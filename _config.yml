@@ -1,0 +1,41 @@
+# Global
+safe:									true
+exclude:							[README.md, LICENSE.md, TODO.md, CNAME]
+include:							[_pages]
+timezone:							Europe/London
+
+# Dependencies
+markdown:							kramdown
+
+# Styling
+sass:
+  sass_dir:						_sass
+  style:							compressed
+
+# Compression
+compress_html:
+  comments:						all
+  clippings:					all
+
+# Permalinks
+permalink:						pretty
+
+# Setup
+title:								"Educ.io"
+byline:								""
+  
+description:					""
+url:									educ.io
+baseurl:							/
+author:
+  name:								"Educ.io"
+  url:								https://github.com/educ-io
+
+# Custom variables
+version:							"0.0.1"
+launched:							"2015"
+
+# Extras
+analytics:
+  enable:							false
+  id:									"UA-53673057-5"

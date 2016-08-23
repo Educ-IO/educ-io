@@ -1,0 +1,24 @@
+// -- Regular Elements -- //
+html, body {width: 100%; height: 100%; background-color: $colour-background;}
+
+p {margin: 0.5em 0.5em;}
+
+a {text-decoration: none; color: inherit;}
+
+h1, h2, h3, h4, h5, h6 {text-align: center;}
+// -- Regular Elements -- //
+
+// -- Backgrounds & Icons -- //
+.small-icon {
+	background-repeat: no-repeat;
+	background-size: 2em auto;
+	background-position: center center;
+	background-image: url("/img/educ_square_logo.svg"), none;
+}
+
+.full-icon {
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-image: url("/img/educ_logo.svg"), none;
+}
+// -- Icons -- //

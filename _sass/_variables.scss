@@ -1,0 +1,19 @@
+/* == Fonts == */
+$font-heading:								"Nixie One", serif;
+$font-general:								sans-serif;
+$font-weight-heading:					700;
+$font-weight:									400;
+$font-spacing-heading:				0.1rem;
+
+/* == Colours == */
+$colour-background: 					#ffffff;
+$colour-emphasis: 						#cccccc;
+$colour-foreground: 					darken($colour-emphasis, 10%);
+$colour-highlight: 						#af0ad9;
+$colour-debug: 								#888888;
+
+/* == Layout == */
+$max-width:										48em;
+
+/* == Breakpoints == */
+$one-column:									"max-width: 32.5em";
