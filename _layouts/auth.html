@@ -1,0 +1,20 @@
+---
+layout: compress
+---
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
+	
+	<head>
+		<title>Redirecting</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+		
+		<!-- Import Scripts -->
+		{% if page.imports %}{% assign _imports = page.imports | split: ';' %}{% for _import in _imports %}
+		{% if site.production == true %}{{ site.data.imports[_import].prod }}{% else %}{{ site.data.imports[_import].dev }}{% endif %}
+		{% endfor %}{% endif %}
+		
+	</head>
+	
+	<body>Redirecting</body>
+	
+</html>

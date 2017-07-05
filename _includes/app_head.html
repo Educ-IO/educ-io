@@ -1,0 +1,24 @@
+	<head>
+		
+		{% include common_head.html %}
+
+		{% if page.google %}<script type="text/javascript" src="https://www.google.com/jsapi"></script>{% endif %}
+		
+		<!-- Set Up API Google Scopes & IDs -->
+		<script>
+			const GOOGLE_KEY = "{{ site.api_keys.google_general }}";
+			const GOOGLE_CLIENT_ID = "{{ site.api_keys.google_oauth }}";
+			{% if page.scopes %}
+			const GOOGLE_SCOPES = [
+				{% for scope in page.scopes %}"{{ scope }}"{% if scope != page.scopes.last %}, {% endif %}{% endfor %}
+			];
+			{% endif %}
+		</script>
+		<!-- Set Up API Google Scopes & IDs -->
+		
+		<!-- Application Page Script -->
+		{% if page.scripts %}{% assign _scripts = page.scripts | split: ';' %}{% for _script in _scripts %}
+			<script src="{{ site.baseurl }}script/{{ _script }}" type="text/javascript" charset="utf-8"></script>
+		{% endfor %}{% endif %}
+    
+	</head>

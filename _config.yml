@@ -1,7 +1,7 @@
 # Global
 safe:									true
 exclude:							[README.md, LICENSE.md, TODO.md, CNAME]
-include:							[_pages]
+include:							[_pages, _apps]
 timezone:							Europe/London
 
 # Dependencies
@@ -34,8 +34,14 @@ author:
 # Custom variables
 version:							"0.0.1"
 launched:							"2015"
+fonts:								"Cabin+Sketch:400,700"
+production:           false
 
 # Extras
 analytics:
   enable:							false
-  id:									"UA-53673057-5"
+  id:                 "UA-53673057-5"
+  
+api_keys:
+  google_general:			"AIzaSyDB4zqDt8WB-DgimvEiCDrSvi8BTaZftxY"
+  google_oauth:				"290943130848-2elj62n7h7hro65viq53cjddg3ln6i4a.apps.googleusercontent.com"

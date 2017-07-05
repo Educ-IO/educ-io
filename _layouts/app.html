@@ -1,0 +1,98 @@
+---
+layout: compress
+---
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
+
+{% include app_head.html %}
+
+<body>
+
+	<nav id="site_nav" class="navbar navbar-toggleable-md navbar-light bg-faded">
+
+		<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#main_Nav" aria-controls="main_Nav" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<a class="navbar-brand logo" href="/">{% include letter.svg %}</a>
+		
+		<div class="collapse navbar-collapse" id="main_Nav">
+
+			<a class="navbar-brand" href="{{ page.permalink }}">{{ page.title }} <span class="sr-only">(current)</span></a>
+			
+			<ul class="navbar-nav mr-auto">
+				
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navAppsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Apps</a>
+					<div class="dropdown-menu" aria-labelledby="navAppsMenu">
+						{% for group in site.data.apps %} {% assign group_title = group[1].name %} {% assign group_apps = group[1].apps %}
+
+						<h5 class="dropdown-heading">{{ group_title }}</h5>
+						{% for app in group_apps %}
+						<a class="dropdown-item" href="{{ app.link }}" {% if app.ext %}target="_blank" {% endif %}{% if app.desc %}data-toggle="tooltip" title="{{ app.desc }}"{% if group == site.data.apps.first %} data-placement="bottom"{% endif %}{% endif %}>
+							{{ app.name }}
+						</a>
+						{% endfor %}
+						
+						{% endfor %}
+
+					</div>
+				</li>
+				
+				{% if page.menu %}
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ page.menu.name }}</a>
+					<div class="dropdown-menu" aria-labelledby="navMenu">
+						{% for group in page.menu.groups %} {% assign group_title = group[1].name %} {% assign group_commands = group[1].commands %}
+
+						<h5 class="dropdown-heading">{{ group_title }}</h5>
+						{% for command in group_commands %}
+						<a class="dropdown-item" href="#{{ command.hash }}" {% if command.desc %}data-toggle="tooltip" title="{{ command.desc }}"{% endif %}>
+							{{ command.name }}
+						</a>
+						{% endfor %}
+						
+						{% endfor %}
+
+					</div>
+				</li>
+				{% endif %}
+				
+				<li class="nav-item">
+					<a class="nav-link" href="#settings">Settings</a>
+				</li>
+				
+				<li class="nav-item">
+					<a class="nav-link" href="#instructions">Instructions</a>
+				</li>
+				
+				<li class="nav-item">
+					<a class="nav-link" href="/about/">About</a>
+				</li>
+				
+			</ul>
+
+			<form id="sign_out" class="form-inline mt-2 mt-md-0" style="display: none;">
+				<span class="navbar-text mr-2">Signed in as <a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions"></a></span>
+				<button class="btn btn-outline-success my-2 my-sm-0 btn-outline-action" href="#">Sign Out</button>
+			</form>
+
+			<form id="sign_in" class="form-inline mt-2 mt-md-0" style="display: none;">
+				<!-- <input class="form-control mr-2" type="text" placeholder="Email Address"> -->
+				<button class="btn btn-outline-success my-2 my-sm-0 btn-outline-action" href="#">Sign In</button>
+			</form>
+
+		</div>
+
+	</nav>
+	
+	<!-- Content here -->
+	<div class="content">
+		{{ content }}
+	</div>
+
+	{% if site.analytics.enable %}{% include analytics.html %}{% endif %}
+
+</body>
+
+</html>

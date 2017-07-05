@@ -1,24 +1,138 @@
-// -- Regular Elements -- //
-html, body {width: 100%; height: 100%; background-color: $colour-background;}
-
-p {margin: 0.5em 0.5em;}
-
-a {text-decoration: none; color: inherit;}
-
-h1, h2, h3, h4, h5, h6 {text-align: center;}
-// -- Regular Elements -- //
-
-// -- Backgrounds & Icons -- //
-.small-icon {
-	background-repeat: no-repeat;
-	background-size: 2em auto;
-	background-position: center center;
-	background-image: url("/img/educ_square_logo.svg"), none;
-}
-
-.full-icon {
-	background-repeat: no-repeat;
-	background-position: center center;
-	background-image: url("/img/educ_logo.svg"), none;
-}
 // -- Icons -- //
+
+.btn-outline-action {
+  color: $colour-highlight;
+  border-color: $colour-highlight;
+	&:hover {
+		border-color: $colour-highlight;
+		background-color: $colour-highlight;
+	}
+	&:focus {
+		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+    box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+	}
+}
+
+.content {
+	margin-top: 0.5rem;
+}
+
+a.navbar-brand.logo, .navbar-brand a.logo {
+	max-height: 48px;
+	svg {
+		height: 40px;	
+	}
+}
+
+.bg-faded {
+	background-color: #fafafa;
+	border-bottom: 1px solid $colour-emphasis;
+}
+
+.dropdown-heading {
+	padding: 4px 1rem;
+	font-weight: 400;
+	line-height: 1;
+	margin-bottom: 2px;
+	text-wrap: nowrap;
+	font-size: 100%;
+	border-bottom: 1px dashed $colour-emphasis;
+}
+
+// -- Google Drive File Picker -- //
+.picker.modal-dialog-content.picker-dialog-content {
+	max-width: 100% !important;
+}
+
+@media screen and (max-width: 991px) {
+ .picker.modal-dialog {
+	  height: 80% !important; 
+    max-width: 86% !important;
+ }
+ .picker.modal-dialog-content.picker-dialog-content {
+   height: 100% !important; 
+ }
+}
+
+@media screen and (min-width: 992px) {
+ .picker.modal-dialog {
+    max-width: 60% !important;
+ }
+}
+// -- Google Drive File Picker -- //
+
+
+// -- Clusterize -- //
+
+
+.clusterize-headers {
+  overflow: hidden;
+}
+
+/* max-height - the only parameter in this file that needs to be edited.
+ * Change it to suit your needs. The rest is recommended to leave as is.
+ */
+.clusterize-scroll {
+  overflow: auto;
+}
+
+/**
+ * Avoid vertical margins for extra tags
+ * Necessary for correct calculations when rows have nonzero vertical margins
+ */
+.clusterize-extra-row {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* By default extra tag .clusterize-keep-parity added to keep parity of rows.
+ * Useful when used :nth-child(even/odd)
+ */
+.clusterize-extra-row.clusterize-keep-parity {
+  display: none;
+}
+
+/* During initialization clusterize adds tabindex to force the browser to keep focus
+ * on the scrolling list, see issue #11
+ * Outline removes default browser's borders for focused elements.
+ */
+.clusterize-content {
+    outline: 0;
+}
+
+/* Centering message that appears when no data provided
+ */
+.clusterize-no-data td {
+  text-align: center;
+}
+// -- Clusterize -- //
+
+// -- Loading Spinner -- //
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.loading {
+	border: 16px solid $colour-deemphasise;
+	border-top: 16px solid rgba(darken($colour-highlight, 20%), 0.5);
+	border-radius: 50%;
+	width: 120px;
+	height: 120px;
+	animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+// -- Loading Spinner -- //
+
+svg path.outline {
+  stroke: $colour-highlight;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: butt;
+}

@@ -1,0 +1,34 @@
+sheets:
+  name: For Sheets
+  apps:
+    - name: View
+      desc: A web-based tool for producing customised views of Google Sheets.
+      link: /view/
+drive:
+  name: For Drive
+  apps:
+    - name: Folders
+      desc: Search folders individually, and view starred files contained within.
+      link: /folders/
+    - name: Transfer
+      desc: Copy your Google Drive data to your own account.
+      link: /transfer/
+team:
+  name: For your Team
+  apps:
+    - name: Markbooks
+      desc: A soon to be written tool.
+      link: /markbooks/
+school:
+  name: Whole School
+  apps:
+   - name: Cover
+     desc: Run your cover in Google Sheets
+     link: /cover/
+coding:
+  name: Coding
+  apps:
+   - name: Scriptr
+     desc: Better Coding with Google Apps Script
+     link: https://scriptr.space
+     ext: true
