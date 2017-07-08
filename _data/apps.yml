@@ -32,10 +32,14 @@ school:
    - name: Cover
      desc: Run your cover in Google Sheets
      link: /cover/
-coding:
-  name: Coding
+other:
+  name: Other
   apps:
    - name: Scriptr
      desc: Better Coding with Google Apps Script
      link: https://scriptr.space
+     ext: true
+   - name: Shelf Dog
+     desc: Your Library, in Google Drive
+     link: https://shelf.dog
      ext: true
