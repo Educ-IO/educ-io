@@ -4,6 +4,13 @@ sheets:
     - name: View
       desc: A web-based tool for producing customised views of Google Sheets.
       link: /view/
+      type: live
+slides:
+  name: For Slides
+  apps:
+    - name: Labels
+      desc: A simple tool for producing pages of labels in Google Slides.
+      link: /labels/
 drive:
   name: For Drive
   apps:
