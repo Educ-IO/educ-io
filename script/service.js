@@ -1,13 +1,12 @@
 importScripts("/script/cache-polyfill.js");
 
-// example usage:
+// == Caching Paths are Relative to the Script == //
 self.addEventListener("install", function(event) {
   event.waitUntil(
     caches.open("educ-io").then(function(cache) {
       return cache.addAll([
         "/",
         "/index.html",
-        "index.html",
         "/about/",
         "/about/index.html",
         "/cover/",
