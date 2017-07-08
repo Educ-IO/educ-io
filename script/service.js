@@ -1,4 +1,4 @@
-importScripts("cache-polyfill.js");
+importScripts("/script/cache-polyfill.js");
 
 // example usage:
 self.addEventListener("install", function(event) {
@@ -8,13 +8,21 @@ self.addEventListener("install", function(event) {
         "/",
         "/index.html",
         "/about/",
+        "/about/index.html",
         "/cover/",
+        "/cover/index.html",
         "/folders/",
+        "/folders/index.html",
         "/labels/",
+        "/labels/index.html",
         "/markbooks/",
+        "/markbooks/index.html",
         "/nqt-easy/",
+        "/nqt-easy/index.html",
         "/transfer/",
+        "/transfer/index.html",
         "/view/",
+        "/view/index.html",
         "/script/app.js",
         "/script/flags.js",
         "/script/github.js",
