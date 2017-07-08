@@ -14,11 +14,11 @@ layout: compress
 			<span class="navbar-toggler-icon"></span>
 		</button>
 
-		<a class="navbar-brand logo" href="/">{% include letter.svg %}</a>
+		<a class="navbar-brand logo" href="/" title="Return to Home"><span class="sr-only">Return to Home</span>{% include letter.svg %}</a>
 		
 		<div class="collapse navbar-collapse" id="main_Nav">
 
-			<a class="navbar-brand" href="{{ page.permalink }}">{{ page.title }} <span class="sr-only">(current)</span></a>
+			<a class="navbar-brand" href="{{ page.permalink }}" title="Reload Current App">{{ page.title }} <span class="sr-only">Current App - Click to Reload</span></a>
 			
 			<ul class="navbar-nav mr-auto">
 				
