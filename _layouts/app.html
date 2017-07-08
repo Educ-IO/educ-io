@@ -29,7 +29,7 @@ layout: compress
 
 						<h5 class="dropdown-heading">{{ group_title }}</h5>
 						{% for app in group_apps %}
-						<a class="dropdown-item" href="{{ app.link }}" {% if app.ext %}target="_blank" {% endif %}{% if app.desc %}data-toggle="tooltip" title="{{ app.desc }}"{% if group == site.data.apps.first %} data-placement="bottom"{% endif %}{% endif %}>
+						<a class="dropdown-item" href="{{ app.link }}" {% if app.ext %}target="_blank" rel="noopener" {% endif %}{% if app.desc %}data-toggle="tooltip" title="{{ app.desc }}"{% if group == site.data.apps.first %} data-placement="bottom"{% endif %}{% endif %}>
 							{{ app.name }}
 						</a>
 						{% endfor %}
@@ -73,7 +73,7 @@ layout: compress
 			</ul>
 
 			<form id="sign_out" class="form-inline mt-2 mt-md-0" style="display: none;">
-				<span class="navbar-text mr-2">Signed in as <a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions"></a></span>
+				<span class="navbar-text mr-2">Signed in as <a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions" rel="noopener"></a></span>
 				<button class="btn btn-outline-success my-2 my-sm-0 btn-outline-action" href="#">Sign Out</button>
 			</form>
 
