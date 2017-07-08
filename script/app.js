@@ -136,7 +136,7 @@ $(function() {
 	Flags().initialise().then(function(flags) {
 			
 		global.flags = flags;
-			
+		
 		// -- Append Content Holder -- //
 		global.container = $(".content");
 		
@@ -155,26 +155,39 @@ $(function() {
 			global.app = App().initialise();
 
 			// -- Start Auth Flow -- //
-			var g = hello("google").getAuthResponse();
-			if (is_SignedIn(g)) { // Signed In
-				google_LoggedIn(g);
-			} else if (g && new Date(g.expires * 1000) < new Date()) { // Expired Token
+			try {
+				var g = hello("google").getAuthResponse();
 				
-				hello.login("google", { // Try silent token refresh
-					force: false, display : "none", scope : encodeURIComponent(GOOGLE_SCOPES.join(" ")),
-				}).then(function(a) {
-					if (is_SignedIn(a.authResponse)) {
-						google_LoggedIn(a.authResponse);
-					} else {
+				if (is_SignedIn(g)) { // Signed In
+					google_LoggedIn(g);
+				} else if (g && new Date(g.expires * 1000) < new Date()) { // Expired Token
+					
+					var refresh_race = Promise.race([
+  					hello.login("google", { // Try silent token refresh
+							force: false, display : "none", scope : encodeURIComponent(GOOGLE_SCOPES.join(" ")),
+						}),
+  					new Promise(function(resolve, reject){
+    					setTimeout(function() { reject("Login Promise Timed Out"); }, 1000);
+  					})
+					]);
+					
+					refresh_race.then(function(a) {
+						if (is_SignedIn(a.authResponse)) {
+							google_LoggedIn(a.authResponse);
+						} else {
+							google_LoggedOut();
+						}
+					}, function(e) {
+						global.flags.error("Signing into Google", e);
 						google_LoggedOut();
-					}
-				}, function(e) {
-					global.flags.error("Signing into Google", e);
+					});
+
+				} else { // Not Logged In
 					google_LoggedOut();
-				});
+				}
 				
-			} else { // Not Logged In
-				google_LoggedOut();
+			} catch(e) {
+				global.flags.error("Google Auth Flow", e);
 			}
 			// -- Start Auth Flow -- //
 			
