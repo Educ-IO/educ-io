@@ -7,6 +7,7 @@ self.addEventListener("install", function(event) {
       return cache.addAll([
         "/",
         "/index.html",
+        "index.html",
         "/about/",
         "/about/index.html",
         "/cover/",
