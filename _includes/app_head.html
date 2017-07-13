@@ -13,6 +13,7 @@
 				{% for scope in page.scopes %}"{{ scope }}"{% if scope != page.scopes.last %}, {% endif %}{% endfor %}
 			];
 			{% endif %}
+			{% if page.version %}const APP_VERSION = "{{ page.version }}";{% endif %}
 		</script>
 		<!-- Set Up API Google Scopes & IDs -->
 		

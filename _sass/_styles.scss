@@ -130,9 +130,11 @@ a.navbar-brand.logo, .navbar-brand a.logo {
 }
 // -- Loading Spinner -- //
 
+// -- Outline Letter Logo -- //
 svg path.outline {
   stroke: $colour-highlight;
   stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: butt;
 }
+// -- Outline Letter Logo -- //

@@ -136,10 +136,11 @@ $(function() {
 	Flags().initialise().then(function(flags) {
 			
 		global.flags = flags;
-		
+		global.interact = Interact().initialise();
+			
 		// -- Append Content Holder -- //
 		global.container = $(".content");
-		
+
 		var _start = function() {
 
 			// -- Set Up Hello.js Auth-Flow -- //
@@ -157,20 +158,20 @@ $(function() {
 			// -- Start Auth Flow -- //
 			try {
 				var g = hello("google").getAuthResponse();
-				
+
 				if (is_SignedIn(g)) { // Signed In
 					google_LoggedIn(g);
 				} else if (g && new Date(g.expires * 1000) < new Date()) { // Expired Token
-					
+
 					var refresh_race = Promise.race([
-  					hello.login("google", { // Try silent token refresh
+						hello.login("google", { // Try silent token refresh
 							force: false, display : "none", scope : encodeURIComponent(GOOGLE_SCOPES.join(" ")),
 						}),
-  					new Promise(function(resolve, reject){
-    					setTimeout(function() { reject("Login Promise Timed Out"); }, 1000);
-  					})
+						new Promise(function(resolve, reject){
+							setTimeout(function() { reject("Login Promise Timed Out"); }, 1000);
+						})
 					]);
-					
+
 					refresh_race.then(function(a) {
 						if (is_SignedIn(a.authResponse)) {
 							google_LoggedIn(a.authResponse);
@@ -185,16 +186,16 @@ $(function() {
 				} else { // Not Logged In
 					google_LoggedOut();
 				}
-				
+
 			} catch(e) {
 				global.flags.error("Google Auth Flow", e);
 			}
 			// -- Start Auth Flow -- //
-			
+
 		}
-			
+
 		_start();
-		
+			
 	});
 
 });
