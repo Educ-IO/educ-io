@@ -51,7 +51,8 @@ App = function() {
 	
 	var _loadValues = function(id, name, target, suffix) {
 
-		var _loader = $("<div />", {class : "loader"}).css("height", $(window).height() - $("#site_nav, #sheet_tab").height() - 120).append($("<div />", {class : "loading"})).appendTo(target);
+		global.interact.busy(target, $(window).height() - $("#site_nav, #sheet_tab").height() - 120);
+		// var _loader = $("<div />", {class : "loader"}).css("height", $(window).height() - $("#site_nav, #sheet_tab").height() - 120).append($("<div />", {class : "loading"})).appendTo(target);
 		
 		global.google.sheets.values(id, name + "!A:ZZ").then(function(data) {
 							
@@ -63,7 +64,8 @@ App = function() {
 			global.flags.log("Loki Values", global.db.chain().data());
 			
 			// -- Remove the Loader -- //
-			if(_loader) _loader.remove();
+			// if(_loader) _loader.remove();
+			global.interact.busy(target);
 			
 			var _headings = $("<tr />");
 			_headers.forEach(function(cell) {
@@ -223,64 +225,116 @@ App = function() {
 				
 					if (__sheet) {
 						
-						var _s2ab = function(s) {
-							if(typeof ArrayBuffer !== 'undefined') {
-								var buf = new ArrayBuffer(s.length);
-								var view = new Uint8Array(buf);
-								for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-								return buf;
-							} else {
-								var buf = new Array(s.length);
-								for (var j=0; j!=s.length; ++j) buf[j] = s.charCodeAt(j) & 0xFF;
-								return buf;
+						// -- Output File Function (once choices have been made) -- //
+						var _output = function(book, type, filename) {
+							
+							var _s2ab = function(s) {
+								if(typeof ArrayBuffer !== 'undefined') {
+									var buf = new ArrayBuffer(s.length);
+									var view = new Uint8Array(buf);
+									for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+									return buf;
+								} else {
+									var buf = new Array(s.length);
+									for (var j=0; j!=s.length; ++j) buf[j] = s.charCodeAt(j) & 0xFF;
+									return buf;
+								}
+							}
+							
+							var wbout = XLSX.write(book, {bookType: type, bookSST : true, type : "binary"});
+							try {
+								saveAs(new Blob([_s2ab(wbout)],{type:"application/octet-stream"}), filename);
+							} catch(e) {
+								global.flags.error("Google Sheet Export", e);
 							}
 						}
-
-						var Workbook = function() {
-							if(!(this instanceof Workbook)) return new Workbook();
-							this.SheetNames = [];
-							this.Sheets = {};
-						}
- 
-						var _exportBook = new Workbook();
-						var _current = 0;
-						var _total = __sheet.sheets.length;
-					
-						__sheet.sheets.forEach(function(tab, index) {
-							global.google.sheets.values(__sheet.spreadsheetId, tab.properties.title + "!A:ZZ").then(function(data) {
+						// -- Output File Function (once choices have been made) -- //
+						
+						global.interact.choose({
+							title : "Please Select a Format to Export to ...",
+							action: "Export",
+							choices: {
+								csv : {name : "csv", desc : "Comma Separated Value Format [Current Tab]", type : "csv", ext : ".csv", size : "single"},
+								dif : {name : "dif", desc : "Data Interchange Format (DIF) [Current Tab]", type : "dif", ext : ".dif", size : "single"},
+								fods : {name : "fods", desc : "Flat OpenDocument Spreadsheet Format [All Tabs]", type : "fods", ext : ".fods", size : "multi"},
+								html : {name : "html", desc : "HTML Document [Current Tab]", type : "html", ext : ".html", size : "single"},
+								ods : {name : "ods", desc : "OpenDocument Spreadsheet Format [All Tabs]", type : "ods", ext : ".ods", size : "multi"},
+								prn : {name : "ods", desc : "Lotus Formatted Text [Current Tab]", type : "prn", ext : ".prn", size : "single"},
+								sylk : {name : "sylk", desc : "Symbolic Link (SYLK) File [Current Tab]", type : "sylk", ext : ".sylk", size : "single"},
+								txt : {name : "txt", desc : "UTF-16 Unicode Text File [Current Tab]", type : "txt", ext : ".txt", size : "single"},
+								xlml : {name : "xlml", desc : "Excel 2003-2004 (SpreadsheetML) Format [All Tabs]", type : "xlml", ext : ".xls", size : "multi"},
+								xlsb: {name : "xlsb", desc : "Excel 2007+ Binary Format [All Tabs]", type : "xlsb", ext : ".xlsb", size : "multi"},
+								xlsm: {name : "xlsm", desc : "Excel 2007+ Macro XML Format [All Tabs]", type : "xlsm", ext : ".xlsm", size : "multi"},
+								xlsx : {name : "xlsx", desc : "Excel 2007+ XML Format [All Tabs]", type : "xlsx", ext : ".xlsx", size : "multi"},
+								xls : {name : "xls", desc : "Excel 2.0 Worksheet Format [Current Tab]", type : "biff2", ext : ".xls", size : "single"}
+							}
+						}).then(function(option) {
+							
+							if (option) {
 								
-								_exportBook.SheetNames.push(tab.properties.title);
-								_exportBook.Sheets[tab.properties.title] = XLSX.utils.aoa_to_sheet(data.values);
-								_current += 1
-								if (_total == _current) {
-									// Need to make decision here?
-									global.interact.choose({
-										title : "Please Select an Output Format",
-										action: "Export",
-										options: {
-											csv : {name : "csv", desc : "Export to Comma Separated Value Format", type : "csv", ext : ".csv"},
-											ods : {name : "ods", desc : "Export to 	OpenDocument Spreadsheet Format", type : "ods", ext : ".ods"},
-											xlml : {name : "xlml", desc : "Export to Excel 2003-2004 (SpreadsheetML) Format", type : "xlml", ext : ".xls"},
-											xlsb: {name : "xlsb", desc : "Export to	Ecel 2007+ Binary Format", type : "xlsb", ext : ".xlsb"},
-											xlsx : {name : "xlsx", desc : "Export to Excel 2007+ XML Format", type : "xlsx", ext : ".xlsx"},
-											xls : {name : "xls", desc : "Export to Excel 2.0 Worksheet Format", type : "biff2", ext : ".xls"}
+								// -- Trigger Loader -- //
+								global.interact.busy();
+								
+								var Workbook = function() {
+									if(!(this instanceof Workbook)) return new Workbook();
+									this.SheetNames = [];
+									this.Sheets = {};
+								}
+ 
+								var _exportBook = new Workbook();
+								var _title = __sheet.properties.title;
+								
+								if (option.size == "multi") {
+									
+									// -- Output all tabs -- //
+									var _current = 0;
+									var _total = __sheet.sheets.length;
+
+									__sheet.sheets.forEach(function(tab, index) {
+
+										global.google.sheets.values(__sheet.spreadsheetId, tab.properties.title + "!A:ZZ").then(function(data) {
+
+											_exportBook.SheetNames.push(tab.properties.title);
+											_exportBook.Sheets[tab.properties.title] = XLSX.utils.aoa_to_sheet(data.values);
+											_current += 1
+											if (_total == _current) _output(_exportBook, option.type, _title + option.ext);
+											
+										});
+									});
+									
+								} else if (option.size == "single") {
+									
+									// -- Output Current tab -- //
+									var _current_Tab = $("#sheet_tabs .nav-link.active").text();
+									
+									__sheet.sheets.forEach(function(tab, index) {
+
+										if (tab.properties.title == _current_Tab) {
+											
+											global.google.sheets.values(__sheet.spreadsheetId, tab.properties.title + "!A:ZZ").then(function(data) {
+
+												_exportBook.SheetNames.push(tab.properties.title);
+												_exportBook.Sheets[tab.properties.title] = XLSX.utils.aoa_to_sheet(data.values);
+												_output(_exportBook, option.type, _title + " - " + _current_Tab + option.ext);
+											
+											});
+											
 										}
-									}).then(function(option) {
-										if (option) {
-											var wbout = XLSX.write(_exportBook, {bookType: option.type, bookSST : true, type : "binary"});
-											try {
-												saveAs(new Blob([_s2ab(wbout)],{type:"application/octet-stream"}), __sheet.properties.title + option.ext); // Need to put name of sheet in here.
-											} catch(e) {
-												global.flags.error("Google Sheet Export", e);
-											}
-										}
-									}, function() {
-										// Clean Up State if required
+										
 									});
 									
 								}
-							});
+								
+								// -- Un-Trigger Loader -- //
+								global.interact.busy();
+								
+							}
+							
+						}, function(e) {
+							if (e) global.flags.error("Google Sheet Export", e);
+							// Clean Up State if required?
 						});
+						
 					}
 					
 			} else if (command == "CLOSE") {
