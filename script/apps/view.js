@@ -276,7 +276,7 @@ App = function() {
 							if (option) {
 								
 								// -- Trigger Loader -- //
-								global.interact.busy($("div.tab-content div.tab-pane.active"), $(window).height() - $("#site_nav, #sheet_tab").height() - 120);
+								global.interact.busy($("div.tab-content div.tab-pane.active"), $(window).height() - $("#site_nav, #sheet_tab").height());
 								
 								var Workbook = function() {
 									if(!(this instanceof Workbook)) return new Workbook();
