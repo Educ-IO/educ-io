@@ -24,13 +24,7 @@ var URLS = [
         "/transfer/",
         "/transfer/index.html",
         "/view/",
-        "/view/index.html",
-        "/script/app.js",
-        "/script/flags.js",
-        "/script/github.js",
-        "/script/google.js",
-        "/script/polyfills.js",
-        "/script/setup.js"
+        "/view/index.html"
       ]
 
 // == Install Handler == //
