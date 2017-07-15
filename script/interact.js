@@ -23,7 +23,7 @@ Interact = function() {
 			
     },
 
-		busy : function (target, height) {
+		busy : function (target, height, width) {
 
 			// -- Ensure we have a target object, and that it is wrapped in JQuery -- //
 			var _target = target ? target : global.container;
@@ -38,7 +38,8 @@ Interact = function() {
 				
 				// Add an overlay loader to the target
 				$("<div />", {class : "loader"})
-					.css("height", height ? height : _target.height())
+					.css("height", height ? height : _target.height() ? _target.height() : $(window).height())
+					.css("width", width ? width : _target.width() ? _target.width() : $(window).width())
 					.css("z-index", 999)
 					.append($("<div />", {class : "loading"}))
 				.prependTo(_target);

@@ -52,7 +52,6 @@ App = function() {
 	var _loadValues = function(id, name, target, suffix) {
 
 		global.interact.busy(target, $(window).height() - $("#site_nav, #sheet_tab").height() - 120);
-		// var _loader = $("<div />", {class : "loader"}).css("height", $(window).height() - $("#site_nav, #sheet_tab").height() - 120).append($("<div />", {class : "loading"})).appendTo(target);
 		
 		global.google.sheets.values(id, name + "!A:ZZ").then(function(data) {
 							
@@ -64,7 +63,6 @@ App = function() {
 			global.flags.log("Loki Values", global.db.chain().data());
 			
 			// -- Remove the Loader -- //
-			// if(_loader) _loader.remove();
 			global.interact.busy(target);
 			
 			var _headings = $("<tr />");
@@ -244,9 +242,14 @@ App = function() {
 							var wbout = XLSX.write(book, {bookType: type, bookSST : true, type : "binary"});
 							try {
 								saveAs(new Blob([_s2ab(wbout)],{type:"application/octet-stream"}), filename);
+								
 							} catch(e) {
 								global.flags.error("Google Sheet Export", e);
 							}
+							
+							// -- Un-Trigger Loader -- //
+							global.interact.busy();
+							
 						}
 						// -- Output File Function (once choices have been made) -- //
 						
@@ -273,7 +276,7 @@ App = function() {
 							if (option) {
 								
 								// -- Trigger Loader -- //
-								global.interact.busy();
+								global.interact.busy($("div.tab-content div.tab-pane.active"), $(window).height() - $("#site_nav, #sheet_tab").height() - 120);
 								
 								var Workbook = function() {
 									if(!(this instanceof Workbook)) return new Workbook();
@@ -324,9 +327,6 @@ App = function() {
 									});
 									
 								}
-								
-								// -- Un-Trigger Loader -- //
-								global.interact.busy();
 								
 							}
 							

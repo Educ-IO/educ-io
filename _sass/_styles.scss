@@ -109,11 +109,12 @@ a.navbar-brand.logo, .navbar-brand a.logo {
 
 // -- Loading Spinner -- //
 .loader {
+	position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
+	background-color: rgba($colour-background, 0.9);
 }
-
 
 .loading {
 	border: 16px solid $colour-deemphasise;
