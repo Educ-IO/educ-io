@@ -124,6 +124,11 @@ App = function() {
 				}
 			});
 							
+		}).catch(function(e) {
+			
+			// -- Remove the Loader -- //
+			global.interact.busy(target);
+			
 		});
 	}
 	

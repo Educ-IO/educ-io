@@ -1,0 +1,21 @@
+sheets:
+  name: For Sheets
+  apps:
+    - view
+slides:
+  name: For Slides
+  apps:
+    - labels
+drive:
+  name: For Drive
+  apps:
+    - folders
+    - transfer
+team:
+  name: For your Team
+  apps:
+    - markbooks
+school:
+  name: Whole School
+  apps:
+   - cover

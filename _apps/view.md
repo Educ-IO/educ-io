@@ -1,5 +1,6 @@
 ---
 layout: app
+name: view
 title: View | Educ.IO
 permalink: /view/
 fonts: true
@@ -7,7 +8,7 @@ bootstrap: true
 google: true
 imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
 scripts: polyfills.js;setup.js;flags.js;interact.js;google.js;apps/view.js;app.js
-templates: choose;confirm
+templates: choose;confirm;alert
 scopes:
   - email
   - profile

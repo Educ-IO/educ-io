@@ -2,3 +2,5 @@ _site/
 .sass-cache/
 .jekyll-metadata
 *_TEST.js
+*.pem
+*.log

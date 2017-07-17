@@ -1,7 +1,1 @@
-<script>
-if("serviceWorker" in navigator) {
-  navigator.serviceWorker
-           .register("/service.js")
-           .then(function() { console.log("Service Worker Registered"); });
-}
-</script>
+<script src="{{ site.baseurl }}script/service-registration.js" type="text/javascript" charset="utf-8"></script>

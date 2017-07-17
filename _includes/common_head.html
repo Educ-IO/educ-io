@@ -12,12 +12,12 @@
 
 <!-- Async CSS -->
 {% if page.fonts == true %}<link rel="preload" href="https://fonts.googleapis.com/css?family={{ site.fonts }}" as="style" onload="this.rel='stylesheet'">{% endif %}
-{% if page.bootstrap == true %}<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" as="style" onload="this.rel='stylesheet'" />{% endif %}
+{% if page.bootstrap == true %}<link rel="preload" href="{{ site.css.bootstrap }}" as="style" onload="this.rel='stylesheet'" />{% endif %}
 
 {% if page.fonts == true or page.bootstrap == true %}
 <noscript>
 	{% if page.fonts == true %}<link rel="stylesheet" href="https://fonts.googleapis.com/css?family={{ site.fonts }}">{% endif %}
-	{% if page.bootstrap == true %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">{% endif %}
+	{% if page.bootstrap == true %}<link rel="stylesheet" href="{{ site.css.bootstrap }}">{% endif %}
 </noscript>
 <!-- Script from: https://github.com/filamentgroup/loadCSS Licence = The MIT License (MIT) | Copyright (c) 2014-17 Filament Group -->
 <script>
@@ -50,7 +50,7 @@
 <link rel="apple-touch-icon" sizes="60x60" href="{{ site.baseurl }}ico/apple-icon-60x60.png">
 
 <!-- For first- and second-generation iPad: -->
-<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-icon-72x72-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ site.baseurl }}ico/apple-touch-icon-72x72-precomposed.png">
 <link rel="apple-touch-icon" sizes="72x72" href="{{ site.baseurl }}ico/apple-icon-72x72.png">
 
 <link rel="apple-touch-icon" sizes="76x76" href="{{ site.baseurl }}ico/apple-icon-76x76.png">
@@ -106,5 +106,13 @@
 
 <!-- Import Scripts -->
 {% if page.imports %}{% assign _imports = page.imports | split: ';' %}{% for _import in _imports %}
-{% if site.production == true %}{{ site.data.imports[_import].prod }}{% else %}{{ site.data.imports[_import].dev }}{% endif %}
+{% if site.production == true %}
+{% for _import_script in site.data.imports[_import].prod %}
+<script src="{{ _import_script.script }}"{% if _import_script.integrity %} integrity="{{ _import_script.integrity }}"{% endif %}{% if _import_script.crossorigin %} crossorigin="{{ _import_script.crossorigin }}"{% endif %}></script>
+{% endfor %}
+{% else %}
+{% for _import_script in site.data.imports[_import].dev %}
+<script src="{{ _import_script.script }}"{% if _import_script.integrity %} integrity="{{ _import_script.integrity }}"{% endif %}{% if _import_script.crossorigin %} crossorigin="{{ _import_script.crossorigin }}"{% endif %}></script>
+{% endfor %}
+{% endif %}
 {% endfor %}{% endif %}

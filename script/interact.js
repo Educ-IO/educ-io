@@ -25,8 +25,10 @@ Interact = function() {
 
 		busy : function (target, height, width) {
 
+			// Should pass clear to this?
+			
 			// -- Ensure we have a target object, and that it is wrapped in JQuery -- //
-			var _target = target ? target : global.container;
+			var _target = target ? target : (global.container ? global.container : $("body"));
 			if (_target instanceof jQuery !== true) _target = $(_target);
 			
 			if (_target.find(".loader").length > 0) {
@@ -51,6 +53,43 @@ Interact = function() {
     confirm : function(question) {
       
     },
+		
+		alert : function(type, headline, message, action) {
+      
+			return new Promise((resolve, reject) => {
+				
+				// -- Great Modal Choice Dialog -- //
+				var template = Handlebars.compile($("#alert").html());
+				var dialog = $(template(
+					{
+						type: type ? type : "info",
+						headline : headline ? headline : "",
+						message : message ? message : "",
+						action : action ? action : ""
+					}
+				));
+				(global.container ? global.container : $("body")).prepend(dialog);
+
+				if (action) {
+				
+					// -- Set Event Handler (if required) -- //
+					dialog.find("button.action").click(function() {
+						resolve(true);
+						dialog.alert("close");
+					});
+
+				}
+					
+				dialog.on("closed.bs.alert", function() {
+					resolve(false);
+				});
+
+				// -- Show the Alert -- //
+				dialog.alert();
+
+    	});
+			
+    },
     
     choose : function(options) {
     
@@ -70,7 +109,7 @@ Interact = function() {
 					// -- Great Modal Choice Dialog -- //
 					var template = Handlebars.compile($("#choose").html());
 					var dialog = $(template(options));
-					global.container.append(dialog);
+					(global.container ? global.container : $("body")).append(dialog);
 
 					// -- Set Event Handlers -- //
 					dialog.find("button.btn-primary").click(function() {

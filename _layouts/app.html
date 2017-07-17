@@ -25,10 +25,11 @@ layout: compress
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="navAppsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Apps</a>
 						<div class="dropdown-menu" aria-labelledby="navAppsMenu">
-							{% for group in site.data.apps %} {% assign group_title = group[1].name %} {% assign group_apps = group[1].apps %}
+							{% for group in site.data.menu %} {% assign group_title = group[1].name %} {% assign group_apps = group[1].apps %}
 
 							<h5 class="dropdown-heading">{{ group_title }}</h5>
-							{% for app in group_apps %}
+							{% for app_key in group_apps %}
+							{% assign app = site.data.apps[app_key] %}
 							<a class="dropdown-item" href="{{ app.link }}" {% if app.ext %}target="_blank" rel="noopener" {% endif %}{% if app.desc %}data-toggle="tooltip" title="{{ app.desc }}"{% if group == site.data.apps.first %} data-placement="bottom"{% endif %}{% endif %}>
 								{{ app.name }}
 							</a>

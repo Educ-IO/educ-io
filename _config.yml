@@ -45,3 +45,6 @@ analytics:
 api_keys:
   google_general:			"AIzaSyDB4zqDt8WB-DgimvEiCDrSvi8BTaZftxY"
   google_oauth:				"290943130848-2elj62n7h7hro65viq53cjddg3ln6i4a.apps.googleusercontent.com"
+
+css:
+  bootstrap:          "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
