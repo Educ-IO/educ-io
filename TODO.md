@@ -10,6 +10,7 @@ TODO LIST
 * Should second level commands (e.g. export on view) be inactive until they are 'possible'? How to declaratively encode this in terms of state?
 * Gracefully handle increasing Google Scopes (e.g. jump to email etc)
 * Can we upload an HTML file to Google Drive and convert it to a Doc for sharing etc?
+* Get Clustify working on View with correct heights and widths!
 
 Complete
 --------

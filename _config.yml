@@ -30,7 +30,7 @@ byline:								""
 description:					"Web Apps & Tools using Google Apps"
 url:									https://educ.io
 baseurl:							/
-source:               https://github.com/Educ-IO/educ-io.github.io
+repo:                 https://github.com/Educ-IO/educ-io.github.io
 author:
   name:								"Educ.io"
   url:								https://github.com/educ-io
