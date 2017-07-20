@@ -107,7 +107,7 @@
         // CTRL-ALT-R --> Force Cache Refresh and then reload
         
         // Show we're busy doing stuff!
-        global.interact.busy();
+        if (global) global.interact.busy();
         
         // Pass request through to relevant service worker
         navigator.serviceWorker.getRegistration(window.location.pathname).then(
@@ -116,7 +116,7 @@
           )}
         ).catch(function() {
           // Clear busy in case of error
-          global.interact.busy({clear : true});
+          if (global) global.interact.busy({clear : true});
         });
         
       }
