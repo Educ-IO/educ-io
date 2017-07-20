@@ -2,10 +2,10 @@ sheets:
   name: For Sheets
   apps:
     - view
-slides:
-  name: For Slides
+docs:
+  name: For Docs
   apps:
-    - labels
+    - reflect
 drive:
   name: For Drive
   apps:

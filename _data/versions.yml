@@ -1,0 +1,10 @@
+0.0.1 :
+  name : Initial Version
+  details : 
+  type : minor
+  changelog :
+    - Initial Service Work Testing
+0.0.2 :
+  name : Service Worker Testing
+  details: Important Security Updates
+  type: security

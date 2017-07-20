@@ -1,7 +1,7 @@
 ---
   permalink: "/service.js"
 ---
-importScripts("/script/cache-polyfill.js");   
+importScripts("/script/cache-polyfill.js");
 
 // -- Set the Version of the Application -- //
 var CACHE_VERSION = "{{ site.version }}";
@@ -16,9 +16,9 @@ var CURRENT_CACHES = {
 var URLS = [
   {% for page in site.pages %}{% if page.layout != "app" and page.permalink != "/service.js" %}"{{ page.permalink }}",{% endif %}{% endfor %}
   {% for app in site.data.apps %}{% if app[1].ext != true %}"{{ app[1].link }}",{% endif %}{% endfor %}
-  {% for import in imports %}{% if site.production == true %}{% for import_script in site.data.imports[import].prod %}"{{ import_script.script }}",{% endfor %}{% else %}{% for import_script in site.data.imports[import].dev %}"{{ import_script.script }}",{% endfor %}{% endif %}{% endfor %}
+  {% for import in imports %}{% if jekyll.environment == "debug" %}{% for import_script in site.data.imports[import].dev %}"{{ import_script.script }}",{% endfor %}{% else %}{% for import_script in site.data.imports[import].prod %}"{{ import_script.script }}",{% endfor %}{% endif %}{% endfor %}
   {% for script in scripts %}"/script/{{ script }}",{% endfor %}
-  "https://fonts.googleapis.com/css?family={{ site.fonts }}", "{{ site.css.bootstrap }}", "/img/educ_logo.svg", "/img/educ_square_logo.svg"
+  "https://fonts.googleapis.com/css?family={{ site.fonts }}", "{{ site.css.bootstrap }}"
 ]
 
 // == Install Handler == //
@@ -110,8 +110,37 @@ self.addEventListener("fetch", function(event) {
 
 // == Message Handler == //
 self.addEventListener("message", function(event) {
-  if (event.data.action == "Update") {
-    self.skipWaiting();
+  if (event.data.action == "update") {
+    
+    self.skipWaiting().then(function() {
+      event.ports[0].postMessage("success");
+    });
+    
+  } else if (event.data.action == "refresh") {
+    
+    var now = Date.now();
+    
+    caches.open(CURRENT_CACHES.static).then(function(cache) {
+      var promises = URLS.map(function(fetch_url) {
+        var url = new URL(fetch_url, location.href);
+        url.search += (url.search ? "&" : "?") + "timestamp=" + now;
+        var request = new Request(url);
+        return fetch(request).then(function(response) {
+          if (response.status >= 400) {
+            throw new Error("Request for " + fetch_url + " failed with status " + response.statusText);
+          }
+          return cache.put(fetch_url, response);
+        }).catch(function(e) {
+          console.error("Failed to cache " + fetch_url + ":", e);
+        });
+      });
+      return Promise.all(promises).then(function() {
+        event.ports[0].postMessage("reload");
+      });
+    }).catch(function(e) {
+      console.error("Failed to Refresh Cache:", e)
+    });
+    
   }
 });
 // == Message Handler == //

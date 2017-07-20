@@ -1,0 +1,21 @@
+// -- Google Drive File Picker -- //
+.picker.modal-dialog-content.picker-dialog-content {
+	max-width: 100% !important;
+}
+
+@media screen and (max-width: 991px) {
+ .picker.modal-dialog {
+	  height: 80% !important; 
+    max-width: 86% !important;
+ }
+ .picker.modal-dialog-content.picker-dialog-content {
+   height: 100% !important; 
+ }
+}
+
+@media screen and (min-width: 992px) {
+ .picker.modal-dialog {
+    max-width: 60% !important;
+ }
+}
+// -- Google Drive File Picker -- //

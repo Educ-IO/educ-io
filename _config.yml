@@ -1,7 +1,7 @@
 # Global
 safe:									true
-exclude:							[README.md, LICENSE.md, TODO.md, CNAME]
-include:							[_pages, _apps]
+exclude:							[TODO.md, REPOSITORY.md, CNAME]
+include:							[_pages, _apps, _extensions,_config]
 timezone:							Europe/London
 
 # Dependencies
@@ -16,6 +16,9 @@ sass:
 compress_html:
   comments:						all
   clippings:					all
+  endings:            all
+  ignore:
+    envs:             [debug]
 
 # Permalinks
 permalink:						pretty
@@ -24,22 +27,21 @@ permalink:						pretty
 title:								"Educ.io"
 byline:								""
   
-description:					""
-url:									educ.io
+description:					"Web Apps & Tools using Google Apps"
+url:									https://educ.io
 baseurl:							/
+source:               https://github.com/Educ-IO/educ-io.github.io
 author:
   name:								"Educ.io"
   url:								https://github.com/educ-io
 
 # Custom variables
-version:							"0.0.1"
+version:							"0.0.2"
 launched:							"2015"
 fonts:								"Cabin+Sketch:400,700"
-production:           false
 
 # Extras
 analytics:
-  enable:							false
   id:                 "UA-53673057-5"
   
 api_keys:

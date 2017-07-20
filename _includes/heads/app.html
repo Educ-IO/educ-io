@@ -1,0 +1,34 @@
+	<head>
+		
+		{% include heads/common.html %}
+
+		{% if page.google == true or site.data.apps[page.app].google %}
+			<script type="text/javascript" src="https://www.google.com/jsapi" async></script>
+		{% endif %}
+		
+		<!-- Set Up API Google Scopes & IDs -->
+		<script>
+			const GOOGLE_KEY = "{{ site.api_keys.google_general }}";
+			const GOOGLE_CLIENT_ID = "{{ site.api_keys.google_oauth }}";
+			{% assign scopes = false %}
+			{% if page.scopes %}
+				{% assign scopes = page.scopes %}
+			{% elsif page.app and page.app != "" and site.data.apps[page.app].scopes %}
+				{% assign scopes = site.data.apps[page.app].scopes %}
+			{% endif %}
+
+			const GOOGLE_SCOPES = [
+				{% for scope in scopes %}"{{ scope }}"{% if scope != scopes.last %}, {% endif %}{% endfor %}
+			];
+
+			{% if page.version %}
+			const APP_VERSION = "{{ page.version }}";
+			{% elsif page.app and page.app != "" and site.data.apps[page.app].version %} 
+			const APP_VERSION = "{{ site.data.apps[page.app].version }}";
+			{% endif %}
+		</script>
+		<!-- Set Up API Google Scopes & IDs -->
+		
+		{% include scripts.html %}
+    
+	</head>

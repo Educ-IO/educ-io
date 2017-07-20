@@ -4,23 +4,9 @@ App = function() {
   if (!(this instanceof App)) {return new App();}
 	
 	// -- Internal Variables -- //
-	var __docs = "/docs/view/", __scroll, __headers, __content, __sheet;
+	var __scroll, __headers, __content, __sheet;
 	
-	// -- Internal Functions -- //
-	var _display = function(value) {
-
-		$("<div />", {class : "row"}).append(
-			$("<div />", {class : "col-12"}).html(
-				new showdown.Converter().makeHtml(value)
-			)
-		).appendTo(
-			$("<div />", {"class" : "container"})
-				.appendTo(global.container.empty()
-			)
-		);
-
-	}
-	
+	// -- Internal Functions -- //	
 	var _fitHeaders = (function() {
   	var _prev = [];
   	return function() {
@@ -51,7 +37,7 @@ App = function() {
 	
 	var _loadValues = function(id, name, target, suffix) {
 
-		global.interact.busy(target, $(window).height() - $("#site_nav, #sheet_tab").height() - 120);
+		global.interact.busy({target : target});
 		
 		global.google.sheets.values(id, name + "!A:ZZ").then(function(data) {
 							
@@ -63,7 +49,7 @@ App = function() {
 			global.flags.log("Loki Values", global.db.chain().data());
 			
 			// -- Remove the Loader -- //
-			global.interact.busy(target);
+			global.interact.busy({target : target, clear : true});
 			
 			var _headings = $("<tr />");
 			_headers.forEach(function(cell) {
@@ -127,7 +113,7 @@ App = function() {
 		}).catch(function(e) {
 			
 			// -- Remove the Loader -- //
-			global.interact.busy(target);
+			global.interact.busy({target : target, clear : true});
 			
 		});
 	}
@@ -191,22 +177,12 @@ App = function() {
 			if (!command || command === false || command == "PUBLIC") {
 				
 				// -- Load the Public Instructions -- //
-				$.ajax({
-					url: __docs + "PUBLIC.md", type: "get", dataType: "html",
-					async: true, success: function(result) {
-						if (result) _display(result);
-					}
-				});
+				global.display.doc({name : "PUBLIC", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
 				
 			} else if (command === true || command == "AUTH") {
 				
 				// -- Load the Initial Instructions -- //
-				$.ajax({
-					url: __docs + "README.md", type: "get", dataType: "html",
-					async: true, success: function(result) {
-						if (result) _display(result);
-					}
-				});
+				global.display.doc({name : "README", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
 				
 			} else if (command == "OPEN") {
 				
@@ -247,13 +223,12 @@ App = function() {
 							var wbout = XLSX.write(book, {bookType: type, bookSST : true, type : "binary"});
 							try {
 								saveAs(new Blob([_s2ab(wbout)],{type:"application/octet-stream"}), filename);
-								
 							} catch(e) {
 								global.flags.error("Google Sheet Export", e);
 							}
 							
 							// -- Un-Trigger Loader -- //
-							global.interact.busy();
+							global.interact.busy({clear: true});
 							
 						}
 						// -- Output File Function (once choices have been made) -- //
@@ -281,7 +256,7 @@ App = function() {
 							if (option) {
 								
 								// -- Trigger Loader -- //
-								global.interact.busy($("div.tab-content div.tab-pane.active"), $(window).height() - $("#site_nav, #sheet_tab").height());
+								global.interact.busy({target : $("div.tab-content div.tab-pane.active")});
 								
 								var Workbook = function() {
 									if(!(this instanceof Workbook)) return new Workbook();
@@ -347,17 +322,12 @@ App = function() {
 			} else if (command == "INSTRUCTIONS") {
 				
 				// -- Load the Instructions -- //
-				$.ajax({
-					url: __docs + "INSTRUCTIONS.md", type: "get", dataType: "html",
-						async: true, success: function(result) {
-						if (result) _display(result);
-					}
-				});
+				global.display.doc({name : "INSTRUCTIONS", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
 				
 			} else if (command == "SETTINGS") {
 				
-				// -- TODO: Something here -- //
-				_display();
+				/// -- Load the Settings Page (for the time being, actually this will be a template!) -- //
+				global.display.doc({name : "SETTINGS", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
 				
 			}
       

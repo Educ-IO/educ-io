@@ -1,6 +1,8 @@
 // -- Global Variables -- //
 var global = {
-	single_Page : window.navigator.standalone || navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
+	single_Page : window.navigator.standalone || navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i),
+	interact : Interact().initialise(),
+	display : Display().initialise(),
 };
 // -- Global Variables -- //
 
@@ -136,7 +138,6 @@ $(function() {
 	Flags().initialise().then(function(flags) {
 			
 		global.flags = flags;
-		global.interact = Interact().initialise();
 			
 		// -- Append Content Holder -- //
 		global.container = $(".content");

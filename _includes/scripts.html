@@ -1,0 +1,14 @@
+<!-- Application Page Script -->
+{% assign scripts = false %}
+
+{% if page.scripts %}
+  {% assign scripts = page.scripts | split: ';' %}
+{% elsif page.app and page.app != "" and site.data.apps[page.app].scripts %}
+  {% assign scripts = site.data.apps[page.app].scripts | split: ';' %}
+{% endif %}
+
+{% if scripts %}
+  {% for script in scripts %}
+    <script src="{{ site.baseurl }}script/{{ script }}" type="text/javascript" charset="utf-8" defer></script>
+  {% endfor %}
+{% endif %}

@@ -1,0 +1,20 @@
+<!-- Application Page Templates -->
+{% assign templates = false %}
+
+{% if page.templates %}
+  {% assign templates = page.templates | split: ';' %}
+{% elsif page.app and page.app != "" and site.data.apps[page.app].templates %}
+  {% assign templates = site.data.apps[page.app].templates | split: ';' %}
+{% endif %}
+
+{% if templates %}
+
+  {% for template in templates %}
+
+    <script id="{{ template }}" type="text/x-handlebars-template">
+      {% include_relative _templates/{{ template }}.html %}
+    </script>
+
+  {% endfor %}
+
+{% endif %}

@@ -4,3 +4,4 @@ _site/
 *_TEST.js
 *.pem
 *.log
+_cert/

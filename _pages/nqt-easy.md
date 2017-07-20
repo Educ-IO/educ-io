@@ -1,7 +1,5 @@
 ---
-layout: page
+layout: landing
 title: NQT Easy
 permalink: /nqt-easy/
-bootstrap: true
-style: blank
 ---

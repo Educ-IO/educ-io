@@ -1,0 +1,28 @@
+html, body {height: 100%;}
+
+// -- Outline Letter Logo -- //
+a.navbar-brand.logo, .navbar-brand a.logo {
+	max-height: 48px;
+	svg {
+		height: 40px;	
+		path.outline {
+  		stroke: $colour-highlight;
+  		stroke-width: 2;
+  		stroke-linejoin: round;
+  		stroke-linecap: butt;
+		}
+	}
+}
+// -- Outline Letter Logo -- //
+
+// -- Menu Branding -- //
+.dropdown-heading {
+	padding: 4px 1rem;
+	font-weight: 400;
+	line-height: 1;
+	margin-bottom: 2px;
+	text-wrap: nowrap;
+	font-size: 100%;
+	border-bottom: 1px dashed $colour-emphasis;
+}
+// -- Menu Branding -- //

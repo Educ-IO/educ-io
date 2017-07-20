@@ -8,18 +8,7 @@ layout: compress
 		<title>Redirecting</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
 		
-		<!-- Import Scripts -->
-		{% if page.imports %}{% assign _imports = page.imports | split: ';' %}{% for _import in _imports %}
-		{% if site.production == true %}
-		{% for _import_script in site.data.imports[_import].prod %}
-		<script src="{{ _import_script.script }}"{% if _import_script.integrity %} integrity="{{ _import_script.integrity }}"{% endif %}{% if _import_script.crossorigin %} crossorigin="{{ _import_script.crossorigin }}"{% endif %}></script>
-		{% endfor %}
-		{% else %}
-		{% for _import_script in site.data.imports[_import].dev %}
-		<script src="{{ _import_script.script }}"{% if _import_script.integrity %} integrity="{{ _import_script.integrity }}"{% endif %}{% if _import_script.crossorigin %} crossorigin="{{ _import_script.crossorigin }}"{% endif %}></script>
-		{% endfor %}
-		{% endif %}
-		{% endfor %}{% endif %}
+		{% include imports.html %}
 		
 	</head>
 	

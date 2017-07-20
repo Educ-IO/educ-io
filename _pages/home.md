@@ -2,5 +2,6 @@
 layout: landing
 title: Coming Soon ...
 permalink: /
-fonts: true
+logo: true
+style: _landing
 ---

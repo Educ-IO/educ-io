@@ -1,3 +1,11 @@
+---
+layout: page
+title: License
+permalink: /license/
+imports: jquery;tether;bootstrap
+support: true
+style: _page
+---
 GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 

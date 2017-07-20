@@ -1,0 +1,38 @@
+// -- Action Button -- //
+.btn-outline-action {
+  color: $colour-highlight;
+  border-color: $colour-highlight;
+	&:hover {
+		border-color: $colour-highlight;
+		background-color: $colour-highlight;
+	}
+	&:focus {
+		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+    box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+	}
+}
+// -- Action Button -- //
+
+// -- Border the bottom of the Navbar -- //
+nav.navbar.bg-faded {
+	background-color: $colour-section;
+	border-bottom: 1px solid $colour-emphasis;
+}
+// -- Border the bottom of the Navbar -- //
+
+// -- Dock Alerts to the Top -- //
+div.alert:first-child { 
+	margin-bottom: 0;
+	button.float-right.close {
+		padding: 0;
+		top: 0;
+	}
+}
+// -- Dock Alerts to the Top -- //
+
+// -- Content Spacer -- //
+.content {
+	margin-top: 0.5rem;
+}
+// -- Content Spacer -- //
+

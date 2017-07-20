@@ -1,0 +1,42 @@
+// == Normal Layout == //
+.container-fluid, .landing {
+  height: 100%;
+}
+
+.landing {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-size: 30em auto;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.title {
+	position: fixed;
+	top: 4em;
+	text-align: center;
+	padding-top: 1rem;
+	h1, h2, h3, h4, h5, h6 {
+		font-size: 4em;
+	}
+}
+// == Normal Layout == //
+
+// == Small Layout == //
+@media all and (unquote($small)) {
+	
+	.landing {
+    background-size: 20em auto;
+  }
+	
+  .title {
+		top: 1em;
+    padding-top: 0;
+		h1, h2, h3, h4, h5, h6 {
+			font-size: 2em;
+		}
+  }
+	
+}
+// == Small Layout == //

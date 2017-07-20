@@ -8,11 +8,14 @@ localstorage:
     - script: https://cdnjs.cloudflare.com/ajax/libs/localStorage/2.0.1/localStorage.min.js
       integrity: sha256-hrbB6Rx4BnuBnpD/19isEnVQuVWTs1FAnwvAmqcw2cw=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/localStorage/2.0.1/localStorage.js
       integrity: sha256-zM/8b1ZXCHo2KsNusq3o8s63IwA3GOTag3BO/Mi71ow=
       crossorigin: anonymous
-
+      async: false
+      defer: true
 jsdiff:
   name: JS Diff
   url: https://cdnjs.com/libraries/jsdiff
@@ -23,10 +26,14 @@ jsdiff:
     - script: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.2.0/diff.min.js
       integrity: sha256-9rZeWIescmaMzN+OSwsGJZtB1euH9s+mnh9u9/opnYw=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.2.0/diff.js
       integrity: sha256-S6+2vbEc1dWquKUJssAFYikp0UY5lpTiTnQmxaYOhVM=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 jshashes:
   name: JS Hashes
@@ -38,10 +45,14 @@ jshashes:
     - script: https://cdnjs.cloudflare.com/ajax/libs/jshashes/1.0.7/hashes.min.js
       integrity: sha256-H7hBuovONQQrY3zESq6MXx+b5Q3ovOY03taLJUaMauk=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/jshashes/1.0.7/hashes.js
       integrity: sha256-l4iarENM32aE2JRv4mcTf2n8c8EecqFAcuxmAtX+PPI=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 screenfull:
   name: Screenfull
@@ -53,10 +64,14 @@ screenfull:
     - script: https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.2.2/screenfull.min.js
       integrity: sha256-BBEvgz7Ny1lJEOu3fKSGrYNkfhfoqjHu9RppGdNeTpI=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev: 
     - script: https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.2.2/screenfull.js
       integrity: sha256-aW+jZEmteJDKviTDjy24bHfzZuAIIwMFBtwGfCijNhM=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 localforage:
   name: Localforage
@@ -68,10 +83,14 @@ localforage:
     - script: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.5.0/localforage.min.js
       integrity: sha256-kAq48olJYgx7dR+P9KbS+Q1OjM1vNGUSFDjQjcM0lKA=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.5.0/localforage.js
       integrity: sha256-q3C/Kj9uGHUCBiTlqWhnpfNBPoDvV3CQaXoZaEtAZws=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 hammer:
   name: Hammer
@@ -83,10 +102,14 @@ hammer:
     - script: https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js
       integrity: sha256-eVNjHw5UeU0jUqPPpZHAkU1z4U+QFBBY488WvueTm88=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.js
       integrity: sha256-GMd3rFxMDNnM5JQEpiKLLl8kSrDuG5egqchk758z59g=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 urlparser:
   name: JQuery URL Parser
@@ -98,10 +121,14 @@ urlparser:
     - script: https://cdnjs.cloudflare.com/ajax/libs/jquery-url-parser/2.3.1/purl.min.js
       integrity: sha256-Ok1mfwLL3kRzz/1DUpgwsieObDr+pGVBAKaFxeyXeNk=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/jquery-url-parser/2.3.1/purl.js
       integrity: sha256-CClfiLXZ7XyMeMnUnnifxEwTETRJNKU9HYRsig8BSD8=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 hello:
   name: Hello
@@ -113,10 +140,14 @@ hello:
     - script: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.15.1/hello.min.js
       integrity: sha256-Ik0hWOywX7ASte0Zm3xa8aMqeFTn2BMB/julZsMRvBI=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.15.1/hello.js
       integrity: sha256-1AZ0nGAR3LkIkwJ3QgYD4RR7evFplTsJd6wLHZOKERU=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 showdown:
   name: Showdown
@@ -128,10 +159,14 @@ showdown:
     - script: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.1/showdown.min.js
       integrity: sha256-cgmBpa41tevGSToVfdP9vzuJ5H5WsT12vZizDOlMSFU=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.1/showdown.js
       integrity: sha256-nArgoS9NZSEeMiNda6cJ+Dw+wBy/P7qsSFYmYOV+OJs=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 jquery:
   name: JQuery
@@ -143,10 +178,14 @@ jquery:
     - script: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
       integrity: sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js
       integrity: sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 tether:
   name: Tether
@@ -158,10 +197,14 @@ tether:
     - script: https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js
       integrity: sha256-gL1ibrbVcRIHKlCO5OXOPC/lZz/gpdApgQAzskqqXp8=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.js
       integrity: sha256-jVfFb7AbGi7S/SLNl8SB4/MYaf549eEs+NlIWMoARHg=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 bootstrap:
   name: Bootstrap
@@ -173,10 +216,14 @@ bootstrap:
     - script: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js
       integrity: sha256-+kIbbrvS+0dNOjhmQJzmwe/RILR/8lb/+4+PUNVW09k=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.js
       integrity: sha256-O80B9+k8kADyLffStFEQZnTxAU91ZryGbUeKwxO0t3M=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 loki:
   name: LokiJS
@@ -188,10 +235,14 @@ loki:
     - script: https://cdnjs.cloudflare.com/ajax/libs/lokijs/1.5.0/lokijs.min.js
       integrity: sha256-C5eRRjE+2mrxY0mnF95Qu6A/JXddwrgg9QMRZ+Ktxhc=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/lokijs/1.5.0/lokijs.min.js
       integrity: sha256-C5eRRjE+2mrxY0mnF95Qu6A/JXddwrgg9QMRZ+Ktxhc=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 clusterize:
   name: Clusterize.js
@@ -203,10 +254,16 @@ clusterize:
     - script: https://cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.min.js
       integrity: sha256-v56TI+wd9PWTvwqrpGaluF6GulSCspBFwQKAcVpXGZc=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.js
       integrity: sha256-d2ft6mverdSdT25oS0c4FNe8x6p8CSbo0hblSmasX4w=
       crossorigin: anonymous
+      async: false
+      defer: true
+  css:
+    - _clusterize
 
 uuid:
   name: Node UUID
@@ -218,10 +275,14 @@ uuid:
     - script: https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js
       integrity: sha256-h7PiJxtxsf7+VkAGN6N+8/0qZrhK7oYJc/pguDnYJi4=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.js
       integrity: sha256-di30dL7N9597Q8UApQWE7AIjWlR2hbVHreqxh7NiX4I=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 yaml:
   name: JS Yaml
@@ -233,10 +294,14 @@ yaml:
     - script: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.8.4/js-yaml.min.js
       integrity: sha256-0fVOf/R0H784sL7gcJSJo2mOapjzsIVdW0Ep3CuOKrg=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.8.4/js-yaml.min.js
       integrity: sha256-0fVOf/R0H784sL7gcJSJo2mOapjzsIVdW0Ep3CuOKrg=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 ace:
   name: ACE
@@ -248,64 +313,104 @@ ace:
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js
       integrity: sha256-198+Grx89n2ofVwo1LWnNTXxIQZIPZJURv+K73cJ93U=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ext-language_tools.js
       integrity: sha256-lWjFoKJOA8E3lXU/1gCNhbDX6rCwzfwd0BJpy620TZ4=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ext-searchbox.js
       integrity: sha256-Nitxd4t5c0ry8F+deewrFXnSAFKRMCpxPnsQs23Ln8Y=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-css.js
       integrity: sha256-1DAcULObTRgnG8BqO1aojDFYkDtBg8wN2oVlefQtE7E=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-diff.js
       integrity: sha256-4QeTsUouWAhGR0MhS+/B9bnA0LtXZ1ryj+WIK/xHUyQ=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-html.js
       integrity: sha256-J3gfuUF3gcRn5h7kuopnyi1azKx8gObAuF/2ukknwBg=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-javascript.js
       integrity: sha256-nyhP9pWA7IXRS8R6IT/ux3e3bGOZymx5RMe/cub8w2Q=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-markdown.js
       integrity: sha256-4/5a1Iyciq5z7FaFTDemyalefnko7q7oHaDOMxdI8t0=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-text.js
       integrity: sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-yaml.js
       integrity: sha256-aKkFuoiUHumdnJdGC82FrWQ9LOvhOAcT8D3XmRVEXoE=
       crossorigin: anonymous
+      async: true
+      defer: false
   dev: 
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js
       integrity: sha256-198+Grx89n2ofVwo1LWnNTXxIQZIPZJURv+K73cJ93U=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ext-language_tools.js
       integrity: sha256-lWjFoKJOA8E3lXU/1gCNhbDX6rCwzfwd0BJpy620TZ4=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ext-searchbox.js
       integrity: sha256-Nitxd4t5c0ry8F+deewrFXnSAFKRMCpxPnsQs23Ln8Y=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-css.js
       integrity: sha256-1DAcULObTRgnG8BqO1aojDFYkDtBg8wN2oVlefQtE7E=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-diff.js
       integrity: sha256-4QeTsUouWAhGR0MhS+/B9bnA0LtXZ1ryj+WIK/xHUyQ=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-html.js
       integrity: sha256-J3gfuUF3gcRn5h7kuopnyi1azKx8gObAuF/2ukknwBg=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-javascript.js
       integrity: sha256-nyhP9pWA7IXRS8R6IT/ux3e3bGOZymx5RMe/cub8w2Q=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-markdown.js
       integrity: sha256-4/5a1Iyciq5z7FaFTDemyalefnko7q7oHaDOMxdI8t0=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-text.js
       integrity: sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       crossorigin: anonymous
+      async: true
+      defer: false
     - script: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-yaml.js
       integrity: sha256-aKkFuoiUHumdnJdGC82FrWQ9LOvhOAcT8D3XmRVEXoE=
       crossorigin: anonymous
+      async: true
+      defer: false
 
 xlsx:
   name: JS XLSX
@@ -317,16 +422,24 @@ xlsx:
     - script: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.full.min.js
       integrity: sha256-TuW/DAcsShnnH448nFucXzahCo5w59DYjX3DNpbi7kU=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/cpexcel.js
       integrity: sha256-ZwLT97zCK48sWZdD4QyV1QcsRzabwLfJ0pPC3Xk67wo=
       crossorigin: anonymous
+      async: false
+      defer: true
     - script: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/jszip.js
       integrity: sha256-MWngzhFufvGHUhvgc8ob9qDaO4FW4t+i2Et0FTnKbOE=
       crossorigin: anonymous
+      async: false
+      defer: true
     - script: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.js
       integrity: sha256-ImIjIcfwhHtmf3Eulcaua6ClXyKHEEos8DIIRiNsyQg=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 download:
   name: downloadjs
@@ -338,10 +451,14 @@ download:
     - script: https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.7/download.min.js
       integrity: sha256-jO7zIwKMJTUQkptQfQMhu+uL4erqSzAd0wUfueDCuNI=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.7/download.js
       integrity: sha256-ABOnKwsYVd1DoQ6h2x/+RNc7ddqtqBBPJDR76/Q6+Zo=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 filesaver:
   name: FileSaver.js
@@ -353,10 +470,14 @@ filesaver:
     - script: https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js
       integrity: sha256-FPJJt8nA+xL4RU6/gsriA8p8xAeLGatoyTjldvQKGdE=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.js
       integrity: sha256-htuR1Owx8i9hm4h4Y4d/FjlPLoj2teQmhJ5WnNSo3w0=
       crossorigin: anonymous
+      async: false
+      defer: true
 
 handlebars:
   name: handlebars.js
@@ -368,7 +489,11 @@ handlebars:
     - script: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js
       integrity: sha256-0JaDbGZRXlzkFbV8Xi8ZhH/zZ6QQM0Y3dCkYZ7JYq34=
       crossorigin: anonymous
+      async: false
+      defer: true
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.js
       integrity: sha256-5Ud5lebnfqDOArqCr7p6w5KxX1dwXFcqiBw25dhhYFI=
       crossorigin: anonymous
+      async: false
+      defer: true

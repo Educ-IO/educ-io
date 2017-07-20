@@ -1,0 +1,32 @@
+<!-- Application Page Docs -->
+{% assign docs = false %}
+
+{% if page.docs %}
+  {% assign docs = page.docs | split: ';' %}
+{% elsif page.app and page.app != "" and site.data.apps[page.app].docs %}
+  {% assign docs = site.data.apps[page.app].docs | split: ';' %}
+{% endif %}
+
+{% if docs %}
+
+  {% raw %}
+  <script id="CONTENT_WRAPPER" type="text/x-handlebars-template">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">{{{ content }}}</div>
+      </div>
+    </div>
+  </script>
+  {% endraw %}
+
+  {% for doc in docs %}
+
+    {% capture markdown %}{% include_relative _docs/{{ doc }}.md %}{% endcapture %}
+
+    <script id="{% if doc contains '/' %}{{ doc | split: '/' | last }}{% else %}{{ doc }}{% endif %}" type="text/x-handlebars-template">
+     {{ markdown | markdownify }}
+    </script>
+
+  {% endfor %}
+
+{% endif %}

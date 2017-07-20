@@ -1,0 +1,19 @@
+<!-- Import Scripts -->
+{% assign imports = false %}
+{% if page.imports %}
+	{% assign imports = page.imports | split: ';' %}
+{% elsif page.app and page.app != "" and site.data.apps[page.app].imports %}
+	{% assign imports = site.data.apps[page.app].imports | split: ';' %}
+{% endif %}
+{% if imports %}
+{% for import in imports %}
+{% if jekyll.environment == "debug" %}
+{% for import_script in site.data.imports[import].dev %}
+<script src="{{ import_script.script }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %}></script>
+{% endfor %}
+{% else %}
+{% for import_script in site.data.imports[import].prod %}
+<script src="{{ import_script.script }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %}{% if import_script.defer %} defer{% endif %}{% if import_script.async %} defer{% endif %}></script>
+{% endfor %}
+{% endif %}
+{% endfor %}{% endif %}

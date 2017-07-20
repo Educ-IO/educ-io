@@ -23,54 +23,56 @@ Interact = function() {
 			
     },
 
-		busy : function (target, height, width) {
+		/*
+			Options are : {
+				target : element to append the loader to,
+				clear : optional boolean to force clearing,
+			}
+		*/
+		busy : function (options) {
 
-			// Should pass clear to this?
-			
 			// -- Ensure we have a target object, and that it is wrapped in JQuery -- //
-			var _target = target ? target : (global.container ? global.container : $("body"));
+			var _target = (options && options.target) ? options.target : (global.container ? global.container : $("body"));
 			if (_target instanceof jQuery !== true) _target = $(_target);
 			
-			if (_target.find(".loader").length > 0) {
+			if (_target.find(".loader").length > 0 || (options && options.clear === true) ) {
 				
-				// If we are already 'busy', clear this!
 				_target.find(".loader").remove();
 				
 			} else {
 				
-				// Add an overlay loader to the target
-				$("<div />", {class : "loader"})
-					.css("height", height ? height : _target.height() ? _target.height() : $(window).height())
-					.css("width", width ? width : _target.width() ? _target.width() : $(window).width())
-					.css("z-index", 999)
-					.append($("<div />", {class : "loading"}))
-				.prependTo(_target);
+				_target.prepend(Handlebars.compile($("#loader").html())())
 				
 			}
 			
 		},
 		
-    confirm : function(question) {
+		/*
+			Options are : {
+
+			}
+		*/
+    confirm : function(options) {
       
     },
 		
-		alert : function(type, headline, message, action) {
+		/*
+			Options are : {
+				type : type of alert (success, info, warning, danger),
+				headline : main message,
+				message : optional body message,
+				action : optional name of action button
+			}
+		*/
+		alert : function(options) {
       
 			return new Promise((resolve, reject) => {
 				
 				// -- Great Modal Choice Dialog -- //
-				var template = Handlebars.compile($("#alert").html());
-				var dialog = $(template(
-					{
-						type: type ? type : "info",
-						headline : headline ? headline : "",
-						message : message ? message : "",
-						action : action ? action : ""
-					}
-				));
+				var dialog = $(Handlebars.compile($("#alert").html())(options));
 				(global.container ? global.container : $("body")).prepend(dialog);
 
-				if (action) {
+				if (options.action) {
 				
 					// -- Set Event Handler (if required) -- //
 					dialog.find("button.action").click(function() {
@@ -91,6 +93,13 @@ Interact = function() {
 			
     },
     
+		/*
+			Options are : {
+				title : main title of the options dialog,
+				choices : array or object of name/desc items to choose from
+				action : optional name of action button
+			}
+		*/
     choose : function(options) {
     
 			return new Promise((resolve, reject) => {
@@ -107,9 +116,8 @@ Interact = function() {
 					options.__LONG = (_length > MAX_ITEMS);
 					
 					// -- Great Modal Choice Dialog -- //
-					var template = Handlebars.compile($("#choose").html());
-					var dialog = $(template(options));
-					(global.container ? global.container : $("body")).append(dialog);
+					var dialog = $(Handlebars.compile($("#choose").html())(options));
+					$("body").append(dialog);
 
 					// -- Set Event Handlers -- //
 					dialog.find("button.btn-primary").click(function() {

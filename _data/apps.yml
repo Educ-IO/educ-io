@@ -2,38 +2,97 @@ view:
   name: View
   desc: A web-based tool for producing customised views of Google Sheets.
   link: /view/
-  type: live
-  fonts: true
-  bootstrap: true
   google: true
-  imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
-  scripts: polyfills.js;setup.js;flags.js;interact.js;google.js;apps/view.js;app.js
-  templates: choose;confirm;alert
+  imports: jquery;tether;bootstrap;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
+  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  templates: choose;confirm;alert;loader
+  docs: view/PUBLIC;view/README;view/INSTRUCTIONS;view/SETTINGS
   scopes:
     - email
     - profile
     - https://www.googleapis.com/auth/drive.file
     - https://www.googleapis.com/auth/spreadsheets.readonly
-labels:
-  name: Labels
-  desc: A simple tool for producing pages of labels in Google Slides.
-  link: /labels/
+  menu:
+    name: Commands
+    groups:
+      file:
+        name: File
+        commands:
+          - name: Open
+            description: Open a Sheet from your Drive
+            hash: open
+          - name: Export
+            description: Export the Sheet to Legacy Formats
+            hash: export
+          - name: Close
+            description: Close the current Sheet
+            hash: close
+  version: 0.0.1
+reflect:
+  name: Reflect
+  desc: Produce reflective reports
+  link: /reflect/
+  google: true
+  imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
+  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  templates: choose;confirm;alert;loader
+  docs: reflect/PUBLIC;reflect/README;reflect/INSTRUCTIONS
+  scopes:
+    - email
+    - profile
+    - https://www.googleapis.com/auth/drive.file
 folders:
   name: Folders
   desc: Search folders individually, and view starred files contained within.
   link: /folders/
+  google: true
+  imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
+  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  templates: choose;confirm;alert;loader
+  docs: folders/PUBLIC;folders/README;folders/INSTRUCTIONS
+  scopes:
+    - email
+    - profile
+    - https://www.googleapis.com/auth/drive.file
 transfer:
   name: Transfer
   desc: Copy your Google Drive data to your own account.
   link: /transfer/
+  google: true
+  imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
+  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  templates: choose;confirm;alert;loader
+  docs: transfer/PUBLIC;transfer/README;transfer/INSTRUCTIONS
+  scopes:
+    - email
+    - profile
+    - https://www.googleapis.com/auth/drive.file
 markbooks:
   name: Markbooks
   desc: A soon to be written tool.
   link: /markbooks/
+  google: true
+  imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
+  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  templates: choose;confirm;alert;loader
+  docs: markbooks/PUBLIC;markbooks/README;markbooks/INSTRUCTIONS
+  scopes:
+    - email
+    - profile
+    - https://www.googleapis.com/auth/drive.file
 cover:
   name: Cover
   desc: Run your cover in Google Sheets
   link: /cover/
+  google: true
+  imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
+  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  templates: choose;confirm;alert;loader
+  docs: cover/PUBLIC;cover/README;cover/INSTRUCTIONS
+  scopes:
+    - email
+    - profile
+    - https://www.googleapis.com/auth/drive.file
 scriptr:
   name: Scriptr
   desc: Better Coding with Google Apps Script
