@@ -1,0 +1,11 @@
+/* -- General Table Styling -- */
+
+// Remove top border for tables appearing after tabs
+.table-bordered.table-tabbed {
+	border-top-width: 0;
+	thead {
+		th, td {
+			border-top-width: 0;
+		}
+	}
+}

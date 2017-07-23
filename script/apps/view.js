@@ -4,113 +4,41 @@ App = function() {
   if (!(this instanceof App)) {return new App();}
 	
 	// -- Internal Variables -- //
-	var __scroll, __headers, __content, __sheet;
+	var __sheet;
 	
-	// -- Internal Functions -- //	
-	var _fitHeaders = (function() {
-  	var _prev = [];
-  	return function() {
-    	
-			var _first = __content.find("tr:not(.clusterize-extra-row):first");
-    	
-			var _width = [];
-    	_first.children().each(function() {
-					global.flags.log($(this).text(), $(this).width());
-      		_width.push($(this).width());
-    	});
-			
-    	if (_width.toString() == _prev.toString()) return;
-			__headers.find("tr").children().each(function(i) {
-				$(this).width(_width[i]);
-			});
-    	_prev = _width;
-  	}
-	})();
-
-	var _setWidth = function() {
-  	__headers.width(__content.width());
-	}
-
-	var _setLeft = function(value) {
-  	__headers.css("margin-left", -value);
-	}
-	
-	var _loadValues = function(id, name, target, suffix) {
+	// -- Internal Functions -- //
+	var _loadValues = function(id, name, target) {
 
 		global.interact.busy({target : target});
 		
 		global.google.sheets.values(id, name + "!A:ZZ").then(function(data) {
 							
 			global.flags.log("Google Sheet Values [" + name + "]", data);
+			
 			global.db = new loki.Collection("Data");
 							
 			var _headers = data.values.shift();
-			global.db.insert(data.values, _headers);
-			global.flags.log("Loki Values", global.db.chain().data());
 			
+			global.db.insert(data.values, _headers);
+			var _table = {
+				classes: ["tablesaw", "tablesaw-sortable", "tablesaw-columntoggle"],
+				headers : _headers,
+				rows : global.db.chain().data()
+			};
+			
+			global.flags.log("Loki Headers", _table.headers);
+			global.flags.log("Loki Values", _table.rows);
+	
+			// -- Append Table to Display -- //		
+			var _display = $(Handlebars.compile($("#table").html())(_table));
+			target.append(_display);
+	
 			// -- Remove the Loader -- //
 			global.interact.busy({target : target, clear : true});
 			
-			var _headings = $("<tr />");
-			_headers.forEach(function(cell) {
-				_headings.append($("<td />").text(cell));
-			});
-			__headers = $("<div />", {id : "table-headings_" + suffix, class : "clusterize-headers"})
-				.append($("<table />", {class : "table"}).append($("<thead />", {class : "thead-default"}).append(_headings)))
-				.appendTo(target);
-							
-			__content = $("<tbody />", {id : "table-content_" + suffix, class : "clusterize-content"});
-			__scroll = $("<div />", {id : "table-scroll_" + suffix, class : "clusterize-scroll"})
-				.css("max-height", $(window).height() - $("#site_nav, #sheet_tabs, #table-headings_" + suffix).height() - 1)
-				.append($("<table />", {class : "table table-striped"}).append(__content))
-				.appendTo(target);
-
-			// -- Handle Screen / Window Resize Events -- //
-			var resize_Timeout = 0;
-			$(window).off("resize").on("resize", function() {
-				clearTimeout(resize_Timeout);
-				resize_Timeout = setTimeout(function() {
-					$(".clusterize-scroll").css("max-height", $(window).height() - $("#site_nav, #sheet_tab, #table-headings_" + suffix).height() - 1)
-					if (global.clusterize) global.clusterize.refresh();
-				}, 100);
-			});
-							
-			// -- Handle Scroll -- //
-			__scroll.off("scroll").on("scroll", (function() {
-				var _prev = 0;
-				return function() {
-					var _left = $(this).scrollLeft();
-					if (_left == _prev) return;
-					_prev = _left;
-					_setLeft(_left);
-				}
-			}()));
-							
-			var _data = [];
-							
-			global.db.chain().data().forEach(function(row) {
-				var _row = $("<tr />");
-				row.forEach(function(cell) {
-					_row.append($("<td />").text(cell));
-				});
-				_data.push(_row.prop("outerHTML"));
-			});
-							
-			global.flags.log("Clusterize Data", _data);
-
-			global.clusterize = new Clusterize({
-				scrollId: "table-scroll_" + suffix,
-				contentId: "table-content_" + suffix,
-				rows : _data,
-				callbacks: {
-					clusterChanged: function() {
-						_fitHeaders();
-						_setWidth();
-					}
-				}
-			});
-							
 		}).catch(function(e) {
+			
+			global.flags.error("Adding Content Table", e);
 			
 			// -- Remove the Loader -- //
 			global.interact.busy({target : target, clear : true});
@@ -118,44 +46,44 @@ App = function() {
 		});
 	}
 	
+	var _showValues = function(e) {
+		if (e && e.target) {
+			var _source = $(e.target);
+			var _tab = $(_source.data("target")).empty(), _id = _source.data("id"), _sheet = _source.data("sheet");
+			_loadValues(_id, _sheet, _tab);
+		}
+	}
+	
 	var _showSheet = function(sheet) {
 		
-		// -- Need to write load handler for tabs - and invoke first one?
+		__sheet = sheet;
 		
-		var _holder = $("<div />", {"class" : "container-fluid"})
-										.appendTo(global.container.empty()
-									);
+		var _tabs = {
+			id : "sheet_tabs",
+			sheet : sheet.spreadsheetId,
+			tabs : sheet.sheets.map(function(v, i) {return {id : "tab_" + i, name : v.properties.title}})
+		};
 		
-		var _navs = $("<ul />", {id : "sheet_tabs","class" : "nav nav-tabs", "role" : "tablist"}).appendTo(_holder);
-		var _tabs = $("<div />", {"class" : "tab-content"}).appendTo(_holder);
+		var _display = $(Handlebars.compile($("#tabs").html())(_tabs));
+		global.container.empty().append(_display);
 		
-		sheet.sheets.forEach(function(tab, index) {
-			
-			$("<li />", {"class" : "nav-item"})
-				.append(
-					$("<a />", {"class" : "nav-link" + (index === 0 ? " active" : ""), "href" : "#tab_" + index, "role" : "tab", "data-toggle" : "tab", "text" : tab.properties.title})
-					.data("id", sheet.spreadsheetId)
-					.data("sheet", tab.properties.title)
-					.data("target", "#tab_" + index)
-					.on("click", function(e) {
-						
-						var _target = $(e.target);
-						var _tab = $(_target.data("target")).empty();
-						var _id = _target.data("id");
-						var _sheet = _target.data("sheet");
-						
-						_loadValues(_id, _sheet, _tab, index);
-					
-					})
-				)
-				.appendTo(_navs);
+		// -- Set Load Tab Handler & Load Initial Values -- //
+		_display.find("a.nav-link").on("show.bs.tab", _showValues).first().tab("show");
 		
-			$("<div />", {"id" : "tab_" + index, "class" : "tab-pane fade" + (index === 0 ? " show active" : ""), "role" : "tabpanel"}).appendTo(_tabs);
-	
-		});
-		
-		// -- Load Initial Values -- //
-		_loadValues(sheet.spreadsheetId, sheet.sheets[0].properties.title, $("#tab_0").empty(), 0);
+		// -- Handle Screen / Window Resize Events -- //
+		var _resize_Timeout = 0;
+		var _resize = function() {
+			clearTimeout(_resize_Timeout);
+			_resize_Timeout = setTimeout(function() {
+				var _height = 0;
+				$("#site_nav, #sheet_tabs").each(function() {
+  				_height += $(this).outerHeight(true);
+				});
+				$(".tab-pane").css("height", $(window).height() - _height - 10)
+			}, 50);
+		};
+		$(window).off("resize").on("resize", _resize);
+		_resize();
 		
 	}
 	// -- Internal Functions -- //
@@ -194,7 +122,6 @@ App = function() {
 						global.flags.log("Google Drive File Picked from Open", file);
 						global.google.sheets.get(file.id).then(function(sheet) {
 							global.flags.log("Google Drive Sheet Opened", sheet);
-							__sheet = sheet;
 							_showSheet(sheet);
 						});
 					}
@@ -328,7 +255,7 @@ App = function() {
 				
 				/// -- Load the Settings Page (for the time being, actually this will be a template!) -- //
 				global.display.doc({name : "SETTINGS", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
-				
+			
 			}
       
     },

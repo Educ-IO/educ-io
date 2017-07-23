@@ -1,0 +1,20 @@
+{% raw %}
+<table id="table_{{id}}" class="table table-striped table-hover table-bordered table-tabbed{{#if classes}} {{#each classes}}{{this}}{{/each}}{{/if}}">
+  <thead id="table-headings_{{id}}">
+    <tr>
+      {{#each headers}}
+      <th class="align-middle">{{this}}</th>
+      {{/each}}
+    </tr>
+  </thead>
+  <tbody id="table-content_{{id}}">
+    {{#each rows}}
+    <tr>
+      {{#each this}}
+       <td>{{this}}</td>
+      {{/each}}
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+{% endraw %}

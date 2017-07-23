@@ -33,6 +33,10 @@ div.alert:first-child {
 // -- Content Spacer -- //
 .content {
 	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
 }
-// -- Content Spacer -- //
 
+.tab-pane {
+	overflow-y: scroll;
+	width: 100%;	
+}

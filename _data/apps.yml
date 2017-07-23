@@ -3,9 +3,9 @@ view:
   desc: A web-based tool for producing customised views of Google Sheets.
   link: /view/
   google: true
-  imports: jquery;tether;bootstrap;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
+  imports: jquery;tether;bootstrap;hello;urlparser;loki;xlsx;filesaver;handlebars
   scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
-  templates: choose;confirm;alert;loader
+  templates: choose;confirm;alert;loader;table;tabs
   docs: view/PUBLIC;view/README;view/INSTRUCTIONS;view/SETTINGS
   scopes:
     - email

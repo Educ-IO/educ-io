@@ -1,4 +1,4 @@
-<nav id="site_nav" class="navbar navbar-toggleable-md navbar-light bg-faded">
+<nav id="site_nav" class="navbar navbar-toggleable-md navbar-light bg-faded{% if include.type %} {{ include.type }}{% endif %}">
 
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#main_Nav" aria-controls="main_Nav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>

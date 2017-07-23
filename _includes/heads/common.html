@@ -7,7 +7,7 @@
 <meta name="description" content="{{ site.description }}">
 
 <title>
-	{% if page.title == "Home" or page.title == "Coming Soon ..." %} {{ site.title }} {% elsif page.title %} {{ page.title }} {% else %} {{ site.title }} {% endif %}
+	{% if page.title == "Home" or page.title == "Coming Soon ..." %} {{ site.title }} {% elsif page.title %} {{ page.title }} | {{ site.title }} {% else %} {{ site.title }} {% endif %}
 </title>
 
 <!-- Async CSS -->
@@ -33,6 +33,7 @@
 		{% if page.style %}@import "{{ page.style }}";{% endif %}	
 		{% if page.layout == "app" %}
 			@import "_app";
+			@import "_tables";
 			@import "_loader";
 			{% include css.html %}
 		{% endif %}

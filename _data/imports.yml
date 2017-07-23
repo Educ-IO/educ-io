@@ -16,6 +16,7 @@ localstorage:
       crossorigin: anonymous
       async: false
       defer: true
+
 jsdiff:
   name: JS Diff
   url: https://cdnjs.com/libraries/jsdiff
@@ -262,8 +263,6 @@ clusterize:
       crossorigin: anonymous
       async: false
       defer: true
-  css:
-    - _clusterize
 
 uuid:
   name: Node UUID

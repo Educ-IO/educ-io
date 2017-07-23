@@ -1,4 +1,7 @@
-html, body {height: 100%;}
+html, body {
+	width: 100vw;
+  height: 100vh;
+}
 
 // -- Outline Letter Logo -- //
 a.navbar-brand.logo, .navbar-brand a.logo {
