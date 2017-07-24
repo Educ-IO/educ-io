@@ -3,18 +3,25 @@
   <thead id="table-headings_{{id}}">
     <tr>
       {{#each headers}}
-      <th class="align-middle">{{this}}</th>
+      
+      <th class="align-middle"{{#if ../widths}} style="width: {{#with (lookup ../widths @index)}}{{this}}{{/with}}px"{{/if}}>
+        
+        <a id="heading_{{../id}}_{{@index}}" data-toggle="collapse" href="#collapse_{{../id}}_{{@index}}" aria-expanded="false" aria-controls="collapse_{{../id}}_{{@index}}">
+          {{this}}
+        </a>
+        
+        <div id="collapse_{{../id}}_{{@index}}" class="collapse" aria-labelledby="heading_{{../id}}_{{@index}}">
+            <div class="input-group">
+              <input data-field="{{@index}}" data-action="filter" type="text" class="form-control table-search" placeholder="Search for...">
+            </div>
+        </div>
+        
+      </th>
       {{/each}}
     </tr>
   </thead>
   <tbody id="table-content_{{id}}">
-    {{#each rows}}
-    <tr>
-      {{#each this}}
-       <td>{{this}}</td>
-      {{/each}}
-      </tr>
-    {{/each}}
+    {{> rows }}
   </tbody>
 </table>
 {% endraw %}

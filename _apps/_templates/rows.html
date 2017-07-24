@@ -1,0 +1,9 @@
+{% raw %}
+{{#each rows}}
+  <tr data-index="{{ @index }}">
+    {{#each this}}
+     <td{{#if ../../widths}} style="width: {{#with (lookup ../../widths @index)}}{{this}}{{/with}}px"{{/if}}>{{this}}</td>
+    {{/each}}
+  </tr>
+{{/each}}
+{% endraw %}

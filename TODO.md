@@ -12,6 +12,8 @@ TODO LIST
 * Get to 100 on PageSpeed Insights for all pages!
 * Sort out CSS loading for consistent visual performance - e.g. not glitchy load display!
 * Wrap Un-Authenticated Sheets Access in Google Javascript files
+* Loader Screwing Up under CPU load??? Ironically.
+* Why does Upgrade Alert Sometimes Appear?
 
 #### View
 

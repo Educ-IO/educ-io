@@ -4,53 +4,144 @@ App = function() {
   if (!(this instanceof App)) {return new App();}
 	
 	// -- Internal Variables -- //
-	var __sheet;
+	var __sheet, __db;
 	
 	// -- Internal Functions -- //
-	var _loadValues = function(id, name, target) {
+	var _loadValues = function(id, name, index, target) {
 
 		global.interact.busy({target : target});
 		
-		global.google.sheets.values(id, name + "!A:ZZ").then(function(data) {
-							
+		var _show = function(data, widths) {
+			
 			global.flags.log("Google Sheet Values [" + name + "]", data);
+
+				var _headers = data.shift();
+				var _length = 0;
+
+				var _values = data.map(function(v) {
+					_length = Math.max(_length, v.length);
+					return Object.assign({}, v)
+				});
+
+				var _fields = Array.apply(null, {length: _length}).map(Number.call, Number)
+				var _table = __db.addCollection(name, {indices : _fields});
+				_table.insert(_values);
+
+				// -- Append Table to Display -- //		
+				var _display = $(Handlebars.compile($("#table").html())({
+					id: name,
+					classes: widths ? ["table-fixed-width"] : [],
+					headers : _headers,
+					widths : widths ? widths : [],
+					rows : _table.chain().data({removeMeta : true})
+				}));
+
+				// -- Set Search Handlers -- //
+				var _addSearch = function(field, value) {
+					var _query = {};
+					_query[field] = {"$contains": [value]};
+					//_query[field] = {"$containsNone": [value]};
+					var _data = _table.find(_query);
+					/*
+					var _rows = _display.find("#table-content_" + name + " tr");
+					_data.forEach(function(row) {
+						_rows.filter("[data-index=" + (row.$loki - 1) + "]").hide();
+					});
+					*/
+					_display.find("#table-content_" + name).empty().append(
+						$(Handlebars.compile($("#rows").html())({
+							widths : widths ? widths : [],
+							rows : _table.chain().find(_query).data({removeMeta : true})
+						}))
+					);
+				};
+				var _removeSearch = function(field) {
+					_display.find("#table-content_" + name).empty().append(
+						$(Handlebars.compile($("#rows").html())({
+							widths : widths ? widths : [],
+							rows : _table.chain().data({removeMeta : true})
+						}))
+					);
+				};
+				var _search_Timeout = 0;
+				_display.find("input.table-search").on("keyup", function(e) {
+					var keycode = ((typeof e.keyCode !='undefined' && e.keyCode) ? e.keyCode : e.which);
+            if (keycode === 27) {
+							var _target = $(e.target);
+							_target.val("");
+							_removeSearch(_target.data("field"));
+							_target.parents(".collapse").collapse("hide");
+            }
+				}).on("input", function(e) {
+					clearTimeout(_search_Timeout);
+					_search_Timeout = setTimeout(function() {
+						if (e && e.target) {
+							var _target = $(e.target);
+							var _action = _target.data("action");
+							var _field = _target.data("field");
+							var _value = _target.val();
+							if (_action == "filter") {
+								if (_value) {
+									_addSearch(_field, _value);
+								} else {
+									_removeSearch(_field);
+								}
+							}
+
+						}
+					}, 100);
+				});
+
+				// -- Set Sort Handlers -- //
+				// .simplesort('name').data()
+
+				target.append(_display);
 			
-			global.db = new loki.Collection("Data");
-							
-			var _headers = data.values.shift();
+				// -- Remove the Loader -- //
+				global.interact.busy({target : target, clear : true});
 			
-			global.db.insert(data.values, _headers);
-			var _table = {
-				classes: ["tablesaw", "tablesaw-sortable", "tablesaw-columntoggle"],
-				headers : _headers,
-				rows : global.db.chain().data()
-			};
+		}
+		
+		var _frozen = {
+			cols : __sheet.sheets[index].properties.gridProperties.frozenColumnCount,
+			rows : __sheet.sheets[index].properties.gridProperties.frozenRowCount
+		}
+		
+		if (__sheet.sheets[index].data && __sheet.sheets[index].data.length == 1) {
 			
-			global.flags.log("Loki Headers", _table.headers);
-			global.flags.log("Loki Values", _table.rows);
+			// -- Already have loaded values -- //
+			var _data = __sheet.sheets[index].data[0];
+			var _widths =_data.columnMetadata.map(function(c) {return c.pixelSize * 1.4});
+			var _rows = _data.rowData.map(function(r) {return r.values.map(function(c) {return c.formattedValue})});
+			
+			_show(_rows, _widths);
 	
-			// -- Append Table to Display -- //		
-			var _display = $(Handlebars.compile($("#table").html())(_table));
-			target.append(_display);
-	
-			// -- Remove the Loader -- //
-			global.interact.busy({target : target, clear : true});
+		} else {
 			
-		}).catch(function(e) {
+			// -- Need to load the values -- //
+			global.google.sheets.values(id, name + "!A:ZZ").then(function(data) {
+
+				_show(data.values);
+
+			}).catch(function(e) {
+
+				global.flags.error("Adding Content Table", e);
+
+				// -- Remove the Loader -- //
+				global.interact.busy({target : target, clear : true});
+
+			});
 			
-			global.flags.error("Adding Content Table", e);
-			
-			// -- Remove the Loader -- //
-			global.interact.busy({target : target, clear : true});
-			
-		});
+		}
+		
+		
 	}
 	
 	var _showValues = function(e) {
 		if (e && e.target) {
 			var _source = $(e.target);
-			var _tab = $(_source.data("target")).empty(), _id = _source.data("id"), _sheet = _source.data("sheet");
-			_loadValues(_id, _sheet, _tab);
+			var _tab = $(_source.data("target")).empty(), _id = _source.data("id"), _sheet = _source.data("sheet"), _index =  _source.data("index");
+			_loadValues(_id, _sheet, _index, _tab);
 		}
 	}
 	
@@ -79,7 +170,7 @@ App = function() {
 				$("#site_nav, #sheet_tabs").each(function() {
   				_height += $(this).outerHeight(true);
 				});
-				$(".tab-pane").css("height", $(window).height() - _height - 10)
+				$(".tab-pane").css("height", $(window).height() - _height - 20)
 			}, 50);
 		};
 		$(window).off("resize").on("resize", _resize);
@@ -94,6 +185,12 @@ App = function() {
     // -- External Functions -- //
 		
     initialise : function() {
+			
+			// -- Create Loki DB -- //
+			__db = new loki("view.db")
+			
+			// -- Register Partial Templates -- //
+			Handlebars.registerPartial("rows", $("#rows").html());
 			
 			// -- Return for Chaining -- //
 			return this;
@@ -119,10 +216,23 @@ App = function() {
 					"Select a Sheet to Open", false, 
 					function() {return [new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS).setIncludeFolders(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED]},
 					function(file) {
+						
+						// -- Start the Loader -- //
+						global.interact.busy();
+						
 						global.flags.log("Google Drive File Picked from Open", file);
-						global.google.sheets.get(file.id).then(function(sheet) {
+						
+						global.google.sheets.get(file.id, global.flags.debug()).then(function(sheet) {
 							global.flags.log("Google Drive Sheet Opened", sheet);
+							global.interact.busy({clear : true});
 							_showSheet(sheet);
+						}).catch(function(e) {
+							
+							global.flags.error("Requesting Selected Google Drive Sheet", e);
+							
+							// -- Remove the Loader -- //
+							global.interact.busy({clear : true});
+							
 						});
 					}
 				);
@@ -256,6 +366,10 @@ App = function() {
 				/// -- Load the Settings Page (for the time being, actually this will be a template!) -- //
 				global.display.doc({name : "SETTINGS", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
 			
+			} else if (command == "SPIN") {
+				
+				global.interact.busy({target : global.container});
+
 			}
       
     },

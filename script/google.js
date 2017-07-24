@@ -268,9 +268,9 @@ Google_API = function() {
 		
 		sheets : {
 			
-			get : function(id) {
+			get : function(id, all) {
 				return _get(
-					SHEETS_URL + "/v4/spreadsheets/" + id
+					SHEETS_URL + "/v4/spreadsheets/" + id + (all ? "?includeGridData=true" : "")
 				);
 			},
 			

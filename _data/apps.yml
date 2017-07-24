@@ -5,7 +5,7 @@ view:
   google: true
   imports: jquery;tether;bootstrap;hello;urlparser;loki;xlsx;filesaver;handlebars
   scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
-  templates: choose;confirm;alert;loader;table;tabs
+  templates: choose;confirm;alert;loader;table;rows;tabs
   docs: view/PUBLIC;view/README;view/INSTRUCTIONS;view/SETTINGS
   scopes:
     - email
