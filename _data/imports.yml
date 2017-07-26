@@ -180,13 +180,13 @@ jquery:
       integrity: sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=
       crossorigin: anonymous
       async: false
-      defer: true
+      defer: false
   dev:
     - script: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js
       integrity: sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=
       crossorigin: anonymous
       async: false
-      defer: true
+      defer: false
 
 tether:
   name: Tether
@@ -484,9 +484,15 @@ handlebars:
   project: http://handlebarsjs.com/
   version: 4.0.10
   license: mit
-  prod:
+  old:
     - script: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js
       integrity: sha256-0JaDbGZRXlzkFbV8Xi8ZhH/zZ6QQM0Y3dCkYZ7JYq34=
+      crossorigin: anonymous
+      async: false
+      defer: true
+  prod:
+    - script: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.runtime.min.js
+      integrity: sha256-PGAt5UMOl8/WYTv2mCI/uKmVbQBP6VP++Jp8coXnxjY=
       crossorigin: anonymous
       async: false
       defer: true

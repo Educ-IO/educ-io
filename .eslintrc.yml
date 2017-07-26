@@ -1,0 +1,36 @@
+env:
+  browser: true
+  es6: true
+extends: 'eslint:recommended'
+rules:
+  indent:
+    - off
+    - tab
+  linebreak-style:
+    - error
+    - unix
+  quotes:
+    - error
+    - double
+  semi:
+    - error
+    - always
+globals:
+  $: false
+  jQuery: false
+  hello: false
+  Handlebars: false
+  XLSX: false
+  showdown: false
+  loki: false
+  google: false
+  GOOGLE_SCOPES: false
+  GOOGLE_CLIENT_ID: false
+  GOOGLE_KEY: false
+  Google_API: true
+  Github_API: true
+  global: true
+  Interact: true
+  Display: true
+  App: true
+  Flags: true

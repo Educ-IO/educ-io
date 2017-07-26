@@ -1,78 +1,85 @@
 // -- Loading Container -- //
-$spinner-width: 100px;
+$spinner-size: 100px;
+$spinner-duration: 0.8s;
 
-// -- Loading Background
+// -- Loading Background -- //
 .loader {
 	position: absolute;
-	display: flex;
 	background-color: rgba($colour-background, 0.9);
 	height: 100%;
 	width: 100%;
-  z-index: 100;
-}
+  z-index: 1000;
+	
+	// -- Loading Container -- //
+	.loading {
+		will-change: transform;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		transform-origin: 50%;
+		width: $spinner-size;
+		height: $spinner-size;
+		z-index: 1001;
+		// -- Actual Spinner -- //
+		.spinner {
+			width: 100%;
+			height: 100%;
+			border: solid $spinner-size/10 rgba(0,0,0,0);
+			border-top-color: $colour-highlight;
 
-// -- Loading Spinner -- //
-.loading {
-  position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	transform-origin: 50%;
-	width: $spinner-width;
-	height: $spinner-width;
-	.spining-circle {
- 		animation: rotate 2s linear infinite;
- 		position: relative;
-		height: 100%;
- 		width: 100%;
-		.path {
-			fill: none;
-			stroke-width: 4;
-			stroke-miterlimit: 10;
-			stroke-linecap: square;
-  		stroke-dasharray: 1,200;
-  		stroke-dashoffset: 0;
-  		animation:
-   			dash 1.5s ease-in-out infinite,
-   			color 6s ease-in-out infinite
-  		;
+			-webkit-border-radius: 50%;
+			-moz-border-radius: 50%;
+			border-radius: 50%;
+
+			//  cubic-bezier(0.5, 0.65, 0.6, 0.5)
+			-webkit-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
+			-moz-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
+			-o-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
+			animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
 		}
 	}
+	
 }
 
-// == Loading Animation == //
-@keyframes rotate {
- 100%{
-  transform: rotate(360deg);
- }
+.pause-animation {
+	-webkit-animation-play-state: paused !important; 
+	-moz-animation-play-state: paused !important; 
+	-o-animation-play-state: paused !important;
+	animation-play-state: paused !important;
 }
 
-@keyframes dash {
- 0%{
-  stroke-dasharray: 1,200;
-  stroke-dashoffset: 0;
- }
- 50%{
-  stroke-dasharray: 89,200;
-  stroke-dashoffset: -35;
- }
- 100%{
-  stroke-dasharray: 89,200;
-  stroke-dashoffset: -124;
- }
+// == Loading Animation == //#
+@-webkit-keyframes spin {
+  from {-webkit-transform: rotate(0deg);}
+  to   {-webkit-transform: rotate(359deg);}
+}
+ 
+@-moz-keyframes spin {
+  from {-moz-transform: rotate(0deg);}
+  to   {-moz-transform: rotate(359deg);}
+}
+ 
+@-o-keyframes spin {
+  from {-o-transform: rotate(0deg);}
+  to   {-o-transform: rotate(359deg);}
+}
+ 
+@keyframes spin{
+  from {transform: rotate(0deg);}
+  to   {transform: rotate(359deg);}
 }
 
-@keyframes color {
-  100%, 0%{
-    stroke: rgba(darken($colour-highlight, 20%), 0.2);
-  }
-  40%{
-    stroke: rgba(darken($colour-highlight, 20%), 0.4);
-  }
-  66%{
-    stroke: rgba(darken($colour-highlight, 20%), 0.6);
-  }
-  80%, 90%{
-    stroke: rgba(darken($colour-highlight, 20%), 0.8);
-  }
+@keyframes opacity {
+	0% { opacity: 0.05; }
+	10% { opacity: 0.2 }
+	20% { opacity: 0.4 }
+	30% { opacity: 0.6; }
+  40% { opacity: 0.8; }
+	50% { opacity: 1; }
+	60% { opacity: 0.8; }
+	70% { opacity: 0.6; }
+	80% { opacity: 0.4 }
+	90% { opacity: 0.2 }
+	100% { opacity: 0.05}
 }

@@ -14,6 +14,7 @@ TODO LIST
 * Wrap Un-Authenticated Sheets Access in Google Javascript files
 * Loader Screwing Up under CPU load??? Ironically.
 * Why does Upgrade Alert Sometimes Appear?
+* Large Table Render Performance
 
 #### View
 

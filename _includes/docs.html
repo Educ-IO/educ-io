@@ -10,10 +10,10 @@
 {% if docs %}
 
   {% raw %}
-  <script id="CONTENT_WRAPPER" type="text/x-handlebars-template">
+  <script id="WRAPPER" type="text/template">
     <div class="container">
       <div class="row">
-        <div class="col-12">{{{ content }}}</div>
+        <div class="col-12">{{content}}</div>
       </div>
     </div>
   </script>
@@ -23,7 +23,7 @@
 
     {% capture markdown %}{% include_relative _docs/{{ doc }}.md %}{% endcapture %}
 
-    <script id="{% if doc contains '/' %}{{ doc | split: '/' | last }}{% else %}{{ doc }}{% endif %}" type="text/x-handlebars-template">
+    <script id="{% if doc contains '/' %}{{ doc | split: '/' | last }}{% else %}{{ doc }}{% endif %}" type="text/template">
      {{ markdown | markdownify }}
     </script>
 

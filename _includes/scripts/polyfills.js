@@ -1,51 +1,90 @@
-// == Lightweight Hello Modules == //
-(function(hello) {
-  'use strict';
-	
-  hello.init({
+/* -- Polyfill Regex Escape -- */
+RegExp.escape= function(value) {
+    return value.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+};
+/* -- Polyfill Regex Escape -- */
 
-		google: {
+/* -- String EndsWith Polyfill -- */
+if (!String.prototype.endsWith) {
+  String.prototype.endsWith = function(searchString, position) {
+      var subjectString = this.toString();
+      if (typeof position !== "number" || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
+        position = subjectString.length;
+      }
+      position -= searchString.length;
+      var lastIndex = subjectString.lastIndexOf(searchString, position);
+      return lastIndex !== -1 && lastIndex === position;
+  };
+}
+/* -- String EndsWith Polyfill -- */
 
-			name: 'Google',
+/* -- Array Map Polyfill -- */
+if (!Array.prototype.map) {
+  Array.prototype.map = function(callback) {
 
-			// See: http://code.google.com/apis/accounts/docs/OAuth2UserAgent.html
-			oauth: {
-				version: 2,
-				auth: 'https://accounts.google.com/o/oauth2/auth',
-				grant: 'https://accounts.google.com/o/oauth2/token'
-			},
+    var T, A, k;
 
-			// API base URI
-			base: 'https://www.googleapis.com/',
+    if (this == null) {
+      throw new TypeError("this is null or not defined");
+    }
 
-		},
-		
-		github: {
+    var O = Object(this);
 
-			name: 'GitHub',
+    var len = O.length >>> 0;
+    if (typeof callback !== "function") {
+      throw new TypeError(callback + " is not a function");
+    }
+    if (arguments.length > 1) {
+      T = arguments[1];
+    }
+    A = new Array(len);
+    k = 0;
+    while (k < len) {
 
-			oauth: {
-				version: 2,
-				auth: 'https://github.com/login/oauth/authorize',
-				grant: 'https://github.com/login/oauth/access_token',
-				response_type: 'code'
-			},
+      var kValue, mappedValue;
+      if (k in O) {
+        kValue = O[k];
+        mappedValue = callback.call(T, kValue, k, O);
+        A[k] = mappedValue;
+      }
+      k++;
+    }
+    return A;
+  };
+}
+/* -- Array Map Polyfill -- */
 
-			base: 'https://api.github.com/',
+/* -- Object Assign Polyfill -- */
+if (typeof Object.assign != "function") {
+  Object.assign = function(target) {
+    "use strict";
+    if (target == null) {
+      throw new TypeError("Cannot convert undefined or null to object");
+    }
 
-		},
+    var to = Object(target);
 
-	});
+    for (var index = 1; index < arguments.length; index++) {
+      var nextSource = arguments[index];
 
-})(hello);
-// == Lightweight Hello Modules == //
+      if (nextSource != null) {
+        for (var nextKey in nextSource) {
+          if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+            to[nextKey] = nextSource[nextKey];
+          }
+        }
+      }
+    }
+    return to;
+  };
+}
+/* -- Object Assign Polyfill -- */
 
-
-// -- Test Storage Availability (inc Mobile Safari | Incognito Mode) --//
+/* -- Test Storage Availability (inc Mobile Safari | Incognito Mode) -- */
 var isStorageAvailable = function (storage) {
 
 	if (typeof storage == "undefined") return false;
-	try { // hack for safari incognito
+	try { /* hack for safari incognito */
 		storage.setItem("storage", "");
 		storage.getItem("storage");
 		storage.removeItem("storage");
@@ -55,10 +94,10 @@ var isStorageAvailable = function (storage) {
 		return false;
 	}
 };
-// -- Test Storage Availability (inc Mobile Safari | Incognito Mode) --//
+/* -- Test Storage Availability (inc Mobile Safari | Incognito Mode) -- */
 
 
-// == Local Object Storage for LocalForage | Polyfill == //
+/* -- Local Object Storage for LocalForage | Polyfill -- */
 (function () {
 
   var localStorageAvailable = isStorageAvailable(window.localStorage),
@@ -82,7 +121,7 @@ var isStorageAvailable = function (storage) {
       }
 
       function readCookie(name) {
-        var nameEQ = name + "=", ca = document.cookie.split(';'), c;
+        var nameEQ = name + "=", ca = document.cookie.split(";"), c;
 
         for (var i = 0; i < ca.length; i++) {
           c = ca[i];
@@ -119,7 +158,7 @@ var isStorageAvailable = function (storage) {
         return data ? JSON.parse(data) : {};
       }
 
-      // initialise if there's already data
+      /* initialise if there"s already data */
       var data = getData();
 
       return {
@@ -133,7 +172,6 @@ var isStorageAvailable = function (storage) {
           return data[key] === undefined ? null : data[key];
         },
         key: function (i) {
-          // not perfect, but works
           var ctr = 0;
           for (var k in data) {
             if (ctr == i) return k;
@@ -148,7 +186,7 @@ var isStorageAvailable = function (storage) {
         },
         setItem: function (key, value) {
           if (data[key] === undefined) this.length++;
-          data[key] = value+'';
+          data[key] = value+"";
           setData(data);
         }
       };
@@ -167,4 +205,4 @@ var isStorageAvailable = function (storage) {
   }
 
 })();
-// == Local Object Storage for LocalForage | Polyfill == //
+/* -- Local Object Storage for LocalForage | Polyfill -- */

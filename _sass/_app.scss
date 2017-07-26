@@ -37,6 +37,7 @@ div.alert:first-child {
 }
 
 .tab-pane {
+	overflow-x: auto;
 	overflow-y: scroll;
 	width: 100%;	
 }

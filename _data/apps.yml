@@ -4,7 +4,7 @@ view:
   link: /view/
   google: true
   imports: jquery;tether;bootstrap;hello;urlparser;loki;xlsx;filesaver;handlebars
-  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  scripts: polyfills;arrays;flags;interact;display;google;apps/view;app
   templates: choose;confirm;alert;loader;table;rows;tabs
   docs: view/PUBLIC;view/README;view/INSTRUCTIONS;view/SETTINGS
   scopes:
@@ -34,7 +34,7 @@ reflect:
   link: /reflect/
   google: true
   imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
-  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  scripts: polyfills;flags;interact;display;google;apps/view;app
   templates: choose;confirm;alert;loader
   docs: reflect/PUBLIC;reflect/README;reflect/INSTRUCTIONS
   scopes:
@@ -47,7 +47,7 @@ folders:
   link: /folders/
   google: true
   imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
-  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  scripts: polyfills;flags;interact;display;google;apps/view;app
   templates: choose;confirm;alert;loader
   docs: folders/PUBLIC;folders/README;folders/INSTRUCTIONS
   scopes:
@@ -60,7 +60,7 @@ transfer:
   link: /transfer/
   google: true
   imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
-  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  scripts: polyfills;flags;interact;display;google;apps/view;app
   templates: choose;confirm;alert;loader
   docs: transfer/PUBLIC;transfer/README;transfer/INSTRUCTIONS
   scopes:
@@ -73,7 +73,7 @@ markbooks:
   link: /markbooks/
   google: true
   imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
-  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  scripts: polyfills;flags;interact;display;google;apps/view;app
   templates: choose;confirm;alert;loader
   docs: markbooks/PUBLIC;markbooks/README;markbooks/INSTRUCTIONS
   scopes:
@@ -86,7 +86,7 @@ cover:
   link: /cover/
   google: true
   imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
-  scripts: polyfills.js;setup.js;flags.js;interact.js;display.js;google.js;apps/view.js;app.js
+  scripts: polyfills;flags;interact;display;google;apps/view;app
   templates: choose;confirm;alert;loader
   docs: cover/PUBLIC;cover/README;cover/INSTRUCTIONS
   scopes:

@@ -2,7 +2,7 @@
 {{#each rows}}
   <tr data-index="{{ @index }}">
     {{#each this}}
-     <td{{#if ../../widths}} style="width: {{#with (lookup ../../widths @index)}}{{this}}{{/with}}px"{{/if}}>{{this}}</td>
+     <td{{#if @../first}}{{#if ../../widths}} style="width: {{#with (lookup ../../widths @index)}}{{this}}{{/with}}px"{{/if}}{{/if}}>{{this}}</td>
     {{/each}}
   </tr>
 {{/each}}

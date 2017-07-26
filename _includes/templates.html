@@ -9,12 +9,26 @@
 
 {% if templates %}
 
-  {% for template in templates %}
+  {% if jekyll.environment == "debug" %}
+    
+    {% for template in templates %}
 
-    <script id="{{ template }}" type="text/x-handlebars-template">
-      {% include_relative _templates/{{ template }}.html %}
+      <script id="{{ template }}" type="text/x-handlebars-template">
+        {% include_relative _templates/{{ template }}.html %}
+      </script>
+
+    {% endfor %}
+
+  {% else %}
+
+    <script type="text/javascript" charset="utf-8">
+      $(function() {
+        {% for template in templates %}
+          {% include scripts/templates/{{ template }}.js %}
+        {% endfor %}
+      });
     </script>
 
-  {% endfor %}
+  {% endif %}
 
 {% endif %}

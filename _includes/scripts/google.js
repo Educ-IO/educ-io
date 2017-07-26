@@ -1,21 +1,20 @@
-// Version 0.0.1 //
 Google_API = function() {
 	
-	// -- Returns an instance of App if required -- //
+	/* -- Returns an instance of App if required -- */
   if (!(this instanceof Google_API)) {return new Google_API();}
 	
-	// === Internal Visibility === //
+	/* === Internal Visibility === */
 	
-	// -- Internal Constants -- //
+	/* -- Internal Constants -- */
 	const GENERAL_URL = "https://www.googleapis.com";
 	const SHEETS_URL = "https://sheets.googleapis.com";
-	// -- Internal Constants -- //
+	/* -- Internal Constants -- */
 	
-	// -- Internal Variables -- //
+	/* -- Internal Variables -- */
 	var _check, _before, _after;
-  // -- Internal Variables -- //
+  /* -- Internal Variables -- */
 	
-	// -- Internal Functions -- //
+	/* -- Internal Functions -- */
 	var _init = function(token, type, expires, update) {
 		
 		_check = (function(e, u) {
@@ -24,16 +23,16 @@ Google_API = function() {
 				
 				return new Promise(function(resolve, reject) {
 				
-					if (e <= new Date()) { // Token Expired
+					if (e <= new Date()) { /* Token Expired */
 
-						u().then(function(r) { // Update token
+						u().then(function(r) { /* Update token */
 
-							if (r) _init(r.token, r.type, r.expires, u); // Non-Null Response, so changes required
+							if (r) _init(r.token, r.type, r.expires, u); /* Non-Null Response, so changes required */
 							resolve();
 
 						}, function(err) {reject(err);});
 
-					} else { // Token Fine
+					} else { /* Token Fine */
 
 						resolve();
 
@@ -41,24 +40,24 @@ Google_API = function() {
 
 				});
 				
-			}
+			};
 			
-		})(new Date((expires - 10) * 1000), update) // 10 second shift in case of network delays!
+		})(new Date((expires - 10) * 1000), update); /* 10 second shift in case of network delays! */
 		
-		// -- Before Ajax Call : Request Authorisation Closure -- //
+		/* -- Before Ajax Call : Request Authorisation Closure -- */
 		_before = (function(t, w, e, u) {
 			
-			//"Authorization: token OAUTH-TOKEN"
+			/* "Authorization: token OAUTH-TOKEN" */
 			return function(a, s) {
 				
 				a.setRequestHeader("Authorization", w + " " + t);
 				
 			};
 		
-		})(token, type)
+		})(token, type);
 
-		// -- After Ajax Call : Do Nothing -- //
-		_after = function(request, status) {}
+		/* -- After Ajax Call : Do Nothing -- */
+		_after = function(request, status) {};
 		
 		_token = (function(t) {
 			
@@ -68,9 +67,9 @@ Google_API = function() {
 				
 			};
 		
-		})(token)
+		})(token);
 			
-	}
+	};
 	
 	var _get = function(url, data) {
 		
@@ -95,7 +94,7 @@ Google_API = function() {
 			
 		});
 		
-	}
+	};
 	
 	var _list = function(url, property, list, data, next) {
 		
@@ -116,7 +115,7 @@ Google_API = function() {
 				
 					list = list.concat(value[property]);
 					if (value.nextPageToken) {
-						_list(url, property, list, data, value.nextPageToken).then(function(list) {resolve(list)});
+						_list(url, property, list, data, value.nextPageToken).then(function(list) {resolve(list);});
 					} else {
 						resolve(list);
 					}
@@ -125,13 +124,13 @@ Google_API = function() {
 
 					reject(Error(request.status + ": " + request.statusText));
 
-				})
+				});
 				
 			});
 			
 		});
 		
-	}
+	};
 		
 	var _patch = function(url, data, type, meta) {
 		
@@ -150,13 +149,13 @@ Google_API = function() {
 
 					reject(Error(request.status + ": " + request.statusText));
 
-				})
+				});
 
 			});
 			
 		});
 		
-	}
+	};
 	
 	var _pick = function(title, multiple, views, callback, context) {
 		
@@ -176,8 +175,8 @@ Google_API = function() {
 								callback(data[google.picker.Response.DOCUMENTS], context);
 							}
 						} 
-					}
-				})(callback, context))
+					};
+				})(callback, context));
 			
 				if (multiple) picker.enableFeature(google.picker.Feature.MULTISELECT_ENABLED);
 				
@@ -188,7 +187,7 @@ Google_API = function() {
 							.setIncludeFolders(true)
 							.setSelectFolderEnabled(true)
 							.setParent("root")
-					)		
+					);
 				} else if (Array.isArray(views)) {
 					views.forEach(function(view) { 
 						picker.addView(view);
@@ -205,32 +204,32 @@ Google_API = function() {
 				 "callback" : (function(title, multiple, views, callback, context) {
 						return function() {
 							_pick(title, multiple, views, callback, context);
-						}
+						};
 					})(title, multiple, views, callback, context)
 			 });
 
 		}
 
-	}
-	// -- Internal Functions -- //
+	};
+	/* -- Internal Functions -- */
 	
-	// === Internal Visibility === //
+	/* === Internal Visibility === */
 
 	
-	// === External Visibility === //
+	/* === External Visibility === */
   return {
 
-    // -- External Functions -- //
+    /* -- External Functions -- */
     initialise : function(token, type, expires, update) {
 			
 			_init(token, type, expires, update);
 
-			// -- Return for Chaining -- //
+			/* -- Return for Chaining -- */
 			return this;
 			
     },
 		
-		// -- Get Repos for the current user (don't pass parameter) or a named user -- //
+		/* -- Get Repos for the current user (don't pass parameter) or a named user -- */
 		me : function() {
 			return _get(GENERAL_URL + "/oauth2/v1/userinfo?alt=json&key=" + GOOGLE_KEY);
 		},
@@ -282,7 +281,7 @@ Google_API = function() {
 			
 		},
 		
-	}
-	// === External Visibility === //
+	};
+	/* === External Visibility === */
 	
-}
+};

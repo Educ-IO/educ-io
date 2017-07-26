@@ -8,7 +8,11 @@
 {% endif %}
 
 {% if scripts %}
+
   {% for script in scripts %}
-    <script src="{{ site.baseurl }}script/{{ script }}" type="text/javascript" charset="utf-8" defer></script>
+    <script type="text/javascript" charset="utf-8">
+      {% include scripts/{{ script }}.js %}
+    </script>
   {% endfor %}
+
 {% endif %}

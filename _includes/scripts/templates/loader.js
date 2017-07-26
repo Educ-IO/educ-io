@@ -1,0 +1,1 @@
+!function(){var a=Handlebars.template;(Handlebars.templates=Handlebars.templates||{}).loader=a({compiler:[7,">= 4.0.0"],main:function(a,n,e,l,s){return'<div class="loader">\n  <div class="loading">\n    <div class="spinner"></div>\n  </div>\n</div>\n'},useData:!0})}();

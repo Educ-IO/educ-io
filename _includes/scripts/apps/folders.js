@@ -1,12 +1,12 @@
 App = function() {
 	
-	// -- Returns an instance of App if required -- //
+	/* -- Returns an instance of App if required -- */
   if (!(this instanceof App)) {return new App();}
 	
-	// -- Internal Variables -- //
-	var __docs = "/docs/labels/";
+	/* -- Internal Variables -- */
+	var __docs = "/docs/folders/";
 	
-	// -- Internal Functions -- //
+	/* -- Internal Functions -- */
 	var _display = function(value) {
 
 		$("<div />", {class : "row"}).append(
@@ -19,17 +19,17 @@ App = function() {
 			)
 		);
 
-	}
-	// -- Internal Functions -- //
+	};
+	/* -- Internal Functions -- */
 	
-	// -- External Visibility -- //
+	/* -- External Visibility -- */
   return {
 
-    // -- External Functions -- //
+    /* -- External Functions -- */
 		
     initialise : function() {
 			
-			// -- Return for Chaining -- //
+			/* -- Return for Chaining -- */
 			return this;
 			
     },
@@ -38,7 +38,7 @@ App = function() {
       
 			if (!command || command === false || command == "PUBLIC") {
 				
-				// -- Load the Public Instructions -- //
+				/* -- Load the Public Instructions -- */
 				$.ajax({
 					url: __docs + "PUBLIC.md", type: "get", dataType: "html",
 					async: true, success: function(result) {
@@ -48,7 +48,7 @@ App = function() {
 				
 			} else if (command === true || command == "AUTH") {
 				
-				// -- Load the Initial Instructions -- //
+				/* -- Load the Initial Instructions -- */
 				$.ajax({
 					url: __docs + "README.md", type: "get", dataType: "html",
 					async: true, success: function(result) {
@@ -58,7 +58,7 @@ App = function() {
 				
 			} else if (command == "INSTRUCTIONS") {
 				
-				// -- Load the Instructions -- //
+				/* -- Load the Instructions -- */
 				$.ajax({
 					url: __docs + "INSTRUCTIONS.md", type: "get", dataType: "html",
 						async: true, success: function(result) {
@@ -70,6 +70,6 @@ App = function() {
       
     },
 
-	}
+	};
 		
-}
+};
