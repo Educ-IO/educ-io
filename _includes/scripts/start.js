@@ -54,26 +54,28 @@
 
 	};
 
-	const proceed = function() {
+	var proceed = function() {
 		if (window.templates) templates();
 		register_Worker();
-		start();
+		if (window.start) start();
 	};
 	
-	const load = function() {
+	var load = function() {
 		
-		if (LOAD_FIRST && LOAD_LAST) {
-			controller(LOAD_LAST, controller(LOAD_FIRST)).then(() => {proceed();}).catch(e => {console.log(e);});
+		if (window.LOAD_FIRST && window.LOAD_LAST) {
+			controller(window.LOAD_LAST, controller(window.LOAD_FIRST)).then(() => {proceed();}).catch(e => {console.log(e);});
+		} else if (window.LOAD_FIRST || window.LOAD_LAST) {
+			controller(window.LOAD_FIRST || window.LOAD_LAST).then(() => {proceed();}).catch(e => {console.log(e);});
 		} else {
-			controller(LOAD_FIRST || LOAD_LAST).then(() => {proceed();}).catch(e => {console.log(e);});
+			register_Worker();
 		}
 		
-		controller(LOAD_AFTER).catch(e => {console.log(e);});
+		if (window.LOAD_AFTER) controller(window.LOAD_AFTER).then(() => {}).catch(e => {console.log(e);});
 		
 	};
 	
 	/* -- Test Storage Availability (inc Mobile Safari | Incognito Mode) -- */
-	const testStorage = function (storage) {
+	var testStorage = function (storage) {
 		if (typeof storage == "undefined") return false;
 		try { /* hack for safari incognito */
 			storage.setItem("__TEST__", "");

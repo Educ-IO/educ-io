@@ -17,8 +17,6 @@ view:
       load: last
     - name: bootstrap-js
       load: last
-    - name: fonts
-      load: after
     - name: loki
       load: after
     - name: xlsx
@@ -27,7 +25,7 @@ view:
       load: after
     - name: google
       load: async
-  scripts: regex;arrays;flags;interact;display;google;apps/view;app
+  scripts: regex;arrays;flags;interact;display;service;google;apps/view;app
   templates: choose;confirm;alert;loader;table;rows;tabs
   docs: view/PUBLIC;view/README;view/INSTRUCTIONS;view/SETTINGS
   scopes:
@@ -71,8 +69,6 @@ reflect:
       load: last
     - name: bootstrap-js
       load: last
-    - name: fonts
-      load: after
     - name: loki
       load: after
     - name: xlsx
@@ -81,7 +77,7 @@ reflect:
       load: after
     - name: google
       load: async
-  scripts: regex;flags;interact;display;google;apps/reflect;app
+  scripts: regex;flags;interact;display;service;google;apps/reflect;app
   templates: choose;confirm;alert;loader
   docs: reflect/PUBLIC;reflect/README;reflect/INSTRUCTIONS
   scopes:
@@ -107,8 +103,6 @@ folders:
       load: last
     - name: bootstrap-js
       load: last
-    - name: fonts
-      load: after
     - name: loki
       load: after
     - name: xlsx
@@ -117,7 +111,7 @@ folders:
       load: after
     - name: google
       load: async
-  scripts: regex;flags;interact;display;google;apps/folders;app
+  scripts: regex;flags;interact;display;service;google;apps/folders;app
   templates: choose;confirm;alert;loader
   docs: folders/PUBLIC;folders/README;folders/INSTRUCTIONS
   scopes:
@@ -144,8 +138,6 @@ transfer:
       load: last
     - name: bootstrap-js
       load: last
-    - name: fonts
-      load: after
     - name: loki
       load: after
     - name: xlsx
@@ -154,7 +146,7 @@ transfer:
       load: after
     - name: google
       load: async
-  scripts: regex;flags;interact;display;google;apps/transfer;app
+  scripts: regex;flags;interact;display;service;google;apps/transfer;app
   templates: choose;confirm;alert;loader
   docs: transfer/PUBLIC;transfer/README;transfer/INSTRUCTIONS
   scopes:
@@ -181,8 +173,6 @@ markbooks:
       load: last
     - name: bootstrap-js
       load: last
-    - name: fonts
-      load: after
     - name: loki
       load: after
     - name: xlsx
@@ -191,7 +181,7 @@ markbooks:
       load: after
     - name: google
       load: async
-  scripts: regex;flags;interact;display;google;apps/markbooks;app
+  scripts: regex;flags;interact;display;service;google;apps/markbooks;app
   templates: choose;confirm;alert;loader
   docs: markbooks/PUBLIC;markbooks/README;markbooks/INSTRUCTIONS
   scopes:
@@ -218,8 +208,6 @@ cover:
       load: last
     - name: bootstrap-js
       load: last
-    - name: fonts
-      load: after
     - name: loki
       load: after
     - name: xlsx
@@ -228,7 +216,7 @@ cover:
       load: after
     - name: google
       load: async
-  scripts: regex;flags;interact;display;google;apps/cover;app
+  scripts: regex;flags;interact;display;service;google;apps/cover;app
   templates: choose;confirm;alert;loader
   docs: cover/PUBLIC;cover/README;cover/INSTRUCTIONS
   scopes:

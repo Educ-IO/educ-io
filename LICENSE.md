@@ -2,9 +2,19 @@
 layout: page
 title: License
 permalink: /license/
-imports: jquery;tether;bootstrap
 support: true
 style: _page
+scripts: service
+imports:
+- name: jquery
+  load: first
+- name: tether
+  load: first
+- name: bootstrap-css
+  load: last
+- name: bootstrap-js
+  load: last
+templates: alert
 ---
 GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007

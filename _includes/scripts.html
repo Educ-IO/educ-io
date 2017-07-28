@@ -6,7 +6,7 @@
   {% assign scripts = site.data.apps[page.app].scripts | split: ';' %}
 {% endif %}
 
-{% if scripts %}
+{% if scripts and scripts.size > 0 %}
 
   {% for script in scripts %}
     <script type="text/javascript" charset="utf-8">

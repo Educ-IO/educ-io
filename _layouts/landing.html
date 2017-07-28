@@ -1,6 +1,7 @@
 ---
 layout: compress
 style: _landing
+scripts: service
 ---
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
@@ -11,7 +12,6 @@ style: _landing
 			  <h1>{% if page.lead %}{{ page.lead }}{% else %}{{ page.title }}{% endif %}</h1>
 		  </div>
 		</div>
-		{% include service.html %}
 		{% include links.html %}
 		{% include analytics.html %}
   </body>

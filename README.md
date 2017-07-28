@@ -2,9 +2,19 @@
 layout: page
 title: About
 permalink: /about/
-imports: jquery;tether;bootstrap
 style: _page
 lead: A collection of web apps, built to make the most of the Google Apps platform and designed to sve time, making the technology work for you.
+scripts: service
+imports:
+- name: jquery
+  load: first
+- name: tether
+  load: first
+- name: bootstrap-css
+  load: last
+- name: bootstrap-js
+  load: last
+templates: alert
 ---
 
 ### Transparency

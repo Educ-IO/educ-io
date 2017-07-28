@@ -1,7 +1,7 @@
 {% comment %}
   Set Up Versions, Google and Github API Scopes / IDs (if applicable)
 {% endcomment %}
-
+{% if page.scopes.google or site.data.apps[page.app].scopes.google or page.scopes.github == true or site.data.apps[page.app].scopes.github or page.version or page.app %}
 <script type="text/javascript" charset="utf-8">
   
   {% if page.scopes.google or site.data.apps[page.app].scopes.google %}
@@ -39,3 +39,4 @@
   {% endif %}
   
 </script>
+{% endif %}

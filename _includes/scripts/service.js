@@ -31,34 +31,42 @@ var register_Worker = function() {
 
     var _updateReady = function(sw) {
 
-      var _urgency, _details;
+      if (window.global) {
+        
+        var _urgency, _details;
 
-      if (VERSION_TYPE == "security") {
-        _urgency = "danger";
-      } else if (VERSION_TYPE == "major") {
-        _urgency = "warning";
-      } else {
-        _urgency = "info";
-      }
+        if (window.VERSION_TYPE == "security") {
+          _urgency = "danger";
+        } else if (window.VERSION_TYPE == "major") {
+          _urgency = "warning";
+        } else {
+          _urgency = "info";
+        }
 
-      if (VERSION_DETAILS) _details = VERSION_DETAILS + " [v" + APP_VERSION + "]";
+        if (window.VERSION_DETAILS) _details = VERSION_DETAILS + " [v" + APP_VERSION + "]";
+        
+        if (!window.global.interact) global.interact = Interact().initialise();
 
-      if (!global.interact) global.interact = Interact().initialise();
+        global.interact.alert({
+          type: _urgency,
+          headline: "New Version Available",
+          message: _details ? _details : "",
+          action: "Refresh"
+        }).then(function(update) {
+          if (update) _message(sw, "update").then(
+            m => {
+              if (m == "success") {
 
-      global.interact.alert({
-        type: _urgency,
-        headline: "New Version Available",
-        message: _details ? _details : "",
-        action: "Refresh"
-      }).then(function(update) {
-        if (update) _message(sw, "update").then(
-          m => {
-            if (m == "success") {
-
+              }
             }
-          }
-        );
-      });
+          );
+        });
+        
+      } else {
+        
+        _message(sw, "update");
+        
+      }
 
     };
 
@@ -109,8 +117,8 @@ var register_Worker = function() {
 
         /* CTRL-ALT-R --> Force Cache Refresh and then reload */
 
-        if (global) try {
-          global.interact.busy();
+        if (window.global) try {
+          window.global.interact.busy();
         } catch (e) {}
 
         /* Pass request through to relevant service worker */
@@ -123,7 +131,7 @@ var register_Worker = function() {
             );
           }
         ).catch(function() {
-          if (global) global.interact.busy({
+          if (window.global) window.global.interact.busy({
             clear: true
           });
         });
