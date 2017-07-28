@@ -10,7 +10,7 @@ permalink: /manifest.json
  "lang": "en-GB",
  "background_color": "#ffffff",
  "theme_color": "#ffffff",
- "start_url": "/index.html",
+ "start_url": "/",
  "display": "fullscreen",
  "version": "{{ site.version }}",
  "manifest_version": 2,
