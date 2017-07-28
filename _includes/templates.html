@@ -22,11 +22,11 @@
   {% else %}
 
     <script type="text/javascript" charset="utf-8">
-      $(function() {
+      var templates = function() {
         {% for template in templates %}
           {% include scripts/templates/{{ template }}.js %}
         {% endfor %}
-      });
+      };
     </script>
 
   {% endif %}

@@ -1,4 +1,4 @@
-(function() {
+var register_Worker = function() {
 
   const APP_VERSION = "{{ site.version }}";
   const VERSION_TYPE = "{% if site.data.versions[site.version] %}{{ site.data.versions[site.version].type }}{% endif %}";
@@ -132,4 +132,4 @@
     };
 
   }
-})();
+};

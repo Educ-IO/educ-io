@@ -15,6 +15,12 @@ TODO LIST
 * Loader Screwing Up under CPU load??? Ironically.
 * Why does Upgrade Alert Sometimes Appear?
 * Large Table Render Performance
+* Visual Sizing BUG with Loader (overspills?)
+* Progressive Render Experience
+* Convert APP Metadata to Arrays rather than split comma arrays
+* Structure Async Loading of Resources, including polyfills for IOS etc
+* Set no-cors on Fetch for Service Worker / particular 
+* Gracefully handle the .map issue for injected async/fetched CSS <-- Relative path at end of Bootstrap CSS (e.g. /*# sourceMappingURL=bootstrap.min.css.map */)
 
 #### View
 

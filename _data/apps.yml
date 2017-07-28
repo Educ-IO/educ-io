@@ -2,16 +2,40 @@ view:
   name: View
   desc: A web-based tool for producing customised views of Google Sheets.
   link: /view/
-  google: true
-  imports: jquery;tether;bootstrap;hello;urlparser;loki;xlsx;filesaver;handlebars
-  scripts: polyfills;arrays;flags;interact;display;google;apps/view;app
+  imports:
+    - name: jquery
+      load: first
+    - name: tether
+      load: first
+    - name: hello
+      load: last
+    - name: urlparser
+      load: last
+    - name: handlebars
+      load: last
+    - name: bootstrap-css
+      load: last
+    - name: bootstrap-js
+      load: last
+    - name: fonts
+      load: after
+    - name: loki
+      load: after
+    - name: xlsx
+      load: after
+    - name: filesaver
+      load: after
+    - name: google
+      load: async
+  scripts: regex;arrays;flags;interact;display;google;apps/view;app
   templates: choose;confirm;alert;loader;table;rows;tabs
   docs: view/PUBLIC;view/README;view/INSTRUCTIONS;view/SETTINGS
   scopes:
-    - email
-    - profile
-    - https://www.googleapis.com/auth/drive.file
-    - https://www.googleapis.com/auth/spreadsheets.readonly
+    google:
+      - email
+      - profile
+      - https://www.googleapis.com/auth/drive.file
+      - https://www.googleapis.com/auth/spreadsheets.readonly
   menu:
     name: Commands
     groups:
@@ -32,9 +56,32 @@ reflect:
   name: Reflect
   desc: Produce reflective reports
   link: /reflect/
-  google: true
-  imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
-  scripts: polyfills;flags;interact;display;google;apps/view;app
+  imports:
+    - name: jquery
+      load: first
+    - name: tether
+      load: first
+    - name: hello
+      load: last
+    - name: urlparser
+      load: last
+    - name: handlebars
+      load: last
+    - name: bootstrap-css
+      load: last
+    - name: bootstrap-js
+      load: last
+    - name: fonts
+      load: after
+    - name: loki
+      load: after
+    - name: xlsx
+      load: after
+    - name: filesaver
+      load: after
+    - name: google
+      load: async
+  scripts: regex;flags;interact;display;google;apps/reflect;app
   templates: choose;confirm;alert;loader
   docs: reflect/PUBLIC;reflect/README;reflect/INSTRUCTIONS
   scopes:
@@ -45,54 +92,150 @@ folders:
   name: Folders
   desc: Search folders individually, and view starred files contained within.
   link: /folders/
-  google: true
-  imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
-  scripts: polyfills;flags;interact;display;google;apps/view;app
+  imports:
+    - name: jquery
+      load: first
+    - name: tether
+      load: first
+    - name: hello
+      load: last
+    - name: urlparser
+      load: last
+    - name: handlebars
+      load: last
+    - name: bootstrap-css
+      load: last
+    - name: bootstrap-js
+      load: last
+    - name: fonts
+      load: after
+    - name: loki
+      load: after
+    - name: xlsx
+      load: after
+    - name: filesaver
+      load: after
+    - name: google
+      load: async
+  scripts: regex;flags;interact;display;google;apps/folders;app
   templates: choose;confirm;alert;loader
   docs: folders/PUBLIC;folders/README;folders/INSTRUCTIONS
   scopes:
-    - email
-    - profile
-    - https://www.googleapis.com/auth/drive.file
+    google:
+      - email
+      - profile
+      - https://www.googleapis.com/auth/drive.file
 transfer:
   name: Transfer
   desc: Copy your Google Drive data to your own account.
   link: /transfer/
-  google: true
-  imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
-  scripts: polyfills;flags;interact;display;google;apps/view;app
+  imports:
+    - name: jquery
+      load: first
+    - name: tether
+      load: first
+    - name: hello
+      load: last
+    - name: urlparser
+      load: last
+    - name: handlebars
+      load: last
+    - name: bootstrap-css
+      load: last
+    - name: bootstrap-js
+      load: last
+    - name: fonts
+      load: after
+    - name: loki
+      load: after
+    - name: xlsx
+      load: after
+    - name: filesaver
+      load: after
+    - name: google
+      load: async
+  scripts: regex;flags;interact;display;google;apps/transfer;app
   templates: choose;confirm;alert;loader
   docs: transfer/PUBLIC;transfer/README;transfer/INSTRUCTIONS
   scopes:
-    - email
-    - profile
-    - https://www.googleapis.com/auth/drive.file
+    google:
+      - email
+      - profile
+      - https://www.googleapis.com/auth/drive.file
 markbooks:
   name: Markbooks
   desc: A soon to be written tool.
   link: /markbooks/
-  google: true
-  imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
-  scripts: polyfills;flags;interact;display;google;apps/view;app
+  imports:
+    - name: jquery
+      load: first
+    - name: tether
+      load: first
+    - name: hello
+      load: last
+    - name: urlparser
+      load: last
+    - name: handlebars
+      load: last
+    - name: bootstrap-css
+      load: last
+    - name: bootstrap-js
+      load: last
+    - name: fonts
+      load: after
+    - name: loki
+      load: after
+    - name: xlsx
+      load: after
+    - name: filesaver
+      load: after
+    - name: google
+      load: async
+  scripts: regex;flags;interact;display;google;apps/markbooks;app
   templates: choose;confirm;alert;loader
   docs: markbooks/PUBLIC;markbooks/README;markbooks/INSTRUCTIONS
   scopes:
-    - email
-    - profile
-    - https://www.googleapis.com/auth/drive.file
+    google:
+      - email
+      - profile
+      - https://www.googleapis.com/auth/drive.file
 cover:
   name: Cover
   desc: Run your cover in Google Sheets
   link: /cover/
-  google: true
-  imports: jquery;tether;bootstrap;showdown;hello;urlparser;loki;clusterize;xlsx;filesaver;handlebars
-  scripts: polyfills;flags;interact;display;google;apps/view;app
+  imports:
+    - name: jquery
+      load: first
+    - name: tether
+      load: first
+    - name: hello
+      load: last
+    - name: urlparser
+      load: last
+    - name: handlebars
+      load: last
+    - name: bootstrap-css
+      load: last
+    - name: bootstrap-js
+      load: last
+    - name: fonts
+      load: after
+    - name: loki
+      load: after
+    - name: xlsx
+      load: after
+    - name: filesaver
+      load: after
+    - name: google
+      load: async
+  scripts: regex;flags;interact;display;google;apps/cover;app
   templates: choose;confirm;alert;loader
   docs: cover/PUBLIC;cover/README;cover/INSTRUCTIONS
   scopes:
-    - email
-    - profile
-    - https://www.googleapis.com/auth/drive.file
+    google:
+      - email
+      - profile
+      - https://www.googleapis.com/auth/drive.file
 scriptr:
   name: Scriptr
   desc: Better Coding with Google Apps Script

@@ -1,5 +1,7 @@
 ---
 layout: auth
 permalink: /redirect/
-imports: hello
+imports:
+  - name: hello
+    load: sync
 ---

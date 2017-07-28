@@ -27,6 +27,7 @@ App = function() {
 				});
 
 				var _fields = Array.apply(null, {length: _length}).map(Number.call, Number);
+				if (!__db) __db = new loki("view.db");
 				var _table = __db.addCollection(name, {indices : _fields});
 				_table.insert(_values);
 
@@ -190,10 +191,7 @@ App = function() {
     /* -- External Functions -- */
 		
     initialise : function() {
-			
-			/* -- Create Loki DB -- */
-			__db = new loki("view.db");
-			
+
 			/* -- Register Partial Templates -- */
 			/* global.display.partialTemplates(["rows"]); */
 			

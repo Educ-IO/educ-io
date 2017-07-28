@@ -1,6 +1,7 @@
 ---
 layout: landing
-title: Coming Soon ...
+title: Home
+lead: Coming Soon ...
 permalink: /
 logo: true
 style: _landing

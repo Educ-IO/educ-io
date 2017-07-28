@@ -46,7 +46,7 @@ var setup = function(hello) {
 };
 /* -- Lightweight Hello Modules -- */
 
-$(function() {
+var start = function() {
 
 	setup(hello);
 	
@@ -243,4 +243,12 @@ $(function() {
 			
 	});
 
-});
+};
+
+if (window.jQuery) {
+	$(function() {
+		if (window.templates) templates();
+		register_Worker();
+		start();
+	});
+}

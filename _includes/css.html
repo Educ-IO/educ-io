@@ -1,23 +1,18 @@
 {% assign imports = false %}
 
 {% if page.imports %}
-	{% assign imports = page.imports | split: ';' %}
+	{% assign imports = page.imports %}
 {% elsif page.app and page.app != "" and site.data.apps[page.app].imports %}
-	{% assign imports = site.data.apps[page.app].imports | split: ';' %}
+	{% assign imports = site.data.apps[page.app].imports %}
 {% endif %}
 
 {% if imports %}
 
 	{% for import in imports %}
-
-		{% for css in site.data.imports[import].css %}
+		{% for css in site.data.imports[import.name].css %}
  			{% include_relative _sass/{{ css }}.scss %}
 		{% endfor %}
 
 	{% endfor %}
 
-{% endif %}
-
-{% if page.google == true or site.data.apps[page.app].google %}
-	{% include_relative _sass/_picker.scss %}
 {% endif %}

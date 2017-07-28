@@ -113,13 +113,20 @@ var CURRENT_CACHES = {
   static: "static-v" + CACHE_VERSION,
   dynamic: "dynamic-v" + CACHE_VERSION
 };
-{% assign imports = "" | split: "" %}{% for app in site.data.apps %}{% if app[1].imports and app[1].imports.size > 0 %}{% for import in app[1].imports %}{% assign _imports = import | split: ";" %}{% if _imports and _imports.size > 0 %}{% assign imports = _imports | concat: imports %}{% endif %}{% endfor %}{% endif %}{% endfor %}{% assign imports = imports | uniq %}
+{% assign imports = "" | split: "" %}
+{% for app in site.data.apps %}
+  {% if app[1].imports and app[1].imports.size > 0 %}
+    {% assign names = app[1].imports | map: "name" %}
+    {% assign imports = names | concat: imports %}
+  {% endif %}
+{% endfor %}
+{% assign imports = imports | uniq %}
 // == Caching Paths are Relative to the Script == //
 var URLS = [
-  {% for page in site.pages %}{% if page.layout != "app" and page.permalink != "/service.js" %}"{{ page.permalink }}",{% endif %}{% endfor %}
-  {% for app in site.data.apps %}{% if app[1].ext != true %}"{{ app[1].link }}",{% endif %}{% endfor %}
-  {% for import in imports %}{% if jekyll.environment == "debug" %}{% for import_script in site.data.imports[import].dev %}"{{ import_script.script }}",{% endfor %}{% else %}{% for import_script in site.data.imports[import].prod %}"{{ import_script.script }}",{% endfor %}{% endif %}{% endfor %}
-  "https://fonts.googleapis.com/css?family={{ site.fonts }}", "{{ site.css.bootstrap }}"
+  {% for page in site.pages %}{% if page.layout != "app" and page.permalink != "/service.js" %}{url : "{{ page.permalink }}"},{% endif %}{% endfor %}
+  {% for app in site.data.apps %}{% if app[1].ext != true %}{url : "{{ app[1].link }}"},{% endif %}{% endfor %}
+  {% for import in imports %}{% if jekyll.environment == "debug" %}{% for import_script in site.data.imports[import].dev %}{ {% if import_script.mode %}mode : "{{ import_script.mode }}", {% endif %}url : "{{ import_script.url }}" },{% endfor %}{% else %}{% for import_script in site.data.imports[import].prod %}{ {% if import_script.mode %}mode : "{{ import_script.mode }}", {% endif %}url : "{{ import_script.url }}" },{% endfor %}{% endif %}{% endfor %}
+  {url : "https://fonts.googleapis.com/css?family={{ site.fonts }}"}
 ]
 
 // == Install Handler == //
@@ -132,17 +139,24 @@ self.addEventListener("install", function(event) {
   event.waitUntil(
     caches.open(CURRENT_CACHES.static).then(function(cache) {
       var promises = URLS.map(function(fetch_url) {
-        var url = new URL(fetch_url, location.href);
+        var url = new URL(fetch_url.url, location.href);
         url.search += (url.search ? "&" : "?") + "timestamp=" + now;
-        var request = new Request(url);
-        return fetch(request).then(function(response) {
-          if (response.status >= 400) {
-            throw new Error("Request for " + fetch_url + " failed with status " + response.statusText);
-          }
-          return cache.put(fetch_url, response);
-        }).catch(function(e) {
-          console.error("Failed to cache " + fetch_url + ":", e);
-        });
+        var _fetch = function(url, fetch_mode) {
+          var request = new Request(url, {mode: fetch_mode ? fetch_mode : "cors"});
+          return fetch(request).then(function(response) {
+            if (response.status >= 400) {
+              throw new Error("Request for " + fetch_url.url + " failed with status " + response.statusText);
+            }
+            return cache.put(fetch_url.url, response);
+          }).catch(function(e) {
+            if (!type)  {
+              return _fetch(url, "no-cors");
+            } else {
+              console.error("Failed to cache " + fetch_url.url + ":", e);  
+            }
+          });
+        };
+        _fetch(url, fetch_url.mode);
       });
       return Promise.all(promises).then(function() {console.log("Completed Pre-Fetch")});
     }).catch(function(e) {console.error("Failed to Pre-Catch:", e)})
@@ -223,17 +237,24 @@ self.addEventListener("message", function(event) {
     
     caches.open(CURRENT_CACHES.static).then(function(cache) {
       var promises = URLS.map(function(fetch_url) {
-        var url = new URL(fetch_url, location.href);
+        var url = new URL(fetch_url.url, location.href);
         url.search += (url.search ? "&" : "?") + "timestamp=" + now;
-        var request = new Request(url);
-        return fetch(request).then(function(response) {
-          if (response.status >= 400) {
-            throw new Error("Request for " + fetch_url + " failed with status " + response.statusText);
-          }
-          return cache.put(fetch_url, response);
-        }).catch(function(e) {
-          console.error("Failed to cache " + fetch_url + ":", e);
-        });
+        var _fetch = function(url, fetch_mode) {
+          var request = new Request(url, {mode: fetch_mode ? fetch_mode : "cors"});
+          return fetch(request).then(function(response) {
+            if (response.status >= 400) {
+              throw new Error("Request for " + fetch_url.url + " failed with status " + response.statusText);
+            }
+            return cache.put(fetch_url.url, response);
+          }).catch(function(e) {
+            if (!fetch_mode)  {
+              return _fetch(url, "no-cors");
+            } else {
+              console.error("Failed to cache " + fetch_url.url + ":", e);  
+            }
+          });
+        };
+        _fetch(url, fetch_url.mode);
       });
       return Promise.all(promises).then(function() {
         event.ports[0].postMessage("reload");

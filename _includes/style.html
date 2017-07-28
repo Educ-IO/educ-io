@@ -1,0 +1,17 @@
+<style type="text/css">
+  {% capture _scss_ %}
+    @import "_variables";	
+    {% if page.colour %}$colour-highlight: #{{ page.colour }};{% else %}$colour-highlight: #af0ad9;{% endif %}
+    @import "_common";
+    @import "_fonts";
+    {% if page.style %}@import "{{ page.style }}";{% endif %}	
+    {% if page.layout == "app" %}
+      @import "_app";
+      @import "_tables";
+      @import "_loader";
+      {% include css.html %}
+    {% endif %}
+    {% if page.logo %}.logo {background-image: url('data:image/svg+xml;utf8,{% include images/logo.svg %}'), none;}{% endif %}
+  {% endcapture %}
+  {{ _scss_ | scssify }}
+</style>
