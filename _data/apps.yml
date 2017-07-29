@@ -25,9 +25,29 @@ view:
       load: after
     - name: google
       load: async
-  scripts: regex;arrays;flags;interact;display;service;google;apps/view;app
-  templates: choose;confirm;alert;loader;table;rows;tabs
-  docs: view/PUBLIC;view/README;view/INSTRUCTIONS;view/SETTINGS
+  scripts: 
+    - regex
+    - arrays
+    - flags
+    - interact
+    - display
+    - service
+    - google
+    - apps/view
+    - app
+  templates:
+    - choose
+    - confirm
+    - alert
+    - loader
+    - table
+    - rows
+    - tabs
+  docs:
+    - view/PUBLIC
+    - view/README
+    - view/INSTRUCTIONS
+    - view/SETTINGS
   scopes:
     google:
       - email
@@ -77,9 +97,25 @@ reflect:
       load: after
     - name: google
       load: async
-  scripts: regex;flags;interact;display;service;google;apps/reflect;app
-  templates: choose;confirm;alert;loader
-  docs: reflect/PUBLIC;reflect/README;reflect/INSTRUCTIONS
+  scripts: 
+    - regex
+    - arrays
+    - flags
+    - interact
+    - display
+    - service
+    - google
+    - apps/reflect
+    - app
+  templates:
+    - choose
+    - confirm
+    - alert
+    - loader
+  docs:
+    - reflect/PUBLIC
+    - reflect/README
+    - reflect/INSTRUCTIONS
   scopes:
     - email
     - profile
@@ -111,9 +147,24 @@ folders:
       load: after
     - name: google
       load: async
-  scripts: regex;flags;interact;display;service;google;apps/folders;app
-  templates: choose;confirm;alert;loader
-  docs: folders/PUBLIC;folders/README;folders/INSTRUCTIONS
+  scripts: 
+    - regex
+    - flags
+    - interact
+    - display
+    - service
+    - google
+    - apps/folders
+    - app
+  templates:
+    - choose
+    - confirm
+    - alert
+    - loader
+  docs:
+    - folders/PUBLIC
+    - folders/README
+    - folders/INSTRUCTIONS
   scopes:
     google:
       - email
@@ -146,9 +197,24 @@ transfer:
       load: after
     - name: google
       load: async
-  scripts: regex;flags;interact;display;service;google;apps/transfer;app
-  templates: choose;confirm;alert;loader
-  docs: transfer/PUBLIC;transfer/README;transfer/INSTRUCTIONS
+  scripts:
+    - regex
+    - flags
+    - interact
+    - display
+    - service
+    - google
+    - apps/transfer
+    - app
+  templates:
+    - choose
+    - confirm
+    - alert
+    - loader
+  docs:
+    - transfer/PUBLIC
+    - transfer/README
+    - transfer/INSTRUCTIONS
   scopes:
     google:
       - email
@@ -181,9 +247,24 @@ markbooks:
       load: after
     - name: google
       load: async
-  scripts: regex;flags;interact;display;service;google;apps/markbooks;app
-  templates: choose;confirm;alert;loader
-  docs: markbooks/PUBLIC;markbooks/README;markbooks/INSTRUCTIONS
+  scripts:
+    - regex
+    - flags
+    - interact
+    - display
+    - service
+    - google
+    - apps/markbooks
+    - app
+  templates:
+    - choose
+    - confirm
+    - alert
+    - loader
+  docs:
+    - markbooks/PUBLIC
+    - markbooks/README
+    - markbooks/INSTRUCTIONS
   scopes:
     google:
       - email
@@ -216,9 +297,24 @@ cover:
       load: after
     - name: google
       load: async
-  scripts: regex;flags;interact;display;service;google;apps/cover;app
-  templates: choose;confirm;alert;loader
-  docs: cover/PUBLIC;cover/README;cover/INSTRUCTIONS
+  scripts:
+    - regex
+    - flags
+    - interact
+    - display
+    - service
+    - google
+    - apps/cover
+    - app
+  templates:
+    - choose
+    - confirm
+    - alert
+    - loader
+  docs:
+    - cover/PUBLIC
+    - cover/README
+    - cover/INSTRUCTIONS
   scopes:
     google:
       - email

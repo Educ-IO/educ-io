@@ -1,9 +1,4 @@
-{% comment %}
-  Set Up Versions, Google and Github API Scopes / IDs (if applicable)
-{% endcomment %}
-{% if page.scopes.google or site.data.apps[page.app].scopes.google or page.scopes.github == true or site.data.apps[page.app].scopes.github or page.version or page.app %}
-<script type="text/javascript" charset="utf-8">
-  
+{% if page.scopes.google or site.data.apps[page.app].scopes.google or page.scopes.github == true or site.data.apps[page.app].scopes.github or page.version or page.app %}<script type="text/javascript" charset="utf-8">
   {% if page.scopes.google or site.data.apps[page.app].scopes.google %}
     const GOOGLE_KEY = "{{ site.api_keys.google_general }}";
     const GOOGLE_CLIENT_ID = "{{ site.api_keys.google_oauth }}";
@@ -16,9 +11,7 @@
     const GOOGLE_SCOPES = [
       {% for scope in scopes %}"{{ scope }}"{% if scope != scopes.last %}, {% endif %}{% endfor %}
     ];
-  {% endif %}
-  
-  {% if page.scopes.github == true or site.data.apps[page.app].scopes.github %}
+  {% endif %}{% if page.scopes.github == true or site.data.apps[page.app].scopes.github %}
     const GITHUB_KEY = "{{ site.api_keys.github_general }}";
     const GITHUB_CLIENT_ID = "{{ site.api_keys.github_oauth }}";
     {% assign scopes = false %}
@@ -30,13 +23,11 @@
     const GITHUB_SCOPES = [
       {% for scope in scopes %}"{{ scope }}"{% if scope != scopes.last %}, {% endif %}{% endfor %}
     ];
-  {% endif %}
-
-  {% if page.version %}
+  {% endif %}{% if page.version %}
     const APP_VERSION = "{{ page.version }}";
   {% elsif page.app and page.app != "" and site.data.apps[page.app].version %} 
     const APP_VERSION = "{{ site.data.apps[page.app].version }}";
   {% endif %}
   
-</script>
-{% endif %}
+</script>{% endif %}
+{% comment %}Set Up Versions, Google and Github API Scopes / IDs (if applicable){% endcomment %}

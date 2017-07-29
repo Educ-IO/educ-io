@@ -121,13 +121,56 @@ var CURRENT_CACHES = {
   {% endif %}
 {% endfor %}
 {% assign imports = imports | uniq %}
+
 // == Caching Paths are Relative to the Script == //
+var FONT_URL = "https://fonts.googleapis.com/css";
 var URLS = [
   {% for page in site.pages %}{% if page.layout != "app" and page.permalink != "/service.js" %}{url : "{{ page.permalink }}"},{% endif %}{% endfor %}
   {% for app in site.data.apps %}{% if app[1].ext != true %}{url : "{{ app[1].link }}"},{% endif %}{% endfor %}
   {% for import in imports %}{% if jekyll.environment == "debug" %}{% for import_script in site.data.imports[import].dev %}{ {% if import_script.mode %}mode : "{{ import_script.mode }}", {% endif %}url : "{{ import_script.url }}" },{% endfor %}{% else %}{% for import_script in site.data.imports[import].prod %}{ {% if import_script.mode %}mode : "{{ import_script.mode }}", {% endif %}url : "{{ import_script.url }}" },{% endfor %}{% endif %}{% endfor %}
-  {url : "https://fonts.googleapis.com/css?family={{ site.fonts }}"}
+  {url : FONT_URL + "?family={{ site.fonts }}"}
 ]
+
+// -- Get Caching Promises -- //
+var cache_Promises = function(now, cache) {
+  return URLS.map(function(fetch_url) {
+    var url = new URL(fetch_url.url, location.href);
+    url.search += (url.search ? "&" : "?") + "timestamp=" + now;
+    var _fetch = function(url, fetch_mode) {
+      var request = new Request(url, {mode: fetch_mode ? fetch_mode : "cors"});
+      return fetch(request).then(function(response) {
+        if (response.status >= 400) {
+          throw new Error("Request for " + url.href + " failed with status " + response.statusText);
+        }
+        var font = !!url.href.match(/^https:\/\/fonts\.googleapis\.com\/css/gi);
+        if (font) {
+          response.text().then(function (text) {
+            var css_regex = /url\(['"\s]*(\S+)['"\s]*\)/gi;
+            var css_urls;
+            while ((css_urls = css_regex.exec(text)) !== null) {
+              if (css_urls && css_urls[1]) {
+                var css_url = new URL(css_urls[1], location.href);
+                fetch(new Request(css_url, {mode: fetch_mode ? fetch_mode : "cors"})).then(function(css_response) {
+                  if (css_response.status < 400) {
+                    return cache.put(css_url, css_response);
+                  }
+                });
+              }
+            }
+          });
+        }
+        return cache.put(url, response);
+      }).catch(function(e) {
+        if (!fetch_mode)  {
+          return _fetch(url, "no-cors");
+        } else {
+          console.error("Failed to cache " + fetch_url.url + ":", e);  
+        }
+      });
+    };
+    _fetch(url, fetch_url.mode);
+  });
+}
 
 // == Install Handler == //
 self.addEventListener("install", function(event) {
@@ -138,27 +181,7 @@ self.addEventListener("install", function(event) {
 
   event.waitUntil(
     caches.open(CURRENT_CACHES.static).then(function(cache) {
-      var promises = URLS.map(function(fetch_url) {
-        var url = new URL(fetch_url.url, location.href);
-        url.search += (url.search ? "&" : "?") + "timestamp=" + now;
-        var _fetch = function(url, fetch_mode) {
-          var request = new Request(url, {mode: fetch_mode ? fetch_mode : "cors"});
-          return fetch(request).then(function(response) {
-            if (response.status >= 400) {
-              throw new Error("Request for " + fetch_url.url + " failed with status " + response.statusText);
-            }
-            return cache.put(fetch_url.url, response);
-          }).catch(function(e) {
-            if (!type)  {
-              return _fetch(url, "no-cors");
-            } else {
-              console.error("Failed to cache " + fetch_url.url + ":", e);  
-            }
-          });
-        };
-        _fetch(url, fetch_url.mode);
-      });
-      return Promise.all(promises).then(function() {console.log("Completed Pre-Fetch")});
+      return Promise.all(cache_Promises(now, cache)).then(function() {console.log("Completed Pre-Fetch")});
     }).catch(function(e) {console.error("Failed to Pre-Catch:", e)})
   );
 });
@@ -182,6 +205,7 @@ self.addEventListener("activate", function(event) {
       );
     })
   );
+  
 });
 
 // == Fetch Handler == //
@@ -236,28 +260,13 @@ self.addEventListener("message", function(event) {
     var now = Date.now();
     
     caches.open(CURRENT_CACHES.static).then(function(cache) {
-      var promises = URLS.map(function(fetch_url) {
-        var url = new URL(fetch_url.url, location.href);
-        url.search += (url.search ? "&" : "?") + "timestamp=" + now;
-        var _fetch = function(url, fetch_mode) {
-          var request = new Request(url, {mode: fetch_mode ? fetch_mode : "cors"});
-          return fetch(request).then(function(response) {
-            if (response.status >= 400) {
-              throw new Error("Request for " + fetch_url.url + " failed with status " + response.statusText);
-            }
-            return cache.put(fetch_url.url, response);
-          }).catch(function(e) {
-            if (!fetch_mode)  {
-              return _fetch(url, "no-cors");
-            } else {
-              console.error("Failed to cache " + fetch_url.url + ":", e);  
-            }
-          });
-        };
-        _fetch(url, fetch_url.mode);
-      });
-      return Promise.all(promises).then(function() {
-        event.ports[0].postMessage("reload");
+      cache.keys().then(function(keys) {
+        keys.forEach(function(request, index, array) {
+          cache.delete(request);
+        });
+        return Promise.all(cache_Promises(now, cache)).then(function() {
+          event.ports[0].postMessage("reload");
+        });
       });
     }).catch(function(e) {
       console.error("Failed to Refresh Cache:", e)

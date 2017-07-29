@@ -54,23 +54,35 @@
 
 	};
 
-	var proceed = function() {
-		if (window.templates) templates();
-		register_Worker();
-		if (window.start) start();
+	var finalise = function(result) {
+		if (result === true) {
+				$(".font-sensitive").removeClass("font-sensitive");
+				$(".css-sensitive").removeClass("css-sensitive");
+		}
 	};
 	
+	var proceed = function(result) {
+		if (result === true) {
+			if (window.templates) templates();
+			register_Worker();
+			if (window.start) start();	
+		}
+		if (window.LOAD_AFTER) {
+			controller(window.LOAD_AFTER).then(() => {finalise(true);}).catch(e => {console.error(e); finalise(true);});
+		} else {
+			finalise(true);
+		}
+	};
+
 	var load = function() {
 		
 		if (window.LOAD_FIRST && window.LOAD_LAST) {
-			controller(window.LOAD_LAST, controller(window.LOAD_FIRST)).then(() => {proceed();}).catch(e => {console.log(e);});
+			controller(window.LOAD_LAST, controller(window.LOAD_FIRST)).then(() => {proceed(true);}).catch(e => {console.error(e);proceed(false);});
 		} else if (window.LOAD_FIRST || window.LOAD_LAST) {
-			controller(window.LOAD_FIRST || window.LOAD_LAST).then(() => {proceed();}).catch(e => {console.log(e);});
+			controller(window.LOAD_FIRST || window.LOAD_LAST).then(() => {proceed(true);}).catch(e => {console.error(e);proceed(false);});
 		} else {
-			register_Worker();
+			proceed(true);
 		}
-		
-		if (window.LOAD_AFTER) controller(window.LOAD_AFTER).then(() => {}).catch(e => {console.log(e);});
 		
 	};
 	

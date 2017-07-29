@@ -1,0 +1,11 @@
+{% if include.type == "app" %}
+  {% include docs.html %}
+  {% include templates.html %}
+{% endif %}
+{% if include.type == "app" or include.type == "page" %}
+		{% include links.html %}
+		{% include analytics.html %}
+{% endif %}
+<script type="text/javascript" charset="utf-8">
+	{% include scripts/start.js %}
+</script>

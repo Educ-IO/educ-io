@@ -1,16 +1,16 @@
 <nav id="site_nav" class="navbar navbar-toggleable-md navbar-light bg-faded{% if include.type %} {{ include.type }}{% endif %}">
 
-  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#main_Nav" aria-controls="main_Nav" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler navbar-toggler-right css-sensitive" type="button" data-toggle="collapse" data-target="#main_Nav" aria-controls="main_Nav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <a class="navbar-brand logo" href="/" title="Return to Home"><span class="sr-only">Return to Home</span>{% include images/letter.svg %}</a>
+  <a class="navbar-brand logo" href="/" title="Return to Home"><span class="sr-only css-sensitive">Return to Home</span>{% include images/letter.svg %}</a>
 
   <div class="collapse navbar-collapse" id="main_Nav">
 
-    <a class="navbar-brand" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }} | {{ site.title }} <span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}"> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}"></span></a>
+    <a class="navbar-brand font-sensitive" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }} | {{ site.title }} <span class="sr-only css-sensitive">Current {% if page.app %}App{% else %}Page{% endif %}"> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}"></span></a>
 
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav mr-auto css-sensitive">
 
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navAppsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Apps</a>

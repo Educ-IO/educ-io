@@ -1,10 +1,8 @@
-<!-- Application Page Templates -->
 {% assign templates = false %}
-
 {% if page.templates %}
-  {% assign templates = page.templates | split: ';' %}
+  {% assign templates = page.templates %}
 {% elsif page.app and page.app != "" and site.data.apps[page.app].templates %}
-  {% assign templates = site.data.apps[page.app].templates | split: ';' %}
+  {% assign templates = site.data.apps[page.app].templates %}
 {% endif %}
 
 {% if templates %}

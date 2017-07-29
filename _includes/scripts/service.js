@@ -35,15 +35,15 @@ var register_Worker = function() {
         
         var _urgency, _details;
 
-        if (window.VERSION_TYPE == "security") {
+        if (VERSION_TYPE == "security") {
           _urgency = "danger";
-        } else if (window.VERSION_TYPE == "major") {
+        } else if (VERSION_TYPE == "major") {
           _urgency = "warning";
         } else {
           _urgency = "info";
         }
 
-        if (window.VERSION_DETAILS) _details = VERSION_DETAILS + " [v" + APP_VERSION + "]";
+        if (VERSION_DETAILS) _details = VERSION_DETAILS + " [v" + APP_VERSION + "]";
         
         if (!window.global.interact) global.interact = Interact().initialise();
 
@@ -51,7 +51,8 @@ var register_Worker = function() {
           type: _urgency,
           headline: "New Version Available",
           message: _details ? _details : "",
-          action: "Refresh"
+          action: "Update",
+          target: "body"
         }).then(function(update) {
           if (update) _message(sw, "update").then(
             m => {
@@ -82,15 +83,22 @@ var register_Worker = function() {
 
       /* -- Loaded via SW -- */
       if (navigator.serviceWorker.controller) {
-        if (reg.waiting) {
-          _updateReady(reg.waiting);
-        } else if (reg.installing) {
-          _trackInstalling(reg.installing);
-        } else {
-          reg.addEventListener("updateFound", function() {
-            _trackInstalling(reg.installing);
-          });
-        }
+        
+        var _check = function(_reg) {
+          if (_reg.waiting) {
+            _updateReady(_reg.waiting);
+          } else if (_reg.installing) {
+            _trackInstalling(_reg.installing);
+          } else {
+            _reg.addEventListener("updateFound", function() {
+              _trackInstalling(_reg.waiting || _reg.installing);
+            });
+          }
+          
+        };
+        
+        /* Wait 5 seconds, then check for update! */
+        setTimeout(function(){_check(reg);}, 5000);
 
         /* Handler Forced Refresh */
         navigator.serviceWorker.addEventListener("controllerChange", function() {

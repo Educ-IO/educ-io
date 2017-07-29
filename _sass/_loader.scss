@@ -4,7 +4,7 @@ $spinner-duration: 0.8s;
 
 // -- Loading Background -- //
 .loader {
-	position: absolute;
+	position: fixed;
 	background-color: rgba($colour-background, 0.9);
 	height: 100%;
 	width: 100%;

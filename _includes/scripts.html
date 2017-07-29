@@ -1,11 +1,10 @@
 {% assign scripts = false %}
 
 {% if page.scripts %}
-  {% assign scripts = page.scripts | split: ';' %}
+  {% assign scripts = page.scripts %}
 {% elsif page.app and page.app != "" and site.data.apps[page.app].scripts %}
-  {% assign scripts = site.data.apps[page.app].scripts | split: ';' %}
+  {% assign scripts = site.data.apps[page.app].scripts %}
 {% endif %}
-
 {% if scripts and scripts.size > 0 %}
 
   {% for script in scripts %}

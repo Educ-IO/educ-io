@@ -29,3 +29,13 @@ a.navbar-brand.logo, .navbar-brand a.logo {
 	border-bottom: 1px dashed $colour-emphasis;
 }
 // -- Menu Branding -- //
+
+// -- Font Sensitive -- //
+.font-sensitive {
+	visibility: hidden;
+}
+
+// -- CSS Sensitive -- //
+.css-sensitive {
+	display: none;
+}

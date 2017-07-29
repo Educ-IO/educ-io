@@ -8,7 +8,14 @@ Interact = function() {
   /* -- Internal Variables -- */
 	
 	/* -- Internal Functions -- */
-  
+  var _target = function(options) {
+		
+		/* -- Ensure we have a target _element, and that it is wrapped in JQuery -- */
+		var _element = (options && options.target) ? options.target : (global.container ? global.container : $("body"));
+		if (_element instanceof jQuery !== true) _element = $(_element);
+		return _element;
+		
+	};
 	/* -- Internal Functions -- */
 	
 	/* -- External Visibility -- */
@@ -31,17 +38,15 @@ Interact = function() {
 		*/
 		busy : function (options) {
 
-			/* -- Ensure we have a target object, and that it is wrapped in JQuery -- */
-			var _target = (options && options.target) ? options.target : (global.container ? global.container : $("body"));
-			if (_target instanceof jQuery !== true) _target = $(_target);
+			var _element = _target(options);
 
-			if ((options && options.clear === true) || _target.find(".loader").length > 0) {
+			if ((options && options.clear === true) || _element.find(".loader").length > 0) {
 
-				_target.find(".loader").remove();
+				_element.find(".loader").remove();
 
 			} else {
 
-				_target.prepend(global.display.template("loader")());
+				_element.prepend(global.display.template("loader")());
 
 			}
 			
@@ -62,6 +67,7 @@ Interact = function() {
 				headline : main message,
 				message : optional body message,
 				action : optional name of action button
+				target : optional name / element / jquery of containing element
 			}
 		*/
 		alert : function(options) {
@@ -70,7 +76,7 @@ Interact = function() {
 				
 				/* -- Great Modal Choice Dialog -- */
 				var dialog = $(global.display.template("alert")(options));
-				(global.container ? global.container : $("body")).prepend(dialog);
+				_target(options).prepend(dialog);
 
 				if (options.action) {
 				
@@ -98,6 +104,7 @@ Interact = function() {
 				title : main title of the options dialog,
 				choices : array or object of name/desc items to choose from
 				action : optional name of action button
+				target : optional name / element / jquery of containing element
 			}
 		*/
     choose : function(options) {
@@ -117,7 +124,7 @@ Interact = function() {
 					
 					/* -- Great Modal Choice Dialog -- */
 					var dialog = $(global.display.template("choose")(options));
-					$("body").append(dialog);
+					_target(options).append(dialog);
 
 					/* -- Set Event Handlers -- */
 					dialog.find("button.btn-primary").click(function() {

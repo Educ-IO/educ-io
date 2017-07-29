@@ -10,17 +10,11 @@ TODO LIST
 * Should second level commands (e.g. export on view) be inactive until they are 'possible'? How to declaratively encode this in terms of state?
 * Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc)
 * Get to 100 on PageSpeed Insights for all pages!
-* Sort out CSS loading for consistent visual performance - e.g. not glitchy load display!
 * Wrap Un-Authenticated Sheets Access in Google Javascript files
-* Loader Screwing Up under CPU load??? Ironically.
-* Why does Upgrade Alert Sometimes Appear?
 * Large Table Render Performance
-* Visual Sizing BUG with Loader (overspills?)
-* Progressive Render Experience
-* Convert APP Metadata to Arrays rather than split comma arrays
-* Structure Async Loading of Resources, including polyfills for IOS etc
-* Set no-cors on Fetch for Service Worker / particular 
+
 * Gracefully handle the .map issue for injected async/fetched CSS <-- Relative path at end of Bootstrap CSS (e.g. /*# sourceMappingURL=bootstrap.min.css.map */)
+* Namespace whole App within single window variable to prevent variable bleed
 
 #### View
 
@@ -29,6 +23,15 @@ TODO LIST
 
 Complete
 --------
+* Improve Font Handling <-- DONE
+* Progressive Render Experience / Sort out CSS loading for consistent visual performance - e.g. not glitchy load display! <-- DONE
+* Can update alert appear without a forced refresh? <-- Resolved with 5-sec delayed call
+* Why does Upgrade Alert Sometimes Appear then get hidden! <-- Resolved
+* Loader Screwing Up under CPU load??? Ironically. <-- Fixed with simplified loader
+* Set no-cors on Fetch for Service Worker / particular Google JSAPI
+* Structure Async Loading of Resources, including polyfills for IOS etc
+* Convert APP Metadata to Arrays rather than split comma arrays
+* Visual Sizing BUG with Loader (overspills?)
 * Handle data load on tab show event, rather than click
 * Update spinner to do highlight colour shades
 * Can we upload an HTML file to Google Drive and convert it to a Doc for sharing etc? <-- YES
@@ -38,4 +41,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-07-21
+ᕕ( ᐛ )ᕗ JD ♑ - 2017-07-29

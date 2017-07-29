@@ -97,6 +97,9 @@ App = function() {
 					}, 100);
 				});
 
+				_display.find(".collapse").on("shown.bs.collapse", function(e) {
+					$(e.target).find("input").first().focus();
+				});
 				/* -- Set Sort Handlers -- */
 				/*  simplesort('name').data() */
 
