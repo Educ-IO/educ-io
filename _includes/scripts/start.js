@@ -2,6 +2,7 @@
 	
 	const inject = (function(i,s,o,g,r,a,m) {
   	a=s.createElement(o);
+		a.setAttribute("data-src", g.url);
   	m=s.getElementsByTagName(o)[0];
   	a.appendChild(s.createTextNode(g.text));
   	a.onload=r(g);
@@ -35,10 +36,10 @@
 		inputs.forEach(input => deferreds.push(
 			window.fetch(input).then(res => {
 				var is_css = !!input.match(/(\.|\/)css($|\?\S+)/gi);
-				return [res.text(), is_css];
+				return [res.text(), is_css, input];
 			}).then(promises => {
 				return Promise.all(promises).then(resolved => {
-					resources.push({ text: resolved[0], css: resolved[1]});
+					resources.push({ text: resolved[0], css: resolved[1], url: resolved[2]});
 				});
 			})
 		));

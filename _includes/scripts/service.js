@@ -121,28 +121,51 @@ var register_Worker = function() {
 
       e = e || window.event;
 
-      if (e.ctrlKey && e.altKey && e.keyCode == 82) {
+      if (e.ctrlKey && e.altKey) {
+        
+        var k = e.which || e.keyCode;
+        
+        if (k == 82 || k == 76) {
+          
+          if (window.global) try {
+            window.global.interact.busy();
+          } catch (e) {}
 
-        /* CTRL-ALT-R --> Force Cache Refresh and then reload */
-
-        if (window.global) try {
-          window.global.interact.busy();
-        } catch (e) {}
-
-        /* Pass request through to relevant service worker */
-        navigator.serviceWorker.getRegistration(window.location.pathname).then(
-          r => {
-            if (r && r.active) _message(r.active, "refresh").then(
-              m => {
-                if (m == "reload") window.location.reload();
+          var _clear = function() {
+            if (window.global) window.global.interact.busy({
+              clear: true
+            });
+          };
+          
+          if (k == 82) {
+            
+            /* CTRL-ALT-R --> Force Cache Refresh and then reload */
+            navigator.serviceWorker.getRegistration(window.location.pathname).then(
+              r => {
+                if (r && r.active) _message(r.active, "refresh").then(
+                  m => {
+                    if (m == "reload") window.location.reload();
+                  }
+                );
               }
-            );
+            ).catch(_clear);
+            
+          }  else if (k == 76) {
+            
+            /* CTRL-ALT-L --> List Cache Objects */
+            navigator.serviceWorker.getRegistration(window.location.pathname).then(
+              r => {
+                if (r && r.active) _message(r.active, "list-cache-items").then(
+                  m => {
+                    _clear();
+                  }
+                );
+              }
+            ).catch(_clear);
+            
           }
-        ).catch(function() {
-          if (window.global) window.global.interact.busy({
-            clear: true
-          });
-        });
+          
+        }
 
       }
     };

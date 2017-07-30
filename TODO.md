@@ -12,7 +12,6 @@ TODO LIST
 * Get to 100 on PageSpeed Insights for all pages!
 * Wrap Un-Authenticated Sheets Access in Google Javascript files
 * Large Table Render Performance
-
 * Gracefully handle the .map issue for injected async/fetched CSS <-- Relative path at end of Bootstrap CSS (e.g. /*# sourceMappingURL=bootstrap.min.css.map */)
 * Namespace whole App within single window variable to prevent variable bleed
 
@@ -41,4 +40,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-07-29
+ᕕ( ᐛ )ᕗ JD ♑ - 2017-07-30

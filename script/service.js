@@ -144,24 +144,26 @@ var cache_Promises = function(now, cache) {
         }
         var font = !!url.href.match(/^https:\/\/fonts\.googleapis\.com\/css/gi);
         if (font) {
-          response.text().then(function (text) {
+          response.clone().text().then(function (text) {
             var css_regex = /url\(['"\s]*(\S+)['"\s]*\)/gi;
             var css_urls;
             while ((css_urls = css_regex.exec(text)) !== null) {
               if (css_urls && css_urls[1]) {
                 var css_url = new URL(css_urls[1], location.href);
+                css_url.search += (css_url.search ? "&" : "?") + "timestamp=" + now;
                 fetch(new Request(css_url, {mode: fetch_mode ? fetch_mode : "cors"})).then(function(css_response) {
                   if (css_response.status < 400) {
-                    return cache.put(css_url, css_response);
+                    cache.put(css_response.url.split("?")[0], css_response);
                   }
                 });
               }
             }
           });
         }
-        return cache.put(url, response);
+        return cache.put(fetch_url.url, response);
       }).catch(function(e) {
         if (!fetch_mode)  {
+           console.error("Failed to cache (trying no-cors) " + fetch_url.url + ":", e);  
           return _fetch(url, "no-cors");
         } else {
           console.error("Failed to cache " + fetch_url.url + ":", e);  
@@ -170,7 +172,7 @@ var cache_Promises = function(now, cache) {
     };
     _fetch(url, fetch_url.mode);
   });
-}
+};
 
 // == Install Handler == //
 self.addEventListener("install", function(event) {
@@ -184,6 +186,7 @@ self.addEventListener("install", function(event) {
       return Promise.all(cache_Promises(now, cache)).then(function() {console.log("Completed Pre-Fetch")});
     }).catch(function(e) {console.error("Failed to Pre-Catch:", e)})
   );
+  
 });
 
 // == Active Handler == //
@@ -249,6 +252,7 @@ self.addEventListener("fetch", function(event) {
 
 // == Message Handler == //
 self.addEventListener("message", function(event) {
+  
   if (event.data.action == "update") {
     
     self.skipWaiting().then(function() {
@@ -270,6 +274,24 @@ self.addEventListener("message", function(event) {
       });
     }).catch(function(e) {
       console.error("Failed to Refresh Cache:", e)
+    });
+  
+  } else if (event.data.action == "list-cache-items") {
+    
+    caches.keys().then(function(names) {
+      console.log("FOUND CACHES:", names);
+      return Promise.all(
+        names.map(function(name) {
+          console.log("OPENING CACHE:", name);
+          caches.open(name).then(function(cache) {
+            cache.keys().then(function(keys) {
+              console.log("GOT CACHE KEYS:", keys);
+            });
+          });
+        })
+      );
+    }).then(function() {event.ports[0].postMessage("done");}).catch(function(e) {
+      console.error("Failed to Enumerate Cache:", e)
     });
     
   }

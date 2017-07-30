@@ -1,4 +1,4 @@
-{% if page.scopes.google or site.data.apps[page.app].scopes.google or page.scopes.github == true or site.data.apps[page.app].scopes.github or page.version or page.app %}<script type="text/javascript" charset="utf-8">
+{% if page.scopes.google or site.data.apps[page.app].scopes.google or page.scopes.github == true or site.data.apps[page.app].scopes.github or page.version or page.app %}<script type="text/javascript" charset="utf-8" data-src="setup">
   {% if page.scopes.google or site.data.apps[page.app].scopes.google %}
     const GOOGLE_KEY = "{{ site.api_keys.google_general }}";
     const GOOGLE_CLIENT_ID = "{{ site.api_keys.google_oauth }}";
@@ -30,4 +30,3 @@
   {% endif %}
   
 </script>{% endif %}
-{% comment %}Set Up Versions, Google and Github API Scopes / IDs (if applicable){% endcomment %}
