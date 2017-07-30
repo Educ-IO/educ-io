@@ -413,6 +413,22 @@ handlebars:
       integrity: sha256-5Ud5lebnfqDOArqCr7p6w5KxX1dwXFcqiBw25dhhYFI=
       crossorigin: anonymous
 
+fontface:
+  name: Font Face Observer
+  url: https://cdnjs.com/libraries/fontfaceobserver
+  project: https://fontfaceobserver.com/
+  version: 2.0.13
+  license: BSD-3-Clause
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/fontfaceobserver/2.0.13/fontfaceobserver.standalone.js
+      integrity: sha256-zY8Pmq4BuvlVm12gHfQKRy92UAZcWNqQzBS29Pcdlqk=
+      crossorigin: anonymous
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/fontfaceobserver/2.0.13/fontfaceobserver.standalone.js
+      integrity: sha256-zY8Pmq4BuvlVm12gHfQKRy92UAZcWNqQzBS29Pcdlqk=
+      crossorigin: anonymous
+
 fetch:
   name: Fetch-Polyfill
   url: https://cdnjs.com/libraries/fetch

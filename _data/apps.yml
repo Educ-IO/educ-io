@@ -7,6 +7,8 @@ view:
       load: first
     - name: tether
       load: first
+    - name: fontface
+      load: first
     - name: hello
       load: last
     - name: urlparser

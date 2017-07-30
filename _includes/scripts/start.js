@@ -57,8 +57,8 @@
 
 	var finalise = function(result) {
 		if (result === true) {
-				$(".font-sensitive").removeClass("font-sensitive");
 				$(".css-sensitive").removeClass("css-sensitive");
+				if (!window.FontFaceObserver) $(".font-sensitive").removeClass("font-sensitive");
 		}
 	};
 	
@@ -66,6 +66,22 @@
 		if (result === true) {
 			if (window.templates) templates();
 			register_Worker();
+			if (window.FontFaceObserver) {
+				
+				var font_promises = [];
+				for (var i = 0, f = FONTS.length; i < f; i++) {
+					for (var j = 0, w = FONTS[i].weights.length; j < w; j++) {
+						font_promises.push(new window.FontFaceObserver(FONTS[i].name, {weight: FONTS[i].weights[j]}).load());
+					}
+				}
+				
+				Promise.all(font_promises).then(function(){
+					$(".font-sensitive").removeClass("font-sensitive");
+				}).catch(function(e) {
+					$(".font-sensitive").removeClass("font-sensitive").addClass("font-failed");
+				});
+				
+			}
 			if (window.start) start();	
 		}
 		if (window.LOAD_AFTER) {

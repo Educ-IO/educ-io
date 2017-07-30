@@ -122,13 +122,13 @@ var CURRENT_CACHES = {
 {% endfor %}
 {% assign imports = imports | uniq %}
 
-// == Caching Paths are Relative to the Script == //
+{% assign fonts = "" %}{% for font in site.data.fonts %}{% if forloop.first %}{% assign fonts = fonts | append: font[1].safe | append: ":" | append: font[1].weights %}{% else %}{% assign fonts = fonts | append: "|" | append: font[1].safe | append: ":" | append: font[1].weights %}{% endif %}{% endfor %}
 var FONT_URL = "https://fonts.googleapis.com/css";
 var URLS = [
   {% for page in site.pages %}{% if page.layout != "app" and page.permalink != "/service.js" %}{url : "{{ page.permalink }}"},{% endif %}{% endfor %}
   {% for app in site.data.apps %}{% if app[1].ext != true %}{url : "{{ app[1].link }}"},{% endif %}{% endfor %}
   {% for import in imports %}{% if jekyll.environment == "debug" %}{% for import_script in site.data.imports[import].dev %}{ {% if import_script.mode %}mode : "{{ import_script.mode }}", {% endif %}url : "{{ import_script.url }}" },{% endfor %}{% else %}{% for import_script in site.data.imports[import].prod %}{ {% if import_script.mode %}mode : "{{ import_script.mode }}", {% endif %}url : "{{ import_script.url }}" },{% endfor %}{% endif %}{% endfor %}
-  {url : FONT_URL + "?family={{ site.fonts }}"}
+  {url : FONT_URL + "?family={{ fonts }}"}
 ]
 
 // -- Get Caching Promises -- //

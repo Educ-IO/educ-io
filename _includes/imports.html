@@ -16,7 +16,16 @@
 		{% endfor %}
 	{% endif %}
 
+	{% for font in site.data.fonts %}{% if forloop.first %}{% assign fonts = fonts | append: font[1].safe | append: ":" | append: font[1].weights %}{% else %}{% assign fonts = fonts | append: "|" | append: font[1].safe | append: ":" | append: font[1].weights %}{% endif %}{% endfor %}
 	<script type="text/javascript" charset="utf-8" data-src="imports">
+		var FONTS = [{% for font in site.data.fonts %
+		{% assign font_weights = "" | split: "" %}
+			{
+				name: "{{ font[0] }}",
+				weights: [{{ font[1].weights }}]
+			},
+		{% endfor %}];
+		 
 		{% assign first_imports = imports | where_exp: "item", "item.load == 'first'" | map: "name" %}{% assign last_imports = imports | where_exp: "item", "item.load == 'last'" | map: "name" %}{% assign after_imports = imports | where_exp: "item", "item.load == 'after'" | map: "name" %}
 		{% if first_imports and first_imports.size > 0 %}var LOAD_FIRST = [
 			{% for import in first_imports %}{% if jekyll.environment == "debug" %}{% for import_url in site.data.imports[import].dev %}"{{ import_url.url }}",{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %}"{{ import_url.url }}",{% endfor %}{% endif %}{% endfor %}
@@ -25,7 +34,7 @@
 			{% for import in last_imports %}{% if jekyll.environment == "debug" %}{% for import_url in site.data.imports[import].dev %}"{{ import_url.url }}",{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %}"{{ import_url.url }}",{% endfor %}{% endif %}{% endfor %}
 		];{% endif %}
 		var LOAD_AFTER = [{% if after_imports and after_imports.size > 0 %}{% for import in after_imports %}{% if jekyll.environment == "debug" %}{% for import_url in site.data.imports[import].dev %}"{{ import_url.url }}",{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %}"{{ import_url.url }}",{% endfor %}{% endif %}{% endfor %}{% endif %}
-			"https://fonts.googleapis.com/css?family={{ site.fonts }}"
+			"https://fonts.googleapis.com/css?family={{ fonts }}"
 		];
 		
 	</script>
@@ -46,14 +55,14 @@
 {% else %}
 	<script type="text/javascript" charset="utf-8" data-src="imports">
 	
-		var LOAD_AFTER = ["https://fonts.googleapis.com/css?family={{ site.fonts }}"];
+		var LOAD_AFTER = ["https://fonts.googleapis.com/css?family={{ fonts }}"];
 
 	</script>
 
 {% endif %}
 
 <noscript>
-	<link rel="stylesheet" href="//fonts.googleapis.com/css?family={{ site.fonts }}">
+	<link rel="stylesheet" href="//fonts.googleapis.com/css?family={{ fonts }}">
 	{% if imports %}
 		{% for import in imports %}
 			{% if site.data.imports[import.name].type == "css" %}
