@@ -43,6 +43,7 @@ fonts:								"Cabin+Sketch:400,700"
 # Extras
 analytics:
   id:                 "UA-53673057-5"
+  scroll:							true
   
 api_keys:
   google_general:			"AIzaSyDB4zqDt8WB-DgimvEiCDrSvi8BTaZftxY"
