@@ -2,9 +2,9 @@
 
 	{% include meta.html %}
 
+	{% if page.app %}<noscript><meta http-equiv="refresh" content="0; URL=/requirements"/></noscript>{% endif %}
+	
 	<title>{% if page.title %} {{ page.title }} | {{ site.title }} {% else %} {{ site.title }} {% endif %}</title>
-
-	{% include style.html %}
 
 	{% include icons.html %}
 
@@ -13,5 +13,7 @@
 	{% include scripts.html %}
 
 	{% include imports.html %}
+	
+	{% include style.html %}
 
 </head>

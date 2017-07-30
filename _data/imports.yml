@@ -4,6 +4,7 @@ localstorage:
   project: https://github.com/mortzdk/localStorage
   version: 2.0.1
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/localStorage/2.0.1/localStorage.min.js
       integrity: sha256-hrbB6Rx4BnuBnpD/19isEnVQuVWTs1FAnwvAmqcw2cw=
@@ -19,6 +20,7 @@ jsdiff:
   project: https://github.com/kpdecker/jsdiff
   version: 3.2.0
   license: BSD-3-Clause
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.2.0/diff.min.js
       integrity: sha256-9rZeWIescmaMzN+OSwsGJZtB1euH9s+mnh9u9/opnYw=
@@ -34,6 +36,7 @@ jshashes:
   project: https://github.com/h2non/jshashes
   version: 1.0.7
   license: New-BSD
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/jshashes/1.0.7/hashes.min.js
       integrity: sha256-H7hBuovONQQrY3zESq6MXx+b5Q3ovOY03taLJUaMauk=
@@ -49,6 +52,7 @@ screenfull:
   project: https://github.com/sindresorhus/screenfull.js
   version: 3.2.2
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.2.2/screenfull.min.js
       integrity: sha256-BBEvgz7Ny1lJEOu3fKSGrYNkfhfoqjHu9RppGdNeTpI=
@@ -64,6 +68,7 @@ localforage:
   project: https://github.com/mozilla/localForage
   version: 1.5.0
   license: Apache-2.0
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.5.0/localforage.min.js
       integrity: sha256-kAq48olJYgx7dR+P9KbS+Q1OjM1vNGUSFDjQjcM0lKA=
@@ -79,6 +84,7 @@ hammer:
   project: http://eightmedia.github.com/hammer.js
   version: 2.0.8
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js
       integrity: sha256-eVNjHw5UeU0jUqPPpZHAkU1z4U+QFBBY488WvueTm88=
@@ -94,6 +100,7 @@ urlparser:
   project: https://github.com/allmarkedup/purl
   version: 2.3.1
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/jquery-url-parser/2.3.1/purl.min.js
       integrity: sha256-Ok1mfwLL3kRzz/1DUpgwsieObDr+pGVBAKaFxeyXeNk=
@@ -109,6 +116,7 @@ hello:
   project: https://github.com/MrSwitch/hello.js
   version: 1.15.1
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.15.1/hello.min.js
       integrity: sha256-Ik0hWOywX7ASte0Zm3xa8aMqeFTn2BMB/julZsMRvBI=
@@ -124,6 +132,7 @@ showdown:
   project: https://github.com/showdownjs/showdown
   version: 1.7.1
   license: BSD-3-Clause
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.1/showdown.min.js
       integrity: sha256-cgmBpa41tevGSToVfdP9vzuJ5H5WsT12vZizDOlMSFU=
@@ -139,6 +148,7 @@ jquery:
   project: http://jquery.com/
   version: 3.2.1
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
       integrity: sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=
@@ -154,6 +164,7 @@ tether:
   project: https://github.com/HubSpot/tether
   version: 1.4.0
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js
       integrity: sha256-gL1ibrbVcRIHKlCO5OXOPC/lZz/gpdApgQAzskqqXp8=
@@ -163,27 +174,13 @@ tether:
       integrity: sha256-jVfFb7AbGi7S/SLNl8SB4/MYaf549eEs+NlIWMoARHg=
       crossorigin: anonymous
 
-bootstrap:
-  name: Bootstrap
-  url: https://cdnjs.com/libraries/twitter-bootstrap
-  project: http://getbootstrap.com/
-  version: 4.0.0-alpha.6
-  license: MIT
-  prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js
-      integrity: sha256-+kIbbrvS+0dNOjhmQJzmwe/RILR/8lb/+4+PUNVW09k=
-      crossorigin: anonymous
-  dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.js
-      integrity: sha256-O80B9+k8kADyLffStFEQZnTxAU91ZryGbUeKwxO0t3M=
-      crossorigin: anonymous
-
 bootstrap-css:
   name: Bootstrap
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
   version: 4.0.0-alpha.6
   license: MIT
+  type: css
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css
       integrity: sha256-rr9hHBQ43H7HSOmmNkxzQGazS/Khx+L8ZRHteEY1tQ4=
@@ -199,6 +196,7 @@ bootstrap-js:
   project: http://getbootstrap.com/
   version: 4.0.0-alpha.6
   license: MIT
+  type: js
   prod:
     - script: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js
       url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js
@@ -216,6 +214,7 @@ loki:
   project: http://lokijs.org
   version: 1.5.0
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/lokijs/1.5.0/lokijs.min.js
       integrity: sha256-C5eRRjE+2mrxY0mnF95Qu6A/JXddwrgg9QMRZ+Ktxhc=
@@ -232,6 +231,7 @@ clusterize:
   project: https://clusterize.js.org/
   version: 0.17.6
   license: GPLv3
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.min.js
       integrity: sha256-v56TI+wd9PWTvwqrpGaluF6GulSCspBFwQKAcVpXGZc=
@@ -247,6 +247,7 @@ uuid:
   project: https://broofa.github.io/node-uuid/
   version: 1.4.8
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js
       integrity: sha256-h7PiJxtxsf7+VkAGN6N+8/0qZrhK7oYJc/pguDnYJi4=
@@ -262,6 +263,7 @@ yaml:
   project: https://github.com/nodeca/js-yaml
   version: 3.8.4
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.8.4/js-yaml.min.js
       integrity: sha256-0fVOf/R0H784sL7gcJSJo2mOapjzsIVdW0Ep3CuOKrg=
@@ -277,6 +279,7 @@ ace:
   project: http://ace.ajax.org/
   version: 1.2.8
   license: BSD
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js
       integrity: sha256-198+Grx89n2ofVwo1LWnNTXxIQZIPZJURv+K73cJ93U=
@@ -346,6 +349,7 @@ xlsx:
   project: https://github.com/SheetJS/js-xlsx
   version: 0.10.8
   license: Apache-2.0
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.full.min.js
       integrity: sha256-TuW/DAcsShnnH448nFucXzahCo5w59DYjX3DNpbi7kU=
@@ -367,6 +371,7 @@ download:
   project: https://github.com/rndme/download
   version: 0.10.8
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.7/download.min.js
       integrity: sha256-jO7zIwKMJTUQkptQfQMhu+uL4erqSzAd0wUfueDCuNI=
@@ -382,6 +387,7 @@ filesaver:
   project: https://github.com/eligrey/FileSaver.js/
   version: 1.3.3
   license: MIT
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js
       integrity: sha256-FPJJt8nA+xL4RU6/gsriA8p8xAeLGatoyTjldvQKGdE=
@@ -397,6 +403,7 @@ handlebars:
   project: http://handlebarsjs.com/
   version: 4.0.10
   license: mit
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.runtime.min.js
       integrity: sha256-PGAt5UMOl8/WYTv2mCI/uKmVbQBP6VP++Jp8coXnxjY=
@@ -412,6 +419,7 @@ fetch:
   project: https://github.com/github/fetch
   version: 2.0.3
   license: mit
+  type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js
       integrity: sha256-aB35laj7IZhLTx58xw/Gm1EKOoJJKZt6RY+bH1ReHxs=
@@ -424,6 +432,7 @@ fetch:
 google:
   name: Google-Javascript-API
   url: https://developers.google.com/loader/
+  type: js
   css: 
     - _picker
   prod:

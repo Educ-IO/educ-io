@@ -4,6 +4,7 @@ title: Requirements
 permalink: /requirements/
 style: _page
 lead: Technical Requirements for using these web-apps, e.g. Browser etc
+script_safe: true
 scripts: service
 imports:
 - name: jquery

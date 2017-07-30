@@ -49,4 +49,24 @@
 		var LOAD_AFTER = ["https://fonts.googleapis.com/css?family={{ site.fonts }}"];
 
 	</script>
+
 {% endif %}
+
+<noscript>
+	<link rel="stylesheet" href="//fonts.googleapis.com/css?family={{ site.fonts }}">
+	{% if imports %}
+		{% for import in imports %}
+			{% if site.data.imports[import.name].type == "css" %}
+				{% if jekyll.environment == "debug" %}
+					{% for import_css in site.data.imports[import.name].dev %}
+						<link rel="stylesheet" href="{{ import_css.url }}"{% if import_css.integrity %} integrity="{{ import_css.integrity }}"{% endif %}{% if import_css.crossorigin %} crossorigin="{{ import_css.crossorigin }}"{% endif %} />
+					{% endfor %}
+				{% else %}
+					{% for import_css in site.data.imports[import.name].prod %}
+						<link rel="stylesheet" href="{{ import_css.url }}"{% if import_css.integrity %} integrity="{{ import_css.integrity }}"{% endif %}{% if import_css.crossorigin %} crossorigin="{{ import_css.crossorigin }}"{% endif %} />
+					{% endfor %}
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+</noscript>
