@@ -10,7 +10,9 @@
     __f = true;
   };
   if (window.addEventListener) {
-    {% if site.analytics.scroll and page.app == "" %}
+    {% if page.app %}
+    window.addEventListener("load", __a, false);
+    {% elsif site.analytics.scroll %}
     window.addEventListener("scroll", function() {if ((document.documentElement.scrollTop != 0 && __f === false) || (document.body.scrollTop != 0 && __f === false)) __a();}, true);
     {% else %}
     window.addEventListener("load", __a, false);
