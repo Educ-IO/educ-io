@@ -10,10 +10,14 @@ TODO LIST
 * Should second level commands (e.g. export on view) be inactive until they are 'possible'? How to declaratively encode this in terms of state?
 * Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc)
 * Get to 100 on PageSpeed Insights for all pages!
-* Wrap Un-Authenticated Sheets Access in Google Javascript files
+* Wrap Un-Authenticated Sheets Access in Google API Javascript file
 * Large Table Render Performance
 * Gracefully handle the .map issue for injected async/fetched CSS <-- Relative path at end of Bootstrap CSS (e.g. /*# sourceMappingURL=bootstrap.min.css.map */)
 * Namespace whole App within single window variable to prevent variable bleed
+* Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view").
+
+Apps
+----
 
 #### View
 

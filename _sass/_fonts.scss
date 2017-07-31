@@ -1,8 +1,7 @@
 h1, h2, h3, h4, h5, h6, .navbar-brand, a.navbar-brand  {
 	letter-spacing: $font-spacing-heading;
-	font-family: $font-heading;
+	font-family: $font-heading, apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	font-weight: $font-weight-heading;
-	font-display: block;
 	color: $colour-highlight !important;
 }
 

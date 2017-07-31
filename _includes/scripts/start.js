@@ -5,12 +5,23 @@
 		a.setAttribute("data-src", g.url);
   	m=s.getElementsByTagName(o)[0];
   	a.appendChild(s.createTextNode(g.text));
-  	a.onload=r(g);
+		a.onload=r(g);
   	if (m) {
     	m.parentNode.insertBefore(a, m);
   	} else {
     	s.head.appendChild(a);
   	}
+		if (g.css === true && g.fonts === true) {
+		try {
+			for (var j=0; j < a.sheet.cssRules.length; j++) {
+				if (a.sheet.cssRules[j].type == 5) {
+					 a.sheet.cssRules[j].style.fontDisplay = "block";
+				}
+			}
+			} catch(e) {
+				console.error("ERROR SETTING FONT DISPLAY:", e);
+			}
+    }
 	});
 	
 	const include = (function(url, type) {
@@ -36,10 +47,11 @@
 		inputs.forEach(input => deferreds.push(
 			window.fetch(input).then(res => {
 				var is_css = !!input.match(/(\.|\/)css($|\?\S+)/gi);
-				return [res.text(), is_css, input];
+				var is_fonts = !!input.match(/^https:\/\/fonts\.googleapis\.com\/css/gi);
+				return [res.text(), input, is_css, is_fonts];
 			}).then(promises => {
 				return Promise.all(promises).then(resolved => {
-					resources.push({ text: resolved[0], css: resolved[1], url: resolved[2]});
+					resources.push({ text: resolved[0], url: resolved[1], css: resolved[2], fonts: resolved[3]});
 				});
 			})
 		));
@@ -79,10 +91,11 @@
 					$(".font-sensitive").removeClass("font-sensitive");
 				}).catch(function(e) {
 					$(".font-sensitive").removeClass("font-sensitive").addClass("font-failed");
+					console.error(e);
 				});
 				
 			}
-			if (window.start) start();	
+			if (window.start) window.start();	
 		}
 		if (window.LOAD_AFTER) {
 			controller(window.LOAD_AFTER).then(() => {finalise(true);}).catch(e => {console.error(e); finalise(true);});
@@ -137,15 +150,3 @@
 	}
 	
 })();
- 
-
-
-
-
-
-
-	
-	 
-	
-	
-		
