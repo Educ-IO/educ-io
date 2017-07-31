@@ -3,5 +3,5 @@ layout: app
 app: reflect
 title: Reflect
 permalink: /reflect/
-colour: #e06666
+colour: e06666
 ---

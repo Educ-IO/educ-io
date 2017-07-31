@@ -4,8 +4,8 @@
 
 <style type="text/css">
   {% capture _scss_ %}
-    @import "_variables";	
-    {% if page.colour %}$colour-highlight: {{ page.colour }};{% else %}$colour-highlight: #af0ad9;{% endif %}
+    @import "_variables";
+    {% if page.colour %}$colour-highlight: #{{ page.colour }};{% else %}$colour-highlight: #af0ad9;{% endif %}
     @import "_common";
     @import "_fonts";
     {% if page.style %}@import "{{ page.style }}";{% endif %}	

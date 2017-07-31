@@ -1,6 +1,3 @@
----
-permalink: /manifest.json
----
 {
  "short_name": "{{ site.title }}",
  "name":"{{ site.title }}",

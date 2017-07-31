@@ -1,12 +1,12 @@
 Display = function() {
 	
-	/* -- Returns an instance of Display if required -- */
+	/* <!-- Returns an instance of Display if required --> */
   if (!(this instanceof Display)) {return new Display();}
 	
-	/* -- Internal Variables -- */
-  /* -- Internal Variables -- */
+	/* <!-- Internal Variables --> */
+  /* <!-- Internal Variables --> */
 	
-	/* -- Internal Functions -- */
+	/* <!-- Internal Functions --> */
   var _template = function(name) {
 			
 		if (Handlebars.templates === undefined || Handlebars.templates[name] === undefined) {
@@ -25,15 +25,15 @@ Display = function() {
 		}
 		
 	};
-	/* -- Internal Functions -- */
+	/* <!-- Internal Functions --> */
 	
-	/* -- External Visibility -- */
+	/* <!-- External Visibility --> */
   return {
 
-    /* -- External Functions -- */
+    /* <!-- External Functions --> */
     initialise : function() {
 			
-			/* -- Return for Chaining -- */
+			/* <!-- Return for Chaining --> */
 			return this;
 			
     },
@@ -48,11 +48,11 @@ Display = function() {
 		*/
 		doc : function (options) {
 
-			/* -- Ensure we have a target object, and that it is wrapped in JQuery -- */
+			/* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
 			var _target = (options && options.target) ? options.target : (global.container ? global.container : $("body"));
 			if (_target instanceof jQuery !== true) _target = $(_target);
 			
-      /* -- Clear Target if required -- */
+      /* <!-- Clear Target if required --> */
       if (options.clear === true) _target = _target.empty();
       
 			var _template = $("#" + options.name)[0].innerText;
@@ -81,8 +81,8 @@ Display = function() {
 			}
 		}
 		
-   /* -- External Functions -- */
+   /* <!-- External Functions --> */
     
 	};
-  /* -- External Visibility -- */
+  /* <!-- External Visibility --> */
 };

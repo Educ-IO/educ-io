@@ -1,12 +1,12 @@
-/* -- Global Variables -- */
+/* <!-- Global Variables --> */
 var global = {
 	single_Page : window.navigator.standalone || navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i),
 	interact : Interact().initialise(),
 	display : Display().initialise(),
 };
-/* -- Global Variables -- */
+/* <!-- Global Variables --> */
 
-/* -- Lightweight Hello Modules -- */
+/* <!-- Lightweight Hello Modules --> */
 var setup = function(hello) {
 	"use strict";
 	
@@ -44,22 +44,22 @@ var setup = function(hello) {
 	});
 
 };
-/* -- Lightweight Hello Modules -- */
+/* <!-- Lightweight Hello Modules --> */
 
 var start = function() {
 
 	setup(hello);
 	
-	/* -- Enable Tooltips -- */
+	/* <!-- Enable Tooltips --> */
 	$("[data-toggle='tooltip']").tooltip();
 	
-	/* -- Enable Closing Bootstrap Menu after Action -- */
+	/* <!-- Enable Closing Bootstrap Menu after Action --> */
 	var navMain = $(".navbar-collapse");
   navMain.on("click", "a:not([data-toggle])", null, function () {
 		navMain.collapse("hide");
  	});
 	
-	/* -- Auth Triggers & Functions -- */
+	/* <!-- Auth Triggers & Functions --> */
 	var google_SignIn = function() {
 		hello.login("google", {
 			force: false, display : (global.single_Page || global.flags.page()) ? "page" : "popup",
@@ -89,7 +89,7 @@ var start = function() {
 		
 		if (!global.google) {
 			
-			/* -- Initialise Google Provider -- */
+			/* <!-- Initialise Google Provider --> */
 			global.google = Google_API().initialise(auth.access_token, auth.token_type, auth.expires, 
 				(function(s) {
 					return function() {
@@ -110,7 +110,7 @@ var start = function() {
 				})(encodeURIComponent(GOOGLE_SCOPES.join(" ")))
 			);
 			
-			/* -- Get User Info for Display -- */
+			/* <!-- Get User Info for Display --> */
 			global.google.me().then(function(user) {
 
 				/* Disable and Hide the Sign in */
@@ -121,7 +121,7 @@ var start = function() {
 				$("#sign_out button").on("click", function(e) {e.preventDefault(); google_SignOut();});
 				$("#sign_out").show();
 				
-				/* -- Route Authenticated -- */
+				/* <!-- Route Authenticated --> */
 				global.app.route(true);
 	
 				window.onhashchange = function() {
@@ -136,7 +136,7 @@ var start = function() {
 	
 	var google_LoggedOut = function() {
 		
-		/* -- Delete Objects dependent on being Logged in -- */
+		/* <!-- Delete Objects dependent on being Logged in --> */
 		delete global.google;
 		
 		/* Disable and Hide the Sign Out */
@@ -148,15 +148,15 @@ var start = function() {
 				
 		$(".auth-only").hide();
 
-		/* -- Route Un-Authenticated -- */
+		/* <!-- Route Un-Authenticated --> */
 		global.app.route(false);
 		
 		window.onhashchange = null;
 		
 	};
-	/* -- Auth Triggers -- */
+	/* <!-- Auth Triggers --> */
 	
-	/* -- Auth Handlers -- */
+	/* <!-- Auth Handlers --> */
 	hello.on("auth.login", function (auth) {
 		
 		if (auth.network == "google") {
@@ -176,31 +176,31 @@ var start = function() {
 		}
 
 	});
-	/* -- Auth Handler -- */
+	/* <!-- Auth Handler --> */
 
-	/* -- Get Global Flags -- */
+	/* <!-- Get Global Flags --> */
 	Flags().initialise().then(function(flags) {
 			
 		global.flags = flags;
 			
-		/* -- Append Content Holder -- */
+		/* <!-- Append Content Holder --> */
 		global.container = $(".content");
 
 		var _start = function() {
 
-			/* -- Set Up Hello.js Auth-Flow -- */
+			/* <!-- Set Up Hello.js Auth-Flow --> */
 			hello.init({
 				google : GOOGLE_CLIENT_ID,
 			}, {
 				redirect_uri : "/redirect/",
 				/* redirect_uri : (global.single_Page || global.flags.page()) ? global.flags.full() : global.flags.full("redirect"), */
 			});
-			/* -- Set Up Hello.js Auth-Flow -- */
+			/* <!-- Set Up Hello.js Auth-Flow --> */
 
-			/* -- Initialise App -- */
+			/* <!-- Initialise App --> */
 			global.app = App().initialise();
 
-			/* -- Start Auth Flow -- */
+			/* <!-- Start Auth Flow --> */
 			try {
 				var g = hello("google").getAuthResponse();
 
@@ -235,7 +235,7 @@ var start = function() {
 			} catch(e) {
 				global.flags.error("Google Auth Flow", e);
 			}
-			/* -- Start Auth Flow -- */
+			/* <!-- Start Auth Flow --> */
 
 		};
 

@@ -1,4 +1,4 @@
-/* -- Is Null -- */
+/* <!-- Is Null --> */
 if (!Array.prototype.isNull) {
   Array.prototype.isNull = function() {
     for (var i = 0, l = this.length; i < l; i += 1) if (this[i] !== null && this[i] !== undefined) return false;
@@ -6,7 +6,7 @@ if (!Array.prototype.isNull) {
   };
 }
 
-/* -- Remove Nulls by Cleaning -- */
+/* <!-- Remove Nulls by Cleaning --> */
 if (!Array.prototype.clean) {
   Array.prototype.clean = function(all, reverse) {
     if (all === true) {

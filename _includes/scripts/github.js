@@ -1,13 +1,13 @@
 Github_API = function() {
 	
-	/* -- Returns an instance of App if required -- */
+	/* <!-- Returns an instance of App if required --> */
   if (!(this instanceof Github_API)) {return new Github_API();}
 	
-	/* -- Internal Variables -- */
+	/* <!-- Internal Variables --> */
 	var _api, _before, _paging, _after;
-  /* -- Internal Variables -- */
+  /* <!-- Internal Variables --> */
 	
-	/* -- Internal Functions -- */
+	/* <!-- Internal Functions --> */
 	var _get = function(url) {
 		
 		return new Promise(function(resolve, reject) {
@@ -106,18 +106,18 @@ Github_API = function() {
 		});
 		
 	};
-	/* -- Internal Functions -- */
+	/* <!-- Internal Functions --> */
 
-	/* -- External Visibility -- */
+	/* <!-- External Visibility --> */
   return {
 
-    /* -- External Functions -- */
+    /* <!-- External Functions --> */
     initialise : function(github_token, github_token_type, expires) {
 			
-			/* -- Set Up Scoped Variables -- */
+			/* <!-- Set Up Scoped Variables --> */
 			_api = "https://api.github.com";
 			
-			/* -- Before Ajax Call : Request Authorisation Closure -- */
+			/* <!-- Before Ajax Call : Request Authorisation Closure --> */
 			_before = (function(token, type) {
 				/* Authorization: token OAUTH-TOKEN" */
 				return function(a) {
@@ -126,7 +126,7 @@ Github_API = function() {
 				};
 			})(github_token, github_token_type);
 		
-			/* -- Parse Paging : From Request / Response Headers -- */
+			/* <!-- Parse Paging : From Request / Response Headers --> */
 			_paging = function(request, status) {
 				if (status == "success") {
 					var next_Page = request.getAllResponseHeaders().match(/<(.*)>; rel="next"/);
@@ -135,10 +135,10 @@ Github_API = function() {
 				return request;
 			};
 		
-			/* -- After Ajax Call : Do Nothing -- */
+			/* <!-- After Ajax Call : Do Nothing --> */
 			_after = function(request, status) {};
 			
-			/* -- Return for Chaining -- */
+			/* <!-- Return for Chaining --> */
 			return this;
 			
     },
@@ -195,7 +195,7 @@ Github_API = function() {
 			);
 		},
 		
-		/* -- Get Repos for the current user (don't pass parameter) or a named user -- */
+		/* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
 		repos : function(user) {
 			if (user) {
 				return _list(_api + "/users/" + user + "/repos", []);

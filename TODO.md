@@ -9,13 +9,13 @@ TODO LIST
 * Commands requiring Authentication (e.g. Open on View) should trigger auth-flow
 * Should second level commands (e.g. export on view) be inactive until they are 'possible'? How to declaratively encode this in terms of state?
 * Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc)
-* Get to 100 on PageSpeed Insights for all pages!
 * Wrap Un-Authenticated Sheets Access in Google API Javascript file
 * Large Table Render Performance
 * Gracefully handle the .map issue for injected async/fetched CSS <-- Relative path at end of Bootstrap CSS (e.g. /*# sourceMappingURL=bootstrap.min.css.map */)
 * Namespace whole App within single window variable to prevent variable bleed
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view").
 * Recents Menu item for Apps / Files
+* Minify Scripts?
 
 Apps
 ----
@@ -27,6 +27,8 @@ Apps
 
 Complete
 --------
+* Get to 100 on PageSpeed Insights for all pages! <-- DONE apart from annoying Google Scripts!
+* DEBUG flag to avoid registering Service Worker (for performance testing) <-- DONE
 * Improve Font Handling <-- DONE
 * Progressive Render Experience / Sort out CSS loading for consistent visual performance - e.g. not glitchy load display! <-- DONE
 * Can update alert appear without a forced refresh? <-- Resolved with 5-sec delayed call

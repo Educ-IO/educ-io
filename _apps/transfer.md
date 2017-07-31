@@ -3,5 +3,5 @@ layout: app
 app: transfer
 title: Transfer
 permalink: /transfer/
-colour: #e06666
+colour: e06666
 ---

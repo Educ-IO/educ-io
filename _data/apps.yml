@@ -24,14 +24,14 @@ view:
     - name: filesaver
       load: after
     - name: google
-      load: async
+      load: defer
   scripts: 
     - regex
     - arrays
     - flags
     - interact
     - display
-    - service
+    - register
     - google
     - apps/view
     - app
@@ -96,14 +96,14 @@ reflect:
     - name: filesaver
       load: after
     - name: google
-      load: async
+      load: defer
   scripts: 
     - regex
     - arrays
     - flags
     - interact
     - display
-    - service
+    - register
     - google
     - apps/reflect
     - app
@@ -152,7 +152,7 @@ folders:
     - flags
     - interact
     - display
-    - service
+    - register
     - google
     - apps/folders
     - app
@@ -202,7 +202,7 @@ transfer:
     - flags
     - interact
     - display
-    - service
+    - register
     - google
     - apps/transfer
     - app
@@ -252,7 +252,7 @@ markbooks:
     - flags
     - interact
     - display
-    - service
+    - register
     - google
     - apps/markbooks
     - app
@@ -302,7 +302,7 @@ cover:
     - flags
     - interact
     - display
-    - service
+    - register
     - google
     - apps/cover
     - app

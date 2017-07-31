@@ -8,11 +8,25 @@ a.navbar-brand.logo, .navbar-brand a.logo {
 	max-height: 48px;
 	svg {
 		height: 40px;	
-		path.outline {
-  		stroke: $colour-highlight;
-  		stroke-width: 2;
-  		stroke-linejoin: round;
-  		stroke-linecap: butt;
+		pointer-events: visible;
+		path {
+			&.o {
+				stroke: $colour-highlight;
+				stroke-width: 2;
+				stroke-linejoin: round;
+				stroke-linecap: butt;
+			}
+			&.f {
+				fill: lighten($colour-highlight, 50%); // #ffedfa
+				fill-opacity: .89;
+				fill-rule: evenodd;
+			}
+		}
+		&:hover {
+			path {
+				&.o {stroke: darken($colour-highlight, 30%);}
+				&.f {fill: lighten($colour-highlight, 45%);}
+			}
 		}
 	}
 }

@@ -18,17 +18,14 @@
 					if (a.sheet.cssRules[j].type == 5) {
 						if ("fontDisplay" in a.sheet.cssRules[j].style) {
 							a.sheet.cssRules[j].style.fontDisplay = "block";
-							console.log("USING FONT-DISPLAY CSS PROPERTY");
-							_supported = true;
+							fonts_handled = true;
 						}
 					}
 				}
 				if (fonts_handled === false) {
 					if ("fonts" in document) {
-						console.log("USING NATIVE FONTS API");
 						document.fonts.ready.then(function(fontFaceSet) {
 							$(".font-sensitive").removeClass("font-sensitive");
-							console.log("NATIVE FONT API LOADED");
 							fonts_handled = true;
 						});
 					}
@@ -36,7 +33,7 @@
 					$(".font-sensitive").removeClass("font-sensitive");
 				}
 			} catch(e) {
-				console.error("ERROR SETTING FONT DISPLAY:", e);
+				console.error("ERROR SETTING FONT DISPLAY/API:", e);
 			}
 		}
 	});
@@ -62,10 +59,10 @@
 		const thenables = [];
 
 		inputs.forEach(input => deferreds.push(
-			window.fetch(input).then(res => {
-				var is_css = !!input.match(/(\.|\/)css($|\?\S+)/gi);
-				var is_fonts = !!input.match(/^https:\/\/fonts\.googleapis\.com\/css/gi);
-				return [res.text(), input, is_css, is_fonts];
+			window.fetch(input.url, {mode: input.mode ? input.mode : "cors"}).then(res => {
+				var is_css = !!input.url.match(/(\.|\/)css($|\?\S+)/gi);
+				var is_fonts = !!input.url.match(/^https:\/\/fonts\.googleapis\.com\/css/gi);
+				return [res.text(), input.url, is_css, is_fonts];
 			}).then(promises => {
 				return Promise.all(promises).then(resolved => {
 					resources.push({ text: resolved[0], url: resolved[1], css: resolved[2], fonts: resolved[3]});
@@ -88,14 +85,14 @@
 		if (result === true) {
 				$(".css-sensitive").removeClass("css-sensitive");
 				if (fonts_handled === false) $(".font-sensitive").removeClass("font-sensitive");
+				if (window.start) window.start();	
 		}
 	};
 	
 	var proceed = function(result) {
 		if (result === true) {
 			if (window.templates) templates();
-			register_Worker();
-			if (window.start) window.start();	
+			if (!window.DEBUG) register_Worker();
 		}
 		if (window.LOAD_AFTER) {
 			controller(window.LOAD_AFTER).then(() => {finalise(true);}).catch(e => {console.error(e); finalise(true);});
@@ -116,7 +113,7 @@
 		
 	};
 	
-	/* -- Test Storage Availability (inc Mobile Safari | Incognito Mode) -- */
+	/* <!-- Test Storage Availability (inc Mobile Safari | Incognito Mode) --> */
 	var testStorage = function (storage) {
 		if (typeof storage == "undefined") return false;
 		try { /* hack for safari incognito */
@@ -129,7 +126,7 @@
 			return false;
 		}
 	};
-/* -- Test Storage Availability (inc Mobile Safari | Incognito Mode) -- */
+/* <!-- Test Storage Availability (inc Mobile Safari | Incognito Mode) --> */
 	
 	var polyfill = 
 			!String.prototype.endsWith ||

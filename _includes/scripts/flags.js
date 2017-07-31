@@ -1,15 +1,15 @@
 Flags = function() {
 
-	/* -- Internal Variables -- */
+	/* <!-- Internal Variables --> */
 	var _alert = false, _debug = false, _development = false, _page = false, _base;
 	
-	/* -- Internal Functions -- */
+	/* <!-- Internal Functions --> */
 	var _parse = function() {
 		
-		/* -- Parse Url -- */
+		/* <!-- Parse Url --> */
 		var _url = $.url();
 
-		/* -- Set Variables -- */
+		/* <!-- Set Variables --> */
 		_alert = (_url.param("alert") === "" || _url.fparam("alert") === "");
 		if (_alert) {
 			window.onerror = function (m, u, l, c, o) {
@@ -31,7 +31,7 @@ Flags = function() {
 		_base = _url.attr("protocol") + "://" + _url.attr("host") + 
 			(_url.attr("port") && _url.attr("port") != 80 && _url.attr("port") != 443 ? ":" + _url.attr("port") : "") + "/";
 
-		/* -- Load Remote Console Script Function -- */
+		/* <!-- Load Remote Console Script Function --> */
 		var _load = function (id) {
     	return new Promise(function(resolve, reject) {
         var script = document.createElement("script");
@@ -42,7 +42,7 @@ Flags = function() {
     	});
 		};
 		
-		/* -- Return Promise -- */
+		/* <!-- Return Promise --> */
 		if (_url.param("remote") && _url.param("remote").length > 0) {
 			return _load(_url.param("remote"));
 		} else if (_url.fparam("remote") && _url.fparam("remote").length > 0) {
@@ -53,13 +53,13 @@ Flags = function() {
 		
 	};
 	
-	/* -- External Visibility -- */
+	/* <!-- External Visibility --> */
   return {
 
-    /* -- External Functions -- */
+    /* <!-- External Functions --> */
     initialise : function() {
 			
-			/* -- Call Parse Method internally -- */
+			/* <!-- Call Parse Method internally --> */
 			return _parse().then(function() {
 				
 				var _return = {
@@ -122,6 +122,6 @@ Flags = function() {
     },
 		
 	};
-	/* -- External Visibility -- */
+	/* <!-- External Visibility --> */
 	
 };

@@ -1,8 +1,4 @@
----
-  permalink: "/polyfills.js"
----
-
-/* -- String EndsWith Polyfill -- */
+/* <!-- String EndsWith Polyfill --> */
 if (!String.prototype.endsWith) {
   String.prototype.endsWith = function(searchString, position) {
       var subjectString = this.toString();
@@ -14,9 +10,9 @@ if (!String.prototype.endsWith) {
       return lastIndex !== -1 && lastIndex === position;
   };
 }
-/* -- String EndsWith Polyfill -- */
+/* <!-- String EndsWith Polyfill --> */
 
-/* -- Array Map Polyfill -- */
+/* <!-- Array Map Polyfill --> */
 if (!Array.prototype.map) {
   Array.prototype.map = function(callback) {
 
@@ -50,9 +46,9 @@ if (!Array.prototype.map) {
     return A;
   };
 }
-/* -- Array Map Polyfill -- */
+/* <!-- Array Map Polyfill --> */
 
-/* -- Object Assign Polyfill -- */
+/* <!-- Object Assign Polyfill --> */
 if (typeof Object.assign != "function") {
   Object.assign = function(target) {
     "use strict";
@@ -76,9 +72,9 @@ if (typeof Object.assign != "function") {
     return to;
   };
 }
-/* -- Object Assign Polyfill -- */
+/* <!-- Object Assign Polyfill --> */
 
-/* -- Test Storage Availability (inc Mobile Safari | Incognito Mode) -- */
+/* <!-- Test Storage Availability (inc Mobile Safari | Incognito Mode) --> */
 var isStorageAvailable = function (storage) {
 
 	if (typeof storage == "undefined") return false;
@@ -92,10 +88,10 @@ var isStorageAvailable = function (storage) {
 		return false;
 	}
 };
-/* -- Test Storage Availability (inc Mobile Safari | Incognito Mode) -- */
+/* <!-- Test Storage Availability (inc Mobile Safari | Incognito Mode) --> */
 
 
-/* -- Local Object Storage for LocalForage | Polyfill -- */
+/* <!-- Local Object Storage for LocalForage | Polyfill --> */
 (function () {
 
   var localStorageAvailable = isStorageAvailable(window.localStorage),
@@ -156,7 +152,7 @@ var isStorageAvailable = function (storage) {
         return data ? JSON.parse(data) : {};
       }
 
-      /* initialise if there"s already data */
+      /* <!-- initialise if there"s already data --> */
       var data = getData();
 
       return {
@@ -203,7 +199,7 @@ var isStorageAvailable = function (storage) {
   }
 
 })();
-/* -- Local Object Storage for LocalForage | Polyfill -- */
+/* <!-- Local Object Storage for LocalForage | Polyfill --> */
 
 
 (function(self) {
@@ -267,7 +263,7 @@ var isStorageAvailable = function (storage) {
     return value
   }
 
-  // Build a destructive iterator for the value list
+  /* <!-- Build a destructive iterator for the value list --> */
   function iteratorFor(items) {
     var iterator = {
       next: function() {
@@ -426,7 +422,7 @@ var isStorageAvailable = function (storage) {
         this._bodyText = body.toString()
       } else if (support.arrayBuffer && support.blob && isDataView(body)) {
         this._bodyArrayBuffer = bufferClone(body.buffer)
-        // IE 10-11 can't handle a DataView body.
+        /* <!-- IE 10-11 can't handle a DataView body. --> */
         this._bodyInit = new Blob([this._bodyArrayBuffer])
       } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
         this._bodyArrayBuffer = bufferClone(body)
@@ -502,7 +498,7 @@ var isStorageAvailable = function (storage) {
     return this
   }
 
-  // HTTP methods whose capitalization should be normalized
+  /* <!-- HTTP methods whose capitalization should be normalized --> */
   var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
 
   function normalizeMethod(method) {
@@ -566,8 +562,8 @@ var isStorageAvailable = function (storage) {
 
   function parseHeaders(rawHeaders) {
     var headers = new Headers()
-    // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
-    // https://tools.ietf.org/html/rfc7230#section-3.2
+    /* <!-- Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space --> */
+    /* <!-- https://tools.ietf.org/html/rfc7230#section-3.2 --> */
     var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ')
     preProcessedHeaders.split(/\r?\n/).forEach(function(line) {
       var parts = line.split(':')

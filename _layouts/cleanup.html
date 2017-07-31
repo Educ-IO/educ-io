@@ -1,0 +1,4 @@
+---
+# Cleans-Up Script Comment Artifacts
+---
+{% if site.compress_html.ignore.envs contains jekyll.environment %}{{ content }}{% else %}{% capture _compressed %}{{ content }}{% endcapture %}{% for _artifact in site.compress_html.artifacts %}{% capture _start %}<{{ _element }}>{% endcapture %}{% assign _compressed = _compressed | remove: _artifact %}{% endfor %}{{ _compressed }}{% endif %}

@@ -1,20 +1,20 @@
 Google_API = function() {
 	
-	/* -- Returns an instance of App if required -- */
+	/* <!-- Returns an instance of App if required --> */
   if (!(this instanceof Google_API)) {return new Google_API();}
 	
 	/* === Internal Visibility === */
 	
-	/* -- Internal Constants -- */
+	/* <!-- Internal Constants --> */
 	const GENERAL_URL = "https://www.googleapis.com";
 	const SHEETS_URL = "https://sheets.googleapis.com";
-	/* -- Internal Constants -- */
+	/* <!-- Internal Constants --> */
 	
-	/* -- Internal Variables -- */
+	/* <!-- Internal Variables --> */
 	var _check, _before, _after;
-  /* -- Internal Variables -- */
+  /* <!-- Internal Variables --> */
 	
-	/* -- Internal Functions -- */
+	/* <!-- Internal Functions --> */
 	var _init = function(token, type, expires, update) {
 		
 		_check = (function(e, u) {
@@ -44,7 +44,7 @@ Google_API = function() {
 			
 		})(new Date((expires - 10) * 1000), update); /* 10 second shift in case of network delays! */
 		
-		/* -- Before Ajax Call : Request Authorisation Closure -- */
+		/* <!-- Before Ajax Call : Request Authorisation Closure --> */
 		_before = (function(t, w, e, u) {
 			
 			/* "Authorization: token OAUTH-TOKEN" */
@@ -56,7 +56,7 @@ Google_API = function() {
 		
 		})(token, type);
 
-		/* -- After Ajax Call : Do Nothing -- */
+		/* <!-- After Ajax Call : Do Nothing --> */
 		_after = function(request, status) {};
 		
 		_token = (function(t) {
@@ -211,7 +211,7 @@ Google_API = function() {
 		}
 
 	};
-	/* -- Internal Functions -- */
+	/* <!-- Internal Functions --> */
 	
 	/* === Internal Visibility === */
 
@@ -219,17 +219,17 @@ Google_API = function() {
 	/* === External Visibility === */
   return {
 
-    /* -- External Functions -- */
+    /* <!-- External Functions --> */
     initialise : function(token, type, expires, update) {
 			
 			_init(token, type, expires, update);
 
-			/* -- Return for Chaining -- */
+			/* <!-- Return for Chaining --> */
 			return this;
 			
     },
 		
-		/* -- Get Repos for the current user (don't pass parameter) or a named user -- */
+		/* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
 		me : function() {
 			return _get(GENERAL_URL + "/oauth2/v1/userinfo?alt=json&key=" + GOOGLE_KEY);
 		},
