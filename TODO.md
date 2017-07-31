@@ -15,6 +15,7 @@ TODO LIST
 * Gracefully handle the .map issue for injected async/fetched CSS <-- Relative path at end of Bootstrap CSS (e.g. /*# sourceMappingURL=bootstrap.min.css.map */)
 * Namespace whole App within single window variable to prevent variable bleed
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view").
+* Recents Menu item for Apps / Files
 
 Apps
 ----

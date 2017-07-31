@@ -1,5 +1,6 @@
 (function() {
 	
+	var fonts_handled = false;
 	const inject = (function(i,s,o,g,r,a,m) {
   	a=s.createElement(o);
 		a.setAttribute("data-src", g.url);
@@ -12,16 +13,32 @@
     	s.head.appendChild(a);
   	}
 		if (g.css === true && g.fonts === true) {
-		try {
-			for (var j=0; j < a.sheet.cssRules.length; j++) {
-				if (a.sheet.cssRules[j].type == 5) {
-					 a.sheet.cssRules[j].style.fontDisplay = "block";
+			try {
+				for (var j=0; j < a.sheet.cssRules.length; j++) {
+					if (a.sheet.cssRules[j].type == 5) {
+						if ("fontDisplay" in a.sheet.cssRules[j].style) {
+							a.sheet.cssRules[j].style.fontDisplay = "block";
+							console.log("USING FONT-DISPLAY CSS PROPERTY");
+							_supported = true;
+						}
+					}
 				}
-			}
+				if (fonts_handled === false) {
+					if ("fonts" in document) {
+						console.log("USING NATIVE FONTS API");
+						document.fonts.ready.then(function(fontFaceSet) {
+							$(".font-sensitive").removeClass("font-sensitive");
+							console.log("NATIVE FONT API LOADED");
+							fonts_handled = true;
+						});
+					}
+				} else {
+					$(".font-sensitive").removeClass("font-sensitive");
+				}
 			} catch(e) {
 				console.error("ERROR SETTING FONT DISPLAY:", e);
 			}
-    }
+		}
 	});
 	
 	const include = (function(url, type) {
@@ -70,7 +87,7 @@
 	var finalise = function(result) {
 		if (result === true) {
 				$(".css-sensitive").removeClass("css-sensitive");
-				if (!window.FontFaceObserver) $(".font-sensitive").removeClass("font-sensitive");
+				if (fonts_handled === false) $(".font-sensitive").removeClass("font-sensitive");
 		}
 	};
 	
@@ -78,23 +95,6 @@
 		if (result === true) {
 			if (window.templates) templates();
 			register_Worker();
-			if (window.FontFaceObserver) {
-				
-				var font_promises = [];
-				for (var i = 0, f = FONTS.length; i < f; i++) {
-					for (var j = 0, w = FONTS[i].weights.length; j < w; j++) {
-						font_promises.push(new window.FontFaceObserver(FONTS[i].name, {weight: FONTS[i].weights[j]}).load());
-					}
-				}
-				
-				Promise.all(font_promises).then(function(){
-					$(".font-sensitive").removeClass("font-sensitive");
-				}).catch(function(e) {
-					$(".font-sensitive").removeClass("font-sensitive").addClass("font-failed");
-					console.error(e);
-				});
-				
-			}
 			if (window.start) window.start();	
 		}
 		if (window.LOAD_AFTER) {
