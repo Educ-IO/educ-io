@@ -1,19 +1,19 @@
 App = function() {
 	
-	/* -- Returns an instance of App if required -- */
+	/* <!-- Returns an instance of App if required --> */
   if (!(this instanceof App)) {return new App();}
 	
-	/* -- Internal Variables -- */
+	/* <!-- Internal Variables --> */
 	var __sheet, __db;
 	
-	/* -- Internal Functions -- */
+	/* <!-- Internal Functions --> */
 	var _loadValues = function(id, name, index, target) {
 
 		global.interact.busy({target : target});
 		
 		var _show = function(data, widths) {
 
-			/* -- Clean up blank rows at the end! -- */
+			/* <!-- Clean up blank rows at the end! --> */
 			data = data.clean(false, true);
 				
 			global.flags.log("Google Sheet Values [" + name + "]", data);
@@ -31,7 +31,7 @@ App = function() {
 				var _table = __db.addCollection(name, {indices : _fields});
 				_table.insert(_values);
 
-				/* -- Append Table to Display -- */
+				/* <!-- Append Table to Display --> */
 			
 				var _display = $(global.display.template("table")({
 					id: name,
@@ -41,7 +41,7 @@ App = function() {
 					rows : _table.chain().data({removeMeta : true})
 				}));
 
-				/* -- Set Search Handlers -- */
+				/* <!-- Set Search Handlers --> */
 				var _addSearch = function(field, value) {
 					var _query = {};
 					_query[field] = {"$contains": [value]};
@@ -100,13 +100,12 @@ App = function() {
 				_display.find(".collapse").on("shown.bs.collapse", function(e) {
 					$(e.target).find("input").first().focus();
 				});
-				/* -- Set Sort Handlers -- */
-				/*  simplesort('name').data() */
+				/* <!-- Set Sort Handlers --> */
 
-				/* -- Remove the Loader -- */
+				/* <!-- Remove the Loader --> */
 				global.interact.busy({target : target, clear : true});
 			
-				/* Append the Table */
+				/* <!-- Append the Table --> */
 				target.append(_display);
 
 		};
@@ -118,7 +117,7 @@ App = function() {
 		
 		if (__sheet.sheets[index].data && __sheet.sheets[index].data.length == 1) {
 			
-			/* -- Already have loaded values -- */
+			/* <!-- Already have loaded values --> */
 			var _data = __sheet.sheets[index].data[0];
 			var _widths =_data.columnMetadata.map(function(c) {return c.pixelSize * 1.4;});
 			var _rows = _data.rowData.map(function(r) {return r.values.map(function(c) {return c.formattedValue;});});
@@ -127,7 +126,7 @@ App = function() {
 	
 		} else {
 			
-			/* -- Need to load the values -- */
+			/* <!-- Need to load the values --> */
 			global.google.sheets.values(id, name + "!A:ZZ").then(function(data) {
 
 				_show(data.values);
@@ -136,7 +135,7 @@ App = function() {
 
 				global.flags.error("Adding Content Table", e);
 
-				/* -- Remove the Loader -- */
+				/* <!-- Remove the Loader --> */
 				global.interact.busy({target : target, clear : true});
 
 			});
@@ -167,10 +166,10 @@ App = function() {
 		var _display = $(global.display.template("tabs")(_tabs));
 		global.container.empty().append(_display);
 		
-		/* -- Set Load Tab Handler & Load Initial Values -- */
+		/* <!-- Set Load Tab Handler & Load Initial Values --> */
 		_display.find("a.nav-link").on("show.bs.tab", _showValues).first().tab("show");
 		
-		/* -- Handle Screen / Window Resize Events -- */
+		/* <!-- Handle Screen / Window Resize Events --> */
 		var _resize_Timeout = 0;
 		var _resize = function() {
 			clearTimeout(_resize_Timeout);
@@ -186,19 +185,16 @@ App = function() {
 		_resize();
 		
 	};
-	/* -- Internal Functions -- */
+	/* <!-- Internal Functions --> */
 	
-	/* -- External Visibility -- */
+	/* <!-- External Visibility --> */
   return {
 
-    /* -- External Functions -- */
+    /* <!-- External Functions --> */
 		
     initialise : function() {
-
-			/* -- Register Partial Templates -- */
-			/* global.display.partialTemplates(["rows"]); */
 			
-			/* -- Return for Chaining -- */
+			/* <!-- Return for Chaining --> */
 			return this;
 			
     },
@@ -207,24 +203,24 @@ App = function() {
       
 			if (!command || command === false || command == "PUBLIC") {
 				
-				/* -- Load the Public Instructions -- */
+				/* <!-- Load the Public Instructions --> */
 				global.display.doc({name : "PUBLIC", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
 				
 			} else if (command === true || command == "AUTH") {
 				
-				/* -- Load the Initial Instructions -- */
+				/* <!-- Load the Initial Instructions --> */
 				global.display.doc({name : "README", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
 				
 			} else if (command == "OPEN") {
 				
-				/* -- Open Sheet from Google Drive Picker -- */
+				/* <!-- Open Sheet from Google Drive Picker --> */
 				global.google.pick(
 					"Select a Sheet to Open", false, 
 					function() {return [new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS).setIncludeFolders(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED];},
 					function(file) {
 						
 						var _full = global.flags.debug();
-						/* -- Start the Loader -- */
+						/* <!-- Start the Loader --> */
 						if (_full) global.interact.busy();
 						
 						global.flags.log("Google Drive File Picked from Open", file);
@@ -237,7 +233,7 @@ App = function() {
 							
 							global.flags.error("Requesting Selected Google Drive Sheet", e);
 							
-							/* -- Remove the Loader -- */
+							/* <!-- Remove the Loader --> */
 							global.interact.busy({clear : true});
 							
 						});
@@ -248,7 +244,7 @@ App = function() {
 				
 					if (__sheet) {
 						
-						/* -- Output File Function (once choices have been made) -- */
+						/* <!-- Output File Function (once choices have been made) --> */
 						var _output = function(book, type, filename) {
 							
 							var _s2ab = function(s) {
@@ -272,11 +268,11 @@ App = function() {
 								global.flags.error("Google Sheet Export", e);
 							}
 							
-							/* -- Un-Trigger Loader -- */
+							/* <!-- Un-Trigger Loader --> */
 							global.interact.busy({clear: true});
 							
 						};
-						/* -- Output File Function (once choices have been made) -- */
+						/* <!-- Output File Function (once choices have been made) --> */
 						
 						global.interact.choose({
 							title : "Please Select a Format to Export to ...",
@@ -300,7 +296,7 @@ App = function() {
 							
 							if (option) {
 								
-								/* -- Trigger Loader -- */
+								/* <!-- Trigger Loader --> */
 								global.interact.busy({target : $("div.tab-content div.tab-pane.active")});
 								
 								var Workbook = function() {
@@ -314,7 +310,7 @@ App = function() {
 								
 								if (option.size == "multi") {
 									
-									/* -- Output all tabs -- */
+									/* <!-- Output all tabs --> */
 									var _current = 0;
 									var _total = __sheet.sheets.length;
 
@@ -332,7 +328,7 @@ App = function() {
 									
 								} else if (option.size == "single") {
 									
-									/* -- Output Current tab -- */
+									/* <!-- Output Current tab --> */
 									var _current_Tab = $("#sheet_tabs .nav-link.active").text();
 									
 									__sheet.sheets.forEach(function(tab, index) {
@@ -365,12 +361,12 @@ App = function() {
 				
 			} else if (command == "INSTRUCTIONS") {
 				
-				/* -- Load the Instructions -- */
+				/* <!-- Load the Instructions --> */
 				global.display.doc({name : "INSTRUCTIONS", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
 				
 			} else if (command == "SETTINGS") {
 				
-				/* -- Load the Settings Page (for the time being, actually this will be a template!) -- */
+				/* <!-- Load the Settings Page (for the time being, actually this will be a template!) --> */
 				global.display.doc({name : "SETTINGS", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
 			
 			} else if (command == "SPIN") {
