@@ -6,11 +6,11 @@
 
   <a class="navbar-brand logo" href="/" title="Return to Home"><span class="sr-only css-sensitive">Return to Home</span>{% include images/letter.svg %}</a>
 
-  <div class="collapse navbar-collapse css-sensitive" id="main_Nav">
+  <div class="collapse navbar-collapse" id="main_Nav">
 
     <a class="navbar-brand font-sensitive" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }} | {{ site.title }} <span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}"> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}"></span></a>
 
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav mr-auto css-sensitive">
 
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navAppsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Apps</a>

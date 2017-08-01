@@ -26,13 +26,13 @@
 					if ("fonts" in document) {
 						document.fonts.ready.then(function(fontFaceSet) {
 							var els = document.getElementsByClassName("font-sensitive");
-							[].forEach.call(els, function(el) {el.className = el.className.replace(/\bfont-sensitive\b/, "");});
+							while(els.length > 0){els[0].classList.remove("font-sensitive");}
 							fonts_handled = true;
 						});
 					}
 				} else {
 					var els = document.getElementsByClassName("font-sensitive");
-					[].forEach.call(els, function(el) {el.className = el.className.replace(/\bfont-sensitive\b/, "");});
+					while(els.length > 0){els[0].classList.remove("font-sensitive");}
 					fonts_handled = true;
 				}
 			} catch(e) {
@@ -107,10 +107,10 @@
 		if (result === true) {
 			if (next) controller(next).then(() => {proceed(true);}).catch(e => {console.error(e);proceed(false);});
 			var els = document.getElementsByClassName("css-sensitive");
-			[].forEach.call(els, function(el) {el.className = el.className.replace(/\bcss-sensitive\b/, "");});
-			if (window.global && !global.container && window.jQuery) global.container = $(".content");
-			if (window.global && !global.app) global.app = App().initialise();
-			global.app.route(false);
+			while(els.length > 0){els[0].classList.remove("css-sensitive");}
+			if (window.global && !window.global.container && window.jQuery) global.container = $(".content");
+			if (window.global && !window.global.app) window.global.app = App().initialise();
+			if (window.global) window.global.app.route(false);
 		}
 	};
 	

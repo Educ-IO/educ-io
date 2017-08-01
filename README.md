@@ -11,7 +11,7 @@ imports:
 - name: tether
   load: first
 - name: bootstrap-css
-  load: last
+  load: first
 - name: bootstrap-js
   load: last
 templates: alert

@@ -8,6 +8,6 @@ imports:
 - name: jquery
   load: first
 - name: bootstrap-css
-  load: last
+  load: first
 scripts: service
 ---

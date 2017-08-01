@@ -8,7 +8,7 @@ layout: compress
 		{% include nav.html type="sticky-top" %}
 		<div class="container css-sensitive">
 			<div class="jumbotron mt-3">
-  			<h1 class="display-4 font-sensitive">{{ page.title }}</h1>
+  			<h1 class="display-4">{{ page.title }}</h1>
   			{% if page.lead %}<p class="lead">{{ page.lead }}</p>{% endif %}
 				{% if page.support %}
   				<hr class="my-4">
@@ -17,8 +17,6 @@ layout: compress
 			</div>
 			{{ content }}
 		</div>
-
-		{% include footer.html type="page" %}
-		
+		{% include footer.html type="page" %}		
   </body>
 </html>
