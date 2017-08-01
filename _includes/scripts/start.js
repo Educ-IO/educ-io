@@ -112,7 +112,7 @@
 			if (!global.app) global.app = App().initialise();
 			global.app.route(false);
 		}
-	}
+	};
 	
 	var load = function() {
 		
