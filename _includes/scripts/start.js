@@ -108,8 +108,8 @@
 			if (next) controller(next).then(() => {proceed(true);}).catch(e => {console.error(e);proceed(false);});
 			var els = document.getElementsByClassName("css-sensitive");
 			[].forEach.call(els, function(el) {el.className = el.className.replace(/\bcss-sensitive\b/, "");});
-			if (!global.container && window.jQuery) global.container = $(".content");
-			if (!global.app) global.app = App().initialise();
+			if (window.global && !global.container && window.jQuery) global.container = $(".content");
+			if (window.global && !global.app) global.app = App().initialise();
 			global.app.route(false);
 		}
 	};
