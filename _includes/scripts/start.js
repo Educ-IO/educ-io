@@ -5,7 +5,7 @@
   	a=s.createElement(o);
 		a.setAttribute("id", g.id);
 		a.setAttribute("data-src", g.url);
-  	m=s.getElementsByTagName(o)[0];
+  	if (o == "style") m=s.getElementsByTagName(o)[0];
   	a.appendChild(s.createTextNode(g.text));
 		a.onload=r(g);
   	if (m) {

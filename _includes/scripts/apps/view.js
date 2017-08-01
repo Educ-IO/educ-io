@@ -4,7 +4,7 @@ App = function() {
   if (!(this instanceof App)) {return new App();}
 	
 	/* <!-- Internal Variables --> */
-	var __sheet, __db;
+	var __sheet, __db, __last = ".";
 	
 	/* <!-- Internal Functions --> */
 	var _loadValues = function(id, name, index, target) {
@@ -204,12 +204,18 @@ App = function() {
 			if (!command || command === false || command == "PUBLIC") {
 				
 				/* <!-- Load the Public Instructions --> */
-				global.display.doc({name : "PUBLIC", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
+				if (__last != command) {
+					global.display.doc({name : "PUBLIC", target : global.container, wrapper : "CONTENT_WRAPPER", clear : (__last !== ".")});
+					__last = command;
+				}
 				
 			} else if (command === true || command == "AUTH") {
 				
 				/* <!-- Load the Initial Instructions --> */
-				global.display.doc({name : "README", target : global.container, wrapper : "CONTENT_WRAPPER", clear : true});
+				if (__last != command) {
+					global.display.doc({name : "README", target : global.container, wrapper : "CONTENT_WRAPPER", clear : (__last !== ".")});
+					__last = command;
+				}
 				
 			} else if (command == "OPEN") {
 				

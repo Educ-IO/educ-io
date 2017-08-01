@@ -1,10 +1,11 @@
-/* <!-- Is Null --> */
+/* <!-- Is Null Method --> */
 if (!Array.prototype.isNull) {
   Array.prototype.isNull = function() {
     for (var i = 0, l = this.length; i < l; i += 1) if (this[i] !== null && this[i] !== undefined) return false;
     return true;
   };
 }
+/* <!-- Is Null Method --> */
 
 /* <!-- Remove Nulls by Cleaning --> */
 if (!Array.prototype.clean) {
@@ -34,3 +35,4 @@ if (!Array.prototype.clean) {
     return this;
   };
 }
+/* <!-- Remove Nulls by Cleaning --> */
