@@ -5,6 +5,8 @@ view:
   imports:
     - name: jquery
       load: first
+    - name: bootstrap-css
+      load: first
     - name: tether
       load: first
     - name: hello
@@ -12,8 +14,6 @@ view:
     - name: urlparser
       load: last
     - name: handlebars
-      load: last
-    - name: bootstrap-css
       load: last
     - name: bootstrap-js
       load: last

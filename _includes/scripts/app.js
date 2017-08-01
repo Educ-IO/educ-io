@@ -184,7 +184,7 @@ var start = function() {
 		global.flags = flags;
 			
 		/* <!-- Append Content Holder --> */
-		global.container = $(".content");
+		if (!global.container) global.container = $(".content");
 
 		var _start = function() {
 
@@ -198,7 +198,7 @@ var start = function() {
 			/* <!-- Set Up Hello.js Auth-Flow --> */
 
 			/* <!-- Initialise App --> */
-			global.app = App().initialise();
+			if (!global.app) global.app = App().initialise();
 
 			/* <!-- Start Auth Flow --> */
 			try {

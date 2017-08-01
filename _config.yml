@@ -1,7 +1,7 @@
 # Global
 safe:									true
-exclude:							[TODO.md, REPOSITORY.md, CNAME]
-include:							[_pages, _apps, _extensions, _config, _scripts]
+exclude:							[TODO.md, REPOSITORY.md, CNAME, Gemfile, Gemfile.lock]
+include:							[_pages, _apps, _extensions, _extras, _scripts]
 timezone:							Europe/London
 
 # Dependencies

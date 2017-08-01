@@ -25,12 +25,15 @@
 				if (fonts_handled === false) {
 					if ("fonts" in document) {
 						document.fonts.ready.then(function(fontFaceSet) {
-							$(".font-sensitive").removeClass("font-sensitive");
+							var els = document.getElementsByClassName("font-sensitive");
+							[].forEach.call(els, function(el) {el.className = el.className.replace(/\bfont-sensitive\b/, "");});
 							fonts_handled = true;
 						});
 					}
 				} else {
-					$(".font-sensitive").removeClass("font-sensitive");
+					var els = document.getElementsByClassName("font-sensitive");
+					[].forEach.call(els, function(el) {el.className = el.className.replace(/\bfont-sensitive\b/, "");});
+					fonts_handled = true;
 				}
 			} catch(e) {
 				console.error("ERROR SETTING FONT DISPLAY/API:", e);
@@ -83,7 +86,6 @@
 
 	var finalise = function(result) {
 		if (result === true) {
-				$(".css-sensitive").removeClass("css-sensitive");
 				if (fonts_handled === false) $(".font-sensitive").removeClass("font-sensitive");
 				if (window.start) window.start();	
 		}
@@ -101,18 +103,29 @@
 		}
 	};
 
+	var start = function(result, next) {
+		if (result === true) {
+			if (next) controller(next).then(() => {proceed(true);}).catch(e => {console.error(e);proceed(false);});
+			var els = document.getElementsByClassName("css-sensitive");
+			[].forEach.call(els, function(el) {el.className = el.className.replace(/\bcss-sensitive\b/, "");});
+			if (!global.container && window.jQuery) global.container = $(".content");
+			if (!global.app) global.app = App().initialise();
+			global.app.route(false);
+		}
+	}
+	
 	var load = function() {
 		
 		if (window.LOAD_FIRST && window.LOAD_LAST) {
-			controller(window.LOAD_LAST, controller(window.LOAD_FIRST)).then(() => {proceed(true);}).catch(e => {console.error(e);proceed(false);});
+			controller(window.LOAD_FIRST).then(() => {start(true, window.LOAD_LAST);}).catch(e => {console.error(e);proceed(false);});
 		} else if (window.LOAD_FIRST || window.LOAD_LAST) {
-			controller(window.LOAD_FIRST || window.LOAD_LAST).then(() => {proceed(true);}).catch(e => {console.error(e);proceed(false);});
+			controller(window.LOAD_FIRST || window.LOAD_LAST).then(() => {start(true); proceed(true);}).catch(e => {console.error(e);start(false);proceed(false);});
 		} else {
 			proceed(true);
 		}
 		
 	};
-	
+
 	/* <!-- Test Storage Availability (inc Mobile Safari | Incognito Mode) --> */
 	var testStorage = function (storage) {
 		if (typeof storage == "undefined") return false;

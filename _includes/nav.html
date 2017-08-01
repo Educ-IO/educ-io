@@ -6,11 +6,11 @@
 
   <a class="navbar-brand logo" href="/" title="Return to Home"><span class="sr-only css-sensitive">Return to Home</span>{% include images/letter.svg %}</a>
 
-  <div class="collapse navbar-collapse" id="main_Nav">
+  <div class="collapse navbar-collapse css-sensitive" id="main_Nav">
 
-    <a class="navbar-brand font-sensitive" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }} | {{ site.title }} <span class="sr-only css-sensitive">Current {% if page.app %}App{% else %}Page{% endif %}"> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}"></span></a>
+    <a class="navbar-brand font-sensitive" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }} | {{ site.title }} <span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}"> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}"></span></a>
 
-    <ul class="navbar-nav mr-auto css-sensitive">
+    <ul class="navbar-nav mr-auto">
 
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navAppsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Apps</a>
@@ -82,7 +82,6 @@
       </form>
 
       <form id="sign_in" class="form-inline mt-2 mt-md-0" style="display: none;">
-        <!-- <input class="form-control mr-2" type="text" placeholder="Email Address"> -->
         <button class="btn btn-outline-success my-2 my-sm-0 btn-outline-action" href="#">Sign In</button>
       </form>
     {% endif %}
