@@ -3,6 +3,7 @@
 	var fonts_handled = false;
 	const inject = (function(i,s,o,g,r,a,m) {
   	a=s.createElement(o);
+		a.setAttribute("id", g.id);
 		a.setAttribute("data-src", g.url);
   	m=s.getElementsByTagName(o)[0];
   	a.appendChild(s.createTextNode(g.text));
@@ -52,7 +53,7 @@
     });
 	});
 
-	const controller = function (inputs, promise) {
+	window.controller = function (inputs, promise) {
 
 		if (!(inputs && Array.isArray(inputs))) return Promise.reject(new TypeError("`inputs` must be an array"));
 		if (promise && !(promise instanceof Promise)) return Promise.reject(new TypeError("`promise` must be a promise"));
@@ -61,14 +62,16 @@
 		const deferreds = promise ? [].concat(promise) : [];
 		const thenables = [];
 
+		inputs = inputs.filter(input => document.getElementById(input.id) == null);
+		
 		inputs.forEach(input => deferreds.push(
 			window.fetch(input.url, {mode: input.mode ? input.mode : "cors"}).then(res => {
 				var is_css = !!input.url.match(/(\.|\/)css($|\?\S+)/gi);
 				var is_fonts = !!input.url.match(/^https:\/\/fonts\.googleapis\.com\/css/gi);
-				return [res.text(), input.url, is_css, is_fonts];
+				return [res.text(), input.id, input.url, is_css, is_fonts];
 			}).then(promises => {
 				return Promise.all(promises).then(resolved => {
-					resources.push({ text: resolved[0], url: resolved[1], css: resolved[2], fonts: resolved[3]});
+					resources.push({ text: resolved[0], id: resolved[1], url: resolved[2], css: resolved[3], fonts: resolved[4]});
 				});
 			})
 		));
@@ -97,7 +100,7 @@
 			if (!window.DEBUG) register_Worker();
 		}
 		if (window.LOAD_AFTER) {
-			controller(window.LOAD_AFTER).then(() => {finalise(true);}).catch(e => {console.error(e); finalise(true);});
+			window.controller(window.LOAD_AFTER).then(() => {finalise(true);}).catch(e => {console.error(e); finalise(true);});
 		} else {
 			finalise(true);
 		}
@@ -105,7 +108,7 @@
 
 	var start = function(result, next) {
 		if (result === true) {
-			if (next) controller(next).then(() => {proceed(true);}).catch(e => {console.error(e);proceed(false);});
+			if (next) window.controller(next).then(() => {proceed(true);}).catch(e => {console.error(e);proceed(false);});
 			var els = document.getElementsByClassName("css-sensitive");
 			while(els.length > 0){els[0].classList.remove("css-sensitive");}
 			if (window.global && !window.global.container && window.jQuery) global.container = $(".content");
@@ -117,9 +120,9 @@
 	var load = function() {
 		
 		if (window.LOAD_FIRST && window.LOAD_LAST) {
-			controller(window.LOAD_FIRST).then(() => {start(true, window.LOAD_LAST);}).catch(e => {console.error(e);proceed(false);});
+			window.controller(window.LOAD_FIRST).then(() => {start(true, window.LOAD_LAST);}).catch(e => {console.error(e);proceed(false);});
 		} else if (window.LOAD_FIRST || window.LOAD_LAST) {
-			controller(window.LOAD_FIRST || window.LOAD_LAST).then(() => {start(true); proceed(true);}).catch(e => {console.error(e);start(false);proceed(false);});
+			window.controller(window.LOAD_FIRST || window.LOAD_LAST).then(() => {start(true); proceed(true);}).catch(e => {console.error(e);start(false);proceed(false);});
 		} else {
 			proceed(true);
 		}
@@ -144,6 +147,7 @@
 	var polyfill = 
 			!String.prototype.endsWith ||
 			!Array.prototype.map ||
+			!Array.prototype.filter ||
 			typeof Object.assign != "function" ||
 			!testStorage(window.localStorage) ||
 			!testStorage(window.sessionStorage) ||

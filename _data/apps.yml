@@ -8,7 +8,7 @@ view:
     - name: bootstrap-css
       load: first
     - name: tether
-      load: first
+      load: last
     - name: hello
       load: last
     - name: urlparser
@@ -18,11 +18,7 @@ view:
     - name: bootstrap-js
       load: last
     - name: loki
-      load: after
-    - name: xlsx
-      load: after
-    - name: filesaver
-      load: after
+      load: last
     - name: google
       load: defer
   scripts: 
@@ -66,6 +62,9 @@ view:
           - name: Export
             description: Export the Sheet to Legacy Formats
             hash: export
+            imports:
+              - xlsx
+              - filesaver
           - name: Close
             description: Close the current Sheet
             hash: close

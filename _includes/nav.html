@@ -47,10 +47,10 @@
           <h5 class="dropdown-heading">{{ group_title }}</h5>
 
           {% for command in group_commands %}
-          <a class="dropdown-item" href="#{{ command.hash }}" {% if command.desc %}data-toggle="tooltip" title="{{ command.desc }}"{% endif %}>
+          <a class="dropdown-item" href="#{{ command.hash }}" {% if command.desc %}data-toggle="tooltip" title="{{ command.desc }}"{% endif %}{% if command.imports and command.imports.size > 0 %}{% capture command_imports %}[{% for import in command.imports %}{% if jekyll.environment == "debug" %}{% for import_url in site.data.imports[import].dev %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% endif %}{% endfor %}]{% endcapture %} onclick="event.preventDefault(); window.controller({{ command_imports }}).then(() => {window.location.hash = '#{{ command.hash }}';}).catch(e => {console.error(e);});"{% endif %}>
             {{ command.name }}
           </a>
-
+          
           {% endfor %}
 
           {% endfor %}
