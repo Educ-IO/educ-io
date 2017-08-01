@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 style: _page
 lead: A collection of web apps, built to make the most of the Google Apps platform and designed to sve time, making the technology work for you.
-scripts: service
+scripts: register
 imports:
 - name: jquery
   load: first
@@ -14,7 +14,6 @@ imports:
   load: first
 - name: bootstrap-js
   load: last
-templates: alert
 ---
 
 ### Transparency

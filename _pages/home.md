@@ -10,5 +10,5 @@ imports:
   load: first
 - name: bootstrap-css
   load: first
-scripts: service
+scripts: register
 ---

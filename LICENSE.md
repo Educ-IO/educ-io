@@ -4,7 +4,7 @@ title: License
 permalink: /license/
 support: true
 style: _page
-scripts: service
+scripts: register
 imports:
 - name: jquery
   load: first
@@ -14,7 +14,6 @@ imports:
   load: first
 - name: bootstrap-js
   load: last
-templates: alert
 ---
 GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007

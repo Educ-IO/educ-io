@@ -12,4 +12,5 @@ imports:
   - name: bootstrap-js
     load: last
 style: _page
+scripts: register
 ---
