@@ -4,12 +4,12 @@ h1, h2, h3, h4, h5, h6, .navbar-brand, a.navbar-brand  {
 	font-weight: $font-weight-heading;
 	color: $colour-highlight !important;
 	em {
-		color: lighten($colour-highlight, 30%) !important;
+		color: lighten($colour-highlight, 5%) !important;
 		font-style: normal;
 		font-weight: $font-weight;
 	}
 	strong {
-		color: darken($colour-highlight, 30%) !important;
+		color: darken($colour-highlight, 20%) !important;
 		font-style: normal;
 	}
 }
