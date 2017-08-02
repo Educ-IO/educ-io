@@ -21,6 +21,10 @@ view:
       load: last
     - name: google
       load: defer
+    - name: xlsx
+      load: lazy
+    - name: filesaver
+      load: lazy
   modules:
     - flags
     - controller
