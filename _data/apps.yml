@@ -20,7 +20,7 @@ view:
     - name: loki
       load: last
     - name: google
-      load: defer
+      load: lazy
     - name: xlsx
       load: lazy
     - name: filesaver
@@ -63,6 +63,8 @@ view:
           - name: Open
             description: Open a Sheet from your Drive
             hash: open
+            imports:
+              - google
           - name: Export
             description: Export the Sheet to Legacy Formats
             hash: export

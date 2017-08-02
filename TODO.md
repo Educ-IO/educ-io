@@ -12,11 +12,9 @@ TODO LIST
 * Wrap Un-Authenticated Sheets Access in Google API Javascript file
 * Large Table Render Performance
 * Gracefully handle the .map issue for injected async/fetched CSS <-- Relative path at end of Bootstrap CSS (e.g. /*# sourceMappingURL=bootstrap.min.css.map */)
-* Namespace whole App within single window variable to prevent variable bleed
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view").
 * Recents Menu item for Apps / Files
 * Hide placeholder / un-published apps from Menu / Sitemap
-* Make Google JSAPI Part of the Picker Process in Google_API Module
 
 Apps
 ----
@@ -28,7 +26,9 @@ Apps
 
 Complete
 --------
-* Minify Scripts?
+* Make Google JSAPI Part of the Picker Process in Google_API Module -- This needs to be in the controller module, hook up Async script load event to promise resolve for 'no-cors' requests. <-- DONE
+* Namespace whole App within single window variable to prevent variable bleed <-- DONE
+* Minify Scripts? <-- DONE
 * Get to 100 on PageSpeed Insights for all pages! <-- DONE apart from annoying Google Scripts!
 * DEBUG flag to avoid registering Service Worker (for performance testing) <-- DONE
 * Improve Font Handling <-- DONE

@@ -522,6 +522,8 @@ google:
   prod:
     - url: https://www.google.com/jsapi
       mode: no-cors
+      id: __google
   dev:
     - url: https://www.google.com/jsapi
       mode: no-cors
+      id: __google

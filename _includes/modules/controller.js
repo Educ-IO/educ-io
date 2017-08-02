@@ -58,14 +58,15 @@ Controller = function() {
 
 	};
 
-	var _include = function(url, type) {
+	var _include = function(url, type, id) {
 		return new Promise((resolve, reject) => {
-			const script = document.createElement(type);
-			script.src = url;
-			script.addEventListener("load", resolve);
-			script.addEventListener("error", () => reject("Error loading script."));
-			script.addEventListener("abort", () => reject("Script loading aborted."));
-			document.head.appendChild(script);
+			var a = document.createElement(type);
+			a.setAttribute("id", id);
+			a.src = url;
+			a.addEventListener("load", resolve);
+			a.addEventListener("error", () => reject("Error loading script."));
+			a.addEventListener("abort", () => reject("Script loading aborted."));
+			document.head.appendChild(a);
 		});
 	};
 	
@@ -80,25 +81,25 @@ Controller = function() {
 
 		inputs = inputs.filter(input => document.getElementById(input.id) == null);
 
-		inputs.forEach(input => deferreds.push(
-			window.fetch(input.url, {
-				mode: input.mode ? input.mode : "cors"
-			}).then(res => {
-				var is_css = !!input.url.match(/(\.|\/)css($|\?\S+)/gi);
-				var is_fonts = !!input.url.match(/^https:\/\/fonts\.googleapis\.com\/css/gi);
-				return [res.text(), input.id, input.url, is_css, is_fonts];
-			}).then(promises => {
-				return Promise.all(promises).then(resolved => {
-					resources.push({
-						text: resolved[0],
-						id: resolved[1],
-						url: resolved[2],
-						css: resolved[3],
-						fonts: resolved[4]
+		inputs.forEach(input => {
+			
+			var is_css = !!input.url.match(/(\.|\/)css($|\?\S+)/gi);
+			var is_fonts = !!input.url.match(/^https:\/\/fonts\.googleapis\.com\/css/gi);
+			
+			if (input.mode == "no-cors") {
+				deferreds.push(_include(input.url, is_css ? "style" : "script", input.id));
+			} else {
+				deferreds.push(window.fetch(input.url, {mode: input.mode ? input.mode : "cors"}).then(res => {
+					return [res.text(), input.id, input.url, is_css, is_fonts];
+				}).then(promises => {
+					return Promise.all(promises).then(resolved => {
+						resources.push({
+							text: resolved[0], id: resolved[1], url: resolved[2], css: resolved[3], fonts: resolved[4]
+						});
 					});
-				});
-			})
-		));
+				}));
+			}
+		});
 
 		return Promise.all(deferreds).then(() => {
 			resources.forEach(resource => {

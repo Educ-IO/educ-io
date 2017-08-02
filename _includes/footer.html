@@ -18,11 +18,11 @@
     {% for import in async_imports %}
       {% if jekyll.environment == "debug" %}
         {% for import_script in site.data.imports[import].dev %}
-          <script src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} async></script>
+          <script id="{{ import_script.id }}" src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} async></script>
         {% endfor %}
       {% else %}
         {% for import_script in site.data.imports[import].prod %}
-          <script src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} async></script>
+          <script id="{{ import_script.id }}" src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} async></script>
         {% endfor %}
       {% endif %}
     {% endfor %}
@@ -32,11 +32,11 @@
     {% for import in defer_imports %}
       {% if jekyll.environment == "debug" %}
         {% for import_script in site.data.imports[import].dev %}
-          <script src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} defer></script>
+          <script id="{{ import_script.id }}" src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} defer></script>
         {% endfor %}
       {% else %}
         {% for import_script in site.data.imports[import].prod %}
-          <script src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} defer></script>
+          <script id="{{ import_script.id }}" src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} defer></script>
         {% endfor %}
       {% endif %}
     {% endfor %}
