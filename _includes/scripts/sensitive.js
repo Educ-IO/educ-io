@@ -15,9 +15,7 @@
       sheet.addRule(selector, rules, index);
     }
   };
-  
   var style = createStylesheet();
   addRule(style.sheet, ".font-sensitive", "visibility: hidden;");
   addRule(style.sheet, ".css-sensitive", "display: none;");
-  
 })();

@@ -1,14 +1,13 @@
-<script type="text/javascript" charset="utf-8"  data-src="sensitive">
+<script type="text/javascript" charset="utf-8" data-type="script" data-src="sensitive">
 	{% include scripts/sensitive.js %}
 </script>
-
 <style type="text/css">
   {% capture _scss_ %}
     @import "_variables";
     {% if page.colour %}$colour-highlight: #{{ page.colour }};{% else %}$colour-highlight: #af0ad9;{% endif %}
     @import "_common";
     @import "_fonts";
-    {% if page.style %}@import "{{ page.style }}";{% endif %}	
+    {% if page.style %}@import "_{{ page.style }}";{% endif %}	
     {% if page.layout == "app" %}
       @import "_app";
       @import "_tables";

@@ -3,8 +3,10 @@ layout: page
 title: License
 permalink: /license/
 support: true
-style: _page
-scripts: register
+style: page
+modules:
+  - controller
+  - service
 imports:
 - name: jquery
   load: first

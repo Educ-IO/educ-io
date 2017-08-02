@@ -1,7 +1,9 @@
 Google_API = function() {
 	
-	/* <!-- Returns an instance of App if required --> */
-  if (!(this instanceof Google_API)) {return new Google_API();}
+	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
+	
+	/* <!-- Returns an instance of this if required --> */
+  if (this && this._isF && this._isF(this.Google_API)) return new this.Google_API();
 	
 	/* === Internal Visibility === */
 	
@@ -11,9 +13,10 @@ Google_API = function() {
 	/* <!-- Internal Constants --> */
 	
 	/* <!-- Internal Variables --> */
+	var KEY, CLIENT_ID;
 	var _check, _before, _after;
   /* <!-- Internal Variables --> */
-	
+
 	/* <!-- Internal Functions --> */
 	var _init = function(token, type, expires, update) {
 		
@@ -163,8 +166,8 @@ Google_API = function() {
 
 			var picker = new google.picker.PickerBuilder()
 				.setTitle(title)
-				.setAppId(GOOGLE_CLIENT_ID)
-				.setDeveloperKey(GOOGLE_KEY)
+				.setAppId(CLIENT_ID)
+				.setDeveloperKey(KEY)
 				.setOAuthToken(_token())
 				.setCallback((function(callback, context) {
 					return function(data) {
@@ -220,7 +223,10 @@ Google_API = function() {
   return {
 
     /* <!-- External Functions --> */
-    initialise : function(token, type, expires, update) {
+    initialise : function(token, type, expires, update, key, client_id) {
+			
+			KEY = key;
+			CLIENT_ID = client_id;
 			
 			_init(token, type, expires, update);
 
@@ -231,7 +237,7 @@ Google_API = function() {
 		
 		/* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
 		me : function() {
-			return _get(GENERAL_URL + "/oauth2/v1/userinfo?alt=json&key=" + GOOGLE_KEY);
+			return _get(GENERAL_URL + "/oauth2/v1/userinfo?alt=json&key=" + KEY);
 		},
 		
 		scripts : function() {

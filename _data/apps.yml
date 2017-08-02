@@ -8,7 +8,7 @@ view:
     - name: bootstrap-css
       load: first
     - name: tether
-      load: last
+      load: first
     - name: hello
       load: last
     - name: urlparser
@@ -21,16 +21,16 @@ view:
       load: last
     - name: google
       load: defer
-  scripts: 
-    - regex
-    - arrays
+  modules:
     - flags
-    - interact
+    - controller
     - display
-    - register
     - google
-    - apps/view
-    - app
+    - service
+    - main
+  scripts: 
+    - extends/regex
+    - extends/array
   templates:
     - choose
     - confirm
@@ -76,6 +76,8 @@ reflect:
   imports:
     - name: jquery
       load: first
+    - name: bootstrap-css
+      load: first
     - name: tether
       load: first
     - name: hello
@@ -84,28 +86,20 @@ reflect:
       load: last
     - name: handlebars
       load: last
-    - name: bootstrap-css
-      load: last
     - name: bootstrap-js
       load: last
-    - name: loki
-      load: after
-    - name: xlsx
-      load: after
-    - name: filesaver
-      load: after
     - name: google
       load: defer
-  scripts: 
-    - regex
-    - arrays
+  modules:
     - flags
-    - interact
+    - controller
     - display
-    - register
     - google
-    - apps/reflect
-    - app
+    - service
+    - main
+  scripts: 
+    - extends/regex
+    - extends/array
   templates:
     - choose
     - confirm
@@ -116,15 +110,18 @@ reflect:
     - reflect/README
     - reflect/INSTRUCTIONS
   scopes:
-    - email
-    - profile
-    - https://www.googleapis.com/auth/drive.file
+    google:
+      - email
+      - profile
+      - https://www.googleapis.com/auth/drive.file
 folders:
   name: Folders
   desc: Search folders individually, and view starred files contained within.
   link: /folders/
   imports:
     - name: jquery
+      load: first
+    - name: bootstrap-css
       load: first
     - name: tether
       load: first
@@ -134,27 +131,20 @@ folders:
       load: last
     - name: handlebars
       load: last
-    - name: bootstrap-css
-      load: last
     - name: bootstrap-js
       load: last
-    - name: loki
-      load: after
-    - name: xlsx
-      load: after
-    - name: filesaver
-      load: after
     - name: google
-      load: async
-  scripts: 
-    - regex
+      load: defer
+  modules:
     - flags
-    - interact
+    - controller
     - display
-    - register
     - google
-    - apps/folders
-    - app
+    - service
+    - main
+  scripts: 
+    - extends/regex
+    - extends/array
   templates:
     - choose
     - confirm
@@ -176,6 +166,8 @@ transfer:
   imports:
     - name: jquery
       load: first
+    - name: bootstrap-css
+      load: first
     - name: tether
       load: first
     - name: hello
@@ -184,27 +176,20 @@ transfer:
       load: last
     - name: handlebars
       load: last
-    - name: bootstrap-css
-      load: last
     - name: bootstrap-js
       load: last
-    - name: loki
-      load: after
-    - name: xlsx
-      load: after
-    - name: filesaver
-      load: after
     - name: google
-      load: async
-  scripts:
-    - regex
+      load: defer
+  modules:
     - flags
-    - interact
+    - controller
     - display
-    - register
     - google
-    - apps/transfer
-    - app
+    - service
+    - main
+  scripts: 
+    - extends/regex
+    - extends/array
   templates:
     - choose
     - confirm
@@ -226,6 +211,8 @@ markbooks:
   imports:
     - name: jquery
       load: first
+    - name: bootstrap-css
+      load: first
     - name: tether
       load: first
     - name: hello
@@ -234,27 +221,20 @@ markbooks:
       load: last
     - name: handlebars
       load: last
-    - name: bootstrap-css
-      load: last
     - name: bootstrap-js
       load: last
-    - name: loki
-      load: after
-    - name: xlsx
-      load: after
-    - name: filesaver
-      load: after
     - name: google
-      load: async
-  scripts:
-    - regex
+      load: defer
+  modules:
     - flags
-    - interact
+    - controller
     - display
-    - register
     - google
-    - apps/markbooks
-    - app
+    - service
+    - main
+  scripts: 
+    - extends/regex
+    - extends/array
   templates:
     - choose
     - confirm
@@ -276,6 +256,8 @@ cover:
   imports:
     - name: jquery
       load: first
+    - name: bootstrap-css
+      load: first
     - name: tether
       load: first
     - name: hello
@@ -284,27 +266,20 @@ cover:
       load: last
     - name: handlebars
       load: last
-    - name: bootstrap-css
-      load: last
     - name: bootstrap-js
       load: last
-    - name: loki
-      load: after
-    - name: xlsx
-      load: after
-    - name: filesaver
-      load: after
     - name: google
-      load: async
-  scripts:
-    - regex
+      load: defer
+  modules:
     - flags
-    - interact
+    - controller
     - display
-    - register
     - google
-    - apps/cover
-    - app
+    - service
+    - main
+  scripts: 
+    - extends/regex
+    - extends/array
   templates:
     - choose
     - confirm

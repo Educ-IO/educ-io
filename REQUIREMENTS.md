@@ -2,10 +2,12 @@
 layout: page
 title: Requirements
 permalink: /requirements/
-style: _page
+style: page
 lead: Technical Requirements for using these web-apps, e.g. Browser etc
 script_safe: true
-scripts: register
+modules:
+  - controller
+  - service
 imports:
 - name: jquery
   load: first

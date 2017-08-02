@@ -1,5 +1,14 @@
 Flags = function() {
 
+	/* <!-- DEPENDS on WINDOW, JQUERY & PURL to work, and initialise --> */
+	
+	/* <!-- Returns an instance of Flags if required --> */
+	if (this && this._isF && this._isF(this.Flags)) {
+		/* <!-- Set Container Reference to this --> */
+		this.Flags = new this.Flags();
+		return this.Flags;
+	}
+	
 	/* <!-- Internal Variables --> */
 	var _alert = false, _debug = false, _development = false, _page = false, _base;
 	

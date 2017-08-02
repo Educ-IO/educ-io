@@ -1,16 +1,11 @@
-{% assign scripts = false %}
-
-{% if page.scripts %}
-  {% assign scripts = page.scripts %}
-{% elsif page.app and page.app != "" and site.data.apps[page.app].scripts %}
-  {% assign scripts = site.data.apps[page.app].scripts %}
-{% endif %}
-{% if scripts and scripts.size > 0 %}
-
-  {% for script in scripts %}
-    <script type="text/javascript" charset="utf-8" data-src="{{ script }}">
-      {% include scripts/{{ script }}.js %}
-    </script>
-  {% endfor %}
-
+{% assign scripts = false %}{% if page.scripts %}{% assign scripts = page.scripts %}{% elsif page.app and page.app != "" and site.data.apps[page.app].scripts %}{% assign scripts = site.data.apps[page.app].scripts %}{% endif %}
+{% if scripts and scripts.size > 0 %}{% for script in scripts %}
+  <script type="text/javascript" charset="utf-8" data-type="script" data-src="{{ script }}">
+    {% include scripts/{{ script }}.js %}
+  </script>
+{% endfor %}{% endif %}
+{% if page.app and page.app != "" %}
+  <script type="text/javascript" charset="utf-8" data-type="app" data-src="{{ page.app }}">
+    {{ site.app.namespace }}.{% include apps/{{ page.app }}.js %}
+  </script>
 {% endif %}

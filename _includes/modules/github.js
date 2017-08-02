@@ -1,10 +1,12 @@
 Github_API = function() {
 	
-	/* <!-- Returns an instance of App if required --> */
-  if (!(this instanceof Github_API)) {return new Github_API();}
+	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
+	
+	/* <!-- Returns an instance of this if required --> */
+  if (this && this._isF && this._isF(this.Github_API)) return new this.Github_API();
 	
 	/* <!-- Internal Variables --> */
-	var _api, _before, _paging, _after;
+	var _setup, _api, _before, _paging, _after;
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */

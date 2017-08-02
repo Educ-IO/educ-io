@@ -44,6 +44,10 @@ launched:							"2015"
 analytics:
   id:                 "UA-53673057-5"
   scroll:							true
+
+app:
+  content:            content
+  namespace:          educ
   
 api_keys:
   google_general:			"AIzaSyDB4zqDt8WB-DgimvEiCDrSvi8BTaZftxY"

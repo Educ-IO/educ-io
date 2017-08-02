@@ -1,19 +1,44 @@
-Interact = function() {
+Display = function() {
 	
-	/* <!-- Returns an instance of Interact if required --> */
-  if (!(this instanceof Interact)) {return new Interact();}
+	/* <!-- DEPENDS on JQUERY & HANDLEBARS to work, but not to initialise --> */
+	
+	/* <!-- Returns an instance of this if required --> */
+	if (this && this._isF && this._isF(this.Display)) return new this.Display().initialise(this);
+	
+	/* <!-- Internal Constants --> */
+	const MAX_ITEMS = 6;
+	/* <!-- Internal Constants --> */
 	
 	/* <!-- Internal Variables --> */
-  const MAX_ITEMS = 6;
+	var _root;
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
   var _target = function(options) {
 		
 		/* <!-- Ensure we have a target _element, and that it is wrapped in JQuery --> */
-		var _element = (options && options.target) ? options.target : (global.container ? global.container : $("body"));
+		var _element = (options && options.target) ? options.target : (_root ? _root : $("body"));
 		if (_element instanceof jQuery !== true) _element = $(_element);
 		return _element;
+		
+	};
+	
+  var _template = function(name) {
+			
+		if (Handlebars.templates === undefined || Handlebars.templates[name] === undefined) {
+
+			var _template = $("#" + name);
+			if (_template.length == 1) {
+				if (Handlebars.templates === undefined) Handlebars.templates = {};
+				Handlebars.templates[name] = Handlebars.compile(_template.html());
+				return Handlebars.templates[name];
+			}
+
+		} else {
+			
+			return Handlebars.templates[name];
+		
+		}
 		
 	};
 	/* <!-- Internal Functions --> */
@@ -22,14 +47,49 @@ Interact = function() {
   return {
 
     /* <!-- External Functions --> */
-		
-    initialise : function() {
+    initialise : function(container) {
+			
+			/* <!-- Set Root Element Reference--> */
+			_root = (container._root) ? document.getElementById(container._root) : document.body;
+			
+			/* <!-- Set Container Reference to this --> */
+			container.Display = this;
 			
 			/* <!-- Return for Chaining --> */
 			return this;
 			
     },
 
+		/*
+			Options are : {
+				name : name of the document to display,
+        target : optional element to append the display to,
+        prepend : optional boolean to prepend doc, rather than append,
+        clear : ooption boolean to clear target first
+			}
+		*/
+		doc : function (options) {
+
+			/* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
+			var _element = options.clear === true ? _target(options).empty() : _target(options);
+      
+			var _doc = $("#" + options.name)[0].innerText;
+      if (options.wrapper) _doc = $("#" + options.wrapper)[0].innerText.replace(/\{+\s*content\s*}}/gi, _doc);
+			
+      if (options.prepend === true) {
+        _element.prepend(_doc);
+      } else {
+        _element.append(_doc);
+      }
+      
+		},
+		
+		template : function(name) {
+			
+			return _template(name);
+			
+		},
+		
 		/* <!--
 			Options are : {
 				target : element to append the loader to,
@@ -46,7 +106,7 @@ Interact = function() {
 
 			} else {
 
-				_element.prepend(global.display.template("loader")());
+				_element.prepend(_template("loader")());
 
 			}
 			
@@ -74,8 +134,7 @@ Interact = function() {
       
 			return new Promise((resolve, reject) => {
 				
-				/* <!-- Great Modal Choice Dialog --> */
-				var dialog = $(global.display.template("alert")(options));
+				var dialog = $(_template("alert")(options));
 				_target(options).prepend(dialog);
 
 				if (options.action) {
@@ -123,7 +182,7 @@ Interact = function() {
 					options.__LONG = (_length > MAX_ITEMS);
 					
 					/* <!-- Great Modal Choice Dialog --> */
-					var dialog = $(global.display.template("choose")(options));
+					var dialog = $(_template("choose")(options));
 					_target(options).append(dialog);
 
 					/* <!-- Set Event Handlers --> */
@@ -147,8 +206,8 @@ Interact = function() {
 			});
 			
     },
+   /* <!-- External Functions --> */
     
-		/* == Functions == */
 	};
-
+  /* <!-- External Visibility --> */
 };

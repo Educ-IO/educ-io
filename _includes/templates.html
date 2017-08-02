@@ -20,7 +20,7 @@
   {% else %}
 
     <script type="text/javascript" charset="utf-8"  data-src="templates">
-      var templates = function() {
+      {{ site.app.namespace }}.templates = function() {
         {% for template in templates %}
           {% include scripts/templates/{{ template }}.js %}
         {% endfor %}

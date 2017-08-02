@@ -2,6 +2,9 @@
 layout: page
 title: Support
 permalink: /support/
+modules:
+  - controller
+  - service
 imports:
   - name: jquery
     load: first
@@ -11,6 +14,5 @@ imports:
     load: first
   - name: bootstrap-js
     load: last
-style: _page
-scripts: register
+style: page
 ---

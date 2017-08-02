@@ -103,28 +103,11 @@ if (typeof Object.assign != "function") {
 }
 /* <!-- Object Assign Polyfill --> */
 
-/* <!-- Test Storage Availability (inc Mobile Safari | Incognito Mode) --> */
-var isStorageAvailable = function (storage) {
-
-	if (typeof storage == "undefined") return false;
-	try { /* hack for safari incognito */
-		storage.setItem("storage", "");
-		storage.getItem("storage");
-		storage.removeItem("storage");
-		return true;
-	}
-	catch (err) {
-		return false;
-	}
-};
-/* <!-- Test Storage Availability (inc Mobile Safari | Incognito Mode) --> */
-
-
 /* <!-- Local Object Storage for LocalForage | Polyfill --> */
 (function () {
 
-  var localStorageAvailable = isStorageAvailable(window.localStorage),
-    sessionStorageAvailable = isStorageAvailable(window.sessionStorage);
+  var localStorageAvailable = __storageAvailable(window.localStorage),
+    sessionStorageAvailable = __storageAvailable(window.sessionStorage);
 
   if (!localStorageAvailable || !sessionStorageAvailable) {
 

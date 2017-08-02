@@ -15,7 +15,8 @@ TODO LIST
 * Namespace whole App within single window variable to prevent variable bleed
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view").
 * Recents Menu item for Apps / Files
-* Minify Scripts?
+* Hide placeholder / un-published apps from Menu / Sitemap
+* Make Google JSAPI Part of the Picker Process in Google_API Module
 
 Apps
 ----
@@ -27,6 +28,7 @@ Apps
 
 Complete
 --------
+* Minify Scripts?
 * Get to 100 on PageSpeed Insights for all pages! <-- DONE apart from annoying Google Scripts!
 * DEBUG flag to avoid registering Service Worker (for performance testing) <-- DONE
 * Improve Font Handling <-- DONE
