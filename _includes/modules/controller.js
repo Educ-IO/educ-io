@@ -154,7 +154,7 @@ Controller = function() {
 			var _proceed = function(result) {
 				if (result === true) {
 					if (_.templates) _.templates();
-					if (_.SETUP.SERVICE && _.Service) _.Service.register();
+					if (_.SETUP && _.SETUP.SERVICE && _.Service) _.Service.register();
 				}
 				if (_.IMPORTS.LOAD_AFTER) {
 					_load(_.IMPORTS.LOAD_AFTER).then(() => {_finalise(true);}).catch(e => {console.error(e); _finalise(true);});
