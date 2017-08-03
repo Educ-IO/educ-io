@@ -1,15 +1,20 @@
 App = function() {
 
 	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
-	
+
 	/* <!-- Returns an instance of this if required --> */
 	if (this && this._isF && this._isF(this.App)) {
 		return new this.App().initialise(this);
 	}
 
+	/* <!-- Internal Constants --> */
+	const HIGH_ROWS = 100;
+	/* <!-- Internal Constants --> */
+
 	/* <!-- Internal Variables --> */
 	var _;
 	var __sheet, __db, __last = ".";
+	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
 	var _loadValues = function(id, name, index, target) {
@@ -19,6 +24,8 @@ App = function() {
 		});
 
 		var _show = function(data, widths) {
+
+			var _cluster;
 
 			/* <!-- Clean up blank rows at the end! --> */
 			data = data.clean(false, true);
@@ -42,58 +49,123 @@ App = function() {
 			});
 			_table.insert(_values);
 
-			/* <!-- Append Table to Display --> */
+			var _rows = _table.chain();
 
+			/* <!-- Log Table Details --> */
+			_.Flags.log("HEADERS for Table:", _headers);
+			_.Flags.log("ROWS for Table:", _rows);
+
+			/* <!-- Append Table to Display --> */
 			var _display = $(_.Display.template("table")({
 				id: name,
 				classes: widths ? ["table-fixed-width"] : [],
 				headers: _headers,
 				widths: widths ? widths : [],
-				rows: _table.chain().data({
-					removeMeta: true
-				})
+				rows: _rows.data({removeMeta: true})
 			}));
 
 			/* <!-- Set Search Handlers --> */
+			var _filters = {};
+
+			var _completeSearch = function() {
+				var _rows;
+				if (_filters === {}) {
+					_rows = _table.chain();
+				} else {
+					var _query;
+					for (var field in _filters) {
+						if (_filters.hasOwnProperty(field)) {
+							var _condition = {};
+							_condition[field] = _filters[field];
+							if (!_query) {
+								_query = _condition;
+							} else {
+								if (_query.$and) {
+									_query.$and.push(_condition);
+								} else {
+									_query = {
+										$and: [_query, _condition]
+									};
+								}
+							}
+						}
+					}
+					_rows = _table.chain().find(_query);
+				}
+				_display.find("#table-content_" + name).empty().append(
+					$(_.Display.template("rows")({
+						widths: widths ? widths : [],
+						rows: _rows.data({removeMeta: true})
+					}))
+				);
+				if (_cluster) _cluster.update();
+			};
+
 			var _addSearch = function(field, value) {
-				var _query = {};
-				_query[field] = {
-					"$contains": [value]
-				};
-				/* _query[field] = {"$containsNone": [value]}; */
-				var _data = _table.find(_query);
-				/*
-				var _rows = _display.find("#table-content_" + name + " tr");
-				_data.forEach(function(row) {
-					_rows.filter("[data-index=" + (row.$loki - 1) + "]").hide();
-				});
-				*/
-				_display.find("#table-content_" + name).empty().append(
-					$(_.Display.template("rows")({
-						widths: widths ? widths : [],
-						rows: _table.chain().find(_query).data({
-							removeMeta: true
-						})
-					}))
-				);
+				if (value.startsWith("<=") || value.startsWith("=<")) {
+					_filters[field] = {
+						"$lte": value.substr(2).trim()
+					};
+				} else if (value.startsWith(">=") || value.startsWith("=>")) {
+					_filters[field] = {
+						"$gte": value.substr(2).trim()
+					};
+				} else if (value.startsWith("<>")) {
+					_filters[field] = {
+						"$ne": value.substr(2).trim()
+					};
+				} else if (value.startsWith("!!")) {
+					_filters[field] = {
+						"$containsNone": [value.substr(2).trim()]
+					};
+				} else if (value.startsWith("=")) {
+					_filters[field] = {
+						"$eq": value.substr(1).trim()
+					};
+				} else if (value.startsWith(">")) {
+					_filters[field] = {
+						"$gt": value.substr(1).trim()
+					};
+				} else if (value.startsWith("<")) {
+					_filters[field] = {
+						"$lt": value.substr(1).trim()
+					};
+				} else if (value.indexOf("->") > 0) {
+					var _value = value.split("->");
+					if (_value.length == 2) {
+						_filters[field] = {
+							"$between": [_value[0].trim(), _value[1].trim()]
+						};
+					} else {
+						_filters[field] = {
+							"$contains": [value]
+						};
+					}
+				} else {
+					_filters[field] = {
+						"$contains": [value]
+					};
+				}
+				_display.find("#heading_" + name + "_" + field).parent().addClass("filtered");
+				_completeSearch();
 			};
+
 			var _removeSearch = function(field) {
-				_display.find("#table-content_" + name).empty().append(
-					$(_.Display.template("rows")({
-						widths: widths ? widths : [],
-						rows: _table.chain().data({
-							removeMeta: true
-						})
-					}))
-				);
+				if (_filters[field]) delete _filters[field];
+				_display.find("#heading_" + name + "_" + field).parent().removeClass("filtered");
+				_completeSearch();
 			};
+
 			var _search_Timeout = 0;
 			_display.find("input.table-search").on("keyup", function(e) {
-				var keycode = ((typeof e.keyCode != "undefined" && e.keyCode) ? e.keyCode : e.which);
-				if (keycode === 27) {
-					var _target = $(e.target);
+				var _target, keycode = ((typeof e.keyCode != "undefined" && e.keyCode) ? e.keyCode : e.which);
+				if (keycode === 27) { /* <!-- Escape Key Pressed --> */
+					_target = $(e.target);
 					_target.val("");
 					_removeSearch(_target.data("field"));
+					_target.parents(".collapse").collapse("hide");
+				} else if (keycode === 13) { /* <!-- Enter Key Pressed --> */
+					_target = $(e.target);
 					_target.parents(".collapse").collapse("hide");
 				}
 			}).on("input", function(e) {
@@ -113,23 +185,73 @@ App = function() {
 						}
 
 					}
-				}, 100);
+				}, 200);
 			});
 
-			_display.find(".collapse").on("shown.bs.collapse", function(e) {
+			_display.filter(".collapse").on("shown.bs.collapse", function(e) {
 				$(e.target).find("input").first().focus();
 			});
-			/* <!-- Set Sort Handlers --> */
-
+			
+			_display.find("[data-toggle='popover']").popover({trigger: "focus"});
+			
+			_display.find("button[data-command='sort']").on("click", function(e) {
+				var _target = $(e.target);
+				var _field = _target.data("field");
+				_rows = _rows.simplesort(_field);
+				_display.find("#table-content_" + name).empty().append(
+					$(_.Display.template("rows")({
+						widths: widths ? widths : [],
+						rows: _rows.data({removeMeta: true})
+					}))
+				);
+				if (_cluster) _cluster.update();
+			});
+			
+			var _removeColumn = function(target, field) {
+				_rows.mapReduce(function(v){ delete v[field]; return v; }, function(a) {return a;});
+				_display.find("#table-content_" + name).empty().append(
+					$(_.Display.template("rows")({
+						widths: widths ? widths : [],
+						rows: _rows.data({removeMeta: true})
+					}))
+				);
+				/* <!-- Will only currently work with one column --> */
+				_display.find("thead th:nth-child(" + (field + 1) + ")").hide();
+				target.parents(".collapse").collapse("hide");
+				if (_cluster) _cluster.update();
+			};
+			_display.find("a[data-command='hide']").on("click", function(e) {
+				var _target = $(e.target);
+				var _action = _target.data("action");
+				var _field = _target.data("field");
+				if (_action == "now") {
+					_removeColumn(_target, _field);
+				} else if (_action == "always") {
+					_removeColumn(_target, _field);
+				} else if (_action == "initially") {
+					/* <!-- Add to Initially Hidden List --> */
+					_display.find("#heading_" + name + "_" + _field).parent().toggleClass("to-hide");
+				}
+			});
+			
+			/* <!-- Append the Table --> */
+			target.append(_display);
+			
+			/* <!-- Set up Clusterize --> */
+			if (_rows.length > HIGH_ROWS) {
+				_cluster = new Clusterize({
+					scrollId: "tab_" + index,
+					contentId: "table-content_" + name,
+					rows_in_block: 20,
+					blocks_in_cluster: 2
+				});
+			}
+			
 			/* <!-- Remove the Loader --> */
 			_.Display.busy({
 				target: target,
 				clear: true
 			});
-
-			/* <!-- Append the Table --> */
-			target.append(_display);
-
 		};
 
 		var _frozen = {
@@ -283,17 +405,22 @@ App = function() {
 					function(file) {
 
 						var _full = _.Flags.debug();
+
 						/* <!-- Start the Loader --> */
-						if (_full) _.Display.busy({target: _.container});
+						_.Display.busy({
+							target: _.container
+						});
 
 						_.Flags.log("Google Drive File Picked from Open", file);
 
 						_.google.sheets.get(file.id, _full).then(function(sheet) {
+
 							_.Flags.log("Google Drive Sheet Opened", sheet);
-							if (_full) _.Display.busy({
+							_.Display.busy({
 								clear: true
 							});
 							_showSheet(sheet);
+
 						}).catch(function(e) {
 
 							_.Flags.error("Requesting Selected Google Drive Sheet", e);

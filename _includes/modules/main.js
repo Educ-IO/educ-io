@@ -73,6 +73,9 @@ Main = function() {
 
 		start : function() {
 
+			/* <!-- Module Starts --> */
+			if (_.Display.start) _.Display.start();
+			
 			_setup(hello);
 
 			/* <!-- Enable Tooltips --> */
@@ -139,7 +142,7 @@ Main = function() {
 						$("#sign_in").hide().children("button").attr("title","").off("click");
 
 						/* Enable and Shopw the Sign Out */
-						$("#user_details").text(user.name).attr("title", "To remove from your account (" + user.email + "), click & follow instructions");
+						$("#user_details").text(user.name.length == 3 ? user.name.split(" ").join("") : user.name).attr("title", "To remove from your account (" + user.email + "), click & follow instructions");
 						$("#sign_out button").on("click", function(e) {e.preventDefault(); google_SignOut();});
 						$("#sign_out").show();
 

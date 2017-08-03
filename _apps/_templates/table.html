@@ -1,21 +1,30 @@
 {% raw %}
-<table id="table_{{id}}" class="table table-striped table-hover table-bordered table-tabbed{{#if classes}} {{#each classes}}{{this}}{{/each}}{{/if}}">
+{{#each headers}}<form id="collapse_{{../id}}_{{@index}}" class="form-tabbed collapse container-fluid pt-2 pb-1 px-2" aria-labelledby="heading_{{../id}}_{{@index}}">
+  <div class="input-group col-md-12 col-lg-8 col-xl-6 p-0 no-gutters">
+    <span class="input-group-btn">
+      <a tabindex="0" class="btn btn-action" role="button" data-toggle="popover" title="Instructions" data-content="Filter with simple text (!!text to exclude) or >, <, >=, <=, <> & x->y (range) operators">{{this}}</a>
+    </span>
+    <input data-field="{{@index}}" data-action="filter" type="text" class="form-control table-search" placeholder="Filter {{ this }} ...">
+    <span class="input-group-btn"><button type="button" class="btn btn-secondary" data-command="sort" data-field="{{@index}}">Sort</button></span>
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Visibility
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-label="Menu for controlling the visibility of this column">
+          <a class="dropdown-item" href="#" data-command="hide" data-action="now" data-field="{{@index}}">Hide now</a>
+          <a class="dropdown-item" href="#" data-command="hide" data-action="always" data-field="{{@index}}">Hide always</a>
+          <a class="dropdown-item" href="#" data-command="hide" data-action="initially" data-field="{{@index}}">Hide initially</a>
+        </div>
+      </div>
+  </div>
+</form>{{/each}}<table id="table_{{id}}" class="table table-striped table-hover table-bordered table-filtered border-top-0{{#if classes}} {{#each classes}}{{this}}{{/each}}{{/if}}">
   <thead id="table-headings_{{id}}">
-    <tr>
+    <tr class="border-top-0">
       {{#each headers}}
-      
-      <th class="align-middle"{{#if ../widths}} style="width: {{#with (lookup ../widths @index)}}{{this}}{{/with}}px"{{/if}}>
-        
+      <th class="align-middle" {{#if ../widths}} style="width: {{#with (lookup ../widths @index)}}{{this}}{{/with}}px"{{/if}}>
         <a id="heading_{{../id}}_{{@index}}" data-toggle="collapse" href="#collapse_{{../id}}_{{@index}}" aria-expanded="false" aria-controls="collapse_{{../id}}_{{@index}}">
           {{this}}
         </a>
-        
-        <div id="collapse_{{../id}}_{{@index}}" class="collapse" aria-labelledby="heading_{{../id}}_{{@index}}">
-            <div class="input-group">
-              <input data-field="{{@index}}" data-action="filter" type="text" class="form-control table-search" placeholder="Search for...">
-            </div>
-        </div>
-        
       </th>
       {{/each}}
     </tr>
@@ -23,9 +32,7 @@
   <tbody id="table-content_{{id}}">
     {{#each rows}}
       <tr data-index="{{ @index }}">
-        {{#each this}}
-         <td{{#if @../first}}{{#if ../../widths}} style="width: {{#with (lookup ../../widths @index)}}{{this}}{{/with}}px"{{/if}}{{/if}}>{{this}}</td>
-        {{/each}}
+        {{#each this}}<td>{{this}}</td>{{/each}}
       </tr>
     {{/each}}
   </tbody>

@@ -19,7 +19,7 @@ compress_html:
   endings:            all
   artifacts:          ["/* */ ", "/* */", "/*jshint ignore:start*/", "/*jshint ignore:end*/"]
   ignore:
-    envs:             [debug]
+    envs:             [debug, perf]
 
 # Permalinks
 permalink:						pretty
@@ -39,6 +39,10 @@ author:
 # Custom variables
 version:							"0.0.2"
 launched:							"2015"
+debug:                "debug"
+performance:          "perf"
+compress:             "compress"
+array:                []
 
 # Extras
 analytics:

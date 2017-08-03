@@ -260,6 +260,8 @@ clusterize:
   version: 0.17.6
   license: GPLv3
   type: js
+  css: 
+    - _clusterize
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.min.js
       integrity: sha256-v56TI+wd9PWTvwqrpGaluF6GulSCspBFwQKAcVpXGZc=

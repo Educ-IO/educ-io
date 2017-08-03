@@ -11,6 +11,20 @@
     box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
 	}
 }
+
+.btn-action {
+  color: $colour-background !important;
+  border-color: $colour-highlight;
+	background-color: $colour-highlight;
+	&:hover {
+		border-color: darken($colour-highlight, 10%);
+		background-color: darken($colour-highlight, 10%);
+	}
+	&:focus {
+		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+    box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
+	}
+}
 // -- Action Button -- //
 
 // -- Border the bottom of the Navbar -- //

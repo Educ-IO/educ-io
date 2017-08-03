@@ -10,11 +10,10 @@ TODO LIST
 * Should second level commands (e.g. export on view) be inactive until they are 'possible'? How to declaratively encode this in terms of state?
 * Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc)
 * Wrap Un-Authenticated Sheets Access in Google API Javascript file
-* Large Table Render Performance
 * Gracefully handle the .map issue for injected async/fetched CSS <-- Relative path at end of Bootstrap CSS (e.g. /*# sourceMappingURL=bootstrap.min.css.map */)
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view").
 * Recents Menu item for Apps / Files
-* Hide placeholder / un-published apps from Menu / Sitemap
+* BUG? Collapse Forms hide scrollbars when hidden!
 
 Apps
 ----
@@ -26,6 +25,9 @@ Apps
 
 Complete
 --------
+* Handle Operaters in View Filter <-- DONE
+* Large Table Render & Filter/Sort Performance <-- Currently Clusterize
+* Hide placeholder / un-published apps from Menu / Sitemap <-- DONE
 * Make Google JSAPI Part of the Picker Process in Google_API Module -- This needs to be in the controller module, hook up Async script load event to promise resolve for 'no-cors' requests. <-- DONE
 * Namespace whole App within single window variable to prevent variable bleed <-- DONE
 * Minify Scripts? <-- DONE

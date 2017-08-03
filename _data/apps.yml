@@ -19,6 +19,8 @@ view:
       load: last
     - name: loki
       load: last
+    - name: clusterize
+      load: last
     - name: google
       load: lazy
     - name: xlsx
@@ -75,6 +77,7 @@ view:
             description: Close the current Sheet
             hash: close
   version: 0.0.1
+  published: true
 reflect:
   name: Reflect
   desc: Produce reflective reports
@@ -120,6 +123,7 @@ reflect:
       - email
       - profile
       - https://www.googleapis.com/auth/drive.file
+  published: false
 folders:
   name: Folders
   desc: Search folders individually, and view starred files contained within.
@@ -165,6 +169,7 @@ folders:
       - email
       - profile
       - https://www.googleapis.com/auth/drive.file
+  published: false
 transfer:
   name: Transfer
   desc: Copy your Google Drive data to your own account.
@@ -210,6 +215,7 @@ transfer:
       - email
       - profile
       - https://www.googleapis.com/auth/drive.file
+  published: false
 markbooks:
   name: Markbooks
   desc: A soon to be written tool.
@@ -255,6 +261,7 @@ markbooks:
       - email
       - profile
       - https://www.googleapis.com/auth/drive.file
+  published: false
 cover:
   name: Cover
   desc: Run your cover in Google Sheets
@@ -300,6 +307,7 @@ cover:
       - email
       - profile
       - https://www.googleapis.com/auth/drive.file
+  published: false
 scriptr:
   name: Scriptr
   desc: Better Coding with Google Apps Script

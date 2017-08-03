@@ -5,7 +5,7 @@
     _root : "{{ site.app.content }}",
     SETUP : {
       SINGLE_PAGE : !!(window.navigator.standalone || window.navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)),
-      {% if jekyll.environment == "debug" %}DEBUG : true{% else %}SERVICE : true{% endif %},
+      {% if jekyll.environment == site.debug %}DEBUG : true{% elsif jekyll.environment == site.performance %}DEBUG : false{% elsif jekyll.environment == site.compress %}DEBUG : false{% else %}SERVICE : true{% endif %},
       {% if page.scopes.google or site.data.apps[page.app].scopes.google %}GOOGLE_KEY : "{{ site.api_keys.google_general }}",
       GOOGLE_CLIENT_ID : "{{ site.api_keys.google_oauth }}",{% assign scopes = false %}{% if page.scopes.google %}{% assign scopes = page.scopes.google %}{% elsif page.app and page.app != "" and site.data.apps[page.app].scopes.google %}{% assign scopes = site.data.apps[page.app].scopes.google %}{% endif %}
       GOOGLE_SCOPES : [
@@ -20,16 +20,16 @@
     },{% assign imports = false %}{% if page.imports %}{% assign imports = page.imports %}{% elsif page.app and page.app != "" and site.data.apps[page.app].imports %}{% assign imports = site.data.apps[page.app].imports %}{% endif %}
     IMPORTS : {
       {% if imports %}{% assign first_imports = imports | where_exp: "item", "item.load == 'first'" | map: "name" %}{% assign last_imports = imports | where_exp: "item", "item.load == 'last'" | map: "name" %}{% assign after_imports = imports | where_exp: "item", "item.load == 'after'" | map: "name" %}
-      LOAD_FIRST : [{ id: "__fonts", url : "https://fonts.googleapis.com/css?family={{ fonts }}" }{% if first_imports and first_imports.size > 0 %},{% for import in first_imports %}{% if jekyll.environment == "debug" %}{% for import_url in site.data.imports[import].dev %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% endif %}{% endfor %}{% endif %}],
-		  {% if last_imports and last_imports.size > 0 %}LOAD_LAST : [{% for import in last_imports %}{% if jekyll.environment == "debug" %}{% for import_url in site.data.imports[import].dev %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% endif %}{% endfor %}],{% endif %}
-      {% if after_imports and after_imports.size > 0 %}LOAD_AFTER : [{% for import in after_imports %}{% if jekyll.environment == "debug" %}{% for import_url in site.data.imports[import].dev %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% endif %}{% endfor %}],{% endif %}{% else %}
+      LOAD_FIRST : [{ id: "__fonts", url : "https://fonts.googleapis.com/css?family={{ fonts }}" }{% if first_imports and first_imports.size > 0 %},{% for import in first_imports %}{% if jekyll.environment == site.debug %}{% for import_url in site.data.imports[import].dev %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% endif %}{% endfor %}{% endif %}],
+		  {% if last_imports and last_imports.size > 0 %}LOAD_LAST : [{% for import in last_imports %}{% if jekyll.environment == site.debug %}{% for import_url in site.data.imports[import].dev %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% endif %}{% endfor %}],{% endif %}
+      {% if after_imports and after_imports.size > 0 %}LOAD_AFTER : [{% for import in after_imports %}{% if jekyll.environment == site.debug %}{% for import_url in site.data.imports[import].dev %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: "{{ import_url.id }}", url : "{{ import_url.url }}"{% if import_url.mode %}, mode : "{{ import_url.mode }}"{% endif %} },{% endfor %}{% endif %}{% endfor %}],{% endif %}{% else %}
       LOAD_AFTER : [{id: "__fonts", url : "https://fonts.googleapis.com/css?family={{ fonts }}"}],
       {% endif %}
     },
   };
 </script>
 {% if imports %}{% assign sync_imports = imports | where_exp: "item", "item.load == 'sync'" | map: "name" %}{% if sync_imports %}{% for import in sync_imports %}{% if site.data.imports[import].type == "js" %}
-  {% if jekyll.environment == "debug" %}{% for script in site.data.imports[import].dev %}
+  {% if jekyll.environment == site.debug %}{% for script in site.data.imports[import].dev %}
   <script src="{{ script.url }}"{% if import_script.integrity %} integrity="{{ script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ script.crossorigin }}"{% endif %}{% if script.defer %} defer{% endif %}{% if script.async %} async{% endif %}></script>
   {% endfor %}{% else %}
   {% for script in site.data.imports[import].prod %}
@@ -38,7 +38,7 @@
 {% endif %}{% endif %}{% endfor %}{% endif %}
   <noscript>
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family={{ fonts }}">
-    {% for import in imports %}{% if site.data.imports[import.name].type == "css" %}{% if jekyll.environment == "debug" %}{% for css in site.data.imports[import.name].dev %}
+    {% for import in imports %}{% if site.data.imports[import.name].type == "css" %}{% if jekyll.environment == site.debug %}{% for css in site.data.imports[import.name].dev %}
       <link rel="stylesheet" href="{{ css.url }}"{% if import_css.integrity %} integrity="{{ css.integrity }}"{% endif %}{% if import_css.crossorigin %} crossorigin="{{ css.crossorigin }}"{% endif %} />
     {% endfor %}{% else %}{% for css in site.data.imports[import.name].prod %}
       <link rel="stylesheet" href="{{ css.url }}"{% if import_css.integrity %} integrity="{{ css.integrity }}"{% endif %}{% if import_css.crossorigin %} crossorigin="{{ css.crossorigin }}"{% endif %} />

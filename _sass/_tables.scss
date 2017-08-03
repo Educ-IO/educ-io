@@ -1,15 +1,22 @@
 /* -- General Table Styling -- */
-
-// Remove top border for tables appearing after tabs
-.table-bordered.table-tabbed {
-	border-top-width: 0;
-	thead {
-		th, td {
-			border-top-width: 0;
-		}
+table {
+	tbody {
+		outline: 0;
 	}
 }
 
 .table-fixed-width {
 	table-layout: fixed;
+}
+
+.table-filtered {
+	td.filtered, th.filtered {
+		background-color: lighten($colour-highlight, 50%);
+	}
+	td.to-hide, th.to-hide {
+		a {
+			color: $colour-emphasis !important;
+		}
+		background-color: lighten($colour-deemphasise, 10%);
+	}
 }
