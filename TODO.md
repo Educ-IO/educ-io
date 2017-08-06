@@ -20,6 +20,7 @@ Apps
 #### View
 * BUG? Collapse Forms hide scrollbars when hidden!
 * Sometimes there is a form submit(????) on Enter in Filter box on View
+* Put filter as title over thead / th
 
 #### Folders
 * File Counts

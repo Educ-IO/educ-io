@@ -34,8 +34,14 @@ table {
 }
 
 .table-filtered {
+	td.inverse-filtered, th.inverse-filtered {
+		background-color: darken($colour-highlight, 10%);
+		a {
+			color: $colour-background;	
+		}
+	}
 	td.filtered, th.filtered {
-		background-color: lighten($colour-highlight, 50%);
+		background-color: lighten($colour-highlight, 52%);
 	}
 	td.to-hide, th.to-hide {
 		a {

@@ -171,7 +171,7 @@ App = function() {
 					} else if (value) {
 						_filter = {"$regex": [RegExp.escape(value), "i"]};
 					}
-				} else {
+				} else if (value) {
 					_filter = {"$regex": [RegExp.escape(value), "i"]};
 				}
 				if (_filter) {
@@ -180,17 +180,21 @@ App = function() {
 						delete __filters[field];
 					} else {
 						__filters[field] = _filter;
+						delete __invertedFilters[field];
 					}
-					__display.find("#heading_" + name + "_" + field).parent().addClass(_invert ? "invert-filtered" : "filtered");
-					_updateRows();
+					__display.find("#heading_" + name + "_" + field).parent().addClass(_invert ? "inverse-filtered" : "filtered").attr("title", (_invert ? "NOT: " : "") + JSON.stringify(_filter));
+				} else {
+					delete __filters[field];
+					delete __invertedFilters[field];
+					__display.find("#heading_" + name + "_" + field).parent().removeClass("filtered inverse-filtered").removeAttr("title");
 				}
-
+				_updateRows();
 			};
 
 			var _removeFilter = function(field) {
 				if (__filters[field]) delete __filters[field];
 				if (__invertedFilters[field]) delete __invertedFilters[field];
-				__display.find("#heading_" + name + "_" + field).parent().removeClass("filtered");
+				__display.find("#heading_" + name + "_" + field).parent().removeClass("filtered inverse-filtered").removeAttr("title");
 				_updateRows();
 			};
 
@@ -331,10 +335,7 @@ App = function() {
 				_.Flags.error("Adding Content Table", e);
 
 				/* <!-- Remove the Loader --> */
-				_.Display.busy({
-					target: target,
-					clear: true
-				});
+				_.Display.busy({target: target, clear: true});
 
 			});
 

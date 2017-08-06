@@ -85,9 +85,8 @@ view:
               description: 
               hash: settings
         visibility:
-          name: Show / Hide
           commands:
-            - name: Columns
+            - name: Show / Hide Columns
               description: Select which columns should remain visible
               hash: visibility-columns
     - name: Instructions
