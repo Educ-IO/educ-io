@@ -22,39 +22,35 @@
         </div>
       </li>
 
-      {% assign menu = false %}{% if page.menu %}{% assign menu = page.menu %}{% elsif page.app and page.app != "" and site.data.apps[page.app].menu %}{% assign menu = site.data.apps[page.app].menu %}{% endif %}
+      {% assign menus = false %}{% if page.menu %}{% assign menus = page.menus %}{% elsif page.app and page.app != "" and site.data.apps[page.app].menus %}{% assign menus = site.data.apps[page.app].menus %}{% endif %}
 
-      {% if menu %}
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ menu.name }}</a>
-        <div class="dropdown-menu" aria-labelledby="navMenu">
+      {% if menus and menus.size > 0 %}{% for menu in menus %}
+      {% if menu.groups and menu.groups.size > 0 %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navMenu_{{ menu.name }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ menu.name }}</a>
+          <div class="dropdown-menu" aria-labelledby="navMenu_{{ menu.name }}">
 
-          {% for group in menu.groups %} {% assign group_title = group[1].name %} {% assign group_commands = group[1].commands %}
+            {% for group in menu.groups %} {% assign group_title = group[1].name %} {% assign group_commands = group[1].commands %}
 
-          <h5 class="dropdown-heading">{{ group_title }}</h5>
+            {% if group_title %}<h5 class="dropdown-heading">{{ group_title }}</h5>{% endif %}
 
-          {% for command in group_commands %}
-          <a class="dropdown-item" href="#{{ command.hash }}" {% if command.desc %}data-toggle="tooltip" title="{{ command.desc }}"{% endif %}{% if command.imports and command.imports.size > 0 %}{% capture command_imports %}[{% for import in command.imports %}{% if jekyll.environment == site.debug %}{% for import_url in site.data.imports[import].dev %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% endif %}{% endfor %}]{% endcapture %} onclick="event.preventDefault(); {{ site.app.namespace }}.Controller.load({{ command_imports }}).then(() => {window.location.hash = '#{{ command.hash }}';}).catch(e => {console.error(e);});"{% endif %}>
-            {{ command.name }}
-          </a>
-          
-          {% endfor %}
+            {% for command in group_commands %}
+            <a class="dropdown-item" href="#{{ command.hash }}" {% if command.desc %}data-toggle="tooltip" title="{{ command.desc }}"{% endif %}{% if command.imports and command.imports.size > 0 %}{% capture command_imports %}[{% for import in command.imports %}{% if jekyll.environment == site.debug %}{% for import_url in site.data.imports[import].dev %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% endif %}{% endfor %}]{% endcapture %} onclick="event.preventDefault(); {{ site.app.namespace }}.Controller.load({{ command_imports }}).then(() => {window.location.hash = '#{{ command.hash }}';}).catch(e => {console.error(e);});"{% endif %}>
+              {{ command.name }}
+            </a>
 
-          {% endfor %}
+            {% endfor %}
 
-        </div>
-      </li>
-      {% endif %}
+            {% endfor %}
 
-      {% if page.app %}
-        <li class="nav-item">
-          <a class="nav-link" href="#settings">Settings</a>
+          </div>
         </li>
-
+      {% elsif menu.hash %}
         <li class="nav-item">
-          <a class="nav-link" href="#instructions">Instructions</a>
+          <a class="nav-link" href="#{{ menu.hash }}">{{ menu.name }}</a>
         </li>
       {% endif %}
+      {% endfor %}{% endif %}
 
       <li class="nav-item">
         <a class="nav-link" href="/about/">About</a>

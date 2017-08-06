@@ -38,12 +38,13 @@ view:
     - extends/regex
     - extends/array
   templates:
+    - options
     - choose
     - confirm
     - alert
     - loader
-    - table
-    - rows
+    - view/table
+    - view/rows
     - tabs
   docs:
     - view/PUBLIC
@@ -56,26 +57,41 @@ view:
       - profile
       - https://www.googleapis.com/auth/drive.file
       - https://www.googleapis.com/auth/spreadsheets.readonly
-  menu:
-    name: Commands
-    groups:
-      file:
-        name: File
-        commands:
-          - name: Open
-            description: Open a Sheet from your Drive
-            hash: open
-            imports:
-              - google
-          - name: Export
-            description: Export the Sheet to Legacy Formats
-            hash: export
-            imports:
-              - xlsx
-              - filesaver
-          - name: Close
-            description: Close the current Sheet
-            hash: close
+  menus:
+    - name: Commands
+      groups:
+        file:
+          name: File
+          commands:
+            - name: Open
+              description: Open a Sheet from your Drive
+              hash: open
+              imports:
+                - google
+            - name: Export
+              description: Export the Sheet to Legacy Formats
+              hash: export
+              imports:
+                - xlsx
+                - filesaver
+            - name: Close
+              description: Close the current Sheet
+              hash: close
+    - name: Settings
+      groups:
+        general:
+          commands:
+            - name: General
+              description: 
+              hash: settings
+        visibility:
+          name: Show / Hide
+          commands:
+            - name: Columns
+              description: Select which columns should remain visible
+              hash: visibility-columns
+    - name: Instructions
+      hash: instructions
   version: 0.0.1
   published: true
 reflect:

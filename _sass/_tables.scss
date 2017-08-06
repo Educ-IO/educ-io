@@ -1,5 +1,29 @@
 /* -- General Table Styling -- */
 table {
+	thead {
+		.sort {
+			&:after {
+				display: inline-block;
+				width: 0;
+				height: 0;
+				margin-left: 0.3em;
+				vertical-align: middle;
+				content: "";
+				border-right: 0.3em solid transparent;
+				border-left: 0.3em solid transparent;
+			}
+			&.asc {
+				&:after {
+					border-top: 0.3em solid;
+				}
+			}
+			&.desc {
+				&:after {
+					border-bottom: .3em solid;
+				}
+			}
+		}
+	}
 	tbody {
 		outline: 0;
 	}

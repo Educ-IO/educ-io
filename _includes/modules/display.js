@@ -10,7 +10,7 @@ Display = function() {
 	/* <!-- Internal Constants --> */
 	
 	/* <!-- Internal Variables --> */
-	var _root;
+	var _root, _debug = false;
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
@@ -30,7 +30,7 @@ Display = function() {
 			var _template = $("#" + name);
 			if (_template.length == 1) {
 				if (Handlebars.templates === undefined) Handlebars.templates = {};
-				Handlebars.templates[name] = Handlebars.compile(_template.html());
+				Handlebars.templates[name] = Handlebars.compile(_template.html(), {strict : _debug});
 				return Handlebars.templates[name];
 			}
 
@@ -48,6 +48,9 @@ Display = function() {
 
     /* <!-- External Functions --> */
     initialise : function(container) {
+			
+			/* <!-- Set Debug Flag, used for Template Compile etc --> */
+			if (container.SETUP && container.SETUP.DEBUG) _debug = true;
 			
 			/* <!-- Set Root Element Reference--> */
 			_root = (container._root) ? document.getElementById(container._root) : document.body;
@@ -219,6 +222,52 @@ Display = function() {
 					dialog.find("button.btn-primary").click(function() {
 						var _value = dialog.find("input[name='choices']:checked, select[name='choices'] option:selected").val();
 						if (_value && options.choices[_value]) resolve(options.choices[_value]);
+					});
+					dialog.on("shown.bs.modal", function () {});
+					dialog.on("hidden.bs.modal", function() {
+						dialog.remove();
+						reject();
+					});
+
+					/* <!-- Show the Modal Dialog --> */
+					dialog.modal("show");
+					
+				} else {
+					reject();
+				}
+				
+			});
+			
+    },
+		
+		/* <!--
+			Options are : {
+				title : main title of the options dialog,
+				instructions: optional instructions
+				list : array or objects for choices to be attached to
+				choices : array or object of name/desc items to choose from
+				action : optional name of action button
+				target : optional name / element / jquery of containing element
+			}
+		--> */
+    options : function(options) {
+    
+			return new Promise((resolve, reject) => {
+
+				if (options && options.list && options.choices) {
+
+					/* <!-- Great Modal Options Dialog --> */
+					var dialog = $(_template("options")(options));
+					_target(options).append(dialog);
+
+					/* <!-- Set Event Handlers --> */
+					dialog.find("button.btn-primary").click(function() {
+						var _return = [];
+						dialog.find("div.input-group").each(function() {
+							var e = $(this);
+							_return.push({name: e.find("input").data("field"), value: e.find("button").text()});
+						});
+						resolve(_return);
 					});
 					dialog.on("shown.bs.modal", function () {});
 					dialog.on("hidden.bs.modal", function() {

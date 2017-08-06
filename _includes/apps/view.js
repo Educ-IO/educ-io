@@ -8,169 +8,208 @@ App = function() {
 	}
 
 	/* <!-- Internal Constants --> */
-	const HIGH_ROWS = 100;
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
 	var _;
-	var __sheet, __db, __last = ".";
+	var __sheet, __db, __last = ".", __headers, __table, __widths, __cluster, __display, __filters, __invertedFilters, __sorts;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
+	var _createQuery = function(filters, join) {
+		var _query, _join = join ? join : "$and";
+		for (var field in filters) {
+			if (filters.hasOwnProperty(field)) {
+				var _condition = {};
+				_condition[field] = filters[field];
+				if (!_query) {
+					_query = _condition;
+				} else {
+					if (_query[_join]) {
+						_query.$and.push(_condition);
+					} else {
+						var _newQuery = {};
+						_newQuery[_join] = [_query, _condition];
+						_query = _newQuery;
+					}
+				}
+			}
+		}
+		return _query;
+	};
+	
+	var _getRows = function() {
+		
+		_.Flags.log("Getting Rows from Data");
+		
+		var _rows = __table.chain();
+		if (!$.isEmptyObject(__invertedFilters)) {
+			_.Flags.log("Applying Inverted Filters", __invertedFilters);
+			var _inversion = _createQuery(__invertedFilters, "$or");
+			var _exclude = new Set(__table.chain().find(_inversion).data().map(function(v) {return v.$loki;}));
+			_rows = _rows.where(function(v) {return !_exclude.has(v.$loki);});
+		}
+		if (!$.isEmptyObject(__filters)) {
+			_.Flags.log("Applying Filters", __filters);
+			_rows = _rows.find(_createQuery(__filters));
+		}
+		
+		if (!$.isEmptyObject(__sorts)) {
+			_.Flags.log("Applying Sorts", __sorts);
+			var _sorts = [];
+			for (var field in __sorts) {
+				if (__sorts.hasOwnProperty(field)) {
+					_sorts.push([field, __sorts[field].is_desc]);
+				}
+			}
+			_rows = _rows.compoundsort(_sorts);
+		}
+		
+		_rows = _rows.data({removeMeta: true});
+		_.Flags.log("Data So Far", _rows);
+		
+		_.Flags.log("Applying Column Hides", __headers);
+		_rows = _rows.map(function(v) {
+			__headers.forEach(function(f, i) {
+				if (f.hide())	delete v[i];
+			});
+			return v;
+		});
+		
+		return _rows;
+	
+	};
+
+	var _updateRows = function() {
+		if (__cluster) {
+			var _textRows = $(_.Display.template("rows")({
+				rows: _getRows()
+			})).toArray().map(function(e) {
+				return e.outerHTML;
+			});
+			_.Flags.log("Text Rows", _textRows);
+			__cluster.update(_textRows);
+		}
+	};
+
 	var _loadValues = function(id, name, index, target) {
 
-		_.Display.busy({
-			target: target
-		});
+		_.Display.busy({target: target});
 
-		var _show = function(data, widths) {
-
-			var _cluster;
+		var _show = function(data) {
 
 			/* <!-- Clean up blank rows at the end! --> */
 			data = data.clean(false, true);
 
 			_.Flags.log("Google Sheet Values [" + name + "]", data);
 
-			var _headers = data.shift();
-			var _length = 0;
-
-			var _values = data.map(function(v) {
-				_length = Math.max(_length, v.length);
-				return Object.assign({}, v);
-			});
+			__filters = {}, __invertedFilters = {}, __sorts = {};
+			__headers = data.shift().map(function(v) {return {name: v, hide: function() {return this.hide_now || this.hide_always;}, hide_now: false,  hide_always: false, hide_initially: false};});
+			
+			var _length = 0,
+				_values = data.map(function(v) {
+					_length = Math.max(_length, v.length);
+					return Object.assign({}, v);
+				});
 
 			var _fields = Array.apply(null, {
 				length: _length
 			}).map(Number.call, Number);
 			if (!__db) __db = new loki("view.db");
-			var _table = __db.addCollection(name, {
+			__table = __db.addCollection(name, {
 				indices: _fields
 			});
-			_table.insert(_values);
-
-			var _rows = _table.chain();
-
-			/* <!-- Log Table Details --> */
-			_.Flags.log("HEADERS for Table:", _headers);
-			_.Flags.log("ROWS for Table:", _rows);
-
+			__table.insert(_values);
+			
 			/* <!-- Append Table to Display --> */
-			var _display = $(_.Display.template("table")({
+			var _options = {
 				id: name,
-				classes: widths ? ["table-fixed-width"] : [],
-				headers: _headers,
-				widths: widths ? widths : [],
-				rows: _rows.data({removeMeta: true})
-			}));
-
-			/* <!-- Set Search Handlers --> */
-			var _filters = {};
-
-			var _completeSearch = function() {
-				var _rows;
-				if (_filters === {}) {
-					_rows = _table.chain();
-				} else {
-					var _query;
-					for (var field in _filters) {
-						if (_filters.hasOwnProperty(field)) {
-							var _condition = {};
-							_condition[field] = _filters[field];
-							if (!_query) {
-								_query = _condition;
-							} else {
-								if (_query.$and) {
-									_query.$and.push(_condition);
-								} else {
-									_query = {
-										$and: [_query, _condition]
-									};
-								}
-							}
-						}
-					}
-					_rows = _table.chain().find(_query);
-				}
-				_display.find("#table-content_" + name).empty().append(
-					$(_.Display.template("rows")({
-						widths: widths ? widths : [],
-						rows: _rows.data({removeMeta: true})
-					}))
-				);
-				if (_cluster) _cluster.update();
+				classes: __widths ? ["table-fixed-width"] : [],
+				headers: __headers,
+				widths: __widths ? __widths : [],
+				rows: _getRows(),
 			};
-
-			var _addSearch = function(field, value) {
-				if (value.startsWith("<=") || value.startsWith("=<")) {
-					_filters[field] = {
-						"$lte": value.substr(2).trim()
-					};
+			__display = $(_.Display.template("table")(_options));
+			
+			/* <!-- Set Search Handlers --> */
+			
+			var _addFilter = function(field, value) {
+				var _invert, _filter;
+				if (value.startsWith("!!")) {
+					_invert = true;
+					value = value.substr(2).trim();
+				}
+				if (value.startsWith("$")) {
+					value = value.substr(1).trim();
+					if (value) _filter = {"$contains": [value]};
+				} else if (value.startsWith("<=") || value.startsWith("=<")) {
+					value = value.substr(2).trim();
+					if (value) _filter = {"$lte": value};
 				} else if (value.startsWith(">=") || value.startsWith("=>")) {
-					_filters[field] = {
-						"$gte": value.substr(2).trim()
-					};
+					value = value.substr(2).trim();
+					if (value) _filter = {"$gte": value.substr(2).trim()};
 				} else if (value.startsWith("<>")) {
-					_filters[field] = {
-						"$ne": value.substr(2).trim()
-					};
-				} else if (value.startsWith("!!")) {
-					_filters[field] = {
-						"$containsNone": [value.substr(2).trim()]
-					};
+					value = value.substr(2).trim();
+					if (value) _filter = {"$ne": value.substr(2).trim()};
+				} else if (value.startsWith("!$") || value.startsWith("$!")) {
+					value = value.substr(2).trim();
+					if (value) _filter = {"$containsNone": [value]};
 				} else if (value.startsWith("=")) {
-					_filters[field] = {
-						"$eq": value.substr(1).trim()
-					};
+					value = value.substr(1).trim();
+					if (value) _filter = {"$aeq": value};
 				} else if (value.startsWith(">")) {
-					_filters[field] = {
-						"$gt": value.substr(1).trim()
-					};
+					value = value.substr(1).trim();
+					if (value) _filter = {"$gt": value};
 				} else if (value.startsWith("<")) {
-					_filters[field] = {
-						"$lt": value.substr(1).trim()
-					};
+					value = value.substr(1).trim();
+					if (value) _filter = {"$lt": value.substr(1).trim()};
 				} else if (value.indexOf("->") > 0) {
 					var _value = value.split("->");
 					if (_value.length == 2) {
-						_filters[field] = {
-							"$between": [_value[0].trim(), _value[1].trim()]
-						};
-					} else {
-						_filters[field] = {
-							"$contains": [value]
-						};
+						var val_1 = _value[0].trim(), val_2 = _value[1].trim();
+						if (val_1 && val_2) _filter = {"$between": [val_1, val_2]};
+					} else if (value) {
+						_filter = {"$regex": [RegExp.escape(value), "i"]};
 					}
 				} else {
-					_filters[field] = {
-						"$contains": [value]
-					};
+					_filter = {"$regex": [RegExp.escape(value), "i"]};
 				}
-				_display.find("#heading_" + name + "_" + field).parent().addClass("filtered");
-				_completeSearch();
+				if (_filter) {
+					if (_invert) {
+						__invertedFilters[field] = _filter;
+						delete __filters[field];
+					} else {
+						__filters[field] = _filter;
+					}
+					__display.find("#heading_" + name + "_" + field).parent().addClass(_invert ? "invert-filtered" : "filtered");
+					_updateRows();
+				}
+
 			};
 
-			var _removeSearch = function(field) {
-				if (_filters[field]) delete _filters[field];
-				_display.find("#heading_" + name + "_" + field).parent().removeClass("filtered");
-				_completeSearch();
+			var _removeFilter = function(field) {
+				if (__filters[field]) delete __filters[field];
+				if (__invertedFilters[field]) delete __invertedFilters[field];
+				__display.find("#heading_" + name + "_" + field).parent().removeClass("filtered");
+				_updateRows();
 			};
 
-			var _search_Timeout = 0;
-			_display.find("input.table-search").on("keyup", function(e) {
+			var _filter_Timeout = 0;
+			__display.find("input.table-search").on("keyup", function(e) {
 				var _target, keycode = ((typeof e.keyCode != "undefined" && e.keyCode) ? e.keyCode : e.which);
 				if (keycode === 27) { /* <!-- Escape Key Pressed --> */
 					_target = $(e.target);
 					_target.val("");
-					_removeSearch(_target.data("field"));
+					_removeFilter(_target.data("field"));
 					_target.parents(".collapse").collapse("hide");
+					_updateRows();
 				} else if (keycode === 13) { /* <!-- Enter Key Pressed --> */
 					_target = $(e.target);
 					_target.parents(".collapse").collapse("hide");
 				}
 			}).on("input", function(e) {
-				clearTimeout(_search_Timeout);
-				_search_Timeout = setTimeout(function() {
+				clearTimeout(_filter_Timeout);
+				_filter_Timeout = setTimeout(function() {
 					if (e && e.target) {
 						var _target = $(e.target);
 						var _action = _target.data("action");
@@ -178,81 +217,88 @@ App = function() {
 						var _value = _target.val();
 						if (_action == "filter") {
 							if (_value) {
-								_addSearch(_field, _value);
+								_addFilter(_field, _value);
 							} else {
-								_removeSearch(_field);
+								_removeFilter(_field);
 							}
+							_updateRows();
 						}
 
 					}
 				}, 200);
 			});
 
-			_display.filter(".collapse").on("shown.bs.collapse", function(e) {
+			__display.filter(".collapse").on("shown.bs.collapse", function(e) {
 				$(e.target).find("input").first().focus();
 			});
-			
-			_display.find("[data-toggle='popover']").popover({trigger: "focus"});
-			
-			_display.find("button[data-command='sort']").on("click", function(e) {
+
+			__display.find("[data-toggle='popover']").popover({
+				trigger: "focus",
+				animation: false, /* <!-- https://github.com/twbs/bootstrap/issues/21607 --> */
+			});
+
+			__display.find("[data-toggle='tooltip']").tooltip({
+				animation: false, /* <!-- https://github.com/twbs/bootstrap/issues/21607 --> */
+			});
+
+			__display.find("button[data-command='sort']").on("click", function(e) {
 				var _target = $(e.target);
 				var _field = _target.data("field");
-				_rows = _rows.simplesort(_field);
-				_display.find("#table-content_" + name).empty().append(
-					$(_.Display.template("rows")({
-						widths: widths ? widths : [],
-						rows: _rows.data({removeMeta: true})
-					}))
-				);
-				if (_cluster) _cluster.update();
+				var _heading = _target.data("heading");
+				if (__sorts[_field]) {
+					if (__sorts[_field].is_desc) {
+						delete __sorts[_field];
+						__display.find("#" + _heading).removeClass("sort desc");
+					} else {
+						__display.find("#" + _heading).removeClass("asc").addClass("desc");
+						__sorts[_field].is_desc = true;
+					}
+				} else {
+					__display.find("#" + _heading).addClass("sort asc");
+					__sorts[_field] = {is_desc : false};
+				}
+				_updateRows();
 			});
-			
-			var _removeColumn = function(target, field) {
-				_rows.mapReduce(function(v){ delete v[field]; return v; }, function(a) {return a;});
-				_display.find("#table-content_" + name).empty().append(
-					$(_.Display.template("rows")({
-						widths: widths ? widths : [],
-						rows: _rows.data({removeMeta: true})
-					}))
-				);
-				/* <!-- Will only currently work with one column --> */
-				_display.find("thead th:nth-child(" + (field + 1) + ")").hide();
-				target.parents(".collapse").collapse("hide");
-				if (_cluster) _cluster.update();
-			};
-			_display.find("a[data-command='hide']").on("click", function(e) {
+
+			__display.find("a[data-command='hide']").on("click", function(e) {
 				var _target = $(e.target);
 				var _action = _target.data("action");
-				var _field = _target.data("field");
+				var _field = _target.parent().data("field");
+				var _heading = _target.parent().data("heading");
 				if (_action == "now") {
-					_removeColumn(_target, _field);
+					__headers[_field].hide_now = !__headers[_field].hide_now;
+					_target.parents(".collapse").collapse("hide");
+					__display.find("#" + _heading).parent().hide();
+					_updateRows();
 				} else if (_action == "always") {
-					_removeColumn(_target, _field);
+					__headers[_field].hide_always = !__headers[_field].hide_always;
+					_target.parents(".collapse").collapse("hide");
+					__display.find("#" + _heading).parent().hide();
+					_updateRows();
 				} else if (_action == "initially") {
-					/* <!-- Add to Initially Hidden List --> */
-					_display.find("#heading_" + name + "_" + _field).parent().toggleClass("to-hide");
+					__headers[_field].hide_initially = !__headers[_field].hide_initially;
+					__display.find("#" + _heading).parent().toggleClass("to-hide");
 				}
 			});
-			
+
 			/* <!-- Append the Table --> */
-			target.append(_display);
-			
+			target.append(__display);
+
 			/* <!-- Set up Clusterize --> */
-			if (_rows.length > HIGH_ROWS) {
-				_cluster = new Clusterize({
-					scrollId: "tab_" + index,
-					contentId: "table-content_" + name,
-					rows_in_block: 20,
-					blocks_in_cluster: 2
-				});
-			}
-			
+			__cluster = new Clusterize({
+				scrollId: "tab_" + index,
+				contentId: "table-content_" + name,
+				rows_in_block: 20,
+				blocks_in__cluster: 2
+			});
+
 			/* <!-- Remove the Loader --> */
 			_.Display.busy({
 				target: target,
 				clear: true
 			});
-		};
+
+		}; /* <!-- End Show --> */
 
 		var _frozen = {
 			cols: __sheet.sheets[index].properties.gridProperties.frozenColumnCount,
@@ -263,16 +309,15 @@ App = function() {
 
 			/* <!-- Already have loaded values --> */
 			var _data = __sheet.sheets[index].data[0];
-			var _widths = _data.columnMetadata.map(function(c) {
+			__widths = _data.columnMetadata.map(function(c) {
 				return c.pixelSize * 1.4;
 			});
-			var _rows = _data.rowData.map(function(r) {
+
+			_show(_data.rowData.map(function(r) {
 				return r.values.map(function(c) {
 					return c.formattedValue;
 				});
-			});
-
-			_show(_rows, _widths);
+			}));
 
 		} else {
 
@@ -324,11 +369,11 @@ App = function() {
 			})
 		};
 
-		var _display = $(_.Display.template("tabs")(_tabs));
-		_.container.empty().append(_display);
+		var __tabs = $(_.Display.template("tabs")(_tabs));
+		_.container.empty().append(__tabs);
 
 		/* <!-- Set Load Tab Handler & Load Initial Values --> */
-		_display.find("a.nav-link").on("show.bs.tab", _showValues).first().tab("show");
+		__tabs.find("a.nav-link").on("show.bs.tab", _showValues).first().tab("show");
 
 		/* <!-- Handle Screen / Window Resize Events --> */
 		var _resize_Timeout = 0;
@@ -404,7 +449,7 @@ App = function() {
 					},
 					function(file) {
 
-						var _full = _.Flags.debug();
+						var _full = _.Flags.option();
 
 						/* <!-- Start the Loader --> */
 						_.Display.busy({
@@ -433,6 +478,92 @@ App = function() {
 						});
 					}
 				);
+
+			} else if (command == "VISIBILITY-COLUMNS") {
+
+				var _choices = {
+					visible: {
+						name: "Visible",
+						desc: "",
+					},
+					now: {
+						name: "Hide Now",
+						desc: "",
+					},
+					always: {
+						name: "Hide Always",
+						desc: "",
+					},
+					initially: {
+						name: "Hide Initially",
+						desc: "",
+					},
+				};
+
+				_.Display.options({
+					id: "column_visibilities",
+					title: "Column Visibilities",
+					action: "Apply",
+					instructions: "Please select which columns you wish to be visible from the list below.",
+					list: __headers.map(function(v) {
+						return {
+							name: v.name,
+							current: v.hide_always ? _choices.always.name : v.hide_initially ? _choices.initially.name : v.hide_now ? _choices.now.name : _choices.visible.name
+						};
+					}),
+					inline: true,
+					choices_label: "Menu for controlling the visibility of this column",
+					choices: _choices
+				}).then(function(options) {
+
+					if (options && options.length > 0) {
+
+						/* <!-- Trigger Loader --> */
+						_.Display.busy({
+							target: $("div.tab-content div.tab-pane.active")
+						});
+
+						_.Flags.log("Current Headers", __headers);
+						_.Flags.log("Received Options", options);
+						
+						/* <!-- Send List of Columns to hide --> */
+						options.forEach(function(v) {
+							
+							if (v.value == _choices.now.name) {
+								__headers[v.name].hide_initially = false;
+								__headers[v.name].hide_always = false;
+								__headers[v.name].hide_now = true;
+								__display.find("thead th:nth-child(" + (v.name + 1) + ")").hide();
+							} else if (v.value == _choices.always.name) {
+								__headers[v.name].hide_initially = false;
+								__headers[v.name].hide_always = true;
+								__headers[v.name].hide_now = false;
+								__display.find("thead th:nth-child(" + (v.name + 1) + ")").hide();
+							} else if (v.value == _choices.initially.name) {
+								__headers[v.name].hide_initially = true;
+								__headers[v.name].hide_always = false;
+								__headers[v.name].hide_now = false;
+								__display.find("thead th:nth-child(" + (v.name + 1) + ")").toggleClass("to-hide");
+							} else if (v.value == _choices.initially.name) {
+								__headers[v.name].hide_initially = false;
+								__headers[v.name].hide_always = false;
+								__headers[v.name].hide_now = false;
+							}
+							
+						});
+						
+						_updateRows();
+						
+						/* <!-- Un-Trigger Loader --> */
+						_.Display.busy({
+							clear: true
+						});
+
+					}
+
+				}, function(e) {
+					if (e) _.Flags.error("Select Column Visibility", e);
+				});
 
 			} else if (command == "EXPORT") {
 
@@ -477,6 +608,7 @@ App = function() {
 					/* <!-- Output File Function (once choices have been made) --> */
 
 					_.Display.choose({
+						id: "view_export",
 						title: "Please Select a Format to Export to ...",
 						action: "Export",
 						choices: {

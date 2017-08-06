@@ -34,3 +34,4 @@ globals:
   Display: true
   App: true
   Flags: true
+  Clusterize: false

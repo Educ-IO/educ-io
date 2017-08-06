@@ -1,0 +1,36 @@
+{% raw %}
+<div id="{{id}}" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal_options_title">{{title}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{#if instructions}}<p>{{instructions}}</p>{{/if}}
+        <form{{#if inline}} class="form-inline"{{/if}}>
+          {{#each list}}
+          <div class="input-group col-md-12 col-lg-8 col-xl-6 p-1 no-gutters">
+            <input data-field="{{@index}}" type="text" class="form-control" value="{{#if name}}{{name}}{{else}}{{this}}{{/if}}" disabled>
+            <div class="input-group-btn">
+              <button id="{{../id}}_{{@index}}_btn" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{#if current}}{{current}}{{else}}Select{{/if}}</button>
+              <div class="dropdown-menu dropdown-menu-right" aria-label="{{../choices_label}}">
+                {{#each ../choices}}
+                <a class="dropdown-item" href="#" data-field="{{@index}}" data-toggle="tooltip" data-placement="left"{{# if desc}} title="desc"{{/if}} onclick="event.preventDefault(); document.getElementById('{{../../id}}_{{@../index}}_btn').innerText = '{{#if name}}{{name}}{{else}}{{this}}{{/if}}';">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">{{action}}</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endraw %}

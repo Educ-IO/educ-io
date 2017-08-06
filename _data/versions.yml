@@ -8,3 +8,7 @@
   name : Service Worker Testing
   details: Important Security Updates
   type: security
+0.0.3 :
+  name : View Functionality Improved
+  details: 
+  type: minor

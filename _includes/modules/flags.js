@@ -10,7 +10,7 @@ Flags = function() {
 	}
 	
 	/* <!-- Internal Variables --> */
-	var _alert = false, _debug = false, _development = false, _page = false, _base;
+	var _alert = false, _debug = false, _development = false, _page = false, _option = false, _base;
 	
 	/* <!-- Internal Functions --> */
 	var _parse = function() {
@@ -34,6 +34,8 @@ Flags = function() {
 		}
 		
 		_development = (_url.attr("host").split(".")[0] == "dev" || _url.param("dev") === "" || _url.fparam("dev") === "");
+		
+		_option = (_url.param("option") === "" || _url.fparam("option") === "");
 		
 		_page = (_url.param("page") === "" || _url.fparam("page") === "");
 		
@@ -103,6 +105,10 @@ Flags = function() {
 							console.log.apply(console, arguments);
 						}
 						return this;
+					},
+					
+					option : function() {
+						return _option;
 					},
 					
 					page : function() {

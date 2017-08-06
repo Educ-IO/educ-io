@@ -13,18 +13,24 @@ TODO LIST
 * Gracefully handle the .map issue for injected async/fetched CSS <-- Relative path at end of Bootstrap CSS (e.g. /*# sourceMappingURL=bootstrap.min.css.map */)
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view").
 * Recents Menu item for Apps / Files
-* BUG? Collapse Forms hide scrollbars when hidden!
 
 Apps
 ----
 
 #### View
+* BUG? Collapse Forms hide scrollbars when hidden!
+* Sometimes there is a form submit(????) on Enter in Filter box on View
 
 #### Folders
 * File Counts
 
 Complete
 --------
+* Handle Complex Header Options <-- DONE
+* Visibility panel (templated) <-- DONE
+* Tooltips for Visibility / Sort Control <-- DONE
+* Inversion Option for Filters <-- DONE
+* Better Operator / Filter Instructions in View <-- DONE
 * Handle Operaters in View Filter <-- DONE
 * Large Table Render & Filter/Sort Performance <-- Currently Clusterize
 * Hide placeholder / un-published apps from Menu / Sitemap <-- DONE

@@ -10,8 +10,8 @@
   {% if jekyll.environment == site.debug %}
     
     {% for template in templates %}
-
-      <script id="{{ template }}" type="text/x-handlebars-template"  data-src="templates">
+      
+      <script id="{{  template | split: '/' | last }}" type="text/x-handlebars-template"  data-src="templates">
         {% include_relative _templates/{{ template }}.html %}
       </script>
 

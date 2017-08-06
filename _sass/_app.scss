@@ -27,6 +27,20 @@
 }
 // -- Action Button -- //
 
+// -- Keyboard Shortcuts -- //
+em.kb-shortcut {
+	white-space: nowrap !important;
+	font-size: 90%;
+	font-style: normal;
+	text-transform: uppercase;
+	border-radius: 0.2rem;
+	padding: 0 0.2rem;
+	margin: 0 0.1rem;
+	background-color: $colour-general;
+	color: $colour-background;
+}
+// -- Keyboard Shortcuts -- //
+
 // -- Border the bottom of the Navbar -- //
 nav.navbar.bg-faded {
 	background-color: $colour-section;

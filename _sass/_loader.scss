@@ -8,7 +8,7 @@ $spinner-duration: 0.8s;
 	background-color: rgba($colour-background, 0.9);
 	height: 100%;
 	width: 100%;
-  z-index: 1000;
+  z-index: 100;
 	
 	// -- Loading Container -- //
 	.loading {
@@ -20,7 +20,7 @@ $spinner-duration: 0.8s;
 		transform-origin: 50%;
 		width: $spinner-size;
 		height: $spinner-size;
-		z-index: 1001;
+		z-index: 101;
 		// -- Actual Spinner -- //
 		.spinner {
 			width: 100%;
