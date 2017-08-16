@@ -1,0 +1,25 @@
+{% raw %}
+<div class="filter-wrapper">
+  {{#each headers}}<div id="collapse_{{../id}}_{{@index}}" class="form form-tabbed container-fluid pt-2 pb-1 px-2 column-settings" aria-labelledby="heading_{{../id}}_{{@index}}" style="display: none;">
+    <div class="input-group col-md-12 col-lg-8 col-xl-6 p-0 no-gutters">
+      <span class="input-group-btn">
+        <a tabindex="0" class="btn btn-action" role="button" data-toggle="popover" data-placement="bottom" data-offset="0 -50%" title="Instructions" data-html=true data-content="<p>Filter with simple search text, or start with an operator, such as:</p><ul><li><b>=</b> exactly <em>equals</em></li><li><b>></b> <em>greater</em> than</li><li><b><</b> <em>less</em> than</li><li><b>>=</b> <em>greater</em> than or <em>equals</em></li><li><b><=</b> - <em>less</em> than or <em>equals</em></li><li><b><></b> exactly <em>not equals</em></li><li><b>x -> y</b> <em>range</em> between x and y</li></ul><p>All text is case <em>insensitive</em>, unless prefixed with <b>$</b> to <em>include</em> or <b>!$</b> to <em>exclude</em>. Starting with <b>!!</b> will invert the filter, showing only those results that <em>don't</em> match.</p><p>Press <em class='kb-shortcut'>Esc</em> to clear then close the filter, or <em class='kb-shortcut'>Enter</em> to apply then close. To just close, click the column title again, or the &times; after the filter.</p>">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
+      </span>
+      <span class="input-group-btn"><button type="button" class="btn btn-secondary" data-command="clear" data-field="{{@index}}" data-toggle="tooltip" data-placement="bottom" title="Clear this filter">&times;</button></span>
+      <input data-field="{{@index}}" data-action="filter" type="text" class="form-control table-search" placeholder="Filter {{#if name}}{{name}}{{else}}{{this}}{{/if}} ...">
+      <span class="input-group-btn"><button type="button" class="btn btn-secondary" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-field="{{@index}}" data-toggle="tooltip" data-placement="bottom" title="Click to sort by this column">Sort</button></span>
+      <div class="input-group-btn">
+          <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Visibility
+          </button>
+          <div class="dropdown-menu dropdown-menu-right" aria-label="Menu for controlling the visibility of this column" data-heading="heading_{{../id}}_{{@index}}" data-field="{{@index}}">
+            <a class="dropdown-item" href="#" data-command="hide" data-action="now" data-toggle="tooltip" data-placement="left" title="Hide this column">Hide now</a>
+            <a class="dropdown-item" href="#" data-command="hide" data-action="always" data-toggle="tooltip" data-placement="left" title="Just hide this column on the view that you create">Hide always</a>
+            <a class="dropdown-item" href="#" data-command="hide" data-action="initially" data-toggle="tooltip" data-placement="left" title="Just hide this column on the view, but allow it to be un-hidden">Hide initially</a>
+          </div>
+        </div>
+      <button type="button" class="close ml-2" aria-label="Close" onclick="event.preventDefault(); $('#collapse_{{../id}}_{{@index}}').fadeOut();" data-toggle="tooltip" data-placement="bottom" title="Close this panel but retain the filter"><span aria-hidden="true">&times;</span></button>
+    </div>
+  </div>{{/each}}
+</div>
+{% endraw %}

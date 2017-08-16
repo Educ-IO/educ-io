@@ -21,9 +21,11 @@ globals:
   hello: false
   Handlebars: false
   XLSX: false
+  saveAs: false
   showdown: false
   loki: false
   google: false
+  _: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -34,4 +36,10 @@ globals:
   Display: true
   App: true
   Flags: true
-  Clusterize: false
+  Controller: true
+  Css: true
+  Main: true
+  Service: true
+  Sheet: true
+  Sheets: true
+  Table: true

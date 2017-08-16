@@ -10,10 +10,33 @@
 {% if docs %}
 
   {% raw %}
-  <script id="WRAPPER" type="text/template"  data-src="docs">
+  <script id="WRAPPER" type="text/template"  data-src="docs" data-type="flow">
     <div class="container">
       <div class="row">
         <div class="col-12">{{content}}</div>
+      </div>
+    </div>
+  </script>
+  {% endraw %}
+
+  {% raw %}
+  <script id="MODAL" type="text/template"  data-src="docs" data-type="modal">
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="__doc_modal_title" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="__doc_modal_title">{{title}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            {{content}}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{close}}</button>
+          </div>
+        </div>
       </div>
     </div>
   </script>

@@ -36,3 +36,21 @@ if (!Array.prototype.clean) {
   };
 }
 /* <!-- Remove Nulls by Cleaning --> */
+
+/* <!-- Trim Array to Length (if nulls) --> */
+if (!Array.prototype.trim) {
+  Array.prototype.trim = function(length) {
+		if (this.length > length) {
+			var _trim = true;
+			for (var i = length, l = this.length; i < l; i += 1) {
+				if (this[i] !== null && this[i] !== undefined) {
+					_trim = false;
+					if (this[i].trim) this[i].trim(length);
+				}
+			}
+			if (_trim) this.splice(length, this.length - length);
+		}
+		return this;
+	};
+}
+/* <!-- Trim Array to Length (if nulls) --> */

@@ -16,7 +16,7 @@
 	if (polyfill) {
 		
 		/*jshint ignore:start*/
-		include("/polyfills.js", "script").then(() => {if ({{ site.app.namespace }}.Main) {{ site.app.namespace }}.Main.load();}).catch(e => {console.log(e);});
+		{{ site.app.namespace }}.Controller.include("/polyfills.js", "script", "polyfills").then(() => {{ site.app.namespace }}.Controller.start()).catch(e => {console.log(e);});
 		/*jshint ignore:end*/
 		
 	} else {

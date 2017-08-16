@@ -70,24 +70,9 @@ Main = function() {
 			return this;
 			
     },
-
+		
 		start : function() {
 
-			/* <!-- Module Starts --> */
-			if (_.Display.start) _.Display.start();
-			
-			_setup(hello);
-
-			/* <!-- Enable Tooltips --> */
-			$("[data-toggle='tooltip']").tooltip();
-
-			/* <!-- Enable Closing Bootstrap Menu after Action --> */
-			var navMain = $(".navbar-collapse");
-			navMain.on("click", "a:not([data-toggle])", null, function () {
-				navMain.collapse("hide");
-			});
-
-			/* <!-- Auth Triggers & Functions --> */
 			var google_SignIn = function() {
 				hello.login("google", {
 					force: false, display : (_.SETUP.SINGLE_PAGE || _.Flags.page()) ? "page" : "popup",
@@ -106,7 +91,38 @@ Main = function() {
 					_.Flags.error("Signing out of Google", e);
 				});
 			};
+			
+			var _routeIn = function() {_.App.route(true);}, _routeOut = function() {_.App.route(false);};
+			
+			var router = function() {
+				if (_.Flags) _.Flags.change(function(directive, command) {
+					if (directive === "GOOGLE" && !_.google) {
+						google_SignIn();
+						_routeIn = function() {
+							_routeIn = function() {_.App.route(true);};
+							_.App.route(command);
+						};
+					} else {
+						_.App.route(command);
+					}
+				});
+			};
+			
+			/* <!-- Module Starts --> */
+			if (_.Display.start) _.Display.start();
+			
+			_setup(hello);
 
+			/* <!-- Enable Tooltips --> */
+			$("[data-toggle='tooltip']").tooltip();
+
+			/* <!-- Enable Closing Bootstrap Menu after Action --> */
+			var navMain = $(".navbar-collapse");
+			navMain.on("click", "a:not([data-toggle])", null, function () {
+				navMain.collapse("hide");
+			});
+
+			/* <!-- Auth Triggers & Functions --> */
 			var is_SignedIn = function(session) {
 				return session && session.access_token && new Date(session.expires * 1000) >= new Date();
 			};
@@ -147,11 +163,10 @@ Main = function() {
 						$("#sign_out").show();
 
 						/* <!-- Route Authenticated --> */
-						_.App.route(true);
+						_routeIn();
 
-						window.onhashchange = function() {
-							if (_.Flags) _.Flags.change(_.App.route);
-						};
+						/* <!-- Add Router Method --> */
+						window.onhashchange = router;
 
 					}).catch(function(e) {_.Flags.error("Google Me", e);});
 
@@ -174,9 +189,10 @@ Main = function() {
 				$(".auth-only").hide();
 
 				/* <!-- Route Un-Authenticated --> */
-				_.App.route(false);
+				_routeOut();
 
-				window.onhashchange = null;
+				/* <!-- Add Router Method --> */
+				window.onhashchange = router;
 
 			};
 			/* <!-- Auth Triggers --> */
@@ -264,8 +280,7 @@ Main = function() {
 
 			});
 
-		}
-		
+		},
    /* <!-- External Functions --> */
     
 	};

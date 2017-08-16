@@ -10,7 +10,7 @@ Service = function() {
 	/* <!-- Internal Constants --> */
 	
   /* <!-- Internal Variables --> */
-	var _display;
+	var ಠ_ಠ;
 	/* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
@@ -23,7 +23,7 @@ Service = function() {
     initialise : function(container) {
 			
 			/* <!-- Get a reference to the Interact Module --> */
-			_display = container.Display;
+			ಠ_ಠ = container;
 			
 			/* <!-- Set Container Reference to this --> */
 			container.Service = this;
@@ -76,7 +76,7 @@ Service = function() {
 
             if (VERSION_DETAILS) _details = VERSION_DETAILS + " [v" + APP_VERSION + "]";
 
-            if (_display) _display.alert({
+						if (!this._isF(this.Display)) ಠ_ಠ.Display.alert({
               type: _urgency,
               headline: "New Version Available",
               message: _details ? _details : "",
@@ -156,10 +156,10 @@ Service = function() {
 
             if (k == 82 || k == 76) {
 
-              if (window.global) try {display.busy();} catch (e) {}
+              if (window.global) try {if (!this._isF(this.Display)) ಠ_ಠ.Display.busy();} catch (e) {}
 
               var _clear = function() {
-                if (_display) _display.busy({
+                if (!this._isF(this.Display)) ಠ_ಠ.Display.busy({
                   clear: true
                 });
               };
@@ -182,11 +182,7 @@ Service = function() {
                 /* <!-- CTRL-ALT-L --> List Cache Objects --> */
                 navigator.serviceWorker.getRegistration(window.location.pathname).then(
                   r => {
-                    if (r && r.active) _message(r.active, "list-cache-items").then(
-                      m => {
-                        _clear();
-                      }
-                    );
+                    if (r && r.active) _message(r.active, "list-cache-items").then(_clear);
                   }
                 ).catch(_clear);
 

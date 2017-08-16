@@ -1,18 +1,18 @@
 {% raw %}
-<div id="{{ id }}" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_confirm_title">
+<div {{#if id}}id="{{ id }}" {{/if}}class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_confirm_title">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modal_confirm_title">Confirm</h5>
+        <h5 class="modal-title" id="modal_confirm_title">{{#if title}}{{title}}{{else}}Are you sure?{{/if}}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <p>Modal body text goes here.</p>
+        {{#if message}}<p>{{{message}}}</p>{{/if}}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">{{#if action}}{{action}}{{else}}Confirm{{/if}}</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>

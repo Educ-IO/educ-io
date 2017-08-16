@@ -207,11 +207,13 @@ bootstrap-css:
     - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css
       integrity: sha256-rr9hHBQ43H7HSOmmNkxzQGazS/Khx+L8ZRHteEY1tQ4=
       crossorigin: anonymous
+      map: true
       id: __bootstrap-css
   dev:
     - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.css
       integrity: sha256-fDZ6wHbmob72H9d6oq3P6/F3Hc+wHBjdi6FTsUvvQjs=
       crossorigin: anonymous
+      map: true
       id: __bootstrap-css
     
 bootstrap-js:
@@ -349,14 +351,10 @@ ace:
       integrity: sha256-4/5a1Iyciq5z7FaFTDemyalefnko7q7oHaDOMxdI8t0=
       crossorigin: anonymous
       id: __ace_7
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-text.js
-      integrity: sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
-      crossorigin: anonymous
-      id: __ace_8
     - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-yaml.js
       integrity: sha256-aKkFuoiUHumdnJdGC82FrWQ9LOvhOAcT8D3XmRVEXoE=
       crossorigin: anonymous
-      id: __ace_9
+      id: __ace_8
   dev: 
     - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js
       integrity: sha256-198+Grx89n2ofVwo1LWnNTXxIQZIPZJURv+K73cJ93U=
@@ -390,14 +388,10 @@ ace:
       integrity: sha256-4/5a1Iyciq5z7FaFTDemyalefnko7q7oHaDOMxdI8t0=
       crossorigin: anonymous
       id: __ace_7
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-text.js
-      integrity: sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
-      crossorigin: anonymous
-      id: __ace_8
     - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/mode-yaml.js
       integrity: sha256-aKkFuoiUHumdnJdGC82FrWQ9LOvhOAcT8D3XmRVEXoE=
       crossorigin: anonymous
-      id: __ace_9
+      id: __ace_8
 
 xlsx:
   name: JS XLSX
@@ -412,19 +406,19 @@ xlsx:
       crossorigin: anonymous
       id: __xlsx
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/cpexcel.js
-      integrity: sha256-ZwLT97zCK48sWZdD4QyV1QcsRzabwLfJ0pPC3Xk67wo=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.js
+      integrity: sha256-ImIjIcfwhHtmf3Eulcaua6ClXyKHEEos8DIIRiNsyQg=
       crossorigin: anonymous
       id: __xlsx_0
     - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/jszip.js
       integrity: sha256-MWngzhFufvGHUhvgc8ob9qDaO4FW4t+i2Et0FTnKbOE=
       crossorigin: anonymous
       id: __xlsx_1
-    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.js
-      integrity: sha256-ImIjIcfwhHtmf3Eulcaua6ClXyKHEEos8DIIRiNsyQg=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/cpexcel.js
+      integrity: sha256-ZwLT97zCK48sWZdD4QyV1QcsRzabwLfJ0pPC3Xk67wo=
       crossorigin: anonymous
       id: __xlsx_2
-
+      
 download:
   name: downloadjs
   url: https://cdnjs.com/libraries/downloadjs
@@ -547,3 +541,22 @@ lazy:
       integrity: sha256-g2p1Yb6F/vy4APexLkO3jcN+9uXjlrF5VfKW4CMCaIQ=
       crossorigin: anonymous
       id: __lazy
+
+underscore:
+  name: Underscore.js
+  url: https://cdnjs.com/libraries/underscore.js
+  project: https://github.com/jashkenas/underscore
+  version: 1.8.3
+  license: mit
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js
+      integrity: sha256-obZACiHd7gkOk9iIL/pimWMTJ4W/pBsKu+oZnSeBIek=
+      crossorigin: anonymous
+      map: true
+      id: __underscore
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js
+      integrity: sha256-SzKOQsVYGX1bmddyfPzGC6yXY/rWYGUSMOi6+T9gZ+0=
+      crossorigin: anonymous
+      id: __underscore

@@ -1,15 +1,15 @@
 {% raw %}
 <div class="container-fluid">
-  <ul id="{{id}}" class="nav nav-tabs" role="tablist">
+  <ul id="{{nav}}" class="nav nav-tabs" role="tablist">
     {{#each tabs}}
       <li class="nav-item">
-        <a class="nav-link" href="#{{id}}" role="tab" {{#if ../loader}} onclick="{{ ../loader }}"{{/if}} aria-controls="{{id}}" data-toggle="tab" data-id="{{../sheet}}" data-sheet="{{name}}" data-index="{{ @index }}" data-target="#{{id}}">{{name}}</a>
+        <a class="nav-link" href="#{{id}}" role="tab" {{#if ../loader}} onclick="{{ ../loader }}"{{/if}} aria-controls="{{id}}" data-toggle="tab" data-name="{{name}}" data-index="{{ @index }}" data-target="#{{id}}">{{name}}</a>
       </li>
     {{/each}}
   </ul>
-  <div class="tab-content">
+  <div class="tab-content" data-id="{{id}}" data-name="{{name}}">
     {{#each tabs}}
-      <div id="{{id}}" class="tab-pane fade" data-id="{{../sheet}}" data-sheet="{{name}}" role="tabpanel"></div>
+      <div id="{{id}}" class="tab-pane fade" data-name="{{name}}" role="tabpanel"></div>
     {{/each}}
   </div>
 </div>

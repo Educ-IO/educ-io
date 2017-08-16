@@ -19,13 +19,23 @@ Controller = function() {
 	};
 	
 	var _inject = function(i, s, o, g, r, a, m) {
-
 		a = s.createElement(o);
 		a.setAttribute("id", g.id);
 		a.setAttribute("data-type", "import");
 		a.setAttribute("data-src", g.url);
 		if (o == "style") m = s.getElementsByTagName(o)[0];
-		a.appendChild(s.createTextNode(g.text));
+		var t = g.text;
+		if (g.map === true) {
+			var map_regex = /[\/\*|\/\/]#[\s]*sourceMappingURL=(\S+)[\s]*[\*\/]?/gi, map_urls;
+			while ((map_urls = map_regex.exec(t)) !== null) {
+				if (map_urls && map_urls[1]) {
+					var map_url = new URL(map_urls[1], g.url);
+					var _s = map_urls.index + map_urls[0].indexOf(map_urls[1]);
+					t = t.substr(0, _s) + map_url.href + t.substr(_s + map_urls[1].length);
+				}
+			}
+		}
+		a.appendChild(s.createTextNode(t));
 		a.onload = r(g);
 		if (m) {
 			m.parentNode.insertBefore(a, m);
@@ -45,7 +55,7 @@ Controller = function() {
 				}
 				if (fonts_handled === false) {
 					if ("fonts" in document) {
-						document.fonts.ready.then(function(fontFaceSet) {
+						document.fonts.ready.then(function() {
 							_removeClass("font-sensitive");
 							fonts_handled = true;
 						});
@@ -55,7 +65,6 @@ Controller = function() {
 				console.error("ERROR SETTING FONT DISPLAY/API:", e);
 			}
 		}
-
 	};
 
 	var _include = function(url, type, id) {
@@ -90,11 +99,11 @@ Controller = function() {
 				deferreds.push(_include(input.url, is_css ? "style" : "script", input.id));
 			} else {
 				deferreds.push(window.fetch(input.url, {mode: input.mode ? input.mode : "cors"}).then(res => {
-					return [res.text(), input.id, input.url, is_css, is_fonts];
+					return [res.text(), input.id, input.url, is_css, is_fonts, input.map === true];
 				}).then(promises => {
 					return Promise.all(promises).then(resolved => {
 						resources.push({
-							text: resolved[0], id: resolved[1], url: resolved[2], css: resolved[3], fonts: resolved[4]
+							text: resolved[0], id: resolved[1], url: resolved[2], css: resolved[3], fonts: resolved[4], map: resolved[5]
 						});
 					});
 				}));
@@ -180,6 +189,10 @@ Controller = function() {
 				_proceed(true);
 			}
 		
+		},
+		
+		include :  function(url, type, id) {
+			return _include(url, type, id);
 		},
 		/* <!-- External Functions --> */
 

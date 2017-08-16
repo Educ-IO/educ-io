@@ -1,3 +1,0 @@
-Settings
---------
-Will go here!

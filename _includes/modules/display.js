@@ -1,94 +1,94 @@
 Display = function() {
-	
+
 	/* <!-- DEPENDS on JQUERY & HANDLEBARS to work, but not to initialise --> */
-	
+
 	/* <!-- Returns an instance of this if required --> */
 	if (this && this._isF && this._isF(this.Display)) return new this.Display().initialise(this);
-	
+
 	/* <!-- Internal Constants --> */
 	const MAX_ITEMS = 6;
 	/* <!-- Internal Constants --> */
-	
+
 	/* <!-- Internal Variables --> */
-	var _root, _debug = false;
-  /* <!-- Internal Variables --> */
-	
+	var _root, _state = {},
+			_debug = false;
+	/* <!-- Internal Variables --> */
+
 	/* <!-- Internal Functions --> */
-  var _target = function(options) {
-		
+	var _target = function(options) {
+
 		/* <!-- Ensure we have a target _element, and that it is wrapped in JQuery --> */
 		var _element = (options && options.target) ? options.target : (_root ? _root : $("body"));
 		if (_element instanceof jQuery !== true) _element = $(_element);
 		return _element;
-		
+
 	};
-	
-  var _template = function(name) {
-			
-		if (Handlebars.templates === undefined || Handlebars.templates[name] === undefined) {
 
-			var _template = $("#" + name);
-			if (_template.length == 1) {
-				if (Handlebars.templates === undefined) Handlebars.templates = {};
-				Handlebars.templates[name] = Handlebars.compile(_template.html(), {strict : _debug});
-				return Handlebars.templates[name];
-			}
-
-		} else {
-			
+	var _compile = function(name) {
+		var _template = $("#" + name);
+		if (_template.length == 1) {
+			if (Handlebars.templates === undefined) Handlebars.templates = {};
+			Handlebars.templates[name] = Handlebars.compile(_template.html(), {
+				strict: _debug
+			});
 			return Handlebars.templates[name];
-		
 		}
-		
+	};
+
+	var _template = function(name) {
+
+		return Handlebars.templates === undefined || Handlebars.templates[name] === undefined ?
+			_compile(name) : Handlebars.templates[name];
+
 	};
 	/* <!-- Internal Functions --> */
-	
-	/* <!-- External Visibility --> */
-  return {
 
-    /* <!-- External Functions --> */
-    initialise : function(container) {
-			
+	/* <!-- External Visibility --> */
+	return {
+
+		/* <!-- External Functions --> */
+		initialise: function(container) {
+
 			/* <!-- Set Debug Flag, used for Template Compile etc --> */
 			if (container.SETUP && container.SETUP.DEBUG) _debug = true;
-			
+
 			/* <!-- Set Root Element Reference--> */
 			_root = (container._root) ? document.getElementById(container._root) : document.body;
-			
+
 			/* <!-- Set Container Reference to this --> */
 			container.Display = this;
-			
+
 			/* <!-- Return for Chaining --> */
 			return this;
-			
-    },
 
-		start : function() {
-			
+		},
+
+		start: function() {
+
 			Handlebars.registerHelper({
-				eq: function (v1, v2) {
-						return v1 === v2;
+				eq: function(v1, v2) {
+					return v1 === v2;
 				},
-				ne: function (v1, v2) {
-						return v1 !== v2;
+				ne: function(v1, v2) {
+					return v1 !== v2;
 				},
-				lt: function (v1, v2) {
-						return v1 < v2;
+				lt: function(v1, v2) {
+					return v1 < v2;
 				},
-				gt: function (v1, v2) {
-						return v1 > v2;
+				gt: function(v1, v2) {
+					return v1 > v2;
 				},
-				lte: function (v1, v2) {
-						return v1 <= v2;
+				lte: function(v1, v2) {
+					return v1 <= v2;
 				},
-				gte: function (v1, v2) {
-						return v1 >= v2;
+				gte: function(v1, v2) {
+					return v1 >= v2;
 				},
-				and: function (v1, v2) {
-						return v1 && v2;
+				and: function(v1, v2) {
+					return v1 && v2;
 				},
-				or: function (v1, v2) {
-						return v1 || v2;
+				or: function(v1, v2) {
+					return v1 || v2;
 				}
 			});
 
@@ -101,59 +101,74 @@ Display = function() {
         clear : ooption boolean to clear target first
 			}
 		*/
-		doc : function (options) {
+		doc: function(options) {
 
 			/* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
 			var _element = options.clear === true ? _target(options).empty() : _target(options);
-      
+
 			var _doc = $("#" + options.name)[0].innerText;
-      if (options.wrapper) _doc = $("#" + options.wrapper)[0].innerText.replace(/\{+\s*content\s*}}/gi, _doc);
-			
-      if (options.prepend === true) {
-        _element.prepend(_doc);
-      } else {
-        _element.append(_doc);
-      }
-      
+			_doc = options.wrapper ? $("#" + options.wrapper)[0].innerText
+				.replace(/\{+\s*content\s*}}/gi, _doc)
+				.replace(/\{+\s*title\s*}}/gi, options.title ? options.title : "Title")
+				.replace(/\{+\s*close\s*}}/gi, options.close ? options.close : "Close") : _doc;
+
+			return options.prepend === true ?
+				$(_doc).prependTo(_element) : $(_doc).appendTo(_element);
+
 		},
-		
-		template : function(name) {
-			
+
+		template: function(name) {
+
 			return _template(name);
-			
+
 		},
-		
+
 		/* <!--
 			Options are : {
 				target : element to append the loader to,
 				clear : optional boolean to force clearing,
 			}
 		--> */
-		busy : function (options) {
+		busy: function(options) {
 
 			var _element = _target(options);
+			(options && options.clear === true) || _element.find(".loader").length > 0 ?
+				_element.find(".loader").remove() : _element.prepend(_template("loader")());
 
-			if ((options && options.clear === true) || _element.find(".loader").length > 0) {
-
-				_element.find(".loader").remove();
-
-			} else {
-
-				_element.prepend(_template("loader")());
-
-			}
-			
+			return this;
 		},
-		
+
 		/*
 			Options are : {
 
 			}
 		*/
-    confirm : function(options) {
-      
-    },
-		
+		confirm: function(options) {
+
+			return new Promise((resolve, reject) => {
+
+				if (!options) return reject();
+
+				/* <!-- Great Modal Choice Dialog --> */
+				var dialog = $(_template("confirm")(options));
+				_target(options).append(dialog);
+
+				/* <!-- Set Event Handlers --> */
+				dialog.find("button.btn-primary").click(function() {
+					resolve(true);
+				});
+				dialog.on("hidden.bs.modal", function() {
+					dialog.remove();
+					reject();
+				});
+
+				/* <!-- Show the Modal Dialog --> */
+				dialog.modal("show");
+
+			});
+
+		},
+
 		/* <!--
 			Options are : {
 				type : type of alert (success, info, warning, danger),
@@ -163,23 +178,21 @@ Display = function() {
 				target : optional name / element / jquery of containing element
 			}
 		--> */
-		alert : function(options) {
-      
+		alert: function(options) {
+
 			return new Promise((resolve, reject) => {
-				
+
+				if (!options) return reject();
+
 				var dialog = $(_template("alert")(options));
 				_target(options).prepend(dialog);
 
-				if (options.action) {
-				
-					/* <!-- Set Event Handler (if required) --> */
-					dialog.find("button.action").click(function() {
-						resolve(true);
-						dialog.alert("close");
-					});
+				/* <!-- Set Event Handler (if required) --> */
+				if (options.action) dialog.find("button.action").click(function() {
+					resolve(true);
+					dialog.alert("close");
+				});
 
-				}
-					
 				dialog.on("closed.bs.alert", function() {
 					resolve(false);
 				});
@@ -187,10 +200,10 @@ Display = function() {
 				/* <!-- Show the Alert --> */
 				dialog.alert();
 
-    	});
-			
-    },
-    
+			});
+
+		},
+
 		/* <!--
 			Options are : {
 				title : main title of the options dialog,
@@ -199,47 +212,38 @@ Display = function() {
 				target : optional name / element / jquery of containing element
 			}
 		--> */
-    choose : function(options) {
-    
+		choose: function(options) {
+
 			return new Promise((resolve, reject) => {
 
-				if (options && options.choices) {
-				
-					/* <!-- Get the Options Length --> */
-					var _length;
-					if (Array.isArray(options.choices)) {
-						_length = options.choices.length;
-					} else {
-						_length = Object.keys(options.choices).length;
-					}
-					options.__LONG = (_length > MAX_ITEMS);
-					
-					/* <!-- Great Modal Choice Dialog --> */
-					var dialog = $(_template("choose")(options));
-					_target(options).append(dialog);
+				if (!options || !options.choices) return reject();
 
-					/* <!-- Set Event Handlers --> */
-					dialog.find("button.btn-primary").click(function() {
-						var _value = dialog.find("input[name='choices']:checked, select[name='choices'] option:selected").val();
-						if (_value && options.choices[_value]) resolve(options.choices[_value]);
-					});
-					dialog.on("shown.bs.modal", function () {});
-					dialog.on("hidden.bs.modal", function() {
-						dialog.remove();
-						reject();
-					});
+				/* <!-- Get the Options Length --> */
+				var _length = Array.isArray(options.choices) ?
+						_length = options.choices.length : _length = Object.keys(options.choices).length;
+				options.__LONG = (_length > MAX_ITEMS);
 
-					/* <!-- Show the Modal Dialog --> */
-					dialog.modal("show");
-					
-				} else {
+				/* <!-- Great Modal Choice Dialog --> */
+				var dialog = $(_template("choose")(options));
+				_target(options).append(dialog);
+
+				/* <!-- Set Event Handlers --> */
+				dialog.find("button.btn-primary").click(function() {
+					var _value = dialog.find("input[name='choices']:checked, select[name='choices'] option:selected").val();
+					if (_value && options.choices[_value]) resolve(options.choices[_value]);
+				});
+				dialog.on("hidden.bs.modal", function() {
+					dialog.remove();
 					reject();
-				}
-				
+				});
+
+				/* <!-- Show the Modal Dialog --> */
+				dialog.modal("show");
+
 			});
-			
-    },
-		
+
+		},
+
 		/* <!--
 			Options are : {
 				title : main title of the options dialog,
@@ -250,43 +254,129 @@ Display = function() {
 				target : optional name / element / jquery of containing element
 			}
 		--> */
-    options : function(options) {
-    
+		options: function(options) {
+
 			return new Promise((resolve, reject) => {
 
-				if (options && options.list && options.choices) {
+				if (!options || !options.list || !options.choices) return reject();
 
-					/* <!-- Great Modal Options Dialog --> */
-					var dialog = $(_template("options")(options));
-					_target(options).append(dialog);
+				/* <!-- Great Modal Options Dialog --> */
+				var dialog = $(_template("options")(options));
+				_target(options).append(dialog);
 
-					/* <!-- Set Event Handlers --> */
-					dialog.find("button.btn-primary").click(function() {
-						var _return = [];
-						dialog.find("div.input-group").each(function() {
-							var e = $(this);
-							_return.push({name: e.find("input").data("field"), value: e.find("button").text()});
+				/* <!-- Set Event Handlers --> */
+				dialog.find("button.btn-primary").click(function() {
+					var _return = [];
+					dialog.find("div.input-group").each(function() {
+						var e = $(this);
+						_return.push({
+							name: e.find("input").data("field"),
+							value: e.find("button").text()
 						});
-						resolve(_return);
 					});
-					dialog.on("shown.bs.modal", function () {});
-					dialog.on("hidden.bs.modal", function() {
-						dialog.remove();
-						reject();
-					});
-
-					/* <!-- Show the Modal Dialog --> */
-					dialog.modal("show");
-					
-				} else {
+					resolve(_return);
+				});
+				dialog.on("shown.bs.modal", function() {});
+				dialog.on("hidden.bs.modal", function() {
+					dialog.remove();
 					reject();
-				}
-				
+				});
+
+				/* <!-- Show the Modal Dialog --> */
+				dialog.modal("show");
+
 			});
-			
-    },
-   /* <!-- External Functions --> */
-    
+
+		},
+
+		protect: function(query) {
+
+			var _parent = this,
+					_selector = $(query);
+
+			return {
+
+				on: function(message_doc, title) {
+					_selector.off("click.protect").on("click.protect", function(e) {
+						e.preventDefault();
+						_parent.confirm({
+							id: "__protect_confirm",
+							title: title,
+							message: $("#" + message_doc)[0].innerText,
+							action: "Proceed"
+						}).then(function() {
+							var link = $(e.target);
+							var target = link.attr("target");
+							if (target && target.trim.length > 0) {
+								window.open(link.attr("href"), target);
+							} else {
+								window.location = link.attr("href");
+							}
+						}).catch(function() {});
+					});
+					return _parent;
+				},
+
+				off: function() {
+					_selector.off("click.protect");
+					return _parent;
+				},
+
+			};
+
+		},
+
+		state: function() {
+
+			var _parent = this;
+
+			var _add = function(name) {
+				if (!_state[name]) {
+					_state[name] = true;
+					return true;
+				}
+				return false;
+			};
+
+			var _remove = function(name) {
+				if (_state[name]) {
+					delete _state[name];
+					return true;
+				}
+				return false;
+			};
+
+			var _all = function() {
+				var _ret = [];
+				for (var name in _state) {
+					if (_state.hasOwnProperty(name)) _ret.push(name);
+				}
+				return _ret;
+			};
+
+			return {
+				enter: function(name) {
+					if (_add(name)) $(".state-" + name).removeClass("disabled");
+					return _parent;
+				},
+
+				exit: function(name) {
+					if (_remove(name)) {
+						$(".state-" + name).addClass("disabled");
+						_all().forEach((v) => $(".state-" + v).removeClass("disabled"));
+					}
+					return _parent;
+				},
+
+				clear: function() {
+					_all().forEach((v) => _remove(v) ? $(".state-" + v).addClass("disabled") : null);
+					return _parent;
+				},
+			};
+
+		},
+		/* <!-- External Functions --> */
+
 	};
-  /* <!-- External Visibility --> */
+	/* <!-- External Visibility --> */
 };

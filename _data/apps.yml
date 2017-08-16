@@ -3,6 +3,8 @@ view:
   desc: A web-based tool for producing customised views of Google Sheets.
   link: /view/
   imports:
+    - name: underscore
+      load: first
     - name: jquery
       load: first
     - name: bootstrap-css
@@ -19,8 +21,6 @@ view:
       load: last
     - name: loki
       load: last
-    - name: clusterize
-      load: last
     - name: google
       load: lazy
     - name: xlsx
@@ -34,6 +34,10 @@ view:
     - google
     - service
     - main
+    - table
+    - css
+    - sheets
+    - sheet
   scripts: 
     - extends/regex
     - extends/array
@@ -43,14 +47,16 @@ view:
     - confirm
     - alert
     - loader
+    - view/filters
     - view/table
     - view/rows
+    - view/sheet
     - tabs
   docs:
     - view/PUBLIC
     - view/README
     - view/INSTRUCTIONS
-    - view/SETTINGS
+    - view/JUMP_WARNING
   scopes:
     google:
       - email
@@ -58,39 +64,99 @@ view:
       - https://www.googleapis.com/auth/drive.file
       - https://www.googleapis.com/auth/spreadsheets.readonly
   menus:
-    - name: Commands
+    - name: Sheet
       groups:
-        file:
-          name: File
+        all:
           commands:
             - name: Open
-              description: Open a Sheet from your Drive
-              hash: open
+              desc: Open a Sheet from your Drive (lazily, one tab at a time)
+              hash: open.lazy
               imports:
                 - google
-            - name: Export
-              description: Export the Sheet to Legacy Formats
-              hash: export
+              auth: google
+            - name: Open & Load Fully
+              desc: Open a Sheet from your Drive (load all tabs up front)
+              hash: open.full
+              imports:
+                - google
+              auth: google
+            - name: Close
+              desc: Close the current Sheet
+              hash: close
+              disabled_until:
+                - opened
+    - name: Share
+      groups:
+        export:
+          name: Export
+          commands:
+            - name: Original Tab
+              desc: Export just this (unfiltered/unsorted) Tab to Legacy Formats
+              hash: export.full.single
+              disabled_until:
+                - opened
               imports:
                 - xlsx
                 - filesaver
-            - name: Close
-              description: Close the current Sheet
-              hash: close
+            - name: All Original Tabs
+              desc: Export all the (unfiltered/unsorted) Tabs to Legacy Formats
+              hash: export.full.all
+              disabled_until:
+                - opened
+              imports:
+                - xlsx
+                - filesaver
+            - name: Filtered View
+              desc: Export this view to Legacy Formats
+              hash: export.filtered.single
+              disabled_until:
+                - opened
+              imports:
+                - xlsx
+                - filesaver
+            - name: All Filtered Views
+              desc: Export all views to Legacy Formats
+              hash: export.filtered.all
+              disabled_until:
+                - opened
+              imports:
+                - xlsx
+                - filesaver
+        link:
+          name: Link
+          commands:
+            - name: Create
+              desc: Create a link to this View
+              hash: link.full
+              disabled_until:
+                - opened
     - name: Settings
       groups:
-        general:
-          commands:
-            - name: General
-              description: 
-              hash: settings
-        visibility:
+        all:
           commands:
             - name: Show / Hide Columns
-              description: Select which columns should remain visible
-              hash: visibility-columns
+              desc: Select which columns should remain visible
+              hash: visibility.columns
+              disabled_until:
+                - opened
+            - name: Fit
+              desc: Fits the data into the width of your screen
+              hash: fit
+              disabled_until:
+                - opened
+            - name: Freeze
+              desc: Locks the position of Frozen Columns and Rows
+              hash: freeze
+              disabled_until:
+                - opened
+            - name: Restore Defaults
+              desc: Remove all filters, sorts & restore all columns to visible
+              hash: defaults
+              disabled_until:
+                - opened
     - name: Instructions
       hash: instructions
+      desc: More details about how to use the View App
   version: 0.0.1
   published: true
 reflect:
