@@ -116,6 +116,7 @@ Sheets = function(sheet, ಠ_ಠ) {
   var _showTab = function(tab, sheet) {
     var target = $(tab.data("target"));
     if (target.children().length === 0 || tab.data("refresh")) _loadValues(sheet, tab.data("name"), tab.data("index"), target.empty());
+    tab.closest(".nav-item").addClass("order-1").siblings(".order-1").removeClass("order-1");
   };
 
   var _showSheet = function(sheet) {

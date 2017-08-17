@@ -96,7 +96,7 @@ Main = function() {
 			
 			var router = function() {
 				if (_.Flags) _.Flags.change(function(directive, command) {
-					if (directive === "GOOGLE" && !_.google) {
+					if ((/GOOGLE/i).test(directive) && !_.google) {
 						google_SignIn();
 						_routeIn = function() {
 							_routeIn = function() {_.App.route(true);};
@@ -118,10 +118,9 @@ Main = function() {
 
 			/* <!-- Enable Closing Bootstrap Menu after Action --> */
 			var navMain = $(".navbar-collapse");
-			navMain.on("click", "a:not([data-toggle])", null, function () {
-				navMain.collapse("hide");
-			});
-
+			navMain.on("click.collapse", "a:not([data-toggle='dropdown'])", () => navMain.collapse("hide"));
+			navMain.on("click.tooltip-remove", "a[data-toggle='tooltip']", (e) => $(e.target).tooltip("dispose"));
+			
 			/* <!-- Auth Triggers & Functions --> */
 			var is_SignedIn = function(session) {
 				return session && session.access_token && new Date(session.expires * 1000) >= new Date();

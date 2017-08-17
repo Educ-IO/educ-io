@@ -1,6 +1,6 @@
 {% raw %}
 <div class="container-fluid">
-  <ul id="{{nav}}" class="nav nav-tabs" role="tablist">
+  <ul id="{{nav}}" class="nav nav-tabs flex-row flex-wrap" role="tablist">
     {{#each tabs}}
       <li class="nav-item">
         <a class="nav-link" href="#{{id}}" role="tab" {{#if ../loader}} onclick="{{ ../loader }}"{{/if}} aria-controls="{{id}}" data-toggle="tab" data-name="{{name}}" data-index="{{ @index }}" data-target="#{{id}}">{{name}}</a>

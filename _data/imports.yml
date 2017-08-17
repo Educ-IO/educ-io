@@ -200,39 +200,37 @@ bootstrap-css:
   name: Bootstrap
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
-  version: 4.0.0-alpha.6
+  version: 4.0.0-beta
   license: MIT
   type: css
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css
-      integrity: sha256-rr9hHBQ43H7HSOmmNkxzQGazS/Khx+L8ZRHteEY1tQ4=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css
+      integrity: sha256-m/h/cUDAhf6/iBRixTbuc8+Rg2cIETQtPcH9D3p2Kg0=
       crossorigin: anonymous
       map: true
       id: __bootstrap-css
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.css
-      integrity: sha256-fDZ6wHbmob72H9d6oq3P6/F3Hc+wHBjdi6FTsUvvQjs=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.css
+      integrity: sha256-tqnsGuq1RhhSNqeZr8GW+PXVDpiNDwNujo4iNsdP50o=
       crossorigin: anonymous
       map: true
       id: __bootstrap-css
-    
+
 bootstrap-js:
   name: Bootstrap
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
-  version: 4.0.0-alpha.6
+  version: 4.0.0-beta
   license: MIT
   type: js
   prod:
-    - script: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js
-      url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js
-      integrity: sha256-+kIbbrvS+0dNOjhmQJzmwe/RILR/8lb/+4+PUNVW09k=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.min.js
+      integrity: sha256-DiWJXXyq81WlPRnDfGmgYZj2aOVCKyEdJ1l+2TmDuAs=
       crossorigin: anonymous
       id: __bootstrap-js
   dev:
-    - script: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.js
-      url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.js
-      integrity: sha256-O80B9+k8kADyLffStFEQZnTxAU91ZryGbUeKwxO0t3M=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.js
+      integrity: sha256-1LmgjLdpcClLOb/DwQyq5qTdgtQFvYxiARMhHFojyHc=
       crossorigin: anonymous
       id: __bootstrap-js
       
@@ -560,3 +558,23 @@ underscore:
       integrity: sha256-SzKOQsVYGX1bmddyfPzGC6yXY/rWYGUSMOi6+T9gZ+0=
       crossorigin: anonymous
       id: __underscore
+
+popper:
+  name: Popper.js
+  url: https://cdnjs.com/libraries/popper.js
+  project: https://github.com/FezVrasta/popper.js
+  version: 1.12.2
+  license: mit
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.2/umd/popper.min.js
+      integrity: sha256-euxX4brPBxGLMi9Y9DyjpzMRjqVkmEPBOPx29M8zNvA=
+      crossorigin: anonymous
+      map: true
+      id: __popper
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.2/umd/popper.js
+      integrity: sha256-ogZ9FxzmYVg4A8ijjhGg7WUzcFlSAVquMVuIYtHpOsU=
+      crossorigin: anonymous
+      map: true
+      id: __popper

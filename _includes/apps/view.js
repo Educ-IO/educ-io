@@ -150,6 +150,42 @@ App = function() {
 
 			} else if ((/TEST/i).test(command)) {
 				
+				var _choices = {
+					visible: {
+						name: "Visible",
+						desc: ""
+					},
+					now: {
+						name: "Hide Now",
+						desc: ""
+					},
+					always: {
+						name: "Hide Always",
+						desc: ""
+					},
+					initially: {
+						name: "Hide Initially",
+						desc: ""
+					}
+				};
+
+				ಠ_ಠ.Display.options({
+					id: "column_visibilities",
+					title: "Column Visibilities",
+					action: "Apply",
+					instructions: "Please select which columns you wish to be visible from the list below.",
+					list: [{name: "Test 1", current: "Visible"}, {name: "Test 2", current: "Visible"}, {name: "Test 3", current: "Visible"}],
+					inline: true,
+					choices_label: "Menu for controlling the visibility of this column",
+					choices: _choices
+				}).then(function(options) {
+
+					console.log("OPTIONS", options);
+					
+				}, function(e) {
+					if (e) ಠ_ಠ.Flags.error("Select Column Visibility", e);
+				});
+				
 			}
 
 		},

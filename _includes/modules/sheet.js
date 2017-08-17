@@ -137,7 +137,8 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 
 	var _createDisplayFilters = () => ಠ_ಠ.Display.template("filters")({
 		id: name,
-		headers: headers
+		headers: headers,
+		instructions: $("#FILTER_INSTRUCTIONS")[0].innerText
 	});
 
 	var _createDisplayTable = () => ಠ_ಠ.Display.template("table")({
@@ -361,7 +362,8 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 					};
 				}
 			}
-			_target.parents("div.form").fadeOut();
+			_target.tooltip("hide").parents("div.form").fadeOut();
+			
 			_update(true, true, target);
 			if (_complete) _complete();
 		});
@@ -383,19 +385,19 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 		var _choices = {
 			visible: {
 				name: "Visible",
-				desc: ""
+				desc: "Show this column"
 			},
 			now: {
 				name: "Hide Now",
-				desc: ""
+				desc: "Hide this column"
 			},
 			always: {
 				name: "Hide Always",
-				desc: ""
+				desc: "Just hide this column on the view that you create"
 			},
 			initially: {
 				name: "Hide Initially",
-				desc: ""
+				desc: "Just hide this column on the view, but allow it to be un-hidden"
 			}
 		};
 

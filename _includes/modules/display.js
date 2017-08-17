@@ -263,7 +263,9 @@ Display = function() {
 				/* <!-- Great Modal Options Dialog --> */
 				var dialog = $(_template("options")(options));
 				_target(options).append(dialog);
-
+				dialog.find("a.dropdown-item").on("click.toggler", (e) => $(e.target).closest(".input-group-btn").children("button")[0].innerText = e.target.innerText);
+				dialog.find("a[data-toggle='tooltip']").tooltip({animation: false});
+				 
 				/* <!-- Set Event Handlers --> */
 				dialog.find("button.btn-primary").click(function() {
 					var _return = [];
