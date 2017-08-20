@@ -485,7 +485,7 @@ Sheet = function(table, headers, name, index, target, widths, frozen, readonly, 
 				_sorts = default_Sorts ? default_Sorts : {};
 
 			headers.forEach(function(v) {
-				v.set_hide(v.hide_default, false, false);
+				if (v.set_hide) v.set_hide(v.hide_default, false, false);
 			});
 
 			target.find("input.table-search").val("");

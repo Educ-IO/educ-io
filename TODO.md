@@ -27,6 +27,7 @@ Apps
 ----
 
 #### View
+* Hidden-First Visibiity on 'View' needs to be hidden
 * Write Flexbox-based Fit Algorithm
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
@@ -36,6 +37,7 @@ Apps
 
 Complete
 --------
+* BUG: Button on Landing Page only works once <== DONE
 * Write Auth'ed Landing Page [Process] <== DONE
 * Write instructions, including further filter instructions <== DONE
 * Write Public Landing Page [Features] <== DONE

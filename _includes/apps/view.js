@@ -89,7 +89,7 @@ App = function() {
 			$("#site_nav, #sheet_tabs").each(function() {
 				_height += $(this).outerHeight(true);
 			});
-			$("div.tab-pane").css("height", $(window).height() - _height - 20);
+			$("div.tab-pane").css("max-height", $(window).height() - _height - 20);
 		};
 		var _resize_Timeout = 0;
 		$(window).off("resize").on("resize", () => {

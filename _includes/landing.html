@@ -9,7 +9,7 @@
 			</p>
 			{{ text | markdownify }}
 			<div class="d-flex flex-column flex-md-row lead mb-3 mt-4">
-				<a href="#" onclick="$('{{ include.start }}').trigger('click');" class="btn btn-lg btn-action mb-3 mb-md-0 mr-md-3">{{ include.start_desc }}</a>
+				<a href="{{ include.start_Url }}"{% if include.start %} onclick="event.preventDefault(); document.getElementById('{{ include.start }}').click(); event.target.removeAttribute('onclick');"{% endif %} class="btn btn-lg btn-action mb-3 mb-md-0 mr-md-3">{{ include.start_desc }}</a>
 				<a href="/support/" class="btn btn-lg btn-outline-success">Support</a>
 			</div>
 			<div class="d-flex flex-column flex-md-row mb-3 mt-2">

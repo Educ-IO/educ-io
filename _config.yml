@@ -37,7 +37,6 @@ author:
   url:								https://github.com/educ-io
 
 # Custom variables
-version:							"0.0.4"
 launched:							"2015"
 debug:                "debug"
 performance:          "perf"
