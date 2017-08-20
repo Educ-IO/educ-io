@@ -93,35 +93,68 @@ Display = function() {
 			});
 
 		},
-		/*
-			Options are : {
-				name : name of the document to display,
-        target : optional element to append the display to,
-        prepend : optional boolean to prepend doc, rather than append,
-        clear : ooption boolean to clear target first
-			}
-		*/
-		doc: function(options) {
+		
+		doc : {
+			
+			wrap : function(wrapper, content, options) {
+				return this.get(wrapper)
+					.replace(/\{\{+\s*content\s*}}/gi, content)
+					.replace(/\{\{+\s*title\s*}}/gi, options && options.title ? options.title : "Title")
+					.replace(/\{\{+\s*close\s*}}/gi, options && options.close ? options.close : "Close");
+			},
+			/*
+				Options are : {
+					name : name of the document to display,
+				}
+			*/
+			get : function(options) {
+				options = _.isString(options) ? {name: options} : options;
+				var _doc = $("#" + options.name)[0].innerText;
+				return options.wrapper ? this.wrap(options.wrapper, _doc, options) : options.content !== undefined ? 
+					_doc.replace(/\{\{+\s*content\s*}}/gi, options.content) : _doc;
+			},
+			
+			/*
+				Options are : {
+					name : name of the document to display,
+					target : optional element to append the display to,
+					prepend : optional boolean to prepend doc, rather than append,
+					clear : ooption boolean to clear target first
+				}
+			*/
+			show: function(options) {
 
-			/* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
-			var _element = options.clear === true ? _target(options).empty() : _target(options);
+				/* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
+				var _element = options.clear === true ? _target(options).empty() : _target(options);
 
-			var _doc = $("#" + options.name)[0].innerText;
-			_doc = options.wrapper ? $("#" + options.wrapper)[0].innerText
-				.replace(/\{+\s*content\s*}}/gi, _doc)
-				.replace(/\{+\s*title\s*}}/gi, options.title ? options.title : "Title")
-				.replace(/\{+\s*close\s*}}/gi, options.close ? options.close : "Close") : _doc;
+				return options.prepend === true ?
+					$(this.get(options)).prependTo(_element) : $(this.get(options)).appendTo(_element);
 
-			return options.prepend === true ?
-				$(_doc).prependTo(_element) : $(_doc).appendTo(_element);
-
+			},
+		
 		},
 
-		template: function(name) {
+		template: {
+			
+			get: function(options) {
 
-			return _template(name);
+				return _.isString(options) ? _template(options) : _template(options.template ? options.template : options.name)(options);
 
+			},
+			
+			show: function(options) {
+
+				/* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
+				var _element = options.clear === true ? _target(options).empty() : _target(options);
+
+				return options.prepend === true ?
+					$(this.get(options)).prependTo(_element) : $(this.get(options)).appendTo(_element);
+
+			},
+		
 		},
+		
+		
 
 		/* <!--
 			Options are : {
@@ -169,6 +202,34 @@ Display = function() {
 
 		},
 
+		/*
+			Options are : {
+
+			}
+		*/
+		modal: function(template, options) {
+
+			return new Promise((resolve, reject) => {
+
+				if (!options) return reject();
+
+				/* <!-- Great Modal Choice Dialog --> */
+				var dialog = $(_template(template)(options));
+				_target(options).append(dialog);
+
+				/* <!-- Set Event Handlers --> */
+				dialog.on("hidden.bs.modal", function() {
+					dialog.remove();
+					resolve();
+				});
+
+				/* <!-- Show the Modal Dialog --> */
+				dialog.modal("show");
+
+			});
+
+		},
+		
 		/* <!--
 			Options are : {
 				type : type of alert (success, info, warning, danger),

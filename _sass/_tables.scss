@@ -7,6 +7,9 @@
 table {
 	thead {
 		z-index: 2;
+		> th {
+			display: none;
+		}
 		tr {
 			background-color: $colour-background;
 			th {
@@ -70,7 +73,7 @@ table {
 		}
 	}
 	thead tr {
-		th:not(.to-hide):not(.hidden-xl-down) + .to-hide, th.to-hide + :not(.to-hide), th.to-hide-prefix {
+		th:not(.to-hide):not(.d-none) + .to-hide, th.to-hide + :not(.to-hide), th.to-hide-prefix {
 			&:before {
 				cursor: pointer;
     		pointer-events: all;
@@ -80,7 +83,7 @@ table {
 				content: "+/-";
 			}
 		}
-		th:not(.to-hide):not(.hidden-xl-down) + .to-hide, th.to-hide + :not(.to-hide) {
+		th:not(.to-hide):not(.d-none) + .to-hide, th.to-hide + :not(.to-hide) {
 			&:after {
 				position: absolute;
 				bottom: .4em;
@@ -90,7 +93,7 @@ table {
 				height: 20%;
 			}
 		}
-		th:not(.to-hide):not(.hidden-xl-down) + .to-hide {
+		th:not(.to-hide):not(.d-none) + .to-hide {
 			&:before {
 				left: -1.6em;
 			}

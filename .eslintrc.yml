@@ -25,6 +25,8 @@ globals:
   showdown: false
   loki: false
   google: false
+  localforage: false
+  Clipboard: false
   _: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
@@ -40,6 +42,7 @@ globals:
   Css: true
   Main: true
   Service: true
+  Recent: true
   Sheet: true
   Sheets: true
   Table: true

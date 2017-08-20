@@ -8,7 +8,7 @@ modules:
 imports:
   - name: jquery
     load: first
-  - name: tether
+  - name: popper
     load: first
   - name: bootstrap-css
     load: first

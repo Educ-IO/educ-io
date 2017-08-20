@@ -4,7 +4,7 @@ Main = function() {
   if (this && this._isF && this._isF(this.Main)) {return new this.Main().initialise(this);}
 	
 	/* <!-- Internal Variables --> */
-	var _;
+	var ಠ_ಠ;
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
@@ -58,10 +58,11 @@ Main = function() {
     initialise : function(container) {
 			
 			/* <!-- Get Reference to Container --> */
-			_ = container;
+			ಠ_ಠ = container;
 			
 			/* <!-- Initialise Objects --> */
-			_.App();
+			ಠ_ಠ.Recent();
+			ಠ_ಠ.App();
 			
 			/* <!-- Set Container Reference to this --> */
 			container.Main = this;
@@ -75,41 +76,57 @@ Main = function() {
 
 			var google_SignIn = function() {
 				hello.login("google", {
-					force: false, display : (_.SETUP.SINGLE_PAGE || _.Flags.page()) ? "page" : "popup",
-					scope : encodeURIComponent(_.SETUP.GOOGLE_SCOPES.join(" ")),
+					force: false, display : (ಠ_ಠ.SETUP.SINGLE_PAGE || ಠ_ಠ.Flags.page()) ? "page" : "popup",
+					scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
 				}).then(function(a) {
-					_.Flags.log("Signed into Google", a);
+					ಠ_ಠ.Flags.log("Signed into Google", a);
 				}, function(e) {
-					_.Flags.error("Signed into Google", e);
+					ಠ_ಠ.Flags.error("Signed into Google", e);
 				});
 			};
 
 			var google_SignOut = function() {
 				hello.logout("google").then(function(a) {
-					_.Flags.log("Signed out of Google", a);
+					/* <!-- Module Cleans --> */
+					[ಠ_ಠ.Recent, ಠ_ಠ.App].forEach((m) => {if (m.clean) m.clean();});
+					ಠ_ಠ.Flags.log("Signed out of Google", a);
 				}, function(e) {
-					_.Flags.error("Signing out of Google", e);
+					ಠ_ಠ.Flags.error("Signing out of Google", e);
 				});
 			};
 			
-			var _routeIn = function() {_.App.route(true);}, _routeOut = function() {_.App.route(false);};
+			var _routeIn = function() {ಠ_ಠ.App.route(true);}, _routeOut = function() {ಠ_ಠ.App.route(false, true);};
 			
 			var router = function() {
-				if (_.Flags) _.Flags.change(function(directive, command) {
-					if ((/GOOGLE/i).test(directive) && !_.google) {
+				if (ಠ_ಠ.Flags) ಠ_ಠ.Flags.change(function(directive, command) {
+					ಠ_ಠ.Flags.log("ROUTING", directive, command);
+					if ((/GOOGLE/i).test(directive) && !ಠ_ಠ.google) {
 						google_SignIn();
 						_routeIn = function() {
-							_routeIn = function() {_.App.route(true);};
-							_.App.route(command);
+							_routeIn = function() {ಠ_ಠ.App.route(true);};
+							ಠ_ಠ.App.route(command);
 						};
 					} else {
-						_.App.route(command);
+						ಠ_ಠ.App.route(command);
 					}
 				});
 			};
 			
+			var setupRouter = function(start) {
+				
+				/* <!-- Route Start --> */
+				if (start) start();
+				
+				/* <!-- Call Router Initially --> */
+				if (window.location.hash) router();
+				
+				/* <!-- Add Router Method --> */
+				window.onhashchange = router;
+				
+			};
+			
 			/* <!-- Module Starts --> */
-			if (_.Display.start) _.Display.start();
+			[ಠ_ಠ.Display, ಠ_ಠ.Recent].forEach((m) => {if (m.start) m.start();});
 			
 			_setup(hello);
 
@@ -128,10 +145,10 @@ Main = function() {
 
 			var google_LoggedIn = function(auth) {
 				
-				if (!_.google) {
+				if (!ಠ_ಠ.google) {
 
 					/* <!-- Initialise Google Provider --> */
-					_.google = _.Google_API().initialise(auth.access_token, auth.token_type, auth.expires, 
+					ಠ_ಠ.google = ಠ_ಠ.Google_API().initialise(auth.access_token, auth.token_type, auth.expires, 
 						(function(s) {
 							return function() {
 								return new Promise(function(resolve, reject) {
@@ -148,26 +165,23 @@ Main = function() {
 									}, function(err) {reject(err);});
 								});
 							};
-						})(encodeURIComponent(_.SETUP.GOOGLE_SCOPES.join(" "))), _.SETUP.GOOGLE_KEY, _.SETUP.GOOGLE_CLIENT_ID);
+						})(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" "))), ಠ_ಠ.SETUP.GOOGLE_KEY, ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID);
 
 					/* <!-- Get User Info for Display --> */
-					_.google.me().then(function(user) {
+					ಠ_ಠ.google.me().then(function(user) {
 
 						/* Disable and Hide the Sign in */
-						$("#sign_in").hide().children("button").attr("title","").off("click");
+						$("#sign_in").hide().children(".btn").attr("title","").off("click");
 
 						/* Enable and Shopw the Sign Out */
 						$("#user_details").text(user.name.length == 3 ? user.name.split(" ").join("") : user.name).attr("title", "To remove from your account (" + user.email + "), click & follow instructions");
-						$("#sign_out button").on("click", function(e) {e.preventDefault(); google_SignOut();});
+						$("#sign_out .btn").on("click", function(e) {e.preventDefault(); google_SignOut();});
 						$("#sign_out").show();
 
 						/* <!-- Route Authenticated --> */
-						_routeIn();
+						setupRouter(_routeIn);
 
-						/* <!-- Add Router Method --> */
-						window.onhashchange = router;
-
-					}).catch(function(e) {_.Flags.error("Google Me", e);});
+					}).catch(function(e) {ಠ_ಠ.Flags.error("Google Me", e);});
 
 				}
 
@@ -176,22 +190,19 @@ Main = function() {
 			var google_LoggedOut = function() {
 
 				/* <!-- Delete Objects dependent on being Logged in --> */
-				delete _.google;
+				delete ಠ_ಠ.google;
 
 				/* Disable and Hide the Sign Out */
-				$("#sign_out").hide().children("button").off("click");
+				$("#sign_out").hide().children(".btn").off("click");
 				$("#user_details").text("").attr("title", "");
 
 				/* Enable and Shopw the Sign In */
-				$("#sign_in").show().children("button").attr("title", "Click here to log into this app, you will be promped to authorise the app on your account if required").on("click", function(e) {e.preventDefault(); google_SignIn();});
+				$("#sign_in").show().children(".btn").attr("title", "Click here to log into this app, you will be promped to authorise the app on your account if required").on("click", function(e) {e.preventDefault(); google_SignIn();});
 
 				$(".auth-only").hide();
 
 				/* <!-- Route Un-Authenticated --> */
-				_routeOut();
-
-				/* <!-- Add Router Method --> */
-				window.onhashchange = router;
+				setupRouter(_routeOut());
 
 			};
 			/* <!-- Auth Triggers --> */
@@ -219,18 +230,18 @@ Main = function() {
 			/* <!-- Auth Handler --> */
 
 			/* <!-- Get Global Flags --> */
-			_.Flags.initialise().then(function(flags) {
+			ಠ_ಠ.Flags.initialise().then(function(flags) {
 
-				_.Flags = flags;
+				ಠ_ಠ.Flags = flags;
 
 				/* <!-- Append Content Holder --> */
-				if (!_.container) _.container = $("#content");
+				if (!ಠ_ಠ.container) ಠ_ಠ.container = $("#content");
 
 				var _start = function() {
 
 					/* <!-- Set Up Hello.js Auth-Flow --> */
 					hello.init({
-						google : _.SETUP.GOOGLE_CLIENT_ID,
+						google : ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID,
 					}, {
 						redirect_uri : "/redirect/",
 					});
@@ -246,7 +257,7 @@ Main = function() {
 
 							var refresh_race = Promise.race([
 								hello.login("google", { /* Try silent token refresh */
-									force: false, display : "none", scope : encodeURIComponent(_.SETUP.GOOGLE_SCOPES.join(" ")),
+									force: false, display : "none", scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
 								}),
 								new Promise(function(resolve, reject){
 									setTimeout(function() { reject("Login Promise Timed Out"); }, 1000);
@@ -260,7 +271,7 @@ Main = function() {
 									google_LoggedOut();
 								}
 							}, function(e) {
-								_.Flags.error("Signing into Google", e);
+								ಠ_ಠ.Flags.error("Signing into Google", e);
 								google_LoggedOut();
 							});
 
@@ -269,7 +280,7 @@ Main = function() {
 						}
 
 					} catch(e) {
-						_.Flags.error("Google Auth Flow", e);
+						ಠ_ಠ.Flags.error("Google Auth Flow", e);
 					}
 					/* <!-- Start Auth Flow --> */
 

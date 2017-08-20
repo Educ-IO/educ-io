@@ -1,9 +1,11 @@
-Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
+Sheet = function(table, headers, name, index, target, widths, frozen, readonly, ಠ_ಠ, 
+									default_Filters, default_InvertedFilters, default_Sorts) {
 
 	/* <!-- Internal Variables --> */
-	var _filters = {},
-			_invertedFilters = {},
-			_sorts = {}, _table, _css = ಠ_ಠ.Css(name);
+	var _filters = default_Filters ? default_Filters : {},
+			_invertedFilters = default_InvertedFilters ? default_InvertedFilters : {},
+			_sorts = default_Sorts ? default_Sorts : {}, 
+			_table, _escapedName = "sheet_" + index, _css = ಠ_ಠ.Css(_escapedName);
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -68,6 +70,11 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 
 	};
 
+	var _clearVisibilities = function() {
+		_css.delete("table-column-visibility");
+		target.find(".to-hide-prefix").removeClass("to-hide-prefix");
+	};
+	
 	var _updateHeaders = function(container, defaults) {
 
 		var query = ".table-header[data-field]";
@@ -79,20 +86,22 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 
 			var _t = $(el),
 					_f = parseInt(_t.data("field"));
-
+			
 			if (headers[_f].hide(defaults) && _t.parent().is("tr")) {
 				var _p = _t.parent().parent();
+				if (_t.hasClass("to-hide-prefix")) _t.prev().addClass("to-hide-prefix");
 				_t.detach().appendTo(_p);
-			} else if (!headers[_f].hide(defaults) && _t.parent().hasClass(".table-header")) {
+			} else if (!headers[_f].hide(defaults) && _t.parent().hasClass("table-headers")) {
 				var _q = _f === 0 ?_t.parents(".table-headers").find("tr")[0] : _t.parents(".table-headers").find("tr .table-header[data-field=" + (_f + 1) + "]")[0];
-				_f === 0 ? _t.detach().appendTo(_q) : _t.detach().insertBefore(_q);
+				_f === 0 ? _t.detach().prependTo(_q) : _t.detach().insertBefore(_q);
+				_t.prev().hasClass("to-hide-prefix") ? _t.prev().removeClass("to-hide-prefix") : _t.removeClass("to-hide-prefix");
 			}
 
 			/* <!-- Set Visibility --> */
-			_t.toggleClass("hidden-xl-down", headers[i].hide(defaults)).toggleClass("to-hide", !!headers[i].hide_initially);
+			_t.toggleClass("d-none", headers[i].hide(defaults)).toggleClass("to-hide", !!headers[i].hide_initially);
 
 			/* <!-- Set Similar Style Rules for Rows --> */
-			var _selector = "#table_" + name + " tbody tr td:nth-child(" + headers.slice(0, _f).reduce((t, h) => h.hide() ? t : t+1, 1) + ")";
+			var _selector = "#table_" + _escapedName + " tbody tr td:nth-child(" + headers.slice(0, _f).reduce((t, h) => h.hide() ? t : t+1, 1) + ")";
 			headers[_f].hide_initially ? 
 				_css.removeRule(_style, _selector).addRule(_style, _selector, "background-color: " +  _t.css("background-color") + "; color: " + _t.css("color")) : 
 			_css.removeRule(_style, _selector);
@@ -107,13 +116,14 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 
 		});
 
-		_css.delete("table-column-visibility");
+		/* <!-- Clear Visibilities (make all toggles visible again) as we're inconsistent with indexing --> */
+		_clearVisibilities();
 
 		return container;
 	};
 
 	var _updateRows = function() {
-		_table.scroll.update($(ಠ_ಠ.Display.template("rows")({
+		_table.scroll.update($(ಠ_ಠ.Display.template.get("rows")({
 			headers: headers,
 			rows: _getRows()
 		})).toArray().map(function(e) {
@@ -126,8 +136,9 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 		if (headers) _updateHeaders(container, defaults);
 	};
 
-	var _createDefaultTable = () => ಠ_ಠ.Display.template("table")({
-		id: name,
+	var _createDefaultTable = () => ಠ_ಠ.Display.template.get("table")({
+		id: _escapedName,
+		links: false,
 		classes: [],
 		headers: headers,
 		rows: table.chain().data({removeMeta: true}).map((v) => {
@@ -135,22 +146,23 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 		}),
 	});
 
-	var _createDisplayFilters = () => ಠ_ಠ.Display.template("filters")({
-		id: name,
+	var _createDisplayFilters = () => ಠ_ಠ.Display.template.get("filters")({
+		id: _escapedName,
 		headers: headers,
 		instructions: $("#FILTER_INSTRUCTIONS")[0].innerText
 	});
 
-	var _createDisplayTable = () => ಠ_ಠ.Display.template("table")({
-		id: name,
+	var _createDisplayTable = () => ಠ_ಠ.Display.template.get("table")({
+		id: _escapedName,
+		links: !readonly,
 		classes: widths.lengths > 0 ? ["table-fixed-width"] : [],
 		headers: headers,
 		widths: widths,
 		rows: _getRows(),
 	});
 
-	var _createDisplaySheet = (filters, table) => $(ಠ_ಠ.Display.template("sheet")({
-		filters: filters ? filters : _createDisplayFilters(),
+	var _createDisplaySheet = (filters, table) => $(ಠ_ಠ.Display.template.get("sheet")({
+		filters: readonly ? "" : filters ? filters : _createDisplayFilters(),
 		table: table ? table : _createDisplayTable()
 	}));
 
@@ -313,8 +325,8 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 		var _toggleColumn = (el, f) => {
 			if (el && el.hasClass("to-hide")) {
 				var _style = _css.sheet("table-column-visibility");
-				var _nth = ":nth-child(" + headers.slice(0, el.index()).reduce((t, h) => h.hide() ? t : t+1, 1) + ")";
-				var _selector = "table#table_" + name + " .table-header" + _nth + ", table#table_" + name + " tbody tr td" + _nth;
+				var _nth = ":nth-child(" + headers.slice(0, el.data("field")).reduce((t, h) => h.hide() ? t : t+1, 1) + ")";
+				var _selector = "table#table_" + _escapedName + " tr th.table-header" + _nth + ", table#table_" + _escapedName + " tbody tr td" + _nth;
 				el.is(":hidden") ? _css.removeRule(_style, _selector) : _css.addRule(_style, _selector, "display: none !important;");
 				if (f) _toggleColumn(f(el), f);
 			}
@@ -331,7 +343,7 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 
 		target.find("button[data-command='clear']").on("click", (e) => _clearFilter(e.target));
 
-		target.find("button[data-command='sort']").on("click", (e) => {
+		target.find("a[data-command='sort'], button[data-command='sort']").on("click", (e) => {
 			var _target = $(e.target);
 			var _field = _target.data("field");
 			if (_sorts[_field]) {
@@ -348,22 +360,33 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 			var _target = $(e.target);
 			var _action = _target.data("action");
 			var _field = _target.parent().data("field");
+			var _heading = $("#" + _target.parent().data("heading")).parent();
 			var _complete;
 			if (_action == "now") {
 				headers[_field].hide_now = !headers[_field].hide_now;
+				_complete = () => {
+						if (headers[_field].hide_now && _heading.next().is(":hidden")) {
+							 /* <!-- Clear Visibilities (make all toggles visible again) as we are now inconsistent with indexing --> */
+							_clearVisibilities();
+						}
+					};
 			} else if (_action == "always") {
 				headers[_field].hide_always = !headers[_field].hide_always;
+				_complete = () => {
+						if (headers[_field].hide_always && _heading.next().is(":hidden")) {
+							/* <!-- Clear Visibilities (make all toggles visible again) as we are now inconsistent with indexing --> */
+							_clearVisibilities();
+						}
+					};
 			} else if (_action == "initially") {
 				headers[_field].hide_initially = !headers[_field].hide_initially;
 				if (headers[_field].hide_initially) {
 					_complete = () => {
-						var _heading = $("#" + _target.parent().data("heading")).parent();
 						if (_heading.prev().is(":hidden") || _heading.next().is(":hidden")) _toggleColumn(_heading);
 					};
 				}
 			}
 			_target.tooltip("hide").parents("div.form").fadeOut();
-			
 			_update(true, true, target);
 			if (_complete) _complete();
 		});
@@ -371,7 +394,7 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 		target.find(".table-header a").on("click", function(e) {
 			e.preventDefault();
 			var target = $($(e.target).data("target"));
-			target.fadeToggle().promise().done(() => target.find("input[type='text']").first().focus());
+			target.fadeToggle().promise().done(() => target.find("input[type='text']:visible").first().focus());
 		});
 
 		/* <!-- Set up Table --> */
@@ -426,7 +449,7 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 
 				/* <!-- Send List of Columns to hide --> */				
 				options.forEach((v) => headers[v.name].set_hide(v.value === _choices.now.name, v.value === _choices.always.name, v.value === _choices.initially.name));
-
+				
 				/* <!-- Update Visual Display --> */
 				_update(true, true);
 
@@ -457,7 +480,9 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 		},
 
 		defaults: function() {
-			_filters = {}, _invertedFilters = {}, _sorts = {};
+			_filters = default_Filters ? default_Filters : {},
+				_invertedFilters = default_InvertedFilters ? default_InvertedFilters : {},
+				_sorts = default_Sorts ? default_Sorts : {};
 
 			headers.forEach(function(v) {
 				v.set_hide(v.hide_default, false, false);
@@ -483,7 +508,9 @@ Sheet = function(table, headers, name, index, target, widths, frozen, ಠ_ಠ) {
 			var _return = [_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray().map((el) => el.textContent.trim())];
 			_html.find("tbody tr").each((i, el) => {_return.push($(el).find("td").toArray().map((el) => el.textContent.trim()));});
 			return _return;
-		}
+		},
+		
+		dehydrate: () => ({n : name, f : _filters, e : _invertedFilters, s : _sorts, r : frozen.rows ? frozen.rows : 1, h : _.chain(headers).filter((h) => h.hide(true)).map((h) => ({n : h.name, h : h.hide_always, i: h.hide_initially})).value()})
 
 	};
 	/* <!-- External Visibility --> */

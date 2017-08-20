@@ -11,6 +11,8 @@ view:
       load: first
     - name: popper
       load: first
+    - name: handlebars
+      load: last
     - name: hello
       load: last
     - name: urlparser
@@ -20,6 +22,8 @@ view:
     - name: bootstrap-js
       load: last
     - name: loki
+      load: last
+    - name: localforage
       load: last
     - name: google
       load: lazy
@@ -36,8 +40,9 @@ view:
     - main
     - table
     - css
+    - recent
     - sheets
-    - sheet
+    - sheet    
   scripts: 
     - extends/regex
     - extends/array
@@ -47,23 +52,28 @@ view:
     - confirm
     - alert
     - loader
+    - recent
+    - tabs
     - view/filters
     - view/table
     - view/rows
     - view/sheet
-    - tabs
+    - view/link
   docs:
     - view/PUBLIC
+    - view/FEATURES
     - view/README
     - view/INSTRUCTIONS
     - view/JUMP_WARNING
     - view/FILTER_INSTRUCTIONS
+    - view/LINK_INSTRUCTIONS
   scopes:
     google:
       - email
       - profile
       - https://www.googleapis.com/auth/drive.file
       - https://www.googleapis.com/auth/spreadsheets.readonly
+      - https://www.googleapis.com/auth/urlshortener
   menus:
     - name: Sheet
       groups:
@@ -75,6 +85,7 @@ view:
               imports:
                 - google
               auth: google
+              id: _cmd_Start
             - name: Open & Load Fully
               desc: Open a Sheet from your Drive (load all tabs up front)
               hash: open.full
@@ -88,6 +99,16 @@ view:
                 - opened
     - name: Share
       groups:
+        link:
+          name: Link
+          commands:
+            - name: Create
+              desc: Create a link to this View
+              hash: link.full
+              imports:
+                - clipboard
+              disabled_until:
+                - opened
         export:
           name: Export
           commands:
@@ -123,14 +144,6 @@ view:
               imports:
                 - xlsx
                 - filesaver
-        link:
-          name: Link
-          commands:
-            - name: Create
-              desc: Create a link to this View
-              hash: link.full
-              disabled_until:
-                - opened
     - name: Settings
       groups:
         all:
@@ -138,6 +151,11 @@ view:
             - name: Show / Hide Columns
               desc: Select which columns should remain visible
               hash: visibility.columns
+              disabled_until:
+                - opened
+            - name: Refresh
+              desc: Refresh the current data (clears filters, sorts & visibilities)
+              hash: refresh
               disabled_until:
                 - opened
             - name: Fit
@@ -158,7 +176,7 @@ view:
     - name: Instructions
       hash: instructions
       desc: More details about how to use the View App
-  version: 0.0.1
+  version: v0.2.0-alpha
   published: true
 reflect:
   name: Reflect

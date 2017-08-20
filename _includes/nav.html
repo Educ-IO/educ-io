@@ -17,7 +17,7 @@
         <div class="dropdown-menu" aria-labelledby="navAppsMenu">
           {% for group in site.data.menu %}{% assign group_title = group[1].name %}{% assign group_apps = group[1].apps %}{% assign apps = site.array %}{% for app_key in group_apps %}{% if jekyll.environment == site.debug or site.data.apps[app_key].published == true %}{% assign apps = apps | push: site.data.apps[app_key] %}{% endif %}{% endfor %}
             {% if apps.size > 0 %}<h5 class="dropdown-heading">{{ group_title }}</h5>
-              {% for app in apps %}<a class="dropdown-item jump" href="{{ app.link }}" {% if app.ext %}target="_blank" rel="noopener" {% endif %}{% if app.desc %}data-toggle="tooltip" title="{{ app.desc }}"{% if group == site.data.apps.first %} data-placement="bottom"{% endif %}{% endif %}>{{ app.name }}</a>{% endfor %}
+              {% for app in apps %}<a class="dropdown-item jump" href="{{ app.link }}" {% if app.ext %}target="_blank" rel="noopener" {% endif %}{% if app.desc %}data-toggle="tooltip" title="{{ app.desc }}"{% if group == site.data.menu.first %} data-placement="bottom"{% endif %}{% endif %}>{{ app.name }}</a>{% endfor %}
             {% endif %}{% endfor %}
         </div>
       </li>
@@ -35,7 +35,7 @@
             {% if group_title %}<h5 class="dropdown-heading">{{ group_title }}</h5>{% endif %}
 
             {% for command in group_commands %}
-            <a class="dropdown-item{% if command.disabled_until and command.disabled_until.size > 0%} disabled{% for until in command.disabled_until %} state-{{until}}{% endfor %}{% endif %}" href="#{% if command.auth %}{{ command.auth }},{% endif %}{{ command.hash }}" {% if command.desc %}data-toggle="tooltip" title="{{ command.desc }}"{% endif %}{% if command.imports and command.imports.size > 0 %}{% capture command_imports %}[{% for import in command.imports %}{% if jekyll.environment == site.debug %}{% for import_url in site.data.imports[import].dev %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% endif %}{% endfor %}]{% endcapture %} onclick="event.preventDefault(); {{ site.app.namespace }}.Controller.load({{ command_imports }}).then(() => {window.location.hash = '#{% if command.auth %}{{ command.auth }},{% endif %}{{ command.hash }}';}).catch(e => {console.error(e);});"{% endif %}>
+            <a {% if command.id %}id="{{command.id}}"{% endif %} class="dropdown-item{% if command.disabled_until and command.disabled_until.size > 0%} disabled{% for until in command.disabled_until %} state-{{until}}{% endfor %}{% endif %}" href="#{% if command.auth %}{{ command.auth }},{% endif %}{{ command.hash }}" {% if command.desc %}data-toggle="tooltip" title="{{ command.desc }}"{% if group == menu.groups.first %}{% if command == group_commands.first %} data-placement="bottom"{% endif %}{% endif %}{% endif %}{% if command.imports and command.imports.size > 0 %}{% capture command_imports %}[{% for import in command.imports %}{% if jekyll.environment == site.debug %}{% for import_url in site.data.imports[import].dev %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% endif %}{% endfor %}]{% endcapture %} onclick="event.preventDefault(); {{ site.app.namespace }}.Controller.load({{ command_imports }}).then(() => {window.location.hash = '#{% if command.auth %}{{ command.auth }},{% endif %}{{ command.hash }}';}).catch(e => {console.error(e);});"{% endif %}>
               {{ command.name }}{% if command.desc %}<span class="sr-only">{{ command.desc }}</span>{% endif %}
             </a>
 
@@ -61,11 +61,11 @@
     {% if page.app or page.login %}
       <form id="sign_out" class="form-inline mt-2 mt-md-0" style="display: none;">
         <span class="navbar-text mr-2">Signed in as <a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions" rel="noopener"></a></span>
-        <button class="btn btn-outline-success my-2 my-sm-0 btn-outline-action" href="#">Sign Out</button>
+        <a class="btn btn-outline-success my-2 my-sm-0 btn-outline-action" href="#">Sign Out</a>
       </form>
 
       <form id="sign_in" class="form-inline mt-2 mt-md-0" style="display: none;">
-        <button class="btn btn-outline-success my-2 my-sm-0 btn-outline-action" href="#">Sign In</button>
+        <a class="btn btn-outline-success my-2 my-sm-0 btn-outline-action" href="#">Sign In</a>
       </form>
     {% endif %}
 

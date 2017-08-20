@@ -17,18 +17,17 @@ TODO LIST
 * Gracefully handle authentication errors:
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "blocked", message: "Popup was blocked"}network: "google" <= e.g. Private Browsing Mode (redirect?)
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "cancelled", message: "Login has been cancelled"}network: "google" <= e.g. Close Login Popup
+* Instantiate Popper in 'Normal' Pages?
 
 Router
-* Need to handle event on load - parse original anchor fragment or querystring?
+
 * Need to have a state property attached to menu items in the app yaml file. Some commands (e.g. Open) don't need to be navigated back to, whereas others (e.g. Freeze) make sense to turn off on back. Some (e.g. Toggles) will go into the back stack straight away? Others might be one removed e.g. Back takes you to the last state rather than 'undoing' an action?
 
 Apps
 ----
 
 #### View
-* Write instructions, including further filter instructions
-* Recents for Files / Part way done with LOAD route / Maybe Card on AUTH view?
-* Add Link generation including QR COde = https://chart.googleapis.com/chart?cht=qr&chs=540x540&chl=http://www.google.com&choe=UTF-8
+* Write Flexbox-based Fit Algorithm
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 
@@ -37,6 +36,19 @@ Apps
 
 Complete
 --------
+* Write Auth'ed Landing Page [Process] <== DONE
+* Write instructions, including further filter instructions <== DONE
+* Write Public Landing Page [Features] <== DONE
+* Changelog Page <== DONE
+* Need to handle event on load - parse original anchor fragment or querystring? <== DONE
+* Add Refresh Current Sheet (like SHIFT-CLICK) <== DONE
+* BUG: Toggle Column Visibility at the end... <-- DONE
+* BUG: Restore Hidden Column <-- DONE
+* Parse Generated Link <-- DONE
+* Link Shortener API Interfacing - https://developers.google.com/url-shortener/v1/ <-- DONE
+* Remove Recent Command Handler <-- DONE
+* Add Link generation including QR Code = https://chart.googleapis.com/chart?cht=qr&chs=540x540&chl=http://www.google.com&choe=UTF-8 <-- DONE
+* Recents for Files / Part way done with LOAD route / Maybe Card on AUTH view? <-- DONE
 * Show/Hide Column Selector dodgy on mobile (scroll and dropdowns) <-- DONE, was Bootstrap bug resolved in 4.0.0-beta
 * Sheet Tab Headers should wrap? <- DONE
 * Filter boxes are too wide on a small device. Need to stack them up rather than inline them on small screens. <-- DONE

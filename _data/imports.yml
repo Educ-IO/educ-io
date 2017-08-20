@@ -578,3 +578,39 @@ popper:
       crossorigin: anonymous
       map: true
       id: __popper
+
+underscore-string:
+  name: Underscore.string
+  url: https://cdnjs.com/libraries/underscore.string
+  project: https://epeli.github.io/underscore.string
+  version: 3.3.4
+  license: mit
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/underscore.string/3.3.4/underscore.string.min.js
+      integrity: sha256-iOkXo5pPeEyOh1IcvZlsNVSh6p+mFfzzHF7rrkyxpes=
+      crossorigin: anonymous
+      id: __underscore-string
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/underscore.string/3.3.4/underscore.string.js
+      integrity: sha256-arfD7Z/ncpaPW01DzLKxju7a+YXdFjP0r1iwnnFyKGY=
+      crossorigin: anonymous
+      id: __underscore-string
+      
+clipboard:
+  name: Clipboard.js
+  url: https://cdnjs.com/libraries/clipboard.js
+  project: https://github.com/zenorocha/clipboard.js/
+  version: 1.7.1
+  license: mit
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js
+      integrity: sha256-Daf8GuI2eLKHJlOWLRR/zRy9Clqcj4TUSumbxYH9kGI=
+      crossorigin: anonymous
+      id: __clipboard
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.js
+      integrity: sha256-ORKvddRkgm0M05FRe/+nsQWeYIHpfXOxiOzzbhPEvS0=
+      crossorigin: anonymous
+      id: __clipboard

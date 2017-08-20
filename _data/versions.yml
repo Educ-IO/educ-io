@@ -1,18 +1,35 @@
-0.0.1 :
-  name : Initial Version
-  details : 
-  type : minor
-  changelog :
-    - Initial Service Work Testing
-0.0.2 :
-  name : Service Worker Testing
-  details: Important Security Updates
-  type: security
-0.0.3 :
-  name : View Functionality Improved
-  details: 
-  type: minor
-0.0.4 :
-  name : View Functionality Further Developed
-  details: 
-  type: minor
+Site :
+  0.0.5 :
+    name : View v0.2.0-alpha
+    details: 
+    type: minor
+  0.0.4 :
+    name : View Functionality Further Developed
+    details: 
+    type: minor
+  0.0.3 :
+    name : View Functionality Improved
+    details: 
+    type: minor
+  0.0.2 :
+    name : Service Worker Testing
+    details: Example Important Security Updates
+    type: security
+  0.0.1 :
+    name : Initial Version
+    details : 
+    type : minor
+    changes :
+      - Initial Service Work Testing
+View :
+  0.2.0-alpha :
+    name : First fully functional build
+    details : 
+    type : major
+    changes :
+      - details: Changed Layout system
+        url: https://github.com/Educ-IO/educ-io.github.io/issues
+  0.1.0-alpha :
+    name : Early testing version
+    details : 
+    type : minor

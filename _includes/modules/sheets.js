@@ -52,7 +52,7 @@ Sheets = function(sheet, ಠ_ಠ) {
       table.insert(values);
     }
 
-    _sheets[name] = ಠ_ಠ.Sheet(table, headers, name, index, target, widths, frozen, ಠ_ಠ);
+    _sheets[name] = ಠ_ಠ.Sheet(table, headers, name, index, target, widths, frozen, false, ಠ_ಠ);
 
   };
 
@@ -61,6 +61,9 @@ Sheets = function(sheet, ಠ_ಠ) {
     ಠ_ಠ.Display.busy({
       target: target
     });
+    
+    /* <!-- Clean Up CSS etc--> */
+    if (_sheets[name]) _sheets[name].defaults();
 
     var _frozen = {
       cols: sheet.sheets[index].properties.gridProperties.frozenColumnCount,
@@ -113,6 +116,11 @@ Sheets = function(sheet, ಠ_ಠ) {
 
   };
 
+  var _refreshTab = function() {
+    var target = $("div.tab-pane.active");
+    _loadValues(sheet, target.data("name"), target.data("index"), target.empty());
+  };
+  
   var _showTab = function(tab, sheet) {
     var target = $(tab.data("target"));
     if (target.children().length === 0 || tab.data("refresh")) _loadValues(sheet, tab.data("name"), tab.data("index"), target.empty());
@@ -121,30 +129,18 @@ Sheets = function(sheet, ಠ_ಠ) {
 
   var _showSheet = function(sheet) {
 
-    var _tabs = $(ಠ_ಠ.Display.template("tabs")({
+    var _tabs = ಠ_ಠ.Display.template.show({
+      template: "tabs",
       id: sheet.spreadsheetId,
       name: sheet.properties.title,
       nav: "sheet_tabs",
       tabs: sheet.sheets.map((v, i) => ({
         id: "tab_" + i,
         name: v.properties.title
-      }))
-    })).appendTo(ಠ_ಠ.container.empty());
-
-    /* <!-- Handle Screen / Window Resize Events --> */
-    var _resize = function() {
-      var _height = 0;
-      $("#site_nav, #sheet_tabs").each(function() {
-        _height += $(this).outerHeight(true);
-      });
-      $("div.tab-pane").css("height", $(window).height() - _height - 20);
-    };
-    var _resize_Timeout = 0;
-    $(window).off("resize").on("resize", () => {
-      clearTimeout(_resize_Timeout);
-      _resize_Timeout = setTimeout(_resize, 50);
+      })),
+      target: ಠ_ಠ.container,
+      clear: true
     });
-    _resize();
 
     /* <!-- Set Load Tab Handler & Load Initial Values --> */
     _tabs.find("a.nav-link").on("click", (e) => $(e.target).data("refresh", e.shiftKey)).on("show.bs.tab", function(e) {
@@ -349,8 +345,6 @@ Sheets = function(sheet, ಠ_ಠ) {
     });
 
   };
-
-  var _createLink = function(full) {};
   /* <!-- Internal Functions --> */
 
   /* <!-- Initial Calls --> */
@@ -358,11 +352,15 @@ Sheets = function(sheet, ಠ_ಠ) {
 
   /* <!-- External Visibility --> */
   return {
-    export: (full, all) => _exportSheet(full, all),
+    id : () => sheet.spreadsheetId,
+    
+    export : (full, all) => _exportSheet(full, all),
 
-    link: (full) => _createLink(full),
+    link : (full) => _createLink(full),
 
-    sheet: () => _currentSheet(),
+    sheet : () => _currentSheet(),
+    
+    refresh : () => _refreshTab(),
   };
   /* <!-- External Visibility --> */
 

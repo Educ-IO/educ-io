@@ -177,7 +177,7 @@ Controller = function() {
 				if (result === true) {
 					if (next) _load(next).then(() => {_proceed(true);}).catch(e => {console.error(e);_proceed(false);});
 					_removeClass("css-sensitive");
-					if (_.App && _.App.route) _.App.route(false);
+					if (_.App && _.App.route) _.App.route([false, false]);
 				}
 			};
 			

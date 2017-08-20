@@ -1,3 +1,31 @@
+// -- Outline App Logo -- //
+.app-logo {
+	svg {
+		max-width: 100%;
+		height: auto;
+		pointer-events: visible;
+		path {
+			&.o {
+				stroke-width: 2;
+			}
+			&.p {
+				stroke-width: 3;
+			}
+			&.o, &.p {
+				stroke: darken($colour-highlight, 15%);
+				stroke-linejoin: round;
+				stroke-linecap: round;
+			}
+		}
+		&:hover {
+			path {
+				&.o, &.p {stroke: darken($colour-highlight, 30%);}
+			}
+		}
+	}
+}
+// -- Outline Letter Logo -- //
+
 // -- Action Button -- //
 .btn-outline-action {
   color: $colour-highlight;
@@ -61,7 +89,11 @@ div.alert:first-child {
 // -- Content Spacer -- //
 .content {
 	margin-bottom: 0.5rem;
+	> .container {
+		margin-top: 0.5rem;
+	}
 }
+
 
 #site_nav {
 	z-index: 10;

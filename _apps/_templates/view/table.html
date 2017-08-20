@@ -3,8 +3,12 @@
   <thead id="table-headings_{{id}}" class="table-headers">
     <tr>
       {{#each headers}}
-      <th class="table-header align-middle border-top-0{{#if hide}} hidden-xl-down no-export{{/if}}{{#if hide_default}} no-export-default{{/if}}{{#if hide_initially}} to-hide{{/if}}" data-field="{{@index}}" {{#if ../widths}} style="width: {{#with (lookup ../widths @index)}}{{this}}{{/with}}px"{{/if}}>
-        <a id="heading_{{../id}}_{{@index}}" href="#" data-target="#collapse_{{../id}}_{{@index}}" aria-expanded="false" aria-controls="collapse_{{../id}}_{{@index}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
+      <th class="table-header align-middle border-top-0{{#if hide}} d-none no-export{{/if}}{{#if hide_default}} no-export-default{{/if}}{{#if hide_initially}} to-hide{{/if}}" data-field="{{@index}}" {{#if ../widths}} style="width: {{#with (lookup ../widths @index)}}{{this}}{{/with}}px"{{/if}}>
+        {{#if ../links}}
+          <a id="heading_{{../id}}_{{@index}}" href="#" data-target="#collapse_{{../id}}_{{@index}}" aria-expanded="false" aria-controls="collapse_{{../id}}_{{@index}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
+        {{else}}
+        <a id="heading_{{../id}}_{{@index}}" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-field="{{@index}}" data-toggle="tooltip" data-placement="bottom" title="Click to sort by this column">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
+        {{/if}}
       </th>
       {{/each}}
     </tr>

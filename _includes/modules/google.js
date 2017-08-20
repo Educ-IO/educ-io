@@ -181,6 +181,37 @@ Google_API = function() {
 		});
 
 	};
+	
+	var _post = function(url, data, type, meta) {
+
+		return new Promise(function(resolve, reject) {
+
+			_check().then(function() {
+
+				var s = {
+					method: "POST",
+					url: url,
+					beforeSend: _before,
+					complete: _after,
+					data: JSON.stringify(data),
+					contentType: type
+				};
+
+				$.ajax(s).done(function(value, status, request) {
+
+					resolve(value);
+
+				}).fail(function(status, request) {
+
+					reject(Error(request.status + ": " + request.statusText));
+
+				});
+
+			});
+
+		});
+
+	};
 
 	var _pick = function(title, multiple, views, callback, context) {
 
@@ -304,11 +335,23 @@ Google_API = function() {
 
 			values: function(id, range) {
 				return _get(
-					SHEETS_URL + "/v4/spreadsheets/" + id + "/values/" + range
+					SHEETS_URL + "/v4/spreadsheets/" + id + "/values/" + encodeURIComponent(range)
 				);
 			},
 
 		},
+		
+		url: {
+			
+			insert: function(url) {
+				return _post(
+					GENERAL_URL + "/urlshortener/v1/url?key=" + KEY, {
+						longUrl: url
+					}, "application/json"
+				);
+			},
+			
+		}
 
 	};
 	/* === External Visibility === */

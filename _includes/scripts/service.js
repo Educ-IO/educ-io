@@ -101,7 +101,7 @@
 }());
 /* <!-- --> */
 /* <!-- Set the Version of the Application --> */
-var CACHE_VERSION = "{{ site.version }}";
+var CACHE_VERSION = "{{ site.data.versions.site.first[0] }}";
 
 /* <!-- Set-Up the Caches --> */
 var CURRENT_CACHES = {

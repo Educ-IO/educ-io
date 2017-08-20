@@ -1,0 +1,3 @@
+The _link_ for your __custom view__ is below. You can test it, copy it to your clipboard to share or even [shorten it](https://goo.gl/){:target="_blank"} if required to make it a little easier to share. These shortened links also allow you to track clicks using their built-in [analytics](https://support.google.com/faqs/answer/190768){:target="_blank"}.
+
+You can also view a [QR code](https://en.wikipedia.org/wiki/QR_code){:target="_blank"}, which is an easy way to 'capture' the link on other devices (using their cameras).

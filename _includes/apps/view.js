@@ -1,20 +1,22 @@
 App = function() {
 	"use strict";
-	
+
 	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
 
 	/* <!-- Returns an instance of this if required --> */
-	if (this && this._isF && this._isF(this.App)) {return new this.App().initialise(this);}
+	if (this && this._isF && this._isF(this.App)) {
+		return new this.App().initialise(this);
+	}
 
 	/* <!-- Internal Constants --> */
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _sheets;
+	var ಠ_ಠ, _sheets, _last;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var _load = function(id, full) {
+	var _load = function(id, full, complete, log) {
 
 		/* <!-- Start the Loader --> */
 		ಠ_ಠ.Display.busy({
@@ -26,11 +28,13 @@ App = function() {
 			ಠ_ಠ.google.sheets.get(id, full).then(function(sheet) {
 					ಠ_ಠ.Flags.log("Google Drive Sheet Opened", sheet);
 					result = sheet;
-				}).catch((e) => ಠ_ಠ.Flags.error("Requesting Selected Google Drive Sheet", e))
+				}).catch((e) => ಠ_ಠ.Flags.error("Requesting Selected Google Drive Sheet", e ? e : "No Inner Error"))
 				.then(() => ಠ_ಠ.Display.busy({
 					clear: true
 				}))
-				.then(() => result ? resolve(ಠ_ಠ.Sheets(result, ಠ_ಠ)) : reject());
+				.then(() => result ?
+					log ? ಠ_ಠ.Recent.add("View", result.spreadsheetId, result.properties.title, "#google,load." + result.spreadsheetId + (full ? ".full" : ".lazy")).then(() => resolve(complete(result, ಠ_ಠ))) :
+					resolve(complete(result, ಠ_ಠ)) : reject());
 		});
 
 	};
@@ -49,6 +53,56 @@ App = function() {
 		});
 
 	};
+
+	var _clear = function() {
+
+		/* <!-- Clear the existing state --> */
+		if (_sheets) {
+			_sheets.sheet().defaults();
+			_sheets = null;
+			ಠ_ಠ.Display.state().exit("opened").protect("a.jump").off();
+			ಠ_ಠ.container.empty();
+		}
+
+	};
+
+	var _default = function() {
+
+		/* <!-- Load the Initial Instructions --> */
+		ಠ_ಠ.Recent.last("View", 5).then((recent) => ಠ_ಠ.Display.doc.show({
+			name: "README",
+			content: recent && recent.length > 0 ? ಠ_ಠ.Display.template.get({
+				template: "recent",
+				recent: recent
+			}) : "",
+			target: ಠ_ಠ.container,
+			clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
+		})).catch((e) => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error"));
+
+	};
+
+	var _resize = function() {
+
+		/* <!-- Handle Screen / Window Resize Events --> */
+		var _resizer = function() {
+			var _height = 0;
+			$("#site_nav, #sheet_tabs").each(function() {
+				_height += $(this).outerHeight(true);
+			});
+			$("div.tab-pane").css("height", $(window).height() - _height - 20);
+		};
+		var _resize_Timeout = 0;
+		$(window).off("resize").on("resize", () => {
+			clearTimeout(_resize_Timeout);
+			_resize_Timeout = setTimeout(_resize, 50);
+		});
+		_resizer();
+
+	};
+
+	/* <!-- See: https://developer.mozilla.org/en/docs/Web/API/WindowBase64/Base64_encoding_and_decoding --> */
+	var _encode = (value) => btoa(encodeURIComponent(value).replace(/%([0-9A-F]{2})/g, (m, p) => String.fromCharCode("0x" + p)));
+	var _decode = (value) => decodeURIComponent(_.map(atob(value).split(""), (c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join(""));
 	/* <!-- Internal Functions --> */
 
 	/* <!-- External Visibility --> */
@@ -71,35 +125,50 @@ App = function() {
 
 		route: function(command) {
 
-			if (!command || command === false || (/PUBLIC/i).test(command)) {
+			if (!command || command === false || command[0] === false || (/PUBLIC/i).test(command)) {
+
+				/* <!-- Clear the existing state (in case of logouts) --> */
+				if (command && command[1]) _clear();
 
 				/* <!-- Load the Public Instructions --> */
-				ಠ_ಠ.Display.doc({
-					name: "PUBLIC",
+				/* <!-- Don't use handlebar templates here as we may be routed from the controller, and it might not be loaded --> */
+				if (!command || !_last || command[0] !== _last[0]) ಠ_ಠ.Display.doc.show({
+					wrapper: "PUBLIC",
+					name: "FEATURES",
 					target: ಠ_ಠ.container,
-					wrapper: "WRAPPER",
 					clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
 				});
 
 			} else if (command === true || (/AUTH/i).test(command)) {
 
 				/* <!-- Load the Initial Instructions --> */
-				ಠ_ಠ.Display.doc({
-					name: "README",
-					target: ಠ_ಠ.container,
-					wrapper: "WRAPPER",
-					clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
-				});
+				_default();
 
 			} else if ((/OPEN/i).test(command)) {
 
+				/* <!-- Clear the existing state --> */
+				_clear();
+
 				/* <!-- Pick, then Load the Selected File --> */
-				_pick().then((f) => _load(f, (/FULL/i).test(command[1])).then((s) => _sheets = s)).catch(() => _sheets = null);
+				_pick().then((f) => _load(f, (/FULL/i).test(command[1]), ಠ_ಠ.Sheets, true).then((s) => {
+					_sheets = s;
+					_resize();
+				})).catch(() => _sheets = null);
 
 			} else if ((/LOAD/i).test(command)) {
 
+				/* <!-- Clear the existing state --> */
+				_clear();
+
 				/* <!-- Load the Supplied File Id --> */
-				_load(command[1], (/FULL/i).test(command[2])).then((s) => _sheets = s).catch(() => _sheets = null);
+				_load(command[1], (/FULL/i).test(command[2]), ಠ_ಠ.Sheets, true).then((s) => {
+					_sheets = s;
+					_resize();
+				}).catch(() => _sheets = null);
+
+			} else if ((/REMOVE/i).test(command)) {
+
+				if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then(() => $("#" + command[1]).remove());
 
 			} else if ((/VISIBILITY/i).test(command)) {
 
@@ -112,8 +181,44 @@ App = function() {
 			} else if ((/FREEZE/i).test(command)) {
 
 				if (_sheets) _sheets.sheet().freeze();
-								
+
 			} else if ((/LINK/i).test(command)) {
+
+				var _data = _sheets.sheet().dehydrate();
+				_data.i = _sheets.id();
+
+				var _link = ಠ_ಠ.Flags.full("view/#google,view." + _encode(JSON.stringify(_data))),
+					_clipboard;
+
+				ಠ_ಠ.Display.modal("link", {
+					id: "generate_link",
+					target: ಠ_ಠ.container,
+					title: "Your View Link",
+					instructions: ಠ_ಠ.Display.doc.get("LINK_INSTRUCTIONS"),
+					link: _link,
+					qr_link: () => "https://chart.googleapis.com/chart?cht=qr&chs=540x540&choe=UTF-8&chl=" + encodeURIComponent(_link),
+					details: _.escape(JSON.stringify(_data, null, 4)),
+				}).then(() => {
+					if (_clipboard) _clipboard.destroy();
+				});
+
+				_clipboard = new Clipboard("#generate_link .copy-trigger", {
+					container: document.getElementById("generate_link")
+				});
+
+				ಠ_ಠ.container.find("#link_shorten").one("click.shorten", () => {
+					ಠ_ಠ.google.url.insert(_link).then((url) => {
+						_link = url.id;
+						var _qr = "https://chart.googleapis.com/chart?cht=qr&chs=540x540&choe=UTF-8&chl=" + encodeURIComponent(_link);
+						ಠ_ಠ.container.find("#link_text").text(_link);
+						ಠ_ಠ.container.find("#qr_copy").attr("data-clipboard-text", _qr);
+						ಠ_ಠ.container.find("#qr_code").attr("src", _qr);
+					}).catch((e) => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error"));
+
+				});
+
+				$("#qr").on("show.bs.collapse", () => $("#details").collapse("hide"));
+				$("#details").on("show.bs.collapse", () => $("#qr").collapse("hide"));
 
 				if (_sheets) _sheets.link((/FULL/i).test(command[1]));
 
@@ -121,72 +226,141 @@ App = function() {
 
 				if (_sheets) _sheets.sheet().defaults();
 
+			} else if ((/REFRESH/i).test(command)) {
+
+				if (_sheets) _sheets.refresh();
+
 			} else if ((/CLOSE/i).test(command)) {
 
-				_sheets = null;
-				ಠ_ಠ.Display.state().exit("opened").protect("a.jump").off().doc({
-					name: "README",
-					target: ಠ_ಠ.container,
-					wrapper: "WRAPPER",
-					clear: true
-				});
+				/* <!-- Clear the existing state --> */
+				_clear();
+
+				/* <!-- Load the Initial Instructions --> */
+				_default();
+
+			} else if ((/VIEW/i).test(command)) {
+
+				/* <!-- Clear the existing state --> */
+				_clear();
+
+				/* <!-- Show the View --> */
+				var params;
+				try {
+					params = JSON.parse(_decode(command[1]));
+				} catch (e) {
+					ಠ_ಠ.Flags.error("Failed to Parse View Params", e ? e : "No Inner Error");
+				}
+
+				var _view = function(p) {
+
+					return function(sheet) {
+
+						/* <!-- Internal Variables --> */
+						var _sheet;
+						/* <!-- Internal Variables --> */
+
+						/* <!-- Internal Functions --> */
+						var _initSheet = function(data, target) {
+
+							var headers = data.shift();
+							var rows = p.r ? p.r - 1 : 0;
+							while (rows > 0) {
+								headers = data.shift().map((v, i) => v ? (headers[i] ? headers[i] + " / " + v : v) : headers[i]);
+								rows--;
+							}
+
+							headers = headers.map((v) => {
+								var h = _.find(p.h, (h) => h.n == v);
+								return {
+									name: v,
+									hide: function() {
+										return !!(this.hide_now);
+									},
+									hide_default: (h && h.h),
+									hide_now: (h && h.h),
+									hide_initially: (h && h.i),
+								};
+							});
+
+							var length = 0,
+								values = data.map((v) => {
+									length = Math.max(length, v.length);
+									return Object.assign({}, v);
+								});
+
+							var fields = Array.apply(null, {
+								length: length
+							}).map(Number.call, Number);
+							var table = new loki("temp.db").addCollection(p.n, {
+								indices: fields
+							});
+							table.insert(values);
+
+							_sheet = ಠ_ಠ.Sheet(table, headers, name, 0, target, [], [], true, ಠ_ಠ, p.f, p.e, p.s);
+
+						};
+
+						var _loadValues = function(target) {
+
+							ಠ_ಠ.Display.busy({
+								target: target
+							});
+
+							/* <!-- Need to load the values --> */
+							ಠ_ಠ.google.sheets.values(sheet.spreadsheetId, p.n + "!A:ZZ")
+								.then((data) => {
+									_initSheet(data.values, target);
+									ಠ_ಠ.Display.busy({
+										target: target,
+										clear: true
+									});
+								}).catch((e) => {
+									ಠ_ಠ.Flags.error("Adding Content Table", e);
+									ಠ_ಠ.Display.busy({
+										target: target,
+										clear: true
+									});
+								});
+
+						};
+
+						_loadValues($("<div />", {
+							class: "container-fluid tab-pane"
+						}).appendTo(ಠ_ಠ.container.empty()));
+
+						/* <!-- External Visibility --> */
+						return {
+							id: () => p.i,
+
+							sheet: () => _sheet,
+						};
+						/* <!-- External Visibility --> */
+
+					};
+
+				};
+
+				if (params && params.i) {
+					_load(params.i, false, _view(params), false).then((s) => {
+						_sheets = s;
+						_resize();
+					}).catch(() => _sheets = null);
+				}
 
 			} else if ((/INSTRUCTIONS/i).test(command)) {
 
 				/* <!-- Load the Instructions --> */
-				ಠ_ಠ.Display.doc({
+				ಠ_ಠ.Display.doc.show({
 					name: "INSTRUCTIONS",
 					title: "How to use View ...",
 					target: ಠ_ಠ.container,
 					wrapper: "MODAL"
 				}).modal();
 
-			} else if ((/SPIN/i).test(command)) {
-
-				/* <!-- Loader Testing Command --> */
-				ಠ_ಠ.Display.busy({
-					target: ಠ_ಠ.container
-				});
-
-			} else if ((/TEST/i).test(command)) {
-				
-				var _choices = {
-					visible: {
-						name: "Visible",
-						desc: ""
-					},
-					now: {
-						name: "Hide Now",
-						desc: ""
-					},
-					always: {
-						name: "Hide Always",
-						desc: ""
-					},
-					initially: {
-						name: "Hide Initially",
-						desc: ""
-					}
-				};
-
-				ಠ_ಠ.Display.options({
-					id: "column_visibilities",
-					title: "Column Visibilities",
-					action: "Apply",
-					instructions: "Please select which columns you wish to be visible from the list below.",
-					list: [{name: "Test 1", current: "Visible"}, {name: "Test 2", current: "Visible"}, {name: "Test 3", current: "Visible"}],
-					inline: true,
-					choices_label: "Menu for controlling the visibility of this column",
-					choices: _choices
-				}).then(function(options) {
-
-					console.log("OPTIONS", options);
-					
-				}, function(e) {
-					if (e) ಠ_ಠ.Flags.error("Select Column Visibility", e);
-				});
-				
 			}
+
+			/* <!-- Record the last command --> */
+			_last = command;
 
 		},
 

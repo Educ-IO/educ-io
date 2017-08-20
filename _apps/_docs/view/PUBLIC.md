@@ -1,3 +1,2 @@
-VIEW
-====
-A web-based tool for producing customised views of Google Sheets.
+{% assign app = site.data.apps.view %}
+{% include public.html logo="images/view_logo.svg" start="#google,auth" %}
