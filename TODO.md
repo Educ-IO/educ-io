@@ -18,6 +18,7 @@ TODO LIST
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "blocked", message: "Popup was blocked"}network: "google" <= e.g. Private Browsing Mode (redirect?)
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "cancelled", message: "Login has been cancelled"}network: "google" <= e.g. Close Login Popup
 * Instantiate Popper in 'Normal' Pages?
+* Does version alert still work???
 
 Router
 
