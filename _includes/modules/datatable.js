@@ -1,34 +1,16 @@
 Datatable = function(ಠ_ಠ, table, options, target) {
 
-	/* <!--
-		
-		table = {
-			id, 
-			name,
-			data,
-			headers
-		}
-		
-		options = {
-			filters,
-			inverted_Filters,
-			sorts,
-			widths,
-			frozen,
-			readonly,
-			advanced
-		}
-		
-	--> */
-	
+	/* <!-- table = {id, name, data, headers} --> */
+	/* <!-- options = {filters, inverted_Filters, sorts, widths, frozen, readonly, advanced} --> */
+
 	/* <!-- Filters --> */
 	var Filters = function(options) {
-		
+
 		/* <!-- Internal Variables --> */
-		var _normal = options.filters ? options.filters : {}, 
-				_inverted = options.inverted_Filters ? options.inverted_Filters : {};
+		var _normal = options.filters ? options.filters : {},
+			_inverted = options.inverted_Filters ? options.inverted_Filters : {};
 		/* <!-- Internal Variables --> */
-		
+
 		/* <!-- Internal Methods --> */
 		var _createQuery = function(filters, join) {
 			var _query, _join = join ? join : "$and";
@@ -49,7 +31,7 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 			}));
 			return _query;
 		};
-		
+
 		var _addFilter = function(field, value, normal, inverted) {
 			var _invert, _filter;
 			if (value.startsWith("!!")) {
@@ -105,7 +87,7 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 				var _value = value.split("->");
 				if (_value.length == 2) {
 					var val_1 = _value[0].trim(),
-							val_2 = _value[1].trim();
+						val_2 = _value[1].trim();
 					if (val_1 && val_2) _filter = {
 						"$between": [val_1, val_2]
 					};
@@ -130,7 +112,7 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 				} else {
 					_filter = {
 						"$regex": [RegExp.escape(value), "i"]
-					};	
+					};
 				}
 			}
 			if (_filter) {
@@ -157,16 +139,21 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 			}
 		};
 		/* <!-- Internal Methods --> */
-		
+
 		/* <!-- External Visibility --> */
 		return {
-			
-			add : (field, value) => _addFilter(field, value, _normal, _inverted),
-			
-			get : (field) => _inverted[field] ? {filter : _inverted[field], inverted : true} : _normal[field] ? {filter : _normal[field]} : null,
-			
-			remove : (field) => _removeFilter(field, _normal, _inverted),
-			
+
+			add: (field, value) => _addFilter(field, value, _normal, _inverted),
+
+			get: (field) => _inverted[field] ? {
+				filter: _inverted[field],
+				inverted: true
+			} : _normal[field] ? {
+				filter: _normal[field]
+			} : null,
+
+			remove: (field) => _removeFilter(field, _normal, _inverted),
+
 			filter: (rows) => {
 				if (!$.isEmptyObject(_inverted)) {
 					ಠ_ಠ.Flags.log("Applying Inverted Filters", _inverted);
@@ -180,48 +167,47 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 				}
 				return rows;
 			},
-			
-			normal : () => _normal,
-			
-			inverted : () => _inverted,
-			
-		}
+
+			normal: () => _normal,
+
+			inverted: () => _inverted,
+
+		};
 		/* <!-- External Visibility --> */
-		
-	}
+
+	};
 	/* <!-- Filters --> */
-	
+
 	/* <!-- Internal Variables --> */
-	
+
 	/* <!-- Internal Variables --> */
 	var _filters, _sorts, _advanced, _name, _css;
 	/* <!-- Internal Variables --> */
 
-	/* <
 	/* <!-- Initialisation Functions --> */
 	var _initialise = function() {
-		
-			/* <!-- Get 'Default' Filters and Searches if applicable --> */
-			_filters = Filters(options);
-			_sorts = options.sorts ? options.sorts : {};
-		
-			/* <!-- Get 'Default' Filters and Searches if applicable --> */
-			_name = ("table_" + table.id).replace(/[^a-z0-9\-_:\.]|^[^a-z]+/gi, "");
-		
-			/* <!-- Remove / Create Custom CSS Sheet --> */
-			_css = _css ? _css.deleteAll() : ಠ_ಠ.Css(_name);
+
+		/* <!-- Get 'Default' Filters and Searches if applicable --> */
+		_filters = Filters(options);
+		_sorts = options.sorts ? options.sorts : {};
+
+		/* <!-- Get 'Default' Filters and Searches if applicable --> */
+		_name = ("table_" + table.id).replace(/[^a-z0-9\-_:\.]|^[^a-z]+/gi, "");
+
+		/* <!-- Remove / Create Custom CSS Sheet --> */
+		_css = _css ? _css.deleteAll() : ಠ_ಠ.Css(_name);
 
 	};
 	_initialise(); /* <!-- Run initial variable initialisation --> */
 	/* <!-- Initialisation Functions --> */
-	
+
 	/* <!-- Internal Functions --> */
 	var _getRows = function() {
 
 		ಠ_ಠ.Flags.log("Getting Rows from Data");
 
 		var _rows = table.data.chain();
-		
+
 		_rows = _filters.filter(_rows);
 
 		if (!$.isEmptyObject(_sorts)) {
@@ -232,7 +218,9 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 			}, []));
 		}
 
-		_rows = _rows.data({removeMeta: true});
+		_rows = _rows.data({
+			removeMeta: true
+		});
 		ಠ_ಠ.Flags.log("Data After Filtering & Sorting", _rows);
 
 		ಠ_ಠ.Flags.log("Applying Column Hides", table.headers);
@@ -249,7 +237,7 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		_css.delete("table-column-visibility");
 		target.find(".to-hide-prefix").removeClass("to-hide-prefix");
 	};
-	
+
 	var _updateHeaders = function(container, defaults) {
 
 		var query = ".table-header[data-index]";
@@ -259,14 +247,16 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 
 		_headers.each(function(i, el) {
 
-			var _t = $(el), _i = parseInt(_t.data("index")), _f = _t.data("field");
-			
+			var _t = $(el),
+				_i = parseInt(_t.data("index")),
+				_f = _t.data("field");
+
 			if (table.headers[_i].hide(defaults) && _t.parent().is("tr")) {
 				var _p = _t.parent().parent();
 				if (_t.hasClass("to-hide-prefix")) _t.prev().addClass("to-hide-prefix");
 				_t.detach().appendTo(_p);
 			} else if (!table.headers[_i].hide(defaults) && _t.parent().hasClass("table-headers")) {
-				var _q = _i === 0 ?_t.parents(".table-headers").find("tr")[0] : _t.parents(".table-headers").find("tr .table-header[data-index=" + (_i + 1) + "]")[0];
+				var _q = _i === 0 ? _t.parents(".table-headers").find("tr")[0] : _t.parents(".table-headers").find("tr .table-header[data-index=" + (_i + 1) + "]")[0];
 				_i === 0 ? _t.detach().prependTo(_q) : _t.detach().insertBefore(_q);
 				_t.prev().hasClass("to-hide-prefix") ? _t.prev().removeClass("to-hide-prefix") : _t.removeClass("to-hide-prefix");
 			}
@@ -275,10 +265,10 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 			_t.toggleClass("d-none", table.headers[i].hide(defaults)).toggleClass("to-hide", !!table.headers[i].hide_initially);
 
 			/* <!-- Set Similar Style Rules for Rows --> */
-			var _selector = "#" + _name + " tbody tr td:nth-child(" + table.headers.slice(0, _i).reduce((t, h) => h.hide() ? t : t+1, 1) + ")";
-			table.headers[_i].hide_initially ? 
-				_css.removeRule(_style, _selector).addRule(_style, _selector, "background-color: " +  _t.css("background-color") + "; color: " + _t.css("color")) : 
-			_css.removeRule(_style, _selector);
+			var _selector = "#" + _name + " tbody tr td:nth-child(" + table.headers.slice(0, _i).reduce((t, h) => h.hide() ? t : t + 1, 1) + ")";
+			table.headers[_i].hide_initially ?
+				_css.removeRule(_style, _selector).addRule(_style, _selector, "background-color: " + _t.css("background-color") + "; color: " + _t.css("color")) :
+				_css.removeRule(_style, _selector);
 
 			/* <!-- Set Sorts --> */
 			_t.toggleClass("sort", !!_sorts[_f]).toggleClass("desc", !!(_sorts[_f] && _sorts[_f].is_desc)).toggleClass("asc", !!(_sorts[_f] && !_sorts[_f].is_desc));
@@ -298,8 +288,8 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 
 	var _updateRows = function() {
 		var _rows = $(ಠ_ಠ.Display.template.get("rows")({
-				rows: _getRows()
-			}));
+			rows: _getRows()
+		}));
 		if (_advanced) {
 			_advanced.scroll.update(_rows.toArray().map(function(e) {
 				return e.outerHTML;
@@ -315,22 +305,29 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 	};
 
 	var _clearFilter = function(t) {
-			var _target = $(t);
-			_target.parents("div.input-group").find("input[type='text']").val("");
-			_filters.remove(_target.data("field"));
-			_target.parents("div.form").fadeOut();
-			_update(true, true, target);
-		};
-	
-	var _createRows = (rows) => ಠ_ಠ.Display.template.get("rows")({rows: rows});
-	
+		var _target = $(t);
+		_target.parents("div.input-group").find("input[type='text']").val("");
+		_filters.remove(_target.data("field"));
+		_target.parents("div.form").fadeOut();
+		_update(true, true, target);
+	};
+
+	var _createRows = (rows) => ಠ_ಠ.Display.template.get("rows")({
+		rows: rows
+	});
+
 	var _createDefaultTable = () => ಠ_ಠ.Display.template.get("table")({
 		id: _name,
 		links: false,
 		classes: [],
 		headers: table.headers,
-		rows: _createRows(table.chain().data({removeMeta: true}).map((v) => {
-			table.headers.forEach((f, i) => {if (f.hide_default) delete v[i];});return v;
+		rows: _createRows(table.chain().data({
+			removeMeta: true
+		}).map((v) => {
+			table.headers.forEach((f, i) => {
+				if (f.hide_default) delete v[i];
+			});
+			return v;
 		})),
 	});
 
@@ -389,13 +386,15 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		});
 
 		/* <!-- Enable Pop-Overs and Tool-Tips --> */
-		target.find("[data-toggle='popover']").popover({trigger: "focus"});
+		target.find("[data-toggle='popover']").popover({
+			trigger: "focus"
+		});
 		target.find("[data-toggle='tooltip']").tooltip({});
 
 		var _toggleColumn = (el, f) => {
 			if (el && el.hasClass("to-hide")) {
 				var _style = _css.sheet("table-column-visibility");
-				var _nth = ":nth-child(" + table.headers.slice(0, el.data("index")).reduce((t, h) => h.hide() ? t : t+1, 1) + ")";
+				var _nth = ":nth-child(" + table.headers.slice(0, el.data("index")).reduce((t, h) => h.hide() ? t : t + 1, 1) + ")";
 				var _selector = "table#" + _name + " tr th.table-header" + _nth + ", table#" + _name + " tbody tr td" + _nth;
 				el.is(":hidden") ? _css.removeRule(_style, _selector) : _css.addRule(_style, _selector, "display: none !important;");
 				if (f) _toggleColumn(f(el), f);
@@ -404,7 +403,8 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 
 		target.find(".table-headers").on("click", (e) => {
 			if (e.target.classList.contains("table-header")) {
-				var _target = $(e.target), _last = (!_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0);
+				var _target = $(e.target),
+					_last = (!_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0);
 				if (_last) _target.prev().addClass("to-hide-prefix");
 				_toggleColumn(_target.hasClass("to-hide") || _target.hasClass("to-hide-prefix") ? (_target.hasClass("to-hide-prefix") ? _target.next() : _target) : _target.prev(), _target.hasClass("to-hide") || _target.hasClass("to-hide-prefix") ? (el) => el.next() : (el) => el.prev());
 				if (_target.hasClass("to-hide-prefix")) _target.removeClass("to-hide-prefix");
@@ -435,19 +435,19 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 			if (_action == "now") {
 				table.headers[_field].hide_now = !table.headers[_field].hide_now;
 				_complete = () => {
-						if (table.headers[_field].hide_now && _heading.next().is(":hidden")) {
-							 /* <!-- Clear Visibilities (make all toggles visible again) as we are now inconsistent with indexing --> */
-							_clearVisibilities();
-						}
-					};
+					if (table.headers[_field].hide_now && _heading.next().is(":hidden")) {
+						/* <!-- Clear Visibilities (make all toggles visible again) as we are now inconsistent with indexing --> */
+						_clearVisibilities();
+					}
+				};
 			} else if (_action == "always") {
 				table.headers[_field].hide_always = !table.headers[_field].hide_always;
 				_complete = () => {
-						if (table.headers[_field].hide_always && _heading.next().is(":hidden")) {
-							/* <!-- Clear Visibilities (make all toggles visible again) as we are now inconsistent with indexing --> */
-							_clearVisibilities();
-						}
-					};
+					if (table.headers[_field].hide_always && _heading.next().is(":hidden")) {
+						/* <!-- Clear Visibilities (make all toggles visible again) as we are now inconsistent with indexing --> */
+						_clearVisibilities();
+					}
+				};
 			} else if (_action == "initially") {
 				table.headers[_field].hide_initially = !table.headers[_field].hide_initially;
 				if (table.headers[_field].hide_initially) {
@@ -470,7 +470,7 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		/* <!-- Set up Table --> */
 		if (options.advanced) {
 			_advanced = _advanced ? _advanced : ಠ_ಠ.Table(target.find("table"), target, ಠ_ಠ);
-			_advanced.scroll.init(target.find("tbody"), 2, 20).toggle();	
+			_advanced.scroll.init(target.find("tbody"), 2, 20).toggle();
 		}
 
 	}; /* <!-- End Show --> */
@@ -519,9 +519,9 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 
 				ಠ_ಠ.Flags.log("Current Headers", table.headers).log("Received Options", options);
 
-				/* <!-- Send List of Columns to hide --> */				
+				/* <!-- Send List of Columns to hide --> */
 				options.forEach((v) => table.headers[v.name].set_hide(v.value === _choices.now.name, v.value === _choices.always.name, v.value === _choices.initially.name));
-				
+
 				/* <!-- Update Visual Display --> */
 				_update(true, true);
 
@@ -552,9 +552,9 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		},
 
 		defaults: function() {
-			
+
 			_initialise(); /* <!-- Run initial variable initialisation --> */
-			
+
 			table.headers.forEach(function(v) {
 				if (v.set_hide) v.set_hide(v.hide_default, false, false);
 			});
@@ -574,11 +574,24 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		values: (filtered) => {
 			var _html = filtered ? $(_createDisplayTable()) : $(_createDefaultTable());
 			var _return = [_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray().map((el) => el.textContent.trim())];
-			_html.find("tbody tr").each((i, el) => {_return.push($(el).find("td").toArray().map((el) => el.textContent.trim()));});
+			_html.find("tbody tr").each((i, el) => {
+				_return.push($(el).find("td").toArray().map((el) => el.textContent.trim()));
+			});
 			return _return;
 		},
-		
-		dehydrate: () => ({n : table.name, f : _filters.normal(), e : _filters.inverted(), s : _sorts, r : options.frozen && options.frozen.rows ? options.frozen.rows : 1, h : _.chain(table.headers).filter((h) => h.hide(true)).map((h) => ({n : h.name, h : h.hide_always, i: h.hide_initially})).value()})
+
+		dehydrate: () => ({
+			n: table.name,
+			f: _filters.normal(),
+			e: _filters.inverted(),
+			s: _sorts,
+			r: options.frozen && options.frozen.rows ? options.frozen.rows : 1,
+			h: _.chain(table.headers).filter((h) => h.hide(true)).map((h) => ({
+				n: h.name,
+				h: h.hide_always,
+				i: h.hide_initially
+			})).value()
+		})
 
 	};
 	/* <!-- External Visibility --> */

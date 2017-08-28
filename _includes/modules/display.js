@@ -10,12 +10,13 @@ Display = function() {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var _root, _state = {}, _debug = false;
+	var _root, _state = {},
+		_debug = false;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
 	var _arrayize = (value, test) => value && test(value) ? [value] : value;
-	
+
 	var _target = function(options) {
 
 		/* <!-- Ensure we have a target _element, and that it is wrapped in JQuery --> */
@@ -94,10 +95,10 @@ Display = function() {
 			});
 
 		},
-		
-		doc : {
-			
-			wrap : function(wrapper, content, options) {
+
+		doc: {
+
+			wrap: function(wrapper, content, options) {
 				return this.get(wrapper)
 					.replace(/\{\{+\s*content\s*}}/gi, content)
 					.replace(/\{\{+\s*title\s*}}/gi, options && options.title ? options.title : "Title")
@@ -108,13 +109,15 @@ Display = function() {
 					name : name of the document to display,
 				}
 			*/
-			get : function(options) {
-				options = _.isString(options) ? {name: options} : options;
+			get: function(options) {
+				options = _.isString(options) ? {
+					name: options
+				} : options;
 				var _doc = $("#__doc__" + options.name)[0].innerText;
-				return options.wrapper ? this.wrap(options.wrapper, _doc, options) : options.content !== undefined ? 
+				return options.wrapper ? this.wrap(options.wrapper, _doc, options) : options.content !== undefined ?
 					_doc.replace(/\{\{+\s*content\s*}}/gi, options.content) : _doc;
 			},
-			
+
 			/*
 				Options are : {
 					name : name of the document to display,
@@ -132,17 +135,17 @@ Display = function() {
 					$(this.get(options)).prependTo(_element) : $(this.get(options)).appendTo(_element);
 
 			},
-		
+
 		},
 
 		template: {
-			
+
 			get: function(options) {
 
 				return _.isString(options) ? _template(options) : _template(options.template ? options.template : options.name)(options);
 
 			},
-			
+
 			show: function(options) {
 
 				/* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
@@ -152,7 +155,7 @@ Display = function() {
 					$(this.get(options)).prependTo(_element) : $(this.get(options)).appendTo(_element);
 
 			},
-		
+
 		},
 
 		/* <!--
@@ -240,7 +243,7 @@ Display = function() {
 			});
 
 		},
-		
+
 		/* <!--
 			Options are : {
 				type : type of alert (success, info, warning, danger),
@@ -292,7 +295,7 @@ Display = function() {
 
 				/* <!-- Get the Options Length --> */
 				var _length = Array.isArray(options.choices) ?
-						_length = options.choices.length : _length = Object.keys(options.choices).length;
+					_length = options.choices.length : _length = Object.keys(options.choices).length;
 				options.__LONG = (_length > MAX_ITEMS);
 
 				/* <!-- Great Modal Choice Dialog --> */
@@ -336,8 +339,10 @@ Display = function() {
 				var dialog = $(_template("options")(options));
 				_target(options).append(dialog);
 				dialog.find("a.dropdown-item").on("click.toggler", (e) => $(e.target).closest(".input-group-btn").children("button")[0].innerText = e.target.innerText);
-				dialog.find("a[data-toggle='tooltip']").tooltip({animation: false});
-				 
+				dialog.find("a[data-toggle='tooltip']").tooltip({
+					animation: false
+				});
+
 				/* <!-- Set Event Handlers --> */
 				dialog.find("button.btn-primary").click(function() {
 					var _return = [];
@@ -366,7 +371,7 @@ Display = function() {
 		protect: function(query) {
 
 			var _parent = this,
-					_selector = $(query);
+				_selector = $(query);
 
 			return {
 
@@ -432,7 +437,7 @@ Display = function() {
 				enter: function(names) {
 					names = _arrayize(names, _.isString);
 					_.each(names, name => {
-						if (_add(name)) $(".state-" + name).removeClass("disabled");	
+						if (_add(name)) $(".state-" + name).removeClass("disabled");
 					});
 					return _parent;
 				},

@@ -12,10 +12,10 @@ Network = function(base, timeout, rate, retry) {
 	const RANDOM = (lower, higher) => Math.random() * (higher - lower) + lower;
 	const QUERY = (value, append) => Object.keys(value).reduce(function(str, key, i) {
 		var delimiter, val;
-		delimiter = (i === 0 || append) ? '?' : '&';
+		delimiter = (i === 0 || append) ? "?" : "&";
 		key = encodeURIComponent(key);
 		val = encodeURIComponent(value[key]);
-		return [str, delimiter, key, '=', val].join("");
+		return [str, delimiter, key, "=", val].join("");
 	}, "");
 	/* <!-- Internal Constants --> */
 
@@ -63,7 +63,7 @@ Network = function(base, timeout, rate, retry) {
 				if (Array.isArray(promises)) {
 					return Promise.all(promises.map(function(promise) {
 						return _add(promise);
-					}.bind(this)))
+					}.bind(this)));
 				} else {
 					return _add(promises);
 				}
@@ -91,7 +91,7 @@ Network = function(base, timeout, rate, retry) {
 					"Content-Type": contentType ? contentType : "application/json"
 				},
 				body: verb != "GET" ? !contentType || contentType == "application/json" ? JSON.stringify(data) : data : null
-			}
+			};
 
 			/* <!-- Extra Headers (e.g. Auth) are set here --> */
 			if (_before) _before(_request);
@@ -144,7 +144,7 @@ Network = function(base, timeout, rate, retry) {
 									fetch(_target, _request).then(_success).catch(_failure);
 								}, RANDOM(RETRY_WAIT_LOWER, RETRY_WAIT_UPPER) * (RETRY_MAX - a)) :
 								reject({name: "Ran out of Retries", url: response.url, status: response.status, statusText: response.statusText});
-						}).catch(e => reject({url: response.url, status: response.status, statusText: response.statusText}))
+						}).catch(() => reject({url: response.url, status: response.status, statusText: response.statusText}));
 						
 					} else {
 						
@@ -160,7 +160,7 @@ Network = function(base, timeout, rate, retry) {
 
 		return LIMITER.add(
 			timeout ?
-			_promise : Promise.race([_promise, new Promise((_, r) => setTimeout(() => r(new Error("Request Timed Out (after " + timeout + "ms) to : " + _url.href)), timeout))])
+			_promise : Promise.race([_promise, new Promise((_, r) => setTimeout(() => r(new Error("Request Timed Out (after " + timeout + "ms) to : " + url)), timeout))])
 		);
 
 	};

@@ -46,3 +46,6 @@ globals:
   Sheet: true
   Sheets: true
   Table: true
+  Datatable: true
+  Folder: true
+  Network: true

@@ -63,7 +63,7 @@ Recent = function() {
 			if (_app) {
 				_db.keys().then(keys => {
 					_.chain(keys).filter((key) => _is(_app, key)).each(key => _db.removeItem(key).then(ಠ_ಠ.Flags.log("Cleared Recent Item: " + key)));
-				}).catch((e) => ಠ_ಠ.Flags.error("App Clear Recent Items Failure", e ? e : "No Inner Error"))
+				}).catch((e) => ಠ_ಠ.Flags.error("App Clear Recent Items Failure", e ? e : "No Inner Error"));
 			} else {
 				_db.clear().then(() => ಠ_ಠ.Flags.log("Globally Cleared Recent Items")).catch((e) => ಠ_ಠ.Flags.error("Global Clear Recent Items Failure", e ? e : "No Inner Error"));	
 			}
