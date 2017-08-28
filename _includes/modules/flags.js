@@ -15,7 +15,9 @@ Flags = function() {
 			_development = false,
 			_page = false,
 			_option = false,
-			_base;
+			_key = false,
+			_oauth = false,
+			_base, _dir;
 
 	/* <!-- Internal Functions --> */
 	var _parse = function() {
@@ -36,6 +38,10 @@ Flags = function() {
 
 		_development = (_url.attr("host").split(".")[0] == "dev" || _url.param("dev") === "" || _url.fparam("dev") === "");
 
+		_key = (_url.param("key") || _url.fparam("key"));
+		
+		_oauth = (_url.param("oauth") || _url.fparam("oauth"));
+		
 		_option = (_url.param("option") === "" || _url.fparam("option") === "");
 
 		_page = (_url.param("page") === "" || _url.fparam("page") === "");
@@ -43,6 +49,8 @@ Flags = function() {
 		_base = _url.attr("protocol") + "://" + _url.attr("host") +
 			(_url.attr("port") && _url.attr("port") != 80 && _url.attr("port") != 443 ? ":" + _url.attr("port") : "") + "/";
 
+		_dir = _url.attr("directory").replace(new RegExp("\\/", "g"), "");
+		
 		/* <!-- Load Remote Console Script Function --> */
 		var _load = function(id) {
 			return new Promise((resolve, reject) => {
@@ -92,6 +100,10 @@ Flags = function() {
 						return _development;
 					},
 
+					dir: function() {
+						return _dir;
+					},
+					
 					error: function(message, exception) {
 						_alert ? alert("ERROR - " + message + " : " + JSON.stringify(exception)) : console.log("ERROR - " + message, exception);
 						return this;
@@ -102,6 +114,14 @@ Flags = function() {
 						return this;
 					},
 
+					oauth: function() {
+						return _oauth;
+					},
+					
+					key: function() {
+						return _key;
+					},
+					
 					option: function() {
 						return _option;
 					},

@@ -10,11 +10,12 @@ Display = function() {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var _root, _state = {},
-			_debug = false;
+	var _root, _state = {}, _debug = false;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
+	var _arrayize = (value, test) => value && test(value) ? [value] : value;
+	
 	var _target = function(options) {
 
 		/* <!-- Ensure we have a target _element, and that it is wrapped in JQuery --> */
@@ -25,7 +26,7 @@ Display = function() {
 	};
 
 	var _compile = function(name) {
-		var _template = $("#" + name);
+		var _template = $("#__template__" + name);
 		if (_template.length == 1) {
 			if (Handlebars.templates === undefined) Handlebars.templates = {};
 			Handlebars.templates[name] = Handlebars.compile(_template.html(), {
@@ -109,7 +110,7 @@ Display = function() {
 			*/
 			get : function(options) {
 				options = _.isString(options) ? {name: options} : options;
-				var _doc = $("#" + options.name)[0].innerText;
+				var _doc = $("#__doc__" + options.name)[0].innerText;
 				return options.wrapper ? this.wrap(options.wrapper, _doc, options) : options.content !== undefined ? 
 					_doc.replace(/\{\{+\s*content\s*}}/gi, options.content) : _doc;
 			},
@@ -153,8 +154,6 @@ Display = function() {
 			},
 		
 		},
-		
-		
 
 		/* <!--
 			Options are : {
@@ -165,8 +164,9 @@ Display = function() {
 		busy: function(options) {
 
 			var _element = _target(options);
+			if (!options.class) options.class = "loader-large";
 			(options && options.clear === true) || _element.find(".loader").length > 0 ?
-				_element.find(".loader").remove() : _element.prepend(_template("loader")());
+				_element.find(".loader").remove() : _element.prepend(_template("loader")(options));
 
 			return this;
 		},
@@ -217,11 +217,22 @@ Display = function() {
 				var dialog = $(_template(template)(options));
 				_target(options).append(dialog);
 
-				/* <!-- Set Event Handlers --> */
-				dialog.on("hidden.bs.modal", function() {
-					dialog.remove();
-					resolve();
-				});
+				if (dialog.find("button.btn-primary").length > 0 && dialog.find("form").length > 0) {
+					/* <!-- Set Form / Return Event Handlers --> */
+					dialog.find("button.btn-primary").click(function() {
+						resolve(dialog.find("form").serializeArray());
+					});
+					dialog.on("hidden.bs.modal", function() {
+						dialog.remove();
+						reject();
+					});
+				} else {
+					/* <!-- Set Basic Event Handlers --> */
+					dialog.on("hidden.bs.modal", function() {
+						dialog.remove();
+						resolve();
+					});
+				}
 
 				/* <!-- Show the Modal Dialog --> */
 				dialog.modal("show");
@@ -365,7 +376,7 @@ Display = function() {
 						_parent.confirm({
 							id: "__protect_confirm",
 							title: title,
-							message: $("#" + message_doc)[0].innerText,
+							message: _parent.doc.get(message_doc),
 							action: "Proceed"
 						}).then(function() {
 							var link = $(e.target);
@@ -418,16 +429,22 @@ Display = function() {
 			};
 
 			return {
-				enter: function(name) {
-					if (_add(name)) $(".state-" + name).removeClass("disabled");
+				enter: function(names) {
+					names = _arrayize(names, _.isString);
+					_.each(names, name => {
+						if (_add(name)) $(".state-" + name).removeClass("disabled");	
+					});
 					return _parent;
 				},
 
-				exit: function(name) {
-					if (_remove(name)) {
-						$(".state-" + name).addClass("disabled");
-						_all().forEach((v) => $(".state-" + v).removeClass("disabled"));
-					}
+				exit: function(names) {
+					names = _arrayize(names, _.isString);
+					_.each(names, name => {
+						if (_remove(name)) {
+							$(".state-" + name).addClass("disabled");
+							_all().forEach((v) => $(".state-" + v).removeClass("disabled"));
+						}
+					});
 					return _parent;
 				},
 

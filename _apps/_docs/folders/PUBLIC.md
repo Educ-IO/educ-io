@@ -1,3 +1,2 @@
-FOLDERS
-=======
-A web-based tool for searching folders, and other useful drive customisations!
+{% assign app = site.data.apps.folders %}
+{% include public.html logo="images/folders_logo.svg" start="#google,auth" %}

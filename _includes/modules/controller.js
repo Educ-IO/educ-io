@@ -9,7 +9,7 @@ Controller = function() {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var _, fonts_handled = false;
+	var ಠ_ಠ, fonts_handled = false;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -131,13 +131,13 @@ Controller = function() {
 		initialise: function(container) {
 
 			/* <!-- Get Reference to Container --> */
-			_ = container;
+			ಠ_ಠ = container;
 			
 			/* <!-- Initialise Objects --> */
-			if (_.Flags) _.Flags();
-			if (_.Display) _.Display();
-			if (_.Service) _.Service();
-			if (_.Main) _.Main();
+			if (ಠ_ಠ.Flags) ಠ_ಠ.Flags();
+			if (ಠ_ಠ.Display) ಠ_ಠ.Display();
+			if (ಠ_ಠ.Service) ಠ_ಠ.Service();
+			if (ಠ_ಠ.Main) ಠ_ಠ.Main();
 			
 			/* <!-- Set Container Reference to this --> */
 			container.Controller = this;
@@ -157,17 +157,17 @@ Controller = function() {
 			var _finalise = function(result) {
 				if (result === true) {
 					if (fonts_handled === false) _removeClass("font-sensitive");
-					if (_.Main) _.Main.start();	
+					if (ಠ_ಠ.Main) ಠ_ಠ.Main.start();	
 				}
 			};
 
 			var _proceed = function(result) {
 				if (result === true) {
-					if (_.templates) _.templates();
-					if (_.SETUP && _.SETUP.SERVICE && _.Service) _.Service.register();
+					if (ಠ_ಠ.templates) ಠ_ಠ.templates();
+					if (ಠ_ಠ.SETUP && ಠ_ಠ.SETUP.SERVICE && ಠ_ಠ.Service) ಠ_ಠ.Service.register();
 				}
-				if (_.IMPORTS.LOAD_AFTER) {
-					_load(_.IMPORTS.LOAD_AFTER).then(() => {_finalise(true);}).catch(e => {console.error(e); _finalise(true);});
+				if (ಠ_ಠ.IMPORTS.LOAD_AFTER) {
+					_load(ಠ_ಠ.IMPORTS.LOAD_AFTER).then(() => {_finalise(true);}).catch(e => {console.error(e); _finalise(true);});
 				} else {
 					_finalise(true);
 				}
@@ -177,14 +177,14 @@ Controller = function() {
 				if (result === true) {
 					if (next) _load(next).then(() => {_proceed(true);}).catch(e => {console.error(e);_proceed(false);});
 					_removeClass("css-sensitive");
-					if (_.App && _.App.route) _.App.route([false, false]);
+					if (ಠ_ಠ.App && ಠ_ಠ.App.route) ಠ_ಠ.App.route([false, false]);
 				}
 			};
 			
-			if (_.IMPORTS.LOAD_FIRST && _.IMPORTS.LOAD_LAST) {
-				_load(_.IMPORTS.LOAD_FIRST).then(() => {_start(true, _.IMPORTS.LOAD_LAST);}).catch(e => {console.error(e);_proceed(false);});
-			} else if (_.IMPORTS.LOAD_FIRST || _.IMPORTS.LOAD_LAST) {
-				_load(_.IMPORTS.LOAD_FIRST || _.IMPORTS.LOAD_LAST).then(() => {_start(true); _proceed(true);}).catch(e => {console.error(e);_start(false);_proceed(false);});
+			if (ಠ_ಠ.IMPORTS.LOAD_FIRST && ಠ_ಠ.IMPORTS.LOAD_LAST) {
+				_load(ಠ_ಠ.IMPORTS.LOAD_FIRST).then(() => {_start(true, ಠ_ಠ.IMPORTS.LOAD_LAST);}).catch(e => {console.error(e);_proceed(false);});
+			} else if (ಠ_ಠ.IMPORTS.LOAD_FIRST || ಠ_ಠ.IMPORTS.LOAD_LAST) {
+				_load(ಠ_ಠ.IMPORTS.LOAD_FIRST || ಠ_ಠ.IMPORTS.LOAD_LAST).then(() => {_start(true); _proceed(true);}).catch(e => {console.error(e);_start(false);_proceed(false);});
 			} else {
 				_proceed(true);
 			}

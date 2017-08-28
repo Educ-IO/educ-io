@@ -33,7 +33,7 @@ App = function() {
 					clear: true
 				}))
 				.then(() => result ?
-					log ? ಠ_ಠ.Recent.add("View", result.spreadsheetId, result.properties.title, "#google,load." + result.spreadsheetId + (full ? ".full" : ".lazy")).then(() => resolve(complete(result, ಠ_ಠ))) :
+					log ? ಠ_ಠ.Recent.add(result.spreadsheetId, result.properties.title, "#google,load." + result.spreadsheetId + (full ? ".full" : ".lazy")).then(() => resolve(complete(result, ಠ_ಠ))) :
 					resolve(complete(result, ಠ_ಠ)) : reject());
 		});
 
@@ -45,7 +45,7 @@ App = function() {
 
 			/* <!-- Open Sheet from Google Drive Picker --> */
 			ಠ_ಠ.google.pick(
-				"Select a Sheet to Open", false,
+				"Select a Sheet to Open", false, true,
 				() => [new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS).setIncludeFolders(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED],
 				(file) => file ? ಠ_ಠ.Flags.log("Google Drive File Picked from Open", file) && resolve(file.id) : reject()
 			);
@@ -69,7 +69,7 @@ App = function() {
 	var _default = function() {
 
 		/* <!-- Load the Initial Instructions --> */
-		ಠ_ಠ.Recent.last("View", 5).then((recent) => ಠ_ಠ.Display.doc.show({
+		ಠ_ಠ.Recent.last(6).then((recent) => ಠ_ಠ.Display.doc.show({
 			name: "README",
 			content: recent && recent.length > 0 ? ಠ_ಠ.Display.template.get({
 				template: "recent",
@@ -213,14 +213,12 @@ App = function() {
 						ಠ_ಠ.container.find("#link_text").text(_link);
 						ಠ_ಠ.container.find("#qr_copy").attr("data-clipboard-text", _qr);
 						ಠ_ಠ.container.find("#qr_code").attr("src", _qr);
-					}).catch((e) => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error"));
+					}).catch((e) => ಠ_ಠ.Flags.error("Link Shorten Failure", e ? e : "No Inner Error"));
 
 				});
 
 				$("#qr").on("show.bs.collapse", () => $("#details").collapse("hide"));
 				$("#details").on("show.bs.collapse", () => $("#qr").collapse("hide"));
-
-				if (_sheets) _sheets.link((/FULL/i).test(command[1]));
 
 			} else if ((/DEFAULTS/i).test(command)) {
 
@@ -296,7 +294,10 @@ App = function() {
 							});
 							table.insert(values);
 
-							_sheet = ಠ_ಠ.Sheet(table, headers, name, 0, target, [], [], true, ಠ_ಠ, p.f, p.e, p.s);
+							_sheet = ಠ_ಠ.Datatable(ಠ_ಠ,
+								{id : "view", name : name, headers : headers, data : table}, 
+								{readonly : true, filters : p.f, inverted_Filters : p.e, sorts : p.s},
+							target);
 
 						};
 

@@ -253,26 +253,6 @@ loki:
       crossorigin: anonymous
       id: __loki
 
-clusterize:
-  name: Clusterize.js
-  url: https://cdnjs.com/libraries/clusterize.js
-  project: https://clusterize.js.org/
-  version: 0.17.6
-  license: GPLv3
-  type: js
-  css: 
-    - _clusterize
-  prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.min.js
-      integrity: sha256-v56TI+wd9PWTvwqrpGaluF6GulSCspBFwQKAcVpXGZc=
-      crossorigin: anonymous
-      id: __clusterize
-  dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.6/clusterize.js
-      integrity: sha256-d2ft6mverdSdT25oS0c4FNe8x6p8CSbo0hblSmasX4w=
-      crossorigin: anonymous
-      id: __clusterize
-
 uuid:
   name: Node UUID
   url: https://cdnjs.com/libraries/node-uuid
@@ -614,3 +594,23 @@ clipboard:
       integrity: sha256-ORKvddRkgm0M05FRe/+nsQWeYIHpfXOxiOzzbhPEvS0=
       crossorigin: anonymous
       id: __clipboard
+
+axios:
+  name: Axios
+  url: https://cdnjs.com/libraries/axios
+  project: https://github.com/mzabriskie/axios
+  version: 0.16.2
+  license: mit
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.min.js
+      integrity: sha256-aXHOBRCjmgqoEhY6VBWs3Bc+E3447Iuywezt+nkgeZk=
+      crossorigin: anonymous
+      map: true
+      id: __axios
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.js
+      integrity: sha256-JXU9bC6uJttvR5dnFkXWImMeNfVl0MwHM8OdBtdGtJs=
+      crossorigin: anonymous
+      map: true
+      id: __axios

@@ -1,45 +1,61 @@
 // -- Loading Container -- //
-$spinner-size: 100px;
+$spinner-size-large: 100px;
+$spinner-size-small: 22px;
 $spinner-duration: 0.8s;
 
 // -- Loading Background -- //
 .loader {
-	position: fixed;
-	background-color: rgba($colour-background, 0.9);
-	height: 100%;
+	
 	width: 100%;
   z-index: 100;
-	
 	// -- Loading Container -- //
 	.loading {
 		will-change: transform;
-		position: fixed;
 		top: 50%;
 		left: 50%;
-		transform: translate(-50%, -50%);
 		transform-origin: 50%;
-		width: $spinner-size;
-		height: $spinner-size;
 		z-index: 101;
 		// -- Actual Spinner -- //
 		.spinner {
 			width: 100%;
 			height: 100%;
-			border: solid $spinner-size/10 rgba(0,0,0,0);
-			border-top-color: $colour-highlight;
-
+			border-top-color: $colour-highlight !important;
 			-webkit-border-radius: 50%;
 			-moz-border-radius: 50%;
 			border-radius: 50%;
-
-			//  cubic-bezier(0.5, 0.65, 0.6, 0.5)
 			-webkit-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
 			-moz-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
 			-o-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
 			animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
 		}
+	}	
+	// -- Size Options -- //
+	&.loader-large {
+		height: 100%;
+		background-color: rgba($colour-background, 0.9);
+		position: fixed;
+		.loading {
+			position: fixed;
+			width: $spinner-size-large;
+			height: $spinner-size-large;
+			transform: translate(-50%, -50%);
+			.spinner {
+				border: solid $spinner-size-large/10 rgba(0,0,0,0);
+			}
+		}
 	}
-	
+	&.loader-small {
+		height: 0;
+		.loading {
+			position: relative;
+			width: $spinner-size-small;
+			height: $spinner-size-small;
+			transform: translate(-50%, 0%);
+			.spinner {
+				border: solid $spinner-size-small/10 rgba(0,0,0,0);
+			}
+		}
+	}
 }
 
 .pause-animation {

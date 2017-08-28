@@ -10,7 +10,7 @@ Once the data is visible, you can do the following things:
 
 Filters allow you to reduce the number of rows that you see, by applying filters to one or more columns (multiple column filters are cumulative, so they will show rows that meet __ALL__ of the filters, rather than any of them). They are accessible by clicking on a column heading, then start typing using the syntax below. Filters are _live_ so the relevant results will be shown as soon as you begin typing. Sorting is also accessible in the filter panel, with sort icons on the columns indicating the presence of a sort, and its direction.
 
-{% include_relative _docs/view/FILTER_INSTRUCTIONS.md %}
+{% include_relative _docs/shared/FILTERS.md %}
 
 ##### Show / Hide Columns
 

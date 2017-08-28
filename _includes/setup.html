@@ -6,15 +6,17 @@
     SETUP : {
       SINGLE_PAGE : !!(window.navigator.standalone || window.navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)),
       {% if jekyll.environment == site.debug %}DEBUG : true{% elsif jekyll.environment == site.performance %}DEBUG : false{% elsif jekyll.environment == site.compress %}DEBUG : false{% else %}SERVICE : true{% endif %},
-      {% if page.scopes.google or site.data.apps[page.app].scopes.google %}GOOGLE_KEY : "{{ site.api_keys.google_general }}",
-      GOOGLE_CLIENT_ID : "{{ site.api_keys.google_oauth }}",{% assign scopes = false %}{% if page.scopes.google %}{% assign scopes = page.scopes.google %}{% elsif page.app and page.app != "" and site.data.apps[page.app].scopes.google %}{% assign scopes = site.data.apps[page.app].scopes.google %}{% endif %}
+      {% if page.scopes.google or site.data.apps[page.app].scopes.google %}GOOGLE_AUTH : "{{ page.app }}_google",
+			GOOGLE_KEY : "{{ site.data.apps[page.app].keys.google.general }}",
+      GOOGLE_CLIENT_ID : "{{ site.data.apps[page.app].keys.google.oauth }}",{% assign scopes = false %}{% if page.scopes.google %}{% assign scopes = page.scopes.google %}{% elsif page.app and page.app != "" and site.data.apps[page.app].scopes.google %}{% assign scopes = site.data.apps[page.app].scopes.google %}{% endif %}
       GOOGLE_SCOPES : [
-        {% for scope in scopes %}"{{ scope }}"{% if scope != scopes.last %}, {% endif %}{% endfor %}
+        {% for scope in scopes %}"{{ scope.scope }}"{% if scope != scopes.last %}, {% endif %}{% endfor %}
       ],{% endif %}
-      {% if page.scopes.github == true or site.data.apps[page.app].scopes.github %}GITHUB_KEY : "{{ site.api_keys.github_general }}",
-      GITHUB_CLIENT_ID : "{{ site.api_keys.github_oauth }}",{% assign scopes = false %}{% if page.scopes.github %}{% assign scopes = page.scopes.github %}{% elsif page.app and page.app != "" and site.data.apps[page.app].scopes.github %}{% assign scopes = site.data.apps[page.app].scopes.github %}{% endif %}
+      {% if page.scopes.github == true or site.data.apps[page.app].scopes.github %}GITHUB_AUTH : "{{ page.app }}_github",
+			GITHUB_KEY : "{{ site.data.apps[page.app].keys.github.general }}",
+      GITHUB_CLIENT_ID : "{{ site.data.apps[page.app].keys.github.oauth }}",{% assign scopes = false %}{% if page.scopes.github %}{% assign scopes = page.scopes.github %}{% elsif page.app and page.app != "" and site.data.apps[page.app].scopes.github %}{% assign scopes = site.data.apps[page.app].scopes.github %}{% endif %}
       GITHUB_SCOPES : [
-        {% for scope in scopes %}"{{ scope }}"{% if scope != scopes.last %}, {% endif %}{% endfor %}
+        {% for scope in scopes %}"{{ scope.scope }}"{% if scope != scopes.last %}, {% endif %}{% endfor %}
       ],{% endif %}
       {% if page.version %}APP_VERSION : "{{ page.version }}",{% elsif page.app and page.app != "" and site.data.apps[page.app].version %}APP_VERSION : "{{ site.data.apps[page.app].version }}",{% endif %}
     },{% assign imports = false %}{% if page.imports %}{% assign imports = page.imports %}{% elsif page.app and page.app != "" and site.data.apps[page.app].imports %}{% assign imports = site.data.apps[page.app].imports %}{% endif %}

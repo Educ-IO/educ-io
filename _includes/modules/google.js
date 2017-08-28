@@ -1,37 +1,55 @@
-Google_API = function() {
+Google_API = function(ಠ_ಠ, timeout) {
 
 	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
 
 	/* <!-- Returns an instance of this if required --> */
-	if (this && this._isF && this._isF(this.Google_API)) return new this.Google_API();
+	if (this && this._isF && this._isF(this.Google_API_NEW)) return new this.Google_API_NEW();
 
 	/* === Internal Visibility === */
 
 	/* <!-- Internal Constants --> */
-	const GENERAL_URL = "https://www.googleapis.com";
-	const SHEETS_URL = "https://sheets.googleapis.com";
+	const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
+	const RANDOM = (lower, higher) => Math.random() * (higher - lower) + lower;
+	/* <!-- Internal Constants --> */
+	
+	/* <!-- Network Constants --> */
+	const GENERAL_URL = {name: "general", url : "https://www.googleapis.com/", rate : 3}; /* <!-- 3 seems fine, 4 will tend to bust over the rate-limit --> */
+	const SHEETS_URL = {name: "sheets", url: "https://sheets.googleapis.com/", rate : 1};
+	const URLS = [GENERAL_URL, SHEETS_URL];
+	/* <!-- Network Constants --> */
+		
+	/* <!-- Internal Constants --> */
+	const FOLDER = "application/vnd.google-apps.folder";
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var KEY, CLIENT_ID;
-	var _check, _before, _after, _token;
+	var KEY, CLIENT_ID, _check, _before, _token;
 	/* <!-- Internal Variables --> */
 
+	/* <!-- Network Variables --> */
+	const NETWORKS = _.reduce(URLS, (networks, url) => {networks[url.name] = ಠ_ಠ.Network(url.url, timeout ? timeout : 60000, url.rate ? url.rate : 0, r =>
+		new Promise(function(resolve, reject) {
+			r.status == 403 || r.status == 429 ?
+				r.json().then(result => result.error.message && result.error.message.indexOf("Rate Limit Exceeded") >= 0 ? resolve(true) : resolve(false)) : resolve(false);
+		})); return networks;}, {});
+	/* <!-- Network Variables --> */
+	
 	/* <!-- Internal Functions --> */
 	var _init = function(token, type, expires, update) {
 
+		/* <!-- Check Function to ensure token validity --> */
 		_check = (function(e, u) {
 
-			return function() {
+			return function(force) {
 
 				return new Promise(function(resolve, reject) {
 
-					if (e <= new Date()) { /* Token Expired */
+					if (force || e <= new Date()) { /* Token Expired */
 
 						u().then(function(r) { /* Update token */
 
 							if (r) _init(r.token, r.type, r.expires, u); /* Non-Null Response, so changes required */
-							resolve();
+							resolve(true);
 
 						}, function(err) {
 							reject(err);
@@ -39,7 +57,7 @@ Google_API = function() {
 
 					} else { /* Token Fine */
 
-						resolve();
+						resolve(false);
 
 					}
 
@@ -47,23 +65,18 @@ Google_API = function() {
 
 			};
 
-		})(new Date((expires - 10) * 1000), update); /* 10 second shift in case of network delays! */
+		})(new Date((expires - 20) * 1000), update); /* 10 second shift in case of network delays! */
 
-		/* <!-- Before Ajax Call : Request Authorisation Closure --> */
-		_before = (function(t, w, e, u) {
-
+		/* <!-- Pass Token to Network --> */
+		_before = (function(t, w) {
 			/* "Authorization: token OAUTH-TOKEN" */
-			return function(a, s) {
-
-				a.setRequestHeader("Authorization", w + " " + t);
-
+			return function(r) {
+				if (r.headers) r.headers.Authorization = (w + " " + t);
+				return true;
 			};
 
-		})(token, type);
-
-		/* <!-- After Ajax Call : Do Nothing --> */
-		_after = function(request, status) {};
-
+		})(token, type)
+		
 		_token = (function(t) {
 
 			return function() {
@@ -73,63 +86,30 @@ Google_API = function() {
 			};
 
 		})(token);
-
-	};
-
-	var _get = function(url, data) {
-
-		return new Promise(function(resolve, reject) {
-
-			_check().then(function() {
-
-				var s = {
-					method: "GET",
-					url: url,
-					beforeSend: _before,
-					complete: _after
-				};
-				if (data) s.data = data;
-
-				$.ajax(s).done(function(value) {
-
-					resolve(value);
-
-				}).fail(function(request) {
-
-					reject(Error(request.status + ": " + request.statusText));
-
-				});
-
-			});
-
+		
+		/* <!-- Before Network Call : Request Authorisation Closure --> */
+		_.each(NETWORKS, network => {
+			network.before(_before);
+			network.check(_check);
 		});
 
 	};
 
+	var _arrayize = (value, test) => value && test(value) ? [value] : value;
+	
 	var _list = function(url, property, list, data, next) {
 
 		return new Promise(function(resolve, reject) {
 
 			_check().then(function() {
 
-				var s = {
-					method: "GET",
-					url: url,
-					beforeSend: _before,
-					complete: _after
-				};
-
 				if (data) {
-					s.data = data;
-					if (next) s.data.pageToken = next;
+					if (next) data.pageToken = next;
 				} else if (next) {
-					s.data = {
-						pageToken: next
-					};
+					data = {pageToken: next};
 				}
 
-				$.ajax(s).done(function(value, status) {
-
+				NETWORKS.general.get(url, data).then((value) => {
 					list = list.concat(value[property]);
 					if (value.nextPageToken) {
 						_list(url, property, list, data, value.nextPageToken).then(function(list) {
@@ -138,12 +118,7 @@ Google_API = function() {
 					} else {
 						resolve(list);
 					}
-
-				}).fail(function(status, request) {
-
-					reject(Error(request.status + ": " + request.statusText));
-
-				});
+				}).catch((e) => reject(e));
 
 			});
 
@@ -151,69 +126,13 @@ Google_API = function() {
 
 	};
 
-	var _patch = function(url, data, type, meta) {
-
-		return new Promise(function(resolve, reject) {
-
-			_check().then(function() {
-
-				var s = {
-					method: "PATCH",
-					url: url,
-					beforeSend: _before,
-					complete: _after,
-					data: JSON.stringify(data),
-					contentType: type
-				};
-
-				$.ajax(s).done(function(value, status, request) {
-
-					resolve(value);
-
-				}).fail(function(status, request) {
-
-					reject(Error(request.status + ": " + request.statusText));
-
-				});
-
-			});
-
+	var _call = function(method) {
+		return new Promise((resolve, reject) => {
+			_check().then(method.apply(this, _.rest(arguments)).then((value) => resolve(value)).catch((e) => reject(e)));
 		});
-
 	};
 	
-	var _post = function(url, data, type, meta) {
-
-		return new Promise(function(resolve, reject) {
-
-			_check().then(function() {
-
-				var s = {
-					method: "POST",
-					url: url,
-					beforeSend: _before,
-					complete: _after,
-					data: JSON.stringify(data),
-					contentType: type
-				};
-
-				$.ajax(s).done(function(value, status, request) {
-
-					resolve(value);
-
-				}).fail(function(status, request) {
-
-					reject(Error(request.status + ": " + request.statusText));
-
-				});
-
-			});
-
-		});
-
-	};
-
-	var _pick = function(title, multiple, views, callback, context) {
+	var _pick = function(title, multiple, team, views, callback, context) {
 
 		if (google.picker) {
 
@@ -235,21 +154,21 @@ Google_API = function() {
 				})(callback, context));
 
 			if (multiple) picker.enableFeature(google.picker.Feature.MULTISELECT_ENABLED);
-
+			if (team) picker.enableFeature(google.picker.Feature.SUPPORT_TEAM_DRIVES);
+			
 			if (views && typeof views === "function") views = views();
 			if (!views || (Array.isArray(views) && views.length === 0)) {
-				picker.addView(
-					new google.picker.DocsView()
+				var view = new google.picker.DocsView()
 					.setIncludeFolders(true)
 					.setSelectFolderEnabled(true)
-					.setParent("root")
-				);
+					.setParent("root");
+				picker.addView(view.setEnableTeamDrives ? view.setEnableTeamDrives(team) : view);
 			} else if (Array.isArray(views)) {
 				views.forEach(function(view) {
-					picker.addView(view);
+					picker.addView(view.setEnableTeamDrives ? view.setEnableTeamDrives(team) : view);
 				});
 			} else {
-				picker.addView(views);
+				picker.addView(views.setEnableTeamDrives ? views.setEnableTeamDrives(team) : views);
 			}
 
 			picker.build().setVisible(true);
@@ -257,20 +176,104 @@ Google_API = function() {
 		} else {
 
 			google.load("picker", "1", {
-				"callback": (function(title, multiple, views, callback, context) {
+				"callback": (function(title, multiple, team, views, callback, context) {
 					return function() {
-						_pick(title, multiple, views, callback, context);
+						_pick(title, multiple, team, views, callback, context);
 					};
-				})(title, multiple, views, callback, context)
+				})(title, multiple, team, views, callback, context)
 			});
 
 		}
 
 	};
+	
+	var _contents = function(ids, mimeTypes) {
+		
+		/* <!-- Build the ID portion of the query --> */
+		var _i = ids && ids.length > 0 ? 
+				_.reduce(ids, (q, id, i) => q + (i > 0 ? " or '" + id + "' in parents" : "'" + id + "' in parents"),  " and (") + ")" : "";
+
+		/* <!-- Build the MIME portion of the query --> */
+		var _m = mimeTypes && mimeTypes.length > 0 ? 
+				_.reduce(mimeTypes, (q, m, i) => q + (i > 0 ? " or mimeType = '" : "mimeType = '") + m + "'",  " and (") + ")" : "";
+
+		return _list(
+			"drive/v3/files", "files", [], {
+				pageSize: 500,
+				q: "trashed = false" + _i + _m,
+				orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name", 
+				fields: "files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred)",
+			}
+		);
+	};
+				
+	var _search = function(ids, recurse, folders, mimeTypes, excludes, includes, cache) {
+				
+		var _paths = (parents, chain, all) => {
+			
+			var _path = (parent, chain) => {
+				var _parent = cache[parent];
+				if (_parent) chain.push(_parent.name);
+				return _paths(_parent ? _parent.parents : [], chain, all);
+			};
+			
+			if (parents && parents.length > 0) {
+				if (parents.length == 1) {
+					return _path(parents[0], chain);
+				} else {
+					_.each(parents, parent => {
+						_path(parent, _.clone(chain));
+					})
+					return all;
+				}
+			} else {
+				all.push(chain.reverse().join("\\"));
+				return all;
+			}
+			
+		};
+		
+		return new Promise((resolve, reject) => {
+
+			_contents(ids, mimeTypes).then((c) => {
+
+				/* <!-- Filter the results using the Exclude then Include methods --> */
+				c = _.reject(c, (item) => _.some(excludes, (e) => e(item)));
+				c = _.filter(c, (item) => _.some(includes, (i) => i(item)));
+				
+				/* <!-- Get the ids of all the folders included in the raw set --> */
+				var next = recurse ? _.filter(c, item => item.mimeType === FOLDER) : [];
+				_.each(next, item => cache[item.id] = {name : item.name, parents : item.parents});
+				next = _.map(next, f => f.id);
+				
+				/* <!-- Batch these IDs into Arrays with length not longer than 30 --> */
+				var batches = _.chain(next).groupBy((v, i) => Math.floor(i / 30)).toArray().value();
+
+				/* <!-- Make an array of promises to resolve with the results of these searches --> */
+				var promises = recurse ? _.map(batches, (batch, i) => new Promise((resolve, reject) => {
+					DELAY(RANDOM(100, 800) * i).then(_search(batch, recurse, folders, mimeTypes, excludes, includes, cache).then((v) => resolve(v)))
+				})) : [];
+				
+				/* <!-- Filter to remove the folders if we are not returning them --> */
+				if (!folders) c = _.reject(c, item => item.mimeType === FOLDER);
+				
+				/* <!-- Add in the current path value to each item --> */
+				_.each(c, item => item.paths = _paths(item.parents, [], []));
+
+				/* <!-- Resolve this promise whilst resolving the recursive promises too if available --> */
+				promises && promises.length > 0 ? 
+					Promise.all(promises).then((recursed) => {
+						resolve(_.reduce(recursed, (current, value) => current.concat(value), c));
+					}).catch((e) => reject(e)) : resolve(c);
+
+			}).catch((e) => reject(e));
+
+		});
+
+	};
 	/* <!-- Internal Functions --> */
-
+	
 	/* === Internal Visibility === */
-
 
 	/* === External Visibility === */
 	return {
@@ -278,9 +281,10 @@ Google_API = function() {
 		/* <!-- External Functions --> */
 		initialise: function(token, type, expires, update, key, client_id) {
 
-			KEY = key;
-			CLIENT_ID = client_id;
+			/* <!-- Set the Important Constants --> */
+			KEY = key, CLIENT_ID = client_id;
 
+			/* <!-- Run the Initialisation --> */
 			_init(token, type, expires, update);
 
 			/* <!-- Return for Chaining --> */
@@ -289,71 +293,91 @@ Google_API = function() {
 		},
 
 		/* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
-		me: function() {
-			return _get(GENERAL_URL + "/oauth2/v1/userinfo?alt=json&key=" + KEY);
-		},
+		me: () => _call(NETWORKS.general.get, "oauth2/v1/userinfo?alt=json&key=" + KEY),
 
-		scripts: function() {
-			return _list(
-				GENERAL_URL + "/drive/v3/files", "files", [], {
-					q: "mimeType = 'application/vnd.google-apps.script' and trashed = false",
-					orderBy: "modifiedByMeTime desc,name",
-					fields: "files(description,id,modifiedByMeTime,name,version)",
-				}
-			);
-		},
+		scripts: () => _list(
+			"drive/v3/files", "files", [], {
+				q: "mimeType = 'application/vnd.google-apps.script' and trashed = false",
+				orderBy: "modifiedByMeTime desc,name", fields: "files(description,id,modifiedByMeTime,name,version)",
+			}
+		),
 
-		export: function(id) {
-			return _get(
-				GENERAL_URL + "/drive/v3/files/" + id + "/export", {
-					mimeType: "application/vnd.google-apps.script+json"
-				}
-			);
-		},
+		download: (id) => _call(NETWORKS.general.download, "drive/v3/files/" + id + "?alt=media"),
+		
+		upload: (metadata, binary, mimeType) => {
+			
+			var _boundary = "**********%%**********";
 
-		save: function(id, files) {
-			return _patch(
-				GENERAL_URL + "/upload/drive/v3/files/" + id + "?uploadType=media", {
-					files: files
-				}, "application/json"
-			);
-		},
+			var _payload = new Blob([
+				 "--" + _boundary + "\r\n" + "Content-Type: application/json; charset=UTF-8" + "\r\n\r\n" + JSON.stringify(metadata) + "\r\n\r\n" + "--" + _boundary + "\r\n" + "Content-Type: " + mimeType +"\r\n\r\n",
+				binary, "\r\n" + "--" + _boundary + "--" + "\r\n"
+			], {type : "multipart/related; boundary=" + _boundary, endings : "native"});
 
-		pick: function(title, multiple, views, callback, context) {
-
-			return _pick(title, multiple, views, callback, context);
+			return _call(NETWORKS.general.post, "upload/drive/v3/files/?uploadType=multipart", _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
 
 		},
+		
+		export: (id) => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {mimeType: "application/vnd.google-apps.script+json"}),
+		
+		save: (id, files) => _call(NETWORKS.general.patch, "upload/drive/v3/files/" + id + "?uploadType=media", {files: files}, "application/json"),
 
+		update: (id, file) => _call(NETWORKS.general.patch, "drive/v3/files/" + id, file, "application/json"),
+		
+		pick: (title, multiple, team, views, callback, context) => _pick(title, multiple, team, views, callback, context),
+
+		files : {
+			
+			get : (id) => _call(NETWORKS.general.get, "drive/v3/files/" + id),
+		
+		},
+		
+		folders: {
+		
+			is: (type) => type === FOLDER,
+			
+			search: (ids, recurse, mimeTypes, excludes, includes) => {
+				var folders = (mimeTypes = _arrayize(mimeTypes, _.isString)).indexOf(FOLDER) >= 0;
+				return _search(
+					_arrayize(ids, _.isString), recurse, folders,
+					recurse && !folders ? [FOLDER].concat(_arrayize(mimeTypes, _.isString)) : _arrayize(mimeTypes, _.isString),
+					_arrayize(excludes, _.isFunction),
+					recurse && !folders ?  [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)): _arrayize(includes, _.isFunction), {})
+		 },
+			
+			contents: (ids, mimeTypes) => _contents(_arrayize(ids, _.isString), _arrayize(mimeTypes, _.isString)),
+			
+			children: function(id) {
+				return _list(
+					"drive/v2/files/" + id + "/children", "items", [], {
+						orderBy: "starred, modifiedByMeDate desc, lastViewedByMeDate desc, folder, title"
+					}
+				);
+			},
+			
+		},
+		
 		sheets: {
 
-			get: function(id, all) {
-				return _get(
-					SHEETS_URL + "/v4/spreadsheets/" + id + (all ? "?includeGridData=true" : "")
-				);
-			},
+			create: (name) => _call(NETWORKS.sheets.post, "v4/spreadsheets", {"properties": {"title" : name}}, "application/json"),
+			
+			get: (id, all) => _call(NETWORKS.sheets.get, "v4/spreadsheets/" + id + (all ? "?includeGridData=true" : "")),
 
-			values: function(id, range) {
-				return _get(
-					SHEETS_URL + "/v4/spreadsheets/" + id + "/values/" + encodeURIComponent(range)
-				);
-			},
+			values: (id, range) => _call(NETWORKS.sheets.get, "v4/spreadsheets/" + id + "/values/" + encodeURIComponent(range)),
 
+			append: (id, range, values, input) => _call(NETWORKS.sheets.post, "v4/spreadsheets/" + id + "/values/" + encodeURIComponent(range) + ":append?valueInputOption=" + (input ? input : "RAW"), 
+																					 {"range" : range, "majorDimension" : "ROWS", "values" : values}, "application/json"),
+			
+			update: (id, range, values, input) => _call(NETWORKS.sheets.put, "v4/spreadsheets/" + id + "/values/" + encodeURIComponent(range) + "?valueInputOption=" + (input ? input : "RAW"), 
+																					 {"range" : range, "majorDimension" : "ROWS", "values" : values}, "application/json"),
+			
 		},
 		
 		url: {
 			
-			insert: function(url) {
-				return _post(
-					GENERAL_URL + "/urlshortener/v1/url?key=" + KEY, {
-						longUrl: url
-					}, "application/json"
-				);
-			},
+			insert: (url) => _call(NETWORKS.general.post, "urlshortener/v1/url?key=" + KEY, {longUrl: url}, "application/json"),
 			
-		}
+		},
 
 	};
 	/* === External Visibility === */
-
 };

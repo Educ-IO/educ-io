@@ -121,3 +121,19 @@ div.modal {
 a.disabled, input.disabled {
    pointer-events: none;  // Allows for touch scrolling on disabled elements
 }
+
+.action-succeeded {
+	&:after {
+		content: " \2714";
+	}
+}
+
+.action-failed {
+	&:after {
+		content: " \274c";
+	}
+}
+
+a.download {
+	&:hover {text-decoration: none; font-weight: bold;}
+}

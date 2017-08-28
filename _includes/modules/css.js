@@ -52,6 +52,7 @@ Css = function(suffix, prefix) {
     
     deleteAll : function() {
       $.each(_ids, function(i, id) {$("#" + _id(id)).remove();});
+			return this;
     },
 			
     addRule : function(sheet, selector, rules, index) {

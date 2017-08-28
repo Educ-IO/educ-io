@@ -1,18 +1,18 @@
 {% raw %}
 <div class="filter-wrapper">
   {{#each headers}}
-  <div id="collapse_{{../id}}_{{@index}}" class="form form-tabbed container-fluid pt-2 pb-1 px-2 column-settings" aria-labelledby="heading_{{../id}}_{{@index}}" style="display: none;">
+  <div id="collapse_{{../id}}_{{@index}}" class="form form-tabbed container-fluid pt-2 pb-1 px-2 column-settings data-identifier" aria-labelledby="heading_{{../id}}_{{@index}}" style="display: none;" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}">
     <div class="input-group no-gutters d-flex d-md-none">
-      <span class="input-group-btn"><button type="button" class="btn btn-secondary" data-command="clear" data-field="{{@index}}" data-toggle="tooltip" data-placement="bottom" title="Clear this filter">&times;</button></span>
+      <span class="input-group-btn"><button type="button" class="btn btn-secondary" data-command="clear" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" data-placement="bottom" title="Clear this filter">&times;</button></span>
       <input data-field="{{@index}}" data-action="filter" type="text" class="form-control table-search" placeholder="Filter {{#if name}}{{name}}{{else}}{{this}}{{/if}} ...">
     </div>
     <div class="pt-1 flex-row flex-wrap d-flex d-md-none">
-      <div class="mr-1 my-1"><button type="button" class="btn btn-secondary" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-field="{{@index}}" data-toggle="tooltip" data-placement="bottom" title="Click to sort by this column">Sort</button></div>
+      <div class="mr-1 my-1"><button type="button" class="btn btn-secondary" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" data-placement="bottom" title="Click to sort by this column">Sort</button></div>
       <div class="mr-1 my-1">
         <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Visibility
           </button>
-        <div class="dropdown-menu dropdown-menu-bottom" aria-label="Menu for controlling the visibility of this column" data-heading="heading_{{../id}}_{{@index}}" data-field="{{@index}}">
+        <div class="dropdown-menu dropdown-menu-bottom" aria-label="Menu for controlling the visibility of this column" data-heading="heading_{{../id}}_{{@index}}" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}">
           <a class="dropdown-item" href="#" data-command="hide" data-action="now" data-toggle="tooltip" data-placement="top" title="Hide this column">Hide now</a>
           <a class="dropdown-item" href="#" data-command="hide" data-action="always" data-toggle="tooltip" data-placement="bottom" title="Just hide this column on the view that you create">Hide always</a>
           <a class="dropdown-item" href="#" data-command="hide" data-action="initially" data-toggle="tooltip" data-placement="bottom" title="Just hide this column on the view, but allow it to be un-hidden">Hide initially</a>
@@ -24,14 +24,14 @@
       <span class="input-group-btn">
         <a tabindex="0" class="btn btn-action" role="button" data-toggle="popover" data-placement="bottom" data-offset="0 -50%" title="Instructions" data-html=true data-content="{{../instructions}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
       </span>
-      <span class="input-group-btn"><button type="button" class="btn btn-secondary" data-command="clear" data-field="{{@index}}" data-toggle="tooltip" data-placement="bottom" title="Clear this filter">&times;</button></span>
-      <input data-field="{{@index}}" data-action="filter" type="text" class="form-control table-search" placeholder="Filter {{#if name}}{{name}}{{else}}{{this}}{{/if}} ...">
-      <span class="input-group-btn"><button type="button" class="btn btn-secondary" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-field="{{@index}}" data-toggle="tooltip" data-placement="bottom" title="Click to sort by this column">Sort</button></span>
+      <span class="input-group-btn"><button type="button" class="btn btn-secondary" data-command="clear" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" data-placement="bottom" title="Clear this filter">&times;</button></span>
+      <input data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-action="filter" type="text" class="form-control table-search" placeholder="Filter {{#if name}}{{name}}{{else}}{{this}}{{/if}} ...">
+      <span class="input-group-btn"><button type="button" class="btn btn-secondary" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" data-placement="bottom" title="Click to sort by this column">Sort</button></span>
       <div class="input-group-btn">
         <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Visibility
           </button>
-        <div class="dropdown-menu dropdown-menu-right" aria-label="Menu for controlling the visibility of this column" data-heading="heading_{{../id}}_{{@index}}" data-field="{{@index}}">
+        <div class="dropdown-menu dropdown-menu-right" aria-label="Menu for controlling the visibility of this column" data-heading="heading_{{../id}}_{{@index}}" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}">
           <a class="dropdown-item" href="#" data-command="hide" data-action="now" data-toggle="tooltip" data-placement="left" title="Hide this column">Hide now</a>
           <a class="dropdown-item" href="#" data-command="hide" data-action="always" data-toggle="tooltip" data-placement="left" title="Just hide this column on the view that you create">Hide always</a>
           <a class="dropdown-item" href="#" data-command="hide" data-action="initially" data-toggle="tooltip" data-placement="left" title="Just hide this column on the view, but allow it to be un-hidden">Hide initially</a>

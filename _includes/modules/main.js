@@ -13,39 +13,30 @@ Main = function() {
 	var _setup = function(hello) {
 		"use strict";
 
-		hello.init({
-
-			google: {
-
-				name: "Google",
-
-				oauth: {
-					version: 2,
-					auth: "https://accounts.google.com/o/oauth2/auth",
-					grant: "https://accounts.google.com/o/oauth2/token"
-				},
-
-				base: "https://www.googleapis.com/",
-
+		var config = {};
+		if (ಠ_ಠ.SETUP.GOOGLE_AUTH) config[ಠ_ಠ.SETUP.GOOGLE_AUTH] = {
+			name: ಠ_ಠ.SETUP.GOOGLE_AUTH,
+			oauth: {
+				version: 2,
+				auth: "https://accounts.google.com/o/oauth2/auth",
+				grant: "https://accounts.google.com/o/oauth2/token"
 			},
-
-			github: {
-
-				name: "GitHub",
-
-				oauth: {
-					version: 2,
-					auth: "https://github.com/login/oauth/authorize",
-					grant: "https://github.com/login/oauth/access_token",
-					response_type: "code"
-				},
-
-				base: "https://api.github.com/",
-
+			base: "https://www.googleapis.com/",
+		};
+		
+		if (ಠ_ಠ.SETUP.GITHUB_AUTH) config[ಠ_ಠ.SETUP.GITHUB_AUTH] = {
+			name: ಠ_ಠ.SETUP.GITHUB_AUTH,
+			oauth: {
+				version: 2,
+				auth: "https://github.com/login/oauth/authorize",
+				grant: "https://github.com/login/oauth/access_token",
+				response_type: "code"
 			},
-
-		});
-
+			base: "https://api.github.com/",
+		};
+		
+		hello.init(config);
+		
 	};
 	/* <!-- Lightweight Hello Modules --> */
 	
@@ -75,7 +66,7 @@ Main = function() {
 		start : function() {
 
 			var google_SignIn = function() {
-				hello.login("google", {
+				hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {
 					force: false, display : (ಠ_ಠ.SETUP.SINGLE_PAGE || ಠ_ಠ.Flags.page()) ? "page" : "popup",
 					scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
 				}).then(function(a) {
@@ -86,7 +77,7 @@ Main = function() {
 			};
 
 			var google_SignOut = function() {
-				hello.logout("google").then(function(a) {
+				hello.logout(ಠ_ಠ.SETUP.GOOGLE_AUTH).then(function(a) {
 					/* <!-- Module Cleans --> */
 					[ಠ_ಠ.Recent, ಠ_ಠ.App].forEach((m) => {if (m.clean) m.clean();});
 					ಠ_ಠ.Flags.log("Signed out of Google", a);
@@ -125,9 +116,6 @@ Main = function() {
 				
 			};
 			
-			/* <!-- Module Starts --> */
-			[ಠ_ಠ.Display, ಠ_ಠ.Recent].forEach((m) => {if (m.start) m.start();});
-			
 			_setup(hello);
 
 			/* <!-- Enable Tooltips --> */
@@ -148,11 +136,11 @@ Main = function() {
 				if (!ಠ_ಠ.google) {
 
 					/* <!-- Initialise Google Provider --> */
-					ಠ_ಠ.google = ಠ_ಠ.Google_API().initialise(auth.access_token, auth.token_type, auth.expires, 
+					ಠ_ಠ.google = ಠ_ಠ.Google_API(ಠ_ಠ).initialise(auth.access_token, auth.token_type, auth.expires, 
 						(function(s) {
 							return function() {
 								return new Promise(function(resolve, reject) {
-									hello.login("google", {force: false, display : "none", scope : s}).then(function(r) {
+									hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {force: false, display : "none", scope : s}).then(function(r) {
 										if (r.authResponse) {
 											resolve({
 												token : r.authResponse.access_token,
@@ -165,7 +153,7 @@ Main = function() {
 									}, function(err) {reject(err);});
 								});
 							};
-						})(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" "))), ಠ_ಠ.SETUP.GOOGLE_KEY, ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID);
+						})(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" "))), ಠ_ಠ.Flags.key() || ಠ_ಠ.SETUP.GOOGLE_KEY, ಠ_ಠ.Flags.oauth() || ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID);
 
 					/* <!-- Get User Info for Display --> */
 					ಠ_ಠ.google.me().then(function(user) {
@@ -210,7 +198,7 @@ Main = function() {
 			/* <!-- Auth Handlers --> */
 			hello.on("auth.login", function (auth) {
 
-				if (auth.network == "google") {
+				if (auth.network == ಠ_ಠ.SETUP.GOOGLE_AUTH) {
 
 					google_LoggedIn(auth.authResponse);
 
@@ -220,7 +208,7 @@ Main = function() {
 
 			hello.on("auth.logout", function (auth) {
 
-				if (auth.network == "google") {
+				if (auth.network == ಠ_ಠ.SETUP.GOOGLE_AUTH) {
 
 					google_LoggedOut();
 
@@ -234,33 +222,34 @@ Main = function() {
 
 				ಠ_ಠ.Flags = flags;
 
+				/* <!-- Module Starts --> */
+				[ಠ_ಠ.Display, ಠ_ಠ.Recent].forEach((m) => {if (m.start) m.start();});
+				
 				/* <!-- Append Content Holder --> */
 				if (!ಠ_ಠ.container) ಠ_ಠ.container = $("#content");
 
 				var _start = function() {
 
 					/* <!-- Set Up Hello.js Auth-Flow --> */
-					hello.init({
-						google : ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID,
-					}, {
-						redirect_uri : "/redirect/",
-					});
+					var _init = {};
+					_init[ಠ_ಠ.SETUP.GOOGLE_AUTH] = ಠ_ಠ.Flags.oauth() || ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID;
+					hello.init(_init, {redirect_uri : "/redirect/"});
 					/* <!-- Set Up Hello.js Auth-Flow --> */
 
 					/* <!-- Start Auth Flow --> */
 					try {
-						var g = hello("google").getAuthResponse();
+						var g = hello(ಠ_ಠ.SETUP.GOOGLE_AUTH).getAuthResponse();
 
 						if (is_SignedIn(g)) { /* Signed In */
 							google_LoggedIn(g);
 						} else if (g && new Date(g.expires * 1000) < new Date()) { /* Expired Token */
 
 							var refresh_race = Promise.race([
-								hello.login("google", { /* Try silent token refresh */
+								hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, { /* Try silent token refresh */
 									force: false, display : "none", scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
 								}),
 								new Promise(function(resolve, reject){
-									setTimeout(function() { reject("Login Promise Timed Out"); }, 1000);
+									setTimeout(function() { reject("Login Promise Timed Out"); }, 2000);
 								})
 							]);
 

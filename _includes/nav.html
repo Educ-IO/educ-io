@@ -50,11 +50,10 @@
           <a class="nav-link" href="#{{ menu.hash }}"{% if menu.desc %}data-toggle="tooltip" data-placement="bottom" title="{{ menu.desc }}"{% endif %}>{{ menu.name }}</a>
         </li>
       {% endif %}
-      {% endfor %}{% endif %}
-
-      <li class="nav-item">
-        <a class="nav-link jump" href="/about/" data-toggle="tooltip" data-placement="bottom" title="Find out more about this site, our privacy safeguards and our technology">About<span class="sr-only">Click to find out more about this site, our privacy safeguards and our technology</span></a>
-      </li>
+      {% endfor %}{% else %}
+        <li class="nav-item">
+          <a class="nav-link jump" href="/about/" data-toggle="tooltip" data-placement="bottom" title="Find out more about this site, our privacy safeguards and our technology">About<span class="sr-only">Click to find out more about this site, our privacy safeguards and our technology</span></a>
+        </li>{% endif %}
 
     </ul>
 

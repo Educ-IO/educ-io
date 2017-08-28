@@ -13,7 +13,7 @@
 				<a href="/support/" class="btn btn-lg btn-outline-success">Support</a>
 			</div>
 			<p class="text-muted mb-0">
-				Current app version is <a href="/changes#{{ app.name | downcase }}">{{ app.version }}</a>
+				Current app version is <a href="/changes#{{ app.name | downcase }}">{{ site.data.versions[app.name].first[0] }}</a>
 			</p>
 		</div>
 	</div>

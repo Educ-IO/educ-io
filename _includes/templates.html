@@ -11,7 +11,7 @@
     
     {% for template in templates %}
       
-      <script id="{{  template | split: '/' | last }}" type="text/x-handlebars-template"  data-src="templates">{% include_relative _templates/{{ template }}.html %}</script>
+      <script id="__template__{{  template | split: '/' | last }}" type="text/x-handlebars-template"  data-src="templates">{% include_relative _templates/{{ template }}.html %}</script>
 
     {% endfor %}
 

@@ -52,8 +52,8 @@ Sheets = function(sheet, ಠ_ಠ) {
       table.insert(values);
     }
 
-    _sheets[name] = ಠ_ಠ.Sheet(table, headers, name, index, target, widths, frozen, false, ಠ_ಠ);
-
+    _sheets[name] = ಠ_ಠ.Datatable(ಠ_ಠ, {id : index, name : name, headers : headers, data : table}, {widths : widths, frozen : frozen, advanced : true}, target);
+    
   };
 
   var _loadValues = function(sheet, name, index, target) {
@@ -76,7 +76,7 @@ Sheets = function(sheet, ಠ_ಠ) {
       ಠ_ಠ.Display.busy({
         target: target,
         clear: true
-      }).state().enter("opened").protect("a.jump").on("JUMP_WARNING");
+      }).state().enter("opened").protect("a.jump").on("JUMP");
     };
 
     /* <!-- ARRAY OF: {startRowIndex: 0, endRowIndex: 1, startColumnIndex: 1, endColumnIndex: 3} --> */
@@ -355,8 +355,6 @@ Sheets = function(sheet, ಠ_ಠ) {
     id : () => sheet.spreadsheetId,
     
     export : (full, all) => _exportSheet(full, all),
-
-    link : (full) => _createLink(full),
 
     sheet : () => _currentSheet(),
     

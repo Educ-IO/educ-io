@@ -7,7 +7,7 @@ TODO LIST
 * Write Readme
 * Write Repository
 * Write Support
-* Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc)
+
 * Favicon Background?
 * Wrap Un-Authenticated Sheets Access in Google API Javascript file
 * Move bulk of YAML config from page to template?
@@ -17,15 +17,23 @@ TODO LIST
 * Gracefully handle authentication errors:
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "blocked", message: "Popup was blocked"}network: "google" <= e.g. Private Browsing Mode (redirect?)
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "cancelled", message: "Login has been cancelled"}network: "google" <= e.g. Close Login Popup
+* Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?)  
 * Instantiate Popper in 'Normal' Pages?
 * Does version alert still work???
+* Remove .map / .filter etc calls so that polyfills can be removed in favour if using Underscore.
+* Filter for correctly returned doc type on picker (recent shows all types?)
+* Write Permissions showing Pages, including details of why the permissions are needed.
+* Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
 
 Router
-
+------
+* Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings.
 * Need to have a state property attached to menu items in the app yaml file. Some commands (e.g. Open) don't need to be navigated back to, whereas others (e.g. Freeze) make sense to turn off on back. Some (e.g. Toggles) will go into the back stack straight away? Others might be one removed e.g. Back takes you to the last state rather than 'undoing' an action?
 
 Apps
 ----
+* Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
+* Check if __class property makes it through to rows.
 
 #### View
 * Hidden-First Visibiity on 'View' needs to be hidden
@@ -33,11 +41,33 @@ Apps
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 
+* List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install
+* Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865
+
 #### Folders
-* File Counts
+* Searches in tabs? Tied to a Search module???
+* Update Scroll Position on Large List Conversions - e.g. follow progress.
+* Searches on Modified Rows clear the classes - maybe we should make those changes to the data source as well?
 
 Complete
 --------
+* Name for Folders loaded via the 'LOAD' method? <-- DONE
+* Authentication Error during Conversion Process - WHY? And how to cope with it? -> HTTP / 401 error. Need to _pause_ and get new token? <-- DONE, but still delay?
+* Error on File Conversion logs WRONG File INDEX Number to console <-- DONE
+* Move Filtered Table Code to Generic (including sorting, filtering & visibilities). <-- DONE
+* Makes filtering Data Set into Module (dataset) <--- IMPORTANT <-- DONE
+* NOT Ignoring $RECYCLE.BIN when it should be?????? <== DONE
+* Spreadsheet Log out of conversion process (successes and failures) <== DONE
+* Make a smaller loader that can fit within a table row element!  <== DONE
+* Signout to clear only app recents, not global <== DONE
+* Change educ namespace variable where it is still _ to ಠ _ ಠ <== DONE
+* GOING BETWEEN APPS RESULTS IN 401 on Auth call. Need to 'rename' the provider in the main.js code -> for Hello, to the include the name of the app so that auth keys are stored differently for each app on the site? <== DONE
+* Display Files / Folders once the Folder is open (in a tab?) <== DONE
+* Display Search Results <== DONE
+* If we include FOLDERS in our return MIMEs on search, how do we express that in our includes? MIME then filter? <== DONE
+* Search Options in Dialog <== DONE
+* SPLIT OAuth Credentials, per App <-- DONE
+* Add Timeout Backoff on API Calls in Google <-- DONE
 * BUG: Button on Landing Page only works once <== DONE
 * Write Auth'ed Landing Page [Process] <== DONE
 * Write instructions, including further filter instructions <== DONE
