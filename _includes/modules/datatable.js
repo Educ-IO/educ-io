@@ -296,6 +296,9 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 			}));
 		} else {
 			target.find("#" + _name + " tbody").empty().append(_rows);
+			target.find("[data-toggle='popover']").popover({
+				trigger: "focus"
+			});
 		}
 	};
 
