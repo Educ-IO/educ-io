@@ -54,6 +54,10 @@ Folder = function(folder, target, ಠ_ಠ) {
 				}
 			});
 		});
+		
+		target.find("[data-toggle='popover']").popover({
+			trigger: "focus"
+		});
 
 	};
 
