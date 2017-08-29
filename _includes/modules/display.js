@@ -393,6 +393,7 @@ Display = function() {
 							action: "Proceed"
 						}).then(function() {
 							var link = $(e.target);
+							if (!link.is("a")) link = link.closest("a");
 							var target = link.attr("target");
 							if (target && target.trim.length > 0) {
 								window.open(link.attr("href"), target);

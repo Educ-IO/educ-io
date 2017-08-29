@@ -21,6 +21,8 @@ TODO LIST
 * Filter for correctly returned doc type on picker (recent shows all types?)
 * Write Permissions showing Pages, including details of why the permissions are needed.
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
+* CHANGES page 404's even with SW loaded????
+* CHANGES page should have flexgrid for app versions???
 
 Router
 ------
@@ -34,6 +36,7 @@ Apps
 * Sign-Out should clear the 'protect' flag for jump out links
 * After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687
 
+
 #### View
 * List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install
 * Hidden-First Visibiity on 'View' needs to be hidden
@@ -44,9 +47,11 @@ Apps
 
 #### Folders
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
+* Back <-> Forward Navigation for Folder Loading?
 
 Complete
 --------
+* BUG: Proceed --> Click on Educ Logo to go back to main page breaks (goes to undefined!) <-- DONE
 * Does version alert still work??? <-- DONE
 * File IDs need to be changed in search results. <-- DONE
 * Searches in tabs? Tied to a Search module??? <-- DONE
