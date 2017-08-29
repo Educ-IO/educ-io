@@ -52,11 +52,13 @@ view:
     - alert
     - loader
     - recent
-    - tabs
+    - shared/tab-links
+    - shared/tab-list
+    - shared/tab-tabs
     - shared/filters
     - shared/table
     - shared/rows
-    - shared/filtered-table
+    - shared/datatable
     - view/link
   docs:
     - shared/FILTERS
@@ -306,9 +308,12 @@ folders:
     - alert
     - loader
     - recent
+    - shared/tab-links
+    - shared/tab-list
+    - shared/tab-tabs
     - shared/filters
     - shared/table
-    - shared/filtered-table
+    - shared/datatable
     - folders/rows
     - folders/search
     - folders/convert
@@ -378,7 +383,7 @@ folders:
     - name: Instructions
       hash: instructions
       desc: More details about how to use the Folders App
-  published: false
+  published: true
 markbooks:
   name: Markbooks
   desc: A soon to be written tool.

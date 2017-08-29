@@ -221,12 +221,13 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		_rows = _rows.data({
 			removeMeta: true
 		});
+		
 		ಠ_ಠ.Flags.log("Data After Filtering & Sorting", _rows);
 
 		ಠ_ಠ.Flags.log("Applying Column Hides", table.headers);
 		return _rows.map((v) => {
 			table.headers.forEach((f, i) => {
-				if (f.hide()) delete v[i];
+				if (f.hide()) delete v[f.field ? f.field : i];
 			});
 			return v;
 		});
@@ -349,7 +350,7 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		rows: _createRows(_getRows()),
 	});
 
-	var _createDisplayDataset = (filters, table) => $(ಠ_ಠ.Display.template.get("filtered-table")({
+	var _createDisplayDataset = (filters, table) => $(ಠ_ಠ.Display.template.get("datatable")({
 		filters: options.readonly ? "" : filters ? filters : _createDisplayFilters(),
 		table: table ? table : _createDisplayTable()
 	}));
@@ -473,7 +474,7 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		/* <!-- Set up Table --> */
 		if (options.advanced) {
 			_advanced = _advanced ? _advanced : ಠ_ಠ.Table(target.find("table"), target, ಠ_ಠ);
-			_advanced.scroll.init(target.find("tbody"), 2, 20).toggle();
+			_advanced.scroll.init(target.find("tbody"), options.blocks_to_show ? options.blocks_to_show : 2, options.rows_to_show ? options.rows_to_show : 20).toggle();
 		}
 
 	}; /* <!-- End Show --> */

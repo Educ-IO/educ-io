@@ -67,6 +67,14 @@ Display = function() {
 
 		start: function() {
 
+			Handlebars.registerHelper("exists", function(variable, options) {
+				if (typeof variable !== "undefined") {
+					return options.fn(this);
+				} else {
+					return options.inverse(this);
+				}
+			});
+
 			Handlebars.registerHelper({
 				eq: function(v1, v2) {
 					return v1 === v2;

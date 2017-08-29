@@ -1,0 +1,7 @@
+{% raw %}
+{{#each tabs}}
+<li class="nav-item">
+  <a class="nav-link" href="#tab_{{id}}" role="tab" {{#if ../loader}} onclick="{{ ../loader }}"{{/if}} aria-controls="{{id}}" data-toggle="tab" data-name="{{name}}" data-id="{{id}}" data-index="{{@index}}" data-target="#tab_{{id}}"{{#if type}} data-type="{{type}}"{{/if}}>{{name}}</a>
+</li>
+{{/each}}
+{% endraw %}

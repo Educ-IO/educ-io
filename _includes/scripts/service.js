@@ -99,7 +99,7 @@
     return this.addAll([request]);
   };
 }());
-/* <!-- --> */
+
 /* <!-- Set the Version of the Application --> */
 var CACHE_VERSION = "{{ site.data.versions.Site.first[0] }}";
 
@@ -212,7 +212,7 @@ self.addEventListener("activate", function(event) {
 /* <!-- Fetch Handler --> */
 self.addEventListener("fetch", function(event) {
   
-  console.log("Handling fetch for:", event.request.url);
+  /* <!-- console.log("Handling fetch for:", event.request.url); --> */
     
   event.respondWith(
     
@@ -220,15 +220,15 @@ self.addEventListener("fetch", function(event) {
       
       if (response) {
         
-        console.log("Returning from cache:", response);
+        /* <!-- console.log("Returning from cache:", response); --> */
         return response;
       
       } else {
       
-        console.log("Network Fetch");
+        /* <!-- console.log("Network Fetch"); --> */
         return fetch(event.request).then(function(response) {
           
-          console.log("Network Response", response);
+          /* <!-- console.log("Network Response", response); --> */
           if (response.status == 404) {
             return new Response ("Contrite Penquin");
           } else {
@@ -237,7 +237,7 @@ self.addEventListener("fetch", function(event) {
           
         }).catch(function(e) {
 
-          console.error("Failed Fetch:", e);
+          console.error("Failed SW Fetch:", e);
           return new Response ("Contrite Penquin");
           
         });

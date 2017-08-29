@@ -7,10 +7,8 @@ TODO LIST
 * Write Readme
 * Write Repository
 * Write Support
-
 * Favicon Background?
-* Wrap Un-Authenticated Sheets Access in Google API Javascript file
-* Move bulk of YAML config from page to template?
+* Move bulk of YAML config from __page__ to template?
 * BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative
 * BUG -> ARROW functions in return object (e.g. View)???
 * More Sophisticated Analytics use.
@@ -19,7 +17,6 @@ TODO LIST
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "cancelled", message: "Login has been cancelled"}network: "google" <= e.g. Close Login Popup
 * Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?)  
 * Instantiate Popper in 'Normal' Pages?
-* Does version alert still work???
 * Remove .map / .filter etc calls so that polyfills can be removed in favour if using Underscore.
 * Filter for correctly returned doc type on picker (recent shows all types?)
 * Write Permissions showing Pages, including details of why the permissions are needed.
@@ -32,25 +29,35 @@ Router
 
 Apps
 ----
+* Wrap Un-Authenticated Sheets Access in Google API Javascript file
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
-* Check if __class property makes it through to rows.
+* Sign-Out should clear the 'protect' flag for jump out links
+* After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687
 
 #### View
+* List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install
 * Hidden-First Visibiity on 'View' needs to be hidden
 * Write Flexbox-based Fit Algorithm
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
-
-* List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install
 * Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865
 
 #### Folders
-* Searches in tabs? Tied to a Search module???
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
-* Searches on Modified Rows clear the classes - maybe we should make those changes to the data source as well?
 
 Complete
 --------
+* Does version alert still work??? <-- DONE
+* File IDs need to be changed in search results. <-- DONE
+* Searches in tabs? Tied to a Search module??? <-- DONE
+* Hide NOW doesn't work on visibility (assume field / index mismatch???) <-- DONE
+* Check if _ _ class property makes it through to rows. <-- DONE
+* Overflow isn't hidden on Folders View???? <-- DONE
+* Vertical Scroll Borked .. was sr-only class issue? <== DONE
+* Put Search Children Input on Search Dialog (default ticked) <-- DONE
+* Searches on Modified Rows clear the classes - maybe we should make those changes to the data source as well? <-- DONE
+* Sort on Type <-- DONE
+* BUG: After Filter on table, data toggles are lost??? <-- DONE
 * Name for Folders loaded via the 'LOAD' method? <-- DONE
 * Authentication Error during Conversion Process - WHY? And how to cope with it? -> HTTP / 401 error. Need to _pause_ and get new token? <-- DONE, but still delay?
 * Error on File Conversion logs WRONG File INDEX Number to console <-- DONE

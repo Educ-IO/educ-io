@@ -16,27 +16,6 @@ App = function() {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var _load = function(id, name, log) {
-		
-		/* <!-- Start the Loader --> */
-		ಠ_ಠ.Display.busy({target: ಠ_ಠ.container});
-		var result;
-
-		return new Promise((resolve, reject) => {
-			ಠ_ಠ.google.folders.contents(id).then(function(contents) {
-					ಠ_ಠ.Flags.log("Google Drive Folder Opened", contents);
-					result = contents;
-				}).catch((e) => ಠ_ಠ.Flags.error("Requesting Selected Google Drive Folder", e ? e : "No Inner Error"))
-				.then(() => ಠ_ಠ.Display.busy({
-					clear: true
-				}))
-				.then(() => result ?
-					log ? ಠ_ಠ.Recent.add(id, name, "#google,load." + id).then(() => resolve({id : id, name : name, contents : result})) :
-					resolve({id : id, name  : name, contents : result}) : reject());
-		});
-		
-	};
-	
 	var _pick = function() {
 
 		return new Promise((resolve, reject) => {
@@ -51,30 +30,34 @@ App = function() {
 		});
 
 	};
-	
+
 	var _default = function() {
-	
+
 		/* <!-- Load the Initial Instructions --> */
 		ಠ_ಠ.Recent.last(5).then((recent) => ಠ_ಠ.Display.doc.show({
 			name: "README",
 			content: recent && recent.length > 0 ? ಠ_ಠ.Display.template.get({
-				template: "recent", recent: recent
+				template: "recent",
+				recent: recent
 			}) : "",
 			target: ಠ_ಠ.container,
 			clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
 		})).catch((e) => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error"));
-		
+
 	};
-	
+
 	var _resize = function() {
+
+		var _css = ಠ_ಠ.Css("folders");
+		var _style = _css.sheet("resizer");
 
 		/* <!-- Handle Screen / Window Resize Events --> */
 		var _resizer = function() {
 			var _height = 0;
-			$("#site_nav, #sheet_tabs").each(function() {
+			$("#site_nav, #folder_tabs").each(function() {
 				_height += $(this).outerHeight(true);
 			});
-			$("div.tab-pane").css("max-height", $(window).height() - _height - 20);
+			_css.removeRule(_style, "div.tab-pane").addRule(_style, "div.tab-pane", "max-height: " + ($(window).height() - _height - 20) + "px !important;");
 		};
 		var _resize_Timeout = 0;
 		$(window).off("resize").on("resize", () => {
@@ -90,7 +73,6 @@ App = function() {
 	return {
 
 		/* <!-- External Functions --> */
-
 		initialise: function(container) {
 
 			/* <!-- Get a reference to the Container --> */
@@ -111,7 +93,8 @@ App = function() {
 				/* <!-- Load the Public Instructions --> */
 				/* <!-- Don't use handlebar templates here as we may be routed from the controller, and it might not be loaded --> */
 				if (!command || !_last || command[0] !== _last[0]) ಠ_ಠ.Display.doc.show({
-					wrapper: "PUBLIC", name: "FEATURES",
+					wrapper: "PUBLIC",
+					name: "FEATURES",
 					target: ಠ_ಠ.container,
 					clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
 				});
@@ -123,46 +106,51 @@ App = function() {
 			} else if ((/OPEN/i).test(command)) {
 
 				/* <!-- Pick, or Load the Root Folder --> */
-				var _start = (/ROOT/i).test(command[1]) ?  _load("root", "root", false) : _pick().then((f) => _load(f.id, f.name, true));
-
-				/* <!-- Load the Children of the Selected Folder --> */
-				_start.then((f) => {
-					_folder = ಠ_ಠ.Folder(f, $("<div />", {
-						class: "container-fluid tab-pane"
-					}).appendTo(ಠ_ಠ.container.empty()), ಠ_ಠ);
+				if ((/ROOT/i).test(command[1])) {
+					_folder = ಠ_ಠ.Folder(ಠ_ಠ, {
+						id: "root",
+						name: "Root"
+					}, ಠ_ಠ.container);
 					_resize();
-					ಠ_ಠ.Display.state().enter("opened").protect("a.jump").on("JUMP");
-				}).catch((e) => ಠ_ಠ.Flags.error("Folder Load Failure", e ? e : "No Inner Error"));
+				} else {
+					_pick().then((folder) => {
+						_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container.empty());
+						ಠ_ಠ.Recent.add(folder.id, folder.name, "#google,load." + folder.id).then(() => _resize());
+					}).catch((e) => ಠ_ಠ.Flags.error("Picker Failure", e ? e : "No Inner Error"));
+				}
 
 			} else if ((/LOAD/i).test(command)) {
 
+				ಠ_ಠ.Display.busy({
+					target: ಠ_ಠ.container
+				});
+
 				/* <!-- Load the Children of the Root Folder --> */
 				ಠ_ಠ.google.files.get(command[1]).then(folder => {
-					_load(folder.id, folder.name, !!command[2]).then((f) => {
-						_folder = ಠ_ಠ.Folder(f, $("<div />", {
-								class: "container-fluid tab-pane"
-							}).appendTo(ಠ_ಠ.container.empty()), ಠ_ಠ);
-						_resize();
-						ಠ_ಠ.Display.state().enter("opened").protect("a.jump").on("JUMP");
-					}).catch((e) => ಠ_ಠ.Flags.error("Folder Load Failure", e ? e : "No Inner Error"));
+					ಠ_ಠ.Display.busy({
+						target: ಠ_ಠ.container,
+						clear: true
+					});
+					_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container.empty());
+					ಠ_ಠ.Recent.add(folder.id, folder.name, "#google,load." + folder.id).then(() => _resize());
 				}).catch((e) => ಠ_ಠ.Flags.error("File / Folder Load Failure", e ? e : "No Inner Error"));
-				
+
 			} else if ((/CLOSE/i).test(command)) {
-			
+
 				if (_folder) {
 					_folder = null;
 					ಠ_ಠ.Display.state().exit(["opened", "searched"]).protect("a.jump").off();
 					_default();
 				}
-				
+
 			} else if ((/CONVERT/i).test(command)) {
-					
+
 				if (_folder) _folder.convert();
-				
+
 			} else if ((/REMOVE/i).test(command)) {
 
 				if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then(() => $("#" + command[1]).remove());
-								
+
 			} else if ((/INSTRUCTIONS/i).test(command)) {
 
 				/* <!-- Load the Instructions --> */
@@ -174,13 +162,11 @@ App = function() {
 				}).modal();
 
 			} else if ((/SEARCH/i).test(command)) {
-					
+
 				if (_folder) _folder.search((/ROOT/i).test(command[1]) ? "root" : "");
-				
-			} else if ((/TEST/i).test(command)) {
-				
+
 			}
-			
+
 			/* <!-- Record the last command --> */
 			_last = command;
 

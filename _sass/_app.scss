@@ -99,7 +99,7 @@ div.alert:first-child {
 	z-index: 10;
 }
 
-#sheet_tabs {
+#sheet_tabs, #folder_tabs {
 	z-index: 1;
 	position: relative;
 	padding-top: 0.5rem;
@@ -114,6 +114,20 @@ div.tab-pane {
 	-webkit-overflow-scrolling: touch; // Smooth Scrolling on Mobile / IOS
 }
 
+a.nav-link[data-type='folder'] {
+	&:after {
+		content: "\2691";
+		padding-left: 5px;
+	}
+}
+
+a.nav-link[data-type='search'] {
+	&:after {
+		content: "\2690";
+		padding-left: 5px;
+	}
+}
+
 div.modal {
 	-webkit-overflow-scrolling: touch; // Smooth Scrolling on Mobile / IOS
 }
@@ -124,7 +138,8 @@ a.disabled, input.disabled {
 
 .action-succeeded {
 	&:after {
-		content: " \2714";
+		content: "\2714";
+		padding-left: 5px;
 	}
 }
 

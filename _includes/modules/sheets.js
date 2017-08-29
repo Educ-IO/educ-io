@@ -129,15 +129,22 @@ Sheets = function(sheet, ಠ_ಠ) {
 
   var _showSheet = function(sheet) {
 
+    var _data = {tabs: sheet.sheets.map((v, i) => ({
+        id: i,
+        name: v.properties.title
+      }))};
+    
+		console.log("DATA", _data);
+		console.log("LINKS", ಠ_ಠ.Display.template.get("tab-links")(_data));
+		console.log("TABS", ಠ_ಠ.Display.template.get("tab-tabs")(_data));
+		
     var _tabs = ಠ_ಠ.Display.template.show({
-      template: "tabs",
+      template: "tab-list",
       id: sheet.spreadsheetId,
       name: sheet.properties.title,
       nav: "sheet_tabs",
-      tabs: sheet.sheets.map((v, i) => ({
-        id: "tab_" + i,
-        name: v.properties.title
-      })),
+      links: ಠ_ಠ.Display.template.get("tab-links")(_data),
+			tabs: ಠ_ಠ.Display.template.get("tab-tabs")(_data),
       target: ಠ_ಠ.container,
       clear: true
     });

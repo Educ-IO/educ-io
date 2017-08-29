@@ -1,4 +1,12 @@
 Site :
+  0.0.5f :
+    name : Folders v0.0.3-alpha
+    details: 
+    type: minor
+  0.0.5b :
+    name : Folders v0.0.2-alpha
+    details: 
+    type: minor
   0.0.5a :
     name : View v0.2.0-alpha
     details: 
@@ -34,6 +42,14 @@ View :
     details : 
     type : minor
 Folders :
+  0.0.3-alpha :
+    name : Tab and Search Clean-up
+    details : 
+    type : minor
+  0.0.2-alpha :
+    name : Basic Conversion Functionality
+    details : 
+    type : minor
   0.0.1-alpha :
     name : Early testing version
     details : 

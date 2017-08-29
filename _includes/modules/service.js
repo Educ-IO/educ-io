@@ -4,9 +4,9 @@ Service = function() {
 	if (this && this._isF && this._isF(this.Service)) return new this.Service().initialise(this);
 	
 	/* <!-- Internal Constants --> */
-  const APP_VERSION = "{{ site.version }}";
-  const VERSION_TYPE = "{% if site.data.versions[site.version] %}{{ site.data.versions[site.version].type }}{% endif %}";
-  const VERSION_DETAILS = "{% if site.data.versions[site.version] %}{{ site.data.versions[site.version].details }}{% endif %}";
+  const APP_VERSION = "{{ site.data.versions.Site.first[0] }}";
+  const VERSION_TYPE = "{{ site.data.versions.Site.first[1].type }}";
+  const VERSION_DETAILS = "{{ site.data.versions.Site.first[1].details }}";
 	/* <!-- Internal Constants --> */
 	
   /* <!-- Internal Variables --> */
@@ -62,41 +62,32 @@ Service = function() {
 
         var _updateReady = function(sw) {
 
-          if (window.global) {
+					var _urgency, _details;
 
-            var _urgency, _details;
+					if (VERSION_TYPE == "security") {
+						_urgency = "danger";
+					} else if (VERSION_TYPE == "major") {
+						_urgency = "warning";
+					} else {
+						_urgency = "info";
+					}
 
-            if (VERSION_TYPE == "security") {
-              _urgency = "danger";
-            } else if (VERSION_TYPE == "major") {
-              _urgency = "warning";
-            } else {
-              _urgency = "info";
-            }
+					if (VERSION_DETAILS) _details = VERSION_DETAILS + " [v" + APP_VERSION + "]";
 
-            if (VERSION_DETAILS) _details = VERSION_DETAILS + " [v" + APP_VERSION + "]";
-
-						if (!this._isF(this.Display)) ಠ_ಠ.Display.alert({
-              type: _urgency,
-              headline: "New Version Available",
-              message: _details ? _details : "",
-              action: "Update",
-              target: "body"
-            }).then(function(update) {
-              if (update) _message(sw, "update").then(
-                m => {
-                  if (m == "success") {
-
-                  }
-                }
-              );
-            });
-
-          } else {
-
-            _message(sw, "update");
-
-          }
+					if (!ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.alert({
+						type: _urgency,
+						headline: "New Version Available",
+						message: _details ? _details : "",
+						action: "Update",
+						target: "body"
+					}).then(function(update) {
+						if (update) _message(sw, "update").then(
+							m => {
+								if (m == "success") {
+								}
+							}
+						);
+					});
 
         };
 
@@ -156,10 +147,10 @@ Service = function() {
 
             if (k == 82 || k == 76) {
 
-              if (window.global) try {if (!this._isF(this.Display)) ಠ_ಠ.Display.busy();} catch (e) {}
+              try {if (!ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.busy();} catch (e) {}
 
               var _clear = function() {
-                if (!this._isF(this.Display)) ಠ_ಠ.Display.busy({
+                if (!ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.busy({
                   clear: true
                 });
               };

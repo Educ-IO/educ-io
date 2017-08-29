@@ -1,8 +1,13 @@
-Folder = function(folder, target, ಠ_ಠ) {
+Folder = function(ಠ_ಠ, folder, target) {
+
+	/* <!-- Internal Constants --> */
+	var SEARCH_NAME = "Google Drive Search";
+	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
 	var _db = new loki("folders.db"),
-		_results;
+		_tables = {},
+		_search;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -18,12 +23,11 @@ Folder = function(folder, target, ಠ_ಠ) {
 		folder: ಠ_ಠ.google.folders.is(v.mimeType),
 		download: !!v.webContentLink,
 		paths: v.paths,
-		__class: v.__class
 	});
 
-	var _showData = function(id, name, values) {
+	var _showData = function(id, name, values, target) {
 
-		var headers = ["Star", "Name", "ID"].map((v) => ({
+		var headers = ["Star", "Name", "Type", "ID"].map((v) => ({
 			name: v,
 			hide: function(initial) {
 				return !!(this.hide_now || (initial && this.hide_initially));
@@ -33,17 +37,20 @@ Folder = function(folder, target, ಠ_ಠ) {
 			field: v.toLowerCase(),
 		}));
 
-		var _data = _db.addCollection(name, {
-			indices: ["mimeType", "starred", "id", "name"]
+		var _data = _db.addCollection(id, {
+			unique: ["id"],
+			indices: ["type", "starred", "name"]
 		});
 		_data.insert(values);
 
-		ಠ_ಠ.Datatable(ಠ_ಠ, {
-			id: folder.id,
-			name: folder.name,
+		var _return = ಠ_ಠ.Datatable(ಠ_ಠ, {
+			id: id,
+			name: name,
 			data: _data,
 			headers: headers
-		}, {}, target.empty());
+		}, {
+			advanced: false
+		}, target);
 
 		target.find("a.download").on("click.download", e => {
 			ಠ_ಠ.google.download($(e.target).data("id")).then(binary => {
@@ -54,23 +61,99 @@ Folder = function(folder, target, ಠ_ಠ) {
 				}
 			});
 		});
-		
-		target.find("[data-toggle='popover']").popover({
-			trigger: "focus"
+
+		return _return;
+
+	};
+
+	var _loadContents = function(id, name, target) {
+
+		/* <!-- Start the Loader --> */
+		ಠ_ಠ.Display.busy({
+			target: target
+		});
+
+		/* <!-- Need to load the contents of the folder --> */
+		ಠ_ಠ.google.folders.contents(id).then((contents) => {
+			ಠ_ಠ.Flags.log("Google Drive Folder Opened", contents);
+			_tables[name] = _showData(id, name, _.map(contents, mapItems), target);
+			ಠ_ಠ.Display.busy({
+				target: target,
+				clear: true
+			}).state().enter("opened").protect("a.jump").on("JUMP");
+		}).catch((e) => {
+			ಠ_ಠ.Flags.error("Requesting Selected Google Drive Folder", e ? e : "No Inner Error");
+			ಠ_ಠ.Display.busy({
+				target: target,
+				clear: true
+			}).state().exit("opened").protect("a.jump").off("JUMP");
 		});
 
 	};
 
-	var _showFolder = function(value) {
+	var _showTab = function(tab) {
+		var target = $(tab.data("target"));
+		if ((target.children().length === 0 || tab.data("refresh")) && tab.data("type") == "folder") _loadContents(tab.data("id"), tab.data("name"), target.empty());
+		if (tab.data("type") == "folder") {
+			ಠ_ಠ.Display.state().exit("searched");
+			_search = null;
+		} else if (tab.data("type") == "search") {
+			ಠ_ಠ.Display.state().enter("searched");
+			_search = tab.data("id");
+		}
+		tab.closest(".nav-item").addClass("order-1").siblings(".order-1").removeClass("order-1");
+	};
 
-		_showData(folder.id, folder.name, _.map(value.contents, mapItems));
+	var _activateTab = function(tabs) {
+		tabs.find("a.nav-link")
+			.off("click.tabs").on("click.tabs", (e) => $(e.target).data("refresh", e.shiftKey))
+			.off("show.bs.tab").on("show.bs.tab", (e) => _showTab($(e.target)))
+			.last().tab("show");
+	};
+
+	var _showFolder = function(folder, target) {
+
+		var _data = {
+			tabs: [{
+				id: folder.id,
+				name: folder.name,
+				type: "folder"
+			}]
+		};
+
+		var _tabs = ಠ_ಠ.Display.template.show({
+			template: "tab-list",
+			id: folder.id,
+			name: folder.name,
+			nav: "folder_tabs",
+			links: ಠ_ಠ.Display.template.get("tab-links")(_data),
+			tabs: ಠ_ಠ.Display.template.get("tab-tabs")(_data),
+			target: target,
+			clear: true
+		});
+
+		/* <!-- Set Load Tab Handler & Load Initial Values --> */
+		_activateTab(_tabs);
 
 	};
 
 	var _showResults = function(name, items) {
 
-		_showData(folder.id, name, _.map(items, mapItems));
+		var _id = name.replace(/[^A-Z0-9]+/gi, "").toLowerCase();
 
+		var _data = {
+			tabs: [{
+				id: _id,
+				name: name,
+				type: "search"
+			}]
+		};
+		var _items = _.each(_.map(items, mapItems), (v) => v.safe = (_id + "_" + v.id));
+
+		_showData(_id, name, _items, $(ಠ_ಠ.Display.template.get("tab-tabs")(_data)).appendTo(".tab-content"));
+		_activateTab($(ಠ_ಠ.Display.template.get("tab-links")(_data)).appendTo("#folder_tabs").parent());
+
+		/* <!-- TEMPORARY STUFF TO SHIFT TO DEBUG LOGS --> */
 		var _folder_Count = _.reduce(items, (count, item) => item.mimeType === "application/vnd.google-apps.folder" ? count + 1 : count, 0);
 		var _file_Count = _.reduce(items, (count, item) => item.mimeType !== "application/vnd.google-apps.folder" ? count + 1 : count, 0);
 		var _file_Size = _.reduce(items, (total, item) => total + (item.size ? parseInt(item.size) : 0), 0);
@@ -85,8 +168,7 @@ Folder = function(folder, target, ಠ_ಠ) {
 
 	var _searchFolder = function(id) {
 
-		var _name = "Google Drive Search";
-
+		var _name = "Search @ " + new Date().toLocaleTimeString();
 		console.time(_name);
 
 		ಠ_ಠ.Display.modal("search", {
@@ -110,11 +192,10 @@ Folder = function(folder, target, ಠ_ಠ) {
 			};
 			var _exclude = _.map(_.find(values, v => v.name == "exclude").value.split("\n"), r => _regex(r.trim()));
 			var _include = _.map(_.find(values, v => v.name == "include").value.split("\n"), r => _regex(r.trim()));
+			var _recurse = !!(_.find(values, v => v.name == "recurse"));
 
-			ಠ_ಠ.google.folders.search(id, true, _mime, _exclude, _include).then((c) => {
-				_results = c;
-				_showResults(_name, c);
-				ಠ_ಠ.Display.state().enter("searched");
+			ಠ_ಠ.google.folders.search(id, _recurse, _mime, _exclude, _include).then((results) => {
+				_showResults(_name, results);
 				ಠ_ಠ.Display.busy({
 					clear: true
 				});
@@ -260,12 +341,17 @@ Folder = function(folder, target, ಠ_ಠ) {
 
 	var _convertItems = function() {
 
+		var _collection;
+		if (!_search || !(_collection = _db.getCollection(_search))) return;
+
 		ಠ_ಠ.Display.modal("convert", {
 			id: "convert_results",
 			target: ಠ_ಠ.container,
 			title: "Convert Files",
 			instructions: ಠ_ಠ.Display.doc.get("CONVERT_INSTRUCTIONS")
 		}).then((values) => {
+
+			var _results = _collection.chain().data();
 
 			ಠ_ಠ.Flags.log("CONVERSION STARTED: " + _results.length + " items to convert");
 
@@ -288,20 +374,21 @@ Folder = function(folder, target, ಠ_ಠ) {
 
 							ಠ_ಠ.Flags.log("PROCESSING FILE " + file_index);
 
-							var _container = $("#" + file.id);
-							var __result = _.find(_results, r => r.id == file.id);
+							var _container = $("#" + _search + "_" + file.id);
+							var _result = _collection.by("id", file.id);
 
 							ಠ_ಠ.Display.busy({
 								target: _container.find(".file-name").parent(),
 								class: "loader-small"
 							});
 							_convertFile(file, _sourceMimeType, _targetMimeType, _prefixAfterConversion).then(converted => {
-								_container.find(".file-name").addClass("action-succeeded text-success font-weight-bold");
-								__result.__class = "action-succeeded text-success font-weight-bold";
+								if (_container) _container.find(".file-name").addClass("action-succeeded text-success font-weight-bold");
+								if (_result) _result.name_class = "action-succeeded text-success font-weight-bold";
 								if (converted.old) {
-									_container.find(".file-name").text(converted.old.name);
-									__result.name = converted.old.name;
+									if (_container) _container.find(".file-name").text(converted.old.name);
+									if (_result) _result.name = converted.old.name;
 								}
+								if (_result) _collection.update(_result);
 								ಠ_ಠ.Flags.debug("CONVERTED ITEM " + file_index, converted);
 								_successes.push(converted);
 								ಠ_ಠ.Display.busy({
@@ -309,8 +396,11 @@ Folder = function(folder, target, ಠ_ಠ) {
 								});
 								_process_Result(files.shift(), files, file_index + 1, id, last, complete);
 							}).catch(e => {
-								_container.find(".file-name").addClass("action-failed text-danger font-weight-bold");
-								__result.__class = "action-failed text-danger font-weight-bold";
+								if (_container) _container.find(".file-name").addClass("action-failed text-danger font-weight-bold");
+								if (_result) {
+									_result.name_class = "action-failed text-danger font-weight-bold";
+									_collection.update(_result);
+								}
 								ಠ_ಠ.Flags.error("File " + file_index + " Conversion Error", e ? e : "No Inner Error");
 								_failures.push(file);
 								ಠ_ಠ.Display.busy({
@@ -390,7 +480,7 @@ Folder = function(folder, target, ಠ_ಠ) {
 	/* <!-- Internal Functions --> */
 
 	/* <!-- Initial Calls --> */
-	_showFolder(folder);
+	_showFolder(folder, target);
 
 	/* <!-- External Visibility --> */
 	return {
