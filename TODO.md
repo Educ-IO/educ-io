@@ -23,6 +23,7 @@ TODO LIST
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
 * CHANGES page 404's even with SW loaded????
 * CHANGES page should have flexgrid for app versions???
+* Open Source CREDITS Page -- pulled from apps?
 
 Router
 ------
@@ -31,10 +32,19 @@ Router
 
 Apps
 ----
-* Wrap Un-Authenticated Sheets Access in Google API Javascript file
+* Wrap Un-Authenticated Sheets Access in Google API Javascript file ... maybe
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * Sign-Out should clear the 'protect' flag for jump out links
 * After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687
+
+Mobile
+------
+- Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
+- Tooltips are annoying. Should hang around once then leave?
+- Top nav menu wastes space on mobile. Can it be shifted to sticky on mobile devices only with bootstrap? Maybe a media query if nothing else works.
+- Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
+- Filter boxes are too wide on a small device. Need to stack them up rather than inline them on small screens.
+- Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 
 
 #### View
@@ -51,6 +61,8 @@ Apps
 
 Complete
 --------
+* Need to handle event on load - parse original anchor fragment <-- DONE
+* Put in retry loop (3 times?) for conversion result save <-- DONE
 * BUG: Proceed --> Click on Educ Logo to go back to main page breaks (goes to undefined!) <-- DONE
 * Does version alert still work??? <-- DONE
 * File IDs need to be changed in search results. <-- DONE

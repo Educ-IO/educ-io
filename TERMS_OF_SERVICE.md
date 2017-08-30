@@ -1,0 +1,7 @@
+### Terms of Service
+
+Firstly, thank you for using the apps provided by [educ.io](https://educ.io), we hope that you find them useful, productive and time-saving! By accessing or using our apps, you are agreeing to the terms set out below. These terms refer to, and govern, your use of these apps, and of this website in general. The code that is used on this site (and your rights to view and modify it) is governed by a seperate [license agreement](/license/).
+
+This website uses cookies and stores some local data in your browser cache. By using this site, and apps, and agreeing to these terms of service, you consent to our use of cookies in accordance with the terms of [NAME]'s [privacy policy / cookies policy].]
+
+ If there is a conflict between these terms and additional terms applicable to a given API, the additional terms will control for that conflict. Collectively, we refer to the terms below, any additional terms, terms within the accompanying API documentation, and any applicable policies and guidelines as the "Terms." You agree to comply with the Terms and that the Terms control your relationship with us. So please read all the Terms carefully. If you use the APIs as an interface to, or in conjunction with other Google products or services, then the terms for those other products or services also apply.

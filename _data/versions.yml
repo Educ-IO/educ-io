@@ -1,4 +1,8 @@
 Site :
+  0.0.5g :
+    name : Folders v0.0.3b-alpha
+    details: 
+    type: minor
   0.0.5f :
     name : Folders v0.0.3-alpha
     details: 
@@ -42,6 +46,10 @@ View :
     details : 
     type : minor
 Folders :
+  0.0.3b-alpha :
+    name : Bug Fix on Spreadsheet Log (retries and fail handling)
+    details : 
+    type : minor
   0.0.3-alpha :
     name : Tab and Search Clean-up
     details : 

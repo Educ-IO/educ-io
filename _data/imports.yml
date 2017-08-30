@@ -20,17 +20,17 @@ jsdiff:
   name: JS Diff
   url: https://cdnjs.com/libraries/jsdiff
   project: https://github.com/kpdecker/jsdiff
-  version: 3.2.0
+  version: 3.3.0
   license: BSD-3-Clause
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.2.0/diff.min.js
-      integrity: sha256-9rZeWIescmaMzN+OSwsGJZtB1euH9s+mnh9u9/opnYw=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.3.0/diff.min.js
+      integrity: sha256-szRKlVjjMz/osRQKeJSN0d3zbSWZiGheWQme17FSKso=
       crossorigin: anonymous
       id: __jsdiff
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.2.0/diff.js
-      integrity: sha256-S6+2vbEc1dWquKUJssAFYikp0UY5lpTiTnQmxaYOhVM=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.3.0/diff.js
+      integrity: sha256-a/7307GFZ0m9Ip13qdajHWSvTgJuHc0e2RtVCoUmOIQ=
       crossorigin: anonymous
       id: __jsdiff
 
@@ -60,13 +60,13 @@ screenfull:
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.2.2/screenfull.min.js
-      integrity: sha256-BBEvgz7Ny1lJEOu3fKSGrYNkfhfoqjHu9RppGdNeTpI=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.3.1/screenfull.min.js
+      integrity: sha256-Do9YpDXNpZPe2mEhwdZnUKMMScUgmXLaM+CeVfWIU5w=
       crossorigin: anonymous
       id: __screenfull
   dev: 
-    - url: https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.2.2/screenfull.js
-      integrity: sha256-aW+jZEmteJDKviTDjy24bHfzZuAIIwMFBtwGfCijNhM=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.3.1/screenfull.js
+      integrity: sha256-2vErvwyvIA01Rt2UhXEVk+qLQywxzxMTIsljfGWcFGw=
       crossorigin: anonymous
       id: __screenfull
 
@@ -146,18 +146,20 @@ showdown:
   name: Showdown
   url: https://cdnjs.com/libraries/showdown
   project: https://github.com/showdownjs/showdown
-  version: 1.7.1
+  version: 1.7.3
   license: BSD-3-Clause
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.1/showdown.min.js
-      integrity: sha256-cgmBpa41tevGSToVfdP9vzuJ5H5WsT12vZizDOlMSFU=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.3/showdown.min.js
+      integrity: sha256-MqAmGZ1xn14UrrEZsGT2l5nxuayfKbnVgw0LH4NIdj8=
       crossorigin: anonymous
+      map: true
       id: __showdown
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.1/showdown.js
-      integrity: sha256-nArgoS9NZSEeMiNda6cJ+Dw+wBy/P7qsSFYmYOV+OJs=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.3/showdown.js
+      integrity: sha256-kLFbdsPEZ3K5Anv9i6aIpDP4F0rPTom2Wc+CvtY26UM=
       crossorigin: anonymous
+      map: true
       id: __showdown
 
 jquery:
@@ -275,17 +277,17 @@ yaml:
   name: JS Yaml
   url: https://cdnjs.com/libraries/js-yaml
   project: https://github.com/nodeca/js-yaml
-  version: 3.8.4
+  version: 3.9.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.8.4/js-yaml.min.js
-      integrity: sha256-0fVOf/R0H784sL7gcJSJo2mOapjzsIVdW0Ep3CuOKrg=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.9.1/js-yaml.min.js
+      integrity: sha256-+zCUcY/sA+WlNjVbacV7arrm0zBt2haIQUBbwNKEN7k=
       crossorigin: anonymous
       id: __yaml
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.8.4/js-yaml.min.js
-      integrity: sha256-0fVOf/R0H784sL7gcJSJo2mOapjzsIVdW0Ep3CuOKrg=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.9.1/js-yaml.js
+      integrity: sha256-XcTimKTr9Jj4gR/kpq60v4uSbDzIwtTtyP4YBQG9vUA=
       crossorigin: anonymous
       id: __yaml
 
@@ -375,25 +377,25 @@ xlsx:
   name: JS XLSX
   url: https://cdnjs.com/libraries/xlsx
   project: https://github.com/SheetJS/js-xlsx
-  version: 0.10.8
+  version: 0.11.3
   license: Apache-2.0
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.full.min.js
-      integrity: sha256-TuW/DAcsShnnH448nFucXzahCo5w59DYjX3DNpbi7kU=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.11.3/xlsx.full.min.js
+      integrity: sha256-NZIpaFVn/Pfj3vKPp4bMHmdE+IHiXkjZj1Y1KIy3vl8=
       crossorigin: anonymous
       id: __xlsx
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.js
-      integrity: sha256-ImIjIcfwhHtmf3Eulcaua6ClXyKHEEos8DIIRiNsyQg=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.11.3/xlsx.js
+      integrity: sha256-nd3aJbYat7P9YsVdEMK+mWEnsZXVwJM+dd+fCu3pQZ0=
       crossorigin: anonymous
       id: __xlsx_0
-    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/jszip.js
-      integrity: sha256-MWngzhFufvGHUhvgc8ob9qDaO4FW4t+i2Et0FTnKbOE=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.11.3/jszip.js
+      integrity: sha256-RDUgxn3MD0bej0RKJV6SsyCW81uBk7QIZXWPfhQHqRY=
       crossorigin: anonymous
       id: __xlsx_1
-    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/cpexcel.js
-      integrity: sha256-ZwLT97zCK48sWZdD4QyV1QcsRzabwLfJ0pPC3Xk67wo=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.11.3/cpexcel.js
+      integrity: sha256-7d8Ce+iiQpmwBrf/TqR53ugjZVxkLkqEoeaAFNaoOw8=
       crossorigin: anonymous
       id: __xlsx_2
       
@@ -401,7 +403,7 @@ download:
   name: downloadjs
   url: https://cdnjs.com/libraries/downloadjs
   project: https://github.com/rndme/download
-  version: 0.10.8
+  version: 1.4.7
   license: MIT
   type: js
   prod:
@@ -543,18 +545,18 @@ popper:
   name: Popper.js
   url: https://cdnjs.com/libraries/popper.js
   project: https://github.com/FezVrasta/popper.js
-  version: 1.12.2
+  version: 1.12.5
   license: mit
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.2/umd/popper.min.js
-      integrity: sha256-euxX4brPBxGLMi9Y9DyjpzMRjqVkmEPBOPx29M8zNvA=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.5/umd/popper.min.js
+      integrity: sha256-jpW4gXAhFvqGDD5B7366rIPD7PDbAmqq4CO0ZnHbdM4=
       crossorigin: anonymous
       map: true
       id: __popper
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.2/umd/popper.js
-      integrity: sha256-ogZ9FxzmYVg4A8ijjhGg7WUzcFlSAVquMVuIYtHpOsU=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.5/umd/popper.js
+      integrity: sha256-qT83xcMtAwodgxtQI7aym8kykPVCPeuvR8g7ZERSgFk=
       crossorigin: anonymous
       map: true
       id: __popper
@@ -614,3 +616,21 @@ axios:
       crossorigin: anonymous
       map: true
       id: __axios
+      
+jszip:
+  name: JSZip
+  url: https://cdnjs.com/libraries/jszip
+  project: https://stuk.github.io/jszip/
+  version: 3.1.4
+  license: mit
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.4/jszip.min.js
+      integrity: sha256-/1hjUCFxE/1IivzFCHoS/Et2IQ3z79iNnk42PkZeXhA=
+      crossorigin: anonymous
+      id: __jszip
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.4/jszip.js
+      integrity: sha256-+QCr2Qs1HsAm+pm1n5JuilQgWsNPS1YxMUPVqYCL3JM=
+      crossorigin: anonymous
+      id: __jszip

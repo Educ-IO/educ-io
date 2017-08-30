@@ -1,7 +1,7 @@
 Folder = function(ಠ_ಠ, folder, target) {
 
 	/* <!-- Internal Constants --> */
-	var SEARCH_NAME = "Google Drive Search";
+	const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -413,11 +413,20 @@ Folder = function(ಠ_ಠ, folder, target) {
 
 							ಠ_ಠ.Flags.log("FILE CONVERSION COMPLETE: " + _successes.length + " successfully converted, " + _failures.length + " failed to convert.");
 
-							_saveConversionResults(_successes, _failures, id, last).then((v) => {
-								complete(v);
-							}).catch(() => {
-								complete();
-							});
+							var _saveRetries = 3;
+							var _save = function() {
+								_saveConversionResults(_successes, _failures, id, last).then((v) => {
+									complete(v);
+								}).catch(() => {
+									/* <!-- Tricky - on fail, should we try again? Or just 'succeed' silently? --> */
+									if (_saveRetries--) {
+										DELAY(2000).then(_save());
+									} else {
+										complete(v);	
+									}
+								});
+							};
+							_save();
 
 						}
 
@@ -428,7 +437,7 @@ Folder = function(ಠ_ಠ, folder, target) {
 						ಠ_ಠ.Flags.log("PROCESSING BATCH " + batch_index + " of " + length);
 
 						var _next = (value) => {
-							if (value) {
+							if (value && value.id) {
 								_process_Batch(batches.shift(), batches, batch_index + 1, length, value.id, value.last);
 							} else {
 								ಠ_ಠ.Flags.error("Failed to Complete Batch Conversion");
