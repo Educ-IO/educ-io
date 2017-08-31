@@ -1,0 +1,3 @@
+__EDUC.IO__ is a set of web-based, and hosted, tools that integrate with Google Apps. It's a platform for making complex tasks easier, faster and more intuitive. Principally designed for educators and the education sector, many of the tools are useful in all walks of life.
+
+It works on all your devices, requiring nothing more than a [modern browser](/requirements/), so __jump in__ and __try them out__.

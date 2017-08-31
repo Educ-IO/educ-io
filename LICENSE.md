@@ -1,22 +1,3 @@
----
-layout: page
-title: License
-permalink: /license/
-support: true
-style: page
-modules:
-  - controller
-  - service
-imports:
-- name: jquery
-  load: first
-- name: popper
-  load: first
-- name: bootstrap-css
-  load: first
-- name: bootstrap-js
-  load: last
----
 GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 

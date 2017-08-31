@@ -4,7 +4,7 @@
     <div class="container-fluid">
       <div class="row align-items-center">
        <div class="col-9">
-          <strong>{{ headline }}</strong> - {{ message }}
+          <strong>{{ headline }}</strong>{{#if message}} - {{ message }}{{/if}}
         </div>
         <div class="col-3">
           <button type="button" class="float-right close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -16,7 +16,7 @@
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
-    <strong>{{ headline }}</strong> - {{ message }}
+    <strong>{{ headline }}</strong>{{#if message}} - {{ message }}{{/if}}
   {{/if}}
 </div>
 {% endraw %}

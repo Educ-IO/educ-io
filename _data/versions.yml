@@ -1,64 +1,57 @@
-Site :
+site :
+  0.0.5h :
+    name : Site Content Updates
+    desc : Code and Content Improvements
+    type : minor
   0.0.5g :
     name : Folders v0.0.3b-alpha
-    details: 
-    type: minor
+    desc : Bug Fix
+    type : minor
   0.0.5f :
     name : Folders v0.0.3-alpha
-    details: 
-    type: minor
+    type : minor
   0.0.5b :
     name : Folders v0.0.2-alpha
-    details: 
-    type: minor
+    type : minor
   0.0.5a :
     name : View v0.2.0-alpha
-    details: 
-    type: minor
+    type : minor
   0.0.4 :
     name : View Functionality Further Developed
-    details: 
-    type: minor
+    type : minor
   0.0.3 :
     name : View Functionality Improved
-    details: 
-    type: minor
+    type : minor
   0.0.2 :
     name : Service Worker Testing
-    details: Example Important Security Updates
-    type: security
+    desc : Example Important Security Updates
+    type : security
   0.0.1 :
     name : Initial Version
-    details : 
     type : minor
     changes :
       - Initial Service Work Testing
-View :
+view :
   0.2.0-alpha :
     name : First fully functional build
-    details : 
     type : major
     changes :
       - details: Changed Layout system
-        url: https://github.com/Educ-IO/educ-io.github.io/issues
+        url : https://github.com/Educ-IO/educ-io.github.io/issues
   0.1.0-alpha :
     name : Early testing version
-    details : 
     type : minor
-Folders :
+folders :
   0.0.3b-alpha :
-    name : Bug Fix on Spreadsheet Log (retries and fail handling)
-    details : 
+    name : Bug Fix on Spreadsheet Log
+    desc : Set Retries and fail handling will allow conversion to continue
     type : minor
   0.0.3-alpha :
     name : Tab and Search Clean-up
-    details : 
     type : minor
   0.0.2-alpha :
     name : Basic Conversion Functionality
-    details : 
     type : minor
   0.0.1-alpha :
     name : Early testing version
-    details : 
     type : minor

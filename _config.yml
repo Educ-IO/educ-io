@@ -42,6 +42,7 @@ debug:                "debug"
 performance:          "perf"
 compress:             "compress"
 array:                []
+highlight:            "#af0ad9"
 
 # Extras
 analytics:

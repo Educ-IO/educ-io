@@ -10,7 +10,7 @@
 	{% include scripts/extends/storage.js %}
 	{% include scripts/start.js %}
 </script>
-{% assign imports = false %}{% if page.imports %}{% assign imports = page.imports %}{% elsif page.app and page.app != "" and site.data.apps[page.app].imports %}{% assign imports = site.data.apps[page.app].imports %}{% endif %}
+{% assign imports = false %}{% if page.imports %}{% assign imports = page.imports %}{% elsif layout.imports %}{% assign imports = layout.imports %}{% elsif page.app and page.app != "" and site.data.apps[page.app].imports %}{% assign imports = site.data.apps[page.app].imports %}{% endif %}
 {% if imports %}
 {% assign async_imports = imports | where_exp: "item", "item.load == 'async'" | map: "name" %}
   {% if async_imports %}

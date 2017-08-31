@@ -8,7 +8,6 @@ TODO LIST
 * Write Repository
 * Write Support
 * Favicon Background?
-* Move bulk of YAML config from __page__ to template?
 * BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative
 * BUG -> ARROW functions in return object (e.g. View)???
 * More Sophisticated Analytics use.
@@ -16,14 +15,11 @@ TODO LIST
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "blocked", message: "Popup was blocked"}network: "google" <= e.g. Private Browsing Mode (redirect?)
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "cancelled", message: "Login has been cancelled"}network: "google" <= e.g. Close Login Popup
 * Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?)  
-* Instantiate Popper in 'Normal' Pages?
 * Remove .map / .filter etc calls so that polyfills can be removed in favour if using Underscore.
 * Filter for correctly returned doc type on picker (recent shows all types?)
-* Write Permissions showing Pages, including details of why the permissions are needed.
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
-* CHANGES page 404's even with SW loaded????
-* CHANGES page should have flexgrid for app versions???
-* Open Source CREDITS Page -- pulled from apps?
+* CHANGES page 404's even with SW loaded???? -- NOT ALL PAGES seem to be cached?
+* Write Permissions showing Pages, including details of why the permissions are needed.
 
 Router
 ------
@@ -40,12 +36,10 @@ Apps
 Mobile
 ------
 - Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
-- Tooltips are annoying. Should hang around once then leave?
 - Top nav menu wastes space on mobile. Can it be shifted to sticky on mobile devices only with bootstrap? Maybe a media query if nothing else works.
 - Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 - Filter boxes are too wide on a small device. Need to stack them up rather than inline them on small screens.
 - Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
-
 
 #### View
 * List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install
@@ -61,6 +55,13 @@ Mobile
 
 Complete
 --------
+* Style and tweak copyright notice <-- DONE
+* Instantiate Popper in 'Normal' Pages? <-- DONE
+* Move bulk of YAML config from __page__ to template? <-- DONE
+* Markdownify Lead Paragraph but add lead class in? <-- DONE
+* New Version Available - trailing dash??? <-- DONE
+* CHANGES page should have improved layout for app versions??? <-- DONE
+* Open Source CREDITS Page -- pulled from apps? <-- DONE
 * Need to handle event on load - parse original anchor fragment <-- DONE
 * Put in retry loop (3 times?) for conversion result save <-- DONE
 * BUG: Proceed --> Click on Educ Logo to go back to main page breaks (goes to undefined!) <-- DONE

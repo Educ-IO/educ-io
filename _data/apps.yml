@@ -29,6 +29,8 @@ view:
       load: lazy
     - name: filesaver
       load: lazy
+    - name: clipboard
+      load: lazy
   modules:
     - flags
     - controller
@@ -206,7 +208,7 @@ reflect:
       load: first
     - name: bootstrap-css
       load: first
-    - name: tether
+    - name: popper
       load: first
     - name: hello
       load: last
@@ -393,7 +395,7 @@ markbooks:
       load: first
     - name: bootstrap-css
       load: first
-    - name: tether
+    - name: popper
       load: first
     - name: hello
       load: last
@@ -452,7 +454,7 @@ cover:
       load: first
     - name: bootstrap-css
       load: first
-    - name: tether
+    - name: popper
       load: first
     - name: hello
       load: last

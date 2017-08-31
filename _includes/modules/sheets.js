@@ -134,10 +134,6 @@ Sheets = function(sheet, ಠ_ಠ) {
         name: v.properties.title
       }))};
     
-		console.log("DATA", _data);
-		console.log("LINKS", ಠ_ಠ.Display.template.get("tab-links")(_data));
-		console.log("TABS", ಠ_ಠ.Display.template.get("tab-tabs")(_data));
-		
     var _tabs = ಠ_ಠ.Display.template.show({
       template: "tab-list",
       id: sheet.spreadsheetId,

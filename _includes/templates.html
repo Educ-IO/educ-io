@@ -1,10 +1,4 @@
-{% assign templates = false %}
-{% if page.templates %}
-  {% assign templates = page.templates %}
-{% elsif page.app and page.app != "" and site.data.apps[page.app].templates %}
-  {% assign templates = site.data.apps[page.app].templates %}
-{% endif %}
-
+{% assign templates = false %}{% if page.templates %}{% assign templates = page.templates %}{% elsif layout.templates %}{% assign templates = layout.templates %}{% elsif page.app and page.app != "" and site.data.apps[page.app].templates %}{% assign templates = site.data.apps[page.app].templates %}{% endif %}
 {% if templates %}
 
   {% if jekyll.environment == site.debug %}

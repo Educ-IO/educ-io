@@ -1,4 +1,4 @@
-{% assign modules = false %}{% if page.modules %}{% assign modules = page.modules %}{% elsif page.app and page.app != "" and site.data.apps[page.app].modules %}{% assign modules = site.data.apps[page.app].modules %}{% endif %}
+{% assign modules = false %}{% if page.modules %}{% assign modules = page.modules %}{% elsif layout.modules %}{% assign modules = layout.modules %}{% elsif page.app and page.app != "" and site.data.apps[page.app].modules %}{% assign modules = site.data.apps[page.app].modules %}{% endif %}
 {% if modules and modules.size > 0 %}{% for module in modules %}
   <script type="text/javascript" charset="utf-8" data-type="module" data-src="{{ module }}">
     {{ site.app.namespace }}.{% include modules/{{ module }}.js %}

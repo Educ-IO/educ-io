@@ -22,7 +22,7 @@
         </div>
       </li>
 
-      {% assign menus = false %}{% if page.menu %}{% assign menus = page.menus %}{% elsif page.app and page.app != "" and site.data.apps[page.app].menus %}{% assign menus = site.data.apps[page.app].menus %}{% endif %}
+      {% assign menus = false %}{% if page.menu %}{% assign menus = page.menus %}{% elsif layout.menu %}{% assign menus = layout.menus %}{% elsif page.app and page.app != "" and site.data.apps[page.app].menus %}{% assign menus = site.data.apps[page.app].menus %}{% endif %}
 
       {% if menus and menus.size > 0 %}{% for menu in menus %}
       {% if menu.groups and menu.groups.size > 0 %}

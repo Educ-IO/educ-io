@@ -1,7 +1,15 @@
 ---
 layout: compress
-style: _landing
-scripts: service
+style: landing
+modules:
+  - controller
+  - service
+imports:
+- name: jquery
+  load: first
+- name: bootstrap-css
+  load: first
+logo: true
 ---
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">

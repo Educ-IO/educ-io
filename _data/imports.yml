@@ -199,7 +199,7 @@ tether:
       id: __tether
 
 bootstrap-css:
-  name: Bootstrap
+  name: Bootstrap (CSS)
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
   version: 4.0.0-beta
@@ -219,7 +219,7 @@ bootstrap-css:
       id: __bootstrap-css
 
 bootstrap-js:
-  name: Bootstrap
+  name: Bootstrap (JS)
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
   version: 4.0.0-beta
@@ -400,7 +400,7 @@ xlsx:
       id: __xlsx_2
       
 download:
-  name: downloadjs
+  name: Download JS
   url: https://cdnjs.com/libraries/downloadjs
   project: https://github.com/rndme/download
   version: 1.4.7
@@ -436,7 +436,7 @@ filesaver:
       id: __filesaver
 
 handlebars:
-  name: handlebars.js
+  name: Handlebars JS
   url: https://cdnjs.com/libraries/handlebars.js
   project: http://handlebarsjs.com/
   version: 4.0.10
@@ -472,7 +472,7 @@ fontface:
       id: __fontface
 
 fetch:
-  name: Fetch-Polyfill
+  name: Fetch Polyfill
   url: https://cdnjs.com/libraries/fetch
   project: https://github.com/github/fetch
   version: 2.0.3
@@ -490,8 +490,9 @@ fetch:
       id: __fetch
 
 google:
-  name: Google-Javascript-API
-  url: https://developers.google.com/loader/
+  name: Google Javascript API
+  project: https://developers.google.com/loader/
+  details: The Google Javascript Loader / API provides access to specific services and components, such as the Google Drive Picker (that can be found in many web apps).
   type: js
   css: 
     - _picker
@@ -505,7 +506,7 @@ google:
       id: __google
 
 lazy:
-  name: Lazy.js
+  name: Lazy JS
   url: https://cdnjs.com/libraries/lazy.js
   project: https://github.com/dtao/lazy.js
   version: 0.5.0
@@ -523,7 +524,7 @@ lazy:
       id: __lazy
 
 underscore:
-  name: Underscore.js
+  name: Underscore JS
   url: https://cdnjs.com/libraries/underscore.js
   project: https://github.com/jashkenas/underscore
   version: 1.8.3
@@ -542,7 +543,7 @@ underscore:
       id: __underscore
 
 popper:
-  name: Popper.js
+  name: Popper JS
   url: https://cdnjs.com/libraries/popper.js
   project: https://github.com/FezVrasta/popper.js
   version: 1.12.5
@@ -562,7 +563,7 @@ popper:
       id: __popper
 
 underscore-string:
-  name: Underscore.string
+  name: Underscore String
   url: https://cdnjs.com/libraries/underscore.string
   project: https://epeli.github.io/underscore.string
   version: 3.3.4
@@ -580,7 +581,7 @@ underscore-string:
       id: __underscore-string
       
 clipboard:
-  name: Clipboard.js
+  name: Clipboard (JS)
   url: https://cdnjs.com/libraries/clipboard.js
   project: https://github.com/zenorocha/clipboard.js/
   version: 1.7.1

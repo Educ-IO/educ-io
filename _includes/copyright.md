@@ -1,0 +1,1 @@
+##### &copy; {% capture year %}{{ site.time | date: '%Y' }}{% endcapture %}{% if year != site.launched %}{{ site.launched }}-{% endif%}{{ year }} [{{site.author.name | downcase }}]({{site.baseurl}}about/#transparency){:.text-muted}

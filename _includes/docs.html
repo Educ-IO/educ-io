@@ -3,6 +3,8 @@
 
 {% if page.docs %}
   {% assign docs = page.docs %}
+{% elsif layout.docs %}
+  {% assign docs = layout.docs %}
 {% elsif page.app and page.app != "" and site.data.apps[page.app].docs %}
   {% assign docs = site.data.apps[page.app].docs %}
 {% endif %}

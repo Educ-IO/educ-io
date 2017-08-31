@@ -1,15 +1,32 @@
 ---
 layout: compress
+style: page
+modules:
+  - controller
+  - service
+  - display
+  - page
+imports:
+- name: jquery
+  load: first
+- name: popper
+  load: first
+- name: bootstrap-css
+  load: first
+- name: bootstrap-js
+  load: last
+- name: handlebars
+  load: last
 ---
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
 	{% include head.html %}
 	<body class="container">
 		{% include nav.html type="sticky-top" %}
-		<div class="container css-sensitive">
-			<div class="jumbotron mt-3">
+		<div class="container css-sensitive pb-4">
+			<div class="jumbotron pt-4 pb-2">
   			<h1 class="display-4">{{ page.title }}</h1>
-  			{% if page.lead %}<p class="lead">{{ page.lead }}</p>{% endif %}
+  			{% if page.lead %}<p class="lead">{{ page.lead | markdownify | remove: "<p>" | remove: "</p>" }}</p>{% endif %}
 				{% if page.support %}
   				<hr class="my-4">
 					{% include support.html %}

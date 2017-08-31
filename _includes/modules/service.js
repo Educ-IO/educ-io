@@ -4,9 +4,9 @@ Service = function() {
 	if (this && this._isF && this._isF(this.Service)) return new this.Service().initialise(this);
 	
 	/* <!-- Internal Constants --> */
-  const APP_VERSION = "{{ site.data.versions.Site.first[0] }}";
-  const VERSION_TYPE = "{{ site.data.versions.Site.first[1].type }}";
-  const VERSION_DETAILS = "{{ site.data.versions.Site.first[1].details }}";
+  const APP_VERSION = "{{ site.data.versions.site.first[0] }}";
+  const VERSION_TYPE = "{{ site.data.versions.site.first[1].type }}";
+  const VERSION_DETAILS = "{{ site.data.versions.site.first[1].desc }}";
 	/* <!-- Internal Constants --> */
 	
   /* <!-- Internal Variables --> */
@@ -62,7 +62,7 @@ Service = function() {
 
         var _updateReady = function(sw) {
 
-					var _urgency, _details;
+					var _urgency, _details = "";
 
 					if (VERSION_TYPE == "security") {
 						_urgency = "danger";
@@ -77,7 +77,7 @@ Service = function() {
 					if (!ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.alert({
 						type: _urgency,
 						headline: "New Version Available",
-						message: _details ? _details : "",
+						message: _details ? _details.trim() : "",
 						action: "Update",
 						target: "body"
 					}).then(function(update) {
