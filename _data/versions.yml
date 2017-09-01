@@ -1,4 +1,8 @@
 site :
+  0.0.5m :
+    name : Cache Busting Servive Worker Version
+    desc : Ensuring latest version file is always retrieved from the network
+    type : minor
   0.0.5l :
     name : Legacy Versioning Removed
     desc : Removed Legacy Versioning Code
