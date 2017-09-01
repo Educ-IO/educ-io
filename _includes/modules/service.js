@@ -74,7 +74,7 @@ Service = function() {
 
 					if (VERSION_DETAILS) _details = VERSION_DETAILS + " [v" + APP_VERSION + "]";
 
-					if (!ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.alert({
+					if (ಠ_ಠ.Display && !ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.alert({
 						type: _urgency,
 						headline: "New Version Available",
 						message: _details ? _details.trim() : "",

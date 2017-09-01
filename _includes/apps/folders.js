@@ -138,6 +138,17 @@ App = function() {
 		}
 		
 	};
+	
+	var _clear = function() {
+		
+		if (_folder || _path) {
+			_path = null;
+			_folder = null;
+			ಠ_ಠ.Display.state().exit(["opened", "searched"]).protect("a.jump").off();
+			ಠ_ಠ.container.empty();
+		}
+		
+	};
 	/* <!-- Internal Functions --> */
 
 	/* <!-- External Visibility --> */
@@ -197,10 +208,8 @@ App = function() {
 						ಠ_ಠ.Display.state().exit(["searched"]);
 						_folder.close();
 					} else {
-						_path = null;
-						_folder = null;
-						ಠ_ಠ.Display.state().exit(["opened", "searched"]).protect("a.jump").off();
-						_default();	
+						_clear();
+						_default();
 					}
 					
 				}
@@ -234,6 +243,9 @@ App = function() {
 
 		},
 
+		/* <!-- Clear the existing state --> */
+		clean: () => _clear()
+		
 	};
 
 };

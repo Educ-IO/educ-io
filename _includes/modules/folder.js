@@ -495,7 +495,7 @@ Folder = function(ಠ_ಠ, folder, target) {
 			_db.removeCollection(search);
 			$("#nav_" + search).remove();
 			$("#tab_" + search).remove();
-			$('#folder_tabs a:last').tab("show");
+			$("#folder_tabs a:last").tab("show");
 		}
 		
 	};

@@ -364,6 +364,9 @@ App = function() {
 			_last = command;
 
 		},
+		
+		/* <!-- Clear the existing state --> */
+		clean: () => _clear()
 
 	};
 

@@ -1,4 +1,8 @@
 site :
+  0.0.5j :
+    name : Site Updates
+    desc : Minor Bug Fixes
+    type : minor
   0.0.5i :
     name : Site Updates
     desc : Content Improvements, Folders v0.0.3c-alpha and forward / back navigation
