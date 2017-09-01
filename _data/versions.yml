@@ -1,4 +1,8 @@
 site :
+  0.0.5l :
+    name : Legacy Versioning Removed
+    desc : Removed Legacy Versioning Code
+    type : minor
   0.0.5k :
     name : Updater Bug Fix
     desc : Fixed Bug to show correct update version

@@ -24,7 +24,6 @@ Router
 
 Apps
 ----
-* Version Update Details aren't correct (as it's cached!) ... need to fix
 * Wrap Un-Authenticated Sheets Access in Google API Javascript file ... maybe
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687
@@ -54,6 +53,7 @@ Folders
 
 Complete
 --------
+* Version Update Details aren't correct (as it's cached!) ... need to fix <-- DONE
 * Sign-Out should clear the 'protect' flag for jump out links <-- DONE
 * Breadcrumbs for Navigation <== DONE
 * Back <-> Forward Navigation for Folder Loading? <== DONE

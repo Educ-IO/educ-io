@@ -3,12 +3,6 @@ Service = function() {
 	/* <!-- Returns an instance of this if required --> */
 	if (this && this._isF && this._isF(this.Service)) return new this.Service().initialise(this);
 	
-	/* <!-- Internal Constants --> */
-  const APP_VERSION = "{{ site.data.versions.site.first[0] }}";
-  const VERSION_TYPE = "{{ site.data.versions.site.first[1].type }}";
-  const VERSION_DETAILS = "{{ site.data.versions.site.first[1].desc }}";
-	/* <!-- Internal Constants --> */
-	
   /* <!-- Internal Variables --> */
 	var ಠ_ಠ;
 	/* <!-- Internal Variables --> */
