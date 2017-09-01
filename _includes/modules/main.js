@@ -88,19 +88,21 @@ Main = function() {
 			
 			var _routeIn = function() {ಠ_ಠ.App.route(true);}, _routeOut = function() {ಠ_ಠ.App.route(false, true);};
 			
-			var router = function() {
-				if (ಠ_ಠ.Flags) ಠ_ಠ.Flags.change(function(directive, command) {
-					ಠ_ಠ.Flags.log("ROUTING", directive, command);
-					if ((/GOOGLE/i).test(directive) && !ಠ_ಠ.google) {
-						google_SignIn();
-						_routeIn = function() {
-							_routeIn = function() {ಠ_ಠ.App.route(true);};
-							ಠ_ಠ.App.route(command);
-						};
-					} else {
+			var _route = function(directive, command) {
+				ಠ_ಠ.Flags.log("ROUTING", directive, command);
+				if ((/GOOGLE/i).test(directive) && !ಠ_ಠ.google) {
+					google_SignIn();
+					_routeIn = function() {
+						_routeIn = function() {ಠ_ಠ.App.route(true);};
 						ಠ_ಠ.App.route(command);
-					}
-				});
+					};
+				} else {
+					ಠ_ಠ.App.route(command);
+				}
+			};
+			
+			var router = function() {
+				if (ಠ_ಠ.Flags) ಠ_ಠ.Flags.change(_route);
 			};
 			
 			var setupRouter = function(start) {
@@ -113,6 +115,7 @@ Main = function() {
 				
 				/* <!-- Add Router Method --> */
 				window.onhashchange = router;
+				window.onpopstate = (e) => {if (ಠ_ಠ.Flags && e && e.state && e.state.command) ಠ_ಠ.Flags.route(event.state.command, _route);};
 				
 			};
 			

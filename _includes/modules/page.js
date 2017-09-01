@@ -29,9 +29,27 @@ Main = function() {
     },
 		
 		start : function() {
-			/* <!-- Initialise Objects --> */
-			$("[data-toggle='popover']").popover({trigger: "focus"});
-			$("[data-toggle='tooltip']").tooltip({});
+			
+						/* <!-- Get Global Flags --> */
+			ಠ_ಠ.Flags.initialise().then(function(flags) {
+
+				ಠ_ಠ.Flags = flags;
+
+				/* <!-- Module Starts --> */
+				[ಠ_ಠ.Display].forEach((m) => {if (m && m.start) m.start();});
+				
+				/* <!-- Initialise Objects --> */
+				$("[data-toggle='popover']").popover({trigger: "focus"});
+				$("[data-toggle='tooltip']").tooltip({});
+				
+				if (ಠ_ಠ.Flags.highlight()) {
+					var _none = "highlight_none order-2";
+					var _highlight = "order-1";
+					$(".highlight_all").addClass(_none).removeClass(_highlight)
+						.filter(".highlight_" + ಠ_ಠ.Flags.highlight().toLowerCase()).removeClass(_none).addClass(_highlight);
+				}
+				
+			});
 		},
    /* <!-- External Functions --> */
     

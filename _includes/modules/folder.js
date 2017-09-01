@@ -128,8 +128,7 @@ Folder = function(ಠ_ಠ, folder, target) {
 			nav: "folder_tabs",
 			links: ಠ_ಠ.Display.template.get("tab-links")(_data),
 			tabs: ಠ_ಠ.Display.template.get("tab-tabs")(_data),
-			target: target,
-			clear: true
+			target: target
 		});
 
 		/* <!-- Set Load Tab Handler & Load Initial Values --> */
@@ -148,6 +147,7 @@ Folder = function(ಠ_ಠ, folder, target) {
 				type: "search"
 			}]
 		};
+		
 		var _items = _.each(_.map(items, mapItems), (v) => v.safe = (_id + "_" + v.id));
 
 		_showData(_id, name, _items, $(ಠ_ಠ.Display.template.get("tab-tabs")(_data)).appendTo(".tab-content"));
@@ -422,7 +422,7 @@ Folder = function(ಠ_ಠ, folder, target) {
 									if (_saveRetries--) {
 										DELAY(2000).then(_save());
 									} else {
-										complete(v);	
+										complete(v);
 									}
 								});
 							};
@@ -486,6 +486,19 @@ Folder = function(ಠ_ಠ, folder, target) {
 		});
 
 	};
+	
+	var _closeSearch = function(search) {
+
+		if (_search && !search) return _closeSearch(_search);
+		
+		if (search) {
+			_db.removeCollection(search);
+			$("#nav_" + search).remove();
+			$("#tab_" + search).remove();
+			$('#folder_tabs a:last').tab("show");
+		}
+		
+	};
 	/* <!-- Internal Functions --> */
 
 	/* <!-- Initial Calls --> */
@@ -494,10 +507,14 @@ Folder = function(ಠ_ಠ, folder, target) {
 	/* <!-- External Visibility --> */
 	return {
 		id: () => folder.id,
+		
+		name: () => folder.name,
 
 		search: (id) => _searchFolder(id ? id : folder.id),
 
 		convert: () => _convertItems(),
+		
+		close: () => _closeSearch(),
 	};
 	/* <!-- External Visibility --> */
 

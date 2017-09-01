@@ -1,16 +1,14 @@
-
 TODO LIST 
 =========
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo
 * Contrite Penguin
-* Write Readme
-* Write Repository
 * Write Support
+* Write Requirements
 * Favicon Background?
 * BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative
 * BUG -> ARROW functions in return object (e.g. View)???
-* More Sophisticated Analytics use.
+* More Sophisticated Analytics use....link on actions?
 * Gracefully handle authentication errors:
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "blocked", message: "Popup was blocked"}network: "google" <= e.g. Private Browsing Mode (redirect?)
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "cancelled", message: "Login has been cancelled"}network: "google" <= e.g. Close Login Popup
@@ -18,13 +16,11 @@ TODO LIST
 * Remove .map / .filter etc calls so that polyfills can be removed in favour if using Underscore.
 * Filter for correctly returned doc type on picker (recent shows all types?)
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
-* CHANGES page 404's even with SW loaded???? -- NOT ALL PAGES seem to be cached?
-* Write Permissions showing Pages, including details of why the permissions are needed.
+* Mini-blog for app use cases?
 
 Router
 ------
 * Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings.
-* Need to have a state property attached to menu items in the app yaml file. Some commands (e.g. Open) don't need to be navigated back to, whereas others (e.g. Freeze) make sense to turn off on back. Some (e.g. Toggles) will go into the back stack straight away? Others might be one removed e.g. Back takes you to the last state rather than 'undoing' an action?
 
 Apps
 ----
@@ -35,13 +31,15 @@ Apps
 
 Mobile
 ------
-- Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
-- Top nav menu wastes space on mobile. Can it be shifted to sticky on mobile devices only with bootstrap? Maybe a media query if nothing else works.
-- Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
-- Filter boxes are too wide on a small device. Need to stack them up rather than inline them on small screens.
-- Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 
-#### View
+* Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
+* Top nav menu wastes space on mobile. Can it be shifted to sticky on mobile devices only with bootstrap? Maybe a media query if nothing else works.
+* Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
+* Filter boxes are too wide on a small device. Need to stack them up rather than inline them on small screens.
+* Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
+
+View
+----
 * List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install
 * Hidden-First Visibiity on 'View' needs to be hidden
 * Write Flexbox-based Fit Algorithm
@@ -49,28 +47,43 @@ Mobile
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 * Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865
 
-#### Folders
+Folders
+-------
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
-* Back <-> Forward Navigation for Folder Loading?
+* Can we do an in-place MimeType change?
+* Write Instructions for 'Folders'
 
 Complete
 --------
-* Style and tweak copyright notice <-- DONE
-* Instantiate Popper in 'Normal' Pages? <-- DONE
-* Move bulk of YAML config from __page__ to template? <-- DONE
-* Markdownify Lead Paragraph but add lead class in? <-- DONE
-* New Version Available - trailing dash??? <-- DONE
-* CHANGES page should have improved layout for app versions??? <-- DONE
-* Open Source CREDITS Page -- pulled from apps? <-- DONE
-* Need to handle event on load - parse original anchor fragment <-- DONE
-* Put in retry loop (3 times?) for conversion result save <-- DONE
-* BUG: Proceed --> Click on Educ Logo to go back to main page breaks (goes to undefined!) <-- DONE
-* Does version alert still work??? <-- DONE
-* File IDs need to be changed in search results. <-- DONE
-* Searches in tabs? Tied to a Search module??? <-- DONE
-* Hide NOW doesn't work on visibility (assume field / index mismatch???) <-- DONE
-* Check if _ _ class property makes it through to rows. <-- DONE
-* Overflow isn't hidden on Folders View???? <-- DONE
+* Breadcrumbs for Navigation <== DONE
+* Back <-> Forward Navigation for Folder Loading? <== DONE
+* Close Search Results <== DONE
+* Need to have a state property attached to menu items in the app yaml file. Some commands (e.g. Open) don't need to be navigated back to, whereas others (e.g. Freeze) make sense to turn off on back. Some (e.g. Toggles) will go into the back stack straight away? Others might be one removed e.g. Back takes you to the last state rather than 'undoing' an action? <== DONE
+* Do anchor tags always work? E.g. Folders on Changes and Scopes? <-- DONE (a different way)
+* Single Letter Icon is partially hidden on mobile (maybe z-index?). Only on App page though.... <--// DONE
+* Where to put the link to the scopes? <--// DONE
+* Add Folder Features <--// DONE
+* Write Security Policy & Cookie Policy <--// DONE
+* Provide standardised DNT Support? <--// DONE
+* CHANGES page 404's even with SW loaded???? -- NOT ALL PAGES seem to be cached? <--// DONE
+* Write Permissions showing Pages, including details of why the permissions are needed. <--// DONE
+* Write Readme <--// DONE
+* Style and tweak copyright notice <--// DONE
+* Instantiate Popper in 'Normal' Pages? <--// DONE
+* Move bulk of YAML config from __page__ to template? <--// DONE
+* Markdownify Lead Paragraph but add lead class in? <--// DONE
+* New Version Available - trailing dash??? <--// DONE
+* CHANGES page should have improved layout for app versions??? <--# DONE
+* Open Source CREDITS Page -- pulled from apps? <--// DONE
+* Need to handle event on load - parse original anchor fragment <--# DONE
+* Put in retry loop (3 times?) for conversion result save <--# DONE
+* BUG: Proceed --> Click on Educ Logo to go back to main page breaks (goes to undefined!) <--# DONE
+* Does version alert still work??? <--# DONE
+* File IDs need to be changed in search results. <--# DONE
+* Searches in tabs? Tied to a Search module??? <--# DONE
+* Hide NOW doesn't work on visibility (assume field / index mismatch???) <--# DONE
+* Check if _ _ class property makes it through to rows. <--# DONE
+* Overflow isn't hidden on Folders View???? <--# DONE
 * Vertical Scroll Borked .. was sr-only class issue? <== DONE
 * Put Search Children Input on Search Dialog (default ticked) <-- DONE
 * Searches on Modified Rows clear the classes - maybe we should make those changes to the data source as well? <-- DONE
@@ -86,7 +99,7 @@ Complete
 * Make a smaller loader that can fit within a table row element!  <== DONE
 * Signout to clear only app recents, not global <== DONE
 * Change educ namespace variable where it is still _ to ಠ _ ಠ <== DONE
-* GOING BETWEEN APPS RESULTS IN 401 on Auth call. Need to 'rename' the provider in the main.js code -> for Hello, to the include the name of the app so that auth keys are stored differently for each app on the site? <== DONE
+* GOING BETWEEN APPS RESULTS IN 401 on Auth call. Need to 'rename' the provider in the main.js code -> Hello: including the name of the app so that auth keys are stored differently for each app on the site? <== DONE
 * Display Files / Folders once the Folder is open (in a tab?) <== DONE
 * Display Search Results <== DONE
 * If we include FOLDERS in our return MIMEs on search, how do we express that in our includes? MIME then filter? <== DONE
@@ -176,4 +189,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-08-09
+ᕕ( ᐛ )ᕗ JD ♑ - 2017-09-01

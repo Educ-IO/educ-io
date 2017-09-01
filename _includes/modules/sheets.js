@@ -136,6 +136,7 @@ Sheets = function(sheet, ಠ_ಠ) {
     
     var _tabs = ಠ_ಠ.Display.template.show({
       template: "tab-list",
+			class: "pt-2",
       id: sheet.spreadsheetId,
       name: sheet.properties.title,
       nav: "sheet_tabs",

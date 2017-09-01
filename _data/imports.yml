@@ -1,5 +1,6 @@
 localstorage:
   name: localStorage
+  desc: This is a polyfill for Local Storage, bringing this feature to older browsers.
   url: https://cdnjs.com/libraries/localStorage
   project: https://github.com/mortzdk/localStorage
   version: 2.0.1
@@ -18,6 +19,7 @@ localstorage:
 
 jsdiff:
   name: JS Diff
+  desc: This allows the 'diffing', or comparsion, of text.
   url: https://cdnjs.com/libraries/jsdiff
   project: https://github.com/kpdecker/jsdiff
   version: 3.3.0
@@ -36,6 +38,7 @@ jsdiff:
 
 jshashes:
   name: JS Hashes
+  desc: This generates cryptographic 'hashes' of data and text.
   url: https://cdnjs.com/libraries/jshashes
   project: https://github.com/h2non/jshashes
   version: 1.0.7
@@ -54,6 +57,7 @@ jshashes:
 
 screenfull:
   name: Screenfull
+  desc: This makes handling full screen functionality easier.
   url: https://cdnjs.com/libraries/screenfull.js
   project: https://github.com/sindresorhus/screenfull.js
   version: 3.2.2
@@ -72,6 +76,7 @@ screenfull:
 
 localforage:
   name: Localforage
+  desc: This makes handling 'offline' storage in the browser easier.
   url: https://cdnjs.com/libraries/localforage
   project: https://github.com/mozilla/localForage
   version: 1.5.0
@@ -90,6 +95,7 @@ localforage:
 
 hammer:
   name: Hammer
+  desc: This makes handling touch gestures in the browser easier.
   url: https://cdnjs.com/libraries/hammer.js
   project: http://eightmedia.github.com/hammer.js
   version: 2.0.8
@@ -108,6 +114,7 @@ hammer:
 
 urlparser:
   name: JQuery URL Parser
+  desc: This is used to parse web addresses / url for navigation and options.
   url: https://cdnjs.com/libraries/jquery-url-parser
   project: https://github.com/allmarkedup/purl
   version: 2.3.1
@@ -126,6 +133,7 @@ urlparser:
       
 hello:
   name: Hello
+  desc: This is used to manage login / tokens for OAuth2 Services.
   url: https://cdnjs.com/libraries/hellojs
   project: https://github.com/MrSwitch/hello.js
   version: 1.15.1
@@ -144,6 +152,7 @@ hello:
 
 showdown:
   name: Showdown
+  desc: This is used to convert Markdown to HTML on the fly.
   url: https://cdnjs.com/libraries/showdown
   project: https://github.com/showdownjs/showdown
   version: 1.7.3
@@ -164,6 +173,7 @@ showdown:
 
 jquery:
   name: JQuery
+  desc: This popular library is used to manipulate the DOM, and HTML elements on the page.
   url: https://cdnjs.com/libraries/jquery
   project: http://jquery.com/
   version: 3.2.1
@@ -182,6 +192,7 @@ jquery:
 
 tether:
   name: Tether
+  desc: This is used for positioning tooltip / dropdown elements on the page.
   url: https://cdnjs.com/libraries/tether
   project: https://github.com/HubSpot/tether
   version: 1.4.0
@@ -200,6 +211,7 @@ tether:
 
 bootstrap-css:
   name: Bootstrap (CSS)
+  desc: This is a toolkit / framework for site design, layout and presentation.
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
   version: 4.0.0-beta
@@ -220,6 +232,7 @@ bootstrap-css:
 
 bootstrap-js:
   name: Bootstrap (JS)
+  desc: This is a toolkit / framework for site design, layout and presentation.
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
   version: 4.0.0-beta
@@ -238,6 +251,7 @@ bootstrap-js:
       
 loki:
   name: LokiJS
+  desc: A fast data querying and manipulation library.
   url: https://cdnjs.com/libraries/lokijs
   project: http://lokijs.org
   version: 1.5.0
@@ -257,8 +271,9 @@ loki:
 
 uuid:
   name: Node UUID
+  desc: Used to generarate UUIDs (universally unique identifiers) in the browser.
   url: https://cdnjs.com/libraries/node-uuid
-  project: https://broofa.github.io/node-uuid/
+  project: https://github.com/broofa/node-uuid
   version: 1.4.8
   license: MIT
   type: js
@@ -275,6 +290,7 @@ uuid:
 
 yaml:
   name: JS Yaml
+  desc: Used to parse YAML data structures.
   url: https://cdnjs.com/libraries/js-yaml
   project: https://github.com/nodeca/js-yaml
   version: 3.9.1
@@ -293,6 +309,7 @@ yaml:
 
 ace:
   name: ACE
+  desc: An in-browser text editor.
   url: https://cdnjs.com/libraries/ace
   project: http://ace.ajax.org/
   version: 1.2.8
@@ -375,6 +392,7 @@ ace:
 
 xlsx:
   name: JS XLSX
+  desc: Import / Output to Legacy Spreadsheet Formats.
   url: https://cdnjs.com/libraries/xlsx
   project: https://github.com/SheetJS/js-xlsx
   version: 0.11.3
@@ -401,6 +419,7 @@ xlsx:
       
 download:
   name: Download JS
+  desc: Directly download files from the browser (used for generated files etc.).
   url: https://cdnjs.com/libraries/downloadjs
   project: https://github.com/rndme/download
   version: 1.4.7
@@ -419,6 +438,7 @@ download:
 
 filesaver:
   name: FileSaver.js
+  desc: Directly download files from the browser (used for generated files etc.).
   url: https://cdnjs.com/libraries/FileSaver.js
   project: https://github.com/eligrey/FileSaver.js/
   version: 1.3.3
@@ -437,6 +457,7 @@ filesaver:
 
 handlebars:
   name: Handlebars JS
+  desc: Used for HTML Templating in the browser.
   url: https://cdnjs.com/libraries/handlebars.js
   project: http://handlebarsjs.com/
   version: 4.0.10
@@ -455,6 +476,7 @@ handlebars:
 
 fontface:
   name: Font Face Observer
+  desc: Web Font Loader
   url: https://cdnjs.com/libraries/fontfaceobserver
   project: https://fontfaceobserver.com/
   version: 2.0.13
@@ -473,6 +495,7 @@ fontface:
 
 fetch:
   name: Fetch Polyfill
+  desc: Brings 'fetch' functionality to older browsers.
   url: https://cdnjs.com/libraries/fetch
   project: https://github.com/github/fetch
   version: 2.0.3
@@ -492,7 +515,7 @@ fetch:
 google:
   name: Google Javascript API
   project: https://developers.google.com/loader/
-  details: The Google Javascript Loader / API provides access to specific services and components, such as the Google Drive Picker (that can be found in many web apps).
+  desc: The Google Javascript Loader / API provides access to specific services and components, such as the Google Drive Picker (that can be found in many web apps).
   type: js
   css: 
     - _picker
@@ -507,6 +530,7 @@ google:
 
 lazy:
   name: Lazy JS
+  desc: A functional utility library.
   url: https://cdnjs.com/libraries/lazy.js
   project: https://github.com/dtao/lazy.js
   version: 0.5.0
@@ -525,6 +549,7 @@ lazy:
 
 underscore:
   name: Underscore JS
+  desc: A functional utility library.
   url: https://cdnjs.com/libraries/underscore.js
   project: https://github.com/jashkenas/underscore
   version: 1.8.3
@@ -544,6 +569,7 @@ underscore:
 
 popper:
   name: Popper JS
+  desc: Utility for managing 'Poppers' (tooltips, dropdowns, popovers etc.).
   url: https://cdnjs.com/libraries/popper.js
   project: https://github.com/FezVrasta/popper.js
   version: 1.12.5
@@ -564,6 +590,7 @@ popper:
 
 underscore-string:
   name: Underscore String
+  desc: String Manipulation Library.
   url: https://cdnjs.com/libraries/underscore.string
   project: https://epeli.github.io/underscore.string
   version: 3.3.4
@@ -582,6 +609,7 @@ underscore-string:
       
 clipboard:
   name: Clipboard (JS)
+  desc: Makes copying to the clipboard easier.
   url: https://cdnjs.com/libraries/clipboard.js
   project: https://github.com/zenorocha/clipboard.js/
   version: 1.7.1
@@ -600,6 +628,7 @@ clipboard:
 
 axios:
   name: Axios
+  desc: HTTP Client for API calls.
   url: https://cdnjs.com/libraries/axios
   project: https://github.com/mzabriskie/axios
   version: 0.16.2
@@ -620,6 +649,7 @@ axios:
       
 jszip:
   name: JSZip
+  desc: Allows Zip / Un-Zipping (compression) of content in the browser.
   url: https://cdnjs.com/libraries/jszip
   project: https://stuk.github.io/jszip/
   version: 3.1.4

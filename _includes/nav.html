@@ -8,7 +8,7 @@
 
   <div class="collapse navbar-collapse" id="main_Nav">
 
-    <a class="navbar-brand font-sensitive jump hidden-sm-down" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }} | {{ site.title }} <span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}</span></a>
+    {% if page.app %}<a class="navbar-brand font-sensitive jump d-sm-none d-md-inline-block" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }} | {{ site.title }} <span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}</span></a>{% endif %}
 
     <ul class="navbar-nav mr-auto css-sensitive">
 
@@ -52,6 +52,12 @@
       {% endif %}
       {% endfor %}{% else %}
         <li class="nav-item">
+          <a class="nav-link jump" href="/changes/" data-toggle="tooltip" data-placement="bottom" title="What is new across this site, and with individual apps">Changes<span class="sr-only">What is new across this site, and with individual apps</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link jump" href="/support/" data-toggle="tooltip" data-placement="bottom" title="Get access to high-quality support, and help us to deliver high quality tools">Support<span class="sr-only">Get access to high-quality support, and help us to deliver high quality tools</span></a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link jump" href="/about/" data-toggle="tooltip" data-placement="bottom" title="Find out more about this site, our privacy safeguards and our technology">About<span class="sr-only">Click to find out more about this site, our privacy safeguards and our technology</span></a>
         </li>{% endif %}
 
@@ -59,7 +65,7 @@
 
     {% if page.app or page.login %}
       <form id="sign_out" class="form-inline mt-2 mt-md-0" style="display: none;">
-        <span class="navbar-text mr-2">Signed in as <a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions" rel="noopener"></a></span>
+        <span class="navbar-text mr-2">Signed in as <a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions" rel="noopener" data-toggle="tooltip" data-placement="bottom"></a></span>
         <a class="btn btn-outline-success my-2 my-sm-0 btn-outline-action" href="#">Sign Out</a>
       </form>
 

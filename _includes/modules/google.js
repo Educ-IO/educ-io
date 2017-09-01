@@ -351,7 +351,9 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		files: {
 
-			get: (id) => _call(NETWORKS.general.get, "drive/v3/files/" + id),
+			get: (id, full) => _call(NETWORKS.general.get, "drive/v3/files/" + id, {
+				fields: "kind,id,name,mimeType,version,parents",
+			}),
 
 		},
 

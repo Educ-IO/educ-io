@@ -1,4 +1,8 @@
 site :
+  0.0.5i :
+    name : Site Updates
+    desc : Content Improvements, Folders v0.0.3c-alpha and forward / back navigation
+    type : minor
   0.0.5h :
     name : Site Content Updates
     desc : Code and Content Improvements
@@ -42,6 +46,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.3c-alpha :
+    name : Improved Navigation
+    desc : Breadcrumbs Navigation
+    type : minor
   0.0.3b-alpha :
     name : Bug Fix on Spreadsheet Log
     desc : Set Retries and fail handling will allow conversion to continue

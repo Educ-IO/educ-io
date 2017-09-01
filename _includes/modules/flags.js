@@ -15,6 +15,7 @@ Flags = function() {
 			_development = false,
 			_page = false,
 			_option = false,
+			_highlight = false,
 			_key = false,
 			_oauth = false,
 			_base, _dir;
@@ -43,6 +44,8 @@ Flags = function() {
 		_oauth = (_url.param("oauth") || _url.fparam("oauth"));
 		
 		_option = (_url.param("option") === "" || _url.fparam("option") === "");
+		
+		_highlight = (_url.param("highlight") || _url.fparam("highlight"));
 
 		_page = (_url.param("page") === "" || _url.fparam("page") === "");
 
@@ -69,6 +72,24 @@ Flags = function() {
 			return _load(_url.fparam("remote"));
 		} else {
 			return Promise.resolve();
+		}
+
+	};
+	
+	var _route = function(command, router) {
+						
+		var directive;
+
+		if (command.indexOf(",") >= 1) {
+			command = command.split(",");
+			directive = command[0];
+			command = command[1];
+		}
+
+		if (command.indexOf(".") >= 1) {
+			router(directive, command.split("."));
+		} else {
+			router(directive, command);
 		}
 
 	};
@@ -122,6 +143,10 @@ Flags = function() {
 						return _key;
 					},
 					
+					highlight: function() {
+						return _highlight;	
+					},
+					
 					option: function() {
 						return _option;
 					},
@@ -130,29 +155,40 @@ Flags = function() {
 						return _page;
 					},
 
+					route: function(command, router) {
+						
+						_route(command, router);
+						
+					},
+					
 					change: function(router) {
 
-						var _command = window.location.hash;
-						window.location.hash = "";
+						var command = window.location.hash;
+						
+						if (command) {
+						
+							if (command.indexOf("#") === 0) command = command.substring(1);
+							
+							if (command !== "!") {
+								
+								var _ignore = false;
+								if (command.indexOf("!") === 0) {
+									_ignore = true;
+									command = command.substring(1);
+								}
+								
+								if (!_ignore && window.history) {
+									window.history.replaceState({command : command}, "", "#!");
+								} else {
+									window.location.hash = "!";
+								}
 
-						if (_command) {
-
-							if (_command.indexOf("#") === 0) _command = _command.substring(1);
-
-							var _directive;
-							if (_command.indexOf(",") >= 1) {
-								_command = _command.split(",");
-								_directive = _command[0];
-								_command = _command[1];
+								_route(command, router);
+								
 							}
-
-							if (_command.indexOf(".") >= 1) {
-								router(_directive, _command.split("."));
-							} else {
-								router(_directive, _command);
-							}
-
+							
 						}
+						 
 					},
 
 				};

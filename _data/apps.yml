@@ -73,24 +73,24 @@ view:
   scopes:
     google:
       - scope: email
-        name: 
-        reason: 
+        name: View your email address
+        reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
         request: login
       - scope: profile
-        name: 
-        reason: 
+        name: View your basic profile info
+        reason: In order to display your name on the navigation menu, once you have signed in.
         request: login
       - scope: https://www.googleapis.com/auth/drive.file
-        name: 
-        reason: 
+        name: View and manage Google Drive files and folders that you have opened or created with this app
+        reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.
         request: login
       - scope: https://www.googleapis.com/auth/spreadsheets.readonly
-        name: 
-        reason: 
+        name: View your Google Spreadsheets
+        reason: This app needs to load data from your spreadsheets in order to display it, but not to write to them.
         request: login
       - scope: https://www.googleapis.com/auth/urlshortener
-        name: 
-        reason: 
+        name: Manage your goo.gl short URLs
+        reason: Once you have created a link to share in this app, you have the option of using the Google Link Shorterner to 'compress' it. This scope allows access to that feature.
         request: lazy
   keys:
     google:
@@ -316,6 +316,7 @@ folders:
     - shared/filters
     - shared/table
     - shared/datatable
+    - shared/breadcrumbs
     - folders/rows
     - folders/search
     - folders/convert
@@ -331,16 +332,16 @@ folders:
   scopes:
     google:
       - scope: email
-        name: 
-        reason: 
+        name: View your email address
+        reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
         request: login
       - scope: profile
-        name: 
-        reason: 
+        name: View your basic profile info
+        reason: In order to display your name on the navigation menu, once you have signed in.
         request: login
       - scope: https://www.googleapis.com/auth/drive
-        name: 
-        reason: 
+        name: View and manage the files in your Google Drive
+        reason: In order to search, manage and convert your Drive files.
         request: login
   keys:
     google:
@@ -380,6 +381,11 @@ folders:
             - name: Convert
               desc: Convert the current search results
               hash: convert
+              disabled_until:
+                - searched
+            - name: Close
+              desc: Close the current search results
+              hash: close.results
               disabled_until:
                 - searched
     - name: Instructions

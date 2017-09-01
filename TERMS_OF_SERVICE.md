@@ -1,4 +1,5 @@
-### Terms of Service
+Terms of Service
+================
 
 Firstly, thank you for using the apps provided by __[educ.io](https://educ.io)__, we hope that you find them useful, productive and time-saving! By accessing or using our apps, you agree to the terms set out below, so please read them carefully. These terms refer to, and govern, your use of these apps, and of this website in general. The code used on this site (and your rights to view and modify it) is subject to copyright and governed by a separate [license agreement](/license/). Under these terms, we may refer to __[educ.io](https://educ.io)__ as _we_, _our_, or _us_.
 

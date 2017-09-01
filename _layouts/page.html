@@ -4,6 +4,7 @@ style: page
 modules:
   - controller
   - service
+  - flags
   - display
   - page
 imports:
@@ -16,6 +17,8 @@ imports:
 - name: bootstrap-js
   load: last
 - name: handlebars
+  load: last
+- name: urlparser
   load: last
 ---
 <!DOCTYPE html>

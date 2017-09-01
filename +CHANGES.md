@@ -5,7 +5,10 @@ permalink: /changes/
 lead: Find out what is new across the site. Below are lists of the most recent versions for each component of the site, together with a summary description and a run down of all the changes in that version.
 support: true
 ---
+{::options parse_block_html="true" /}
+<div class="d-flex flex-column p-2">
 {% for app in site.data.versions %}{% assign name = app[0] %}
+<div class="highlight_all highlight_{{ name | downcase }} mb-3">
 ##### {{ name | capitalize }}
 {% if site.data.apps[name].desc %}{{ site.data.apps[name].desc }}
 {:.small}{% endif %}
@@ -16,6 +19,7 @@ support: true
 		* {% if change.details %}{{ change.details }}{% else %}{{ change }}{% endif %}{% if change.url %} (See [here]({{ change.url }}){:target="_blank"} for details){% endif %}
 	{% endfor %}{% endif %}
 {% endfor %}
-{% unless forloop.last %}* * *{% endunless %}
+</div>
 {% endfor %}
+</div>
 {% include copyright.md %}

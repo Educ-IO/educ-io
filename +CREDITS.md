@@ -9,10 +9,10 @@ lead: This website and apps rely on code from the wider open-source community. B
 {% for import in imports %}{% assign __import = site.data.imports[import] %}
 ##### {{ __import.name }}
 {% if __import.version %}+ Version: _{{ __import.version }}_{:.text-muted}{% endif %}
-{% if __import.project %}+ Link: [{{ __import.project }}]({{ __import.project }}){% endif %}
+{% if __import.project %}+ Link: [{{ __import.project }}]({{ __import.project }}){:target="_blank"}{% endif %}
 {% if __import.license %}+ License: __{{ __import.license | upcase }}__{% endif %}
-{% if __import.details %}
-{{ __import.details }}
+{% if __import.desc %}
+{{ __import.desc }}
 {:.small}
 {% endif %}
 {% unless forloop.last %}* * *{% endunless %}

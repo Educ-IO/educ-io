@@ -12,7 +12,7 @@ App = function() {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _folder, _last;
+	var ಠ_ಠ, _folder, _path, _last;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -54,7 +54,7 @@ App = function() {
 		/* <!-- Handle Screen / Window Resize Events --> */
 		var _resizer = function() {
 			var _height = 0;
-			$("#site_nav, #folder_tabs").each(function() {
+			$("#site_nav, #paths, #folder_tabs").each(function() {
 				_height += $(this).outerHeight(true);
 			});
 			_css.removeRule(_style, "div.tab-pane").addRule(_style, "div.tab-pane", "max-height: " + ($(window).height() - _height - 20) + "px !important;");
@@ -66,6 +66,77 @@ App = function() {
 		});
 		_resizer();
 
+	};
+	
+	var _showPath = function(path, target) {
+		ಠ_ಠ.Display.template.show({
+			template: "breadcrumbs",
+			id: "paths",
+			class: "mb-0 px-3 py-2",
+			items: path,
+			target: target,
+			clear: true
+		});
+	};
+
+	var _openFolder = function(folder, log) {
+
+		folder.url = "#google,load." + folder.id;
+
+		if (!_folder || !_path) {
+			
+			/* <!-- Root Folder --> */
+			_path = [folder];
+			
+		} else if (folder.parents && folder.parents.indexOf(_folder.id()) >= 0) {
+			
+			/* <!-- Child of the current Folder --> */
+			_path.push(folder);
+			
+		} else {
+			
+			/* <!-- Check if it's in the paths already --> */
+			var _existing = _.findIndex(_path, (p) => p.id === folder.id) + 1;
+			if (_existing > 0) {
+				
+				/* <!-- Existing in Current Path, so splice back to it --> */
+				_path.splice(_existing, _path.length - _existing);
+				
+			} else {
+				
+				/* <!-- Start a new Path --> */
+				_path = [folder];
+				
+			}
+			
+		}
+		
+		_showPath(_path, ಠ_ಠ.container);
+		_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container);
+		if (log) ಠ_ಠ.Recent.add(folder.id, folder.name, folder.url).then(() => _resize());
+
+	};
+	
+	var _loadFolder = function(id, log) {
+		
+		if (id) {
+			
+			ಠ_ಠ.Display.busy({
+				target: ಠ_ಠ.container
+			});
+
+			ಠ_ಠ.google.files.get(id).then(folder => {
+
+				ಠ_ಠ.Display.busy({
+					target: ಠ_ಠ.container,
+					clear: true
+				});
+
+				_openFolder(folder, log);
+
+			}).catch((e) => ಠ_ಠ.Flags.error("File / Folder Load Failure", e ? e : "No Inner Error"));
+		}
+		
 	};
 	/* <!-- Internal Functions --> */
 
@@ -87,7 +158,7 @@ App = function() {
 		},
 
 		route: function(command) {
-
+			
 			if (!command || command === false || command[0] === false || (/PUBLIC/i).test(command)) {
 
 				/* <!-- Load the Public Instructions --> */
@@ -107,40 +178,31 @@ App = function() {
 
 				/* <!-- Pick, or Load the Root Folder --> */
 				if ((/ROOT/i).test(command[1])) {
-					_folder = ಠ_ಠ.Folder(ಠ_ಠ, {
-						id: "root",
-						name: "Root"
-					}, ಠ_ಠ.container);
-					_resize();
+					_loadFolder("root", false);
 				} else {
 					_pick().then((folder) => {
-						_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container.empty());
-						ಠ_ಠ.Recent.add(folder.id, folder.name, "#google,load." + folder.id).then(() => _resize());
+						_openFolder(folder, true);
 					}).catch((e) => ಠ_ಠ.Flags.error("Picker Failure", e ? e : "No Inner Error"));
 				}
 
 			} else if ((/LOAD/i).test(command)) {
 
-				ಠ_ಠ.Display.busy({
-					target: ಠ_ಠ.container
-				});
-
-				/* <!-- Load the Children of the Root Folder --> */
-				ಠ_ಠ.google.files.get(command[1]).then(folder => {
-					ಠ_ಠ.Display.busy({
-						target: ಠ_ಠ.container,
-						clear: true
-					});
-					_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container.empty());
-					ಠ_ಠ.Recent.add(folder.id, folder.name, "#google,load." + folder.id).then(() => _resize());
-				}).catch((e) => ಠ_ಠ.Flags.error("File / Folder Load Failure", e ? e : "No Inner Error"));
+				_loadFolder(command[1], true);
 
 			} else if ((/CLOSE/i).test(command)) {
 
 				if (_folder) {
-					_folder = null;
-					ಠ_ಠ.Display.state().exit(["opened", "searched"]).protect("a.jump").off();
-					_default();
+					
+					if ((/RESULTS/i).test(command[1])) {
+						ಠ_ಠ.Display.state().exit(["searched"]);
+						_folder.close();
+					} else {
+						_path = null;
+						_folder = null;
+						ಠ_ಠ.Display.state().exit(["opened", "searched"]).protect("a.jump").off();
+						_default();	
+					}
+					
 				}
 
 			} else if ((/CONVERT/i).test(command)) {

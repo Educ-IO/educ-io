@@ -8,4 +8,12 @@ nav.navbar.bg-faded {
 .jumbotron {
 	background-color: $colour-section;
 }
+
+.highlight_all {
+	border-bottom: thin solid $colour-emphasis;
+}
+
+.highlight_none {
+	opacity: 0.4;
+}
 // -- Tweak Jumbotron -- //
