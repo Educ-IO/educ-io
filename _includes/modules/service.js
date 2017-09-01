@@ -76,7 +76,7 @@ Service = function() {
 					
 					if (window.fetch) {
 						
-						fetch("/version.json", {cache: "no-store"}).then((response) => {
+						fetch("/version.json?d=" + Date.now(), {cache: "no-store"}).then((response) => {
 							
 							if (response.status == 200) return response.json();
 							
