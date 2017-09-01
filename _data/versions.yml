@@ -1,4 +1,8 @@
 site :
+  0.0.5k :
+    name : Updater Bug Fix
+    desc : Fixed Bug to show correct update version
+    type : minor
   0.0.5j :
     name : Site Updates
     desc : Minor Bug Fixes

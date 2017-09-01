@@ -1,0 +1,1 @@
+{"APP_VERSION" : "{{ site.data.versions.site.first[0] }}", "VERSION_TYPE" : "{{ site.data.versions.site.first[1].type }}", "VERSION_DETAILS" : "{{ site.data.versions.site.first[1].desc }}"}

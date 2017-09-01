@@ -62,32 +62,50 @@ Service = function() {
 
         var _updateReady = function(sw) {
 
-					var _urgency, _details = "";
-
-					if (VERSION_TYPE == "security") {
-						_urgency = "danger";
-					} else if (VERSION_TYPE == "major") {
-						_urgency = "warning";
-					} else {
-						_urgency = "info";
-					}
-
-					if (VERSION_DETAILS) _details = VERSION_DETAILS + " [v" + APP_VERSION + "]";
-
-					if (ಠ_ಠ.Display && !ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.alert({
-						type: _urgency,
-						headline: "New Version Available",
-						message: _details ? _details.trim() : "",
-						action: "Update",
-						target: "body"
-					}).then(function(update) {
-						if (update) _message(sw, "update").then(
-							m => {
-								if (m == "success") {
+					var _update = function(urgency, details) {
+						
+						if (ಠ_ಠ.Display && !ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.alert({
+							type: urgency ? urgency : "info",
+							headline: "New Version Available",
+							message: details ? details.trim() : "",
+							action: "Update",
+							target: "body"
+						}).then(function(update) {
+							if (update) _message(sw, "update").then(
+								m => {
+									if (m == "success") {console.log("UPDATED");}
 								}
+							);
+						});
+						
+					};
+					
+					if (window.fetch) {
+						
+						fetch("/version.json").then((response) => {
+							
+							if (response.status == 200) return response.json();
+							
+						}).then((version) => {
+							
+							var _details, _urgency = "info";
+							if (version) {
+								if (version.VERSION_TYPE == "security") {
+									_urgency = "danger";
+								} else if (version.VERSION_TYPE == "major") {
+									_urgency = "warning";
+								}
+								if (version.VERSION_DETAILS) _details = version.VERSION_DETAILS + " [v" + version.APP_VERSION + "]";
+								_update(_urgency, _details);
 							}
-						);
-					});
+							
+						}).catch((e) => _update());
+						
+					} else {
+						
+						_update();
+						
+					}
 
         };
 
