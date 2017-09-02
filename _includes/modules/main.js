@@ -86,18 +86,18 @@ Main = function() {
 				});
 			};
 			
-			var _routeIn = function() {ಠ_ಠ.App.route(true);}, _routeOut = function() {ಠ_ಠ.App.route(false, true);};
+			var _routeIn = function() {if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(true);}, _routeOut = function() {if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(false, true);};
 			
 			var _route = function(directive, command) {
 				ಠ_ಠ.Flags.log("ROUTING", directive, command);
 				if ((/GOOGLE/i).test(directive) && !ಠ_ಠ.google) {
 					google_SignIn();
 					_routeIn = function() {
-						_routeIn = function() {ಠ_ಠ.App.route(true);};
-						ಠ_ಠ.App.route(command);
+						_routeIn = function() {if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(true);};
+						if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
 					};
 				} else {
-					ಠ_ಠ.App.route(command);
+					if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
 				}
 			};
 			

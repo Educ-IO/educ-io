@@ -23,6 +23,8 @@ view:
       load: last
     - name: localforage
       load: last
+    - name: moment_all
+      load: last
     - name: google
       load: lazy
     - name: xlsx
@@ -201,62 +203,112 @@ view:
   published: true
 reflect:
   name: Reflect
-  desc: Produce reflective reports
+  desc: Produce then share reflective reports, tracking evidence and progress
   link: /reflect/
   imports:
+    - name: underscore
+      load: first
     - name: jquery
       load: first
     - name: bootstrap-css
       load: first
     - name: popper
       load: first
+    - name: handlebars
+      load: last
     - name: hello
       load: last
     - name: urlparser
       load: last
-    - name: handlebars
-      load: last
     - name: bootstrap-js
       load: last
+    - name: loki
+      load: last
+    - name: localforage
+      load: last
     - name: google
-      load: defer
+      load: lazy
   modules:
     - flags
     - controller
     - display
+    - network
     - google
+    - recent
     - service
     - main
+    - css
   scripts: 
     - extends/regex
     - extends/array
   templates:
+    - options
     - choose
     - confirm
     - alert
     - loader
+    - recent
+    - shared/tab-links
+    - shared/tab-list
+    - shared/tab-tabs
+    - reflect/form
   docs:
+    - shared/JUMP
     - reflect/PUBLIC
+    - reflect/FEATURES
     - reflect/README
     - reflect/INSTRUCTIONS
   scopes:
     google:
       - scope: email
-        name: 
-        reason: 
+        name: View your email address
+        reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
         request: login
       - scope: profile
-        name: 
-        reason: 
+        name: View your basic profile info
+        reason: In order to display your name on the navigation menu, once you have signed in.
         request: login
       - scope: https://www.googleapis.com/auth/drive.file
-        name: 
-        reason: 
+        name: View and manage Google Drive files and folders that you have opened or created with this app
+        reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.
+        request: login
+      - scope: https://www.googleapis.com/auth/spreadsheets
+        name: View / Edit your Google Spreadsheets
+        reason: This app needs to write data to your spreadsheets in order to record periodic progress from your reflections.
         request: login
   keys:
     google:
         general: AIzaSyDCjK2aSKu9CAb3lCXxegwy-G9VTdNBAak
         oauth: 969160887251-lnkpkhpet6ojgtkposr49f0uuubbbpq2.apps.googleusercontent.com
+  menus:
+    - name: Reports
+      groups:
+        all:
+          commands:
+            - name: Create
+              desc: Create a new Report
+              hash: create
+              auth: google
+            - name: Open a saved Report
+              desc: Open a Save Report from your Drive
+              hash: open
+              imports:
+                - google
+              auth: google
+            - name: Save
+              desc: Save this Report
+              hash: save
+              disabled_until:
+                - opened
+              auth: google
+            - name: Close
+              desc: Close this Report
+              hash: close
+              disabled_until:
+                - opened
+    - name: Instructions
+      hash: instructions
+      desc: More details about how to use the Reflect App
   published: false
 folders:
   name: Folders

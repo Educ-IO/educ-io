@@ -1,4 +1,8 @@
 site :
+  0.0.5p :
+    name : Bug Fixes
+    desc : View App 0.2.0b-alpha
+    type : minor
   0.0.5o :
     name : Add Query String to Version JSON
     desc : Ensuring latest version file is always retrieved from the network
@@ -56,6 +60,12 @@ site :
     changes :
       - Initial Service Work Testing
 view :
+  0.2.0b-alpha :
+    name : Bug Fix
+    type : Converted Magic Filters to Dates from Strings
+    changes :
+      - details: Changed Layout system
+        url : https://github.com/Educ-IO/educ-io.github.io/issues
   0.2.0-alpha :
     name : First fully functional build
     type : major
@@ -81,5 +91,9 @@ folders :
     name : Basic Conversion Functionality
     type : minor
   0.0.1-alpha :
+    name : Early testing version
+    type : minor
+reflect :
+  0.1.0-alpha :
     name : Early testing version
     type : minor

@@ -119,9 +119,9 @@ Network = function(base, timeout, rate, retry) {
 				
 				} else {
 					
-					if (response.status >= 500) {
+					if (response.status >= 500 || response.status == 413) {
 						
-						/* <!-- 500 errors means rejection --> */
+						/* <!-- 500 errors or 413 (Entity Too Large) means rejection --> */
 						reject({name: "HTTP 50x Error", url: response.url, status: response.status, statusText: response.statusText});
 						
 					} else if (response.status == 401 && a--) {

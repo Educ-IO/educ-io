@@ -12,14 +12,14 @@
 				stroke-width: 3;
 			}
 			&.o, &.p {
-				stroke: darken($colour-highlight, 15%);
+				stroke: darken($colour-highlight, 10%);
 				stroke-linejoin: round;
 				stroke-linecap: round;
 			}
 		}
 		&:hover {
 			path {
-				&.o, &.p {stroke: darken($colour-highlight, 30%);}
+				&.o, &.p {stroke: darken($colour-highlight, 20%);}
 			}
 		}
 	}

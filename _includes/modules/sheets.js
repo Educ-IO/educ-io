@@ -7,7 +7,7 @@ Sheets = function(sheet, ಠ_ಠ) {
   /* <!-- Internal Functions --> */
   var _currentSheet = () => _sheets[Object.keys(_sheets).filter((key) => _sheets[key].active())[0]];
 
-  var _initSheet = function(data, name, index, target, widths, hide, frozen) {
+  var _initSheet = function(data, name, index, target, widths, hide, frozen, locale) {
 
     ಠ_ಠ.Flags.log("Google Sheet Values [" + name + "]", data);
 
@@ -34,6 +34,40 @@ Sheets = function(sheet, ಠ_ಠ) {
       hide_default: !!hide[i]
     }));
 
+		/* <!-- Check Array for Dates --> */
+		var _formats;
+		console.log(moment.locale(locale));
+		if (locale && moment.locale(locale) == locale.toLowerCase()) {
+			var _locales = moment.localeData()._longDateFormat;
+		 _formats = [moment.ISO_8601];
+			if (_locales) {
+				if (_locales.L) {
+					_formats.unshift(_locales.L);
+					if (_locales.LT) _formats.unshift(_locales.L + " " + _locales.LT);
+					if (_locales.LT) _formats.unshift(_locales.L + " " + _locales.LTS);
+				}
+				if (_locales.LL) _formats.unshift(_locales.LL);
+				if (_locales.LLL) _formats.unshift(_locales.LLL);
+				if (_locales.LLLL) _formats.unshift(_locales.LLLL);
+			}
+			console.log("FORMATS:", _formats);
+		} else {
+			ಠ_ಠ.Flags.error("Could Not Set Date/Time Locale to " + locale, "");
+		}
+		
+		if (data && data.length > 1) {
+			var _date_Indexes = _.reduce(data[0], (dates, value, index) => {
+				if (value && _.isString(value) && moment(value, _formats, true).isValid()) dates.push(index);
+				return dates;
+			}, []);
+			console.log("DATE INDEXES:", _date_Indexes);
+			if (_date_Indexes.length > 0) _.each(data, (row) => _.each(_date_Indexes, (index) => {
+				row[index] = moment(row[index], _formats, true).toDate();
+			}));
+		}
+		
+		console.log("DATA:", data);
+		
     var length = 0,
       values = data.map((v) => {
         length = Math.max(length, v.length);
@@ -47,7 +81,8 @@ Sheets = function(sheet, ಠ_ಠ) {
 
     if (!table) {
       table = _db.addCollection(name, {
-        indices: fields
+        indices: fields,
+				serializableIndices: false
       });
       table.insert(values);
     }
@@ -62,17 +97,21 @@ Sheets = function(sheet, ಠ_ಠ) {
       target: target
     });
     
-    /* <!-- Clean Up CSS etc--> */
+    /* <!-- Clean Up CSS etc --> */
     if (_sheets[name]) _sheets[name].defaults();
 
+		/* <!-- Grab and correct locale (if required) --> */
+		var _locale = sheet.properties.locale;
+		if (_locale) _locale = _locale.replace("_", "-");
+			
     var _frozen = {
       cols: sheet.sheets[index].properties.gridProperties.frozenColumnCount,
       rows: sheet.sheets[index].properties.gridProperties.frozenRowCount
     };
 
     /* <!-- Initiatilise Sheet, Protect Jump Links & Remove the Loader --> */
-    var _complete = (d, n, i, t, w, h, f) => {
-      _initSheet(d, n, i, t, w, h, f);
+    var _complete = (d, n, i, t, w, h, f, l) => {
+      _initSheet(d, n, i, t, w, h, f, l);
       ಠ_ಠ.Display.busy({
         target: target,
         clear: true
@@ -81,7 +120,6 @@ Sheets = function(sheet, ಠ_ಠ) {
 
     /* <!-- ARRAY OF: {startRowIndex: 0, endRowIndex: 1, startColumnIndex: 1, endColumnIndex: 3} --> */
     ಠ_ಠ.Flags.log("Google Sheet Merges [" + name + "]", sheet.sheets[index].merges);
-
 
     if (sheet.sheets[index].data && sheet.sheets[index].data.length == 1) {
 
@@ -96,14 +134,14 @@ Sheets = function(sheet, ಠ_ಠ) {
       _complete(
         _rows.clean(false, true).trim(_rows[0].length), name, index, target,
         _data.columnMetadata.map((c, i) => (c.pixelSize / _fontSizes[i]) * parseFloat(getComputedStyle(document.documentElement).fontSize)),
-        _data.columnMetadata.map((c) => !!c.hiddenByUser), _frozen
+        _data.columnMetadata.map((c) => !!c.hiddenByUser), _frozen, _locale
       );
 
     } else {
 
       /* <!-- Need to load the values --> */
       ಠ_ಠ.google.sheets.values(sheet.spreadsheetId, name + "!A:ZZ")
-        .then((data) => _complete(data.values, name, index, target, [], [], _frozen))
+        .then((data) => _complete(data.values, name, index, target, [], [], _frozen, _locale))
         .catch((e) => {
           ಠ_ಠ.Flags.error("Adding Content Table", e);
           ಠ_ಠ.Display.busy({

@@ -12,6 +12,8 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		/* <!-- Internal Variables --> */
 
 		/* <!-- Internal Methods --> */
+		var _padZero = (number, digits) => Array(Math.max(digits - String(number).length + 1, 0)).join(0) + number;
+
 		var _createQuery = function(filters, join) {
 			var _query, _join = join ? join : "$and";
 			Object.keys(filters).map((field => {
@@ -99,15 +101,16 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 			} else if (value) {
 				if (value.toLowerCase() === "past") {
 					_filter = {
-						"$lt": new Date().toLocaleDateString()
+						"$lt": new Date()
 					};
 				} else if (value.toLowerCase() === "future") {
 					_filter = {
-						"$gt": new Date().toLocaleString()
+						"$gt": new Date()
 					};
 				} else if (value.toLowerCase() === "today") {
+					var _t = new Date();
 					_filter = {
-						"$contains": [new Date().toLocaleDateString()]
+						"$between": [moment().startOf("day"), moment().endOf("day")]
 					};
 				} else {
 					_filter = {

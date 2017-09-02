@@ -1,3 +1,3 @@
 {% raw %}
-{{#each rows}}<tr>{{#each this}}<td>{{this}}</td>{{/each}}</tr>{{/each}}
+{{#each rows}}<tr>{{#each this}}<td>{{#isDate this}}{{localeDate this}}{{else}}{{this}}{{/isDate}}</td>{{/each}}</tr>{{/each}}
 {% endraw %}

@@ -67,6 +67,18 @@ Display = function() {
 
 		start: function() {
 
+			Handlebars.registerHelper("isDate", function(variable, options) {
+				if (variable && variable instanceof Date) {
+    			return options.fn(this);
+  			} else {
+  				return options.inverse(this);
+				}
+			});
+			
+			Handlebars.registerHelper("localeDate", function(variable, options) {
+  			return variable.toLocaleString();
+			});
+			
 			Handlebars.registerHelper("exists", function(variable, options) {
 				if (typeof variable !== "undefined") {
 					return options.fn(this);

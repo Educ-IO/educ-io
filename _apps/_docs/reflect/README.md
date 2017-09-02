@@ -1,3 +1,3 @@
-REFLECT
-------
-Thanks for logging in, let's get started.
+{% assign app = site.data.apps.reflect %}
+{% capture text %}Thanks for logging in, let's __get started__. Use the menus above, your __recently created__ reports or the buttons below to jump straight in. If you haven't used this app before, it might be worth __pausing for a moment__ to read the [instructions](#instructions). Or read our [about](/about/) page to find out more about this site, our privacy safeguards and our technology.{% endcapture %}
+{% include landing.html logo="images/reflect_logo.svg" start_desc="Create a Report" start_Url="#google,create.new" %}

@@ -51,8 +51,14 @@ Folders
 * Can we do an in-place MimeType change?
 * Write Instructions for 'Folders'
 
+Reflect
+-------
+
+
 Complete
 --------
+* Future and Past Filters? Are they working?? ... need to deal with the numerical values here? <-- DONE
+* Handle no-App-route situation <-- DONE
 * Version Update Details aren't correct (as it's cached!) ... need to fix <-- DONE
 * Sign-Out should clear the 'protect' flag for jump out links <-- DONE
 * Breadcrumbs for Navigation <== DONE

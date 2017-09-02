@@ -665,3 +665,41 @@ jszip:
       integrity: sha256-+QCr2Qs1HsAm+pm1n5JuilQgWsNPS1YxMUPVqYCL3JM=
       crossorigin: anonymous
       id: __jszip
+
+moment:
+  name: Moment JS
+  desc: Flexible Parsing and Display of dates
+  url: https://cdnjs.com/libraries/moment.js
+  project: https://github.com/moment/moment/
+  version: 2.18.1
+  license: mit
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js
+      integrity: sha256-1hjUhpc44NwiNg8OwMu2QzJXhD8kcj+sJA3aCQZoUjg=
+      crossorigin: anonymous
+      id: __moment
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js
+      integrity: sha256-GSRe5cHmmTD3DgBxRifzkNLaW1iwPTzt9kJ86rGa8tg=
+      crossorigin: anonymous
+      id: __moment
+      
+moment_all:
+  name: Moment JS (All Locales)
+  desc: Flexible Parsing and Display of dates (including locales)
+  url: https://cdnjs.com/libraries/moment.js
+  project: https://github.com/moment/moment/
+  version: 2.18.1
+  license: mit
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js
+      integrity: sha256-/ioiJhI6NkoUDkSyBru7JZUGXGQhdml6amBC3ApTf5A=
+      crossorigin: anonymous
+      id: __moment
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.js
+      integrity: sha256-OwvooOJkr7XYSFHUMivG/ExkE0TDfqbuY3wSVswkkD4=
+      crossorigin: anonymous
+      id: __moment

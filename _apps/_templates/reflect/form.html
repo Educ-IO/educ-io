@@ -1,0 +1,236 @@
+<div class="row">
+
+	<div class="col-md-offset-2 col-md-10">
+
+		<!-- Retrieve if error -->
+		<div id="retrieve_Local" style="display: none;" class="panel panel-info">
+
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="glyphicon glyphicon-piggy-bank" style="padding-right: 0.6em;"></span>Recovered Form</h4>		
+			</div>
+
+			<div class="panel-body">
+
+				<p>Looks like there was a <strong>failed</strong> form save/submit from <strong><span id="recover_date"></span></strong>, which has been recovered. <span id="recover_details"></span>You can choose to recover this and try to save/submit again, or abandon it (the recovered data will be removed).</p>
+
+				<!-- Control Buttons -->
+				<div class="form-group">
+
+					<button id="recover_draft" class="btn material-button material-button-info">Recover</button>
+					<button id="abandon_draft" class="btn material-button material-button-warning">Abandon</button>
+					<span class="help-block"></span>
+				</div>
+
+			</div>
+
+		</div>
+
+		<!-- Weep Form -->
+		<form id="form_Reflect" class="form-horizontal pane" role="form">
+			<fieldset>
+
+				<div class="col-md-12">
+					<h4 class="col-md-offset-1 col-md-8 well well-sm light">To Start</h4>
+				</div>
+
+				<!-- Select input-->
+				<!-- Week / Assessment Point -->
+				<div class="form-group form-group-lg">
+					<label class="col-md-3 control-label" for="weep_PeriodSelector">Week / Assessment Point</label>  
+					<div class="col-md-6">
+						<select id="weep_PeriodSelector" class="form-control input-md" data-for="weep_Period" disabled="disabled">
+						</select>
+						<input id="weep_Period" name="weep_Period" type="text" class="hidden" readonly="readonly" required="required" data-field="Assessment Point" data-order="1" />
+						<span class="help-block">For which week or assessment point is this for? Once you select this, you won't be able to change it as data will loaded for 'weeps in progress'!</span>
+					</div>
+				</div>
+
+				<!-- Text input-->
+				<!-- Current Trainee -->
+				<div class="form-group form-group-lg">
+					<label class="col-md-3 control-label" for="weep_Trainee">Trainee</label>
+					<div class="col-md-6">
+						<input id="weep_Trainee" name="weep_Trainee" type="text" class="form-control input-md resizable" readonly="readonly" required="required" data-field="Trainee" data-order="2" />
+						<i id="weep_Trainee_Glyph" class="form-control-feedback glyphicon glyphicon-user pad-right-more"></i>
+						<span class="help-block"></span>
+					</div>
+				</div>
+
+				<!-- Numerical input-->
+				<!-- Days Absent -->
+				<div class="form-group">
+					<label class="col-md-3 control-label" for="number_of_Absences">Any absences this week?</label> 
+					<div class="col-md-6">
+						<div class="input-group" data-for="number_of_Absences">
+							<div class="input-group-btn">
+								<button type="button" class="btn btn-default alter-numerical" data-target="number_of_Absences" data-value="-0.5"><span class="glyphicon glyphicon-minus"></span></button>
+								<button type="button" class="btn btn-default alter-numerical" data-target="number_of_Absences" data-value="0.5"><span class="glyphicon glyphicon-plus"></span></button>
+								<button type="button" class="btn eraser" data-target="number_of_Absences"
+									style="background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 1px rgba(0,0,0,.075); border-color: #ccc;	color: #333;">
+									<span class="glyphicon glyphicon-erase" style="padding-left: 0.7em;"></span>
+								</button>
+							</div>
+							<input id="number_of_Absences" name="number_of_Absences" type="text" class="form-control" style="margin-left: 0.2em;" readonly="readonly" aria-label="Number of Absences this week" data-suffix="day/s absent this week" data-min="0" data-max="4" data-field="Number of Absences" data-order="4" />
+						</div>
+						<textarea data-for="number_of_Absences" data-type="Details" id="details_of_Absences" name="details_of_Absences" class="form-control resizable optional" style="margin-top: 0.4em;" rows="1" aria-label="Further Details of Absence" placeholder="Further details, if applicable"></textarea>
+						<span class="help-block">If you have been ill, or have taken <strong>agreed</strong> absence from your school, please enter the number of days here.</span>  
+					</div>
+				</div>
+
+				<!-- Text input-->
+				<!-- Current Mentor -->
+				<div class="form-group form-group-lg">
+					<label class="col-md-3 control-label" for="weep_Mentor">Mentor</label>
+					<div class="col-md-6">
+						<input id="weep_Mentor" name="weep_Mentor" type="text" class="form-control input-md resizable" readonly="readonly" required="required" data-field="Mentor" data-order="3"/>
+						<i id="weep_Mentor_Glyph" class="form-control-feedback glyphicon glyphicon-user pad-right-more"></i>
+						<span class="help-block">This will change (automatically) during your second placement.</span>
+					</div>
+				</div>
+
+				<!-- Previous Targets, populated and toggled/shown from code -->
+				<div id="previous_Targets" class="col-md-offset-1 col-md-8" style="display: none;">
+					<div class="panel panel-warning">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<span class="glyphicon glyphicon-education pad-right-more"></span>
+								Previous Targets
+							</h4>
+						</div>
+						<div class="panel-body">
+						</div>
+						<div class="panel-footer">
+							<span class="help-block">Please indicate which of your previous targets you feel you have met, and also add applicable supporting evidence.</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-12">
+					<h4 class="col-md-offset-1 col-md-8 well well-sm light">Evaluate your Progress</h4>
+					<span class="help-block col-md-offset-1 col-md-8" style="margin-top: -1.5em;">During the week, you should target between <strong>3</strong> and <strong>6</strong> sub-standards, focussing upon them in your teaching and approach. Please gather material to support this, and link it here using the 'Evidence' buttons. Once you have begun teaching, and after having met with your mentor, you should also supply your <strong>agreed</strong> overall assessment.</span>
+				</div>
+
+				<!-- Multi-Checkbox input-->
+				<!-- Teachers' Standards -->
+				<div class="form-group">
+					<label class="col-md-3 control-label" for="weep_Standards">Teachers' Standards</label>
+					<div class="col-md-6">
+						<!-- List group -->
+						<ul class="list-group" id="weep_Standards"></ul>
+						<span class="help-block"><strong>Click</strong> on the switches of the Teachers' Standards you have targeted this week. You should <strong>supply evidence</strong> as well, which will help build and populate your evidence tracker.</span>
+					</div>
+				</div>
+
+				<!-- Mutli-Line Text input-->
+				<!-- Reflection on progress this week-->
+				<div class="form-group">
+					<label class="col-md-3 control-label" for="weep_Reflection">Any further reflections on this week</label>  
+					<div class="col-md-6">
+						<textarea id="weep_Reflection" name="weep_Reflection"class="form-control input-md resizable optional" data-field="Reflections" data-order="6" rows="4" style="width: 100%; max-width: 100%; resize: vertical" ></textarea>
+						<span class="help-block">Please record further thoughts about your progress here.</span>
+					</div>
+				</div>
+
+				<!-- Radio Select-->
+				<!-- Summative Assessment -->
+				<div class="form-group">
+					<label class="col-md-3 control-label" for="weep_Assessment">Overall Assessment</label>
+					<div class="col-md-6">
+
+						<div class="btn-group" data-toggle="buttons" id="weep_Assessment_Buttons">
+
+							<label class="btn btn-primary">
+								<input type="radio" name="options" autocomplete="off" data-target="weep_Assessment" data-value="A: Excellent" />
+								<span class="glyphicon glyphicon-ok dim"></span>
+							</label>
+
+							<label class="btn btn-info">
+								<input type="radio" name="options" autocomplete="off" data-target="weep_Assessment" data-value="B: Secure" />
+								<span class="glyphicon glyphicon-ok dim"></span>
+							</label>
+
+							<label class="btn btn-success">
+								<input type="radio" name="options" autocomplete="off" data-target="weep_Assessment" data-value="C: Developing (Standards Met)" />
+								<span class="glyphicon glyphicon-ok dim"></span>
+							</label>
+
+							<label class="btn btn-warning">
+								<input type="radio" name="options" autocomplete="off" data-target="weep_Assessment" data-value="D: Emerging" />
+								<span class="glyphicon glyphicon-ok dim"></span>
+							</label>
+
+							<label class="btn btn-danger">
+								<input type="radio" name="options" autocomplete="off" data-target="weep_Assessment" data-value="E: Weak" />
+								<span class="glyphicon glyphicon-ok dim"></span>
+							</label>
+
+							<label class="btn btn-primary black">
+								<input type="radio" name="options" autocomplete="off" data-target="weep_Assessment" data-value="Not enough evidence seen / Opportunity to assess" />
+								<span class="glyphicon glyphicon-eye-close dim"></span>
+							</label>
+
+							<label class="btn"
+								style="background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 1px rgba(0,0,0,.075); border-color: #ccc;	color: #333;">
+								<input type="radio" name="options" autocomplete="off" data-target="weep_Assessment" data-value=""  />
+								<span class="glyphicon glyphicon-erase no-dim" style="padding-left: 0.7em;"></span>
+							</label>
+
+						</div>
+
+						<textarea id="weep_Assessment" name="weep_Assessment" type="text" class="form-control resizable optional" style="margin-top: 0.4em;" aria-label="Summative Assessment" readonly="readonly" data-field="Assessment" rows="1" data-order="7"></textarea>
+						<span class="help-block">Having <strong>discussed</strong> and <strong>agreed</strong> this with your Mentor, please assess your progress over this past week.</span>
+					</div>
+				</div>
+
+				<div class="col-md-12">
+					<h4 class="col-md-offset-1 col-md-8 well well-sm light">Looking Forward</h4>
+					<span class="help-block col-md-offset-1 col-md-8" style="margin-top: -1.5em;">Please identify between <strong>2</strong> and <strong>5</strong> targets that you feel would be appropriate for the week ahead, thinking about the types of evidence you might gather to show you have meet them. You will be asked in the following week to identify those you have met, and supply relevant supporting evidence.</span>
+				</div>
+
+				<!-- Complex Input-->
+				<!-- Create Targets for the Coming Week -->
+				<!-- Details / Strategies / Evidence Types -->
+				<div class="form-group">
+					<label class="col-md-3 control-label" for="weep_Targets">Targets for the coming week</label>  
+					<div class="col-md-6">
+						<div class="input-group" data-for="target_Entry">
+							<input id="weep_Targets" name="targets" data-field="targets" hidden="hidden" type="checkbox" data-order="8">
+							<textarea id="target_Details" class="form-control resizable" style="margin-left: 0.2em;" rows="1" aria-label="Target Details" placeholder="Target Details" ></textarea>
+							<div class="input-group-btn bottom-align">
+								<button type="button" id="target_EvidenceType" class="btn btn-default" style="color: #777;">Evidence Type</button>
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<span class="caret"></span>
+										<span class="sr-only">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu dropdown-menu-right">
+										<li><a href="#" class="dropdown-selector" data-target="target_EvidenceType" data-value="Lesson Plan">Lesson Plan</a></li>
+										<li><a href="#" class="dropdown-selector" data-target="target_EvidenceType" data-value="Lesson Observation">Lesson Observation</a></li>
+										<li><a href="#" class="dropdown-selector" data-target="target_EvidenceType" data-value="Audio / Visual Recording">Audio / Visual Recording</a></li>
+										<li><a href="#" class="dropdown-selector" data-target="target_EvidenceType" data-value="Feedback (from Colleagues / Students)">Feedback (from Colleagues / Students)</a></li>
+										<li><a href="#" class="dropdown-selector" data-target="target_EvidenceType" data-value="Records (e.g. Google Sheet Markbook)">Records (e.g. Google Sheet Markbook)</a></li>
+										<li><a href="#" class="dropdown-selector" data-target="target_EvidenceType" data-value="Other">Other</a></li>
+									</ul>
+								<button id="add_Target" type="button" class="btn btn-primary" style="margin-left: 0.2em;" title="Add Target to List"><span class="glyphicon glyphicon-floppy-save"></span></button>
+							</div>
+						</div>
+						<span class="help-block">Enter details of the targets you are setting yourself this week, together with the type of evidence that will confirm you have met the target. Then save them to the list below.</span>
+					</div>
+				</div>
+
+				<!-- Button (Double) -->
+				<div class="form-group">
+					<label class="col-md-3 control-label" for="weep_Submit">Submission</label>
+					<div id="weep_Submission" class="col-md-6">
+						<button id="weep_Save" class="btn material-button material-button-info">Save</button>
+						<button id="weep_Submit" class="btn material-button material-button-success">Submit</button>
+						<span class="help-block">You can <strong>save</strong> this form during the week (while you are working on it), but please make sure you have <strong>submitted</strong> it before the beginning of the next week so that a copy is automatically generated into your E-Portfolio and sent to your Mentor/s and ITTCo. <span id="distribution_list"></span></span>
+					</div>
+				</div>
+
+			</fieldset>
+
+		</form>
+
+	</div>
+
+</div>
