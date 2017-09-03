@@ -4,26 +4,16 @@ title: About
 permalink: /about/
 support: true
 lead: A collection of web apps, built to take advantage of the Google G-Suite platform and designed to __save time__, making technology __work for you__.
+includes: ["README", "TRANSPARENCY", "PRIVACY", "RELIABILITY", "TERMS_OF_SERVICE"]
 ---
 
-{% include_relative README.md %}
-
-- - -
-
-{% include_relative TRANSPARENCY.md %}
-
-- - -
-
-{% include_relative PRIVACY.md %}
-
-- - -
-
-{% include_relative RELIABILITY.md %}
-
-- - -
-
-{% include_relative TERMS_OF_SERVICE.md %}
-
-- - -
+{::options parse_block_html="true" /}
+<div class="d-flex flex-column p-2">
+{% for file in page.includes %}
+<div class="highlight_all highlight_{{ file | downcase }} mb-3">
+{% include_relative {{ file | upcase }}.md %}
+</div>
+{% endfor %}
+</div>
 
 {% include copyright.md %}

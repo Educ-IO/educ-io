@@ -1,0 +1,12 @@
+individual:
+  name: Individual
+  desc: For a Single User
+  cost: 1
+team:
+  name: Team
+  desc: For up to 10 Users in a single domain
+  cost: 5
+organisation:
+  name: Organisation
+  desc: For all users in a Google Apps domain
+  cost: 20

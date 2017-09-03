@@ -3,10 +3,8 @@ TODO LIST
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo
 * Contrite Penguin
-* Write Support
-* Write Requirements
 * Favicon Background?
-* BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative
+* BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative?
 * BUG -> ARROW functions in return object (e.g. View)???
 * More Sophisticated Analytics use....link on actions?
 * Gracefully handle authentication errors:
@@ -54,9 +52,12 @@ Folders
 Reflect
 -------
 
-
 Complete
 --------
+* Extend highlight= instead of anchor links into about pages etc? <-- DONE
+* Write Requirements <-- DONE
+* Write Support <-- DONE
+* ON UPDATE, need to force a refresh! <-- DONE
 * Future and Past Filters? Are they working?? ... need to deal with the numerical values here? <-- DONE
 * Handle no-App-route situation <-- DONE
 * Version Update Details aren't correct (as it's cached!) ... need to fix <-- DONE

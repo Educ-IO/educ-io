@@ -1,19 +1,18 @@
-Privacy
-=======
+### Privacy
 
 As well as an unswerving commitment to __transparency__, we are determined to protect your __privacy__, __security__ and the __confidentiality__ of your data.
 
-### __Data Protection, US COPPA and the EU GDPR__
+#### Data Protection, US COPPA and the EU GDPR
 
 All the web-apps run from this site are '__client side__' apps, meaning that __none__ of your data is transmitted back to _our systems_. Apps and their instructions are served up over HTTPS (industry standard encryption). *Your data*, however, is loaded (and saved) directly from Google, again using HTTPS. Your data stays between you and Google Apps, ensuring it remains secure and governed by your existing data protection agreements with Google. We never see it, never could see it, and would want to see it. We just provide the code!
 
-### Analytics
+#### Analytics
 
 The only data that we receive from this site is __usage__ information. This data is handled by via [Googe Analytics](https://en.wikipedia.org/wiki/Google_Analytics){:target="_blank"}, which is a widely-used third party service that collects standard internet log information, and behaviour patterns. The reason we do this is to measure the usage of these apps (e.g. what is frequently used), and also __how__ they are being used (e.g. which buttons or menu-items are clicked most often). This data helps to shape development decisions (e.g. updating and streamlining layout and processes). None of this data is linked to your account, name or email address in any way. Personally identifiable information is banned from the [analytics platform](https://support.google.com/analytics/answer/6004245){:target="_blank"} and we would never seek to try to track any individual users. All data is held in a highly secure state by google, and only accessible by us using industry-standard 2-factor authentication.
 
 While this data is important, and __useful to us__, your preferences are __even more so__. If you would prefer to block these sorts of analytics tools while you are browsing the web, you can enable [do not track](http://donottrack.us/){:target="_blank"} in your browser. This setting will be [read by us](https://github.com/Educ-IO/educ-io.github.io/blob/master/_includes/analytics.html){:target="_blank"} and __we will not attempt__ to load the analytics code if it is set. Compliance with this setting is dependent on the website/tool and is not universally honoured across the web. Alternatively, to __forcefully block__ these analytics scripts from loading, you can install a privacy enhancing tool, such as the excellent [Ghostery](https://www.ghostery.com/){:target="_blank"} chrome extension.
 
-### Browser Storage
+#### Browser Storage
 
 To provide functionality to you, we need to store a small amount of information in your browser. This stored information takes three forms:
 

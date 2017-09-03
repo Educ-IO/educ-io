@@ -63,11 +63,12 @@ Service = function() {
 							headline: "New Version Available",
 							message: details ? details.trim() : "",
 							action: "Update",
+							warning: "Updating will reload this app, and lose any un-saved work",
 							target: "body"
 						}).then(function(update) {
 							if (update) _message(sw, "update").then(
 								m => {
-									if (m == "success") {console.log("UPDATED");}
+									if (m == "success") window.location.reload();
 								}
 							);
 						});

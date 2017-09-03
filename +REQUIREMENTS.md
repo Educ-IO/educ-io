@@ -2,8 +2,9 @@
 layout: page
 title: Requirements
 permalink: /requirements/
-lead: Technical Requirements for using these web-apps, e.g. Browser etc
+lead: Browser technical specifications for using this site and our tools
 ---
+
 {% include_relative REQUIREMENTS.md %}
 
 - - -

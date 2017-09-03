@@ -17,3 +17,97 @@ nav.navbar.bg-faded {
 	opacity: 0.4;
 }
 // -- Tweak Jumbotron -- //
+
+.tiers {
+	
+	.card {
+		border: 0;
+		border-radius: 0px;
+		-webkit-box-shadow: 0 3px 0px 0 rgba(0, 0, 0, .08);
+		box-shadow: 0 3px 0px 0 rgba(0, 0, 0, .08);
+		transition: all .3s ease-in-out;
+		padding: 2.25rem 0;
+		position: relative;
+		will-change: transform; 
+		background-color: $colour-section;
+
+		&:after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 0%;
+			height: 5px;
+			background-color: $colour-highlight;
+			transition: 0.5s;
+		}
+
+		&:hover {
+			transform: scale(1.05);
+			-webkit-box-shadow: 0 20px 35px 0 rgba(0, 0, 0, .08);
+			box-shadow: 0 20px 35px 0 rgba(0, 0, 0, .08);
+
+			&:after {
+				width: 100%;
+			}
+
+		}
+		.card-header, .card-block {
+			background-color: $colour-background;
+		}
+		.card-header {
+			padding-left: 2rem;
+			border-bottom: 0px;
+		}
+		.card-title, .btn {
+			margin-bottom: 1rem;
+		}
+		.card-block {
+			padding-top: 0;
+		}
+		.list-group-item {
+			border: 0px;
+			padding: .25rem;
+			color: $colour-general;
+			font-weight: $font-weight;
+		}
+	}
+
+	.display-2 {
+		font-size: 7rem;
+		letter-spacing: -.5rem;
+		& .currency {
+			font-size: 2.75rem;
+			position: relative;
+			font-weight: $font-weight-heading;
+			top: -45px;
+			letter-spacing: 0px;
+		}
+		& .period {
+			font-size: 1rem;
+			color: lighten($colour-general, 20%);
+			letter-spacing: 0px;
+		}
+	}
+
+	// Buttons
+	.btn {
+		text-transform: uppercase;
+		font-size: .75rem;
+		font-weight: $font-weight-heading;
+		color: lighten($colour-general, 15%);
+		border-radius: 0;
+		padding: .75rem 1.25rem;
+		letter-spacing: 1px;
+	}
+
+	.btn-gradient { 
+		background-color: $colour-deemphasise;
+		transition: background .3s ease-in-out;
+
+		&:hover {
+			color: $colour-background;
+			background-color: $colour-highlight;
+		}
+	}	
+}

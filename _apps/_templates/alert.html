@@ -8,7 +8,7 @@
         </div>
         <div class="col-3">
           <button type="button" class="float-right close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <button type="button" class="btn btn-outline-{{#if type}}{{ type }}{{else}}info{{/if}} btn-sm float-right action">{{action}}</button>
+          <button type="button" class="btn btn-outline-{{#if type}}{{ type }}{{else}}info{{/if}} btn-sm float-right action"{{#if warning }} data-toggle="tooltip" data-placement="left" title="{{warning}}"{{/if}}>{{action}}</button>
         </div>
       </div>
     </div>

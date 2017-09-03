@@ -1,13 +1,12 @@
-Terms of Service
-================
+### Terms of Service
 
 Firstly, thank you for using the apps provided by __[educ.io](https://educ.io)__, we hope that you find them useful, productive and time-saving! By accessing or using our apps, you agree to the terms set out below, so please read them carefully. These terms refer to, and govern, your use of these apps, and of this website in general. The code used on this site (and your rights to view and modify it) is subject to copyright and governed by a separate [license agreement](/license/). Under these terms, we may refer to __[educ.io](https://educ.io)__ as _we_, _our_, or _us_.
 
-We use a small number of cookies and store some local data in your browser cache. In using this site, and apps, you, therefore, consent to our use of cookies under the terms set out in our [privacy](/about/#privacy) and [cookie](/about/#cookies) policies.
+We use a small number of cookies and store some local data in your browser cache. In using this site, and apps, you, therefore, consent to our use of cookies under the terms set out in our [privacy](/about/?highlight=privacy) and __cookie__ policies.
 
 #####  No Warranties
 
-This website is, and the apps containing within are, provided __as is__ without any representations or warranties, expressly stated or implied. We make absolutely no representations or warranties concerning this website or the information and materials provided within. While [every reasonable effort](/about/#reliability) will be made to ensure the reliability and continued operation of this site, we depend entirely on the availability of other APIs, over which we have no control. As such, we cannot warrant that these apps will be continuously available, or that they will be fully functional at all times.
+This website is, and the apps containing within are, provided __as is__ without any representations or warranties, expressly stated or implied. We make absolutely no representations or warranties concerning this website or the information and materials provided within. While [every reasonable effort](/about/?highlight=reliability) will be made to ensure the reliability and continued operation of this site, we depend entirely on the availability of other APIs, over which we have no control. As such, we cannot warrant that these apps will be continuously available, or that they will be fully functional at all times.
 
 ##### Limitations of Liability
 

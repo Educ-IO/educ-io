@@ -1,4 +1,8 @@
 site :
+  0.0.5q :
+    name : Bug Fixes
+    desc : Bug Fixes and Content Updates
+    type : minor
   0.0.5p :
     name : Bug Fixes
     desc : View App 0.2.0b-alpha
