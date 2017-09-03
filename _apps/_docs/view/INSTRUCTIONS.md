@@ -1,20 +1,20 @@
-Once you have __signed in__ to the site, or to the view app, you'll be able to __load a sheet__ from your Google Drive using the __open__ command from the __Sheet__ menu.
+Once you have __signed in__ to view app, you'll be able to __load a sheet__ from your Google Drive using the __open__ command from the __Sheet__ menu.
 
 If you have opened any other sheets during this logged in session (e.g. until you __sign out__), they will appear on the opening screen of the app, giving you a __quick way__ to open sheets that you commonly use. Just click on them to open directly, or click on the small cross to remove them from this page.
 
-Upon opening a sheet, the first _tab_ and it's associated data is displayed. You can refresh the data in the tab (by re-loading it from your Google Drive sheet) via the __Refresh__ command on the __Settings__ menu (this will also clear any filters / sorts / visibilities). You can open other tabs by clicking on them (*shift*{:.kb-shortcut} click will refresh the data if it has been already loaded). Moving between tabs will __not clear__ your filters / sorts / visibilities unless you refresh them.
+Upon opening a sheet, the first _tab_ and its associated data is displayed. You can refresh the data in the tab (by re-loading it from your Google Drive sheet) via the __Refresh__ command on the __Settings__ menu (this will also clear any filters/sorts / visibilities). You can open other tabs by clicking on them (*shift*{:.kb-shortcut} click will refresh the data if it has been already loaded). Moving between tabs will __not clear__ your filters/sorts /visibilities unless you refresh them.
 
 Once the data is visible, you can do the following things:
 
 ##### Filter & Sort the data
 
-Filters allow you to reduce the number of rows that you see, by applying filters to one or more columns (multiple column filters are cumulative, so they will show rows that meet __ALL__ of the filters, rather than any of them). They are accessible by clicking on a column heading, then start typing using the syntax below. Filters are _live_ so the relevant results will be shown as soon as you begin typing. Sorting is also accessible in the filter panel, with sort icons on the columns indicating the presence of a sort, and its direction.
+Filters allow you to reduce the number of rows that you see, by applying filters to one or more columns (multiple column filters are cumulative, so they will show rows that meet __ALL__ of the filters, rather than any of them). They are accessible by clicking on a column heading, then start typing using the syntax below. Filters are _live_, so the relevant results will be shown as soon as you begin typing. Sorting is also accessible in the filter panel, with sort icons on the columns indicating the presence of a sort, and its direction.
 
 {% include_relative _docs/shared/FILTERS.md %}
 
 ##### Show / Hide Columns
 
-Visibiity can be set inside the __filter panel__ for an individual column, or using the __Show / Hide Columns__ command from the __Settings__ menu for all of the columns (especially __hidden ones__). Setting the visibility to __hide initially__ will allow groups of adjacent columns to be quickly shown and hidden both on this page, and your final _view_.
+Visibility can be set inside the __filter panel__ for an individual column or using the __Show / Hide Columns__ command from the __Settings__ menu for all of the columns (especially __hidden ones__). Setting the visibility to __hide initially__ will allow groups of adjacent columns to be quickly shown and hidden both on this page, and your final _view_.
 
 ##### Exporting
 

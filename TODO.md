@@ -47,13 +47,13 @@ Folders
 -------
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Can we do an in-place MimeType change?
-* Write Instructions for 'Folders'
 
 Reflect
 -------
 
 Complete
 --------
+* Write Instructions for 'Folders' <-- DONE
 * Extend highlight= instead of anchor links into about pages etc? <-- DONE
 * Write Requirements <-- DONE
 * Write Support <-- DONE
