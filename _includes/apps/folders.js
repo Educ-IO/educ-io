@@ -214,6 +214,14 @@ App = function() {
 					
 				}
 
+			} else if ((/TALLY/i).test(command)) {
+
+				if (_folder) _folder.tally();
+					
+			} else if ((/AGGREGATE/i).test(command)) {
+
+				if (_folder) _folder.aggregate();
+						
 			} else if ((/CONVERT/i).test(command)) {
 
 				if (_folder) _folder.convert();

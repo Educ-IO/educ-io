@@ -135,6 +135,11 @@ Flags = function() {
 						return this;
 					},
 
+					time: function(name, end) {
+						if (_debug && console) end ? console.timeEnd.apply(console, [name]) : console.time.apply(console, [name]);
+						return this;
+					},
+					
 					oauth: function() {
 						return _oauth;
 					},

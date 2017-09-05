@@ -47,12 +47,21 @@ Folders
 -------
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Can we do an in-place MimeType change?
+* Permissions from Sheets??
+* Aggregate Spreadsheets
+* Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 
 Reflect
 -------
 
 Complete
 --------
+* Attach Statistics to Loki objects to persist filters. <-- DONE
+* EMPTY Folders <-- DONE
+* Parallelize Files / Folders with batches <-- DONE
+* File / Folder Count <-- DONE
+* Search Result Statistics in 'Alert' style dialog <-- DONE
+* Shift Console.time to Flags Module (Debug Perf) <-- DONE
 * Write Instructions for 'Folders' <-- DONE
 * Extend highlight= instead of anchor links into about pages etc? <-- DONE
 * Write Requirements <-- DONE

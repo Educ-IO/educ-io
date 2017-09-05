@@ -8,6 +8,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 	/* === Internal Visibility === */
 
 	/* <!-- Internal Constants --> */
+	const PAGE_SIZE = 500;
+	const BATCH_SIZE = 50;
 	const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
 	const RANDOM = (lower, higher) => Math.random() * (higher - lower) + lower;
 	/* <!-- Internal Constants --> */
@@ -123,14 +125,19 @@ Google_API = function(ಠ_ಠ, timeout) {
 				}
 
 				NETWORKS.general.get(url, data).then((value) => {
+										
 					list = list.concat(value[property]);
+					
 					if (value.nextPageToken) {
+						
 						_list(url, property, list, data, value.nextPageToken).then(function(list) {
 							resolve(list);
 						});
+						
 					} else {
 						resolve(list);
 					}
+					
 				}).catch((e) => reject(e));
 
 			});
@@ -200,7 +207,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-	var _contents = function(ids, mimeTypes) {
+	var _contents = function(ids, mimeTypes, excludeMimeTypes, skeleton) {
 
 		/* <!-- Build the ID portion of the query --> */
 		var _i = ids && ids.length > 0 ?
@@ -210,12 +217,17 @@ Google_API = function(ಠ_ಠ, timeout) {
 		var _m = mimeTypes && mimeTypes.length > 0 ?
 			_.reduce(mimeTypes, (q, m, i) => q + (i > 0 ? " or mimeType = '" : "mimeType = '") + m + "'", " and (") + ")" : "";
 
+		/* <!-- Build exclude MIME portion of the query --> */
+		var _e = excludeMimeTypes && excludeMimeTypes.length > 0 ?
+			_.reduce(excludeMimeTypes, (q, m, i) => q + (i > 0 ? " and mimeType != '" : "mimeType != '") + m + "'", " and (") + ")" : "";
+		
 		return _list(
 			"drive/v3/files", "files", [], {
-				pageSize: 500,
-				q: "trashed = false" + _i + _m,
+				pageSize: PAGE_SIZE,
+				q: "trashed = false" + _i + _m + _e,
 				orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-				fields: "files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred)",
+				fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size)" :
+					"kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred)",
 			}
 		);
 	};
@@ -262,8 +274,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 				});
 				next = _.map(next, f => f.id);
 
-				/* <!-- Batch these IDs into Arrays with length not longer than 30 --> */
-				var batches = _.chain(next).groupBy((v, i) => Math.floor(i / 30)).toArray().value();
+				/* <!-- Batch these IDs into Arrays with length not longer than BATCH_SIZE --> */
+				var batches = _.chain(next).groupBy((v, i) => Math.floor(i / BATCH_SIZE)).toArray().value();
 
 				/* <!-- Make an array of promises to resolve with the results of these searches --> */
 				var promises = recurse ? _.map(batches, (batch, i) => new Promise((resolve, reject) => {
@@ -351,7 +363,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		files: {
 
-			get: (id, full) => _call(NETWORKS.general.get, "drive/v3/files/" + id, {
+			get: (id) => _call(NETWORKS.general.get, "drive/v3/files/" + id, {
 				fields: "kind,id,name,mimeType,version,parents",
 			}),
 
@@ -379,6 +391,10 @@ Google_API = function(ಠ_ಠ, timeout) {
 					}
 				);
 			},
+			
+			folders: (ids, skeleton) => _contents(_arrayize(ids, _.isString), [FOLDER], [], skeleton),
+			
+			files: (ids, skeleton) => _contents(_arrayize(ids, _.isString), [], [FOLDER], skeleton),
 
 		},
 

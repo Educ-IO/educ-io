@@ -372,6 +372,8 @@ folders:
     - folders/rows
     - folders/search
     - folders/convert
+    - folders/results
+    - folders/tally
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -421,6 +423,12 @@ folders:
               disabled_until:
                 - opened
               auth: google
+            - name: Tally
+              desc: Count Files / Folders within these Folders
+              hash: tally
+              disabled_until:
+                - opened
+              auth: google
             - name: Close
               desc: Close the current Sheet
               hash: close
@@ -433,6 +441,11 @@ folders:
             - name: Convert
               desc: Convert the current search results
               hash: convert
+              disabled_until:
+                - searched
+            - name: Aggregate
+              desc: Aggregate the files (sheets) in the current search results
+              hash: aggregate
               disabled_until:
                 - searched
             - name: Close

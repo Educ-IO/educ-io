@@ -1,4 +1,8 @@
 site :
+  0.0.5r :
+    name : Folders v0.0.3d-alpha
+    desc : Improved Functionality and Bug Fixes
+    type : minor
   0.0.5q :
     name : Bug Fixes
     desc : Bug Fixes and Content Updates
@@ -80,6 +84,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.3d-alpha :
+    name : File and Folder Tallies
+    desc : Improved Functionality and Bug Fixes
+    type : minor
   0.0.3c-alpha :
     name : Improved Navigation
     desc : Breadcrumbs Navigation
