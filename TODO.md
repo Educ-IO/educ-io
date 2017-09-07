@@ -10,11 +10,14 @@ TODO LIST
 * Gracefully handle authentication errors:
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "blocked", message: "Popup was blocked"}network: "google" <= e.g. Private Browsing Mode (redirect?)
   + ERROR - Signed into Google {error: {…}, network: "google"}error: {code: "cancelled", message: "Login has been cancelled"}network: "google" <= e.g. Close Login Popup
-* Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?)  
 * Remove .map / .filter etc calls so that polyfills can be removed in favour if using Underscore.
 * Filter for correctly returned doc type on picker (recent shows all types?)
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
 * Mini-blog for app use cases?
+* Check Get Started Button on Folders - Does it work from Un-Auth? <-- Pop-Up Blocker on Incognito tab.
+
+* Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?)  
+* Lazy Permission Requests....
 
 Router
 ------
@@ -28,7 +31,6 @@ Apps
 
 Mobile
 ------
-
 * Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
 * Top nav menu wastes space on mobile. Can it be shifted to sticky on mobile devices only with bootstrap? Maybe a media query if nothing else works.
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
@@ -50,12 +52,17 @@ Folders
 * Permissions from Sheets??
 * Aggregate Spreadsheets
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
+* Search and Remove -> Cleaning Up!
+* Team Drive Support
+* Catch Promise Errors in tally, continue but mark the data as suspect?
 
 Reflect
 -------
 
 Complete
 --------
+* Remove Item from List <== DONE
+* Suppress 'preview' on remove click. <== DONE
 * Attach Statistics to Loki objects to persist filters. <-- DONE
 * EMPTY Folders <-- DONE
 * Parallelize Files / Folders with batches <-- DONE

@@ -20,7 +20,6 @@ Folder = function(ಠ_ಠ, folder, target) {
 			i = Math.floor(Math.log(bytes) / Math.log(k));
 		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 	};
-
 	
 	var mapItems = (v) => ({
 		id: v.id,
@@ -34,6 +33,7 @@ Folder = function(ಠ_ಠ, folder, target) {
 		folder: ಠ_ಠ.google.folders.is(v.mimeType),
 		download: !!v.webContentLink,
 		paths: v.paths,
+		properties: v.properties
 	});
 
 	var _showData = function(id, name, values, target) {
@@ -87,7 +87,7 @@ Folder = function(ಠ_ಠ, folder, target) {
 		/* <!-- Need to load the contents of the folder --> */
 		ಠ_ಠ.google.folders.contents(id).then((contents) => {
 			ಠ_ಠ.Flags.log("Google Drive Folder Opened", contents);
-			_tables[name] = _showData(id, name, _.map(contents, mapItems), target);
+			_tables[id] = _showData(id, name, _.map(contents, mapItems), target);
 			ಠ_ಠ.Display.busy({
 				target: target,
 				clear: true
@@ -165,7 +165,7 @@ Folder = function(ಠ_ಠ, folder, target) {
 		var _file_Count = _.reduce(items, (count, item) => item.mimeType !== "application/vnd.google-apps.folder" ? count + 1 : count, 0);
 		var _file_Size = _.reduce(items, (total, item) => total + (item.size ? parseInt(item.size) : 0), 0);
 
-		_showData(_id, name, _items, $(ಠ_ಠ.Display.template.get("tab-tabs")(_data)).appendTo(".tab-content"));
+		_tables[_id] = _showData(_id, name, _items, $(ಠ_ಠ.Display.template.get("tab-tabs")(_data)).appendTo(".tab-content"));
 		_activateTab($(ಠ_ಠ.Display.template.get("tab-links")(_data)).appendTo("#folder_tabs").parent());
 		
 		/* <!-- Measure the Performance (end) --> */
@@ -209,6 +209,7 @@ Folder = function(ಠ_ಠ, folder, target) {
 					return new RegExp(regex, "i").test(f.name);
 				}
 			};
+			var _properties = _.map(_.find(values, v => v.name == "properties").value.split("\n"), r => _regex(r.trim()));
 			var _exclude = _.map(_.find(values, v => v.name == "exclude").value.split("\n"), r => _regex(r.trim()));
 			var _include = _.map(_.find(values, v => v.name == "include").value.split("\n"), r => _regex(r.trim()));
 			var _recurse = !!(_.find(values, v => v.name == "recurse"));
@@ -546,21 +547,20 @@ Folder = function(ಠ_ಠ, folder, target) {
 		var _tally_folders = function(folder_ids, results) {
 			
 			return new Promise((resolve) => {
-				
-				Promise.all([
-					ಠ_ಠ.google.folders.files(folder_ids, true),
-					ಠ_ಠ.google.folders.folders(folder_ids, true)
-				]).then((values) => {
-					
-					/* <!-- Separate Promise Returns --> */
-					var _files = values[0], _folders = values[1];
-					
+
+				var _complete = (items) => {
+									
 					/* <!-- Update File Count & Sizes --> */
-					results.files += _files.length;
-					results.size += _.reduce(_files, (total, file) => total + (file.size ? parseInt(file.size) : 0), 0);
+					var _isFile = ಠ_ಠ.google.folders.check(false);
+					var _isFolder =  ಠ_ಠ.google.folders.check(true);
+					
+					results.files += _.reduce(items, (count, item) => _isFile(item) ? count + 1 : count, 0);
+					results.size += _.reduce(items, (total, item) => total + (item.size ? parseInt(item.size) : 0), 0);
 					
 					/* <!-- Update Folder Count --> */
-					results.folders += _folders.length;
+					results.folders += _.reduce(items, (count, item) => _isFolder(item) ? count + 1 : count, 0);
+					
+					var _folders = _.filter(items, _isFolder);
 					
 					/* <!-- Recursive Iteration Function --> */
 					var _iterate_batch = function(batch, batches, complete) {
@@ -591,6 +591,14 @@ Folder = function(ಠ_ಠ, folder, target) {
 
 					}
 					
+				};
+				
+				/* <!-- Run the promise to fetch the data, with a delayed single retry (if required) --> */
+				/* <!-- Should be moved (DELAY / RETRY) to the Google Module, which will pass call retry details to network --> */
+				ಠ_ಠ.google.folders.children(folder_ids, true).then(_complete).catch((e) => {
+					DELAY(2000).then(() => {
+						ಠ_ಠ.google.folders.children(folder_ids, true).then(_complete).catch((e) => ಠ_ಠ.Flags.error("Processing Tally for Google Drive Folders: " + JSON.stringify(folder_ids), e ? e : "No Inner Error"));
+					});
 				});
 				
 			});
@@ -676,6 +684,17 @@ Folder = function(ಠ_ಠ, folder, target) {
 		});
 		
 	};
+	
+	var _removeItem = function(id) {
+		
+		var _id = _search ? _search : folder.id;
+		var _collection = _db.getCollection(_id);
+		var _candidate = _collection.by("id", id);
+		
+		if (_candidate) _collection.remove(_candidate);
+		_tables[_id].update();
+		
+	};
 	/* <!-- Internal Functions --> */
 
 	/* <!-- Initial Calls --> */
@@ -697,6 +716,8 @@ Folder = function(ಠ_ಠ, folder, target) {
 		tally: (id) => _tally(id ? id : folder.id),
 		
 		aggregate: () => _aggregateSearch(),
+		
+		remove: (id) => _removeItem(id),
 		
 	};
 	/* <!-- External Visibility --> */

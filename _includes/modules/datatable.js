@@ -598,7 +598,9 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 				h: h.hide_always,
 				i: h.hide_initially
 			})).value()
-		})
+		}),
+		
+		update: () => _update(true, true),
 
 	};
 	/* <!-- External Visibility --> */

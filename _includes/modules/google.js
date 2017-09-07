@@ -226,13 +226,14 @@ Google_API = function(ಠ_ಠ, timeout) {
 				pageSize: PAGE_SIZE,
 				q: "trashed = false" + _i + _m + _e,
 				orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-				fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size)" :
-					"kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred)",
+				fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size,mimeType)" :
+					"kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties)",
 			}
 		);
+		
 	};
 
-	var _search = function(ids, recurse, folders, mimeTypes, excludes, includes, cache) {
+	var _search = function(ids, recurse, folders, mimeTypes, excludes, includes, properties, cache) {
 
 		var _paths = (parents, chain, all) => {
 
@@ -279,7 +280,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 				/* <!-- Make an array of promises to resolve with the results of these searches --> */
 				var promises = recurse ? _.map(batches, (batch, i) => new Promise((resolve, reject) => {
-					DELAY(RANDOM(100, 800) * i).then(_search(batch, recurse, folders, mimeTypes, excludes, includes, cache).then((v) => resolve(v)));
+					DELAY(RANDOM(100, 800) * i).then(_search(batch, recurse, folders, mimeTypes, excludes, includes, properties, cache).then((v) => resolve(v)));
 				})) : [];
 
 				/* <!-- Filter to remove the folders if we are not returning them --> */
@@ -371,26 +372,22 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		folders: {
 
+			check : (is) => (item) => is ? item.mimeType === FOLDER : item.mimeType !== FOLDER,
+			
 			is: (type) => type === FOLDER,
 
-			search: (ids, recurse, mimeTypes, excludes, includes) => {
+			search: (ids, recurse, mimeTypes, excludes, includes, properties) => {
 				var folders = (mimeTypes = _arrayize(mimeTypes, _.isString)).indexOf(FOLDER) >= 0;
 				return _search(
 					_arrayize(ids, _.isString), recurse, folders,
 					recurse && !folders ? [FOLDER].concat(_arrayize(mimeTypes, _.isString)) : _arrayize(mimeTypes, _.isString),
 					_arrayize(excludes, _.isFunction),
-					recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), {});
+					recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), properties, {});
 			},
 
 			contents: (ids, mimeTypes) => _contents(_arrayize(ids, _.isString), _arrayize(mimeTypes, _.isString)),
 
-			children: function(id) {
-				return _list(
-					"drive/v2/files/" + id + "/children", "items", [], {
-						orderBy: "starred, modifiedByMeDate desc, lastViewedByMeDate desc, folder, title"
-					}
-				);
-			},
+			children: (ids, skeleton) => _contents(_arrayize(ids, _.isString), [], [], skeleton),
 			
 			folders: (ids, skeleton) => _contents(_arrayize(ids, _.isString), [FOLDER], [], skeleton),
 			

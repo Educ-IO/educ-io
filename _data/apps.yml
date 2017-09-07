@@ -275,7 +275,7 @@ reflect:
       - scope: https://www.googleapis.com/auth/spreadsheets
         name: View / Edit your Google Spreadsheets
         reason: This app needs to write data to your spreadsheets in order to record periodic progress from your reflections.
-        request: login
+        request: lazy
   keys:
     google:
         general: AIzaSyDCjK2aSKu9CAb3lCXxegwy-G9VTdNBAak
@@ -396,6 +396,10 @@ folders:
       - scope: https://www.googleapis.com/auth/drive
         name: View and manage the files in your Google Drive
         reason: In order to search, manage and convert your Drive files.
+        request: login
+      - scope: https://www.googleapis.com/auth/spreadsheets
+        name: View your Google Spreadsheets
+        reason: This app needs to load data from your spreadsheets in order to be able to aggregate it, but not to write to them.
         request: login
   keys:
     google:

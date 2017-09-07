@@ -228,7 +228,16 @@ App = function() {
 
 			} else if ((/REMOVE/i).test(command)) {
 
-				if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then(() => $("#" + command[1]).remove());
+				if ((/LIST/i).test(command[1])) {
+					
+					if (_folder && command[2]) _folder.remove(command[2]);
+					
+				} else {
+					
+					if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then(() => $("#" + command[1]).remove());	
+					
+				}
+				
 
 			} else if ((/INSTRUCTIONS/i).test(command)) {
 

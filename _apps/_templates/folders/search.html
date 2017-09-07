@@ -18,17 +18,22 @@
 				<form>
 					<div class="form-group">
     				<label for="mimeTypes">Mime Types</label>
-    				<textarea id="mimeTypes" name="mime" class="form-control" rows="3"></textarea>
+    				<textarea id="mimeTypes" name="mime" class="form-control" rows="2"></textarea>
 						<small class="form-text text-muted">Mime Types to search for (OR), one per line.</small>
   				</div>
 					<div class="form-group">
+    				<label for="includeProperties">Properties</label>
+    				<textarea id="includeProperties" name="properties" class="form-control" rows="2"></textarea>
+						<small class="form-text text-muted">Properties to search for, one per line (property name for existance, = for value too).</small>
+  				</div>
+					<div class="form-group">
     				<label for="excludeRegexes">Exclude (Regexes)</label>
-    				<textarea id="excludeRegexes" name="exclude" class="form-control" rows="3"></textarea>
+    				<textarea id="excludeRegexes" name="exclude" class="form-control" rows="2"></textarea>
 						<small class="form-text text-muted">Regexes to exclude search results (OR), one per line.</small>
   				</div>
 					<div class="form-group">
     				<label for="includeRegexes">Include (Regexes)</label>
-    				<textarea id="includeRegexes" name="include" class="form-control"  rows="3"></textarea>
+    				<textarea id="includeRegexes" name="include" class="form-control"  rows="2"></textarea>
 						<small class="form-text text-muted">Regexes to include search results (OR), one per line.</small>
   				</div>
 					<div class="form-check">
