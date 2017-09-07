@@ -537,11 +537,6 @@ Folder = function(ಠ_ಠ, folder, target) {
 		/* <!-- Measure the Performance (start) --> */
 		ಠ_ಠ.Flags.time(_name);
 		
-		/* <!-- Go Busy whilst we load the child folders --> */
-		ಠ_ಠ.Display.busy({
-			target: ಠ_ಠ.container
-		});
-		
 		var _collection = _db.getCollection(id);
 		
 		var _tally_folders = function(folder_ids, results) {
@@ -667,21 +662,11 @@ Folder = function(ಠ_ಠ, folder, target) {
 			
 		};
 			
-		ಠ_ಠ.google.folders.folders(id, true).then((folders) => {
-	
-			/* <!-- Clear the Busy --> */
-			ಠ_ಠ.Display.busy({clear: true});
-			
-			/* <!-- Start Recursively Tallying Folders --> */
-			_process_Folder(folders.shift(), folders, {files: 0, folders: 0, size: 0});
-			
-		})
-		.catch((e) => {
-			
-			ಠ_ಠ.Display.busy({clear: true});
-			ಠ_ಠ.Flags.error("Processing Tally for Google Drive Folder", e ? e : "No Inner Error");
-			
-		});
+		/* <!-- Get the Folders to Process --> */
+		var _folders = _collection.chain().find({"folder": true}).data();
+		
+		/* <!-- Start Recursively Tallying Folders --> */
+		_process_Folder(_folders.shift(), _folders, {files: 0, folders: 0, size: 0});
 		
 	};
 	

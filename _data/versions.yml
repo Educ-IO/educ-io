@@ -1,4 +1,8 @@
 site :
+  0.0.5t :
+    name : Folders v0.0.3f-alpha
+    desc : Bug Fixes
+    type : minor
   0.0.5s :
     name : Folders v0.0.3e-alpha
     desc : Improved Functionality
@@ -88,6 +92,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.3f-alpha :
+    name : File and Folder Tallies
+    desc : Bug Fixing
+    type : minor
   0.0.3e-alpha :
     name : File and Folder Tallies
     desc : Improved Functionality

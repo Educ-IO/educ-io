@@ -29,6 +29,9 @@ Apps
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687
 
+* START VIEW LAYOUT ISN'T right on .md sized screen // IMPORTANT
+* LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued... maybe a workr
+
 Mobile
 ------
 * Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
