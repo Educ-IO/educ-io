@@ -1,6 +1,6 @@
 site :
   0.0.5v :
-    name : Bug Fixes
+    name : Folders v0.0.3h-alpha
     desc : Bug Fixes
     type : minor
   0.0.5u :
