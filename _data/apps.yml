@@ -198,6 +198,7 @@ view:
               disabled_until:
                 - opened
     - name: Instructions
+      short_name: Help
       hash: instructions
       desc: More details about how to use the View App
   published: true
@@ -307,6 +308,7 @@ reflect:
               disabled_until:
                 - opened
     - name: Instructions
+      short_name: Help
       hash: instructions
       desc: More details about how to use the Reflect App
   published: false
@@ -374,6 +376,7 @@ folders:
     - folders/convert
     - folders/results
     - folders/tally
+    - folders/status
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -397,10 +400,6 @@ folders:
         name: View and manage the files in your Google Drive
         reason: In order to search, manage and convert your Drive files.
         request: login
-      - scope: https://www.googleapis.com/auth/spreadsheets
-        name: View your Google Spreadsheets
-        reason: This app needs to load data from your spreadsheets in order to be able to aggregate it, but not to write to them.
-        request: login
   keys:
     google:
         general: AIzaSyAWBZZmDitrJkyaP8NaJg7MqAZNzOA0Vls
@@ -421,6 +420,12 @@ folders:
                 - google
               auth: google
               id: _cmd_Start_Folder
+            - name: Open a Team Drive
+              desc: Open a Google Team Drive
+              hash: open.team
+              imports:
+                - google
+              auth: google
             - name: Search
               desc: Search a Google Drive Folder
               hash: search
@@ -447,9 +452,14 @@ folders:
               hash: convert
               disabled_until:
                 - searched
-            - name: Aggregate
-              desc: Aggregate the files (sheets) in the current search results
-              hash: aggregate
+            - name: Delete
+              desc: Delete the files in these search results
+              hash: delete
+              disabled_until:
+                - searched
+            - name: Open With
+              desc: Open these search results with a different app
+              hash: export
               disabled_until:
                 - searched
             - name: Close
@@ -458,6 +468,7 @@ folders:
               disabled_until:
                 - searched
     - name: Instructions
+      short_name: Help
       hash: instructions
       desc: More details about how to use the Folders App
   published: true

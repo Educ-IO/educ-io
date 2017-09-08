@@ -8,7 +8,7 @@
 
   <div class="collapse navbar-collapse" id="main_Nav">
 
-    {% if page.app %}<a class="navbar-brand font-sensitive jump d-sm-none d-md-inline-block" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }} | {{ site.title }} <span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}</span></a>{% endif %}
+    {% if page.app %}<a class="navbar-brand font-sensitive jump d-sm-none d-md-inline-block" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }}<span class="d-none d-lg-inline"> | {{ site.title }}</span><span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}</span></a>{% endif %}
 
     <ul class="navbar-nav mr-auto css-sensitive">
 
@@ -27,12 +27,14 @@
       {% if menus and menus.size > 0 %}{% for menu in menus %}
       {% if menu.groups and menu.groups.size > 0 %}
         <li class="nav-item dropdown"{%if menu.desc %} title="{{menu.desc}}"{% endif %}>
-          <a class="nav-link dropdown-toggle" href="#" id="navMenu_{{ menu.name }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ menu.name }}</a>
+          <a class="nav-link dropdown-toggle" href="#" id="navMenu_{{ menu.name }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {% if menu.short_name %}<span class="d-inline d-lg-none">{{ menu.short_name }}</span><span class="d-none d-lg-inline">{{ menu.name }}</span>{% else %}{{ menu.name }}{% endif %}
+          </a>
           <div class="dropdown-menu" aria-labelledby="navMenu_{{ menu.name }}">
 
-            {% for group in menu.groups %} {% assign group_title = group[1].name %} {% assign group_commands = group[1].commands %}
+            {% for group in menu.groups %}{% assign group_commands = group[1].commands %}
 
-            {% if group_title %}<h5 class="dropdown-heading">{{ group_title }}</h5>{% endif %}
+            {% if group[1].name %}<h5 class="dropdown-heading">{{ group[1].name }}</h5>{% endif %}
 
             {% for command in group_commands %}
             <a {% if command.id %}id="{{command.id}}"{% endif %} class="dropdown-item{% if command.disabled_until and command.disabled_until.size > 0%} disabled{% for until in command.disabled_until %} state-{{until}}{% endfor %}{% endif %}" href="#{% if command.auth %}{{ command.auth }},{% endif %}{{ command.hash }}" {% if command.desc %}data-toggle="tooltip" title="{{ command.desc }}"{% if group == menu.groups.first %}{% if command == group_commands.first %} data-placement="bottom"{% endif %}{% endif %}{% endif %}{% if command.imports and command.imports.size > 0 %}{% capture command_imports %}[{% for import in command.imports %}{% if jekyll.environment == site.debug %}{% for import_url in site.data.imports[import].dev %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% else %}{% for import_url in site.data.imports[import].prod %} { id: '{{ import_url.id }}', url : '{{ import_url.url }}'{% if import_url.mode %}, mode : '{{ import_url.mode }}'{% endif %} },{% endfor %}{% endif %}{% endfor %}]{% endcapture %} onclick="event.preventDefault(); {{ site.app.namespace }}.Controller.load({{ command_imports }}).then(() => {window.location.hash = '#{% if command.auth %}{{ command.auth }},{% endif %}{{ command.hash }}';}).catch(e => {console.error(e);});"{% endif %}>
@@ -47,7 +49,9 @@
         </li>
       {% elsif menu.hash %}
         <li class="nav-item">
-          <a class="nav-link" href="#{{ menu.hash }}"{% if menu.desc %}data-toggle="tooltip" data-placement="bottom" title="{{ menu.desc }}"{% endif %}>{{ menu.name }}</a>
+          <a class="nav-link" href="#{{ menu.hash }}"{% if menu.desc %}data-toggle="tooltip" data-placement="bottom" title="{{ menu.desc }}"{% endif %}>
+            {% if menu.short_name %}<span class="d-inline d-lg-none">{{ menu.short_name }}</span><span class="d-none d-lg-inline">{{ menu.name }}</span>{% else %}{{ menu.name }}{% endif %}
+          </a>
         </li>
       {% endif %}
       {% endfor %}{% else %}

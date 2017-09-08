@@ -23,7 +23,8 @@ App = function() {
 			/* <!-- Open Sheet from Google Drive Picker --> */
 			ಠ_ಠ.google.pick(
 				"Select a Folder to Open", false, true,
-				() => [new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED],
+				() => [new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"), 
+							 google.picker.ViewId.RECENTLY_PICKED],
 				(folder) => folder ? ಠ_ಠ.Flags.log("Google Drive Folder Picked from Open", folder) && resolve(folder) : reject()
 			);
 
@@ -79,9 +80,9 @@ App = function() {
 		});
 	};
 
-	var _openFolder = function(folder, log) {
-
-		folder.url = "#google,load." + folder.id;
+	var _openFolder = function(folder, log, teamDrive) {
+		
+		folder.url = "#google,load." + (folder.team ? "team." : "") + folder.id + (teamDrive ? "." + teamDrive : "");
 
 		if (!_folder || !_path) {
 			
@@ -112,30 +113,43 @@ App = function() {
 		}
 		
 		_showPath(_path, ಠ_ಠ.container);
-		_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container);
+		_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive);
 		if (log) ಠ_ಠ.Recent.add(folder.id, folder.name, folder.url).then(() => _resize());
 
 	};
 	
-	var _loadFolder = function(id, log) {
+	var _load = function(loader, rootTeamDrive, log, teamDrive) {
 		
-		if (id) {
-			
+		ಠ_ಠ.Display.busy({
+			target: ಠ_ಠ.container
+		});
+
+		loader.then(folder => {
+
 			ಠ_ಠ.Display.busy({
-				target: ಠ_ಠ.container
+				target: ಠ_ಠ.container,
+				clear: true
 			});
 
-			ಠ_ಠ.google.files.get(id).then(folder => {
+			folder.team = rootTeamDrive;
+			_openFolder(folder, log, teamDrive);
 
-				ಠ_ಠ.Display.busy({
-					target: ಠ_ಠ.container,
-					clear: true
-				});
-
-				_openFolder(folder, log);
-
-			}).catch((e) => ಠ_ಠ.Flags.error("File / Folder Load Failure", e ? e : "No Inner Error"));
-		}
+		}).catch((e) => {
+			ಠ_ಠ.Display.busy({clear: true});
+			ಠ_ಠ.Flags.error("File / Folder Load Failure", e ? e : "No Inner Error");
+		});
+		
+	};
+	
+	var _loadFolder = function(id, log, teamDrive) {
+		
+		if (id) _load(ಠ_ಠ.google.files.get(id, teamDrive), false, log, teamDrive);
+		
+	};
+	
+	var _loadTeamDrive = function(id, log) {
+		
+		if (id) _load(ಠ_ಠ.google.teamDrives.get(id), true, log);
 		
 	};
 	
@@ -148,6 +162,41 @@ App = function() {
 			ಠ_ಠ.container.empty();
 		}
 		
+	};
+	
+	var _openTeamDrive = function() {
+		
+		ಠ_ಠ.Display.busy({
+			target: ಠ_ಠ.container
+		});
+		
+		ಠ_ಠ.google.teamDrives.list().then(drives => {
+		
+			ಠ_ಠ.Display.busy({
+				target: ಠ_ಠ.container,
+				clear: true
+			});
+			
+			ಠ_ಠ.Display.choose({
+				id: "folders_teamDrives",
+				title: "Please Choose a Team Drive to Open ...",
+				action: "Open",
+				choices: _.map(drives, (drive) => ({id: drive.id, name: drive.name}))
+			}).then(function(option) {
+
+				if (option) {
+					option.team = true;
+					_openFolder(option, true);
+				}
+
+			}).catch((e) => {
+				
+				ಠ_ಠ.Flags.error("Team Drive Select:", e);
+				ಠ_ಠ.Display.busy({clear: true});
+				
+			});
+			
+		}).catch((e) => ಠ_ಠ.Flags.error("Team Drive Load Failure", e ? e : "No Inner Error"));
 	};
 	/* <!-- Internal Functions --> */
 
@@ -190,6 +239,8 @@ App = function() {
 				/* <!-- Pick, or Load the Root Folder --> */
 				if ((/ROOT/i).test(command[1])) {
 					_loadFolder("root", false);
+				} else if ((/TEAM/i).test(command[1])) {
+					_openTeamDrive();
 				} else {
 					_pick().then((folder) => {
 						_openFolder(folder, true);
@@ -198,7 +249,7 @@ App = function() {
 
 			} else if ((/LOAD/i).test(command)) {
 
-				_loadFolder(command[1], true);
+				(/TEAM/i).test(command[1]) ? _loadTeamDrive(command[2], true) : _loadFolder(command[1], true, command[2]);
 
 			} else if ((/CLOSE/i).test(command)) {
 
@@ -238,7 +289,6 @@ App = function() {
 					
 				}
 				
-
 			} else if ((/INSTRUCTIONS/i).test(command)) {
 
 				/* <!-- Load the Instructions --> */
@@ -253,6 +303,10 @@ App = function() {
 
 				if (_folder) _folder.search((/ROOT/i).test(command[1]) ? "root" : "");
 
+			} else if ((/DELETE/i).test(command)) {
+
+				if (_folder) _folder.delete();
+				
 			}
 
 			/* <!-- Record the last command --> */

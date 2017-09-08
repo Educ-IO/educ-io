@@ -107,16 +107,20 @@ Network = function(base, timeout, rate, retry) {
 				/* <!-- Fetch Executed, but may have returned a non-200 status code --> */
 				if (response.ok) {
 					
-					var _response;
-					if (!responseType || responseType == "application/json") {
-						_response = response.json();
-					} else if (responseType == "text/plain") {
-						_response = response.text();
-					} else if (responseType == "application/binary") {
-						_response = response.blob();
+					if (response.status == 204) {
+						resolve(true);
+					} else {
+						var _response;
+						if (!responseType || responseType == "application/json") {
+							_response = response.json();
+						} else if (responseType == "text/plain") {
+							_response = response.text();
+						} else if (responseType == "application/binary") {
+							_response = response.blob();
+						}
+						_response.then(value => resolve(value));	
 					}
-					_response.then(value => resolve(value));
-				
+					
 				} else {
 					
 					if (response.status >= 500 || response.status == 413) {
@@ -173,9 +177,9 @@ Network = function(base, timeout, rate, retry) {
 
 		check: (fn) => _check = fn,
 
-		delete: (url) => _request("delete", url),
+		delete: (url, data) => _request("delete", url, data),
 
-		download: (url) => _request("get", url, null, null, "application/binary"),
+		download: (url, data) => _request("get", url, data, null, "application/binary"),
 
 		get: (url, data, contentType, responseType) => _request("get", url, data, contentType, responseType),
 

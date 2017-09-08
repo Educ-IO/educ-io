@@ -7,7 +7,7 @@ $spinner-duration: 0.8s;
 .loader {
 	
 	width: 100%;
-  z-index: 100;
+  z-index: 5; // -- Above Content, but below navigation -- //
 	// -- Loading Container -- //
 	.loading {
 		will-change: transform;

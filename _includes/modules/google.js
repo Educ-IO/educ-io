@@ -174,8 +174,9 @@ Google_API = function(ಠ_ಠ, timeout) {
 				})(callback, context));
 
 			if (multiple) picker.enableFeature(google.picker.Feature.MULTISELECT_ENABLED);
+			/* <!-- This doesn't currently work, although it is in the Google Drive Picker API Documentation --> */
 			if (team) picker.enableFeature(google.picker.Feature.SUPPORT_TEAM_DRIVES);
-
+			
 			if (views && typeof views === "function") views = views();
 			if (!views || (Array.isArray(views) && views.length === 0)) {
 				var view = new google.picker.DocsView()
@@ -207,7 +208,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-	var _contents = function(ids, mimeTypes, excludeMimeTypes, skeleton) {
+	var _contents = function(ids, mimeTypes, excludeMimeTypes, skeleton, team) {
 
 		/* <!-- Build the ID portion of the query --> */
 		var _i = ids && ids.length > 0 ?
@@ -221,19 +222,26 @@ Google_API = function(ಠ_ಠ, timeout) {
 		var _e = excludeMimeTypes && excludeMimeTypes.length > 0 ?
 			_.reduce(excludeMimeTypes, (q, m, i) => q + (i > 0 ? " and mimeType != '" : "mimeType != '") + m + "'", " and (") + ")" : "";
 		
-		return _list(
-			"drive/v3/files", "files", [], {
-				pageSize: PAGE_SIZE,
-				q: "trashed = false" + _i + _m + _e,
-				orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-				fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size,mimeType)" :
-					"kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties)",
-			}
-		);
+		var _data = {
+			pageSize: PAGE_SIZE,
+			q: "trashed = false" + _i + _m + _e,
+			orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
+			fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size,mimeType)" :
+				"kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties)",
+		};
+		
+		if (team) {
+			_data.teamDriveId = team;
+			_data.includeTeamDriveItems = true;
+			_data.supportsTeamDrives = true;
+			_data.corpora = "teamDrive";
+		}
+		
+		return _list("drive/v3/files", "files", [], _data);
 		
 	};
 
-	var _search = function(ids, recurse, folders, mimeTypes, excludes, includes, properties, cache) {
+	var _search = function(ids, recurse, folders, mimeTypes, excludes, includes, properties, team, cache) {
 
 		var _paths = (parents, chain, all) => {
 
@@ -261,7 +269,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		return new Promise((resolve, reject) => {
 
-			_contents(ids, mimeTypes).then((c) => {
+			_contents(ids, mimeTypes, [], false, team).then((c) => {
 
 				/* <!-- Filter the results using the Exclude then Include methods --> */
 				c = _.reject(c, (item) => _.some(excludes, (e) => e(item)));
@@ -280,7 +288,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 				/* <!-- Make an array of promises to resolve with the results of these searches --> */
 				var promises = recurse ? _.map(batches, (batch, i) => new Promise((resolve, reject) => {
-					DELAY(RANDOM(100, 800) * i).then(_search(batch, recurse, folders, mimeTypes, excludes, includes, properties, cache).then((v) => resolve(v)));
+					DELAY(RANDOM(100, 800) * i).then(_search(batch, recurse, folders, mimeTypes, excludes, includes, properties, team, cache).then((v) => resolve(v)));
 				})) : [];
 
 				/* <!-- Filter to remove the folders if we are not returning them --> */
@@ -331,10 +339,15 @@ Google_API = function(ಠ_ಠ, timeout) {
 				fields: "files(description,id,modifiedByMeTime,name,version)",
 			}
 		),
+		
+		download: (id, team) => team ? 
+			_call(NETWORKS.general.download, "drive/v3/files/" + id, {
+				alt: "media", supportsTeamDrives : true}) : 
+			_call(NETWORKS.general.download, "drive/v3/files/" + id, {
+				alt: "media",
+		}),
 
-		download: (id) => _call(NETWORKS.general.download, "drive/v3/files/" + id + "?alt=media"),
-
-		upload: (metadata, binary, mimeType) => {
+		upload: (metadata, binary, mimeType, team) => {
 
 			var _boundary = "**********%%**********";
 
@@ -346,7 +359,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 				endings: "native"
 			});
 
-			return _call(NETWORKS.general.post, "upload/drive/v3/files/?uploadType=multipart", _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
+			return _call(NETWORKS.general.post, "upload/drive/v3/files/?uploadType=multipart" + (team ? "&supportTeamDrives=true" : ""), _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
 
 		},
 
@@ -354,44 +367,69 @@ Google_API = function(ಠ_ಠ, timeout) {
 			mimeType: "application/vnd.google-apps.script+json"
 		}),
 
-		save: (id, files) => _call(NETWORKS.general.patch, "upload/drive/v3/files/" + id + "?uploadType=media", {
+		save: (id, files, team) => _call(NETWORKS.general.patch, "upload/drive/v3/files/" + id + "?uploadType=media" + (team ? "&supportTeamDrives=true" : ""), {
 			files: files
 		}, "application/json"),
 
-		update: (id, file) => _call(NETWORKS.general.patch, "drive/v3/files/" + id, file, "application/json"),
+		update: (id, file, team) => _call(NETWORKS.general.patch, "drive/v3/files/" + id + (team ? "?supportTeamDrives=true" : ""), file, "application/json"),
 
 		pick: (title, multiple, team, views, callback, context) => _pick(title, multiple, team, views, callback, context),
 
 		files: {
 
-			get: (id) => _call(NETWORKS.general.get, "drive/v3/files/" + id, {
+			delete: (id, team, trash) => {
+				var _url = team ? "drive/v3/files/" + id + "?teamDriveId=" + team + "&supportsTeamDrives=true" : "drive/v3/files/" + id;
+				var _data = trash ? {trashed : true} : null;
+				var _function = trash ? NETWORKS.general.patch : NETWORKS.general.delete;
+				return _call(_function, _url, _data);
+			},
+			
+			get: (id, team) => team ? 
+			_call(NETWORKS.general.get, "drive/v3/files/" + id, {
+				fields: "kind,id,name,mimeType,version,parents",
+				teamDriveId : team, includeTeamDriveItems : true, supportsTeamDrives : true, corpora : "teamDrive"}) : 
+			_call(NETWORKS.general.get, "drive/v3/files/" + id, {
 				fields: "kind,id,name,mimeType,version,parents",
 			}),
 
 		},
 
+		teamDrives : {
+			
+			get : (id) => _call(NETWORKS.general.get, "drive/v3/teamdrives/" + id, {
+				fields: "kind,id,name,colorRgb,capabilities",
+			}),
+			
+			list : () => _list(
+				"drive/v3/teamdrives", "teamDrives", [], {
+				orderBy: "name",
+				fields: "kind,nextPageToken,teamDrives(id,name,colorRgb)",
+			}),
+			
+		},
+		
 		folders: {
 
 			check : (is) => (item) => is ? item.mimeType === FOLDER : item.mimeType !== FOLDER,
 			
 			is: (type) => type === FOLDER,
 
-			search: (ids, recurse, mimeTypes, excludes, includes, properties) => {
+			search: (ids, recurse, mimeTypes, excludes, includes, properties, team) => {
 				var folders = (mimeTypes = _arrayize(mimeTypes, _.isString)).indexOf(FOLDER) >= 0;
 				return _search(
 					_arrayize(ids, _.isString), recurse, folders,
 					recurse && !folders ? [FOLDER].concat(_arrayize(mimeTypes, _.isString)) : _arrayize(mimeTypes, _.isString),
 					_arrayize(excludes, _.isFunction),
-					recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), properties, {});
+					recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), properties, team, {});
 			},
 
-			contents: (ids, mimeTypes) => _contents(_arrayize(ids, _.isString), _arrayize(mimeTypes, _.isString)),
+			contents: (ids, mimeTypes, team) => _contents(_arrayize(ids, _.isString), _arrayize(mimeTypes, _.isString), [], false, team),
 
-			children: (ids, skeleton) => _contents(_arrayize(ids, _.isString), [], [], skeleton),
+			children: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), [], [], skeleton, team),
 			
-			folders: (ids, skeleton) => _contents(_arrayize(ids, _.isString), [FOLDER], [], skeleton),
+			folders: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), [FOLDER], [], skeleton, team),
 			
-			files: (ids, skeleton) => _contents(_arrayize(ids, _.isString), [], [FOLDER], skeleton),
+			files: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), [], [FOLDER], skeleton, team),
 
 		},
 

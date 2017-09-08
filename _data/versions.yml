@@ -1,4 +1,8 @@
 site :
+  0.0.5u :
+    name : Folders v0.0.3g-alpha
+    desc : Team Drive
+    type : minor
   0.0.5t :
     name : Folders v0.0.3f-alpha
     desc : Bug Fixes
@@ -92,6 +96,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.3g-alpha :
+    name : Team Drive
+    desc : Team Drive Support & Cleaning
+    type : minor
   0.0.3f-alpha :
     name : File and Folder Tallies
     desc : Bug Fixing

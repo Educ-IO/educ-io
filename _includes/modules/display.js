@@ -211,6 +211,7 @@ Display = function() {
 
 				/* <!-- Set Event Handlers --> */
 				dialog.find("button.btn-primary").click(function() {
+					$(".modal-backdrop").remove();
 					resolve(true);
 				});
 				dialog.on("hidden.bs.modal", function() {
@@ -243,6 +244,8 @@ Display = function() {
 				if (dialog.find("button.btn-primary").length > 0 && dialog.find("form").length > 0) {
 					/* <!-- Set Form / Return Event Handlers --> */
 					dialog.find("button.btn-primary").click(function() {
+						/* <!-- Weird Modal Not Hiding Bug --> */
+						$(".modal-backdrop").remove();
 						resolve(dialog.find("form").serializeArray());
 					});
 					dialog.on("hidden.bs.modal", function() {
@@ -325,7 +328,10 @@ Display = function() {
 				/* <!-- Set Event Handlers --> */
 				dialog.find("button.btn-primary").click(function() {
 					var _value = dialog.find("input[name='choices']:checked, select[name='choices'] option:selected").val();
+					/* <!-- Weird Modal Not Hiding Bug --> */
+					$(".modal-backdrop").remove();
 					if (_value && options.choices[_value]) resolve(options.choices[_value]);
+					
 				});
 				dialog.on("hidden.bs.modal", function() {
 					dialog.remove();

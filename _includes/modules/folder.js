@@ -1,4 +1,4 @@
-Folder = function(ಠ_ಠ, folder, target) {
+Folder = function(ಠ_ಠ, folder, target, team) {
 
 	/* <!-- Internal Constants --> */
 	const BATCH_SIZE = 50;
@@ -8,7 +8,8 @@ Folder = function(ಠ_ಠ, folder, target) {
 	/* <!-- Internal Variables --> */
 	var _db = new loki("folders.db"),
 		_tables = {},
-		_search;
+		_search,
+		_team = team;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -33,7 +34,10 @@ Folder = function(ಠ_ಠ, folder, target) {
 		folder: ಠ_ಠ.google.folders.is(v.mimeType),
 		download: !!v.webContentLink,
 		paths: v.paths,
-		properties: v.properties
+		properties: v.properties,
+		team: _team,
+		size: v.size,
+		display_size: v.size ? _formatBytes(v.size, 2) : ""
 	});
 
 	var _showData = function(id, name, values, target) {
@@ -64,7 +68,7 @@ Folder = function(ಠ_ಠ, folder, target) {
 		}, target);
 
 		target.find("a.download").on("click.download", e => {
-			ಠ_ಠ.google.download($(e.target).data("id")).then(binary => {
+			ಠ_ಠ.google.download($(e.target).data("id"), _team).then(binary => {
 				try {
 					saveAs(binary, $(e.target).data("name"));
 				} catch (e) {
@@ -84,8 +88,10 @@ Folder = function(ಠ_ಠ, folder, target) {
 			target: target
 		});
 
+		var _loader = _team ? ಠ_ಠ.google.folders.contents(id, [], _team) : ಠ_ಠ.google.folders.contents(id);
+		
 		/* <!-- Need to load the contents of the folder --> */
-		ಠ_ಠ.google.folders.contents(id).then((contents) => {
+		_loader.then((contents) => {
 			ಠ_ಠ.Flags.log("Google Drive Folder Opened", contents);
 			_tables[id] = _showData(id, name, _.map(contents, mapItems), target);
 			ಠ_ಠ.Display.busy({
@@ -104,8 +110,11 @@ Folder = function(ಠ_ಠ, folder, target) {
 
 	var _showTab = function(tab) {
 		var target = $(tab.data("target"));
-		if ((target.children().length === 0 || tab.data("refresh")) && tab.data("type") == "folder") _loadContents(tab.data("id"), tab.data("name"), target.empty());
-		if (tab.data("type") == "folder") {
+		
+		if (tab.data("type") == "team") _team = tab.data("id");
+		
+		if ((target.children().length === 0 || tab.data("refresh")) && (tab.data("type") == "folder" || tab.data("type") == "team")) _loadContents(tab.data("id"), tab.data("name"), target.empty());
+		if (tab.data("type") == "folder" || tab.data("type") == "team") {
 			ಠ_ಠ.Display.state().exit("searched");
 			_search = null;
 		} else if (tab.data("type") == "search") {
@@ -128,7 +137,7 @@ Folder = function(ಠ_ಠ, folder, target) {
 			tabs: [{
 				id: folder.id,
 				name: folder.name,
-				type: "folder"
+				type: folder.team ? "team" : "folder"
 			}]
 		};
 
@@ -202,27 +211,31 @@ Folder = function(ಠ_ಠ, folder, target) {
 			});
 
 			var _mime = _.map(_.find(values, v => v.name == "mime").value.split("\n"), m => m.trim());
-			var _regex = (regex) => f => {
+			var _regex = (regex, fallback) => f => {
 				if (regex.indexOf("||") > 0) {
 					return f.mimeType === regex.split("||")[0] && new RegExp(regex.split("||")[1], "i").test(f.name);
-				} else {
+				} else if (regex) {
 					return new RegExp(regex, "i").test(f.name);
+				} else {
+					return fallback;
 				}
 			};
-			var _properties = _.map(_.find(values, v => v.name == "properties").value.split("\n"), r => _regex(r.trim()));
-			var _exclude = _.map(_.find(values, v => v.name == "exclude").value.split("\n"), r => _regex(r.trim()));
-			var _include = _.map(_.find(values, v => v.name == "include").value.split("\n"), r => _regex(r.trim()));
+			var _properties = _.map(_.find(values, v => v.name == "properties").value.split("\n"), r => _regex(r.trim(), true));
+			var _exclude = _.map(_.find(values, v => v.name == "exclude").value.split("\n"), r => _regex(r.trim(), false));
+			var _include = _.map(_.find(values, v => v.name == "include").value.split("\n"), r => _regex(r.trim(), true));
 			var _recurse = !!(_.find(values, v => v.name == "recurse"));
-
-			ಠ_ಠ.google.folders.search(id, _recurse, _mime, _exclude, _include).then((results) => {
+			
+			ಠ_ಠ.google.folders.search(id, _recurse, _mime, _exclude, _include, null, _team).then((results) => {
 				_showResults(_name, results);
 				ಠ_ಠ.Display.busy({
 					clear: true
 				});
 			});
 
-		}).catch(e => ಠ_ಠ.Flags.error("Search Error", e ? e : "No Inner Error"));
+		}).catch(e => {});
 
+		ಠ_ಠ.container.find("#start_search button[data-action='clear']").on("click.clear", (e) => $("#" + $(e.currentTarget).data("clear")).val(""));
+			
 		ಠ_ಠ.container.find("#start_search button[data-action='populate']").on("click.populate", (e) => {
 
 			var _excludes = ["^(\\~\\$)", "^(\\*\\*\\*\\sARCHIVE\\s\\*\\*\\*\\s)", "\\$RECYCLE\\.BIN"].join("\n");
@@ -253,7 +266,19 @@ Folder = function(ಠ_ಠ, folder, target) {
 				].join("\n"));
 				$("#excludeRegexes").val(_excludes);
 				$("#includeRegexes").val(["(\\.pptx)$", "(\\.ppt)$"].join("\n"));
+				
+			} else if (_populate == "temp") {
 
+				$("#mimeTypes").val([
+					"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+					"application/vnd.ms-excel", "application/msword", "application/vnd.ms-powerpoint",
+					"application/zip", "application/octet-stream"
+				].join("\n"));
+				$("#includeRegexes").val( ["^(\\s*\\~\\$).*(\\.docx)$", "^(\\s*\\~\\$).*(\\.doc)$", 
+					"^(\\s*\\~\\$).*(\\.pptx)$", "^(\\s*\\~\\$).*(\\.ppt)$", "^(\\s*\\~\\$).*(\\.xlsx)$", "^(\\s*\\~\\$).*(\\.xls)$", "thumbs\\.db"].join("\n"));
+			
 			}
 		});
 
@@ -269,14 +294,14 @@ Folder = function(ಠ_ಠ, folder, target) {
 				parents: file.parents
 			};
 
-			ಠ_ಠ.google.download(file.id).then(binary => {
+			ಠ_ಠ.google.download(file.id, _team).then(binary => {
 
-				ಠ_ಠ.google.upload(metadata, binary, sourceMimeType).then(uploadedFile => {
+				ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team).then(uploadedFile => {
 
 						prefixAfterConversion ?
 							ಠ_ಠ.google.update(file.id, {
 								name: prefixAfterConversion + file.name
-							})
+							}, _team)
 							.then(updated => resolve({
 								new: uploadedFile,
 								old: updated
@@ -507,6 +532,96 @@ Folder = function(ಠ_ಠ, folder, target) {
 
 	};
 	
+	var _deleteItems = function() {
+		
+		var _collection;
+		if (!_search || !(_collection = _db.getCollection(_search))) return;
+		
+		
+		ಠ_ಠ.Display.confirm({
+			id: "delete_results",
+			target: ಠ_ಠ.container,
+			message: "Please confirm that you want to delete " + _collection.count() + " items.",
+			action: "Delete"
+		}).then((confirm) => {
+			
+			if (confirm) {
+				
+				var _delete_Item = function(item, items, totals) {
+			
+					if (item) {
+
+						var _container = $("#" + _search + "_" + item.id).find(".file-name").parent();
+
+						ಠ_ಠ.Display.busy({
+							target: _container,
+							class: "loader-small"
+						});
+
+						var _result = _collection.by("id", item.id);
+
+						ಠ_ಠ.google.files.delete(item.id, _team, true).then((value) => {
+
+							if (value) {
+								
+								/* <!-- Aggregate Results --> */
+								ಠ_ಠ.google.folders.is(item.mimeType) ? totals.folders += 1 : totals.files += 1;
+								totals.size += item.size ? Number(item.size) : 0;
+
+								/* <!-- Save Results (for filtering etc) --> */
+								_result.deleted = true;
+								_collection.update(_result);
+
+								/* <!-- Show Results --> */
+								_container.append(ಠ_ಠ.Display.template.get("status")(_result));
+
+								/* <!-- Debug Log Results --> */
+								ಠ_ಠ.Flags.log("DELETED ITEM:", item.id);
+								
+							}
+							
+							ಠ_ಠ.Display.busy({
+								target: _container,
+								clear: true
+							});
+
+							_delete_Item(items.shift(), items, totals);
+
+						}).catch((e) => {
+							
+							ಠ_ಠ.Display.busy({
+								target: _container,
+								clear: true,
+							});
+							ಠ_ಠ.Flags.error("Deletion Error", e ? e : "No Inner Error");});
+
+					} else {
+
+						/* <!-- Display the Results --> */
+						ಠ_ಠ.Display.modal("results", {
+							id: "delete_results",
+							target: ಠ_ಠ.container,
+							title: "Deletion Results",
+							folders: totals.folders,
+							files: totals.files,
+							size: _formatBytes(totals.size, 2),
+						});
+
+					}
+
+				};
+				
+				var _items = _collection.chain().data();
+				
+				/* <!-- Start Recursively Deleting Items --> */
+				_delete_Item(_items.shift(), _items, {files: 0, folders: 0, size: 0});
+
+			}
+
+		}).catch((e) => {});
+		
+	};
+	
 	var _closeSearch = function(search) {
 
 		if (_search && !search) return _closeSearch(_search);
@@ -590,9 +705,9 @@ Folder = function(ಠ_ಠ, folder, target) {
 				
 				/* <!-- Run the promise to fetch the data, with a delayed single retry (if required) --> */
 				/* <!-- Should be moved (DELAY / RETRY) to the Google Module, which will pass call retry details to network --> */
-				ಠ_ಠ.google.folders.children(folder_ids, true).then(_complete).catch((e) => {
+				ಠ_ಠ.google.folders.children(folder_ids, true, _team).then(_complete).catch((e) => {
 					DELAY(2000).then(() => {
-						ಠ_ಠ.google.folders.children(folder_ids, true).then(_complete).catch((e) => ಠ_ಠ.Flags.error("Processing Tally for Google Drive Folders: " + JSON.stringify(folder_ids), e ? e : "No Inner Error"));
+						ಠ_ಠ.google.folders.children(folder_ids, true, _team).then(_complete).catch((e) => ಠ_ಠ.Flags.error("Processing Tally for Google Drive Folders: " + JSON.stringify(folder_ids), e ? e : "No Inner Error"));
 					});
 				});
 				
@@ -697,6 +812,8 @@ Folder = function(ಠ_ಠ, folder, target) {
 		convert: () => _convertItems(),
 		
 		close: () => _closeSearch(),
+		
+		delete: () => _deleteItems(),
 		
 		tally: (id) => _tally(id ? id : folder.id),
 		
