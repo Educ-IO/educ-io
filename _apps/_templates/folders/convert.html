@@ -10,10 +10,13 @@
       </div>
       <div class="modal-body">
         {{#if instructions}}{{{instructions}}}{{/if}}
-				<div class="d-flex flex-column flex-md-row lead mb-3 mt-4">
-					<button data-action="populate" data-populate="docs" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3">Google Docs</button>
-					<button data-action="populate" data-populate="sheets" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3">Google Sheets</button>
-					<button data-action="populate" data-populate="slides" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3">Google Slides</button>
+				<div class="d-flex flex-column flex-wrap flex-md-row lead mb-3 mt-1">
+					<button data-action="populate" data-populate="docs" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Word -> Docs</button>
+					<button data-action="populate" data-populate="sheets" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Excel -> Sheets</button>
+					<button data-action="populate" data-populate="slides" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Powerpoint -> Slides</button>
+					<button data-action="populate" data-populate="word" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Zip -> Word</button>
+					<button data-action="populate" data-populate="excel" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Zip -> Excel</button>
+					<button data-action="populate" data-populate="powerpoint" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Zip -> Powerpoint</button>
 				</div>
 				<form>
 					<div class="form-group">
@@ -33,10 +36,15 @@
   				</div>
 					<div class="form-group">
     				<label for="batchSize">Batch Size</label>
-						<input type="number" id="batchSize" name="batch" class="form-control" value="20"/>
-						<small class="form-text text-muted">Number of batches to break conversion task into (results written after each batch).</small>
+						<input type="number" id="batchSize" name="batch" class="form-control" value="0"/>
+						<small class="form-text text-muted">Number of batches to break conversion task into (results written after each batch). A zero or negative number will <strong>disable logging</strong>.</small>
   				</div>
-					
+					<div class="form-check">
+    				<label class="form-check-label">
+      				<input id="convertInplace" name="inplace" type="checkbox" class="form-check-input">
+      				Convert 'In Place' (don't create new file)?
+    				</label>
+  				</div>
 				</form>
       </div>
       <div class="modal-footer">

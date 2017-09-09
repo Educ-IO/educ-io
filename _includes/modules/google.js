@@ -30,6 +30,10 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	/* <!-- Internal Constants --> */
 	const FOLDER = "application/vnd.google-apps.folder";
+	const DOC = "application/vnd.google-apps.document";
+	const SHEET = "application/vnd.google-apps.spreadsheet";
+	const SLIDE = "application/vnd.google-apps.presentation";
+	const NATIVES = [DOC, SHEET, SLIDE];
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -347,7 +351,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 				alt: "media",
 		}),
 
-		upload: (metadata, binary, mimeType, team) => {
+		upload: (metadata, binary, mimeType, team, id) => {
 
 			var _boundary = "**********%%**********";
 
@@ -359,7 +363,9 @@ Google_API = function(ಠ_ಠ, timeout) {
 				endings: "native"
 			});
 
-			return _call(NETWORKS.general.post, "upload/drive/v3/files/?uploadType=multipart" + (team ? "&supportTeamDrives=true" : ""), _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
+			return _call(
+				id ? NETWORKS.general.patch : NETWORKS.general.post, 
+				"upload/drive/v3/files/" + (id ? id + "?newRevision=true&" : "?") + "uploadType=multipart" + (team ? "&supportTeamDrives=true" : ""), _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
 
 		},
 
@@ -377,6 +383,10 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		files: {
 
+			natives: () => NATIVES,
+			
+			native : (type) => type && NATIVES.indexOf(type.toLowerCase()) >= 0,
+			
 			delete: (id, team, trash) => {
 				var _url = team ? "drive/v3/files/" + id + "?teamDriveId=" + team + "&supportsTeamDrives=true" : "drive/v3/files/" + id;
 				var _data = trash ? {trashed : true} : null;

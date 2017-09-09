@@ -37,7 +37,8 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 		properties: v.properties,
 		team: _team,
 		size: v.size,
-		display_size: v.size ? _formatBytes(v.size, 2) : ""
+		display_size: v.size ? _formatBytes(v.size, 2) : "",
+		out : v.mimeType === "application/vnd.google-apps.spreadsheet" ? {text: "Open in View", url: "/view/#google,load." + v.id + ".lazy"} : null
 	});
 
 	var _showData = function(id, name, values, target) {
@@ -284,19 +285,20 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 	};
 
-	var _convertFile = function(file, sourceMimeType, targetMimeType, prefixAfterConversion) {
+	var _convertFile = function(file, sourceMimeType, targetMimeType, prefixAfterConversion, inPlace) {
 
 		return new Promise((resolve, reject) => {
 
-			var metadata = {
-				mimeType: targetMimeType,
+			var metadata = inPlace ? {} : {
 				name: file.name.substr(0, file.name.lastIndexOf(".")),
 				parents: file.parents
 			};
+			metadata.mimeType = targetMimeType;
 
 			ಠ_ಠ.google.download(file.id, _team).then(binary => {
 
-				ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team).then(uploadedFile => {
+				(inPlace ? ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team, file.id) : ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team))
+					.then(uploadedFile => {
 
 						prefixAfterConversion ?
 							ಠ_ಠ.google.update(file.id, {
@@ -339,7 +341,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 				var values = [];
 
 				_.each(failures, failure => values.push(["FAILURE", failure.id, failure.name, "", "", ""]));
-				_.each(successes, success => values.push(["Success", success.old.id, success.old.name, success.new.id, success.new.name, success.new.mimeType]));
+				_.each(successes, success => values.push(["Success", success.old ? success.old.id : "", success.old ? success.old.name : "", success.new.id, success.new.name, success.new.mimeType]));
 
 				var _total = failures.length + successes.length + last;
 
@@ -404,7 +406,10 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 			var _targetMimeType = _.find(values, v => v.name == "target").value;
 			var _prefixAfterConversion = _.find(values, v => v.name == "prefix").value;
 			var _batchSize = _.find(values, v => v.name == "batch").value;
-
+			var _inplace = !!(_.find(values, v => v.name == "inplace"));
+			var _log = (_batchSize && _batchSize > 0);
+			if (!_log) _batchSize = 50;
+			
 			if (_sourceMimeType && _targetMimeType) {
 
 				var _process_Batch = function(batch, batches, batch_index, length, id, last) {
@@ -426,16 +431,17 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 								target: _container.find(".file-name").parent(),
 								class: "loader-small"
 							});
-							_convertFile(file, _sourceMimeType, _targetMimeType, _prefixAfterConversion).then(converted => {
+							
+							_convertFile(file, _sourceMimeType, _targetMimeType, _prefixAfterConversion, _inplace).then(converted => {
 								if (_container) _container.find(".file-name").addClass("action-succeeded text-success font-weight-bold");
 								if (_result) _result.name_class = "action-succeeded text-success font-weight-bold";
-								if (converted.old) {
+								if (converted && converted.old) {
 									if (_container) _container.find(".file-name").text(converted.old.name);
 									if (_result) _result.name = converted.old.name;
 								}
 								if (_result) _collection.update(_result);
 								ಠ_ಠ.Flags.debug("CONVERTED ITEM " + file_index, converted);
-								_successes.push(converted);
+								if (converted) _successes.push(converted);
 								ಠ_ಠ.Display.busy({
 									clear: true
 								});
@@ -458,20 +464,27 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 							ಠ_ಠ.Flags.log("FILE CONVERSION COMPLETE: " + _successes.length + " successfully converted, " + _failures.length + " failed to convert.");
 
-							var _saveRetries = 3;
-							var _save = function() {
-								_saveConversionResults(_successes, _failures, id, last).then((v) => {
-									complete(v);
-								}).catch(() => {
-									/* <!-- Tricky - on fail, should we try again? Or just 'succeed' silently? --> */
-									if (_saveRetries--) {
-										DELAY(2000).then(_save());
-									} else {
-										complete({id : id, last : last});
-									}
-								});
-							};
-							_save();
+							if (_log) {
+								var _saveRetries = 3;
+								var _save = function() {
+									_saveConversionResults(_successes, _failures, id, last).then((v) => {
+										complete(v);
+									}).catch(() => {
+										/* <!-- Tricky - on fail, should we try again? Or just 'succeed' silently? --> */
+										if (_saveRetries--) {
+											DELAY(2000).then(_save());
+										} else {
+											complete({id : id, last : last});
+										}
+									});
+								};
+								_save();
+								
+							} else {
+								
+								complete({id : id, last : last});
+								
+							}
 
 						}
 
@@ -482,7 +495,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 						ಠ_ಠ.Flags.log("PROCESSING BATCH " + batch_index + " of " + length);
 
 						var _next = (value) => {
-							if (value && value.id) {
+							if (value && (!_log || value.id)) {
 								_process_Batch(batches.shift(), batches, batch_index + 1, length, value.id, value.last);
 							} else {
 								ಠ_ಠ.Flags.error("Failed to Complete Batch Conversion");
@@ -504,30 +517,63 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 			}
 
-		}).catch(e => ಠ_ಠ.Flags.error("Convert Cancelled", e ? e : "No Inner Error"));
+		}).catch(e => {if (e) ಠ_ಠ.Flags.error("Converstion Error", e);});
 
-		ಠ_ಠ.container.find("#convert_results button[data-action='populate']").on("click.populate", (e) => {
+		/* <!-- Handle the Populate Buttons --> */
+		ಠ_ಠ.container.find("#convert_results button[data-action='populate']").on("click.populate", e => {
 
-			var _populate = $(e.target).data("populate");
+			var _populate = $(e.target).data("populate"), _natives = ಠ_ಠ.google.files.natives(), _inplace = false;
+			
 			if (_populate == "docs") {
-
+			
 				$("#sourceMimeType").val("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-				$("#targetMimeType").val("application/vnd.google-apps.document");
+				$("#targetMimeType").val(_natives[0]);
 
 			} else if (_populate == "sheets") {
 
 				$("#sourceMimeType").val("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-				$("#targetMimeType").val("application/vnd.google-apps.spreadsheet");
+				$("#targetMimeType").val(_natives[1]);
 
 			} else if (_populate == "slides") {
 
 				$("#sourceMimeType").val("application/vnd.openxmlformats-officedocument.presentationml.presentation");
-				$("#targetMimeType").val("application/vnd.google-apps.presentation");
+				$("#targetMimeType").val(_natives[2]);
+				
+			} else if (_populate == "word") {
 
+				$("#sourceMimeType").val("application/zip");
+				$("#targetMimeType").val("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+				_inplace = true;
+				
+			} else if (_populate == "excel") {
+
+				$("#sourceMimeType").val("application/zip");
+				$("#targetMimeType").val("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+				_inplace = true;
+				
+			} else if (_populate == "powerpoint") {
+
+				$("#sourceMimeType").val("application/zip");
+				$("#targetMimeType").val("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+				_inplace = true;
+				
 			}
 
-			$("#prefixAfterConversion").val("*** ARCHIVE *** ");
-
+			/* <!-- Reconcile Interface --> */
+			$("#prefixAfterConversion").val(_inplace ? "" : "*** ARCHIVE *** ");
+			$("#convertInplace").prop("disabled", !_inplace).prop("checked", _inplace);
+			
+		});
+		
+		/* <!-- Update whether we can do an inplace conversion, depending on the Target MIME Type --> */
+		$("#targetMimeType").on("change", (e) => {
+			var _native = ಠ_ಠ.google.files.native($(e.target).val());
+			$("#convertInplace").prop("disabled", _native).prop("checked", !_native);
+		});
+		
+		/* <!-- If we are working inplace, we're not renaming --> */
+		$("#convertInplace").on("change", (e) => {
+			if (e.currentTarget.checked) $("#prefixAfterConversion").val("");
 		});
 
 	};
@@ -618,7 +664,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 			}
 
-		}).catch((e) => {});
+		}).catch(e => {if (e) ಠ_ಠ.Flags.error("Deletion Error", e);});
 		
 	};
 	

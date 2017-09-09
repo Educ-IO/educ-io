@@ -1,4 +1,8 @@
 site :
+  0.0.5w :
+    name : Folders v0.0.3i-alpha
+    desc : New Features
+    type : minor
   0.0.5v :
     name : Folders v0.0.3h-alpha
     desc : Bug Fixes
@@ -100,6 +104,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.3i-alpha :
+    name : New Features
+    desc : In Place Mime Conversion
+    type : minor
   0.0.3h-alpha :
     name : Bug Fixing
     desc : Bug Fixing

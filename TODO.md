@@ -50,8 +50,6 @@ View
 Folders
 -------
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
-* Can we do an in-place MimeType change?
-* Permissions from Sheets??
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 
 Reflect
@@ -59,6 +57,9 @@ Reflect
 
 Complete
 --------
+* Jump out link to View for Spreadsheets? <== PUT IT IN THE TYPE COLUMN? <-- DONE
+* Bug on Spreadsheet Conversion Logs -> Seems to create 4? Also - should be turned off if batch size is set to 0? <-- DONE
+* Can we do an in-place MimeType change? <-- DONE
 * Search and Remove -> Cleaning Up! <-- DONE
 * Handle 204 Status Gracefully <-- DONE
 * Clear Buttons on Search <-- DONE
