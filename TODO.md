@@ -50,7 +50,7 @@ View
 * Should we remove entirely blank columns????
 
 * Table Module -> 'Flickering Bug' on Table Sroll to End on Occasional Sheets
-* Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT
+* Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
 
 
 Folders

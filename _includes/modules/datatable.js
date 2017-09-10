@@ -477,7 +477,8 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		/* <!-- Set up Table --> */
 		if (options.advanced) {
 			_advanced = _advanced ? _advanced : ಠ_ಠ.Table(target.find("table"), target, ಠ_ಠ);
-			_advanced.scroll.init(target.find("tbody"), options.blocks_to_show ? options.blocks_to_show : 2, options.rows_to_show ? options.rows_to_show : 20).toggle();
+			/* <!-- Init Scroll Cache for Larger Tables --> */
+			if (table.data.count() > 200) _advanced.scroll.init(target.find("tbody"), options.blocks_to_show, options.rows_to_show).toggle();
 		}
 
 	}; /* <!-- End Show --> */

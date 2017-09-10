@@ -136,8 +136,8 @@ Table = function(table, outside, ಠ_ಠ) {
 
 				/* <!-- Set up Variable --> */
 				_content = content ? $$(content) : $$("tbody");
-				_blocks_in_cluster = _.isNull(clusterBlocks) ? 2 : clusterBlocks;
-				_rows_in_block = _.isNull(blockRows) ? 20 : blockRows;
+				_blocks_in_cluster = _.isNull(clusterBlocks) || _.isUndefined(clusterBlocks) ? 2 : clusterBlocks;
+				_rows_in_block = _.isNull(blockRows) || _.isUndefined(blockRows) ? 20 : blockRows;
 				
 				/* <!-- Return for Chaining --> */
 				return this;
@@ -199,7 +199,7 @@ Table = function(table, outside, ಠ_ಠ) {
 					_outside[0].scrollTop = 0;
 					_last_cluster = 0;
 				}
-				insertToDOM(_rows, _cache);
+				if (_content) insertToDOM(_rows, _cache);
 				_outside[0].scrollTop = scroll_top;
 				
 				/* <!-- Return for Chaining --> */
