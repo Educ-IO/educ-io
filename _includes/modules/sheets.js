@@ -19,7 +19,7 @@ Sheets = function(sheet, ಠ_ಠ) {
     }
 
     headers = headers.map((v, i) => ({
-      name: v,
+      name: v ? v : "-" + i + "-",
       hide: function(initial) {
         return !!(this.hide_now || this.hide_always || (initial && this.hide_initially));
       },
@@ -36,8 +36,8 @@ Sheets = function(sheet, ಠ_ಠ) {
 
 		/* <!-- Check Array for Dates --> */
 		var _formats;
-		console.log(moment.locale(locale));
 		if (locale && moment.locale(locale) == locale.toLowerCase()) {
+			ಠ_ಠ.Flags.log("SPREADSHEET LOCALE:", locale);
 			var _locales = moment.localeData()._longDateFormat;
 		 _formats = [moment.ISO_8601];
 			if (_locales) {
@@ -50,7 +50,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 				if (_locales.LLL) _formats.unshift(_locales.LLL);
 				if (_locales.LLLL) _formats.unshift(_locales.LLLL);
 			}
-			console.log("FORMATS:", _formats);
+			ಠ_ಠ.Flags.log("DATE PARSING FORMATS:", _formats);
 		} else {
 			ಠ_ಠ.Flags.error("Could Not Set Date/Time Locale to " + locale, "");
 		}
@@ -60,13 +60,11 @@ Sheets = function(sheet, ಠ_ಠ) {
 				if (value && _.isString(value) && moment(value, _formats, true).isValid()) dates.push(index);
 				return dates;
 			}, []);
-			console.log("DATE INDEXES:", _date_Indexes);
+			ಠ_ಠ.Flags.log("DATE COLUMN INDEXES:", _date_Indexes);
 			if (_date_Indexes.length > 0) _.each(data, (row) => _.each(_date_Indexes, (index) => {
 				row[index] = moment(row[index], _formats, true).toDate();
 			}));
 		}
-		
-		console.log("DATA:", data);
 		
     var length = 0,
       values = data.map((v) => {

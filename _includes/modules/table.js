@@ -36,6 +36,7 @@ Table = function(table, outside, ಠ_ಠ) {
 		_cluster_height = 0;
 		if( ! rows.length) return;
 		var nodes = _content[0].children;
+		/* <!-- TODO: Node can sometimes be null? --> */
 		var node = nodes[Math.floor(nodes.length / 2)];
 		_row_height = node.offsetHeight;
 		if(getStyle("borderCollapse", _content[0]) != "collapse")

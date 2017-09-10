@@ -4,7 +4,7 @@ TODO LIST
 * Animated Logo
 * Contrite Penguin
 * Favicon Background?
-* BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative?
+* BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
 * BUG -> ARROW functions in return object (e.g. View)???
 * More Sophisticated Analytics use....link on actions?
 * Gracefully handle authentication errors:
@@ -25,7 +25,7 @@ Router
 
 Apps
 ----
-* Wrap Un-Authenticated Sheets Access in Google API Javascript file ... maybe
+* Wrap Un-Authenticated Sheets Access in Google API Javascript file ... maybe??
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued... maybe a workr
@@ -46,17 +46,26 @@ View
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 * Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865
 * Provide Aggregate Open and Load (accepts cross-app commands from Folders?)
+* Handle Merged Cells and merged ranges.
+* Should we remove entirely blank columns????
+
+* Table Module -> 'Flickering Bug' on Table Sroll to End on Occasional Sheets
+* Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT
+
 
 Folders
 -------
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
+* Manual Selection for Processing Results (tick boxes?)
 
 Reflect
 -------
 
 Complete
 --------
+* [object Object] Parsing Weirdness on View HEADERS if blank cells. <-- DONE
+* Export Bug on Table Chain ... <-- DONE
 * Jump out link to View for Spreadsheets? <== PUT IT IN THE TYPE COLUMN? <-- DONE
 * Bug on Spreadsheet Conversion Logs -> Seems to create 4? Also - should be turned off if batch size is set to 0? <-- DONE
 * Can we do an in-place MimeType change? <-- DONE

@@ -1,4 +1,8 @@
 site :
+  0.0.5x :
+    name : View v0.2.0c-alpha
+    desc : Bug Fixes
+    type : minor
   0.0.5w :
     name : Folders v0.0.3i-alpha
     desc : New Features
@@ -88,6 +92,9 @@ site :
     changes :
       - Initial Service Work Testing
 view :
+  0.2.0c-alpha :
+    name : Bug Fixes
+    type : Exports and Null Headers Fix
   0.2.0b-alpha :
     name : Bug Fix
     type : Converted Magic Filters to Dates from Strings

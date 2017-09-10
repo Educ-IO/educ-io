@@ -19,7 +19,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 			dm = decimals || 2,
 			sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
 			i = Math.floor(Math.log(bytes) / Math.log(k));
-		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 	};
 	
 	var mapItems = (v) => ({
@@ -233,7 +233,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 				});
 			});
 
-		}).catch(e => {});
+		}).catch((e) => {if (e) ಠ_ಠ.Flags.error("Search Error", e);});
 
 		ಠ_ಠ.container.find("#start_search button[data-action='clear']").on("click.clear", (e) => $("#" + $(e.currentTarget).data("clear")).val(""));
 			
@@ -681,16 +681,6 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 		
 	};
 	
-	var _aggregateSearch = function(search) {
-
-		if (_search && !search) return _closeSearch(_search);
-		
-		if (search) {
-			
-		}
-		
-	};
-	
 	var _tally = function(id) {
 		
 		var _name = "Tally @ " + new Date().toLocaleTimeString();
@@ -751,7 +741,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 				
 				/* <!-- Run the promise to fetch the data, with a delayed single retry (if required) --> */
 				/* <!-- Should be moved (DELAY / RETRY) to the Google Module, which will pass call retry details to network --> */
-				ಠ_ಠ.google.folders.children(folder_ids, true, _team).then(_complete).catch((e) => {
+				ಠ_ಠ.google.folders.children(folder_ids, true, _team).then(_complete).catch(() => {
 					DELAY(2000).then(() => {
 						ಠ_ಠ.google.folders.children(folder_ids, true, _team).then(_complete).catch((e) => ಠ_ಠ.Flags.error("Processing Tally for Google Drive Folders: " + JSON.stringify(folder_ids), e ? e : "No Inner Error"));
 					});
@@ -862,8 +852,6 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 		delete: () => _deleteItems(),
 		
 		tally: (id) => _tally(id ? id : folder.id),
-		
-		aggregate: () => _aggregateSearch(),
 		
 		remove: (id) => _removeItem(id),
 		

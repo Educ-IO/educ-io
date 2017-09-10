@@ -328,7 +328,7 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		links: false,
 		classes: [],
 		headers: table.headers,
-		rows: _createRows(table.chain().data({
+		rows: _createRows(table.data.chain().data({
 			removeMeta: true
 		}).map((v) => {
 			table.headers.forEach((f, i) => {
