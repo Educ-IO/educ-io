@@ -10,29 +10,32 @@ Sheets = function(sheet, ಠ_ಠ) {
   var _initSheet = function(data, name, index, target, widths, hide, frozen, locale) {
 
     ಠ_ಠ.Flags.log("Google Sheet Values [" + name + "]", data);
+		var headers = [];
+		
+		if (data && data.length > 0) {
+			headers = data.shift();
+			var rows = frozen.rows ? frozen.rows - 1 : 0;
+			while (rows > 0) {
+				headers = data.shift().map((v, i) => v ? (headers[i] ? headers[i] + " / " + v : v) : headers[i]);
+				rows--;
+			}
 
-    var headers = data.shift();
-    var rows = frozen.rows ? frozen.rows - 1 : 0;
-    while (rows > 0) {
-      headers = data.shift().map((v, i) => v ? (headers[i] ? headers[i] + " / " + v : v) : headers[i]);
-      rows--;
-    }
-
-    headers = headers.map((v, i) => ({
-      name: v ? v : "-" + i + "-",
-      hide: function(initial) {
-        return !!(this.hide_now || this.hide_always || (initial && this.hide_initially));
-      },
-      set_hide: function(now, always, initially) {
-        this.hide_now = now;
-        this.hide_always = always;
-        this.hide_initially = initially;
-      },
-      hide_now: !!hide[i],
-      hide_always: false,
-      hide_initially: false,
-      hide_default: !!hide[i]
-    }));
+			headers = headers.map((v, i) => ({
+				name: v ? v : "-" + i + "-",
+				hide: function(initial) {
+					return !!(this.hide_now || this.hide_always || (initial && this.hide_initially));
+				},
+				set_hide: function(now, always, initially) {
+					this.hide_now = now;
+					this.hide_always = always;
+					this.hide_initially = initially;
+				},
+				hide_now: !!hide[i],
+				hide_always: false,
+				hide_initially: false,
+				hide_default: !!hide[i]
+			}));
+		}
 
 		/* <!-- Check Array for Dates --> */
 		var _formats;
@@ -55,7 +58,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 			ಠ_ಠ.Flags.error("Could Not Set Date/Time Locale to " + locale, "");
 		}
 		
-		if (data && data.length > 1) {
+		if (data && data.length > 0) {
 			var _date_Indexes = _.reduce(data[0], (dates, value, index) => {
 				if (value && _.isString(value) && moment(value, _formats, true).isValid()) dates.push(index);
 				return dates;
@@ -67,10 +70,10 @@ Sheets = function(sheet, ಠ_ಠ) {
 		}
 		
     var length = 0,
-      values = data.map((v) => {
+      values = data && data.length > 0 ? data.map((v) => {
         length = Math.max(length, v.length);
         return Object.assign({}, v);
-      });
+      }) : [];
 
     var fields = Array.apply(null, {
       length: length
@@ -218,6 +221,13 @@ Sheets = function(sheet, ಠ_ಠ) {
       size: "single",
       desc: "HTML Document [Current Tab]"
     },
+		md: {
+      name: "md",
+      type: "md",
+      ext: ".md",
+      size: "single",
+      desc: "Markdown Table [Current Tab]"
+    },
     ods: {
       name: "ods",
       type: "ods",
@@ -334,53 +344,91 @@ Sheets = function(sheet, ಠ_ಠ) {
 
       if (option) {
 
-        /* <!-- Trigger Loader --> */
+				/* <!-- Trigger Loader --> */
         ಠ_ಠ.Display.busy({target: $("div.tab-content div.tab-pane.active")});
+				
+				var _content = $(".tab-content");
+				var _id = _content.data("id");
+				var _title = _content.data("name");
+				
+				if (option.type == "md") {
+					
+					var _md_sheet = _currentSheet(), _md_name = _md_sheet.name();
+					var _md_values = _md_sheet.values(!full);
+					
+					var _md_output = "|---\n";
+					if (_md_values && _md_values.length > 0) {
+						
+						/* <!-- Output Header Row --> */
+						var _md_headers = _md_values.shift();
+						_md_output += (_.reduce(_md_headers, (row, value, index) => row + (index > 0 ? " | " + value : value), "") + "\n");
+						/* <!-- Output Separator Row --> */
+						_md_output += (_.times(_md_headers.length, () => "|:-").join("") + "\n");
+						if (_md_values.length > 0) {
+							_md_output += _.map(_md_values, (values) => _.reduce(values, (row, value, index) => row + (index > 0 ? " | " + value : value), "")).join("\n");
+						}
+						
+					}
+					
+					try {
+        		saveAs(new Blob([_md_output], {
+          		type: "text/markdown"
+        		}), _title + " - " + _md_name + option.ext);
+      		} catch (e) {
+        		ಠ_ಠ.Flags.error("Google Sheet Export", e);
+      		}
+					
+					ಠ_ಠ.Display.busy({clear: true});
 
-        var Workbook = function() {
-          if (!(this instanceof Workbook)) return new Workbook();
-          this.SheetNames = [];
-          this.Sheets = {};
-        };
+				} else {
+					
+					var Workbook = function() {
+						if (!(this instanceof Workbook)) return new Workbook();
+						this.SheetNames = [];
+						this.Sheets = {};
+					};
 
-        var _exportBook = new Workbook();
-        var _content = $(".tab-content");
-        var _id = _content.data("id");
-        var _title = _content.data("name");
+					var _exportBook = new Workbook();
+					var _safeName = {"\\" : "" , "/" : " ", "?" : "",  "*" : "", "[" : "", "]" : ""};
 
-        if (all && option.size == "multi") {
+					if (all && option.size == "multi") {
 
-          /* <!-- Get all tabs --> */
-          var _tabs = _content.children("div.tab-pane"), _current = 0, _total = _tabs.length;
+						/* <!-- Get all tabs --> */
+						var _tabs = _content.children("div.tab-pane"), _current = 0, _total = _tabs.length;
 
-          _tabs.each((i, el) => {
-            var _name = $(el).data("name");
-            var _get = !_sheets[_name] ?
-              new Promise((resolve) => {ಠ_ಠ.google.sheets.values(_id, _name + "!A:ZZ").then((data) => resolve(data.values));}) :
-              new Promise((resolve) => resolve(_sheets[_name].values(!full)));
+						_tabs.each((i, el) => {
+							var _name = $(el).data("name");
+							var _get = !_sheets[_name] ?
+								new Promise((resolve) => {ಠ_ಠ.google.sheets.values(_id, _name + "!A:ZZ").then((data) => resolve(data.values));}) :
+								new Promise((resolve) => resolve(_sheets[_name].values(!full)));
 
-            _get.then((data) => {
-              _exportBook.SheetNames.push(_name);
-              _exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(data);
-              _current += 1;
-              if (_total == _current) _outputAndSave(_exportBook, option.type, _title + option.ext).then(() => ಠ_ಠ.Display.busy({clear: true}));
-            });
+							_get.then((data) => {
+								if (data && data.length > 0) {
+									_name = RegExp.replaceChars(_name, _safeName);
+									_exportBook.SheetNames.push(_name);
+									_exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(data);
+								}
+								_current += 1;
+								if (_total == _current) _outputAndSave(_exportBook, option.type, _title + option.ext).then(() => ಠ_ಠ.Display.busy({clear: true}));
+							});
 
-          });
+						});
 
-        } else if (option.size == "single") {
+					} else if (option.size == "single") {
 
-          var _sheet = _currentSheet(), _name = _sheet.name();
-          _exportBook.SheetNames.push(_name);
-          _exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(_sheet.values(!full));
-          _outputAndSave(_exportBook, option.type, _title + " - " + _name + option.ext).then(() => ಠ_ಠ.Display.busy({clear: true}));
+						var _sheet = _currentSheet(), _name = RegExp.replaceChars(_sheet.name(), _safeName), _values = _sheet.values(!full);
+						_exportBook.SheetNames.push(_name);
+						_exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(_values && _values.length > 0 ? _values : []);
+						_outputAndSave(_exportBook, option.type, _title + " - " + _name + option.ext).then(() => ಠ_ಠ.Display.busy({clear: true}));
 
-        }
+					}
+					
+				}
 
       }
 
     }).catch((e) => {
-      ಠ_ಠ.Flags.error("Google Sheet Export:", e);
+      if (e) ಠ_ಠ.Flags.error("Google Sheet Export:", e);
       ಠ_ಠ.Display.busy({clear: true});
     });
 

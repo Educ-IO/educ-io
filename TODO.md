@@ -51,7 +51,7 @@ View
 
 * Table Module -> 'Flickering Bug' on Table Sroll to End on Occasional Sheets
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
-
+* Scroll Bars are still buggy in Chrome
 
 Folders
 -------
@@ -64,10 +64,11 @@ Reflect
 
 Complete
 --------
+* Add Markdown as an output format. <-- DONE
 * [object Object] Parsing Weirdness on View HEADERS if blank cells. <-- DONE
 * Export Bug on Table Chain ... <-- DONE
 * Jump out link to View for Spreadsheets? <== PUT IT IN THE TYPE COLUMN? <-- DONE
-* Bug on Spreadsheet Conversion Logs -> Seems to create 4? Also - should be turned off if batch size is set to 0? <-- DONE
+* Bug on Spreadsheet Conversion Logs -> SeemsJust to create 4? Also - should be turned off if batch size is set to 0? <-- DONE
 * Can we do an in-place MimeType change? <-- DONE
 * Search and Remove -> Cleaning Up! <-- DONE
 * Handle 204 Status Gracefully <-- DONE

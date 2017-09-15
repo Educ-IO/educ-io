@@ -1,4 +1,8 @@
 site :
+  0.0.5z :
+    name : View 0.2.0e-alpha
+    desc : Markdown Table Support and Bug Fixes
+    type : minor
   0.0.5y :
     name : View v0.2.0d-alpha
     desc : Bug Fixes
@@ -96,6 +100,9 @@ site :
     changes :
       - Initial Service Work Testing
 view :
+  0.2.0e-alpha :
+    name : Markdown Table Support
+    type : Markdown Table Export and Bug Fixes (for non-standard characters in export)
   0.2.0d-alpha :
     name : Bug Fixes
     type : Scroll Bug Fixes
