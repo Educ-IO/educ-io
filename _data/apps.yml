@@ -96,8 +96,8 @@ view:
         request: lazy
   keys:
     google:
-        general: AIzaSyDB4zqDt8WB-DgimvEiCDrSvi8BTaZftxY
-        oauth: 290943130848-2elj62n7h7hro65viq53cjddg3ln6i4a.apps.googleusercontent.com
+        general: AIzaSyAnA6HobNGSG5BheqjmH8-ltY483OiFZWA
+        oauth: 413873384033-o7ip66i3qhm5q80cksnce0v0vi4qij6l.apps.googleusercontent.com
   menus:
     - name: Sheet
       groups:
