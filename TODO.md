@@ -15,7 +15,6 @@ TODO LIST
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
 * Mini-blog for app use cases?
 * Check Get Started Button on Folders - Does it work from Un-Auth? <-- Pop-Up Blocker on Incognito tab. But button + script does work?
-
 * Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?)  
 * Lazy Permission Requests....
 
@@ -39,22 +38,22 @@ Mobile
 
 View
 ----
+* VIEW -> Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865
 * List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install
 * Hidden-First Visibiity on 'View' needs to be hidden
 * Write Flexbox-based Fit Algorithm
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
-* Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865
 * Provide Aggregate Open and Load (accepts cross-app commands from Folders?)
 * Handle Merged Cells and merged ranges.
 * Should we remove entirely blank columns????
-
 * Table Module -> 'Flickering Bug' on Table Sroll to End on Occasional Sheets
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
 * Scroll Bars are still buggy in Chrome
 
 Folders
 -------
+* FOLDERS -> Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Manual Selection for Processing Results (tick boxes?)

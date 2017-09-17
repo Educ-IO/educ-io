@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 support: true
 lead: A collection of web apps, built to take advantage of the Google G-Suite platform and designed to __save time__, making technology __work for you__.
-includes: ["README", "TRANSPARENCY", "PRIVACY", "RELIABILITY", "TERMS_OF_SERVICE"]
+includes: ["README", "TRANSPARENCY", "PRIVACY", "RELIABILITY", "TERMS"]
 ---
 
 {::options parse_block_html="true" /}
