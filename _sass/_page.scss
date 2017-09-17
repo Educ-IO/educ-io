@@ -18,8 +18,8 @@ nav.navbar.bg-faded {
 }
 // -- Tweak Jumbotron -- //
 
+// -- Support / Pricing Page -- //
 .tiers {
-	
 	.card {
 		border: 0;
 		border-radius: 0px;
@@ -30,7 +30,6 @@ nav.navbar.bg-faded {
 		position: relative;
 		will-change: transform; 
 		background-color: $colour-section;
-
 		&:after {
 			content: '';
 			position: absolute;
@@ -41,16 +40,13 @@ nav.navbar.bg-faded {
 			background-color: $colour-highlight;
 			transition: 0.5s;
 		}
-
 		&:hover {
 			transform: scale(1.05);
 			-webkit-box-shadow: 0 20px 35px 0 rgba(0, 0, 0, .08);
 			box-shadow: 0 20px 35px 0 rgba(0, 0, 0, .08);
-
 			&:after {
 				width: 100%;
 			}
-
 		}
 		.card-header, .card-block {
 			background-color: $colour-background;
@@ -66,8 +62,8 @@ nav.navbar.bg-faded {
 			padding-top: 0;
 		}
 		.list-group-item {
-			border: 0px;
-			padding: .25rem;
+			border: 0;
+			padding: 0.25rem;
 			color: $colour-general;
 			font-weight: $font-weight;
 		}
@@ -76,21 +72,21 @@ nav.navbar.bg-faded {
 	.display-2 {
 		font-size: 7rem;
 		letter-spacing: -.5rem;
-		& .currency {
+		&.currency {
 			font-size: 2.75rem;
 			position: relative;
 			font-weight: $font-weight-heading;
 			top: -45px;
 			letter-spacing: 0px;
 		}
-		& .period {
+		&.period {
 			font-size: 1rem;
 			color: lighten($colour-general, 20%);
 			letter-spacing: 0px;
 		}
 	}
 
-	// Buttons
+	// -- Buttons -- //
 	.btn {
 		text-transform: uppercase;
 		font-size: .75rem;
@@ -104,10 +100,12 @@ nav.navbar.bg-faded {
 	.btn-gradient { 
 		background-color: $colour-deemphasise;
 		transition: background .3s ease-in-out;
-
 		&:hover {
 			color: $colour-background;
 			background-color: $colour-highlight;
 		}
-	}	
+	}
+	// -- Buttons -- //
+	
 }
+// -- Support / Pricing Page -- //

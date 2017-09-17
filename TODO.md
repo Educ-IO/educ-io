@@ -27,7 +27,7 @@ Apps
 * Wrap Un-Authenticated Sheets Access in Google API Javascript file ... maybe??
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687
-* LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued... maybe a workr
+* LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 
 Mobile
 ------
@@ -38,7 +38,6 @@ Mobile
 
 View
 ----
-* VIEW -> Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865
 * List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install
 * Hidden-First Visibiity on 'View' needs to be hidden
 * Write Flexbox-based Fit Algorithm
@@ -63,6 +62,7 @@ Reflect
 
 Complete
 --------
+* VIEW -> Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865
 * Add Markdown as an output format. <-- DONE
 * [object Object] Parsing Weirdness on View HEADERS if blank cells. <-- DONE
 * Export Bug on Table Chain ... <-- DONE
