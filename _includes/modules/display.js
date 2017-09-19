@@ -69,16 +69,16 @@ Display = function() {
 
 			Handlebars.registerHelper("isDate", function(variable, options) {
 				if (variable && variable instanceof Date) {
-    			return options.fn(this);
-  			} else {
-  				return options.inverse(this);
+					return options.fn(this);
+				} else {
+					return options.inverse(this);
 				}
 			});
-			
+
 			Handlebars.registerHelper("localeDate", function(variable, options) {
-  			return variable.toLocaleString();
+				return variable.toLocaleString();
 			});
-			
+
 			Handlebars.registerHelper("exists", function(variable, options) {
 				if (typeof variable !== "undefined") {
 					return options.fn(this);
@@ -331,7 +331,7 @@ Display = function() {
 					/* <!-- Weird Modal Not Hiding Bug --> */
 					$(".modal-backdrop").remove();
 					if (_value && options.choices[_value]) resolve(options.choices[_value]);
-					
+
 				});
 				dialog.on("hidden.bs.modal", function() {
 					dialog.remove();

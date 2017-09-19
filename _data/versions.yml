@@ -1,4 +1,12 @@
 site :
+  0.0.6a :
+    name : Auth Bug Fix
+    desc : Better handling of Pop-Up blocked authentication scenarios (e.g. get started button on chrome)
+    type : minor
+  0.0.5z :
+    name : View 0.2.0e-alpha
+    desc : Markdown Table Support and Bug Fixes
+    type : minor
   0.0.5z :
     name : View 0.2.0e-alpha
     desc : Markdown Table Support and Bug Fixes

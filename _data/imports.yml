@@ -22,23 +22,23 @@ jsdiff:
   desc: This allows the 'diffing', or comparsion, of text.
   url: https://cdnjs.com/libraries/jsdiff
   project: https://github.com/kpdecker/jsdiff
-  version: 3.3.0
+  version: 3.3.1
   license: BSD-3-Clause
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.3.0/diff.min.js
-      integrity: sha256-szRKlVjjMz/osRQKeJSN0d3zbSWZiGheWQme17FSKso=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.3.1/diff.min.js
+      integrity: sha256-JV2dZf2Q2wl1RzHfqPCY/GZWrw2iBV75VMHVM2L2fMI=
       crossorigin: anonymous
       id: __jsdiff
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.3.0/diff.js
-      integrity: sha256-a/7307GFZ0m9Ip13qdajHWSvTgJuHc0e2RtVCoUmOIQ=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.3.1/diff.js
+      integrity: sha256-eb0HHINNxn8JZtW7d83Nqy9Dj/FtzDZ9q5auSQYGa1o=
       crossorigin: anonymous
       id: __jsdiff
 
 jshashes:
   name: JS Hashes
-  desc: This generates cryptographic 'hashes' of data and text.
+  desc: This generates cryptographic hashes of data and text.
   url: https://cdnjs.com/libraries/jshashes
   project: https://github.com/h2non/jshashes
   version: 1.0.7
@@ -60,7 +60,7 @@ screenfull:
   desc: This makes handling full screen functionality easier.
   url: https://cdnjs.com/libraries/screenfull.js
   project: https://github.com/sindresorhus/screenfull.js
-  version: 3.2.2
+  version: 3.3.1
   license: MIT
   type: js
   prod:
@@ -76,7 +76,7 @@ screenfull:
 
 localforage:
   name: Localforage
-  desc: This makes handling 'offline' storage in the browser easier.
+  desc: This makes handling offline storage in the browser easier.
   url: https://cdnjs.com/libraries/localforage
   project: https://github.com/mozilla/localForage
   version: 1.5.0
@@ -155,18 +155,18 @@ showdown:
   desc: This is used to convert Markdown to HTML on the fly.
   url: https://cdnjs.com/libraries/showdown
   project: https://github.com/showdownjs/showdown
-  version: 1.7.3
+  version: 1.7.4
   license: BSD-3-Clause
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.3/showdown.min.js
-      integrity: sha256-MqAmGZ1xn14UrrEZsGT2l5nxuayfKbnVgw0LH4NIdj8=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.4/showdown.min.js
+      integrity: sha256-ABe6QqWGbNFZSCvuF6dKVgf0yWKGwtvcm5mbPBQdZH0=
       crossorigin: anonymous
       map: true
       id: __showdown
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.3/showdown.js
-      integrity: sha256-kLFbdsPEZ3K5Anv9i6aIpDP4F0rPTom2Wc+CvtY26UM=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.4/showdown.js
+      integrity: sha256-ybTm671881aplCGw6AI2Ev8hQkUOU6s+hh0AkW966g8=
       crossorigin: anonymous
       map: true
       id: __showdown
@@ -293,17 +293,17 @@ yaml:
   desc: Used to parse YAML data structures.
   url: https://cdnjs.com/libraries/js-yaml
   project: https://github.com/nodeca/js-yaml
-  version: 3.9.1
+  version: 3.10.0
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.9.1/js-yaml.min.js
-      integrity: sha256-+zCUcY/sA+WlNjVbacV7arrm0zBt2haIQUBbwNKEN7k=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.10.0/js-yaml.js
+      integrity: sha256-IvyJyCZZThuFl2Tf289RAgY4HgtuvPxnRHrwkOeuYCY=
       crossorigin: anonymous
       id: __yaml
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.9.1/js-yaml.js
-      integrity: sha256-XcTimKTr9Jj4gR/kpq60v4uSbDzIwtTtyP4YBQG9vUA=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.10.0/js-yaml.min.js
+      integrity: sha256-d0C0/4HwzRp0c+ea3Bpxk8/CNjd0Hw8KjRCSW7tKqtA=
       crossorigin: anonymous
       id: __yaml
 
@@ -495,7 +495,7 @@ fontface:
 
 fetch:
   name: Fetch Polyfill
-  desc: Brings 'fetch' functionality to older browsers.
+  desc: Brings fetch functionality to older browsers.
   url: https://cdnjs.com/libraries/fetch
   project: https://github.com/github/fetch
   version: 2.0.3
@@ -569,7 +569,7 @@ underscore:
 
 popper:
   name: Popper JS
-  desc: Utility for managing 'Poppers' (tooltips, dropdowns, popovers etc.).
+  desc: Utility for managing tooltips, dropdowns, popovers etc.
   url: https://cdnjs.com/libraries/popper.js
   project: https://github.com/FezVrasta/popper.js
   version: 1.12.5

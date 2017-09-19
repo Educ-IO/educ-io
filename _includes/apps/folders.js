@@ -24,7 +24,7 @@ App = function() {
 			ಠ_ಠ.google.pick(
 				"Select a Folder to Open", false, true,
 				() => [new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"), 
-							 google.picker.ViewId.RECENTLY_PICKED],
+						google.picker.ViewId.RECENTLY_PICKED],
 				(folder) => folder ? ಠ_ಠ.Flags.log("Google Drive Folder Picked from Open", folder) && resolve(folder) : reject()
 			);
 

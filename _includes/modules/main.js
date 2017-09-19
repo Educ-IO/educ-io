@@ -66,14 +66,22 @@ Main = function() {
 		start : function() {
 
 			var google_SignIn = function() {
-				hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {
-					force: false, display : (ಠ_ಠ.SETUP.SINGLE_PAGE || ಠ_ಠ.Flags.page()) ? "page" : "popup",
+				var _login = (display, force) => hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {
+					force: force, display : display,
 					scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
-				}).then(function(a) {
-					ಠ_ಠ.Flags.log("Signed into Google", a);
-				}, function(e) {
-					ಠ_ಠ.Flags.error("Signed into Google", e);
 				});
+				var _success = (a) => ಠ_ಠ.Flags.log("Signed into Google", a);
+				var _failure = (e) => ಠ_ಠ.Flags.error("Signed into Google", e);
+				var _retry = (e) => {
+					if (e.error && e.error.code && e.error.code == "blocked") {
+						_login("page", true).then(_success, _failure);
+					} else if (e.error && e.error.code && e.error.code == "cancelled") {
+						ಠ_ಠ.Flags.log("Cancelled Signing into Google");
+					} else {
+						ಠ_ಠ.Flags.error("Signed into Google", e);
+					}
+				};
+				_login((ಠ_ಠ.SETUP.SINGLE_PAGE || ಠ_ಠ.Flags.page()) ? "page" : "popup", false).then(_success, _retry);
 			};
 
 			var google_SignOut = function() {
@@ -162,11 +170,11 @@ Main = function() {
 					ಠ_ಠ.google.me().then(function(user) {
 
 						/* Disable and Hide the Sign in */
-						$("#sign_in").hide().children(".btn").attr("title","").off("click");
-
+						$("#sign_in").hide().children(".btn").attr("title","").off("click.login");
+						
 						/* Enable and Shopw the Sign Out */
 						$("#user_details").text(user.name.length == 3 ? user.name.split(" ").join("") : user.name).attr("title", "To remove from your account (" + user.email + "), click & follow instructions");
-						$("#sign_out .btn").on("click", function(e) {e.preventDefault(); google_SignOut();});
+						$("#sign_out .btn").on("click.logout", function(e) {e.preventDefault(); google_SignOut();});
 						$("#sign_out").show();
 
 						/* <!-- Route Authenticated --> */
@@ -184,12 +192,11 @@ Main = function() {
 				delete ಠ_ಠ.google;
 
 				/* Disable and Hide the Sign Out */
-				$("#sign_out").hide().children(".btn").off("click");
+				$("#sign_out").hide().children(".btn").off("click.logout");
 				$("#user_details").text("").attr("title", "");
 
 				/* Enable and Shopw the Sign In */
-				$("#sign_in").show().children(".btn").attr("title", "Click here to log into this app, you will be promped to authorise the app on your account if required").on("click", function(e) {e.preventDefault(); google_SignIn();});
-
+				$("#sign_in").show().children(".btn").attr("title", "Click here to log into this app, you will be promped to authorise the app on your account if required").on("click.login", function(e) {e.preventDefault(); google_SignIn();});
 				$(".auth-only").hide();
 
 				/* <!-- Route Un-Authenticated --> */
