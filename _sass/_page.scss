@@ -72,14 +72,14 @@ nav.navbar.bg-faded {
 	.display-2 {
 		font-size: 7rem;
 		letter-spacing: -.5rem;
-		&.currency {
+		.currency {
 			font-size: 2.75rem;
 			position: relative;
 			font-weight: $font-weight-heading;
 			top: -45px;
 			letter-spacing: 0px;
 		}
-		&.period {
+		.period {
 			font-size: 1rem;
 			color: lighten($colour-general, 20%);
 			letter-spacing: 0px;
