@@ -7,6 +7,14 @@ nav.navbar.bg-faded {
 // -- Tweak Jumbotron -- //
 .jumbotron {
 	background-color: $colour-section;
+	.lead {
+		code {
+			font: inherit;
+			color: $colour-support;
+			font-weight: bold;
+			padding: 0;
+		}
+	}
 }
 
 .highlight_all {

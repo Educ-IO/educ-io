@@ -2,7 +2,7 @@
 layout: page
 title: Support
 permalink: /support/
-lead: Great tools take __a lot__ of building. Using our tools is __free for everyone__{:.text-success}, but we would encourage anyone who finds them __really useful__, or who wants __amazing support__ or a voice in their __future development__ to subscribe below.
+lead: Great tools take __a lot__ of building. Using our tools is `free for everyone`, but we would encourage anyone who finds them __really useful__, or who wants __amazing support__ or a voice in their __future development__ to subscribe below.
 ---
 
 {% include tiers.html class="mb-4" %}
