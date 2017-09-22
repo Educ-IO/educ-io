@@ -52,6 +52,7 @@ Folders
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Manual Selection for Processing Results (tick boxes?)
+* Test Conversion in Team Drives.
 
 Reflect
 -------

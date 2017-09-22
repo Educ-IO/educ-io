@@ -1,4 +1,8 @@
 site :
+  0.0.6b :
+    name : Folders 0.0.3j-alpha
+    desc : Bug Fix for upload and conversion in Team Drives
+    type : minor
   0.0.6a :
     name : Auth Bug Fix
     desc : Better handling of Pop-Up blocked authentication scenarios (e.g. get started button on chrome)
@@ -133,6 +137,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.3j-alpha :
+    name : Upload Bug Fix
+    desc : Fixed Bug with Upload / Conversion in Team Drive (mis-spelling of parameter in Google Documentation)
+    type : minor
   0.0.3i-alpha :
     name : New Features
     desc : In Place Mime Conversion

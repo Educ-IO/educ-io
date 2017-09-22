@@ -230,8 +230,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 			pageSize: PAGE_SIZE,
 			q: "trashed = false" + _i + _m + _e,
 			orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-			fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size,mimeType)" :
-				"kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties)",
+			fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size,mimeType" + (team ? ",teamDriveId" : "") + ")" :
+				"kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties" + (team ? ",teamDriveId" : "") + ")",
 		};
 		
 		if (team) {
@@ -365,7 +365,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 			return _call(
 				id ? NETWORKS.general.patch : NETWORKS.general.post, 
-				"upload/drive/v3/files/" + (id ? id + "?newRevision=true&" : "?") + "uploadType=multipart" + (team ? "&supportTeamDrives=true" : ""), _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
+				"upload/drive/v3/files/" + (id ? id + "?newRevision=true&" : "?") + "uploadType=multipart" + (team ? "&supportsTeamDrives=true" : ""), _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
 
 		},
 
@@ -373,11 +373,11 @@ Google_API = function(ಠ_ಠ, timeout) {
 			mimeType: "application/vnd.google-apps.script+json"
 		}),
 
-		save: (id, files, team) => _call(NETWORKS.general.patch, "upload/drive/v3/files/" + id + "?uploadType=media" + (team ? "&supportTeamDrives=true" : ""), {
+		save: (id, files, team) => _call(NETWORKS.general.patch, "upload/drive/v3/files/" + id + "?uploadType=media" + (team ? "&supportsTeamDrives=true" : ""), {
 			files: files
 		}, "application/json"),
 
-		update: (id, file, team) => _call(NETWORKS.general.patch, "drive/v3/files/" + id + (team ? "?supportTeamDrives=true" : ""), file, "application/json"),
+		update: (id, file, team) => _call(NETWORKS.general.patch, "drive/v3/files/" + id + (team ? "?supportsTeamDrives=true" : ""), file, "application/json"),
 
 		pick: (title, multiple, team, views, callback, context) => _pick(title, multiple, team, views, callback, context),
 

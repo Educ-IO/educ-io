@@ -291,10 +291,13 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 			var metadata = inPlace ? {} : {
 				name: file.name.substr(0, file.name.lastIndexOf(".")),
-				parents: file.parents
+				parents: file.parents,
+				teamDriveId : _team,
 			};
 			metadata.mimeType = targetMimeType;
 
+console.log("METADATA:", metadata);			
+			
 			ಠ_ಠ.google.download(file.id, _team).then(binary => {
 
 				(inPlace ? ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team, file.id) : ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team))
