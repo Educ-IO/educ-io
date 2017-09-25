@@ -1,5 +1,5 @@
 site :
-  0.0.6b :
+  0.0.6c :
     name : Front Landing Page Update
     desc : Finally, a window onto the Educ.io World!
     type : minor
