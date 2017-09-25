@@ -6,13 +6,13 @@ TODO LIST
 * Favicon Background?
 * BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
 * BUG -> ARROW functions in return object (e.g. View)???
-* More Sophisticated Analytics use....link on actions?
+* More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');"
 * Remove .map / .filter etc calls so that polyfills can be removed in favour if using Underscore.
 * Filter for correctly returned doc type on picker (recent shows all types?)
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
-* Mini-blog for app use cases?
 * Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?)  
 * Lazy Permission Requests....
+* Mini-blog for app use cases?
 
 Router
 ------
@@ -24,6 +24,8 @@ Apps
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
+* Handle remove app from Google account, e.g. delete local hello data...
+* Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
 
 Mobile
 ------
@@ -48,17 +50,24 @@ View
 
 Folders
 -------
-* FOLDERS -> Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Manual Selection for Processing Results (tick boxes?)
-* Test Conversion in Team Drives.
+
+Merge
+-----
+
 
 Reflect
 -------
 
+
 Complete
 --------
+* SEARCH and CONVERT Instructions... <-- DONE
+* FOLDERS -> Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865 <-- DONE
+* Add Team Drive Open Button <-- DONE
+* Test Conversion in Team Drives. <-- DONE
 * Gracefully handle authentication errors: <== DONE
 * Check Get Started Button on Folders - Does it work from Un-Auth? <-- Pop-Up Blocker on Incognito tab. But button + script does work? <-- DONE
 * VIEW -> Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865 <-- SUBMITTED

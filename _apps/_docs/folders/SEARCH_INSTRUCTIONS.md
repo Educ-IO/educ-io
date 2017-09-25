@@ -1,1 +1,1 @@
-Search __instructions__ to go here!
+Use the __shortcut__ buttons below, or the text entry boxes to customise your search. If the _sub-folders_ box is ticked, then the search will look in all the folders below the current one too. 

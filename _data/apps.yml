@@ -1,7 +1,8 @@
 view:
   name: View
-  desc: A web-based tool for producing customised views of Google Sheets.
+  desc: Producing __customised__ _views_ of your Google Sheets, with easy __filtering__ and __sharing__
   link: /view/
+  colour: af0ad9
   imports:
     - name: underscore
       load: first
@@ -204,8 +205,9 @@ view:
   published: true
 reflect:
   name: Reflect
-  desc: Produce then share reflective reports, tracking evidence and progress
+  desc: _Produce_ and _share_ __reflective reports__, tracking _evidence_ and your _progress_
   link: /reflect/
+  colour: 00833a
   imports:
     - name: underscore
       load: first
@@ -314,8 +316,9 @@ reflect:
   published: false
 folders:
   name: Folders
-  desc: Search folders individually, view starred files contained within and perform bulk actions; like conversions!
+  desc: __Search__ folders individually, view _sizes_, _starred_ files and perform bulk _conversions_
   link: /folders/
+  colour: c12727
   imports:
     - name: underscore
       load: first
@@ -413,6 +416,7 @@ folders:
               desc: Open 
               hash: open.root
               auth: google
+              id: _cmd_Start
             - name: Open a Folder
               desc: Open a Google Drive Folder
               hash: open
@@ -426,6 +430,7 @@ folders:
               imports:
                 - google
               auth: google
+              id: _cmd_Start_Team
             - name: Search
               desc: Search a Google Drive Folder
               hash: search
@@ -476,6 +481,7 @@ markbooks:
   name: Markbooks
   desc: A soon to be written tool.
   link: /markbooks/
+  colour: 6d9eeb
   imports:
     - name: jquery
       load: first
@@ -533,8 +539,9 @@ markbooks:
   published: false
 cover:
   name: Cover
-  desc: Run your cover in Google Sheets
+  desc: Run your lesson __cover__ system in Google Sheets, _efficiently_ and _brilliantly_
   link: /cover/
+  colour: 93c47d
   imports:
     - name: jquery
       load: first
@@ -590,13 +597,123 @@ cover:
         general: AIzaSyCVlH0c5Td9hgJgHaafQLYgKWAmqyGh1Do
         oauth: 1093927740269-ssddiv25h6o3vodg878mr7bcbnc6iop4.apps.googleusercontent.com
   published: false
+merge:
+  name: Merge
+  desc: _Produce_ __merged__ documents from your sheets __data__
+  link: /merge/
+  colour: 818109
+  imports:
+    - name: underscore
+      load: first
+    - name: jquery
+      load: first
+    - name: bootstrap-css
+      load: first
+    - name: popper
+      load: first
+    - name: handlebars
+      load: last
+    - name: hello
+      load: last
+    - name: urlparser
+      load: last
+    - name: bootstrap-js
+      load: last
+    - name: loki
+      load: last
+    - name: localforage
+      load: last
+    - name: google
+      load: lazy
+  modules:
+    - flags
+    - controller
+    - display
+    - network
+    - google
+    - recent
+    - service
+    - main
+    - css
+  scripts: 
+    - extends/regex
+    - extends/array
+  templates:
+    - options
+    - choose
+    - confirm
+    - alert
+    - loader
+    - recent
+    - shared/tab-links
+    - shared/tab-list
+    - shared/tab-tabs
+  docs:
+    - shared/JUMP
+    - merge/PUBLIC
+    - merge/FEATURES
+    - merge/README
+    - merge/INSTRUCTIONS
+  scopes:
+    google:
+      - scope: email
+        name: View your email address
+        reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+        request: login
+      - scope: profile
+        name: View your basic profile info
+        reason: In order to display your name on the navigation menu, once you have signed in.
+        request: login
+      - scope: https://www.googleapis.com/auth/drive
+        name: View and manage the files in your Google Drive
+        reason: In order to read you sheets, and create / aggregate your merged documents.
+        request: login
+  keys:
+    google:
+        general: AIzaSyACPqbocW3AgV_wP4wCkhzmU7S_ASQtcNs
+        oauth: 51509082175-cjimvgm2eo78evoqu2fokfmm3amai5sg.apps.googleusercontent.com
+  menus:
+    - name: Reports
+      groups:
+        all:
+          commands:
+            - name: Create
+              desc: Create a new Report
+              hash: create
+              auth: google
+            - name: Open a saved Report
+              desc: Open a Save Report from your Drive
+              hash: open
+              imports:
+                - google
+              auth: google
+            - name: Save
+              desc: Save this Report
+              hash: save
+              disabled_until:
+                - opened
+              auth: google
+            - name: Close
+              desc: Close this Report
+              hash: close
+              disabled_until:
+                - opened
+    - name: Instructions
+      short_name: Help
+      hash: instructions
+      desc: More details about how to use the Merge App
+  published: false
 scriptr:
   name: Scriptr
-  desc: Better Coding with Google Apps Script
+  desc: __Better__ _coding_ with Google Apps Script
   link: https://scriptr.space
+  published: true
   ext: true
+  colour: 868e96
 shelfdog:
   name: Shelf Dog
-  desc: Your Library, in Google Drive
+  desc: Your _library_, __everywhere__, in Google Drive
   link: https://shelf.dog
+  published: false
   ext: true
+  colour: 758e96

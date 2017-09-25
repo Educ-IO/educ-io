@@ -1,1 +1,1 @@
-Convert __instructions__ to go here!
+Use the __shortcut__ buttons below, or the text entry boxes to customise your conversions. If the _in-place_ box is ticked, then a __new version__ of the each file will be uploaded, rather than an entirely new file (use this is you are just converting mime-types).

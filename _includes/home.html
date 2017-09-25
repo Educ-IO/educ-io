@@ -1,0 +1,34 @@
+{% assign apps = site.array %}{% for app in site.data.apps %}{% if jekyll.environment == site.debug or app[1].published == true %}{% assign apps = apps | push: app[1] %}{% endif %}{% endfor %}<div class="container css-sensitive pt-1 pt-md-2 pt-lg-4 pt-xl-5">
+	
+	<div class="row align-items-center">
+		<div class="d-inline d-md-block col-12 mx-auto col-md-6 order-md-2 px-2 py-2">
+			<a class="img-fluid mb-3 mb-md-0" alt="{{ site.title }}: {{ site.description }}" href="{{ site.url }}">{% include {{ include.logo }} %}</a>
+		</div>
+		<div class="col-md-6 order-md-1 text-center text-md-left pr-md-5">
+			<h1 class="display-4 mb-3 font-sensitive">{{ site.title | upcase }}</h1>
+			{% if text %}{{ text | markdownify }}{% endif %}
+			<div class="d-flex flex-column flex-md-row lead mb-3">
+				<a href="/about/" class="btn btn-lg btn-outline-dark mb-3 mb-md-0 mr-md-3">Learn More</a>
+				<a href="/support/" class="btn btn-lg btn-outline-success">Support</a>
+			</div>
+		</div>
+	</div>
+
+	{% if apps and apps.size > 0 %}
+	<div class="d-flex flex-row flex-wrap mx-1 my-2 border border-white">
+		{% for app in apps %}{% capture c %}{% cycle 'odd', 'even' %}{% endcapture %}
+			<div class="col-12 col-md-4 p-2 p-md-4{% if c == 'odd' %} bg-light{% endif %} border border-white rounded">
+    		<h3{% if app.colour %} style="color: #{{ app.colour }} !important;"{% endif %}>{{ app.name }}</h3>
+    		<p>{{ app.desc | markdownify }}</p>
+    		<hr class="half-rule">
+    		<a class="btn btn-outline-{% if c == 'odd' %}primary{% else %}secondary{% endif %}" href="{{ app.link }}"{% if app.ext %} target="_new"{% endif %}>Open {{ app.name }}</a>
+  		</div>
+		{% endfor %}
+	</div>
+	{% endif %}
+
+	<p class="text-muted mb-3">
+		&copy; {% capture year %}{{ site.time | date: '%Y' }}{% endcapture %}{% if year != site.launched %}{{ site.launched }}-{% endif%}{{ year }} <a href="{{site.baseurl}}about/?highlight=transparency"><strong>{{site.author.name | downcase }}</strong></a>. Current site version is <a href="/changes?highlight=site">{{ site.data.versions["site"].first[0] }}</a>
+	</p>
+
+</div>

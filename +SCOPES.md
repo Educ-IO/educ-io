@@ -2,7 +2,7 @@
 layout: page
 title: API Scopes
 permalink: /scopes/
-lead: Each app on this site requires a particular set of permissions to access various parts of your Google account. These are called __[scopes](https://developers.google.com/identity/protocols/googlescopes){:target="_blank"}__ and are visible when you first authorise / sign into an app, or from your [connected app](https://myaccount.google.com/permissions){:target="_blank"} page. Here is a list of those scopes, broken down by app, and a short description of __why__ each permission is needed, and what it is used for.
+lead: Each app requires a __particular set of permissions__ to access various parts of your Google account. These are called __[scopes](https://developers.google.com/identity/protocols/googlescopes){:target="_blank"}__ and are visible when you first sign into an app, or from your [connected apps](https://myaccount.google.com/permissions){:target="_blank"} page. By authorising an app, the token that __grants access__ will remain on __your device only__ - nowhere else! Here are those scopes, broken down by app, with a short description of __why__ each permission is needed, and what it is used for.
 support: true
 ---
 {% assign apps = site.data.apps | where_exp:"item", "item.published == true" %}

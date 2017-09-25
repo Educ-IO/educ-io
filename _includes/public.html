@@ -5,7 +5,7 @@
 		</div>
 		<div class="col-md-6 order-md-1 text-center text-md-left pr-md-5 mt-md-2 mt-xl-4">
 			<p class="lead">
-				{{ app.desc }}
+				{{ app.desc | replace: '_', '' }}
 			</p>
 			{% raw %}{{content}}{% endraw %}
 			<div class="d-flex flex-column flex-md-row lead mb-3 mt-4">

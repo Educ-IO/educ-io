@@ -1,6 +1,10 @@
 ### Transparency
 
-The best technology is __open__, and the best education thrives in the __light__. Closed systems do little but perpetuate closed minds. We __passionately believe__ that everyone should have access to the best possible tools, everywhere. All of our web-apps are released under a _permissive_ __open-source__ [license](/license). The source code is __freely available__ [online]({{ site.repo }}), and contributions, comments, and bug reports all welcome. Feel free to have a look!
+The best technology is __open__, and the best education thrives in the __light__. Closed systems do little but perpetuate closed minds. We __passionately believe__ that everyone should have access to the best possible tools, everywhere.
+
+All of our web-apps are subject to copyright (&copy; {% capture year %}{{ site.time | date: '%Y' }}{% endcapture %}{% if year != site.launched %}{{ site.launched }}-{% endif%}{{ year }} __{{site.author.name | downcase }}__) but released under a _permissive_ __open-source__ [license](/license). These apps are free software, meaning you can redistribute then and/or modify them under the terms of the __GNU General Public License__ (Version 3) as [published](http://www.gnu.org/licenses) by the Free Software Foundation. 
+
+The source code is __freely available__ [online]({{ site.repo }}), and contributions, comments, and bug reports all welcome. Feel free to have a look!
 
 Like all open-source systems, this site builds upon the work of others. Our tools wouldn't be possible without these external libraries, but instead of hiding them away, we choose to celebrate them. You can find a list of all the external libraries we currently use on our [credits](/credits/) page, including a brief description of how they are used and a link to their project website or documentation. Please take a look, and say thanks if you can.
 
