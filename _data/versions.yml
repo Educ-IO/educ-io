@@ -1,4 +1,8 @@
 site :
+  0.0.6e :
+    name : Site Updates
+    desc : Minor Fixes and Tweaks
+    type : minor
   0.0.6d :
     name : View 0.2.0f-alpha
     desc : Minor Fixes and Tweaks
