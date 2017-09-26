@@ -18,6 +18,7 @@ Flags = function() {
 		_highlight = false,
 		_key = false,
 		_oauth = false,
+		_performance = false,
 		_base, _dir;
 
 	/* <!-- Internal Functions --> */
@@ -47,6 +48,8 @@ Flags = function() {
 
 		_highlight = (_url.param("highlight") || _url.fparam("highlight"));
 
+		_performance = (_url.param("performance") === "" || _url.fparam("performance") === "");
+		
 		_page = (_url.param("page") === "" || _url.fparam("page") === "");
 
 		_base = _url.attr("protocol") + "://" + _url.attr("host") +
@@ -136,7 +139,7 @@ Flags = function() {
 					},
 
 					time: function(name, end) {
-						if (_debug && console) end ? console.timeEnd.apply(console, [name]) : console.time.apply(console, [name]);
+						if ((_debug || _performance) && console) end ? console.timeEnd.apply(console, [name]) : console.time.apply(console, [name]);
 						return this;
 					},
 

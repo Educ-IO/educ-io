@@ -8,12 +8,36 @@ Sheets = function(sheet, ಠ_ಠ) {
 	/* <!-- Internal Functions --> */
 	var _currentSheet = () => _sheets[Object.keys(_sheets).filter((key) => _sheets[key].active())[0]];
 
-	var _initSheet = function(data, name, index, target, widths, hide, frozen, locale) {
+	var _initSheet = function(data, name, index, target, widths, hide, frozen, locale, size) {
 
 		ಠ_ಠ.Flags.log("Google Sheet Values [" + name + "]", data);
 		var headers = [];
 
 		if (data && data.length > 0) {
+			
+			/* <!-- Check for fully 'blank' columns --> */
+			ಠ_ಠ.Flags.time("Checking Blank Columns");
+			var _hasValues = Array.apply(null, {
+				length: size.cols
+			}).map(Number.call, Number);
+			_.find(data, (row) => {
+				_.each(row, (cell, index) => {
+					if (cell) _hasValues = _.filter(_hasValues, (number) => number !== index);
+				});
+				return (_hasValues.length === 0);
+			});
+			if (_hasValues && _hasValues.length > 0) {
+				ಠ_ಠ.Flags.log("Blank Columns in Sheet:", JSON.stringify(_hasValues));
+				_hasValues.reverse();
+				data = _.map(data, (row) => {
+					_.each(_hasValues, function(index) {if (row.length > index+1) row.splice(index, 1)});
+					return row;
+				});
+			}
+			ಠ_ಠ.Flags.time("Checking Blank Columns", true);
+			
+			/* <!-- Handle Headers --> */
+			ಠ_ಠ.Flags.time("Generating Headers");
 			headers = data.shift();
 			var rows = frozen.rows ? frozen.rows - 1 : 0;
 			while (rows > 0) {
@@ -21,6 +45,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 				rows--;
 			}
 
+			/* <!-- Create Headers Object --> */
 			headers = headers.map((v, i) => ({
 				name: v ? v : "-" + i + "-",
 				hide: function(initial) {
@@ -36,12 +61,15 @@ Sheets = function(sheet, ಠ_ಠ) {
 				hide_initially: false,
 				hide_default: !!hide[i]
 			}));
+			ಠ_ಠ.Flags.time("Generating Headers", true);
+			
 		}
 
 		/* <!-- Check Array for Dates --> */
+		ಠ_ಠ.Flags.time("Checking for Dates in Sheet Values");
 		var _formats;
 		if (locale && moment.locale(locale) == locale.toLowerCase()) {
-			ಠ_ಠ.Flags.log("SPREADSHEET LOCALE:", locale);
+			ಠ_ಠ.Flags.log("Spreadsheet Locale:", locale);
 			var _locales = moment.localeData()._longDateFormat;
 			_formats = [moment.ISO_8601];
 			if (_locales) {
@@ -54,7 +82,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 				if (_locales.LLL) _formats.unshift(_locales.LLL);
 				if (_locales.LLLL) _formats.unshift(_locales.LLLL);
 			}
-			ಠ_ಠ.Flags.log("DATE PARSING FORMATS:", _formats);
+			ಠ_ಠ.Flags.log("Date Parsing Formats:", _formats);
 		} else {
 			ಠ_ಠ.Flags.error("Could Not Set Date/Time Locale to " + locale, "");
 		}
@@ -64,21 +92,22 @@ Sheets = function(sheet, ಠ_ಠ) {
 				if (value && _.isString(value) && moment(value, _formats, true).isValid()) dates.push(index);
 				return dates;
 			}, []);
-			ಠ_ಠ.Flags.log("DATE COLUMN INDEXES:", _date_Indexes);
+			ಠ_ಠ.Flags.log("Date Column Indexes:", _date_Indexes);
 			if (_date_Indexes.length > 0) _.each(data, (row) => _.each(_date_Indexes, (index) => {
 				row[index] = moment(row[index], _formats, true).toDate();
 			}));
 		}
-
-		var length = 0,
-			values = data && data.length > 0 ? data.map((v) => {
-				length = Math.max(length, v.length);
+		ಠ_ಠ.Flags.time("Checking for Dates in Sheet Values", true);
+		
+		ಠ_ಠ.Flags.time("Creating Object Array from Sheet Values");
+		var values = data && data.length > 0 ? data.map((v) => {
 				return Object.assign({}, v);
 			}) : [];
-
 		var fields = Array.apply(null, {
-			length: length
+			length: size.cols
 		}).map(Number.call, Number);
+		ಠ_ಠ.Flags.time("Creating Object Array from Sheet Values", true);
+		
 		var table = _db.getCollection(name);
 
 		if (!table) {
@@ -119,10 +148,15 @@ Sheets = function(sheet, ಠ_ಠ) {
 			cols: sheet.sheets[index].properties.gridProperties.frozenColumnCount,
 			rows: sheet.sheets[index].properties.gridProperties.frozenRowCount
 		};
+		
+		var _size = {
+			cols: sheet.sheets[index].properties.gridProperties.columnCount,
+			rows: sheet.sheets[index].properties.gridProperties.rowCount
+		};
 
 		/* <!-- Initiatilise Sheet, Protect Jump Links & Remove the Loader --> */
-		var _complete = (d, n, i, t, w, h, f, l) => {
-			_initSheet(d, n, i, t, w, h, f, l);
+		var _complete = (d, n, i, t, w, h, f, l, s) => {
+			_initSheet(d, n, i, t, w, h, f, l, s);
 			ಠ_ಠ.Display.busy({
 				target: target,
 				clear: true
@@ -145,14 +179,14 @@ Sheets = function(sheet, ಠ_ಠ) {
 			_complete(
 				_rows.clean(false, true).trim(_rows[0].length), name, index, target,
 				_data.columnMetadata.map((c, i) => (c.pixelSize / _fontSizes[i]) * parseFloat(getComputedStyle(document.documentElement).fontSize)),
-				_data.columnMetadata.map((c) => !!c.hiddenByUser), _frozen, _locale
+				_data.columnMetadata.map((c) => !!c.hiddenByUser), _frozen, _locale, _size
 			);
 
 		} else {
 
 			/* <!-- Need to load the values --> */
 			ಠ_ಠ.google.sheets.values(sheet.spreadsheetId, name + "!A:ZZ")
-				.then((data) => _complete(data.values, name, index, target, [], [], _frozen, _locale))
+				.then((data) => _complete(data.values, name, index, target, [], [], _frozen, _locale, _size))
 				.catch((e) => {
 					ಠ_ಠ.Flags.error("Adding Content Table", e);
 					ಠ_ಠ.Display.busy({

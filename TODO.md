@@ -43,7 +43,6 @@ View
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 * Provide Aggregate Open and Load (accepts cross-app commands from Folders?)
 * Handle Merged Cells and merged ranges.
-* Should we remove entirely blank columns????
 * Table Module -> 'Flickering Bug' on Table Sroll to End on Occasional Sheets
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
 * Scroll Bars are still buggy in Chrome
@@ -53,6 +52,7 @@ Folders
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Manual Selection for Processing Results (tick boxes?)
+* Tally should break down file / folder counts by MimeType?
 
 Merge
 -----
@@ -64,6 +64,9 @@ Reflect
 
 Complete
 --------
+* Added Performance Flag <-- DONE
+* Should we remove entirely blank columns???? <-- DONE
+* Deal with NaN - Undefined in size handling! <-- DONE
 * SEARCH and CONVERT Instructions... <-- DONE
 * FOLDERS -> Fill in app authorisation form -- https://support.google.com/code/contact/oauth_app_verification && https://support.google.com/cloud/answer/7454865 <-- DONE
 * Add Team Drive Open Button <-- DONE
@@ -237,4 +240,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-09-17
+ᕕ( ᐛ )ᕗ JD ♑ - 2017-09-25

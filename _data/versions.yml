@@ -1,4 +1,8 @@
 site :
+  0.0.6d :
+    name : View 0.2.0f-alpha
+    desc : Minor Fixes and Tweaks
+    type : minor
   0.0.6c :
     name : Front Landing Page Update
     desc : Finally, a window onto the Educ.io World!
@@ -116,6 +120,9 @@ site :
     changes :
       - Initial Service Work Testing
 view :
+  0.2.0f-alpha :
+    name : Minor Fixes and Tweaks
+    type : Remove fully blank columns
   0.2.0e-alpha :
     name : Markdown Table Support
     type : Markdown Table Export and Bug Fixes (for non-standard characters in export)
