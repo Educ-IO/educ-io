@@ -1,4 +1,8 @@
 site :
+  0.0.6f :
+    name : Site Updates
+    desc : Extensions Pages
+    type : minor
   0.0.6e :
     name : Site Updates
     desc : Minor Fixes and Tweaks

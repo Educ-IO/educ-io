@@ -717,3 +717,27 @@ shelfdog:
   published: false
   ext: true
   colour: 758e96
+shiny:
+  name: Shiny! Shiny!
+  desc: __Simple__ and __secure__ text editing for Chrome
+  link: /extensions/shiny
+  published: true
+  ext: true
+  colour: 000080
+  action: Find out more
+gabriel:
+  name: Gabriel
+  desc: The Markdown Angel - publish Google Docs to Jekyll
+  link: /extensions/gabriel
+  published: true
+  ext: true
+  colour: 333333
+  action: Find out more
+isams:
+  name: Sheets for iSAMS
+  desc: Avoid __downloading__ lists in iSAMS, open __directly__ in a _new tab_
+  link: /extensions/isams
+  published: true
+  ext: true
+  colour: 38761d
+  action: Find out more

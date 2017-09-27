@@ -2,7 +2,6 @@ TODO LIST
 =========
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo
-* Contrite Penguin
 * Favicon Background?
 * BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
 * BUG -> ARROW functions in return object (e.g. View)???
@@ -13,6 +12,7 @@ TODO LIST
 * Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?)  
 * Lazy Permission Requests....
 * Mini-blog for app use cases?
+* Contrite Penguin 404 Page
 
 Router
 ------
@@ -240,4 +240,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-09-25
+ᕕ( ᐛ )ᕗ JD ♑ - 2017-09-26

@@ -1,4 +1,9 @@
 // == Normal Layout == //
+html, body {
+	width: 100vw;
+  height: 100vh;
+}
+
 .container-fluid, .landing {
   height: 100%;
 }

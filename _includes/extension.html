@@ -1,0 +1,26 @@
+<div class="container css-sensitive pt-1 pt-md-2 pt-lg-4 pt-xl-5">
+	
+	<div class="row align-items-center">
+		<div class="d-inline align-items-start d-md-block flex-column col-12 mx-auto col-md-6 order-md-2 px-2 py-2">
+			{% if include.logo %}<a class="img-fluid align-self-start mb-3 mb-md-0" alt="{{ site.title }}: {{ site.description }}" href="{% if include.url %}{{ include.url }}{% else %}{{ site.url }}{% endif %}">{% include {{ include.logo }} %}</a>{% endif %}
+		</div>
+		<div class="col-md-6 order-md-1 text-center text-md-left pr-md-5">
+			<h1 class="display-4 mb-3 font-sensitive">{{ page.title | upcase }}</h1>
+			{% if lead %}{{ lead | markdownify }}{% endif %}
+			<div class="d-flex flex-column flex-md-row lead mb-3">
+				{% if include.action and include.url %}<a href="{{ include.url }}" class="btn btn-lg btn-primary mb-3 mb-md-0 mr-md-3">{{ include.action }}</a>{% endif %}
+				<a href="/" class="btn btn-lg btn-outline-dark mb-3 mb-md-0 mr-md-3">Other Apps</a>
+				<a href="/support/" class="btn btn-lg btn-outline-success">Support</a>
+			</div>
+		</div>
+	</div>
+	
+	{% if text %}<div class="d-flex flex-column col-12 px-0">
+		{{ text | markdownify }}
+	</div>{% endif %}
+
+	<p class="text-muted mb-3">
+		&copy; {% capture year %}{{ site.time | date: '%Y' }}{% endcapture %}{% if year != site.launched %}{{ site.launched }}-{% endif%}{{ year }} <a href="{{site.baseurl}}about/?highlight=transparency"><strong>{{site.author.name | downcase }}</strong></a>. Current site version is <a href="/changes?highlight=site">{{ site.data.versions["site"].first[0] }}</a>
+	</p>
+
+</div>
