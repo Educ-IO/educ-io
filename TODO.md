@@ -37,7 +37,6 @@ Mobile
 View
 ----
 * List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install
-* Hidden-First Visibiity on 'View' needs to be hidden
 * Write Flexbox-based Fit Algorithm
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
@@ -64,6 +63,7 @@ Reflect
 
 Complete
 --------
+* Hidden-First Visibiity on 'View' needs to be hidden <-- DONE
 * Added Performance Flag <-- DONE
 * Should we remove entirely blank columns???? <-- DONE
 * Deal with NaN - Undefined in size handling! <-- DONE
@@ -240,4 +240,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-09-27
+ᕕ( ᐛ )ᕗ JD ♑ - 2017-09-29

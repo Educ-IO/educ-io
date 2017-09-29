@@ -1,4 +1,8 @@
 site :
+  0.0.6g :
+    name : View 0.2.0g-alpha
+    desc : Bug Fixes and Hide Initially Hidden Columns on View
+    type : minor
   0.0.6f :
     name : Site Updates
     desc : Extensions Pages
@@ -128,6 +132,9 @@ site :
     changes :
       - Initial Service Work Testing
 view :
+  0.2.0g-alpha :
+    name : Minor Fixes and Tweaks
+    type : Bug Fixes and Hide Initially Hidden Columns on View
   0.2.0f-alpha :
     name : Minor Fixes and Tweaks
     type : Remove fully blank columns
