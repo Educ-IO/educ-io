@@ -269,14 +269,15 @@ App = function() {
 
 							headers = headers.map((v) => {
 								var h = _.find(p.h, (h) => h.n == v);
+								if (h === undefined) h = false;
 								return {
 									name: v,
 									hide: function() {
-										return !!(this.hide_now);
+										return !!(this.hide_default || this.hide_now);
 									},
-									hide_default: (h && h.h),
-									hide_now: (h && h.h),
-									hide_initially: (h && h.i),
+									hide_default: h && h.h,
+									hide_now: h && h.h,
+									hide_initially: h && h.i,
 								};
 							});
 
@@ -296,7 +297,7 @@ App = function() {
 
 							_sheet = ಠ_ಠ.Datatable(ಠ_ಠ,
 								{id : "view", name : name, headers : headers, data : table}, 
-								{readonly : true, filters : p.f, inverted_Filters : p.e, sorts : p.s},
+								{readonly : true, filters : p.f, inverted_Filters : p.e, sorts : p.s, collapsed: true},
 							target);
 
 						};

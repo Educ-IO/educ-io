@@ -11,8 +11,8 @@ TODO LIST
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
 * Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?)  
 * Lazy Permission Requests....
-* Mini-blog for app use cases?
 * Contrite Penguin 404 Page
+* Links to ISSUE trackers for APPS and EXTENSIONS ??
 
 Router
 ------
@@ -240,4 +240,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-09-26
+ᕕ( ᐛ )ᕗ JD ♑ - 2017-09-27

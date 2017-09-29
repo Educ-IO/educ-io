@@ -1,7 +1,7 @@
 Datatable = function(ಠ_ಠ, table, options, target) {
 
 	/* <!-- table = {id, name, data, headers} --> */
-	/* <!-- options = {filters, inverted_Filters, sorts, widths, frozen, readonly, advanced} --> */
+	/* <!-- options = {filters, inverted_Filters, sorts, widths, frozen, readonly, advanced, collapsed} --> */
 
 	/* <!-- Filters --> */
 	var Filters = function(options) {
@@ -242,6 +242,18 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		target.find(".to-hide-prefix").removeClass("to-hide-prefix");
 	};
 
+	var _toggleColumn = (el, f) => {
+		if (el && el.hasClass("to-hide")) {
+			var _style = _css.sheet("table-column-visibility");
+			var _nth = ":nth-child(" + table.headers.slice(0, el.data("index")).reduce((t, h) => h.hide() ? t : t + 1, 1) + ")";
+			var _selector = "table#" + _name + " tr th.table-header" + _nth + ", table#" + _name + " tbody tr td" + _nth;
+			el.is(":hidden") ? _css.removeRule(_style, _selector) : _css.addRule(_style, _selector, "display: none !important;");
+			if (f) return _toggleColumn(f(el), f);
+		} else {
+			return el;
+		}
+	};
+	
 	var _updateHeaders = function(container, defaults) {
 
 		var query = ".table-header[data-index]";
@@ -283,9 +295,22 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 			ಠ_ಠ.Flags.debug() && _filter ? _t.attr("title", (_filter.inverted ? "NOT: " : "") + JSON.stringify(_filter.filter)) : _t.removeAttr("title");
 
 		});
-
+		
 		/* <!-- Clear Visibilities (make all toggles visible again) as we're inconsistent with indexing --> */
 		_clearVisibilities();
+		
+		/* <!-- Collapse by default --> */
+		if (options.collapsed) {
+			query = ".table-header[data-index].to-hide";
+			(container ? container.find(query) : target.find(query)).each(function(i, el) {
+				if (!el.nextElementSibling || !$(el.nextElementSibling).hasClass("to-hide")) {
+					var _target = $(el),
+					_last = (!_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0),
+					_result = _toggleColumn(_target, (el) => el.prev());
+					if (_last) _result.addClass("to-hide-prefix");
+				}
+			});
+		}
 
 		return container;
 	};
@@ -398,16 +423,6 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 		});
 		target.find("[data-toggle='tooltip']").tooltip({});
 
-		var _toggleColumn = (el, f) => {
-			if (el && el.hasClass("to-hide")) {
-				var _style = _css.sheet("table-column-visibility");
-				var _nth = ":nth-child(" + table.headers.slice(0, el.data("index")).reduce((t, h) => h.hide() ? t : t + 1, 1) + ")";
-				var _selector = "table#" + _name + " tr th.table-header" + _nth + ", table#" + _name + " tbody tr td" + _nth;
-				el.is(":hidden") ? _css.removeRule(_style, _selector) : _css.addRule(_style, _selector, "display: none !important;");
-				if (f) _toggleColumn(f(el), f);
-			}
-		};
-
 		target.find(".table-headers").on("click", (e) => {
 			if (e.target.classList.contains("table-header")) {
 				var _target = $(e.target),
@@ -480,7 +495,10 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 			/* <!-- Init Scroll Cache for Larger Tables --> */
 			if (table.data.count() > 200) _advanced.scroll.init(target.find("tbody"), options.blocks_to_show, options.rows_to_show).toggle();
 		}
-
+		
+		/* <!-- Collapse Columns if required --> */
+		if (options.collapsed) _updateHeaders(target);
+		
 	}; /* <!-- End Show --> */
 
 	var _columnVisibility = function() {

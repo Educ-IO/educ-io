@@ -709,7 +709,7 @@ scriptr:
   link: https://scriptr.space
   published: true
   ext: true
-  colour: 868e96
+  colour: a64d79
 shelfdog:
   name: Shelf Dog
   desc: Your _library_, __everywhere__, in Google Drive
@@ -727,7 +727,7 @@ shiny:
   action: Find out more
 gabriel:
   name: Gabriel
-  desc: The Markdown Angel - publish Google Docs to Jekyll
+  desc: The __Markdown Angel__ - publish Google Docs to a static Jekyll site
   link: /extensions/gabriel
   published: true
   ext: true
