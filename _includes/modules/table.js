@@ -49,7 +49,9 @@ Table = function(table, outside, ಠ_ಠ) {
 
   var getClusterNum = function () {
 		_scroll_top = _outside[0].scrollTop;
-		return Math.floor(_scroll_top / (_cluster_height - _block_height)) || 0;
+		var _cluster_Num = _scroll_top / (_cluster_height - _block_height);
+		_cluster_Num = (Math.ceiling(_cluster_Num) - _cluster_Num <= 0.01) ? Math.round(_cluster_Num) : Math.floor(_cluster_Num);
+		return _cluster_Num || 0;
 	};
 	
 	var generateEmptyRow = function() {
@@ -177,7 +179,8 @@ Table = function(table, outside, ಠ_ಠ) {
 										pointer_events_set = false;
 								}, 50);
 						}
-						if (_last_cluster != (_last_cluster = getClusterNum())) insertToDOM(_rows, _cache);
+						var _cluster_Num = getClusterNum();
+						if (_last_cluster != (_last_cluster = _cluster_Num)) insertToDOM(_rows, _cache);
 					});
 					$(window).on("resize.scroller", () => _.debounce(this.refresh, 100));
 					

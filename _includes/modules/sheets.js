@@ -30,7 +30,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 				ಠ_ಠ.Flags.log("Blank Columns in Sheet:", JSON.stringify(_hasValues));
 				_hasValues.reverse();
 				data = _.map(data, (row) => {
-					_.each(_hasValues, function(index) {if (row.length > index+1) row.splice(index, 1)});
+					_.each(_hasValues, function(index) {if (row.length > index+1) row.splice(index, 1);});
 					return row;
 				});
 			}

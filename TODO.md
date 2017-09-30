@@ -42,9 +42,7 @@ View
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 * Provide Aggregate Open and Load (accepts cross-app commands from Folders?)
 * Handle Merged Cells and merged ranges.
-* Table Module -> 'Flickering Bug' on Table Sroll to End on Occasional Sheets
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
-* Scroll Bars are still buggy in Chrome
 
 Folders
 -------
@@ -63,6 +61,8 @@ Reflect
 
 Complete
 --------
+* Table Module -> 'Flickering Bug' on Table Sroll to End on Occasional Sheets <-- DONE
+* Scroll Bars are still buggy in Chrome <-- DONE
 * Hidden-First Visibiity on 'View' needs to be hidden <-- DONE
 * Added Performance Flag <-- DONE
 * Should we remove entirely blank columns???? <-- DONE
