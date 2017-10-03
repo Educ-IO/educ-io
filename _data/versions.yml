@@ -1,4 +1,8 @@
 site :
+  0.0.6i :
+    name : View 0.2.0i-alpha
+    desc : Bug Fixes for View Scrolling
+    type : minor
   0.0.6h :
     name : View 0.2.0h-alpha
     desc : Bug Fixes for View Scrolling
@@ -136,6 +140,9 @@ site :
     changes :
       - Initial Service Work Testing
 view :
+  0.2.0i-alpha :
+    name : Minor Fixes and Tweaks
+    type : Bug Fixes for scrolling
   0.2.0h-alpha :
     name : Minor Fixes and Tweaks
     type : Bug Fixes for scrolling

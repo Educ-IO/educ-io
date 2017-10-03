@@ -50,7 +50,7 @@ Table = function(table, outside, ಠ_ಠ) {
   var getClusterNum = function () {
 		_scroll_top = _outside[0].scrollTop;
 		var _cluster_Num = _scroll_top / (_cluster_height - _block_height);
-		_cluster_Num = (Math.ceiling(_cluster_Num) - _cluster_Num <= 0.01) ? Math.round(_cluster_Num) : Math.floor(_cluster_Num);
+		_cluster_Num = (Math.ceil(_cluster_Num) - _cluster_Num <= 0.01) ? Math.round(_cluster_Num) : Math.floor(_cluster_Num);
 		return _cluster_Num || 0;
 	};
 	
