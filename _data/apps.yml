@@ -229,6 +229,10 @@ reflect:
       load: last
     - name: localforage
       load: last
+    - name: autosize
+      load: last
+    - name: showdown
+      load: last
     - name: google
       load: lazy
   modules:
@@ -240,7 +244,8 @@ reflect:
     - recent
     - service
     - main
-    - css
+    - forms
+    - fields
   scripts: 
     - extends/regex
     - extends/array
@@ -254,7 +259,20 @@ reflect:
     - shared/tab-links
     - shared/tab-list
     - shared/tab-tabs
+    - reflect/field_complex
+    - reflect/field_evidence
+    - reflect/field_numeric
+    - reflect/field_marker
+    - reflect/field_radio
+    - reflect/field_scale
+    - reflect/field_select
+    - reflect/field_textual
+    - reflect/group
+    - reflect/list_item
+    - reflect/recovery
     - reflect/form
+    - reflect/report
+    - reflect/template
   docs:
     - shared/JUMP
     - reflect/PUBLIC
@@ -284,17 +302,17 @@ reflect:
         general: AIzaSyDCjK2aSKu9CAb3lCXxegwy-G9VTdNBAak
         oauth: 969160887251-lnkpkhpet6ojgtkposr49f0uuubbbpq2.apps.googleusercontent.com
   menus:
-    - name: Reports
+    - name: Report
       groups:
         all:
           commands:
             - name: Create
               desc: Create a new Report
-              hash: create
+              hash: create.report
               auth: google
             - name: Open a saved Report
               desc: Open a Save Report from your Drive
-              hash: open
+              hash: open.report
               imports:
                 - google
               auth: google
@@ -309,6 +327,51 @@ reflect:
               hash: close
               disabled_until:
                 - opened
+    - name: Template
+      groups:
+        all:
+          commands:
+            - name: Create
+              desc: Create a new Template for Reports
+              hash: create.template
+              auth: google
+            - name: Open a saved Template
+              desc: Open a Saved Template from your Drive
+              hash: open.template
+              imports:
+                - google
+              auth: google
+            - name: Share
+              desc: Share this Template
+              hash: share
+              disabled_until:
+                - opened
+              auth: google
+            - name: Close
+              desc: Close this Template
+              hash: close
+              disabled_until:
+                - opened
+    - name: Analyse
+      groups:
+        all:
+          commands:
+            - name: Progress
+              desc: Create a new Report
+              hash: progress
+              auth: google
+            - name: Open a saved Report
+              desc: Open a Save Report from your Drive
+              hash: open
+              imports:
+                - google
+              auth: google
+            - name: Template
+              desc: Create a Report for Sharing
+              hash: template
+              imports:
+                - google
+              auth: google
     - name: Instructions
       short_name: Help
       hash: instructions

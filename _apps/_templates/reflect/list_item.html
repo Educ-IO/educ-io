@@ -1,0 +1,17 @@
+{% raw %}
+{{#if description}}<!-- {{description}} -->{{/if}}
+<div class="d-flex align-items-center flex-row mt-1 list-item{{#if class}} {{class}}{{/if}}">
+	<a class="align-self-center d-flex delete" href="#" title="{{delete}}">
+		<i class="align-self-center mr-2 material-icons text-danger">delete_forever</i>
+	</a>
+	<p class="align-self-center px-0 py-0 mx-0 my-0">
+		{{#if icon}}<img class="mr-2{{#if class}} {{class}}{{/if}}" src="{{icon}}"/>{{/if}}
+		{{#if url}}
+		<a {{#if id}}id="{{id}}" {{/if}}{{#if for}}id="{{for}}" {{/if}}href="{{url}}" target="_blank">{{details}}</a>
+		{{else}}
+		{{details}}
+		{{/if}}
+		<span class="badge badge-secondary ml-2 align-self-center">{{type}}</span>
+	</p>
+</div>
+{% endraw %}

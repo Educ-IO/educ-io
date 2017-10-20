@@ -1,3 +1,7 @@
 "Cabin Sketch":
   safe: "Cabin+Sketch"
   weights: "700"
+  for: [all]
+"Material Icons":
+  safe: "Material+Icons"
+  for: [reflect]

@@ -1,4 +1,8 @@
 site :
+  0.0.6j :
+    name : Reflect 0.0.2a-alpha
+    desc : Initial Reflect Report Forms and Updated Import Libraries
+    type : minor
   0.0.6i :
     name : View 0.2.0i-alpha
     desc : Bug Fixes for View Scrolling
@@ -223,6 +227,9 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.2a-alpha :
+    name : Basic Report Form Functionality
+    type : minor
   0.1.0-alpha :
     name : Early testing version
     type : minor

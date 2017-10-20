@@ -1,0 +1,21 @@
+{% raw %}
+{{#if description}}<!-- {{description}} -->{{/if}}
+<div class="card mx-1 my-1 mx-md-0">
+
+	<div id="heading_{{id}}" class="card-header">
+		<h5 class="mb-0 d-inline">{{name}}</h5>
+		<a class="float-right" data-toggle="collapse" href="#collapse_{{ id }}" aria-expanded="false" aria-controls="collapse_{{id}}">
+			<i style="display: none;" class="material-icons md-18" data-listen="#collapse_{{id}}" data-event="hidden.bs.collapse">expand_more</i>
+			<i class="material-icons md-18" data-listen="#collapse_{{id}}" data-event="shown.bs.collapse">expand_less</i>
+		</a>
+	</div>
+	
+	<div id="collapse_{{id}}" class="collapse show" role="tabpanel" aria-labelledby="heading_{{id}}">
+		<div class="card-body">
+			{{#if help}}<div class="form-text text-muted">{{{help}}}</div>{{/if}}
+			{{{fields}}}
+		</div>
+	</div>
+
+</div>
+{% endraw %}

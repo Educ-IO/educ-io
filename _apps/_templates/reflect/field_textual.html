@@ -1,0 +1,17 @@
+{% raw %}
+{{#if description}}<!-- {{description}} -->{{/if}}
+<div class="form-group{{#if large}} form-group-lg{{/if}} row">
+	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
+	<div class="col-md-9">
+		{{#if icon}}<div class="input-group{{#if large}} input-group-lg{{/if}}">
+			<div class="input-group-addon"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">{{icon}}</i></div>{{/if}}
+			{{#if rows}}
+			<textarea id="{{id}}" name="{{id}}" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional" data-field="Reflections" data-order="6" rows="{{rows}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
+			{{else}}
+			<input id="{{id}}" name="{{id}}" type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable"{{#if required}} required="required"{{/if}} data-field="{{field}}"{{#if order}} data-order="{{order}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}/>
+			{{/if}}
+		{{#if icon}}</div>{{/if}}
+		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted">{{{help}}}</div>{{/if}}
+	</div>
+</div>
+{% endraw %}

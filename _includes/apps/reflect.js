@@ -12,7 +12,7 @@ App = function() {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _last;
+	var ಠ_ಠ, _last, _forms, _field;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -22,9 +22,9 @@ App = function() {
 
 			/* <!-- Open Sheet from Google Drive Picker --> */
 			ಠ_ಠ.google.pick(
-				"Select a File / Folder to Use", false, true,
+				"Select a File / Folder to Use", true, true,
 				() => [new google.picker.DocsView(google.picker.ViewId.DOCS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED],
-				(file) => file ? ಠ_ಠ.Flags.log("Google Drive Folder Picked from Open", file) && resolve(file) : reject()
+				(files) => files && files.length > 0 ? ಠ_ಠ.Flags.log("Google Drive Files Picked", files) && resolve(files) : reject()
 			);
 
 		});
@@ -45,6 +45,7 @@ App = function() {
 		})).catch((e) => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error"));
 
 	};
+	
 	var _clear = function() {
 		
 		ಠ_ಠ.Display.state().exit([]).protect("a.jump").off();
@@ -64,6 +65,7 @@ App = function() {
 
 			/* <!-- Set Container Reference to this --> */
 			container.App = this;
+			/* <!-- Set Container Reference to this --> */
 
 			/* <!-- Return for Chaining --> */
 			return this;
@@ -89,23 +91,81 @@ App = function() {
 
 			} else if ((/CREATE/i).test(command)) {
 				
-				/* <!-- Load a new Form --> */
-				ಠ_ಠ.Display.template.show({
-					name: "form",
-					target: ಠ_ಠ.container.empty(),
-				});
+				/* <!-- Create a new Form / Template --> */
+				if (!_forms) _forms = ಠ_ಠ.Forms();
+				if (command[1] && _forms.has(command[1].toLowerCase())) {
+					
+					var _form = _forms.get(command[1].toLowerCase());
+					_form.target = ಠ_ಠ.container.empty();
+					_form = ಠ_ಠ.Fields().on(ಠ_ಠ.Display.template.show(_form));
+
+					var _picker = function(form) {
+						form.find("button.g-picker, a.g-picker").off("click.picker").on("click.picker", function(event) {
+							event.preventDefault();
+							if (typeof google === "undefined" || !google.picker) {
+								/* <!-- NEEDS TO BE A BETTER, DECLARATIVE, way of doing this? --> */
+								/* <!-- MAYBE THROUGH ROUTE CONTROL???? --> */
+								ಠ_ಠ.Controller.load([ { id: "__google", url : "https://www.google.com/jsapi", mode : "no-cors" },]).then(() => {window.location.hash = "#evidence.pick." + $(this).parents(".evidence-holder").attr("id");}).catch(e => {console.error(e);});
+							} else {
+								window.location.hash = "#evidence.pick." + $(this).parents(".evidence-holder").attr("id");
+							}
+						});
+
+					};
+					
+					_picker(_form);
+					
+				}
 				
 			} else if ((/OPEN/i).test(command)) {
 				
+			} else if ((/EVIDENCE/i).test(command)) {
 				
+				if ((/PICK/i).test(command[1])) {
+				
+					/* <!-- Pick, then Handle the Selected File --> */
+					_pick().then((f) => {
+						
+						if (command[2]) {
+							
+							var _target = $("#" + command[2]);
+							
+							var checks = _target.find("input[type='checkbox']");
+							if (checks && checks.length == 1 && !checks.prop("checked")) inputChange(checks.prop("checked", true));
+							
+							for (var i = 0; i < f.length; i++) {
+
+								/* <!-- Add new Item to List --> */
+								$(ಠ_ಠ.Display.template.get({
+									template : "list_item",
+									id : f[i][google.picker.Document.ID],
+									url : f[i][google.picker.Document.URL],
+									details : f[i][google.picker.Document.NAME],
+									type : _target.find("button[data-default]").data("default"),
+									icon : f[i][google.picker.Document.ICON_URL],
+									delete : "Remove",
+									for: "",
+								})).appendTo(_target.find(".list-data")).find("a.delete").click(
+									function(e) {
+										e.preventDefault();
+										var _this = $(this).parent();
+										if (_this.siblings(".list-item").length === 0) {
+											_this.closest(".input-group").children("input[type='checkbox']").prop("checked", false);
+										}
+										_this.remove();
+									}
+								);
+	
+							}
+						}
+						
+					}).catch((e) => console.log(e));
+					
+				}
 				
 			} else if ((/SAVE/i).test(command)) {
-				
-				
-				
+
 			} else if ((/CLOSE/i).test(command)) {
-				
-				
 				
 			} else if ((/INSTRUCTIONS/i).test(command)) {
 
@@ -117,6 +177,13 @@ App = function() {
 					wrapper: "MODAL"
 				}).modal();
 
+			} else if ((/TEST/i).test(command)) {
+
+				var __form = ಠ_ಠ.Display.template.show({
+					template: (/TEMPLATE/i).test(command[1]) ? "template" : "report",
+					target: ಠ_ಠ.container.empty(),
+				});
+				
 			}
 
 			/* <!-- Record the last command --> */

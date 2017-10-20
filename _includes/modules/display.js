@@ -30,9 +30,27 @@ Display = function() {
 		var _template = $("#__template__" + name);
 		if (_template.length == 1) {
 			if (Handlebars.templates === undefined) Handlebars.templates = {};
-			Handlebars.templates[name] = Handlebars.compile(_template.html(), {
+			
+			var _html = _template.html();
+			
+			/* <!-- Compile and add compiled template to Handlebars Template object --> */
+			Handlebars.templates[name] = Handlebars.compile(_html, {
 				strict: _debug
 			});
+			
+			/* <!-- Look for partial templates to register/compile too --> */
+			var partial_regex = /\s?{>\s?([a-zA-Z]{1}[^\r\n\t\f }]+)/gi;
+			var partial_names;
+			while ((partial_names = partial_regex.exec(_html)) !== null) {
+				if (partial_names && partial_names[1]) {
+					if (Handlebars.templates[partial_names[1]] === undefined) {
+						Handlebars.registerPartial(partial_names[1], _compile(partial_names[1]));
+					} else {
+						Handlebars.registerPartial(partial_names[1], Handlebars.templates[partial_names[1]]);
+					}
+				}
+			}
+			
 			return Handlebars.templates[name];
 		}
 	};
@@ -114,6 +132,21 @@ Display = function() {
 				}
 			});
 
+			Handlebars.registerHelper("concat", function() {
+				var _return = "";
+				for(var argument in arguments){
+					if (typeof arguments[argument] != "object") {
+						_return += arguments[argument];
+					}
+				}
+				return _return;
+			});
+			
+			Handlebars.registerHelper("inc", function(number, options) {
+    		if(typeof(number) === "undefined" || number === null) return null;
+    		return number + (options && options.hash.inc || 1);
+			});
+			
 		},
 
 		doc: {

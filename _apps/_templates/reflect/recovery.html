@@ -1,0 +1,35 @@
+{% raw %}
+<div class="card mx-1 my-1 mx-md-0 my-md-0">
+
+	<!-- Retrieve if error -->
+	<div id="heading_Recovered" class="card-header bg-warning text-white">
+		
+		<h5 class="mb-0 d-inline">Recovered Form</h5>
+		<a class="float-right" data-toggle="collapse" href="#collapse_Recovered" aria-expanded="false" aria-controls="collapse_Recovered">
+			<i style="display: none;" class="material-icons md-18" data-listen="#collapse_Recovered" data-event="hidden.bs.collapse">expand_more</i>
+			<i class="material-icons md-18" data-listen="#collapse_Recovered" data-event="shown.bs.collapse">expand_less</i>
+		</a>
+		
+	</div>
+	
+	<div id="collapse_Recovered" class="collapse show" role="tabpanel" aria-labelledby="heading_Recovered">
+	
+		<div class="card-body">
+
+				<p>Looks like there was a <strong>failed</strong> form save/submit from <strong><span id="recovery_date"></span></strong>, which has been recovered. <span id="recovery_details"></span>You can choose to recover this and try to save/submit again, or abandon it (the recovered data will be removed).</p>
+
+				<!-- Control Buttons -->
+				<div class="form-group">
+
+					<button id="recovery_recover" type="button" class="btn btn-primary">Recover</button>
+					<button id="recovery_abandon" type="button" class="btn btn-danger">Abandon</button>
+					<span class="form-text text-muted">{{ help }}</span>
+					
+				</div>
+			
+		</div>
+		
+	</div>
+
+</div>
+{% endraw %}

@@ -1,0 +1,15 @@
+{% raw %}
+{{#if description}}<!-- {{description}} -->{{/if}}
+<div class="form-group{{#if large}} form-group-lg{{/if}} row">
+	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
+	<div class="col-md-9">
+		<ul class="list-group" id="{{id}}" name="{{#if name}}{{name}}{{else}}{{id}}{{/if}}"{{#if field}} data-field="{{field}}"{{/if}}{{#if order}} data-order="{{order}}"{{/if}}>
+			{{#each markers}}
+			{{!-- Call Partial Template, concatenating the ID with this parent ID and the Index, and also passing an incremented index for display --}}
+			{{> field_marker id=(concat ../id "_" @index) options=../options type=../type evidence=../evidence number=(inc @index)}}
+			{{/each}}
+		</ul>
+		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted mt-1 mt-md-2">{{{help}}}</div>{{/if}}
+	</div>
+</div>
+{% endraw %}

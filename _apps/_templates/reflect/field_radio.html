@@ -1,0 +1,22 @@
+{% raw %}
+{{#if description}}<!-- {{description}} -->{{/if}}
+<div class="form-group{{#if large}} form-group-lg{{/if}} row">
+	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
+	<div class="col-md-9">
+		<div class="btn-group{{#if large}} btn-group-lg{{/if}}" data-toggle="buttons" id="{{id}}_BUTTONS">
+			{{#each options}}
+				<label class="btn{{#if ../large}} btn-lg{{/if}} {{class}} d-flex h-100">
+					<input type="radio" name="{{../id}}_OPTIONS" autocomplete="off" data-target="{{../id}}" data-value="{{value}}" />
+					<i class="material-icons {{#if ../large}}md-24{{else}}md-18{{/if}} md-light md-inactive to-dim align-self-center">{{#if icon}}{{icon}}{{else}}check{{/if}}</i>
+				</label>
+			{{/each}}
+			<label class="btn btn-secondary d-flex{{#if large}} btn-lg{{/if}} h-100" title="Clear / Reset">
+				<input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-target="{{id}}" />
+				<i class="pl-1 material-icons {{#if large}}md-24{{else}}md-18{{/if}} md-dark align-self-center">refresh</i>
+			</label>
+		</div>
+		<textarea id="{{id}}" name="{{id}}" type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-1" readonly="readonly" data-field="{{field}}" rows="1"{{#if order}} data-order="{{order}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
+		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted">{{{help}}}</div>{{/if}}
+	</div>
+</div>
+{% endraw %}

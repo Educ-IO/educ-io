@@ -9,6 +9,7 @@
     @import "_fonts";
     {% if page.style %}@import "_{{ page.style }}";{% elsif layout.style %}@import "_{{ layout.style }}";{% endif %}	
     {% if page.layout == "app" %}
+			{% if site.data.fonts["Material Icons"].for contains page.app %}@import "_icons";{% endif %}
       @import "_app";
       @import "_tables";
 			@import "_forms";

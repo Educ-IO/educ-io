@@ -1,0 +1,30 @@
+{% raw %}
+{{#if description}}<!-- {{description}} -->{{/if}}
+<li class="list-group-item dim"{{#if colour}} style="background-color: {{colour}};"{{/if}}>
+	<div class="material-switch-label">
+		{{!-- Output a numerical marker (e.g. 1, 1.1, 1.1.1 etc) by concatenating the parent and the current number --}}
+		<h4 class="marker-label">{{#if number}}{{#unless naked}}{{#if parent}}{{concat parent "." number}}{{else}}{{number}}{{/if}}) {{/unless}}{{/if}}{{#if name}}{{name}}{{/if}}</h4>
+		{{#if details}}{{{details}}}{{/if}}
+	</div>
+	<div class="float-right">
+		<input id="{{id}}" name="{{#if name}}{{name}}{{else}}{{id}}{{/if}}" hidden="hidden" type="checkbox" for="{{#if children}}{{id}}_CHILDREN{{else}}{{id}}_EVIDENCE{{/if}}" data-reveal="#{{id}}_{{#if children}}CHILDREN{{else}}EVIDENCE{{/if}}">
+		<label class="material-switch" for="{{id}}"></label>
+	</div>
+	{{#if children}}
+	<ul class="list-group" id="{{id}}_CHILDREN"{{#if name}} name="{{name}}"{{/if}} style="display: none;" {{#if field}} data-field="{{field}}"{{/if}} class="mt-1"{{#if order}} data-order="{{order}}"{{/if}}>
+		{{#each children}}
+			{{#if ../parent}}
+			{{!-- Output a marker for the child, concatenating the id and also the parent with the parent of this marker --}}
+			{{> field_marker id=(concat ../id "_" @index) options=../options type=../type evidence=../evidence parent=(concat ../parent "." ../number) number=(inc @index)}}
+			{{else}}
+			{{!-- Output a marker for the child, concatenating the id and making the number for this marker the parent --}}
+			{{> field_marker id=(concat ../id "_" @index) options=../options type=../type evidence=../evidence parent=../number number=(inc @index)}}
+			{{/if}}
+		{{/each}}
+	</ul>
+	{{else}}
+	{{!-- If there are no children, output an Evidence Holder for evidence picking --}}
+ 	{{> field_evidence id=(concat id "_EVIDENCE") details=evidence number=@index style="display: none;" class="mt-1 mt-md-2"}}
+	{{/if}}
+</li>
+{% endraw %}

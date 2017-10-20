@@ -13,6 +13,7 @@ TODO LIST
 * Lazy Permission Requests....
 * Contrite Penguin 404 Page
 * Links to ISSUE trackers for APPS and EXTENSIONS ??
+* Add Fonts to Credits page....
 
 Router
 ------
@@ -54,13 +55,20 @@ Folders
 Merge
 -----
 
-
 Reflect
 -------
-
+* Sign out doesn't route back to initial text?
+* Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL/
+* Email group from above.
 
 Complete
 --------
+* Generic Output Evidence Picker <-- DONE
+* Comprehensive Teachers' Standards Evidence Picker <-- DONE
+* Basic Reflect Report Form <-- DONE
+* Make all re-usable form components sizable (with large option) <-- DONE
+* Don't forget resizable CSS & Code <-- DONE
+* Added Material Icon Support <-- DONE
 * Table Module -> 'Flickering Bug' on Table Sroll to End on Occasional Sheets <-- DONE
 * Scroll Bars are still buggy in Chrome <-- DONE
 * Hidden-First Visibiity on 'View' needs to be hidden <-- DONE
@@ -240,4 +248,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-09-29
+ᕕ( ᐛ )ᕗ JD ♑ - 2017-10-20
