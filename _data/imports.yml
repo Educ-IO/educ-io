@@ -209,6 +209,27 @@ tether:
       crossorigin: anonymous
       id: __tether
 
+latest-bootstrap-css:
+  name: Bootstrap (CSS)
+  desc: This is a toolkit / framework for site design, layout and presentation.
+  url: https://cdnjs.com/libraries/twitter-bootstrap
+  project: http://getbootstrap.com/
+  version: 4.0.0-beta.2
+  license: MIT
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.min.css
+      integrity: sha256-QUyqZrt5vIjBumoqQV0jM8CgGqscFfdGhN+nVCqX0vc=
+      crossorigin: anonymous
+      map: true
+      id: __bootstrap-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.css
+      integrity: sha256-bQNoQmAU+jjEAH6JRX378IbDNnQPkLt5yWRxHn3yUYE=
+      crossorigin: anonymous
+      map: true
+      id: __bootstrap-css
+      
 bootstrap-css:
   name: Bootstrap (CSS)
   desc: This is a toolkit / framework for site design, layout and presentation.
@@ -230,6 +251,27 @@ bootstrap-css:
       map: true
       id: __bootstrap-css
 
+latest-bootstrap-js:
+  name: Bootstrap (JS)
+  desc: This is a toolkit / framework for site design, layout and presentation.
+  url: https://cdnjs.com/libraries/twitter-bootstrap
+  project: http://getbootstrap.com/
+  version: 4.0.0-beta.2
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.min.js
+      integrity: sha256-GIa8Vh3sfESnVB2CN3rYGkD/MklvMq0lmITweQxE1qU=
+      crossorigin: anonymous
+      map: true
+      id: __bootstrap-js
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.js
+      integrity: sha256-o5aEI5KgisQLdZNoCMhg5OQcBDXoUHF5P1ubIREMaZg=
+      crossorigin: anonymous
+      map: true
+      id: __bootstrap-js
+      
 bootstrap-js:
   name: Bootstrap (JS)
   desc: This is a toolkit / framework for site design, layout and presentation.
@@ -242,11 +284,13 @@ bootstrap-js:
     - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.min.js
       integrity: sha256-DiWJXXyq81WlPRnDfGmgYZj2aOVCKyEdJ1l+2TmDuAs=
       crossorigin: anonymous
+      map: true
       id: __bootstrap-js
   dev:
     - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.js
       integrity: sha256-1LmgjLdpcClLOb/DwQyq5qTdgtQFvYxiARMhHFojyHc=
       crossorigin: anonymous
+      map: true
       id: __bootstrap-js
       
 loki:
@@ -722,3 +766,23 @@ autosize:
       integrity: sha256-5t2LHarwurNaHTil6frwj73iwwZNrVFmx65P933nwys=
       crossorigin: anonymous
       id: __autosize
+      
+sprintf:
+  name: Sprintf.js
+  desc: JavaScript sprintf implementation
+  url: https://cdnjs.com/libraries/sprintf
+  project: https://github.com/alexei/sprintf.js
+  version: 1.1.1
+  license: BSD-3-Clause
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/sprintf/1.1.1/sprintf.min.js
+      integrity: sha256-eVgCKximJ7hwWhTBw52jq3541BGK6y88M79oQxJt4Jk=
+      crossorigin: anonymous
+      map: true
+      id: __sprintf
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/sprintf/1.1.1/sprintf.js
+      integrity: sha256-PEpGhUXWF9LuZLlCnJqemwT6Or8HMc5AzeDMB29U9dQ=
+      crossorigin: anonymous
+      id: __sprintf

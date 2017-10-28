@@ -97,7 +97,7 @@ Fields = function() {
 			var _this = $(this);
 			if (_this.data("target") && _this.data("value")) {
 				e.preventDefault();
-				$("#" + _this.data("target")).text(_this.data("value"));
+				form.find("#" + _this.data("target")).text(_this.data("value"));
 			}
 		});
 		
@@ -107,15 +107,15 @@ Fields = function() {
 		
 		form.find("button.complex-list-add, a.complex-list-add").click(function(e) {
 			var _this = $(this);
-			var _holder = _this.siblings("textarea"), _details = _holder.val();
+			var _holder = form.find("#" + _this.data("details")), _details = _holder.val();
 			if (_details) {
-
+ 
 				/* <!-- Get Type and Defaults --> */
-				var _selector = _this.parent().find("button.complex-list-type, a.complex-list-type"), _type = _selector.text(), _default = _selector.data("default");
+				var _selector = form.find("#" + _this.data("type")), _type = _selector.text(), _default = _selector.data("default");
 				if (_type == _default) _type = "";
 
 				/* <!-- Add new Item to List --> */
-				var _list = _this.closest(".input-group").siblings(".list-data");
+				var _list = form.find("#" + _this.data("target"));
 				if (_list.children(".list-item").length === 0) _this.closest(".input-group").children("input[type='checkbox']").prop("checked", true);
 				$(ಠ_ಠ.Display.template.get({
 					template : "list_item",
@@ -177,6 +177,14 @@ Fields = function() {
 		});
 		
 	};
+	
+	var _me = function(form) {
+		
+		form.find(".textual-input-button[data-action='me']").off("click.me").on("click.me", function() {
+			if (ಠ_ಠ.me) $("#" + $(this).data("target")).val(ಠ_ಠ.me.full_name());
+		});
+		
+	};
 	/* <!-- Internal Functions --> */
 	
 	/* <!-- External Visibility --> */
@@ -197,7 +205,8 @@ Fields = function() {
 				_complex,
 				_reveal,
 				_dim,
-				_autosize
+				_autosize,
+				_me
 			];
 			/* <!-- Return for Chaining --> */
 			return this;

@@ -266,6 +266,7 @@ reflect:
     - reflect/field_radio
     - reflect/field_scale
     - reflect/field_select
+    - reflect/field_span
     - reflect/field_textual
     - reflect/group
     - reflect/list_item
@@ -803,4 +804,12 @@ isams:
   published: true
   ext: true
   colour: 38761d
+  action: Find out more
+isams:
+  name: Cloudy Sky
+  desc: Produce __better spreadsheet__ reports from the _BlueSky_ platform, directly in your browser
+  link: /extensions/cloudy-sky
+  published: true
+  ext: true
+  colour: 4a86e8
   action: Find out more

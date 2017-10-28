@@ -13,7 +13,9 @@ TODO LIST
 * Lazy Permission Requests....
 * Contrite Penguin 404 Page
 * Links to ISSUE trackers for APPS and EXTENSIONS ??
-* Add Fonts to Credits page....
+* Test page for Javascript / Browser Features! <- TEST.md
+* Branding License
+* Make JS Request calls for SW cacheable resources with integrity flags if available
 
 Router
 ------
@@ -60,9 +62,13 @@ Reflect
 * Sign out doesn't route back to initial text?
 * Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL/
 * Email group from above.
+* Field Span
+* Picker seems to have problems overlaying card for Report Form?
 
 Complete
 --------
+* Default Button for Textual Field <-- DONE
+* Add Fonts to Credits page.... <-- DONE
 * Generic Output Evidence Picker <-- DONE
 * Comprehensive Teachers' Standards Evidence Picker <-- DONE
 * Basic Reflect Report Form <-- DONE
@@ -248,4 +254,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-10-20
+ᕕ( ᐛ )ᕗ JD ♑ - 2017-10-22

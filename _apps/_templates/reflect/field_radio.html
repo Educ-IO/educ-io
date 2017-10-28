@@ -15,7 +15,10 @@
 				<i class="pl-1 material-icons {{#if large}}md-24{{else}}md-18{{/if}} md-dark align-self-center">refresh</i>
 			</label>
 		</div>
-		<textarea id="{{id}}" name="{{id}}" type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-1" readonly="readonly" data-field="{{field}}" rows="1"{{#if order}} data-order="{{order}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
+		<div class="input-group{{#if large}} input-group-lg{{/if}} mt-1">
+			{{#if icon}}<div class="input-group-addon d-none d-md-flex"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">{{icon}}</i></div>{{/if}}
+			<textarea id="{{id}}" name="{{id}}" type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional" readonly="readonly" data-field="{{field}}" rows="1"{{#if order}} data-order="{{order}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
+		</div>
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted">{{{help}}}</div>{{/if}}
 	</div>
 </div>

@@ -169,11 +169,15 @@ Main = function() {
 					/* <!-- Get User Info for Display --> */
 					ಠ_ಠ.google.me().then(function(user) {
 
+						user.display_name = function() {return this.name.length == 3 ? this.name.split(" ").join("") : this.name};
+						user.full_name = function() {return this.display_name()  + " (" + this.email + ")"};
+						ಠ_ಠ.me = user;
+						
 						/* Disable and Hide the Sign in */
 						$("#sign_in").hide().children(".btn").attr("title","").off("click.login");
 						
 						/* Enable and Shopw the Sign Out */
-						$("#user_details").text(user.name.length == 3 ? user.name.split(" ").join("") : user.name).attr("title", "To remove from your account (" + user.email + "), click & follow instructions");
+						$("#user_details").text(ಠ_ಠ.me.display_name()).attr("title", "To remove from your account (" + ಠ_ಠ.me.email + "), click & follow instructions");
 						$("#sign_out .btn").on("click.logout", function(e) {e.preventDefault(); google_SignOut();});
 						$("#sign_out").show();
 

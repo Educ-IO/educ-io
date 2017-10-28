@@ -1,4 +1,8 @@
 site :
+  0.0.6k :
+    name : Cloudy Sky Extension
+    desc : New extension page and updated imports
+    type : minor
   0.0.6j :
     name : Reflect 0.0.2a-alpha
     desc : Initial Reflect Report Forms and Updated Import Libraries

@@ -432,6 +432,7 @@ Forms = function() {
 							help: markdown("How often will this form be used?"),
 							options: [
 								{value: "weekly", name: "Weekly"},
+								{value: "fortnightly", name: "Fortnightly (every two weeks)"},
 								{value: "monthly", name: "Monthly"},
 								{value: "quarterly", name: "Quarterly (four times a year)"},
 								{value: "triannually", name: "Triannually (three times a year)"},
@@ -463,16 +464,35 @@ Forms = function() {
 					fields : {
 						name : {
 							template: "field_textual",
-							title: "Week / Assessment Point",
-							field: "Week",
-							help: markdown("For which week or assessment point is this report for?"),
+							title: "About / Subject",
+							field: "Name",
+							help: markdown("Who (or what) is this report about?"),
+							icon: "face",
+							button: "Me!",
+							action: "me",
 							large: true,
 							required: true
 						},
+						span : {
+							template: "field_span",
+							title: "Week / Assessment Span",
+							field: "Span",
+							icon: "query_builder",
+							help: markdown("For which week or assessment period is this report for?"),
+							large: true,
+							required: true,
+							type: "Weekly",
+							options: [
+								{value: "Weekly", name: "Weekly"},
+								{value: "Monthly", name: "Monthly"},
+								{value: "Yearly", name: "Yearly"}
+							],
+						},
 						absences : {
 							template: "field_numeric",
-							title: "Any absences this week?",
+							title: "Any absences over this period?",
 							field: "Absences",
+							icon: "local_hospital",
 							help: markdown("If you have been ill, or have taken __agreed absence__ from your school, please enter the number of days here."),
 							increment: 0.5,
 							min: 0,
@@ -485,6 +505,7 @@ Forms = function() {
 							template: "field_textual",
 							title: "Mentor",
 							field: "Mentor",
+							icon: "school",
 							help: "",
 							required: true
 						},
@@ -523,6 +544,7 @@ Forms = function() {
 							template: "field_radio",
 							title: "Overall Assessment",
 							field: "Overall Assessment",
+							icon: "gavel",
 							help: markdown("Having discussed and agreed this with your Mentor, please assess your progress over this past week."),
 							large: true,
 							options: [
@@ -571,6 +593,7 @@ Forms = function() {
 							field: "Future Targets",
 							item: "Target",
 							type: "Evidence Type",
+							icon: "gps_fixed",
 							help: markdown("Enter details of the targets you are setting yourself this week, together with the type of evidence that will confirm you have met the target. Then save them to the list below."),
 							options: [
 								"Lesson Plan",
