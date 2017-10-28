@@ -805,7 +805,7 @@ isams:
   ext: true
   colour: 38761d
   action: Find out more
-isams:
+cloudysky:
   name: Cloudy Sky
   desc: Produce __better spreadsheet__ reports from the _BlueSky_ platform, directly in your browser
   link: /extensions/cloudy-sky
