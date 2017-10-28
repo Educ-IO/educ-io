@@ -33,5 +33,15 @@ The code is fully open-source but does contain code (many thanks!) from the proj
 |EXAMPLE.md|[Website](http://www.unexpected-vortices.com/sw/rippledoc/quick-markdown-example.html)|Copyright 2014 John Gabriele|[GNU GPL v3](http://www.gnu.org/licenses/)|
 {:class="table table-hover table-responsive"}
 
+{% if site.data.apps.shiny.versions %}
+
+#### Recent Versions
+{:class="border border-left-0 border-right-0 border-top-0 mt-2 pb-1"}
+The most recent versions of this tool are below, showing significant functionality changes and improvements.
+{:class="text-small text-muted"}
+{% include versions.html versions=site.data.apps.shiny.versions %}
+
+{% endif %}
+
 {% endcapture %}
 {% include extension.html logo="images/shiny.svg" url="https://chrome.google.com/webstore/detail/shiny-shiny/ihigondjldgbcfcaabmplodljjliedaf" action="Install" %}

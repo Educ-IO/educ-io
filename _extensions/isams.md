@@ -29,5 +29,15 @@ The code is fully open-source but does contain code (many thanks!) from the proj
 |FileSaver.js|[Github Repo](https://github.com/eligrey/FileSaver.js)|Copyright © 2016 [Eli Grey](http://eligrey.com/).|[MIT License](https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md)|
 {:class="table table-hover table-responsive"}
 
+{% if site.data.apps.isams.versions %}
+
+#### Recent Versions
+{:class="border border-left-0 border-right-0 border-top-0 mt-2 pb-1"}
+The most recent versions of this extension are below, showing significant functionality changes and improvements.
+{:class="text-small text-muted"}
+{% include versions.html versions=site.data.apps.isams.versions %}
+
+{% endif %}
+
 {% endcapture %}
 {% include extension.html logo="images/sheets_downloader.svg" url="https://chrome.google.com/webstore/detail/isams-xls-reports-to-shee/kkahfpjmfgjidhahaapadhgcnecbfckl" action="Install" %}

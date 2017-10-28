@@ -1,0 +1,13 @@
+{::options parse_block_html="true" /}
+<div class="highlight_all highlight_{{ include.name | downcase }} mb-3">
+{% if include.name %}##### {{ include.name | capitalize }}{% endif %}
+{% if include.desc %}{{ include.desc }}
+{:.small}{% endif %}
+{% for version in include.versions limit:5 %}
++ {{ version[0] }}{% if version[1].type == "security" %} <span class="badge badge-danger">Security Fix</span>{% endif %}{% if version[1].type == "major" %} <span class="badge badge-dark">Major Release</span>{% endif %}{% if version == include.versions.first %} <span class="badge badge-secondary">Latest</span>{% endif %}
+	- __{{ version[1].name }}__{% if version[1].desc %}
+	- _{{ version[1].desc }}_{% endif %}{% if version[1].changes %}{% for change in version[1].changes %}
+		* {% if change.details %}{{ change.details }}{% else %}{{ change }}{% endif %}{% if change.url %} (See [here]({{ change.url }}){:target="_blank"} for details){% endif %}
+	{% endfor %}{% endif %}
+{% endfor %}
+</div>

@@ -813,3 +813,15 @@ cloudysky:
   ext: true
   colour: 4a86e8
   action: Find out more
+  versions:
+    1.0.1-beta :
+      name : Minor Tweaks
+      desc : Improved performance handling
+      type : minor
+    1.0.0 :
+      name : Initial Version
+      desc : Initial version published online
+      type : major
+      changes :
+        - details: Initial Code Commit
+          url : https://github.com/thiscouldbejd/cloudysky-extension

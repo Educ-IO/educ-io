@@ -49,5 +49,15 @@ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRAN
 
 The __logo__ incorporates the [Markdown Mark](https://github.com/dcurtis/markdown-mark) which is licensed under the Creative Commons License (CC0 UNIVERSAL PUBLIC DOMAIN DEDICATION LICENSE).
 
+{% if site.data.apps.gabriel.versions %}
+
+#### Recent Versions
+{:class="border border-left-0 border-right-0 border-top-0 mt-2 pb-1"}
+The most recent versions of this add-on are below, showing significant functionality changes and improvements.
+{:class="text-small text-muted"}
+{% include versions.html versions=site.data.apps.gabriel.versions %}
+
+{% endif %}
+
 {% endcapture %}
 {% include extension.html logo="images/gabriel.svg" url="https://chrome.google.com/webstore/detail/gabriel-the-markdown-ange/okimajjeocnndpifeelaajdebkkbckff" action="Install" %}

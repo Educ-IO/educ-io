@@ -1,4 +1,8 @@
 site :
+  0.0.6l :
+    name : Versions for Extensions
+    desc : Added version details for extensions
+    type : minor
   0.0.6k :
     name : Cloudy Sky Extension
     desc : New extension page and updated imports
