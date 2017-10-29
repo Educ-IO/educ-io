@@ -814,6 +814,10 @@ cloudysky:
   colour: 4a86e8
   action: Find out more
   versions:
+    1.0.2 :
+      name : Minor Improvements
+      desc : Busy Spinners and Percentage Progress Feedback
+      type : minor
     1.0.1-beta :
       name : Minor Tweaks
       desc : Improved performance handling

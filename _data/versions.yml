@@ -1,4 +1,8 @@
 site :
+  0.0.6m :
+    name : Cloudy Sky Instructions
+    desc : Added instructions for cloudy sky extension
+    type : minor
   0.0.6l :
     name : Versions for Extensions
     desc : Added version details for extensions
