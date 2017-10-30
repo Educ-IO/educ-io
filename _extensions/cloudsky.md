@@ -35,6 +35,11 @@ While undertaking [reviews](https://v2.blueskyeducation.co.uk/reviews/levels), y
 
 If you maintain a [personal journal](https://v2.blueskyeducation.co.uk/journal/index) in BlueSky, this extension will allow you to export all of these journal entries. An 'Export to Spreadsheet' button will be added to your [journal](https://v2.blueskyeducation.co.uk/journal/index) page. When you click the button, every journal entry in your current view (optionally filtered) is exported (with full text and any associated comments) to a spreadsheet, which is then downloaded by your browser.
 
+##### Reviews <i class="material-icons md-24">domain</i>
+{:title="For BlueSky Mentors & Line Managers"}
+
+If you are using __Reviews__ (under either the [manage](https://v2.blueskyeducation.co.uk/manage/reviews/index){:target="_new"} or [mentor](https://v2.blueskyeducation.co.uk/mentor/reviews/index){:target="_new"} tabs) to track _self-assessments_, _skills_ or _knowlege_ then you might want to __monitor__ which users have completed different reviews. This extension gives you the ability to export this information to a spreadsheet by adding an 'Export to Spreadsheet' to the _paged_ overview of these reviews. This saves you having to click through each page of data (10 items at a time) to get the information you need.
+
 ##### Shared Journals <i class="material-icons md-24">domain</i>
 {:title="For BlueSky Mentors & Line Managers"}
 

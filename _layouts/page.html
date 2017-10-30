@@ -26,7 +26,7 @@ imports:
 	{% include head.html %}
 	<body class="container">
 		{% include nav.html type="sticky-top" %}
-		<div class="container css-sensitive pb-4">
+		<div class="container css-sensitive pb-4 px-0">
 			<div class="jumbotron pt-4 pb-2">
   			<h1 class="display-4">{{ page.title }}</h1>
   			{% if page.lead %}<p class="lead">{{ page.lead | markdownify | remove: "<p>" | remove: "</p>" }}</p>{% endif %}

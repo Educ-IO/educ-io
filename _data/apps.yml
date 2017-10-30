@@ -814,6 +814,10 @@ cloudysky:
   colour: 4a86e8
   action: Find out more
   versions:
+    1.0.6 :
+      name : New Features
+      desc : Reviews metadata export
+      type : minor
     1.0.5 :
       name : New Features
       desc : Evidence Tracker and full-text Shared Journal exports
