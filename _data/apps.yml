@@ -814,6 +814,14 @@ cloudysky:
   colour: 4a86e8
   action: Find out more
   versions:
+    1.0.5 :
+      name : New Features
+      desc : Evidence Tracker and full-text Shared Journal exports
+      type : minor
+    1.0.3 :
+      name : Functionality Improvements
+      desc : Ability to output Personal Journals to Spreadsheet
+      type : minor
     1.0.2 :
       name : Minor Improvements
       desc : Busy Spinners and Percentage Progress Feedback

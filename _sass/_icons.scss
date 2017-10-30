@@ -15,8 +15,12 @@
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 // -- Material Design Icons -- //
 
-/* Rules for using icons as white on a dark background. */
 a .material-icons {
   color: $colour-highlight;
   text-decoration: none !important;
+}
+
+h1 > .material-icons, h2 > .material-icons, h3 > .material-icons,
+h4 > .material-icons, h5 > .material-icons, h6 > .material-icons {
+  vertical-align: bottom;
 }

@@ -67,6 +67,7 @@ Reflect
 
 Complete
 --------
+* Add Material Icons to Pages <-- DONE
 * Default Button for Textual Field <-- DONE
 * Add Fonts to Credits page.... <-- DONE
 * Generic Output Evidence Picker <-- DONE
@@ -254,4 +255,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-10-22
+ᕕ( ᐛ )ᕗ JD ♑ - 2017-10-30
