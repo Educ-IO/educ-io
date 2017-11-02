@@ -32,6 +32,7 @@ Apps
 
 Mobile
 ------
+* ** IMPORTANT ** Incognito Mode on IOS fails on sign-in (issue with LocalForage again?)
 * Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
 * Top nav menu wastes space on mobile. Can it be shifted to sticky on mobile devices only with bootstrap? Maybe a media query if nothing else works.
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
@@ -64,6 +65,8 @@ Reflect
 * Email group from above.
 * Field Span
 * Picker seems to have problems overlaying card for Report Form?
+* Button Sizes inconsistent (Text vs Icnon buttons) on Mobile / IOS
+* Picker problems on IOS
 
 Complete
 --------

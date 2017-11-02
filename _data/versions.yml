@@ -1,4 +1,8 @@
 site :
+  0.0.6p :
+    name : Cloudy Sky Instructions
+    desc : Further instructions for cloudy sky extension
+    type : minor
   0.0.6o :
     name : Cloudy Sky Instructions
     desc : Further instructions for cloudy sky extension

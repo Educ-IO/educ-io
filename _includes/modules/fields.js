@@ -61,7 +61,7 @@ Fields = function() {
 		/* <!-- Wire up eraser actions --> */
 		form.find(".eraser").click(function(e) {
 			var _this = $(this);
-			if (_this.data("target")) $("#" + _this.data("target")).val("").removeClass("invalid");
+			if (_this.data("target")) $("#" + _this.data("target") + ", #" + _this.data("target") + "> input").val("").removeClass("invalid");
 			if (_this.data("reset")) {
 				var _reset = $("#" + _this.data("reset"));
 				if (_reset.data("default")) _reset.text(_reset.data("default"));
@@ -185,6 +185,17 @@ Fields = function() {
 		});
 		
 	};
+	
+	var _datetime = function(form) {
+		
+		form.find("div.dt-picker, input.dt-picker").datepicker({
+			format: "yyyy-mm-dd",
+    	todayBtn: "linked",
+    	todayHighlight: true,
+			autoclose: true
+		});
+		
+	};
 	/* <!-- Internal Functions --> */
 	
 	/* <!-- External Visibility --> */
@@ -206,7 +217,8 @@ Fields = function() {
 				_reveal,
 				_dim,
 				_autosize,
-				_me
+				_me,
+				_datetime
 			];
 			/* <!-- Return for Chaining --> */
 			return this;

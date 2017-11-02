@@ -475,7 +475,7 @@ Forms = function() {
 						},
 						span : {
 							template: "field_span",
-							title: "Week / Assessment Span",
+							title: "Week / Assessment Period",
 							field: "Span",
 							icon: "query_builder",
 							help: markdown("For which week or assessment period is this report for?"),
@@ -485,7 +485,8 @@ Forms = function() {
 							options: [
 								{value: "Weekly", name: "Weekly"},
 								{value: "Monthly", name: "Monthly"},
-								{value: "Yearly", name: "Yearly"}
+								{value: "Yearly", name: "Yearly"},
+								{value: "Custom", name: "Custom"}
 							],
 						},
 						absences : {

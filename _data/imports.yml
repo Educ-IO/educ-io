@@ -786,3 +786,43 @@ sprintf:
       integrity: sha256-PEpGhUXWF9LuZLlCnJqemwT6Or8HMc5AzeDMB29U9dQ=
       crossorigin: anonymous
       id: __sprintf
+      
+bootstrap-datepicker-css:
+  name: DatePicker for Bootstrap (CSS)
+  desc: This is a UI Component to provide cross-browser date picking (on top of Bootstrap)
+  url: https://cdnjs.com/libraries/bootstrap-datepicker
+  project: https://github.com/uxsolutions/bootstrap-datepicker
+  version: 4.0.0-beta
+  license: MIT
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker3.min.css
+      integrity: sha256-WgFzD1SACMRatATw58Fxd2xjHxwTdOqB48W5h+ZGLHA=
+      crossorigin: anonymous
+      map: true
+      id: __bootstrap-datepicker-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker3.css
+      integrity: sha256-Mma0D9pd/zkCHD9ftp77ww67u9F2C1HheGUszGajph0=
+      crossorigin: anonymous
+      map: true
+      id: __bootstrap-datepicker-css
+
+bootstrap-datepicker-js:
+  name: DatePicker for Bootstrap (JS)
+  desc: This is a UI Component to provide cross-browser date picking (on top of Bootstrap)
+  url: https://cdnjs.com/libraries/bootstrap-datepicker
+  project: https://github.com/uxsolutions/bootstrap-datepicker
+  version: 1.7.1
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js
+      integrity: sha256-TueWqYu0G+lYIimeIcMI8x1m14QH/DQVt4s9m/uuhPw=
+      crossorigin: anonymous
+      id: __bootstrap-datepicker-js
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.js
+      integrity: sha256-7Ls/OujunW6k7kudzvNDAt82EKc/TPTfyKxIE5YkBzg=
+      crossorigin: anonymous
+      id: __bootstrap-datepicker-js
