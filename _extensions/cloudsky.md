@@ -38,7 +38,7 @@ If you maintain a [personal journal](https://v2.blueskyeducation.co.uk/journal/i
 ##### Reviews <i class="material-icons md-24">domain</i>
 {:title="For BlueSky Mentors & Line Managers"}
 
-If you are using __Reviews__ (under either the [manage](https://v2.blueskyeducation.co.uk/manage/reviews/index){:target="_new"} or [mentor](https://v2.blueskyeducation.co.uk/mentor/reviews/index){:target="_new"} tabs) to track _self-assessments_, _skills_ or _knowlege_ then you might want to __monitor__ which users have completed different reviews. This extension gives you the ability to export this information to a spreadsheet by adding an 'Export to Spreadsheet' to the _paged_ overview of these reviews. This saves you having to click through each page of data (10 items at a time) to get the information you need.
+If you are using __Reviews__ (under either the [manage](https://v2.blueskyeducation.co.uk/manage/reviews/index){:target="_new"} or [mentor](https://v2.blueskyeducation.co.uk/mentor/reviews/index){:target="_new"} tabs) to track _self-assessments_, _skills_ or _knowlege_ then you might want to __monitor__ which users have completed different reviews. This extension gives you the ability to export this information to a spreadsheet by adding an 'Export to Spreadsheet' to the _paged_ overview of these reviews. You might also find that the _evidence percentage indicator_ does not always show the numbers you might expect. This extension adds a 'Check Evidence' button, which will give you an __accurate total__ and a __more detailed breakdown__, including number of comments, links and documents.
 
 ##### Shared Journals <i class="material-icons md-24">domain</i>
 {:title="For BlueSky Mentors & Line Managers"}
@@ -58,8 +58,9 @@ The code is fully open-source but does contain code (many thanks!) from the proj
 
 |File|From|Copyright|License|
 |---|---|---|---|
-|XLSX.js|[Github Repo](https://github.com/SheetJS/js-xlsx)|Copyright © 2012-2017 [SheetJS LLC ](http://sheetjs.com/)|[Apache License 2.0](https://github.com/SheetJS/js-xlsx/blob/master/LICENSE)|
-|FileSaver.js|[Github Repo](https://github.com/eligrey/FileSaver.js)|Copyright © 2016 [Eli Grey](http://eligrey.com/)|[MIT License](https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md)|
+|__XLSX.js__|[Github Repo](https://github.com/SheetJS/js-xlsx)|Copyright © 2012-2017 [SheetJS LLC ](http://sheetjs.com/)|[Apache License 2.0](https://github.com/SheetJS/js-xlsx/blob/master/LICENSE)|
+|__FileSaver.js__|[Github Repo](https://github.com/eligrey/FileSaver.js)|Copyright © 2016 [Eli Grey](http://eligrey.com/)|[MIT License](https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md)|
+|__Spin.js__|[Github Repo](https://github.com/fgnass/spin.js)|Copyright © 2011-2015 [Felix Gnass](http://spin.js.org/)|[MIT License](https://github.com/fgnass/spin.js/blob/master/LICENSE.md)|
 {:class="table table-hover table-responsive"}
 
 {% if site.data.apps.cloudysky.versions %}

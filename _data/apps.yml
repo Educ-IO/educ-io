@@ -818,6 +818,10 @@ cloudysky:
   colour: 4a86e8
   action: Find out more
   versions:
+    1.0.8 :
+      name : New Feature
+      desc : Check Evidence Button on Review Page
+      type : minor
     1.0.7 :
       name : Bug Fix
       desc : Fixes Hyperlink Formula Bug
