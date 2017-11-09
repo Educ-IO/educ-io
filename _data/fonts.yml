@@ -4,4 +4,4 @@
   for: [all]
 "Material Icons":
   safe: "Material+Icons"
-  for: [reflect, cloudsky.md]
+  for: [reflect, cloudsky.md, test.md]

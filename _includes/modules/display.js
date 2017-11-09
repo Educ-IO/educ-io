@@ -85,67 +85,71 @@ Display = function() {
 
 		start: function() {
 
-			Handlebars.registerHelper("isDate", function(variable, options) {
-				if (variable && variable instanceof Date) {
-					return options.fn(this);
-				} else {
-					return options.inverse(this);
-				}
-			});
-
-			Handlebars.registerHelper("localeDate", function(variable, options) {
-				return variable.toLocaleString();
-			});
-
-			Handlebars.registerHelper("exists", function(variable, options) {
-				if (typeof variable !== "undefined") {
-					return options.fn(this);
-				} else {
-					return options.inverse(this);
-				}
-			});
-
-			Handlebars.registerHelper({
-				eq: function(v1, v2) {
-					return v1 === v2;
-				},
-				ne: function(v1, v2) {
-					return v1 !== v2;
-				},
-				lt: function(v1, v2) {
-					return v1 < v2;
-				},
-				gt: function(v1, v2) {
-					return v1 > v2;
-				},
-				lte: function(v1, v2) {
-					return v1 <= v2;
-				},
-				gte: function(v1, v2) {
-					return v1 >= v2;
-				},
-				and: function(v1, v2) {
-					return v1 && v2;
-				},
-				or: function(v1, v2) {
-					return v1 || v2;
-				}
-			});
-
-			Handlebars.registerHelper("concat", function() {
-				var _return = "";
-				for(var argument in arguments){
-					if (typeof arguments[argument] != "object") {
-						_return += arguments[argument];
+			if (Handlebars) {
+				
+				Handlebars.registerHelper("isDate", function(variable, options) {
+					if (variable && variable instanceof Date) {
+						return options.fn(this);
+					} else {
+						return options.inverse(this);
 					}
-				}
-				return _return;
-			});
-			
-			Handlebars.registerHelper("inc", function(number, options) {
-    		if(typeof(number) === "undefined" || number === null) return null;
-    		return number + (options && options.hash.inc || 1);
-			});
+				});
+
+				Handlebars.registerHelper("localeDate", function(variable, options) {
+					return variable.toLocaleString();
+				});
+
+				Handlebars.registerHelper("exists", function(variable, options) {
+					if (typeof variable !== "undefined") {
+						return options.fn(this);
+					} else {
+						return options.inverse(this);
+					}
+				});
+
+				Handlebars.registerHelper({
+					eq: function(v1, v2) {
+						return v1 === v2;
+					},
+					ne: function(v1, v2) {
+						return v1 !== v2;
+					},
+					lt: function(v1, v2) {
+						return v1 < v2;
+					},
+					gt: function(v1, v2) {
+						return v1 > v2;
+					},
+					lte: function(v1, v2) {
+						return v1 <= v2;
+					},
+					gte: function(v1, v2) {
+						return v1 >= v2;
+					},
+					and: function(v1, v2) {
+						return v1 && v2;
+					},
+					or: function(v1, v2) {
+						return v1 || v2;
+					}
+				});
+
+				Handlebars.registerHelper("concat", function() {
+					var _return = "";
+					for(var argument in arguments){
+						if (typeof arguments[argument] != "object") {
+							_return += arguments[argument];
+						}
+					}
+					return _return;
+				});
+
+				Handlebars.registerHelper("inc", function(number, options) {
+					if(typeof(number) === "undefined" || number === null) return null;
+					return number + (options && options.hash.inc || 1);
+				});
+				
+			}
 			
 		},
 
@@ -195,7 +199,7 @@ Display = function() {
 
 			get: function(options) {
 
-				return _.isString(options) ? _template(options) : _template(options.template ? options.template : options.name)(options);
+				return (_ && _.isString(options)) ? _template(options) : _template(options.template ? options.template : options.name)(options);
 
 			},
 

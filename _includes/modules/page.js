@@ -20,8 +20,11 @@ Main = function() {
 			/* <!-- Get Reference to Container --> */
 			ಠ_ಠ = container;
 			
+			/* <!-- Initialise Objects --> */
+			if (ಠ_ಠ.Page) ಠ_ಠ.Page();
+			
 			/* <!-- Set Container Reference to this --> */
-			container.Main = this;
+			ಠ_ಠ.Main = this;
 			
 			/* <!-- Return for Chaining --> */
 			return this;
@@ -36,7 +39,8 @@ Main = function() {
 				ಠ_ಠ.Flags = flags;
 
 				/* <!-- Module Starts --> */
-				[ಠ_ಠ.Display].forEach((m) => {if (m && m.start) m.start();});
+				(ಠ_ಠ.Page ? [ಠ_ಠ.Display, ಠ_ಠ.Page] : [ಠ_ಠ.Display])
+					.forEach((m) => {if (m && m.start) m.start();});
 				
 				/* <!-- Initialise Objects --> */
 				$("[data-toggle='popover']").popover({trigger: "focus"});

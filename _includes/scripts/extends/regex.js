@@ -11,7 +11,7 @@ RegExp.replaceChars = function(value, replacements) {
     for (var i = 0; i < _replacements.length; i++) {
       _regEx += (i > 0 ? "|" : "") + RegExp.escape(_replacements[i]);
     }
-    return value.replace(new RegExp(_regEx, "g"), function(match) {return replacements[match];})
+    return value.replace(new RegExp(_regEx, "g"), function(match) {return replacements[match];});
   } else {
     return value;
   }

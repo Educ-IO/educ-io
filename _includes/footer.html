@@ -1,4 +1,4 @@
-{% if include.type == "app" %}
+{% if include.type == "app" or page.templates or layout.templates or page.docs or layout.docs %}
   {% include docs.html %}
   {% include templates.html %}
 {% endif %}

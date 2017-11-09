@@ -28,6 +28,7 @@ globals:
   localforage: false
   Clipboard: false
   moment: false
+  autosize: false
   _: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
@@ -50,3 +51,6 @@ globals:
   Datatable: true
   Folder: true
   Network: true
+  Page: true
+  Fields: true
+  Forms: true

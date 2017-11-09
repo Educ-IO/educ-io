@@ -108,7 +108,6 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 						"$gt": new Date()
 					};
 				} else if (value.toLowerCase() === "today") {
-					var _t = new Date();
 					_filter = {
 						"$between": [moment().startOf("day"), moment().endOf("day")]
 					};

@@ -1,31 +1,31 @@
 Fields = function() {
 	"use strict";
-	
+
 	/* <!-- Returns an instance of this if required --> */
 	if (this && this._isF && this._isF(this.Fields)) return new this.Fields().initialise(this);
-	
+
 	/* <!-- Internal Constants --> */
 	/* <!-- Internal Constants --> */
-	
+
 	/* <!-- Internal Variables --> */
 	var ಠ_ಠ, _steps;
-  /* <!-- Internal Variables --> */
-	
+	/* <!-- Internal Variables --> */
+
 	/* <!-- Internal Functions --> */
 	var _listen = function(form) {
-		
+
 		/* <!-- Wire up event / visibility listeners --> */
 		form.find("[data-listen]").each(function() {
 			var _this = $(this);
-			$(_this.data("listen")).off(_this.data("event")).on(_this.data("event"), function () {
+			$(_this.data("listen")).off(_this.data("event")).on(_this.data("event"), function() {
 				_this.show().siblings("[data-listen]").hide();
 			});
 		});
-		
+
 	};
-	
+
 	var _numerical = function(form) {
-		
+
 		/* <!-- Wire up numerical fields --> */
 		form.find(".alter-numerical").click(function(e) {
 			var _this = $(this);
@@ -53,11 +53,11 @@ Fields = function() {
 				}
 			}
 		});
-		
+
 	};
-	
+
 	var _erase = function(form) {
-		
+
 		/* <!-- Wire up eraser actions --> */
 		form.find(".eraser").click(function(e) {
 			var _this = $(this);
@@ -67,32 +67,32 @@ Fields = function() {
 				if (_reset.data("default")) _reset.text(_reset.data("default"));
 			}
 		});
-		
+
 	};
-	
+
 	var _radio = function(form) {
-		
+
 		/* <!-- Wire up radio fields --> */
 		form.find("input[type='radio'], input[type='checkbox']").change(function() {
 			var _this = $(this);
 			if (_this.data("target")) {
-				
+
 				_this.parents("div").find(".to-dim").addClass("md-inactive");
 				_this.siblings(".to-dim").removeClass("md-inactive");
-				
+
 				if (_this.data("value") && _this.prop("checked")) {
 					autosize.update($("#" + _this.data("target")).val(_this.data("value")));
 				} else {
 					autosize.update($("#" + _this.data("target")).val(""));
 				}
-				
+
 			}
 		});
-		
+
 	};
-	
+
 	var _menus = function(form) {
-		
+
 		form.find("button.dropdown-item, a.dropdown-item").click(function(e) {
 			var _this = $(this);
 			if (_this.data("target") && _this.data("value")) {
@@ -100,28 +100,31 @@ Fields = function() {
 				form.find("#" + _this.data("target")).text(_this.data("value"));
 			}
 		});
-		
+
 	};
-	
+
 	var _complex = function(form) {
-		
+
 		form.find("button.complex-list-add, a.complex-list-add").click(function(e) {
 			var _this = $(this);
-			var _holder = form.find("#" + _this.data("details")), _details = _holder.val();
+			var _holder = form.find("#" + _this.data("details")),
+				_details = _holder.val();
 			if (_details) {
- 
+
 				/* <!-- Get Type and Defaults --> */
-				var _selector = form.find("#" + _this.data("type")), _type = _selector.text(), _default = _selector.data("default");
+				var _selector = form.find("#" + _this.data("type")),
+					_type = _selector.text(),
+					_default = _selector.data("default");
 				if (_type == _default) _type = "";
 
 				/* <!-- Add new Item to List --> */
 				var _list = form.find("#" + _this.data("target"));
 				if (_list.children(".list-item").length === 0) _this.closest(".input-group").children("input[type='checkbox']").prop("checked", true);
 				$(ಠ_ಠ.Display.template.get({
-					template : "list_item",
-					details : _details + (_type ? " [" + _default + ": " + _type + "]": ""),
-					type : _this.data("item"),
-					delete : "Remove"
+					template: "list_item",
+					details: _details + (_type ? " [" + _default + ": " + _type + "]" : ""),
+					type: _this.data("item"),
+					delete: "Remove"
 				})).appendTo(_list).find("a.delete").click(
 					function(e) {
 						e.preventDefault();
@@ -131,82 +134,81 @@ Fields = function() {
 						$(this).parent().remove();
 					}
 				);
-				
+
 				/* <!-- Clear Up ready for next list item --> */
 				_holder.off("change.validity.test").removeClass("invalid").val("");
 				_selector.text(_default);
 
 			} else {
-				
+
 				_holder.addClass("invalid");
 				_holder.on("change.validity.test", function() {
 					var _this = $(this);
 					if (_this.val()) _this.removeClass("invalid");
 					_this.off("change.validity.test");
 				});
-				
+
 			}
 
 		});
-		
-	}
-	
+
+	};
+
 	var _autosize = function(form) {
 		autosize(form.find("textarea.resizable"));
 	};
-	
+
 	var _reveal = function(form) {
-		
+
 		/* <!-- Wire up event / visibility listeners --> */
 		form.find("[data-reveal]").each(function() {
 			$(this).off("change.reveal").on("change.reveal", function() {
-				var _target = $(this).data("reveal");
 				$($(this).data("reveal")).slideToggle();
 			});
 		});
-											
+
 	};
-	
+
 	var _dim = function(form) {
-		
+
 		/* <!-- Wire up event / visibility listeners --> */
 		form.find(".dim").off("click.dim").on("click.dim", function() {
 			var _this = $(this);
 			_this.siblings().addClass("dim");
 			_this.removeClass("dim");
 		});
-		
+
 	};
-	
+
 	var _me = function(form) {
-		
+
 		form.find(".textual-input-button[data-action='me']").off("click.me").on("click.me", function() {
 			if (ಠ_ಠ.me) $("#" + $(this).data("target")).val(ಠ_ಠ.me.full_name());
 		});
-		
+
 	};
-	
+
 	var _datetime = function(form) {
-		
+
 		form.find("div.dt-picker, input.dt-picker").datepicker({
 			format: "yyyy-mm-dd",
-    	todayBtn: "linked",
-    	todayHighlight: true,
+			todayBtn: "linked",
+			todayHighlight: true,
 			autoclose: true
 		});
-		
+
 	};
 	/* <!-- Internal Functions --> */
-	
-	/* <!-- External Visibility --> */
-  return {
 
-    /* <!-- External Functions --> */
-    initialise : function(container) {
+	/* <!-- External Visibility --> */
+	return {
+
+		/* <!-- External Functions --> */
+		initialise: function(container) {
 
 			/* <!-- Get a reference to the Container --> */
 			ಠ_ಠ = container;
-			
+
 			_steps = [
 				_listen,
 				_numerical,
@@ -222,15 +224,15 @@ Fields = function() {
 			];
 			/* <!-- Return for Chaining --> */
 			return this;
-			
-    },
-    
-    on : (form) => {
+
+		},
+
+		on: (form) => {
 			_.each(_steps, (step) => step(form));
 			return form;
-    },
-		
-  };
-  /* <!-- External Visibility --> */
-  
+		},
+
+	};
+	/* <!-- External Visibility --> */
+
 };

@@ -56,7 +56,7 @@ Main = function() {
 			ಠ_ಠ.App();
 			
 			/* <!-- Set Container Reference to this --> */
-			container.Main = this;
+			ಠ_ಠ.Main = this;
 			
 			/* <!-- Return for Chaining --> */
 			return this;
@@ -169,8 +169,8 @@ Main = function() {
 					/* <!-- Get User Info for Display --> */
 					ಠ_ಠ.google.me().then(function(user) {
 
-						user.display_name = function() {return this.name.length == 3 ? this.name.split(" ").join("") : this.name};
-						user.full_name = function() {return this.display_name()  + " (" + this.email + ")"};
+						user.display_name = function() {return this.name.length == 3 ? this.name.split(" ").join("") : this.name;};
+						user.full_name = function() {return this.display_name()  + " (" + this.email + ")";};
 						ಠ_ಠ.me = user;
 						
 						/* Disable and Hide the Sign in */

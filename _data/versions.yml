@@ -1,4 +1,8 @@
 site :
+  0.0.6r :
+    name : Browser Test Page
+    desc : Browser Testing Page for Javascript Features
+    type : minor
   0.0.6q :
     name : Cloudy Sky Instructions
     desc : Further instructions for cloudy sky extension
