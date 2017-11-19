@@ -21,7 +21,7 @@
     		<h3{% if app.colour %} style="color: #{{ app.colour }} !important;"{% endif %}>{{ app.name }}</h3>
     		<p>{{ app.desc | markdownify }}</p>
     		<hr class="half-rule">
-    		<a class="btn btn-outline-{% if c == 'odd' %}primary{% else %}secondary{% endif %}" href="{{ app.link }}"{% if app.ext %} target="_new"{% endif %}>{% if app.action %}{{ app.action }}{% else %}Open {{ app.name }}{% endif %}</a>
+    		<a id="open_{{ app.name | replace: '_', '' | replace: '`', '' | replace: '?', '' | replace: '!', '' | replace: ' ', '' | downcase }}" class="btn btn-outline-{% if c == 'odd' %}primary{% else %}secondary{% endif %}" href="{{ app.link }}"{% if app.ext %} target="_new"{% endif %}>{% if app.action %}{{ app.action }}{% else %}Open {{ app.name }}{% endif %}</a>
   		</div>
 		{% endfor %}
 	</div>

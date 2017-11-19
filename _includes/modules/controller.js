@@ -35,6 +35,7 @@ Controller = function() {
 				}
 			}
 		}
+		if (g.overrides) for (var j = 0; j < g.overrides.length; j++) t = t.replace(g.overrides[j].replace, g.overrides[j].with);
 		a.appendChild(s.createTextNode(t));
 		a.onload = r(g);
 		if (m) {
@@ -44,10 +45,10 @@ Controller = function() {
 		}
 		if (g.css === true && g.fonts === true) {
 			try {
-				for (var j = 0; j < a.sheet.cssRules.length; j++) {
-					if (a.sheet.cssRules[j].type == 5) {
-						if ("fontDisplay" in a.sheet.cssRules[j].style) {
-							a.sheet.cssRules[j].style.fontDisplay = "block";
+				for (var k = 0; k < a.sheet.cssRules.length; k++) {
+					if (a.sheet.cssRules[k].type == 5) {
+						if ("fontDisplay" in a.sheet.cssRules[k].style) {
+							a.sheet.cssRules[k].style.fontDisplay = "block";
 							_removeClass("font-sensitive");
 							fonts_handled = true;
 						}
@@ -99,11 +100,11 @@ Controller = function() {
 				deferreds.push(_include(input.url, is_css ? "style" : "script", input.id));
 			} else {
 				deferreds.push(window.fetch(input.url, {mode: input.mode ? input.mode : "cors"}).then(res => {
-					return [res.text(), input.id, input.url, is_css, is_fonts, input.map === true];
+					return [res.text(), input.id, input.url, is_css, is_fonts, input.map === true, input.overrides];
 				}).then(promises => {
 					return Promise.all(promises).then(resolved => {
 						resources.push({
-							text: resolved[0], id: resolved[1], url: resolved[2], css: resolved[3], fonts: resolved[4], map: resolved[5]
+							text: resolved[0], id: resolved[1], url: resolved[2], css: resolved[3], fonts: resolved[4], map: resolved[5], overrides: resolved[6]
 						});
 					});
 				}));
@@ -157,7 +158,9 @@ Controller = function() {
 			var _finalise = function(result) {
 				if (result === true) {
 					if (fonts_handled === false) _removeClass("font-sensitive");
-					if (ಠ_ಠ.Main) ಠ_ಠ.Main.start();	
+					if (ಠ_ಠ.Main) ಠ_ಠ.Main.start();
+					var name = "controller-completed", now = new Date(), event = new CustomEvent(name, { detail: now });
+					if (document) document.dispatchEvent(event);
 				}
 			};
 

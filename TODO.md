@@ -13,9 +13,10 @@ TODO LIST
 * Lazy Permission Requests....
 * Contrite Penguin 404 Page
 * Links to ISSUE trackers for APPS and EXTENSIONS ??
-* Test page for Javascript / Browser Features! <- TEST.md
 * Branding License
 * Make JS Request calls for SW cacheable resources with integrity flags if available
+* Version Page (when highlighted) should provide clickable links to highlight other apps (sort of bring to foreground / top)
+* Put placeholder dialogs on Subscription options
 
 Router
 ------
@@ -44,9 +45,11 @@ View
 * Write Flexbox-based Fit Algorithm
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
-* Provide Aggregate Open and Load (accepts cross-app commands from Folders?)
+* Provide Aggregate Open and Load (accepts cross-app commands from Folders?) (Partially done, no aggregation mechanism yet!)
 * Handle Merged Cells and merged ranges.
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
+* Numerical Filter implies re-sort?
+* Move Export Selection to Dialog Box (rather than menu items) -> Or series of Options Dialogs (better documentation support?)
 
 Folders
 -------
@@ -65,11 +68,20 @@ Reflect
 * Email group from above.
 * Field Span
 * Picker seems to have problems overlaying card for Report Form?
-* Button Sizes inconsistent (Text vs Icnon buttons) on Mobile / IOS
+* Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS
 * Picker problems on IOS
 
 Complete
 --------
+* Test page for Javascript / Browser Features! <= DONE
+* Invalid dates popping through into App when no cell content <= DONE
+* Test new Excel .xls BIFF5 & BIFF8 outputs. Issues with newest output. <== DONE
+    REPLACE:
+`     var __toBuffer = function(bufs) { var x = []; for(var i = 0; i < bufs[0].length; ++i) { x.push.apply(x, bufs[0][i]); } return x; };   `
+`     var je=function(e){var r=[];for(var t=0;t<e[0].length;++t){r.push.apply(r,e[0][t])}return r};   `
+    WITH:
+`     var __toBuffer = function(bufs) { return [].concat.apply([], bufs[0]); };   `
+`     var je=function(e){return [].concat.apply([], e[0])};   `
 * Add Material Icons to Pages <-- DONE
 * Default Button for Textual Field <-- DONE
 * Add Fonts to Credits page.... <-- DONE
@@ -258,4 +270,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-10-30
+ᕕ( ᐛ )ᕗ JD ♑ - 2017-11-19

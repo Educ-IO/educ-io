@@ -94,7 +94,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 			}, []);
 			ಠ_ಠ.Flags.log("Date Column Indexes:", _date_Indexes);
 			if (_date_Indexes.length > 0) _.each(data, (row) => _.each(_date_Indexes, (index) => {
-				row[index] = moment(row[index], _formats, true).toDate();
+				row[index] = row[index] ? moment(row[index], _formats, true).toDate() : row[index];
 			}));
 		}
 		ಠ_ಠ.Flags.time("Checking for Dates in Sheet Values", true);
@@ -330,7 +330,21 @@ Sheets = function(sheet, ಠ_ಠ) {
 			size: "multi",
 			desc: "Excel 2007+ XML Format [All Tabs]"
 		},
-		xls: {
+		xls_8: {
+			name: "xls",
+			type: "biff8",
+			ext: ".xls",
+			size: "multi",
+			desc: "Excel 97-2004 Workbook Format [All Tabs]"
+		},
+		xls_5: {
+			name: "xls",
+			type: "biff5",
+			ext: ".xls",
+			size: "multi",
+			desc: "Excel 5.0/95 Workbook Format [All Tabs]"
+		},
+		xls_2: {
 			name: "xls",
 			type: "biff2",
 			ext: ".xls",
@@ -394,10 +408,15 @@ Sheets = function(sheet, ಠ_ಠ) {
 				ಠ_ಠ.Display.busy({
 					target: $("div.tab-content div.tab-pane.active")
 				});
-
-				var _content = $(".tab-content");
-				var _id = _content.data("id");
-				var _title = _content.data("name");
+				
+				var error = (e) => {
+					if (e) ಠ_ಠ.Flags.error("Google Sheet Export:", e);
+					ಠ_ಠ.Display.busy({
+						clear: true
+					});
+				}, complete = () => ಠ_ಠ.Display.busy({
+					clear: true
+				}),_content = $(".tab-content"), _id = _content.data("id"), _title = _content.data("name");
 
 				if (option.type == "md") {
 
@@ -423,13 +442,10 @@ Sheets = function(sheet, ಠ_ಠ) {
 						saveAs(new Blob([_md_output], {
 							type: "text/markdown"
 						}), _title + " - " + _md_name + option.ext);
+						complete();
 					} catch (e) {
-						ಠ_ಠ.Flags.error("Google Sheet Export", e);
+						error(e);
 					}
-
-					ಠ_ಠ.Display.busy({
-						clear: true
-					});
 
 				} else {
 
@@ -448,6 +464,8 @@ Sheets = function(sheet, ಠ_ಠ) {
 						"[": "",
 						"]": ""
 					};
+					
+					var save = (title) => _outputAndSave(_exportBook, option.type, title + option.ext).then(complete).catch(error);
 
 					if (all && option.size == "multi") {
 
@@ -470,24 +488,20 @@ Sheets = function(sheet, ಠ_ಠ) {
 									_exportBook.SheetNames.push(_name);
 									_exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(data);
 								}
-								_current += 1;
-								if (_total == _current) _outputAndSave(_exportBook, option.type, _title + option.ext).then(() => ಠ_ಠ.Display.busy({
-									clear: true
-								}));
+								if (_total == ++_current)  save(_title);
+
 							});
 
 						});
 
-					} else if (option.size == "single") {
+					} else {
 
 						var _sheet = _currentSheet(),
 							_name = RegExp.replaceChars(_sheet.name(), _safeName),
 							_values = _sheet.values(!full);
 						_exportBook.SheetNames.push(_name);
 						_exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(_values && _values.length > 0 ? _values : []);
-						_outputAndSave(_exportBook, option.type, _title + " - " + _name + option.ext).then(() => ಠ_ಠ.Display.busy({
-							clear: true
-						}));
+						save(_title + " - " + _name);
 
 					}
 
@@ -495,12 +509,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 
 			}
 
-		}).catch((e) => {
-			if (e) ಠ_ಠ.Flags.error("Google Sheet Export:", e);
-			ಠ_ಠ.Display.busy({
-				clear: true
-			});
-		});
+		}).catch((e) => ಠ_ಠ.Flags.error("Google Sheet Export:", e));
 
 	};
 	/* <!-- Internal Functions --> */

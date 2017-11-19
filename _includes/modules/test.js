@@ -18,9 +18,39 @@ Page = function() {
 	/* <!-- Internal Variables --> */
 	var ಠ_ಠ;
 	var FEATURES = [{
+			name: "Events",
+			desc: "Javascript Custom Events",
+			url: "https://caniuse.com/#feat=customevent",
+			required: false,
+			test: function() {
+				return new Promise((resolve, reject) => {
+					var name = "test-event", now = new Date(), event = new CustomEvent(name, { detail: now });
+					window.addEventListener(name, function (e) {
+						resolve(e.detail == now);
+					}, false);
+					window.dispatchEvent(event);
+				});
+			},
+			success: {
+				icon: "check",
+				class: "text-success",
+				message: ""
+			},
+			failure: {
+				icon: "priority_high",
+				class: "text-warning",
+				message: "Unfortunately, your browser doesn't support Javascript Custom Events."
+			},
+			type: {
+				name: "language",
+				class: ""
+			},
+		},
+		{
 			name: "Arrow Functions",
 			desc: "Javascript Arrow Functions",
 			url: "https://caniuse.com/#feat=arrow-functions",
+			required: true,
 			test: function() {
 				return evaluate("var f = x => 1");
 			},

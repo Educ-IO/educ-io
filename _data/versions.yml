@@ -1,4 +1,8 @@
 site :
+  0.0.6s :
+    name : View 0.2.0j-alpha
+    desc : Extended Output Format Options
+    type : minor
   0.0.6r :
     name : Browser Test Page
     desc : Browser Testing Page for Javascript Features
@@ -168,30 +172,42 @@ site :
     changes :
       - Initial Service Work Testing
 view :
+  0.2.0j-alpha :
+    name : Extended Output Formats and Bug Fixes
+    desc : Latest XLSX Release supports Excel BIFF5 and 8 Outputs
+    type : minor
   0.2.0i-alpha :
     name : Minor Fixes and Tweaks
-    type : Bug Fixes for scrolling
+    desc : Bug Fixes for scrolling
+    type : minor
   0.2.0h-alpha :
     name : Minor Fixes and Tweaks
-    type : Bug Fixes for scrolling
+    desc : Bug Fixes for scrolling
+    type : minor
   0.2.0g-alpha :
     name : Minor Fixes and Tweaks
-    type : Bug Fixes and Hide Initially Hidden Columns on View
+    desc : Bug Fixes and Hide Initially Hidden Columns on View
+    type : minor
   0.2.0f-alpha :
     name : Minor Fixes and Tweaks
-    type : Remove fully blank columns
+    desc : Remove fully blank columns
+    type : minor
   0.2.0e-alpha :
     name : Markdown Table Support
-    type : Markdown Table Export and Bug Fixes (for non-standard characters in export)
+    desc : Markdown Table Export and Bug Fixes (for non-standard characters in export)
+    type : minor
   0.2.0d-alpha :
     name : Bug Fixes
-    type : Scroll Bug Fixes
+    desc : Scroll Bug Fixes
+    type : minor
   0.2.0c-alpha :
     name : Bug Fixes
-    type : Exports and Null Headers Fix
+    desc : Exports and Null Headers Fix
+    type : minor
   0.2.0b-alpha :
     name : Bug Fix
-    type : Converted Magic Filters to Dates from Strings
+    desc : Converted Magic Filters to Dates from Strings
+    type : minor
     changes :
       - details: Changed Layout system
         url : https://github.com/Educ-IO/educ-io.github.io/issues
