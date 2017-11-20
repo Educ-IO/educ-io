@@ -14,7 +14,7 @@ layout: compress
   	{% endfor %}{% else %}{% for script in site.data.imports[import].prod %}
   	<script src="{{ script.url }}"{% if import_script.integrity %} integrity="{{ script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ script.crossorigin }}"{% endif %}{% if script.defer %} defer{% endif %}{% if script.async %} async{% endif %}></script>
   	{% endfor %}{% endif %}{% endif %}{% endfor %}{% endif %}
-		
+    
 	</head>
 	
 	<body>Redirecting</body>

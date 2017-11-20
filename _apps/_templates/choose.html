@@ -9,28 +9,30 @@
         </button>
       </div>
       <div class="modal-body">
+        {{#if instructions}}{{{instructions}}}{{/if}}
         <form>
-          {{#if __LONG}}
+        {{#if __LONG}}
           <div class="form-group">
-            <label for="choices">Example select</label>
+            {{#if desc}}<label for="choices">{{desc}}</label>{{/if}}
             <select class="form-control" id="choices" name="choices">
               {{#each choices}}
               <option value="{{@key}}">{{name}}{{#if desc}} - {{desc}}{{/if}}</option>
               {{/each}}
             </select>
           </div>
-          {{else}}
-            <fieldset class="form-group">
-              {{#each choices}}
-                <div class="form-check">
-                  <label class="form-check-label">
-                    <input class="form-check-input" type="radio" name="choices" id="choice_{{@key}}" value="{{@key}}"{{#if @first}} checked{{/if}}>
-                    {{name}}{{#if desc}} - {{desc}}{{/if}}
-                  </label>
-                </div>
-              {{/each}}
-            </fieldset>
-          {{/if}}
+        {{else}}
+          {{#if desc}}<label for="choices">{{desc}}</label>{{/if}}
+          <fieldset class="form-group" id="choices">
+            {{#each choices}}
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="choices" id="choice_{{@key}}" value="{{@key}}"{{#if @first}} checked{{/if}}>
+                  {{name}}{{#if desc}} - {{desc}}{{/if}}
+                </label>
+              </div>
+            {{/each}}
+          </fieldset>
+        {{/if}}
         </form>        
       </div>
       <div class="modal-footer">

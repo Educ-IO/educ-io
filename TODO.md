@@ -6,7 +6,7 @@ TODO LIST
 * BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
 * BUG -> ARROW functions in return object (e.g. View)???
 * More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');"
-* Remove .map / .filter etc calls so that polyfills can be removed in favour if using Underscore.
+* Remove .map / .filter etc calls so that polyfills can be removed in favour of using Underscore.
 * Filter for correctly returned doc type on picker (recent shows all types?)
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
 * Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?)  
@@ -14,9 +14,9 @@ TODO LIST
 * Contrite Penguin 404 Page
 * Links to ISSUE trackers for APPS and EXTENSIONS ??
 * Branding License
-* Make JS Request calls for SW cacheable resources with integrity flags if available
+* ** IMPORTANT ** Make JS Request calls for SW cacheable resources with integrity flags if available
 * Version Page (when highlighted) should provide clickable links to highlight other apps (sort of bring to foreground / top)
-* Put placeholder dialogs on Subscription options
+* ** IMPORTANT ** Put placeholder dialogs on Subscription options
 
 Router
 ------
@@ -24,16 +24,17 @@ Router
 
 Apps
 ----
+* 
 * Wrap Un-Authenticated Sheets Access in Google API Javascript file ... maybe??
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 * Handle remove app from Google account, e.g. delete local hello data...
-* Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
+* ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
 
 Mobile
 ------
-* ** IMPORTANT ** Incognito Mode on IOS fails on sign-in (issue with LocalForage again?)
+* ** IMPORTANT ** Incognito Mode on IOS fails on sign-in (issue with LocalForage again?) -> Issue on IOS 10.3 but not on 11? 11 seems to fix the Local Storage problem. Cookie problems on IOS?
 * Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
 * Top nav menu wastes space on mobile. Can it be shifted to sticky on mobile devices only with bootstrap? Maybe a media query if nothing else works.
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
@@ -44,26 +45,30 @@ View
 * List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install
 * Write Flexbox-based Fit Algorithm
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
+* Vertical Only Freeze should work better (e.g. not screw with table row cell heights?);
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 * Provide Aggregate Open and Load (accepts cross-app commands from Folders?) (Partially done, no aggregation mechanism yet!)
 * Handle Merged Cells and merged ranges.
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
 * Numerical Filter implies re-sort?
-* Move Export Selection to Dialog Box (rather than menu items) -> Or series of Options Dialogs (better documentation support?)
+* Auto-hide hidden columns (from original sheet)
+* Export -> Select Single, Multiple or All Tabs for export (need a custom template for this)
+* ** IMPORTANT ** Column Filters
 
 Folders
 -------
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Manual Selection for Processing Results (tick boxes?)
-* Tally should break down file / folder counts by MimeType?
+* ** IMPORTANT ** Tally should break down file / folder counts by MimeType?
+* ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
 
 Merge
 -----
 
 Reflect
 -------
-* Sign out doesn't route back to initial text?
+* ** IMPORTANT ** * Sign out doesn't route back to initial text? <-- SEEMS TO HAPPEN SOMETIMES on VIEW as well?
 * Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL/
 * Email group from above.
 * Field Span
@@ -73,6 +78,9 @@ Reflect
 
 Complete
 --------
+* Vertical Freeze only <== DONE
+* API Scopes (urls) don't wrap on scopes page, meaning page width exceeds header width ... <== DONE
+* Move Export Selection to Dialog Box (rather than menu items) -> Or series of Options Dialogs (better documentation support?) <== DONE
 * Test page for Javascript / Browser Features! <= DONE
 * Invalid dates popping through into App when no cell content <= DONE
 * Test new Excel .xls BIFF5 & BIFF8 outputs. Issues with newest output. <== DONE

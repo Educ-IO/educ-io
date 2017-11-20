@@ -73,6 +73,8 @@ view:
     - view/README
     - view/INSTRUCTIONS
     - view/LINK_INSTRUCTIONS
+    - view/EXPORT_FORMATS
+    - view/EXPORT_SIZE
   scopes:
     google:
       - scope: email
@@ -137,33 +139,17 @@ view:
         export:
           name: Export
           commands:
-            - name: Original Tab
-              desc: Export just this (unfiltered/unsorted) Tab to Legacy Formats
-              hash: export.full.single
-              disabled_until:
-                - opened
-              imports:
-                - xlsx
-                - filesaver
-            - name: All Original Tabs
-              desc: Export all the (unfiltered/unsorted) Tabs to Legacy Formats
-              hash: export.full.all
+            - name: Original Sheet
+              desc: Export the original sheet to Legacy Formats
+              hash: export.full
               disabled_until:
                 - opened
               imports:
                 - xlsx
                 - filesaver
             - name: Filtered View
-              desc: Export this view to Legacy Formats
-              hash: export.filtered.single
-              disabled_until:
-                - opened
-              imports:
-                - xlsx
-                - filesaver
-            - name: All Filtered Views
-              desc: Export all views to Legacy Formats
-              hash: export.filtered.all
+              desc: Export the filtered view/s to Legacy Formats
+              hash: export.filtered
               disabled_until:
                 - opened
               imports:
@@ -187,9 +173,14 @@ view:
               desc: Fits the data into the width of your screen
               hash: fit
               disabled_until:
+                - experimental
+            - name: Lock Headers
+              desc: Locks the position of Headers Rows
+              hash: freeze.rows
+              disabled_until:
                 - opened
             - name: Freeze
-              desc: Locks the position of Frozen Columns and Rows
+              desc: Locks the position of both Frozen Columns and Rows
               hash: freeze
               disabled_until:
                 - opened

@@ -1,4 +1,8 @@
 site :
+  0.0.6t :
+    name : View 0.2.0k-alpha
+    desc : Improved Export Dialogs and Instructions
+    type : minor
   0.0.6s :
     name : View 0.2.0j-alpha
     desc : Extended Output Format Options
@@ -172,6 +176,10 @@ site :
     changes :
       - Initial Service Work Testing
 view :
+  0.2.0k-alpha :
+    name : Bug Fixes and Tweaks
+    desc : Improved Export Dialogs and Instructions
+    type : minor
   0.2.0j-alpha :
     name : Extended Output Formats and Bug Fixes
     desc : Latest XLSX Release supports Excel BIFF5 and 8 Outputs

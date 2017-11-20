@@ -129,7 +129,7 @@ Flags = function() {
 					},
 
 					error: function(message, exception) {
-						_alert ? alert("ERROR - " + message + " : " + JSON.stringify(exception)) : console.log("ERROR - " + message, exception);
+						_alert ? alert("ERROR - " + message + " : " + JSON.stringify(exception)) : (exception ? console.log("ERROR - " + message, exception) : console.log("ERROR - " + message));
 						return this;
 					},
 

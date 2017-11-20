@@ -66,7 +66,7 @@ Main = function() {
 		start : function() {
 
 			var google_SignIn = function() {
-				var _login = (display, force) => hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {
+        var _login = (display, force) => hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {
 					force: force, display : display,
 					scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
 				});

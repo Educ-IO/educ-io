@@ -244,115 +244,115 @@ Sheets = function(sheet, ಠ_ಠ) {
 			type: "csv",
 			ext: ".csv",
 			size: "single",
-			desc: "Comma Separated Value Format [Current Tab]"
+			desc: "Comma Separated Value Format"
 		},
 		dif: {
 			name: "dif",
 			type: "dif",
 			ext: ".dif",
 			size: "single",
-			desc: "Data Interchange Format (DIF) [Current Tab]"
+			desc: "Data Interchange Format (DIF)"
 		},
 		fods: {
 			name: "fods",
 			type: "fods",
 			ext: ".fods",
 			size: "multi",
-			desc: "Flat OpenDocument Spreadsheet Format [All Tabs]"
+			desc: "Flat OpenDocument Spreadsheet Format"
 		},
 		html: {
 			name: "html",
 			type: "html",
 			ext: ".html",
 			size: "single",
-			desc: "HTML Document [Current Tab]"
+			desc: "HTML Document"
 		},
 		md: {
 			name: "md",
 			type: "md",
 			ext: ".md",
 			size: "single",
-			desc: "Markdown Table [Current Tab]"
+			desc: "Markdown Table"
 		},
 		ods: {
 			name: "ods",
 			type: "ods",
 			ext: ".ods",
 			size: "multi",
-			desc: "OpenDocument Spreadsheet Format [All Tabs]"
+			desc: "OpenDocument Spreadsheet Format"
 		},
 		prn: {
 			name: "ods",
 			type: "prn",
 			ext: ".prn",
 			size: "single",
-			desc: "Lotus Formatted Text [Current Tab]"
+			desc: "Lotus Formatted Text"
 		},
 		sylk: {
 			name: "sylk",
 			type: "sylk",
 			ext: ".sylk",
 			size: "single",
-			desc: "Symbolic Link (SYLK) File [Current Tab]"
+			desc: "Symbolic Link (SYLK) File"
 		},
 		txt: {
 			name: "txt",
 			type: "txt",
 			ext: ".txt",
 			size: "single",
-			desc: "UTF-16 Unicode Text File [Current Tab]"
+			desc: "UTF-16 Unicode Text File"
 		},
 		xlml: {
 			name: "xlml",
 			type: "xlml",
 			ext: ".xls",
 			size: "multi",
-			desc: "Excel 2003-2004 (SpreadsheetML) Format [All Tabs]"
+			desc: "Excel 2003-2004 (SpreadsheetML) Format"
 		},
 		xlsb: {
 			name: "xlsb",
 			type: "xlsb",
 			ext: ".xlsb",
 			size: "multi",
-			desc: "Excel 2007+ Binary Format [All Tabs]"
+			desc: "Excel 2007+ Binary Format"
 		},
 		xlsm: {
 			name: "xlsm",
 			type: "xlsm",
 			ext: ".xlsm",
 			size: "multi",
-			desc: "Excel 2007+ Macro XML Format [All Tabs]"
+			desc: "Excel 2007+ Macro XML Format"
 		},
 		xlsx: {
 			name: "xlsx",
 			type: "xlsx",
 			ext: ".xlsx",
 			size: "multi",
-			desc: "Excel 2007+ XML Format [All Tabs]"
+			desc: "Excel 2007+ XML Format"
 		},
 		xls_8: {
 			name: "xls",
 			type: "biff8",
 			ext: ".xls",
 			size: "multi",
-			desc: "Excel 97-2004 Workbook Format [All Tabs]"
+			desc: "Excel 97-2004 Workbook Format"
 		},
 		xls_5: {
 			name: "xls",
 			type: "biff5",
 			ext: ".xls",
 			size: "multi",
-			desc: "Excel 5.0/95 Workbook Format [All Tabs]"
+			desc: "Excel 5.0/95 Workbook Format"
 		},
 		xls_2: {
 			name: "xls",
 			type: "biff2",
 			ext: ".xls",
 			size: "single",
-			desc: "Excel 2.0 Worksheet Format [Current Tab]"
+			desc: "Excel 2.0 Worksheet Format"
 		}
 	};
-
+  
 	/* <!-- Output File Function (once choices have been made) --> */
 	var _outputAndSave = function(book, type, filename) {
 
@@ -395,121 +395,166 @@ Sheets = function(sheet, ಠ_ಠ) {
 	/* <!-- Output File Function (once choices have been made) --> */
 	var _exportSheet = function(full, all) {
 
-		ಠ_ಠ.Display.choose({
-			id: "view_export",
+    var error = (e) => e ? ಠ_ಠ.Flags.error("Google Sheet Export", e) : ಠ_ಠ.Flags.log("Google Sheet Export Cancelled");
+    
+    ಠ_ಠ.Display.choose({
+			id: "view_export_format",
 			title: "Please Select a Format to Export to ...",
+      instructions: ಠ_ಠ.Display.doc.get({
+			  name: "EXPORT_FORMATS",
+			  content: full ? "original" : "filtered",
+      }),
+      desc: "Available Formats:",
 			action: "Export",
 			choices: _exportTypes
 		}).then(function(option) {
 
 			if (option) {
 
-				/* <!-- Trigger Loader --> */
-				ಠ_ಠ.Display.busy({
-					target: $("div.tab-content div.tab-pane.active")
-				});
-				
-				var error = (e) => {
-					if (e) ಠ_ಠ.Flags.error("Google Sheet Export:", e);
-					ಠ_ಠ.Display.busy({
-						clear: true
-					});
-				}, complete = () => ಠ_ಠ.Display.busy({
-					clear: true
-				}),_content = $(".tab-content"), _id = _content.data("id"), _title = _content.data("name");
+        var __exportSheet = function() {
+          
+          /* <!-- Trigger Loader --> */
+          ಠ_ಠ.Display.busy({
+            target: $("div.tab-content div.tab-pane.active")
+          });
 
-				if (option.type == "md") {
+          var error = (e) => {
+            if (e) ಠ_ಠ.Flags.error("Google Sheet Export:", e);
+            ಠ_ಠ.Display.busy({
+              clear: true
+            });
+          }, complete = () => ಠ_ಠ.Display.busy({
+            clear: true
+          }),_content = $(".tab-content"), _id = _content.data("id"), _title = _content.data("name");
 
-					var _md_sheet = _currentSheet(),
-						_md_name = _md_sheet.name();
-					var _md_values = _md_sheet.values(!full);
+          if (option.type == "md") {
 
-					var _md_output = "|---\n";
-					if (_md_values && _md_values.length > 0) {
+            var _md_sheet = _currentSheet(),
+              _md_name = _md_sheet.name();
+            var _md_values = _md_sheet.values(!full);
 
-						/* <!-- Output Header Row --> */
-						var _md_headers = _md_values.shift();
-						_md_output += (_.reduce(_md_headers, (row, value, index) => row + (index > 0 ? " | " + value : value), "") + "\n");
-						/* <!-- Output Separator Row --> */
-						_md_output += (_.times(_md_headers.length, () => "|:-").join("") + "\n");
-						if (_md_values.length > 0) {
-							_md_output += _.map(_md_values, (values) => _.reduce(values, (row, value, index) => row + (index > 0 ? " | " + value : value), "")).join("\n");
-						}
+            var _md_output = "|---\n";
+            if (_md_values && _md_values.length > 0) {
 
-					}
+              /* <!-- Output Header Row --> */
+              var _md_headers = _md_values.shift();
+              _md_output += (_.reduce(_md_headers, (row, value, index) => row + (index > 0 ? " | " + value : value), "") + "\n");
+              /* <!-- Output Separator Row --> */
+              _md_output += (_.times(_md_headers.length, () => "|:-").join("") + "\n");
+              if (_md_values.length > 0) {
+                _md_output += _.map(_md_values, (values) => _.reduce(values, (row, value, index) => row + (index > 0 ? " | " + value : value), "")).join("\n");
+              }
 
-					try {
-						saveAs(new Blob([_md_output], {
-							type: "text/markdown"
-						}), _title + " - " + _md_name + option.ext);
-						complete();
-					} catch (e) {
-						error(e);
-					}
+            }
 
-				} else {
+            try {
+              saveAs(new Blob([_md_output], {
+                type: "text/markdown"
+              }), _title + " - " + _md_name + option.ext);
+              complete();
+            } catch (e) {
+              error(e);
+            }
 
-					var Workbook = function() {
-						if (!(this instanceof Workbook)) return new Workbook();
-						this.SheetNames = [];
-						this.Sheets = {};
-					};
+          } else {
 
-					var _exportBook = new Workbook();
-					var _safeName = {
-						"\\": "",
-						"/": " ",
-						"?": "",
-						"*": "",
-						"[": "",
-						"]": ""
-					};
-					
-					var save = (title) => _outputAndSave(_exportBook, option.type, title + option.ext).then(complete).catch(error);
+            var Workbook = function() {
+              if (!(this instanceof Workbook)) return new Workbook();
+              this.SheetNames = [];
+              this.Sheets = {};
+            };
 
-					if (all && option.size == "multi") {
+            var _exportBook = new Workbook();
+            var _safeName = {
+              "\\": "",
+              "/": " ",
+              "?": "",
+              "*": "",
+              "[": "",
+              "]": ""
+            };
 
-						/* <!-- Get all tabs --> */
-						var _tabs = _content.children("div.tab-pane"),
-							_current = 0,
-							_total = _tabs.length;
+            var save = (title) => _outputAndSave(_exportBook, option.type, title + option.ext).then(complete).catch(error);
 
-						_tabs.each((i, el) => {
-							var _name = $(el).data("name");
-							var _get = !_sheets[_name] ?
-								new Promise((resolve) => {
-									ಠ_ಠ.google.sheets.values(_id, _name + "!A:ZZ").then((data) => resolve(data.values));
-								}) :
-								new Promise((resolve) => resolve(_sheets[_name].values(!full)));
+            if (all && option.size == "multi") {
 
-							_get.then((data) => {
-								if (data && data.length > 0) {
-									_name = RegExp.replaceChars(_name, _safeName);
-									_exportBook.SheetNames.push(_name);
-									_exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(data);
-								}
-								if (_total == ++_current)  save(_title);
+              /* <!-- Get all tabs --> */
+              var _tabs = _content.children("div.tab-pane"),
+                _current = 0,
+                _total = _tabs.length;
 
-							});
+              _tabs.each((i, el) => {
+                var _name = $(el).data("name");
+                var _get = !_sheets[_name] ?
+                  new Promise((resolve) => {
+                    ಠ_ಠ.google.sheets.values(_id, _name + "!A:ZZ").then((data) => resolve(data.values));
+                  }) :
+                  new Promise((resolve) => resolve(_sheets[_name].values(!full)));
 
-						});
+                _get.then((data) => {
+                  if (data && data.length > 0) {
+                    _name = RegExp.replaceChars(_name, _safeName);
+                    _exportBook.SheetNames.push(_name);
+                    _exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(data);
+                  }
+                  if (_total == ++_current)  save(_title);
 
-					} else {
+                });
 
-						var _sheet = _currentSheet(),
-							_name = RegExp.replaceChars(_sheet.name(), _safeName),
-							_values = _sheet.values(!full);
-						_exportBook.SheetNames.push(_name);
-						_exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(_values && _values.length > 0 ? _values : []);
-						save(_title + " - " + _name);
+              });
 
-					}
+            } else {
 
-				}
+              var _sheet = _currentSheet(),
+                _name = RegExp.replaceChars(_sheet.name(), _safeName),
+                _values = _sheet.values(!full);
+              _exportBook.SheetNames.push(_name);
+              _exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(_values && _values.length > 0 ? _values : []);
+              save(_title + " - " + _name);
+
+            }
+
+          }
+          
+        };
+        
+        if (!all && option.size == "multi") {
+          
+          ಠ_ಠ.Display.choose({
+            id: "view_export_size",
+            title: "Which Tabs would you like to export ...",
+            instructions: ಠ_ಠ.Display.doc.get({
+			        name: "EXPORT_SIZE",
+              content: option.desc
+            }),
+            action: "Export",
+            choices: {
+		          all: {
+			          name: "All Tabs",
+                all: true
+	            },
+              single: {
+                name: "Current Tab",
+                desc: _currentSheet().name(),
+                all: false,
+              }
+            }
+          }).then(function(option) {
+            
+            all = option.all;
+            __exportSheet();
+            
+          }).catch(error);  
+          
+        } else {
+          
+          __exportSheet();
+          
+        }
 
 			}
 
-		}).catch((e) => ಠ_ಠ.Flags.error("Google Sheet Export:", e));
+		}).catch(error);
 
 	};
 	/* <!-- Internal Functions --> */

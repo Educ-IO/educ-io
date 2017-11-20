@@ -62,7 +62,6 @@ beforeAll(() => {
   return new Promise(async (resolve, reject) => {
   
     var defaults = ["--no-sandbox", "--disable-setuid-sandbox", "--ignore-certificate-errors", "--disable-popup-blocking", "--incognito", `--window-size=${WIDTH},${HEIGHT}`];
-
     // --user-agent
     
     browser = await ACTION("Launch Browser", puppeteer, puppeteer.launch, {

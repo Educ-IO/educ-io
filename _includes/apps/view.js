@@ -176,11 +176,11 @@ App = function() {
 
 			} else if ((/EXPORT/i).test(command)) {
 
-				if (_sheets) _sheets.export((/FULL/i).test(command), (/ALL/i).test(command));
+				if (_sheets) _sheets.export((/FULL/i).test(command));
 
 			} else if ((/FREEZE/i).test(command)) {
 
-				if (_sheets) _sheets.sheet().freeze();
+				if (_sheets) _sheets.sheet().freeze((/ROWS/i).test(command[1]));
 
 			} else if ((/LINK/i).test(command)) {
 

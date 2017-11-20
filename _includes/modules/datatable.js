@@ -590,8 +590,8 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 			_update(true, true, target, true);
 		},
 
-		freeze: function() {
-			if (_advanced) _advanced.freeze.init(options.frozen ? options.frozen.cols : 0).toggle();
+		freeze: function(rows_only) {
+			if (_advanced) _advanced.freeze.init((options.frozen && !rows_only) ? options.frozen.cols : 0).toggle();
 		},
 
 		name: () => table.name,

@@ -16,7 +16,7 @@ support: true
 {% for service in app.scopes %}
 + {{ service[0] | capitalize }}
 {% for scope in service[1] %}
-	- __{{ scope.scope }}__{% if scope.name %} - {{ scope.name }}{% endif %}
+	- __{{ scope.scope }}__{:.wrap-break}{% if scope.name %} - {{ scope.name }}{% endif %}
 	{% if scope.reason %}- __Why?__ _{{ scope.reason }}_{:.text-muted}{% endif %}
 {% endfor %}
 {% endfor %}
