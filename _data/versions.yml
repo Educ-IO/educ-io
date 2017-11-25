@@ -1,4 +1,8 @@
 site :
+  0.0.6v :
+    name : Folders 0.0.4a-alpha
+    desc : Bug Fixes
+    type : minor
   0.0.6u :
     name : View 0.2.1-alpha and Folders 0.0.4-alpha
     desc : Installable in Google Drive and Lazy Scope Requests
@@ -237,6 +241,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.4a-alpha :
+    name : Menu Bug Fix
+    desc : Fixed Bug which meant About menu had incorrect links
+    type : minor
   0.0.4-alpha :
     name : Feature Improvements
     desc : Installable in Google Drive and Lazy Scope Requests
