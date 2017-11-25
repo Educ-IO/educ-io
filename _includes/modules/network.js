@@ -130,6 +130,10 @@ Network = function(base, timeout, rate, retry) {
 						
 					} else if (response.status == 401 && a--) {
 
+						/* <!-- Set Retries down to nothing --> */
+						/* <!-- TODO: This doesn't really work in the way intended - e.g. timeout is too long --> */
+						a = 0;
+						
 						/* <!-- 401 Likely Means an expired token, so retry --> */
 						_check && _check(true) ?
 							setTimeout(function() {

@@ -1,4 +1,8 @@
 site :
+  0.0.6u :
+    name : View 0.2.1-alpha and Folders 0.0.4-alpha
+    desc : Installable in Google Drive and Lazy Scope Requests
+    type : minor
   0.0.6t :
     name : View 0.2.0k-alpha
     desc : Improved Export Dialogs and Instructions
@@ -176,6 +180,10 @@ site :
     changes :
       - Initial Service Work Testing
 view :
+  0.2.1-alpha :
+    name : Feature Improvements
+    desc : Installable in Google Drive and Lazy Scope Requests
+    type : minor
   0.2.0k-alpha :
     name : Bug Fixes and Tweaks
     desc : Improved Export Dialogs and Instructions
@@ -229,6 +237,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.4-alpha :
+    name : Feature Improvements
+    desc : Installable in Google Drive and Lazy Scope Requests
+    type : minor
   0.0.3j-alpha :
     name : Upload Bug Fix
     desc : Fixed Bug with Upload / Conversion in Team Drive (mis-spelling of parameter in Google Documentation)

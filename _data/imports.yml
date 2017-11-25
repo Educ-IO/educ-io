@@ -1,3 +1,5 @@
+# Last Updated: 2017-11-25
+
 localstorage:
   name: localStorage
   desc: This is a polyfill for Local Storage, bringing this feature to older browsers.
@@ -859,3 +861,22 @@ bootstrap-datepicker-js:
       integrity: sha256-7Ls/OujunW6k7kudzvNDAt82EKc/TPTfyKxIE5YkBzg=
       crossorigin: anonymous
       id: __bootstrap-datepicker-js
+
+transducers:
+  name: Transducers.js
+  desc: Transduction library for generic data transformations
+  url: https://cdnjs.com/libraries/transducers.js
+  project: https://github.com/jlongster/transducers.js
+  version: 0.3.2
+  license: BSD-2-Clause
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/transducers.js/0.3.2/transducers.min.js
+      integrity: sha256-QyAAjIV3r3eOitepsqdZvTZyr+xy+2CjDiBoGWbyisA=
+      crossorigin: anonymous
+      id: __tranducers
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/transducers.js/0.3.2/transducers.js
+      integrity: sha256-r8uF868DbAonzuKCZfUCa19lpcTue85DPCS3fuMlo2o=
+      crossorigin: anonymous
+      id: __tranducers

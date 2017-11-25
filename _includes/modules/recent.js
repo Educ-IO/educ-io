@@ -35,8 +35,15 @@ Recent = function() {
 		},
 
     /* <!-- External Functions --> */
-		add : (key, name, url, details) => _db.setItem(_key(_app, key), 
-																									 {app : _camel(_app), name : name, url : url, date : new Date(), date_string : new Date().toDateString(), details : details, key : _key(_app, key)}),
+		add: (key, name, url, details) => _db.setItem(_key(_app, key), {
+			app: _camel(_app),
+			name: name,
+			url: url,
+			date: new Date(),
+			date_string: new Date().toDateString(),
+			details: details,
+			key: _key(_app, key)
+		}),
 		
 		last : (number) => 
 			

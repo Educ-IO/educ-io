@@ -1,5 +1,7 @@
 TODO LIST 
 =========
+* ** IMPORTANT ** Put placeholder dialogs on Subscription options
+* ** IMPORTANT ** Make JS Request calls for SW cacheable resources with integrity flags if available
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo
 * Favicon Background?
@@ -9,14 +11,9 @@ TODO LIST
 * Remove .map / .filter etc calls so that polyfills can be removed in favour of using Underscore.
 * Filter for correctly returned doc type on picker (recent shows all types?)
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
-* Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?)  
-* Lazy Permission Requests....
 * Contrite Penguin 404 Page
 * Links to ISSUE trackers for APPS and EXTENSIONS ??
 * Branding License
-* ** IMPORTANT ** Make JS Request calls for SW cacheable resources with integrity flags if available
-* Version Page (when highlighted) should provide clickable links to highlight other apps (sort of bring to foreground / top)
-* ** IMPORTANT ** Put placeholder dialogs on Subscription options
 
 Router
 ------
@@ -24,16 +21,16 @@ Router
 
 Apps
 ----
-* 
+* ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
+* ** IMPORTANT ** Retries (in network.js) takes too long when handling security (401) errors
 * Wrap Un-Authenticated Sheets Access in Google API Javascript file ... maybe??
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
-* Handle remove app from Google account, e.g. delete local hello data...
-* ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
 
 Mobile
 ------
+* ** IMPORTANT ** Full Page Lazy Scope Load may break app flow (need state object to pass back to app?) - also should test for scope before initiating flow?
 * ** IMPORTANT ** Incognito Mode on IOS fails on sign-in (issue with LocalForage again?) -> Issue on IOS 10.3 but not on 11? 11 seems to fix the Local Storage problem. Cookie problems on IOS?
 * Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
 * Top nav menu wastes space on mobile. Can it be shifted to sticky on mobile devices only with bootstrap? Maybe a media query if nothing else works.
@@ -42,7 +39,8 @@ Mobile
 
 View
 ----
-* List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install
+* ** IMPORTANT ** Column Filters
+* Do went need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view
 * Write Flexbox-based Fit Algorithm
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Vertical Only Freeze should work better (e.g. not screw with table row cell heights?);
@@ -53,22 +51,22 @@ View
 * Numerical Filter implies re-sort?
 * Auto-hide hidden columns (from original sheet)
 * Export -> Select Single, Multiple or All Tabs for export (need a custom template for this)
-* ** IMPORTANT ** Column Filters
+* Include instructions about Exporting only exporting values rather than formulas or formats.
 
 Folders
 -------
+* ** IMPORTANT ** Tally should break down file / folder counts by MimeType?
+* ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Manual Selection for Processing Results (tick boxes?)
-* ** IMPORTANT ** Tally should break down file / folder counts by MimeType?
-* ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
+* Can we save as PDF directly in the same folder as the Google Doc / Sheet etc is in? What about from a link directly from Google Drive - does that give the parent folder info as well as the File ID?
 
 Merge
 -----
 
 Reflect
 -------
-* ** IMPORTANT ** * Sign out doesn't route back to initial text? <-- SEEMS TO HAPPEN SOMETIMES on VIEW as well?
 * Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL/
 * Email group from above.
 * Field Span
@@ -78,6 +76,10 @@ Reflect
 
 Complete
 --------
+* List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install (https://developers.google.com/drive/v3/web/integrate-open)
+* Handle remove app from Google account, e.g. delete local hello data... <== DONE
+* ** IMPORTANT ** * Sign out doesn't route back to initial text in REFLECT App? <-- SEEMS TO HAPPEN SOMETIMES on VIEW as well? <== DONE
+* ** IMPORTANT ** Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) | Lazy Permission Requests.... <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?) <== DONE
 * Vertical Freeze only <== DONE
 * API Scopes (urls) don't wrap on scopes page, meaning page width exceeds header width ... <== DONE
 * Move Export Selection to Dialog Box (rather than menu items) -> Or series of Options Dialogs (better documentation support?) <== DONE
@@ -278,4 +280,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD ♑ - 2017-11-19
+ᕕ( ᐛ )ᕗ JD - 2017-11-25

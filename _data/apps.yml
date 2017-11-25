@@ -95,7 +95,11 @@ view:
         request: login
       - scope: https://www.googleapis.com/auth/urlshortener
         name: Manage your goo.gl short URLs
-        reason: Once you have created a link to share in this app, you have the option of using the Google Link Shorterner to 'compress' it. This scope allows access to that feature.
+        reason: Once you have created a link to share in this app, you have the option of using the Google Link Shortener to 'compress' it. This scope allows access to that feature.
+        request: lazy
+      - scope: https://www.googleapis.com/auth/drive.install
+        name: Special scope used to let users approve installation of an app.
+        reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
         request: lazy
   keys:
     google:
@@ -132,6 +136,8 @@ view:
             - name: Create
               desc: Create a link to this View
               hash: link.full
+              auth: google
+              scope: https://www.googleapis.com/auth/urlshortener
               imports:
                 - clipboard
               disabled_until:
@@ -189,10 +195,26 @@ view:
               hash: defaults
               disabled_until:
                 - opened
-    - name: Instructions
+    - name: About
       short_name: Help
-      hash: instructions
-      desc: More details about how to use the View App
+      groups:
+        all:
+          commands:
+            - name: Instructions
+              hash: instructions
+              desc: More details about how to use this app
+              divider: true
+            - name: Install
+              desc: Install this app into your Google Drive
+              hash: install
+              auth: google
+              scope: https://www.googleapis.com/auth/drive.install
+            - name: Permissions
+              url: /scopes/?highlight=view
+              desc: Find out about the permissions and scopes that this app uses
+            - name: Changes
+              url: /changes?highlight=view
+              desc: Find out about the most recent changes and features of this app
   published: true
 reflect:
   name: Reflect
@@ -207,6 +229,8 @@ reflect:
     - name: bootstrap-css
       load: first
     - name: popper
+      load: first
+    - name: transducers
       load: first
     - name: handlebars
       load: last
@@ -368,10 +392,21 @@ reflect:
               imports:
                 - google
               auth: google
-    - name: Instructions
+    - name: About
       short_name: Help
-      hash: instructions
-      desc: More details about how to use the Reflect App
+      groups:
+        all:
+          commands:
+            - name: Instructions
+              hash: instructions
+              desc: More details about how to use this app
+              divider: true
+            - name: Permissions
+              url: /scopes/?highlight=view
+              desc: Find out about the permissions and scopes that this app uses
+            - name: Changes
+              url: /changes?highlight=view
+              desc: Find out about the most recent changes and features of this app
   published: false
 folders:
   name: Folders
@@ -462,6 +497,10 @@ folders:
         name: View and manage the files in your Google Drive
         reason: In order to search, manage and convert your Drive files.
         request: login
+      - scope: https://www.googleapis.com/auth/drive.install
+        name: Special scope used to let users approve installation of an app.
+        reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
+        request: lazy
   keys:
     google:
         general: AIzaSyAWBZZmDitrJkyaP8NaJg7MqAZNzOA0Vls
@@ -503,10 +542,15 @@ folders:
                 - opened
               auth: google
             - name: Close
-              desc: Close the current Sheet
+              desc: Close the current Folder
               hash: close
               disabled_until:
                 - opened
+            - name: Install
+              desc: Install this app into your Google Drive
+              hash: install
+              auth: google
+              scope: https://www.googleapis.com/auth/drive.install
     - name: Results
       groups:
         all:
@@ -531,10 +575,26 @@ folders:
               hash: close.results
               disabled_until:
                 - searched
-    - name: Instructions
+    - name: About
       short_name: Help
-      hash: instructions
-      desc: More details about how to use the Folders App
+      groups:
+        all:
+          commands:
+            - name: Instructions
+              hash: instructions
+              desc: More details about how to use this app
+              divider: true
+            - name: Install
+              desc: Install this app into your Google Drive
+              hash: install
+              auth: google
+              scope: https://www.googleapis.com/auth/drive.install
+            - name: Permissions
+              url: /scopes/?highlight=view
+              desc: Find out about the permissions and scopes that this app uses
+            - name: Changes
+              url: /changes?highlight=view
+              desc: Find out about the most recent changes and features of this app
   published: true
 markbooks:
   name: Markbooks

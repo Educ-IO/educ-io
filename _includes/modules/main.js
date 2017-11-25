@@ -65,6 +65,29 @@ Main = function() {
 		
 		start : function() {
 
+			var google_Initialise = function(auth) {
+
+				return ಠ_ಠ.Google_API(ಠ_ಠ).initialise(auth.access_token, auth.token_type, auth.expires, 
+					(function(s) {
+						return function() {
+							return new Promise(function(resolve, reject) {
+								hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {force: false, display : "none", scope : s}).then(function(r) {
+									if (r.authResponse) {
+										resolve({
+											token : r.authResponse.access_token,
+											type : r.authResponse.token_type,
+											expires : r.authResponse.expires,
+										});
+									} else {
+										resolve();
+									}
+								}, function(err) {reject(err);});
+							});
+						};
+					})(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" "))), ಠ_ಠ.Flags.key() || ಠ_ಠ.SETUP.GOOGLE_KEY, ಠ_ಠ.Flags.oauth() || ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID);
+				
+			};
+			
 			var google_SignIn = function() {
         var _login = (display, force) => hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {
 					force: force, display : display,
@@ -94,18 +117,50 @@ Main = function() {
 				});
 			};
 			
-			var _routeIn = function() {if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(true);}, _routeOut = function() {if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(false, true);};
+			var _routeIn = function() {if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(true);}, _routeOut = function() {if (ಠ_ಠ.App.route) ಠ_ಠ.App.route([false, true]);};
 			
 			var _route = function(directive, command) {
-				ಠ_ಠ.Flags.log("ROUTING", directive, command);
-				if ((/GOOGLE/i).test(directive) && !ಠ_ಠ.google) {
-					google_SignIn();
-					_routeIn = function() {
-						_routeIn = function() {if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(true);};
+				
+				ಠ_ಠ.Flags.log("ROUTING", [directive, command]);
+				
+				if ((/GOOGLE/i).test(directive)) {
+					
+					if (!ಠ_ಠ.google) {
+						
+						/* <!-- No existing sign-in, so full sign-in --> */
+						google_SignIn();
+						_routeIn = function() {
+							_routeIn = function() {if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(true);};
+							if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
+						};
+						
+					} else if ((/\|/i).test(directive)) {
+					
+						/* <!-- Scope Authorisation --> */
+						/* <!-- TODO: Handle State for Full Page redirects.... --> */
+						var scopes= directive.split("|")[1].split(";");
+						hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {
+							force: false, display : (ಠ_ಠ.SETUP.SINGLE_PAGE || ಠ_ಠ.Flags.page()) ? "page" : "popup",
+							scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.concat(scopes).join(" "))
+						}).then(
+							(a) => {
+								ಠ_ಠ.Flags.log("Signed into Google", a);
+								if (!a.unchanged) ಠ_ಠ.google = google_Initialise(a.authResponse);
+								if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
+							}, 
+							(e) => ಠ_ಠ.Flags.error("Signed into Google", e)
+						);
+						
+					} else {
+					
 						if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
-					};
+						
+					}
+					
 				} else {
+					
 					if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
+					
 				}
 			};
 			
@@ -143,29 +198,12 @@ Main = function() {
 			};
 
 			var google_LoggedIn = function(auth) {
-				
+
 				if (!ಠ_ಠ.google) {
 
 					/* <!-- Initialise Google Provider --> */
-					ಠ_ಠ.google = ಠ_ಠ.Google_API(ಠ_ಠ).initialise(auth.access_token, auth.token_type, auth.expires, 
-						(function(s) {
-							return function() {
-								return new Promise(function(resolve, reject) {
-									hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {force: false, display : "none", scope : s}).then(function(r) {
-										if (r.authResponse) {
-											resolve({
-												token : r.authResponse.access_token,
-												type : r.authResponse.token_type,
-												expires : r.authResponse.expires,
-											});
-										} else {
-											resolve();
-										}
-									}, function(err) {reject(err);});
-								});
-							};
-						})(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" "))), ಠ_ಠ.Flags.key() || ಠ_ಠ.SETUP.GOOGLE_KEY, ಠ_ಠ.Flags.oauth() || ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID);
-
+					ಠ_ಠ.google = google_Initialise(auth);
+					
 					/* <!-- Get User Info for Display --> */
 					ಠ_ಠ.google.me().then(function(user) {
 
@@ -184,7 +222,11 @@ Main = function() {
 						/* <!-- Route Authenticated --> */
 						setupRouter(_routeIn);
 
-					}).catch(function(e) {ಠ_ಠ.Flags.error("Google Me", e);});
+					}).catch(function(e) {
+						ಠ_ಠ.Flags.error("Google Me", e);
+						/* <!-- Maybe user has revoked scopes, so default back to unauthenticated --> */
+						if (e.status == 401) google_SignOut();
+					});
 
 				}
 
@@ -221,11 +263,19 @@ Main = function() {
 			});
 
 			hello.on("auth.logout", function (auth) {
-
+				
 				if (auth.network == ಠ_ಠ.SETUP.GOOGLE_AUTH) {
 
-					google_LoggedOut();
-
+					if (auth.authResponse && auth.authResponse.error && auth.authResponse.error.code == "access_denied") {
+						
+						ಠ_ಠ.Flags.error("Google Authorisation / Sign-In Error", auth.authResponse);
+						
+					} else {
+						
+						google_LoggedOut();
+						
+					}
+					
 				}
 
 			});
