@@ -14,7 +14,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 		var headers = [];
 
 		if (data && data.length > 0) {
-			
+
 			/* <!-- Check for fully 'blank' columns --> */
 			ಠ_ಠ.Flags.time("Checking Blank Columns");
 			var _hasValues = Array.apply(null, {
@@ -30,12 +30,14 @@ Sheets = function(sheet, ಠ_ಠ) {
 				ಠ_ಠ.Flags.log("Blank Columns in Sheet:", JSON.stringify(_hasValues));
 				_hasValues.reverse();
 				data = _.map(data, (row) => {
-					_.each(_hasValues, function(index) {if (row.length > index+1) row.splice(index, 1);});
+					_.each(_hasValues, function(index) {
+						if (row.length > index + 1) row.splice(index, 1);
+					});
 					return row;
 				});
 			}
 			ಠ_ಠ.Flags.time("Checking Blank Columns", true);
-			
+
 			/* <!-- Handle Headers --> */
 			ಠ_ಠ.Flags.time("Generating Headers");
 			headers = data.shift();
@@ -62,7 +64,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 				hide_default: !!hide[i]
 			}));
 			ಠ_ಠ.Flags.time("Generating Headers", true);
-			
+
 		}
 
 		/* <!-- Check Array for Dates --> */
@@ -98,16 +100,16 @@ Sheets = function(sheet, ಠ_ಠ) {
 			}));
 		}
 		ಠ_ಠ.Flags.time("Checking for Dates in Sheet Values", true);
-		
+
 		ಠ_ಠ.Flags.time("Creating Object Array from Sheet Values");
 		var values = data && data.length > 0 ? data.map((v) => {
-				return Object.assign({}, v);
-			}) : [];
+			return Object.assign({}, v);
+		}) : [];
 		var fields = Array.apply(null, {
 			length: size.cols
 		}).map(Number.call, Number);
 		ಠ_ಠ.Flags.time("Creating Object Array from Sheet Values", true);
-		
+
 		var table = _db.getCollection(name);
 
 		if (!table) {
@@ -148,7 +150,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 			cols: sheet.sheets[index].properties.gridProperties.frozenColumnCount,
 			rows: sheet.sheets[index].properties.gridProperties.frozenRowCount
 		};
-		
+
 		var _size = {
 			cols: sheet.sheets[index].properties.gridProperties.columnCount,
 			rows: sheet.sheets[index].properties.gridProperties.rowCount
@@ -352,7 +354,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 			desc: "Excel 2.0 Worksheet Format"
 		}
 	};
-  
+
 	/* <!-- Output File Function (once choices have been made) --> */
 	var _outputAndSave = function(book, type, filename) {
 
@@ -395,162 +397,166 @@ Sheets = function(sheet, ಠ_ಠ) {
 	/* <!-- Output File Function (once choices have been made) --> */
 	var _exportSheet = function(full, all) {
 
-    var error = (e) => e ? ಠ_ಠ.Flags.error("Google Sheet Export", e) : ಠ_ಠ.Flags.log("Google Sheet Export Cancelled");
-    
-    ಠ_ಠ.Display.choose({
+		var error = (e) => e ? ಠ_ಠ.Flags.error("Google Sheet Export", e) : ಠ_ಠ.Flags.log("Google Sheet Export Cancelled");
+
+		ಠ_ಠ.Display.choose({
 			id: "view_export_format",
 			title: "Please Select a Format to Export to ...",
-      instructions: ಠ_ಠ.Display.doc.get({
-			  name: "EXPORT_FORMATS",
-			  content: full ? "original" : "filtered",
-      }),
-      desc: "Available Formats:",
+			instructions: ಠ_ಠ.Display.doc.get({
+				name: "EXPORT_FORMATS",
+				content: full ? "original" : "filtered",
+			}),
+			desc: "Available Formats:",
 			action: "Export",
 			choices: _exportTypes
 		}).then(function(option) {
 
 			if (option) {
 
-        var __exportSheet = function() {
-          
-          /* <!-- Trigger Loader --> */
-          ಠ_ಠ.Display.busy({
-            target: $("div.tab-content div.tab-pane.active")
-          });
+				var __exportSheet = function() {
 
-          var error = (e) => {
-            if (e) ಠ_ಠ.Flags.error("Google Sheet Export:", e);
-            ಠ_ಠ.Display.busy({
-              clear: true
-            });
-          }, complete = () => ಠ_ಠ.Display.busy({
-            clear: true
-          }),_content = $(".tab-content"), _id = _content.data("id"), _title = _content.data("name");
+					/* <!-- Trigger Loader --> */
+					ಠ_ಠ.Display.busy({
+						target: $("div.tab-content div.tab-pane.active")
+					});
 
-          if (option.type == "md") {
+					var error = (e) => {
+							if (e) ಠ_ಠ.Flags.error("Google Sheet Export:", e);
+							ಠ_ಠ.Display.busy({
+								clear: true
+							});
+						},
+						complete = () => ಠ_ಠ.Display.busy({
+							clear: true
+						}),
+						_content = $(".tab-content"),
+						_id = _content.data("id"),
+						_title = _content.data("name");
 
-            var _md_sheet = _currentSheet(),
-              _md_name = _md_sheet.name();
-            var _md_values = _md_sheet.values(!full);
+					if (option.type == "md") {
 
-            var _md_output = "|---\n";
-            if (_md_values && _md_values.length > 0) {
+						var _md_sheet = _currentSheet(),
+							_md_name = _md_sheet.name();
+						var _md_values = _md_sheet.values(!full);
 
-              /* <!-- Output Header Row --> */
-              var _md_headers = _md_values.shift();
-              _md_output += (_.reduce(_md_headers, (row, value, index) => row + (index > 0 ? " | " + value : value), "") + "\n");
-              /* <!-- Output Separator Row --> */
-              _md_output += (_.times(_md_headers.length, () => "|:-").join("") + "\n");
-              if (_md_values.length > 0) {
-                _md_output += _.map(_md_values, (values) => _.reduce(values, (row, value, index) => row + (index > 0 ? " | " + value : value), "")).join("\n");
-              }
+						var _md_output = "|---\n";
+						if (_md_values && _md_values.length > 0) {
 
-            }
+							/* <!-- Output Header Row --> */
+							var _md_headers = _md_values.shift();
+							_md_output += (_.reduce(_md_headers, (row, value, index) => row + (index > 0 ? " | " + value : value), "") + "\n");
+							/* <!-- Output Separator Row --> */
+							_md_output += (_.times(_md_headers.length, () => "|:-").join("") + "\n");
+							if (_md_values.length > 0) {
+								_md_output += _.map(_md_values, (values) => _.reduce(values, (row, value, index) => row + (index > 0 ? " | " + value : value), "")).join("\n");
+							}
 
-            try {
-              saveAs(new Blob([_md_output], {
-                type: "text/markdown"
-              }), _title + " - " + _md_name + option.ext);
-              complete();
-            } catch (e) {
-              error(e);
-            }
+						}
 
-          } else {
+						try {
+							saveAs(new Blob([_md_output], {
+								type: "text/markdown"
+							}), _title + " - " + _md_name + option.ext);
+							complete();
+						} catch (e) {
+							error(e);
+						}
 
-            var Workbook = function() {
-              if (!(this instanceof Workbook)) return new Workbook();
-              this.SheetNames = [];
-              this.Sheets = {};
-            };
+					} else {
 
-            var _exportBook = new Workbook();
-            var _safeName = {
-              "\\": "",
-              "/": " ",
-              "?": "",
-              "*": "",
-              "[": "",
-              "]": ""
-            };
+						var Workbook = function() {
+							if (!(this instanceof Workbook)) return new Workbook();
+							this.SheetNames = [];
+							this.Sheets = {};
+						};
 
-            var save = (title) => _outputAndSave(_exportBook, option.type, title + option.ext).then(complete).catch(error);
+						var _exportBook = new Workbook();
+						var _safeName = {
+							"\\": "",
+							"/": " ",
+							"?": "",
+							"*": "",
+							"[": "",
+							"]": ""
+						};
 
-            if (all && option.size == "multi") {
+						var save = (title) => _outputAndSave(_exportBook, option.type, title + option.ext).then(complete).catch(error);
 
-              /* <!-- Get all tabs --> */
-              var _tabs = _content.children("div.tab-pane"),
-                _current = 0,
-                _total = _tabs.length;
+						if (all && option.size == "multi") {
 
-              _tabs.each((i, el) => {
-                var _name = $(el).data("name");
-                var _get = !_sheets[_name] ?
-                  new Promise((resolve) => {
-                    ಠ_ಠ.google.sheets.values(_id, _name + "!A:ZZ").then((data) => resolve(data.values));
-                  }) :
-                  new Promise((resolve) => resolve(_sheets[_name].values(!full)));
+							/* <!-- Get all tabs --> */
+							var _tabs = _content.children("div.tab-pane"),
+								_current = 0,
+								_total = _tabs.length;
 
-                _get.then((data) => {
-                  if (data && data.length > 0) {
-                    _name = RegExp.replaceChars(_name, _safeName);
-                    _exportBook.SheetNames.push(_name);
-                    _exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(data);
-                  }
-                  if (_total == ++_current)  save(_title);
+							_tabs.each((i, el) => {
+								var _name = $(el).data("name");
+								var _get = !_sheets[_name] ?
+									new Promise((resolve) => {
+										ಠ_ಠ.google.sheets.values(_id, _name + "!A:ZZ").then((data) => resolve(data.values));
+									}) :
+									new Promise((resolve) => resolve(_sheets[_name].values(!full)));
 
-                });
+								_get.then((data) => {
+									if (data && data.length > 0) {
+										_name = RegExp.replaceChars(_name, _safeName);
+										_exportBook.SheetNames.push(_name);
+										_exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(data);
+									}
+									if (_total == ++_current) save(_title);
 
-              });
+								});
 
-            } else {
+							});
 
-              var _sheet = _currentSheet(),
-                _name = RegExp.replaceChars(_sheet.name(), _safeName),
-                _values = _sheet.values(!full);
-              _exportBook.SheetNames.push(_name);
-              _exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(_values && _values.length > 0 ? _values : []);
-              save(_title + " - " + _name);
+						} else {
 
-            }
+							var _sheet = _currentSheet(),
+								_name = RegExp.replaceChars(_sheet.name(), _safeName),
+								_values = _sheet.values(!full);
+							_exportBook.SheetNames.push(_name);
+							_exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(_values && _values.length > 0 ? _values : []);
+							save(_title + " - " + _name);
 
-          }
-          
-        };
-        
-        if (!all && option.size == "multi") {
-          
-          ಠ_ಠ.Display.choose({
-            id: "view_export_size",
-            title: "Which Tabs would you like to export ...",
-            instructions: ಠ_ಠ.Display.doc.get({
-			        name: "EXPORT_SIZE",
-              content: option.desc
-            }),
-            action: "Export",
-            choices: {
-		          all: {
-			          name: "All Tabs",
-                all: true
-	            },
-              single: {
-                name: "Current Tab",
-                desc: _currentSheet().name(),
-                all: false,
-              }
-            }
-          }).then(function(option) {
-            
-            all = option.all;
-            __exportSheet();
-            
-          }).catch(error);  
-          
-        } else {
-          
-          __exportSheet();
-          
-        }
+						}
+
+					}
+
+				};
+
+				if (!all && option.size == "multi") {
+
+					ಠ_ಠ.Display.choose({
+						id: "view_export_size",
+						title: "Which Tabs would you like to export ...",
+						instructions: ಠ_ಠ.Display.doc.get({
+							name: "EXPORT_SIZE",
+							content: option.desc
+						}),
+						action: "Export",
+						choices: {
+							all: {
+								name: "All Tabs",
+								all: true
+							},
+							single: {
+								name: "Current Tab",
+								desc: _currentSheet().name(),
+								all: false,
+							}
+						}
+					}).then(function(option) {
+
+						all = option.all;
+						__exportSheet();
+
+					}).catch(error);
+
+				} else {
+
+					__exportSheet();
+
+				}
 
 			}
 

@@ -395,12 +395,16 @@ Google_API = function(ಠ_ಠ, timeout) {
 			},
 			
 			get: (id, team) => team ? 
-			_call(NETWORKS.general.get, "drive/v3/files/" + id, {
-				fields: "kind,id,name,mimeType,version,parents",
-				teamDriveId : team, includeTeamDriveItems : true, supportsTeamDrives : true, corpora : "teamDrive"}) : 
-			_call(NETWORKS.general.get, "drive/v3/files/" + id, {
-				fields: "kind,id,name,mimeType,version,parents",
+				_call(NETWORKS.general.get, "drive/v3/files/" + id, {
+					fields: "kind,id,name,mimeType,version,parents",
+					teamDriveId : team, includeTeamDriveItems : true, supportsTeamDrives : true, corpora : "teamDrive"}) : 
+				_call(NETWORKS.general.get, "drive/v3/files/" + id, {
+					fields: "kind,id,name,mimeType,version,parents",
 			}),
+			
+			export: (id, format, team) => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {
+				mimeType: format
+			}, null, "application/binary"),
 
 		},
 

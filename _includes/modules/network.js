@@ -118,7 +118,9 @@ Network = function(base, timeout, rate, retry) {
 						} else if (responseType == "application/binary") {
 							_response = response.blob();
 						}
-						_response.then(value => resolve(value));	
+						_response
+							.then(value => resolve(value))
+							.catch(e => reject({name: "Could not process response", url: response.url, status: response.status, statusText: response.statusText}));	
 					}
 					
 				} else {

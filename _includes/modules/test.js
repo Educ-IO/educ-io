@@ -23,7 +23,7 @@ Page = function() {
 			url: "https://caniuse.com/#feat=customevent",
 			required: false,
 			test: function() {
-				return new Promise((resolve, reject) => {
+				return new Promise((resolve) => {
 					var name = "test-event", now = new Date(), event = new CustomEvent(name, { detail: now });
 					window.addEventListener(name, function (e) {
 						resolve(e.detail == now);
@@ -160,7 +160,30 @@ Page = function() {
 				class: ""
 			},
 		},
-
+		{
+			name: "Template Literals",
+			desc: "Javascript String Template Literal Expressions",
+			url: "https://caniuse.com/#feat=template-literals",
+			required: true,
+			test: function() {
+				var hello = "Hello";
+				return `${hello} World!` == "Hello World!";
+			},
+			success: {
+				icon: "check",
+				class: "text-success",
+				message: ""
+			},
+			failure: {
+				icon: "close",
+				class: "text-danger",
+				message: "Unfortunately, your browser doesn't support template literal strings."
+			},
+			type: {
+				name: "feature",
+				class: "badge-dark"
+			},
+		},
 		{
 			name: "Promises",
 			desc: "Javascript Promises",

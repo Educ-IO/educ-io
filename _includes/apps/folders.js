@@ -298,6 +298,10 @@ App = function() {
 			} else if ((/SEARCH/i).test(command)) {
 
 				if (_folder) _folder.search((/ROOT/i).test(command[1]) ? "root" : "");
+				
+			} else if ((/REFINE/i).test(command)) {
+
+				if (_folder) _folder.refine();
 
 			} else if ((/DELETE/i).test(command)) {
 

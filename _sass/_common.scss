@@ -35,6 +35,46 @@ a.navbar-brand.logo, .navbar-brand a.logo {
 	margin-bottom: 2px;
 	text-wrap: nowrap;
 	font-size: 100%;
-	border-bottom: 1px dashed $colour-emphasis;
+	border-bottom: 1px dashed lighten($colour-highlight, 25%);
 }
 // -- Menu Branding -- //
+
+// -- Outline App Logo -- //
+.dropdown-item, .app-logo {
+	svg {
+		path {
+			&.o {
+				stroke-width: 2;
+			}
+			&.p {
+				stroke-width: 3;
+			}
+			&.o, &.p {
+				stroke: darken($colour-highlight, 10%);
+				stroke-linejoin: round;
+				stroke-linecap: round;
+			}
+		}
+	}
+}
+.dropdown-item {
+	svg {
+		max-height: 1em;
+		max-width: 1em;
+		margin: 0 0.2em -0.1em -0.5em;
+	}
+}
+
+.app-logo {
+	svg {
+		max-width: 100%;
+		height: auto;
+		pointer-events: visible;
+		&:hover {
+			path {
+				&.o, &.p {stroke: darken($colour-highlight, 20%);}
+			}
+		}
+	}
+}
+// -- Outline Letter Logo -- //

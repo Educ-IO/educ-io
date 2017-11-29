@@ -3,6 +3,7 @@ view:
   desc: Producing __customised__ _views_ of your Google Sheets, with easy __filtering__ and __sharing__
   link: /view/
   colour: af0ad9
+  logo: images/view_logo.svg
   imports:
     - name: underscore
       load: first
@@ -215,12 +216,17 @@ view:
             - name: Changes
               url: /changes?highlight=view
               desc: Find out about the most recent changes and features of this app
+              divider: true
+            - name: About
+              url: /about
+              desc: Find out about our platform, technology and approach
   published: true
 reflect:
   name: Reflect
   desc: _Produce_ and _share_ __reflective reports__, tracking _evidence_ and your _progress_
   link: /reflect/
   colour: 00833a
+  logo: images/reflect_logo.svg
   imports:
     - name: underscore
       load: first
@@ -407,12 +413,17 @@ reflect:
             - name: Changes
               url: /changes?highlight=view
               desc: Find out about the most recent changes and features of this app
+              divider: true
+            - name: About
+              url: /about
+              desc: Find out about our platform, technology and approach
   published: false
 folders:
   name: Folders
   desc: __Search__ folders individually, view _sizes_, _starred_ files and perform bulk _conversions_
   link: /folders/
   colour: c12727
+  logo: images/folders_logo.svg
   imports:
     - name: underscore
       load: first
@@ -546,28 +557,18 @@ folders:
               hash: close
               disabled_until:
                 - opened
-            - name: Install
-              desc: Install this app into your Google Drive
-              hash: install
-              auth: google
-              scope: https://www.googleapis.com/auth/drive.install
     - name: Results
       groups:
         all:
           commands:
             - name: Convert
-              desc: Convert the current search results
+              desc: Convert files in the current folder or search results
               hash: convert
               disabled_until:
-                - searched
+                - opened
             - name: Delete
               desc: Delete the files in these search results
               hash: delete
-              disabled_until:
-                - searched
-            - name: Open With
-              desc: Open these search results with a different app
-              hash: export
               disabled_until:
                 - searched
             - name: Close
@@ -595,6 +596,10 @@ folders:
             - name: Changes
               url: /changes?highlight=folders
               desc: Find out about the most recent changes and features of this app
+              divider: true
+            - name: About
+              url: /about
+              desc: Find out about our platform, technology and approach
   published: true
 markbooks:
   name: Markbooks

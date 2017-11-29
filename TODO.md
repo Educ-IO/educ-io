@@ -23,9 +23,9 @@ Apps
 ----
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
 * ** IMPORTANT ** Retries (in network.js) takes too long when handling security (401) errors
+* ** IMPORTANT ** Move tooltips to RHS/LHS for larger screens (responsive breakpoints?)
 * Wrap Un-Authenticated Sheets Access in Google API Javascript file ... maybe??
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
-* After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 
 Mobile
@@ -42,6 +42,7 @@ View
 * ** IMPORTANT ** Column Filters
 * Do went need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view
 * Write Flexbox-based Fit Algorithm
+  + Categorised data to 'pills' for display?
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Vertical Only Freeze should work better (e.g. not screw with table row cell heights?);
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
@@ -57,10 +58,9 @@ Folders
 -------
 * ** IMPORTANT ** Tally should break down file / folder counts by MimeType?
 * ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
-* Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
-* Manual Selection for Processing Results (tick boxes?)
-* Can we save as PDF directly in the same folder as the Google Doc / Sheet etc is in? What about from a link directly from Google Drive - does that give the parent folder info as well as the File ID?
+* Update Scroll Position on Large List Conversions - e.g. follow progress.
+* Properties-based Search
 
 Merge
 -----
@@ -76,6 +76,10 @@ Reflect
 
 Complete
 --------
+* Manual Selection for Processing Results (tick boxes?) <== DONE
+* Can we save as PDF directly in the same folder as the Google Doc / Sheet etc is in? What about from a link directly from Google Drive - does that give the parent folder info as well as the File ID? (NO IT DOESN'T) <= DONE
+* Put App Logos in Menu <== DONE
+* After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687 <= DONE
 * List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install (https://developers.google.com/drive/v3/web/integrate-open)
 * Handle remove app from Google account, e.g. delete local hello data... <== DONE
 * ** IMPORTANT ** * Sign out doesn't route back to initial text in REFLECT App? <-- SEEMS TO HAPPEN SOMETIMES on VIEW as well? <== DONE
@@ -280,4 +284,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2017-11-25
+ᕕ( ᐛ )ᕗ JD - 2017-11-27

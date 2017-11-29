@@ -95,8 +95,8 @@ Display = function() {
 					}
 				});
 
-				Handlebars.registerHelper("localeDate", function(variable, options) {
-					return variable.toLocaleString();
+				Handlebars.registerHelper("localeDate", function(variable) {
+					if (variable && variable instanceof Date) return variable.toLocaleString();
 				});
 
 				Handlebars.registerHelper("exists", function(variable, options) {

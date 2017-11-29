@@ -2,7 +2,6 @@ h1, h2, h3, h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading, .navb
 	letter-spacing: $font-spacing-heading;
 	font-family: $font-heading, apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	font-weight: $font-weight-heading;
-	color: $colour-highlight !important;
 	em {
 		color: lighten($colour-highlight, 5%) !important;
 		font-style: normal;
@@ -12,6 +11,14 @@ h1, h2, h3, h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading, .navb
 		color: darken($colour-highlight, 20%) !important;
 		font-style: normal;
 	}
+}
+
+h1, h2, h3, .navbar-brand, a.navbar-brand  {
+	color: $colour-highlight !important;
+}
+
+h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading {
+	color: lighten($colour-highlight, 25%) !important;
 }
 
 a.navbar-brand  {

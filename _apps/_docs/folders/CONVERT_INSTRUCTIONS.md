@@ -1,1 +1,2 @@
-Use the __shortcut__ buttons below, or the text entry boxes to customise your conversions. If the _in-place_ box is ticked, then a __new version__ of the each file will be uploaded, rather than an entirely new file (use this is you are just converting mime-types).
+Use the __shortcut__ buttons below, or the text entry boxes to customise your conversions.
+If the _in-place_ box is ticked, then a __new version__ of the each file will be uploaded, rather than an entirely new file (use this is you are just converting mime-types). If you are exporting files (e.g. to PDF) then _in-place_ will export to an existing file (if it exists) rather than creating a new one.

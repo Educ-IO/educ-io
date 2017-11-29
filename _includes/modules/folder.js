@@ -3,6 +3,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 	/* <!-- Internal Constants --> */
 	const BATCH_SIZE = 50;
 	const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
+	const SEARCH_TRIGGER = 20;
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -162,9 +163,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 	var _showResults = function(name, items) {
 
-		var _id = name.replace(/[^A-Z0-9]+/gi, "").toLowerCase();
-
-		var _data = {
+		var _id = name.replace(/[^A-Z0-9]+/gi, "").toLowerCase(), _data = {
 			tabs: [{
 				id: _id,
 				name: name,
@@ -172,11 +171,10 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 			}]
 		};
 
-		var _items = _.each(_.map(items, mapItems), (v) => v.safe = (_id + "_" + v.id));
-
-		var _folder_Count = _.reduce(items, (count, item) => item.mimeType === "application/vnd.google-apps.folder" ? count + 1 : count, 0);
-		var _file_Count = _.reduce(items, (count, item) => item.mimeType !== "application/vnd.google-apps.folder" ? count + 1 : count, 0);
-		var _file_Size = _.reduce(items, (total, item) => total + (item.size ? parseInt(item.size) : 0), 0);
+		var _items = _.each(_.map(items, mapItems), (v) => v.safe = (_id + "_" + v.id)),
+			_folder_Count = _.reduce(items, (count, item) => item.mimeType === "application/vnd.google-apps.folder" ? count + 1 : count, 0),
+			_file_Count = _.reduce(items, (count, item) => item.mimeType !== "application/vnd.google-apps.folder" ? count + 1 : count, 0),
+			_file_Size = _.reduce(items, (total, item) => total + (item.size ? parseInt(item.size) : 0), 0);
 
 		_tables[_id] = _showData(_id, name, _items, $(ಠ_ಠ.Display.template.get("tab-tabs")(_data)).appendTo(".tab-content"));
 		_activateTab($(ಠ_ಠ.Display.template.get("tab-links")(_data)).appendTo("#folder_tabs").parent());
@@ -184,8 +182,8 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 		/* <!-- Measure the Performance (end) --> */
 		ಠ_ಠ.Flags.time(name, true);
 
-		/* <!-- Display the Results --> */
-		ಠ_ಠ.Display.modal("results", {
+		/* <!-- Display the Results (if the total results exceeds the trigger) --> */
+		if (items.length >= SEARCH_TRIGGER) ಠ_ಠ.Display.modal("results", {
 			id: "search_results",
 			target: ಠ_ಠ.container,
 			title: "Search Results",
@@ -246,51 +244,142 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 			var _excludes = ["^(\\~\\$)", "^(\\*\\*\\*\\sARCHIVE\\s\\*\\*\\*\\s)", "\\$RECYCLE\\.BIN"].join("\n");
 			var _populate = $(e.target).data("populate");
-			if (_populate == "word") {
-
-				$("#mimeTypes").val([
-					"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-					"application/zip", "application/msword"
-				].join("\n"));
-				$("#excludeRegexes").val(_excludes);
-				$("#includeRegexes").val(["(\\.docx)$", "(\\.doc)$"].join("\n"));
-
-			} else if (_populate == "excel") {
-
-				$("#mimeTypes").val([
-					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-					"application/zip", "application/vnd.ms-excel"
-				].join("\n"));
-				$("#excludeRegexes").val(_excludes);
-				$("#includeRegexes").val(["(\\.xlsx)$", "(\\.xls)$"].join("\n"));
-
-			} else if (_populate == "powerpoint") {
-
-				$("#mimeTypes").val([
-					"application/vnd.openxmlformats-officedocument.presentationml.presentation",
-					"application/zip", "application/vnd.ms-powerpoint"
-				].join("\n"));
-				$("#excludeRegexes").val(_excludes);
-				$("#includeRegexes").val(["(\\.pptx)$", "(\\.ppt)$"].join("\n"));
-
-			} else if (_populate == "temp") {
-
-				$("#mimeTypes").val([
-					"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-					"application/vnd.openxmlformats-officedocument.presentationml.presentation",
-					"application/vnd.ms-excel", "application/msword", "application/vnd.ms-powerpoint",
-					"application/zip", "application/octet-stream"
-				].join("\n"));
-				$("#includeRegexes").val(["^(\\s*\\~\\$).*(\\.docx)$", "^(\\s*\\~\\$).*(\\.doc)$",
-					"^(\\s*\\~\\$).*(\\.pptx)$", "^(\\s*\\~\\$).*(\\.ppt)$", "^(\\s*\\~\\$).*(\\.xlsx)$", "^(\\s*\\~\\$).*(\\.xls)$", "thumbs\\.db"
-				].join("\n"));
-
+			
+			switch (_populate) {
+					
+				case "word": 
+					
+					$("#mimeTypes").val([
+						"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+						"application/zip", "application/msword"
+					].join("\n"));
+					$("#excludeRegexes").val(_excludes);
+					$("#includeRegexes").val(["(\\.docx)$", "(\\.doc)$"].join("\n"));
+					break;
+					
+				case "docs":
+					
+					$("#mimeTypes").val([
+						"application/vnd.google-apps.document"
+					].join("\n"));
+					$("#excludeRegexes").val(_excludes);
+					$("#includeRegexes").val([].join("\n"));
+					break;
+					
+				case "excel":
+					
+					$("#mimeTypes").val([
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+						"application/zip", "application/vnd.ms-excel"
+					].join("\n"));
+					$("#excludeRegexes").val(_excludes);
+					$("#includeRegexes").val(["(\\.xlsx)$", "(\\.xls)$"].join("\n"));
+					break;
+				
+				case "sheets":
+					
+					$("#mimeTypes").val([
+						"application/vnd.google-apps.spreadsheet"
+					].join("\n"));
+					$("#excludeRegexes").val(_excludes);
+					$("#includeRegexes").val([].join("\n"));
+					break;
+					
+				case "powerpoint":
+					
+					$("#mimeTypes").val([
+						"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+						"application/zip", "application/vnd.ms-powerpoint"
+					].join("\n"));
+					$("#excludeRegexes").val(_excludes);
+					$("#includeRegexes").val(["(\\.pptx)$", "(\\.ppt)$"].join("\n"));
+					break;
+					
+				case "slides":
+					
+					$("#mimeTypes").val([
+						"application/vnd.google-apps.presentation"
+					].join("\n"));
+					$("#excludeRegexes").val(_excludes);
+					$("#includeRegexes").val([].join("\n"));
+					break;
+					
+				case "drawings":
+					
+					$("#mimeTypes").val([
+						"application/vnd.google-apps.drawing"
+					].join("\n"));
+					$("#excludeRegexes").val(_excludes);
+					$("#includeRegexes").val([].join("\n"));
+					break;
+					
+				case "temp":
+					
+					$("#mimeTypes").val([
+						"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+						"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+						"application/vnd.ms-excel", "application/msword", "application/vnd.ms-powerpoint",
+						"application/zip", "application/octet-stream"
+					].join("\n"));
+					$("#includeRegexes").val(["^(\\s*\\~\\$).*(\\.docx)$", "^(\\s*\\~\\$).*(\\.doc)$",
+						"^(\\s*\\~\\$).*(\\.pptx)$", "^(\\s*\\~\\$).*(\\.ppt)$", "^(\\s*\\~\\$).*(\\.xlsx)$", "^(\\s*\\~\\$).*(\\.xls)$", "thumbs\\.db"
+					].join("\n"));
+					break;
 			}
+
 		});
 
 	};
 
+	var _exportFile = function(file, targetMimeType, inPlace) {
+		
+		return new Promise((resolve, reject) => {
+			
+			ಠ_ಠ.google.files.export(file.id, targetMimeType, _team).then(binary => {
+
+				var _name = file.name.lastIndexOf(".") > 0 ? file.name.substr(0, file.name.lastIndexOf(".")) : file.name;
+				
+				var _upload = (metadata, id) => {
+					
+					ಠ_ಠ.google.upload(metadata ? metadata : {
+						name: _name,
+						parents: file.parents,
+						teamDriveId: _team,
+					}, binary, targetMimeType, _team, id)
+						.then(uploadedFile => resolve({new: uploadedFile}))
+						.catch(e => {
+							ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error");
+							reject();
+						});
+					
+				};
+				
+				if (inPlace) {
+					
+					ಠ_ಠ.google.folders.search(file.parents, false, targetMimeType, null, ((n, t) => f => (f.name == n) && f.mimeType == t)(_name, targetMimeType), null, _team).then((results) => {
+						if (results && results.length == 1) {
+							_upload({}, results[0].id);
+						} else {
+							_upload();
+						}
+					});
+					
+				} else {
+					
+					_upload();
+					
+				}
+				
+			}).catch(e => {
+				ಠ_ಠ.Flags.error("Export Error", e ? e : "No Inner Error");
+				reject();
+			});
+			
+		});
+		
+	};
+	
 	var _convertFile = function(file, sourceMimeType, targetMimeType, prefixAfterConversion, inPlace) {
 
 		return new Promise((resolve, reject) => {
@@ -304,7 +393,9 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 			ಠ_ಠ.google.download(file.id, _team).then(binary => {
 
-				(inPlace ? ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team, file.id) : ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team))
+				(inPlace ? 
+					ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team, file.id) : 
+					ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team))
 				.then(uploadedFile => {
 
 						prefixAfterConversion ?
@@ -393,11 +484,11 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 	};
 
-	var _convertItems = function() {
+	var _convertItems = function(id) {
 
 		var _collection;
-		if (!_search || !(_collection = _db.getCollection(_search))) return;
-
+		if(!(_collection = _db.getCollection(id))) return;
+		
 		ಠ_ಠ.Display.modal("convert", {
 			id: "convert_results",
 			target: ಠ_ಠ.container,
@@ -407,17 +498,17 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 			var _results = _collection.chain().data();
 
-			ಠ_ಠ.Flags.log("CONVERSION STARTED: " + _results.length + " items to convert");
+			ಠ_ಠ.Flags.log(`CONVERSION STARTED: ${_results.length} items to convert`);
 
-			var _sourceMimeType = _.find(values, v => v.name == "source").value;
+			var _sourceMimeType = _.find(values, v => v.name == "source") ? _.find(values, v => v.name == "source").value : null;
 			var _targetMimeType = _.find(values, v => v.name == "target").value;
-			var _prefixAfterConversion = _.find(values, v => v.name == "prefix").value;
+			var _prefixAfterConversion = _.find(values, v => v.name == "prefix") ? _.find(values, v => v.name == "prefix").value : null;
 			var _batchSize = _.find(values, v => v.name == "batch").value;
 			var _inplace = !!(_.find(values, v => v.name == "inplace"));
 			var _log = (_batchSize && _batchSize > 0);
 			if (!_log) _batchSize = 50;
 
-			if (_sourceMimeType && _targetMimeType) {
+			if (_targetMimeType) {
 
 				var _process_Batch = function(batch, batches, batch_index, length, id, last) {
 
@@ -429,43 +520,55 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 						if (file) {
 
-							ಠ_ಠ.Flags.log("PROCESSING FILE " + file_index);
+							if ((_sourceMimeType || ಠ_ಠ.google.files.native(file.type))) {
+								
+								ಠ_ಠ.Flags.log("PROCESSING FILE " + file_index);
 
-							var _container = $("#" + _search + "_" + file.id);
-							var _result = _collection.by("id", file.id);
-
-							ಠ_ಠ.Display.busy({
-								target: _container.find(".file-name").parent(),
-								class: "loader-small"
-							});
-
-							_convertFile(file, _sourceMimeType, _targetMimeType, _prefixAfterConversion, _inplace).then(converted => {
-								if (_container) _container.find(".file-name").addClass("action-succeeded text-success font-weight-bold");
-								if (_result) _result.name_class = "action-succeeded text-success font-weight-bold";
-								if (converted && converted.old) {
-									if (_container) _container.find(".file-name").text(converted.old.name);
-									if (_result) _result.name = converted.old.name;
-								}
-								if (_result) _collection.update(_result);
-								ಠ_ಠ.Flags.debug("CONVERTED ITEM " + file_index, converted);
-								if (converted) _successes.push(converted);
+								var _container = $("#" + id + "_" + file.id), _result = _collection.by("id", file.id);
+								if (!_container || _container.length === 0) _container = $("#" + file.id);
+								
 								ಠ_ಠ.Display.busy({
-									clear: true
+									target: _container.find(".file-name").parent(),
+									class: "loader-small"
 								});
-								_process_Result(files.shift(), files, file_index + 1, id, last, complete);
-							}).catch(e => {
-								if (_container) _container.find(".file-name").addClass("action-failed text-danger font-weight-bold");
-								if (_result) {
-									_result.name_class = "action-failed text-danger font-weight-bold";
-									_collection.update(_result);
-								}
-								ಠ_ಠ.Flags.error("File " + file_index + " Conversion Error", e ? e : "No Inner Error");
-								_failures.push(file);
-								ಠ_ಠ.Display.busy({
-									clear: true
+
+								(_sourceMimeType ? 
+									_convertFile(file, _sourceMimeType, _targetMimeType, _prefixAfterConversion, _inplace) :
+									_exportFile(file, _targetMimeType, _inplace))
+								.then(converted => {
+									if (_container) _container.find(".file-name").addClass("action-succeeded text-success font-weight-bold");
+									if (_result) _result.name_class = "action-succeeded text-success font-weight-bold";
+									if (converted && converted.old) {
+										if (_container) _container.find(".file-name").text(converted.old.name);
+										if (_result) _result.name = converted.old.name;
+									}
+									if (_result) _collection.update(_result);
+									ಠ_ಠ.Flags.debug("CONVERTED ITEM " + file_index, converted);
+									if (converted) _successes.push(converted);
+									ಠ_ಠ.Display.busy({
+										clear: true
+									});
+									_process_Result(files.shift(), files, file_index + 1, id, last, complete);
+								}).catch(e => {
+									if (_container) _container.find(".file-name").addClass("action-failed text-danger font-weight-bold");
+									if (_result) {
+										_result.name_class = "action-failed text-danger font-weight-bold";
+										_collection.update(_result);
+									}
+									ಠ_ಠ.Flags.error("File " + file_index + " Conversion Error", e ? e : "No Inner Error");
+									_failures.push(file);
+									ಠ_ಠ.Display.busy({
+										clear: true
+									});
+									_process_Result(files.shift(), files, file_index + 1, id, last, complete);
 								});
+								
+							} else {
+								
+								ಠ_ಠ.Flags.log("FILE WILL NOT BE PROCESSED:", file);
 								_process_Result(files.shift(), files, file_index + 1, id, last, complete);
-							});
+								
+							}
 
 						} else {
 
@@ -476,17 +579,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 								var _save = function() {
 									_saveConversionResults(_successes, _failures, id, last).then((v) => {
 										complete(v);
-									}).catch(() => {
-										/* <!-- Tricky - on fail, should we try again? Or just 'succeed' silently? --> */
-										if (_saveRetries--) {
-											DELAY(2000).then(_save());
-										} else {
-											complete({
-												id: id,
-												last: last
-											});
-										}
-									});
+									}).catch(() => _saveRetries-- ? DELAY(2000).then(_save()) : complete({id: id, last: last}));
 								};
 								_save();
 
@@ -541,39 +634,60 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 				_natives = ಠ_ಠ.google.files.natives(),
 				_inplace = false;
 
-			if (_populate == "docs") {
-
-				$("#sourceMimeType").val("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-				$("#targetMimeType").val(_natives[0]);
-
-			} else if (_populate == "sheets") {
-
-				$("#sourceMimeType").val("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-				$("#targetMimeType").val(_natives[1]);
-
-			} else if (_populate == "slides") {
-
-				$("#sourceMimeType").val("application/vnd.openxmlformats-officedocument.presentationml.presentation");
-				$("#targetMimeType").val(_natives[2]);
-
-			} else if (_populate == "word") {
-
-				$("#sourceMimeType").val("application/zip");
-				$("#targetMimeType").val("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-				_inplace = true;
-
-			} else if (_populate == "excel") {
-
-				$("#sourceMimeType").val("application/zip");
-				$("#targetMimeType").val("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-				_inplace = true;
-
-			} else if (_populate == "powerpoint") {
-
-				$("#sourceMimeType").val("application/zip");
-				$("#targetMimeType").val("application/vnd.openxmlformats-officedocument.presentationml.presentation");
-				_inplace = true;
-
+			switch (_populate) {
+					
+				case "docs": 
+					
+					$("#sourceMimeType").val("application/vnd.openxmlformats-officedocument.wordprocessingml.document").prop("disabled", false);
+					$("#targetMimeType").val(_natives[0]);
+					$("#prefixAfterConversion").prop("disabled", false);
+					break;
+			
+				case "sheets":
+					
+					$("#sourceMimeType").val("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet").prop("disabled", false);
+					$("#targetMimeType").val(_natives[1]);
+					$("#prefixAfterConversion").prop("disabled", false);
+					break;
+					
+				case "slides":
+					
+					$("#sourceMimeType").val("application/vnd.openxmlformats-officedocument.presentationml.presentation").prop("disabled", false);
+					$("#targetMimeType").val(_natives[2]);
+					$("#prefixAfterConversion").prop("disabled", false);
+					break;
+					
+				case "word":
+					
+					$("#sourceMimeType").val("application/zip").prop("disabled", false);
+					$("#targetMimeType").val("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+					$("#prefixAfterConversion").prop("disabled", false);
+					_inplace = true;
+					break;
+					
+				case "excel":
+					
+					$("#sourceMimeType").val("application/zip").prop("disabled", false);
+					$("#targetMimeType").val("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+					$("#prefixAfterConversion").prop("disabled", false);
+					_inplace = true;
+					break;
+					
+				case "powerpoint":
+					
+					$("#sourceMimeType").val("application/zip").prop("disabled", false);
+					$("#targetMimeType").val("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+					$("#prefixAfterConversion").prop("disabled", false);
+					_inplace = true;
+					break;
+					
+				case "pdf":
+					
+					$("#sourceMimeType").val("").prop("disabled", true);
+					$("#targetMimeType").val("application/pdf");
+					$("#prefixAfterConversion").val("").prop("disabled", true);
+					_inplace = true;
+					
 			}
 
 			/* <!-- Reconcile Interface --> */
@@ -599,7 +713,6 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 		var _collection;
 		if (!_search || !(_collection = _db.getCollection(_search))) return;
-
 
 		ಠ_ಠ.Display.confirm({
 			id: "delete_results",
@@ -883,7 +996,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 		search: (id) => _searchFolder(id ? id : folder.id),
 
-		convert: () => _convertItems(),
+		convert: () => _convertItems(_search ? _search : folder.id),
 
 		close: () => _closeSearch(),
 

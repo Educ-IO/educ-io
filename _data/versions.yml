@@ -1,4 +1,8 @@
 site :
+  0.0.6w :
+    name : Folders 0.0.4b-alpha
+    desc : Feature Improvements
+    type : minor
   0.0.6v :
     name : Folders 0.0.4a-alpha
     desc : Bug Fixes
@@ -241,6 +245,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.4b-alpha :
+    name : Feature Improvements
+    desc : Added bulk export functionality to folders and search results
+    type : minor
   0.0.4a-alpha :
     name : Menu Bug Fix
     desc : Fixed Bug which meant About menu had incorrect links

@@ -19,7 +19,7 @@ compress_html:
   endings:            all
   artifacts:          ["/* */ ", "/* */", "/*jshint ignore:start*/", "/*jshint ignore:end*/"]
   ignore:
-    envs:             [debug, perf]
+    envs:             [debug]
 
 # Permalinks
 permalink:						pretty

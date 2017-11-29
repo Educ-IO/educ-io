@@ -1,2 +1,3 @@
 {% assign app = site.data.apps.reflect %}
-{% include public.html logo="images/reflect_logo.svg" start="#google,auth" %}
+{% capture logo %}{{ app.logo }}{% endcapture %}
+{% include public.html logo=logo start="#google,auth" %}

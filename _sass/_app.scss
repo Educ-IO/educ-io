@@ -4,41 +4,17 @@ html, body {
   height: 100vh;
 }
 
-// -- Outline App Logo -- //
-.app-logo {
-	svg {
-		max-width: 100%;
-		height: auto;
-		pointer-events: visible;
-		path {
-			&.o {
-				stroke-width: 2;
-			}
-			&.p {
-				stroke-width: 3;
-			}
-			&.o, &.p {
-				stroke: darken($colour-highlight, 10%);
-				stroke-linejoin: round;
-				stroke-linecap: round;
-			}
-		}
-		&:hover {
-			path {
-				&.o, &.p {stroke: darken($colour-highlight, 20%);}
-			}
-		}
-	}
-}
-// -- Outline Letter Logo -- //
-
 // -- Action Button -- //
+#sign_in .btn {
+	background-color: $colour-background;
+}
+
 .btn-outline-action {
   color: $colour-highlight;
   border-color: $colour-highlight;
 	&:hover {
 		border-color: $colour-highlight;
-		background-color: $colour-highlight;
+		background-color: $colour-highlight !important;
 	}
 	&:focus {
 		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
@@ -52,7 +28,7 @@ html, body {
 	background-color: $colour-highlight;
 	&:hover {
 		border-color: darken($colour-highlight, 10%);
-		background-color: darken($colour-highlight, 10%);
+		background-color: darken($colour-highlight, 10%) !important;;
 	}
 	&:focus {
 		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
