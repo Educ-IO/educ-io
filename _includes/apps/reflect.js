@@ -12,7 +12,7 @@ App = function() {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _last, _forms, _field;
+	var ಠ_ಠ, _last, _forms;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -64,7 +64,7 @@ App = function() {
 			
 			if (check !== false) {
 				var checks = list.find("input[type='checkbox']");
-				if (checks && checks.length == 1 && !checks.prop("checked")) inputChange(checks.prop("checked", true));
+				if (checks && checks.length == 1 && !checks.prop("checked")) checks.prop("checked", true);
 			}
 			
 			if (!o.template) o.template = "list_item";
@@ -126,7 +126,7 @@ App = function() {
 						target: _list.closest("li"),
 						clear: true
 					});
-				}
+				};
 				_.each(files, source => {
 					ಠ_ಠ.google.upload({name: source.name}, source, source.type)
 						.then(uploaded => ಠ_ಠ.google.files.get(uploaded.id).then(file => {
@@ -177,7 +177,7 @@ App = function() {
 				icon : "local_printshop"
 			}, _list, true);
 		},
-	}
+	};
 	/* <!-- Internal Handlers --> */
 
 	/* <!-- External Visibility --> */
@@ -248,13 +248,6 @@ App = function() {
 					target: ಠ_ಠ.container,
 					wrapper: "MODAL"
 				}).modal();
-
-			} else if ((/TEST/i).test(command)) {
-
-				var __form = ಠ_ಠ.Display.template.show({
-					template: (/TEMPLATE/i).test(command[1]) ? "template" : "report",
-					target: ಠ_ಠ.container.empty(),
-				});
 				
 			}
 
