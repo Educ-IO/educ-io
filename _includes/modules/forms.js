@@ -13,7 +13,7 @@ Forms = function() {
 		
 	/* <!-- == UK Teachers' Standards == --> */
 	var standards = (markdown) => [
-		// -- Standard 1 -- //
+		/* <!-- Standard 1 --> */
 		{
 			number: 1,
 			type: "Teaching",
@@ -48,9 +48,9 @@ Forms = function() {
 				}
 			]
 		},
-		// -- Standard 1 -- //
+		/* <!-- Standard 1 --> */
 
-		// -- Standard 2 -- //
+		/* <!-- Standard 2 --> */
 		{
 			number: 2,
 			type: "Teaching",
@@ -93,9 +93,9 @@ Forms = function() {
 				evidence: true,
 			}, ]
 		},
-		// -- Standard 2 -- //
+		/* <!-- Standard 2 --> */
 
-		// -- Standard 3 -- //
+		/* <!-- Standard 3 --> */
 		{
 			number: 3,
 			type: "Teaching",
@@ -138,9 +138,9 @@ Forms = function() {
 				evidence: true,
 			}, ]
 		},
-		// -- Standard 3 -- //
+		/* <!-- Standard 3 --> */
 
-		// -- Standard 4 -- //
+		/* <!-- Standard 4 --> */
 		{
 			number: 4,
 			type: "Teaching",
@@ -183,9 +183,9 @@ Forms = function() {
 				evidence: true,
 			}, ]
 		},
-		// -- Standard 4 -- //
+		/* <!-- Standard 4 --> */
 
-		// -- Standard 5 -- //
+		/* <!-- Standard 5 --> */
 		{
 			number: 5,
 			type: "Teaching",
@@ -224,9 +224,9 @@ Forms = function() {
 				evidence: true,
 			}, ]
 		},
-		// -- Standard 5 -- //
+		/* <!-- Standard 5 --> */
 
-		// -- Standard 6 -- //
+		/* <!-- Standard 6 --> */
 		{
 			number: 6,
 			type: "Teaching",
@@ -265,9 +265,9 @@ Forms = function() {
 				evidence: true,
 			}, ]
 		},
-		// -- Standard 6 -- //
+		/* <!-- Standard 6 --> */
 
-		// -- Standard 7 -- //
+		/* <!-- Standard 7 --> */
 		{
 			number: 7,
 			type: "Teaching",
@@ -306,9 +306,9 @@ Forms = function() {
 				evidence: true,
 			}, ]
 		},
-		// -- Standard 7 -- //
+		/* <!-- Standard 7 --> */
 
-		// -- Standard 8 -- //
+		/* <!-- Standard 8 --> */
 		{
 			number: 8,
 			type: "Teaching",
@@ -351,9 +351,9 @@ Forms = function() {
 				evidence: true,
 			}, ]
 		},
-		// -- Standard 8 -- //
+		/* <!-- Standard 8 --> */
 
-		// -- Standard 9 -- //
+		/* <!-- Standard 9 --> */
 		{
 			number: 9,
 			type: "Conduct",
@@ -401,7 +401,7 @@ Forms = function() {
 				evidence: true,
 			}, ]
 		},
-		// -- Standard 9 -- //
+		/* <!-- Standard 9 --> */
 	];
 	/* <!-- == UK Teachers' Standards == --> */
 	

@@ -47,8 +47,7 @@ Display = function() {
 			});
 			
 			/* <!-- Look for partial templates to register/compile too --> */
-			var partial_regex = /\s?{>\s?([a-zA-Z]{1}[^\r\n\t\f }]+)/gi;
-			var partial_names;
+			var partial_names, partial_regex = /\s?{>\s?([a-zA-Z]{1}[^\r\n\t\f }]+)/gi;
 			while ((partial_names = partial_regex.exec(_html)) !== null) {
 				if (partial_names && partial_names[1]) {
 					if (Handlebars.templates[partial_names[1]] === undefined) {
@@ -168,6 +167,9 @@ Display = function() {
 					if(typeof(number) === "undefined" || number === null) return null;
 					return number + (options && options.hash.inc || 1);
 				});
+				
+				/* <!-- Map all templates as Partials too --> */
+				if (Handlebars.templates) Handlebars.partials = Handlebars.templates;
 				
 			}
 			

@@ -874,6 +874,7 @@ transducers:
     - url: https://cdnjs.cloudflare.com/ajax/libs/transducers.js/0.3.2/transducers.min.js
       integrity: sha256-QyAAjIV3r3eOitepsqdZvTZyr+xy+2CjDiBoGWbyisA=
       crossorigin: anonymous
+      map: true
       id: __tranducers
   dev:
     - url: https://cdnjs.cloudflare.com/ajax/libs/transducers.js/0.3.2/transducers.js

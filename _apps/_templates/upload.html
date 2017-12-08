@@ -10,11 +10,13 @@
       </div>
       <div class="modal-body">
         {{#if message}}{{{message}}}{{/if}}
-        <label class="custom-file">
-          <input type="file" {{#if id}}id="{{id}}_FILE" {{/if}} class="custom-file-input" multiple>
-          <span class="custom-file-control"></span>
-        </label>
-        <ul {{#if id}}id="{{id}}_FILES" {{/if}}class="list-group w-100 mt-1 mt-md-2 mt-lg-3"></ul>
+        <div>
+          <label class="custom-file">
+            <input type="file" {{#if id}}id="{{id}}_FILE" {{/if}} class="custom-file-input" multiple>
+            <span class="custom-file-control"></span>
+          </label>
+          <ul {{#if id}}id="{{id}}_FILES" {{/if}}class="list-group w-100 mt-1 mt-md-2 mt-lg-3"></ul>  
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">{{#if action}}{{action}}{{else}}Confirm{{/if}}</button>
