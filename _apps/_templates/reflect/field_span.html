@@ -1,18 +1,18 @@
 {% raw %}
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row">
+<div class="form-group{{#if large}} form-group-lg{{/if}} row justify-content-between">
 	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
-	<div class="col-md-9">
+	<div class="col-md-9 col-lg-8 col-xl-6">
 		<div class="btn-group float-right mb-1" role="group" id="{{id}}_BUTTONS">
-			{{#if options}}<button type="button" class="btn btn-primary alter-numerical d-flex h-100" data-target="{{id}}" data-value="-{{#if this.increment}}{{this.increment}}{{else}}1{{/if}}"><i class="material-icons md-24 align-self-center">remove</i></button>
-			<button type="button" class="btn btn-info alter-numerical d-flex h-100" data-target="{{id}}" data-value="{{#if this.increment}}{{this.increment}}{{else}}1{{/if}}"><i class="material-icons md-24 align-self-center">add</i></button>
-			<button id="{{id}}_PERIOD" type="button" class="btn btn-secondary complex-list-type" data-default="{{type}}">{{type}}</button>
-			<button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			{{#if options}}<button type="button" class="btn btn-primary alter-numerical d-flex h-100" data-target="{{id}}" data-modifier="{{id}}_PERIOD" data-value="-{{#if this.increment}}{{this.increment}}{{else}}1{{/if}}"><i class="material-icons md-24 align-self-center">remove</i></button>
+			<button type="button" class="btn btn-info alter-numerical d-flex h-100" data-target="{{id}}" data-modifier="{{id}}_PERIOD" data-value="{{#if this.increment}}{{this.increment}}{{else}}1{{/if}}"><i class="material-icons md-24 align-self-center">add</i></button>
+			<button id="{{id}}_PERIOD" type="button" class="btn btn-dark complex-list-type" data-default="{{type}}" data-target="{{id}}" data-span="">{{type}}</button>
+			<button type="button" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				<span class="sr-only">Toggle Dropdown</span>
 			</button>
 			<div class="dropdown-menu">
 				{{#each options}}
-				<a class="dropdown-item" href="#" data-target="{{../id}}_PERIOD" data-value="{{#if value}}{{value}}{{else}}{{this}}{{/if}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>				
+				<a class="dropdown-item alter-span" href="#" data-target="{{../id}}_PERIOD" data-value="{{#if value}}{{value}}{{else}}{{this}}{{/if}}"{{#exists span}}{{#if span}} data-span="{{span}}"{{/if}}{{/exists}}>{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>				
 				{{/each}}
 			</div>{{/if}}
 		</div>
@@ -26,7 +26,7 @@
 			</span>
 		</div>
 		{{#if details}}<textarea data-for="{{id}}" data-type="Details" id="{{id}}_DETAILS" name="{{id}}_DETAILS" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2" rows="1" aria-label="{{details}}" placeholder="{{details}}"></textarea>{{/if}}
-		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted">{{{help}}}</div>{{/if}}
+		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}
 	</div>
 </div>
 {% endraw %}

@@ -10,13 +10,21 @@ Display = function() {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var _root, _state = {},
-		_debug = false;
+	var _root, _state = {}, _debug = false;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
 	var _arrayize = (value, test) => value && test(value) ? [value] : value;
 
+	var _bytes = function(bytes, decimals) {
+		if (!bytes || _.isNaN(bytes) || bytes === 0 || bytes === "0") return "";
+		var k = 1024,
+			dm = decimals || 2,
+			sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+			i = Math.floor(Math.log(bytes) / Math.log(k));
+		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+	};
+	
 	var _target = function(options) {
 
 		/* <!-- Ensure we have a target _element, and that it is wrapped in JQuery --> */
@@ -98,9 +106,21 @@ Display = function() {
 				Handlebars.registerHelper("localeDate", function(variable) {
 					if (variable && variable instanceof Date) return variable.toLocaleString();
 				});
+				
+				Handlebars.registerHelper("formatBytes", function(variable) {
+					if (variable && !isNaN(variable) && variable > 0) return _bytes(variable, 2);
+				});
 
 				Handlebars.registerHelper("exists", function(variable, options) {
 					if (typeof variable !== "undefined") {
+						return options.fn(this);
+					} else {
+						return options.inverse(this);
+					}
+				});
+				
+				Handlebars.registerHelper("present", function(variable, options) {
+					if (typeof variable !== "undefined" && variable) {
 						return options.fn(this);
 					} else {
 						return options.inverse(this);
@@ -431,6 +451,104 @@ Display = function() {
 
 		},
 
+		/* <!--
+			Options are : {
+				title : main title of the options dialog,
+				message : message for the dialog
+				name : name of the name field, triggers splitting of name and value
+				value : name of the value field (if name/value are split)
+				validate : a regex to test the resultant value against (a mismatch will result in rejected promise)
+				action : optional name of action button
+				target : optional name / element / jquery of containing element
+			}
+		--> */
+		text: function(options) {
+
+			return new Promise((resolve, reject) => {
+
+				if (!options || !options.message) return reject();
+
+				/* <!-- Great Modal Choice Dialog --> */
+				var dialog = $(_template("text")(options));
+				_target(options).append(dialog);
+
+				/* <!-- Set Event Handlers --> */
+				dialog.find("button.btn-primary").click(function() {
+					var _name = dialog.find("textarea[name='name'], input[type='text'][name='name']").val();
+					var _value = dialog.find("textarea[name='value'], input[type='text'][name='value']").val();
+					/* <!-- Weird Modal Not Hiding Bug --> */
+					$(".modal-backdrop").remove();
+					if (_value && (!options.validate || options.validate.test(_value))) 
+						resolve(_name ? {name: _name, value: _value} : _value);
+
+				});
+				dialog.on("hidden.bs.modal", function() {
+					dialog.remove();
+					reject();
+				});
+
+				/* <!-- Show the Modal Dialog --> */
+				dialog.modal("show");
+
+			});
+
+		},
+		
+		/* <!--
+			Options are : {
+				title : main title of the options dialog,
+				message : message for the dialog
+				action : optional name of action button
+				target : optional name / element / jquery of containing element
+			}
+		--> */
+		files: function(options) {
+
+			return new Promise((resolve, reject) => {
+
+				if (!options || !options.message) return reject();
+
+				/* <!-- Great Modal Choice Dialog --> */
+				var files = [], dialog = $(_template("upload")(options));
+				_target(options).append(dialog);
+
+				/* <!-- Handle Files Population --> */
+				var _populate = function() {
+					var _files = $(_template("files")(files));
+					_files.find("a.close").click(e => {
+						e.preventDefault();		
+						files.splice($(e.target).closest("li.list-group-item").index(), 1);
+						_populate();
+					});
+					dialog.find("ul").empty().append(_files);
+				};
+				
+				/* <!-- Handle File Upload --> */
+				dialog.find("input[type='file']").on("change", function upload(e) {
+					files = files.concat(_.toArray(e.target.files));
+					if (files.length > 0) _populate();
+  			});
+				
+				/* <!-- Set Event Handlers --> */
+				dialog.find("button.btn-primary").click(function() {
+					
+					/* <!-- Weird Modal Not Hiding Bug --> */
+					$(".modal-backdrop").remove();
+					if (files && files.length > 0) resolve(files);
+
+				});
+				dialog.on("hidden.bs.modal", function() {
+					dialog.remove();
+					reject();
+				});
+
+				/* <!-- Show the Modal Dialog --> */
+				dialog.modal("show");
+
+			});
+
+		},
+		
 		protect: function(query) {
 
 			var _parent = this,

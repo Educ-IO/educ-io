@@ -1,0 +1,36 @@
+{% raw %}
+<div {{#if id}}id="{{id}}" {{/if}}class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_text_title">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal_text_title">{{#if title}}{{title}}{{else}}Please enter value{{/if}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{#if message}}{{{message}}}{{/if}}
+        <form>
+          {{#present name}}
+          <div class="form-group d-flex flex-wrap">
+            <label class="col-12 col-lg-3 col-form-label"{{#if id}} for="{{id}}_NAME" {{/if}}>{{name}}</label>
+            <input {{#if id}}id="{{id}}_NAME" {{/if}} type="text" name="name" class="col-12 col-lg-9 form-control optional" />
+          </div>
+          <div class="form-group d-flex flex-wrap">
+            <label class="col-12 col-lg-3 col-form-label"{{#if id}} for="{{id}}_VALUE" {{/if}}>{{#if value}}{{value}}{{else}}Value{{/if}}</label>
+            <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="col-12 col-lg-9 form-control-lg" rows="{{#if rows}}{{rows}}{{else}}2{{/if}}"></textarea>
+          </div>
+          {{else}}
+          <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="form-control-lg w-100" rows="{{#if rows}}{{rows}}{{else}}2{{/if}}"></textarea>
+          {{/present}}
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">{{#if action}}{{action}}{{else}}Confirm{{/if}}</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endraw %}
+

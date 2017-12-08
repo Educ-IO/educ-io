@@ -278,6 +278,9 @@ Google_API = function(ಠ_ಠ, timeout) {
 				/* <!-- Filter the results using the Exclude then Include methods --> */
 				c = _.reject(c, (item) => _.some(excludes, (e) => e(item)));
 				c = _.filter(c, (item) => _.some(includes, (i) => i(item)));
+				
+				/* <!-- TODO: Properties filter to go here --> */
+				
 
 				/* <!-- Get the ids of all the folders included in the raw set --> */
 				var next = recurse ? _.filter(c, item => item.mimeType === FOLDER) : [];
@@ -396,10 +399,10 @@ Google_API = function(ಠ_ಠ, timeout) {
 			
 			get: (id, team) => team ? 
 				_call(NETWORKS.general.get, "drive/v3/files/" + id, {
-					fields: "kind,id,name,mimeType,version,parents",
+					fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
 					teamDriveId : team, includeTeamDriveItems : true, supportsTeamDrives : true, corpora : "teamDrive"}) : 
 				_call(NETWORKS.general.get, "drive/v3/files/" + id, {
-					fields: "kind,id,name,mimeType,version,parents",
+					fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
 			}),
 			
 			export: (id, format, team) => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {

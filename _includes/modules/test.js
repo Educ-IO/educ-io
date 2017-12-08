@@ -249,6 +249,29 @@ Page = function() {
 			},
 		},
 		{
+			name: "File API",
+			desc: "Interact with local Files the the Browser",
+			url: "https://caniuse.com/#feat=fileapi",
+			required: false,
+			test: function() {
+				return !!(window.File && window.FileReader && window.FileList && window.Blob);
+			},
+			success: {
+				icon: "check",
+				class: "text-success",
+				message: ""
+			},
+			failure: {
+				icon: "priority_high",
+				class: "text-warning",
+				message: "Unfortunately, your browser doesn't support the File API. This is only used for uploading local files, so most apps and features will still work."
+			},
+			type: {
+				name: "feature",
+				class: "badge-dark"
+			},
+		},
+		{
 			name: "Storage",
 			desc: "Name/Value Storage",
 			url: "https://caniuse.com/#feat=namevalue-storage",
@@ -261,7 +284,7 @@ Page = function() {
 							value = "__TEST_VALUE__",
 							result = true;
 						storage.setItem(name, value);
-						result = !!(storage.getItem(name) == value);
+						result = (storage.getItem(name) == value);
 						storage.removeItem(name);
 						return result;
 					} catch (err) {

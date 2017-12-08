@@ -9,7 +9,7 @@
 			{{> field_marker id=(concat ../id "_" @index) options=../options type=../type evidence=../evidence number=(inc @index)}}
 			{{/each}}
 		</ul>
-		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted mt-1 mt-md-2">{{{help}}}</div>{{/if}}
+		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted mt-1 mt-md-2 text-justify">{{{help}}}</div>{{/if}}
 	</div>
 </div>
 {% endraw %}

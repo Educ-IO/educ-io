@@ -254,6 +254,8 @@ reflect:
       load: last
     - name: showdown
       load: last
+    - name: moment
+      load: last
     - name: bootstrap-datepicker-css
       load: last
     - name: bootstrap-datepicker-js
@@ -281,6 +283,9 @@ reflect:
     - alert
     - loader
     - recent
+    - text
+    - files
+    - upload
     - shared/tab-links
     - shared/tab-list
     - shared/tab-tabs
@@ -305,6 +310,8 @@ reflect:
     - reflect/FEATURES
     - reflect/README
     - reflect/INSTRUCTIONS
+    - reflect/URL
+    - reflect/FILE
   scopes:
     google:
       - scope: email

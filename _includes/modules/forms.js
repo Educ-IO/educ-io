@@ -405,212 +405,203 @@ Forms = function() {
 	];
 	/* <!-- == UK Teachers' Standards == --> */
 	
-	
 	/* <!-- == Form Template Form == --> */
-	var template = (markdown) => (
-		{
-			name : "Form Template",
-			title : "Create a new Reflective Form",
-			groups : {
-				basic : {
-					template : "group",
-					name : "Basic Details",
-					fields : {
-						name : {
-							template: "field_textual",
-							title: "Name",
-							field: "Name",
-							help: markdown("What will this form be called?"),
-							required: true
-						},
-						frequency : {
-							template: "field_select",
-							title: "Frequency of use",
-							field: "Frequency",
-							icon: "query_builder",
-							help: markdown("How often will this form be used?"),
-							options: [
-								{value: "weekly", name: "Weekly"},
-								{value: "fortnightly", name: "Fortnightly (every two weeks)"},
-								{value: "monthly", name: "Monthly"},
-								{value: "quarterly", name: "Quarterly (four times a year)"},
-								{value: "triannually", name: "Triannually (three times a year)"},
-								{value: "biannually", name: "Biannually (twice a year)"},
-								{value: "yearly", name: "Yearly"},
-								{value: "biennially", name: "Biennially (every two years)"},
-								{value: "triennially", name: "Triennially (every three years)"},
-								{value: "quadrennially", name: "Quadrennially (every four years)"}
-							],
-							required: true
-						}
+	var template = (markdown) => ({
+		name : "Form Template",
+		title : "Create a new Reflective Form",
+		groups : {
+			basic : {
+				template : "group",
+				name : "Basic Details",
+				fields : {
+					name : {
+						template: "field_textual",
+						title: "Name",
+						field: "Name",
+						help: markdown("What will this form be called?"),
+						required: true
+					},
+					frequency : {
+						template: "field_select",
+						title: "Frequency of use",
+						field: "Frequency",
+						icon: "query_builder",
+						help: markdown("How often will this form be used?"),
+						options: [
+							{value: "weekly", name: "Weekly"},
+							{value: "fortnightly", name: "Fortnightly (every two weeks)"},
+							{value: "monthly", name: "Monthly"},
+							{value: "quarterly", name: "Quarterly (four times a year)"},
+							{value: "triannually", name: "Triannually (three times a year)"},
+							{value: "biannually", name: "Biannually (twice a year)"},
+							{value: "yearly", name: "Yearly"},
+							{value: "biennially", name: "Biennially (every two years)"},
+							{value: "triennially", name: "Triennially (every three years)"},
+							{value: "quadrennially", name: "Quadrennially (every four years)"}
+						],
+						required: true
 					}
 				}
 			}
 		}
-	);
+	});
 	/* <!-- == Form Template Form == --> */
 	
-	
 	/* <!-- == Reflective Report Form == --> */
-	var report = (markdown) => (
-		{
-			name : "Reflective Report",
-			title : "Reflective Report",
-			groups : {
-				basic : {
-					template : "group",
-					name : "To Start",
-					fields : {
-						name : {
-							template: "field_textual",
-							title: "About / Subject",
-							field: "Name",
-							help: markdown("Who (or what) is this report about?"),
-							icon: "face",
-							button: "Me!",
-							action: "me",
-							large: true,
-							required: true
-						},
-						span : {
-							template: "field_span",
-							title: "Week / Assessment Period",
-							field: "Span",
-							icon: "query_builder",
-							help: markdown("For which week or assessment period is this report for?"),
-							large: true,
-							required: true,
-							type: "Weekly",
-							options: [
-								{value: "Weekly", name: "Weekly"},
-								{value: "Monthly", name: "Monthly"},
-								{value: "Yearly", name: "Yearly"},
-								{value: "Custom", name: "Custom"}
-							],
-						},
-						absences : {
-							template: "field_numeric",
-							title: "Any absences over this period?",
-							field: "Absences",
-							icon: "local_hospital",
-							help: markdown("If you have been ill, or have taken __agreed absence__ from your school, please enter the number of days here."),
-							increment: 0.5,
-							min: 0,
-							max: 5,
-							suffix: "day/s absent this week",
-							details: "Further details, if applicable",
-							large: true
-						},
-						mentor : {
-							template: "field_textual",
-							title: "Mentor",
-							field: "Mentor",
-							icon: "school",
-							help: "",
-							required: true
-						},
-					}
-				},
-				progress : {
-					template: "group",
-					name: "Evaluate your Progress",
-					help: markdown("During the week, you should have targeted between __3__ and __6__ sub-standards, focussing upon them in your teaching and approach. Please gather material to support this, and link it here using the 'Evidence' buttons. Once you have begun teaching, and after having met with your mentor, you should also supply your __agreed__ overall assessment."),
-					fields : {
-						ts_evidence : {
-							template : "field_scale",
-							title : "Evidence against the Teachers' Standards",
-							field : "TS Evidence",
-							scale : "uk_teachers",
-							type : "Evidence",
-							evidence : "Further details about how this was met",
-							options: [
-								{name : "From Google Drive", value: "drive", class: "g-drive g-picker"},
-								{name : "From Google Classroom", value: "classroom", class: "g-classroom dim"},
-								{name : "From Gmail", value: "gmail", class: "g-gmail dim"},
-								{name : "From File", value: "file", class: "g-file dim"},
-								{name : "From Web", value: "web", class: "web dim"},
-								{name : "Offline / Paper", value: "paper", class: "paper", divider: true},
-							],
-							help : markdown("__Click__ on the switches of the _Teachers' Standards_ you have targeted this week. You should __supply evidence__ as well, which will help build and populate your evidence tracker."),
-						},
-						further_reflections : {
-							template: "field_textual",
-							title: "Any further reflections on this week",
-							field: "Further Reflections",
-							rows: 5,
-							help: "Please record further thoughts about your progress here.",
-						},
-						overall_assessment : {
-							template: "field_radio",
-							title: "Overall Assessment",
-							field: "Overall Assessment",
-							icon: "gavel",
-							help: markdown("Having discussed and agreed this with your Mentor, please assess your progress over this past week."),
-							large: true,
-							options: [
-								{
-									class: "btn-primary",
-									value: "A: Excellent",
-									icon: ""
-								},
-								{
-									class: "btn-info",
-									value: "B: Secure",
-									icon: ""
-								},
-								{
-									class: "btn-success",
-									value: "C: Developing (Standards Met)",
-									icon: ""
-								},
-								{
-									class: "btn-warning",
-									value: "D: Emerging",
-									icon: ""
-								},
-								{
-									class: "btn-danger",
-									value: "E: Weak",
-									icon: ""
-								},
-								{
-									class: "btn-dark",
-									value: "Not enough evidence seen / Opportunity to assess",
-									icon: "visibility_off"
-								}
-							]
-						},
-					}
-				},
-				forward : {
-					template: "group",
-					name: "Looking Forward",
-					help: markdown("Please identify between __2__ and __5__ targets that you feel would be appropriate for the week ahead, thinking about the types of evidence you might gather to show you have meet them. You will be asked in the following week to identify those you have met, and supply relevant supporting evidence."),
-					fields : {
-						future_targets : {
-							template: "field_complex",
-							title: "Targets for the coming week",
-							field: "Future Targets",
-							item: "Target",
-							type: "Evidence Type",
-							icon: "gps_fixed",
-							help: markdown("Enter details of the targets you are setting yourself this week, together with the type of evidence that will confirm you have met the target. Then save them to the list below."),
-							options: [
-								"Lesson Plan",
-								"Lesson Observation",
-								"Audio / Visual Recording",
-								"Feedback (from Colleagues / Students)",
-								"Records (e.g. Google Sheet Markbook)",
-								"Other"
-							]
-						},
-					}
+	var report = (markdown) => ({
+		name : "Reflective Report",
+		title : "Teachers' Reflective Report",
+		groups : {
+			basic : {
+				template : "group",
+				name : "To Start",
+				fields : {
+					name : {
+						template: "field_textual",
+						title: "About / Subject",
+						field: "Name",
+						help: markdown("Who (or what) is this report about?"),
+						icon: "face",
+						button: "Me!",
+						action: "me",
+						large: true,
+						required: true
+					},
+					span : {
+						template: "field_span",
+						title: "Assessment Period",
+						field: "Span",
+						icon: "query_builder",
+						help: markdown("For which assessment period is this report for?"),
+						large: true,
+						required: true,
+						type: "Custom",
+						options: [
+							{value: "Custom", name: "Custom"},
+							{span: "w", value: "Weekly", name: "Weekly"},
+							{span: "M", value: "Monthly", name: "Monthly"},
+							{span: "y", value: "Yearly", name: "Yearly"}
+						],
+					},
+					absences : {
+						template: "field_numeric",
+						title: "Any absences over this period?",
+						field: "Absences",
+						icon: "local_hospital",
+						help: markdown("If you have been ill, or have taken __agreed absence__, please enter the number of days here."),
+						increment: 0.5,
+						min: 0,
+						max: 5,
+						suffix: "day/s absent this week",
+						details: "Further details, if applicable",
+						large: true
+					},
+					mentor : {
+						template: "field_textual",
+						title: "Mentor",
+						field: "Mentor",
+						icon: "school",
+						help: "",
+						required: true
+					},
+				}
+			},
+			progress : {
+				template: "group",
+				name: "Evaluate your Progress",
+				help: markdown("During the week, you should have targeted between __3__ and __6__ sub-standards, focussing upon them in your teaching and approach. Please gather material to support this, and link it here using the 'Evidence' buttons. Once you have begun teaching, and after having met with your mentor, you should also supply your __agreed__ overall assessment."),
+				fields : {
+					ts_evidence : {
+						template : "field_scale",
+						title : "Evidence against the Teachers' Standards",
+						field : "TS Evidence",
+						scale : "uk_teachers",
+						type : "Evidence",
+						evidence : "Further details about how this was met",
+						options: [
+							{name : "From Google Drive", value: "drive", class: "g-picker"},
+							{name : "From File", value: "file", class: "g-file"},
+							{name : "From Web", value: "web", class: "web"},
+							{name : "Offline / Paper", value: "paper", class: "paper", divider: true},
+						],
+						help : markdown("__Click__ on the switches of the _Teachers' Standards_ you have targeted this week. You should __supply evidence__ as well, which will help build and populate your evidence tracker."),
+					},
+					further_reflections : {
+						template: "field_textual",
+						title: "Any further reflections on this week",
+						field: "Further Reflections",
+						rows: 5,
+						help: "Please record further thoughts about your progress here.",
+					},
+					overall_assessment : {
+						template: "field_radio",
+						title: "Overall Assessment",
+						field: "Overall Assessment",
+						icon: "gavel",
+						help: markdown("Having discussed and agreed this, please assess your progress over this period."),
+						large: true,
+						options: [
+							{
+								class: "btn-primary",
+								value: "A: Excellent",
+								icon: ""
+							},
+							{
+								class: "btn-info",
+								value: "B: Secure",
+								icon: ""
+							},
+							{
+								class: "btn-success",
+								value: "C: Developing (Standards Met)",
+								icon: ""
+							},
+							{
+								class: "btn-warning",
+								value: "D: Emerging",
+								icon: ""
+							},
+							{
+								class: "btn-danger",
+								value: "E: Weak",
+								icon: ""
+							},
+							{
+								class: "btn-dark",
+								value: "Not enough evidence seen / Opportunity to assess",
+								icon: "visibility_off"
+							}
+						]
+					},
+				}
+			},
+			forward : {
+				template: "group",
+				name: "Looking Forward",
+				help: markdown("Please identify between __2__ and __5__ targets that you feel would be appropriate for the week ahead, thinking about the types of evidence you might gather to show you have meet them. You will be asked in the following week to identify those you have met, and supply relevant supporting evidence."),
+				fields : {
+					future_targets : {
+						template: "field_complex",
+						title: "Targets for the coming week",
+						field: "Future Targets",
+						item: "Target",
+						type: "Evidence Type",
+						icon: "gps_fixed",
+						help: markdown("Enter details of the targets you are setting yourself this week, together with the type of evidence that will confirm you have met the target. Then save them to the list below."),
+						options: [
+							"Lesson Plan",
+							"Lesson Observation",
+							"Audio / Visual Recording",
+							"Feedback (from Colleagues / Students)",
+							"Records (e.g. Google Sheet Markbook)",
+							"Other"
+						]
+					},
 				}
 			}
 		}
-	);
+	});
 	/* <!-- == Reflective Report Form == --> */
-	
 	
 	/* <!-- Internal Defaults --> */
 	var _default = function(type, markdown) {

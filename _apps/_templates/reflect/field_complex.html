@@ -11,8 +11,8 @@
 				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-secondary eraser d-flex h-100" title="Clear / Reset" data-target="{{id}}_DETAILS" data-reset="{{id}}_TYPE">
 					<i class="pr-1 material-icons {{#if large}}md-24{{else}}md-18{{/if}} md-dark align-self-center">refresh</i>
 				</button>
-				<button id="{{id}}_TYPE" type="button" class="btn{{#if large}} btn-lg{{/if}} btn-secondary complex-list-type" data-default="{{type}}">{{type}}</button>
-				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<button id="{{id}}_TYPE" type="button" class="btn{{#if large}} btn-lg{{/if}} btn-dark complex-list-type" data-default="{{type}}">{{type}}</button>
+				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<span class="sr-only">Toggle Dropdown</span>
 				</button>
 				<div class="dropdown-menu">
@@ -26,7 +26,7 @@
 			</span>
 		</div>
 		<div id="{{id}}_LIST" class="list-data d-flex flex-column mt-1 mt-md-2"></div>
-		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted">{{{help}}}</div>{{/if}}
+		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-justify">{{{help}}}</div>{{/if}}
 	</div>
 </div>
 {% endraw %}

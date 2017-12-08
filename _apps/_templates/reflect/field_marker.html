@@ -11,7 +11,7 @@
 		<label class="material-switch" for="{{id}}"></label>
 	</div>
 	{{#if children}}
-	<ul class="list-group" id="{{id}}_CHILDREN"{{#if name}} name="{{name}}"{{/if}} style="display: none;" {{#if field}} data-field="{{field}}"{{/if}} class="mt-1"{{#if order}} data-order="{{order}}"{{/if}}>
+	<ul class="list-group mt-1 mt-lg-2" id="{{id}}_CHILDREN"{{#if name}} name="{{name}}"{{/if}} style="display: none;" {{#if field}} data-field="{{field}}"{{/if}} class="mt-1"{{#if order}} data-order="{{order}}"{{/if}}>
 		{{#each children}}
 			{{#if ../parent}}
 			{{!-- Output a marker for the child, concatenating the id and also the parent with the parent of this marker --}}

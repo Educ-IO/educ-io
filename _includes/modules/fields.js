@@ -5,6 +5,8 @@ Fields = function() {
 	if (this && this._isF && this._isF(this.Fields)) return new this.Fields().initialise(this);
 
 	/* <!-- Internal Constants --> */
+	const DATE_FORMAT = "yyyy-mm-dd", DATE_FORMAT_M = DATE_FORMAT.toUpperCase();
+	const EVENT_CHANGE_DT = "change.datetime";
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -23,6 +25,79 @@ Fields = function() {
 		});
 
 	};
+	
+	var _spans = function(form) {
+		
+		var _handler = function(control) {
+			
+			if (control.data("target") && control.data("value")) {
+				
+				var _target = $("#" + control.data("target")),
+						_value = control.data("value");
+				
+				if (_target.data("target")) {
+					
+					var _span = control.data("span") ? control.data("span") : "";
+					_target.data("span", _span);
+					
+					_target = $("#" + _target.data("target"));
+					
+					var _start = _target.find("input[name='start']"), _end = _target.find("input[name='end']");
+					var _start_Date = _start.val() ? moment(_start.val(), DATE_FORMAT_M) : moment(), _end_Date;
+					
+					if (_span) {
+						
+						if (_start_Date.isValid()) {
+							
+							_end_Date = _start_Date.clone().add(1, _span);
+							_start.val(_start_Date.format(DATE_FORMAT_M));
+							_end.val(_end_Date.format(DATE_FORMAT_M));
+
+							(function(start, span, end) {
+								start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, function(e) {
+									var _value = $(this).val();
+									if (_value) {
+										_value = moment(_value, DATE_FORMAT_M);
+										if (_value.isValid()) end.val(_value.add(1, span).format(DATE_FORMAT_M));
+									} else {
+										end.val("");
+									}
+								});
+							})(_start, _span, _end);
+							
+						}
+						
+					} else {
+						
+						(function(start, end) {
+								start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, function(e) {
+									var _value_S = $(this).val();
+									if (_value_S) {
+										_value_S = moment(_value_S, DATE_FORMAT_M);
+										if (_value_S.isValid()) {
+											var _value_E = moment(end.val(), DATE_FORMAT_M);
+											if (!end.val() || (_value_E.isValid() && _value_E.isSameOrBefore(_value_S))) 
+												end.val(moment(_value_S, DATE_FORMAT_M).add(1, "d").format(DATE_FORMAT_M));
+										}
+									} else {
+										end.val("");
+									}
+								});
+							})(_start, _end);
+						
+					}
+					
+				}
+				
+			}
+
+		};
+		
+		form.find("button.alter-span, a.alter-span").click((e) => _handler($(e.currentTarget)));
+		
+		form.find("button.alter-span:first-child, a.alter-span:first-child").each((i, el) => _handler($(el)));
+		
+	};
 
 	var _numerical = function(form) {
 
@@ -30,27 +105,35 @@ Fields = function() {
 		form.find(".alter-numerical").click(function(e) {
 			var _this = $(this);
 			if (_this.data("target") && _this.data("value")) {
-				var _target = $("#" + _this.data("target"));
-				var _min = 0;
-				if (_target.data("min")) _min = Number(_target.data("min"));
-				var _max = Number.MAX_VALUE;
-				if (_target.data("max")) _max = Number(_target.data("max"));
-				var _suffix = _target.data("suffix");
-				var current_Val = _target.val();
-				if (current_Val && _suffix) current_Val = current_Val.split(" ")[0];
-				if (current_Val) {
-					current_Val = Number(current_Val);
+				
+				var _target = $("#" + _this.data("target")), 
+						_value = Number(_this.data("value"));
+				var _min = _target.data("min") ? Number(_target.data("min")) : 0,
+						_max = _target.data("max") ? Number(_target.data("max")) : Number.MAX_VALUE;
+				
+				if (_target.hasClass("input-daterange") && _this.data("modifier")) {
+					
+					var _modifier = $("#" + _this.data("modifier"));
+					var _span = _modifier.data("span") ? _modifier.data("span") : "d";
+					
+					var _start = _target.find("input[name='start']"), _start_Date = _start.val() ? moment(_start.val(), DATE_FORMAT_M) : moment();
+					_start.val(_start_Date.add(_value, _span).format(DATE_FORMAT_M)).trigger(EVENT_CHANGE_DT);
+					
+					
 				} else {
-					current_Val = 0;
+					
+					var _suffix = _target.data("suffix"), _current = Number(_target.val() ? (_suffix ? _target.val().split(" ")[0] : _target.val()) : 0);
+					if (_current + _value <= _max) _current += _value;
+					if (_current <= _min) {
+						_target.val("");
+					} else if (_suffix) {
+						_target.val(_current + " " + _suffix);
+					} else {
+						_target.val(_current);
+					}
+					
 				}
-				if (current_Val + Number(_this.data("value")) <= _max) current_Val += Number(_this.data("value"));
-				if (current_Val <= _min) {
-					_target.val("");
-				} else if (_suffix) {
-					_target.val(current_Val + " " + _suffix);
-				} else {
-					_target.val(current_Val);
-				}
+				
 			}
 		});
 
@@ -172,10 +255,12 @@ Fields = function() {
 	var _dim = function(form) {
 
 		/* <!-- Wire up event / visibility listeners --> */
-		form.find(".dim").off("click.dim").on("click.dim", function() {
-			var _this = $(this);
-			_this.siblings().addClass("dim");
-			_this.removeClass("dim");
+		form.find(".dim").off("click.dim").on("click.dim", function(e) {
+			var _this = $(e.currentTarget);
+			if (_this.hasClass("dim")) {
+				_this.siblings().addClass("dim").find("button, a[type='button']").prop("disabled", true);
+				_this.removeClass("dim").find("button, a[type='button']").prop("disabled", false);	
+			}
 		});
 
 	};
@@ -191,7 +276,7 @@ Fields = function() {
 	var _datetime = function(form) {
 
 		form.find("div.dt-picker, input.dt-picker").datepicker({
-			format: "yyyy-mm-dd",
+			format: DATE_FORMAT,
 			todayBtn: "linked",
 			todayHighlight: true,
 			autoclose: true
@@ -210,17 +295,9 @@ Fields = function() {
 			ಠ_ಠ = container;
 
 			_steps = [
-				_listen,
-				_numerical,
-				_erase,
-				_radio,
-				_menus,
-				_complex,
-				_reveal,
-				_dim,
-				_autosize,
-				_me,
-				_datetime
+				_listen, _numerical, _erase, _radio, _menus,
+				_complex, _reveal, _dim, _autosize, _me, _datetime,
+				_spans
 			];
 			/* <!-- Return for Chaining --> */
 			return this;

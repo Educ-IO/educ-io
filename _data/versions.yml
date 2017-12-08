@@ -1,4 +1,8 @@
 site :
+  0.0.6x :
+    name : Reflect 0.0.3-alpha
+    desc : Feature Improvements
+    type : minor
   0.0.6w :
     name : Folders 0.0.4b-alpha
     desc : Feature Improvements
@@ -303,9 +307,12 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.3-alpha :
+    name : Google Drive, File Upload and Web Evidence Handlers
+    type : minor
   0.0.2a-alpha :
     name : Basic Report Form Functionality
     type : minor
-  0.1.0-alpha :
+  0.0.1-alpha :
     name : Early testing version
     type : minor

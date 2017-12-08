@@ -4,10 +4,10 @@
 	<a class="align-self-center d-flex delete" href="#" title="{{delete}}">
 		<i class="align-self-center mr-2 material-icons text-danger">delete_forever</i>
 	</a>
-	<p class="align-self-center px-0 py-0 mx-0 my-0">
-		{{#if icon}}<img class="mr-2{{#if class}} {{class}}{{/if}}" src="{{icon}}"/>{{/if}}
+	<p class="align-self-center{{#present icon}} d-flex{{/present}} px-0 py-0 mx-0 my-0">
+		{{#present icon_url}}<img class="ml-1 mr-2{{#if class}} {{class}}{{/if}}" src="{{icon_url}}"/>{{else}}{{#present icon}}<i class="align-self-center mr-2 material-icons{{#if class}} {{class}}{{/if}}">{{icon}}</i>{{/present}}{{/present}}
 		{{#if url}}
-		<a {{#if id}}id="{{id}}" {{/if}}{{#if for}}id="{{for}}" {{/if}}href="{{url}}" target="_blank">{{details}}</a>
+		<a {{#present id}}id="{{id}}" {{else}}{{#present for}}id="{{for}}" {{/present}}{{/present}}href="{{url}}" target="_blank">{{details}}</a>
 		{{else}}
 		{{details}}
 		{{/if}}

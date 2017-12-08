@@ -60,27 +60,32 @@ Folders
 * ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
-* Properties-based Search
+* Properties-based Search?
+* Replace calls to _formatBytes with formatBytes Template Handler
 
 Merge
 -----
 
 Reflect
 -------
-* Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL/
+* Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL
 * Email group from above.
-* Field Span
 * Picker seems to have problems overlaying card for Report Form?
 * Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS
 * Picker problems on IOS
 
 Complete
 --------
-* Manual Selection for Processing Results (tick boxes?) <== DONE
-* Can we save as PDF directly in the same folder as the Google Doc / Sheet etc is in? What about from a link directly from Google Drive - does that give the parent folder info as well as the File ID? (NO IT DOESN'T) <= DONE
-* Put App Logos in Menu <== DONE
-* After Sign-In....Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687 <= DONE
-* List App as Drive Handling App / Shortcut <--- https://www.googleapis.com/auth/drive.install (https://developers.google.com/drive/v3/web/integrate-open)
+* File Upload to Google Drive (File From Evidence Menu) <-- DONE
+* URL for Evidence <-- DONE
+* Paper / Offline for Evidence <-- DONE
+* Evidence List should close aspects/standard when a new one is selected <-- DONE
+* Field Span <-- DONE
+* Manual Selection for Processing Results (tick boxes?) <-- DONE
+* Can we save as PDF directly in the same folder as the Google Doc / Sheet etc is in? What about from a link directly from Google Drive - does that give the parent folder info as well as the File ID? (NO IT DOESN'T) <-- DONE
+* Put App Logos in Menu <-- DONE
+* After Sign-In ... Recent Breaks? ERROR - Recent Items Failure DOMException: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing. (index):3687 <-- DONE
+* List App as Drive Handling App / Shortcut <-- https://www.googleapis.com/auth/drive.install (https://developers.google.com/drive/v3/web/integrate-open)
 * Handle remove app from Google account, e.g. delete local hello data... <== DONE
 * ** IMPORTANT ** * Sign out doesn't route back to initial text in REFLECT App? <-- SEEMS TO HAPPEN SOMETIMES on VIEW as well? <== DONE
 * ** IMPORTANT ** Gracefully handle increasing Google Scopes (e.g. jump up to email, full drive access etc) | Lazy Permission Requests.... <-- Pass a function to the Google API that returns a promise to increase scopes, and a checker (request scope?) <== DONE
@@ -284,4 +289,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2017-11-27
+ᕕ( ᐛ )ᕗ JD - 2017-12-08
