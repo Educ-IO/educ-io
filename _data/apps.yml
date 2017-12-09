@@ -310,6 +310,9 @@ reflect:
     - reflect/FEATURES
     - reflect/README
     - reflect/INSTRUCTIONS
+    - reflect/COMPLETE_INSTRUCTIONS
+    - reflect/SAVE_INSTRUCTIONS
+    - reflect/SEND_INSTRUCTIONS
     - reflect/URL
     - reflect/FILE
   scopes:

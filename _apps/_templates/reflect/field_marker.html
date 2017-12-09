@@ -1,13 +1,13 @@
 {% raw %}
 {{#if description}}<!-- {{description}} -->{{/if}}
-<li class="list-group-item dim"{{#if colour}} style="background-color: {{colour}};"{{/if}}>
+<li data-output-name='{{#if number}}{{#unless naked}}{{#if parent}}{{concat parent "." number}}{{else}}{{number}}{{/if}} {{/unless}}{{/if}}{{#if name}}{{name}}{{/if}}' class="list-group-item dim"{{#if colour}} style="background-color: {{colour}};"{{/if}}>
 	<div class="material-switch-label">
 		{{!-- Output a numerical marker (e.g. 1, 1.1, 1.1.1 etc) by concatenating the parent and the current number --}}
 		<h4 class="marker-label">{{#if number}}{{#unless naked}}{{#if parent}}{{concat parent "." number}}{{else}}{{number}}{{/if}}) {{/unless}}{{/if}}{{#if name}}{{name}}{{/if}}</h4>
 		{{#if details}}{{{details}}}{{/if}}
 	</div>
 	<div class="float-right">
-		<input id="{{id}}" name="{{#if name}}{{name}}{{else}}{{id}}{{/if}}" hidden="hidden" type="checkbox" for="{{#if children}}{{id}}_CHILDREN{{else}}{{id}}_EVIDENCE{{/if}}" data-reveal="#{{id}}_{{#if children}}CHILDREN{{else}}EVIDENCE{{/if}}">
+		<input id="{{id}}" name="{{#if name}}{{name}}{{else}}{{id}}{{/if}}" data-output-name="Value" hidden="hidden" type="checkbox" for="{{#if children}}{{id}}_CHILDREN{{else}}{{id}}_EVIDENCE{{/if}}" data-reveal="#{{id}}_{{#if children}}CHILDREN{{else}}EVIDENCE{{/if}}">
 		<label class="material-switch" for="{{id}}"></label>
 	</div>
 	{{#if children}}

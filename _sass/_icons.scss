@@ -15,9 +15,10 @@
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 // -- Material Design Icons -- //
 
-a .material-icons {
+a.icon, a .material-icons {
   color: $colour-highlight;
   text-decoration: none !important;
+  &:hover {text-decoration: none !important;}
 }
 
 h1 > .material-icons, h2 > .material-icons, h3 > .material-icons,

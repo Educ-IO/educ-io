@@ -21,10 +21,11 @@ Router
 
 Apps
 ----
+* ** IMPORTANT ** Clear process instructions? Visual?
+* ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
 * ** IMPORTANT ** Retries (in network.js) takes too long when handling security (401) errors
 * ** IMPORTANT ** Move tooltips to RHS/LHS for larger screens (responsive breakpoints?)
-* Wrap Un-Authenticated Sheets Access in Google API Javascript file ... maybe??
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 
@@ -39,7 +40,7 @@ Mobile
 
 View
 ----
-* ** IMPORTANT ** Column Filters
+* ** IMPORTANT ** Column Filters (Type)
 * Do went need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view
 * Write Flexbox-based Fit Algorithm
   + Categorised data to 'pills' for display?
@@ -68,11 +69,19 @@ Merge
 
 Reflect
 -------
+* ** IMPORTANT ** Save, Send & Complete Instructions / About
+* ** IMPORTANT ** De-Hydrate Functionality <-- DONE
+* ** IMPORTANT ** Re-Hydrate Functionality
+* ** IMPORTANT ** JSON <-> Sheets Functionality for saving
 * Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL
 * Email group from above.
 * Picker seems to have problems overlaying card for Report Form?
 * Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS
 * Picker problems on IOS
+* Regex to extract Email Address from person fields (with various types of surrounding brackets)
+* Load Text from Doc for Textual Control
+* Download needs Filesaver -> But Lazy load needs declarative import, similar issue to picker loading from form. How to pull in at 'compile' time?
+* Should everything be written as sheets or JSON? .reflect files? With output to spreadsheet? How does this impact analytics?
 
 Complete
 --------

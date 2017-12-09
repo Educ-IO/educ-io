@@ -1,18 +1,18 @@
 {% raw %}
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row">
+<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}>
 	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
 	<div class="col-md-9">
 		<div class="input-group{{#if large}} input-group-lg{{/if}}" data-for="{{id}}">
 			{{#if icon}}<div class="input-group-addon d-none d-md-flex"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">{{icon}}</i></div>{{/if}}
-			<input id="{{id}}" name="{{id}}" type="text" class="pl-2 form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly" aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"{{#if suffix}} data-suffix="{{suffix}}"{{/if}} data-min="{{#if min}}{{min}}{{else}}0{{/if}}" data-max="{{#if max}}{{max}}{{else}}10{{/if}}" data-field="{{field}}"{{#if order}} data-order="{{order}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}} />
+			<input id="{{id}}" name="{{id}}" type="text" data-output-name="Value" class="pl-2 form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly" aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"{{#if suffix}} data-suffix="{{suffix}}"{{/if}} data-min="{{#if min}}{{min}}{{else}}0{{/if}}" data-max="{{#if max}}{{max}}{{else}}10{{/if}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}} />
 			<span class="input-group-btn{{#if large}} input-group-btn-lg{{/if}}">
 				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-secondary eraser d-flex h-100" data-target="{{id}}"><i class="pl-1 material-icons {{#if large}}md-24{{else}}md-18{{/if}} md-dark align-self-center">refresh</i></button>
 				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-primary alter-numerical d-flex h-100" data-target="{{id}}" data-value="-{{#if this.increment}}{{this.increment}}{{else}}1{{/if}}"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}} align-self-center">remove</i></button>
 				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-info alter-numerical d-flex h-100" data-target="{{id}}" data-value="{{#if this.increment}}{{this.increment}}{{else}}1{{/if}}"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}} align-self-center">add</i></button>
 			</span>
 		</div>
-		{{#if details}}<textarea data-for="{{id}}" data-type="Details" id="{{id}}_DETAILS" name="{{id}}_DETAILS" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2" rows="1" aria-label="{{details}}" placeholder="{{details}}"></textarea>{{/if}}
+		{{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS"  data-name="value" name="{{id}}_DETAILS" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2" rows="1" aria-label="{{details}}" placeholder="{{details}}"></textarea>{{/if}}
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}
 	</div>
 </div>

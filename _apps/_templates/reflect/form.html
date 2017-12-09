@@ -6,7 +6,7 @@
 		{{#if header}}{{{header}}}{{/if}}
 		
 		{{#if description}}<!-- {{description}} -->{{/if}}
-		<form id="{{ id }}" class="form-horizontal" role="form">
+		<form id="{{id}}" class="form-horizontal" role="form"{{#if name}} data-name="{{name}}"{{/if}}>
 			
 			{{#if title}}<h4>{{title}}</h4>{{/if}}
 			
@@ -19,37 +19,36 @@
 			<!-- Submission / Save / Progress Area -->
 			<div class="card mx-1 my-1 mx-md-0">
 
-				<div id="heading_{{ id }}_Submission" class="card-header">
+				<div id="heading_{{id}}_Submission" class="card-header">
 					<h5 class="mb-0 d-inline">Submission</h5>
-					<a class="float-right" data-toggle="collapse" href="#collapse_{{ id }}_Submission" aria-expanded="false" aria-controls="collapse_{{ id }}_Submission">
-						<i style="display: none;" class="material-icons md-18" data-listen="#collapse_{{ id }}_Submission" data-event="hidden.bs.collapse">expand_more</i>
-						<i class="material-icons md-18" data-listen="#collapse_{{ id }}_Submission" data-event="shown.bs.collapse">expand_less</i>
+					<a class="float-right" data-toggle="collapse" href="#collapse_{{id}}_Submission" aria-expanded="false" aria-controls="collapse_{{id}}_Submission">
+						<i style="display: none;" class="material-icons md-18" data-listen="#collapse_{{id}}_Submission" data-event="hidden.bs.collapse">expand_more</i>
+						<i class="material-icons md-18" data-listen="#collapse_{{id}}_Submission" data-event="shown.bs.collapse">expand_less</i>
 					</a>
 				</div>
 
-				<div id="collapse_{{ id }}_Submission" class="collapse show" role="tabpanel" aria-labelledby="heading_{{ id }}_Submission">
+				<div id="collapse_{{id}}_Submission" class="collapse show" role="tabpanel" aria-labelledby="heading_{{id}}_Submission">
 					<div class="card-body">
 						<div class="form-group">
 								<div class="col-md-9 d-flex flex-column flex-md-row">
 									
 									<!-- Save Button Group -->
 									<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
-										<button id="{{ id }}_SAVE" type="button" class="btn btn-info btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">save</i>Save</button>
+										<a id="{{id}}_SAVE" href="#save" role="button" class="btn btn-info btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">save</i>Save</a>
 										<button type="button" class="btn btn-info btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											<span class="sr-only">Toggle Dropdown</span>
 										</button>
 										<div class="dropdown-menu dropdown-menu-right">
-											<a class="dropdown-item" href="#">Action</a>
-											<a class="dropdown-item" href="#">Another action</a>
-											<a class="dropdown-item" href="#">Something else here</a>
+											<a class="dropdown-item" href="#save.new">New</a>
+											<a class="dropdown-item" href="#save.download">Download</a>
 											<div class="dropdown-divider"></div>
-											<a class="dropdown-item" href="#">Separated link</a>
+											<a class="dropdown-item" href="#instructions.save">About</a>
 										</div>
 									</div>
 									
 									<!-- Send Button Group -->
 									<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
-										<button id="{{ id }}_SEND" type="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">send</i>Send</button>
+										<a id="{{id}}_SEND" href="#send" role="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">send</i>Send</a>
 										<button type="button" class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											<span class="sr-only">Toggle Dropdown</span>
 										</button>
@@ -58,13 +57,13 @@
 											<a class="dropdown-item" href="#">Another action</a>
 											<a class="dropdown-item" href="#">Something else here</a>
 											<div class="dropdown-divider"></div>
-											<a class="dropdown-item" href="#">Separated link</a>
+											<a class="dropdown-item" href="#instructions.send">About</a>
 										</div>
 									</div>
 									
 									<!-- Complete Button Group -->
 									<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
-										<button id="{{ id }}_COMPLETE" type="button" class="btn btn-success btn-lg d-flex"><i class="mr-4 material-icons md-light md-24 align-self-center">cloud_done</i>Complete</button>
+										<a id="{{id}}_COMPLETE" href="#complete" role="button" class="btn btn-success btn-lg d-flex"><i class="mr-4 material-icons md-light md-24 align-self-center">cloud_done</i>Complete</a>
 										<button type="button" class="btn btn-success btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 											<span class="sr-only">Toggle Dropdown</span>
 										</button>
@@ -73,7 +72,7 @@
 											<a class="dropdown-item" href="#">Another action</a>
 											<a class="dropdown-item" href="#">Something else here</a>
 											<div class="dropdown-divider"></div>
-											<a class="dropdown-item" href="#">Separated link</a>
+											<a class="dropdown-item" href="#instructions.complete">About</a>
 										</div>
 									</div>
 									

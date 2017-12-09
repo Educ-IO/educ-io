@@ -623,7 +623,7 @@ Forms = function() {
 
 		if (id && template) {
 			
-			var groups = [];
+			var groups = [], _order = 0;
 											
 			for (var group_Id in template.groups) {
 				var group = _.clone(template.groups[group_Id]);
@@ -632,6 +632,7 @@ Forms = function() {
 				for (var field_Id in group.fields) {
 					var field = _.clone(group.fields[field_Id]);
 					field.id = field_Id;
+					if (field.order === undefined) field.order = ++_order;
 					if (field.scale) field.markers = _default("evidence", (markdown) => _showdown.makeHtml(markdown))[field.scale];
 					fields.push(ಠ_ಠ.Display.template.get(field));
 				}

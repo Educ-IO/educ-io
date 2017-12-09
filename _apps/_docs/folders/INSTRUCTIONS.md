@@ -1,4 +1,4 @@
-Once you have __signed in__ to view app, you'll be able to __open Your Drive__ of a folder from your Google Drive using the __open a folder__ command from the __Folders__ menu.
+Once you have __signed in__ to this app, you'll be able to __open Your Drive__ of a folder from your Google Drive using the __open a folder__ command from the __Folders__ menu.
 
 If you have opened any other folders during this logged in session (e.g. until you __sign out__), they will appear on the opening screen of the app, giving you a __quick way__ to open sheets that you commonly use. Just click on them to open directly, or click on the small cross to remove them from this page.
 

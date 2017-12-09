@@ -35,6 +35,7 @@ Display = function() {
 	};
 
 	var _compile = function(name) {
+		
 		var _template = $("#__template__" + name);
 		if (_template.length == 1) {
 			if (Handlebars.templates === undefined) Handlebars.templates = {};
@@ -42,9 +43,7 @@ Display = function() {
 			var _html = _template.html();
 			
 			/* <!-- Compile and add compiled template to Handlebars Template object --> */
-			Handlebars.templates[name] = Handlebars.compile(_html, {
-				strict: _debug
-			});
+			Handlebars.templates[name] = Handlebars.compile(_html, {strict: _debug});
 			
 			/* <!-- Look for partial templates to register/compile too --> */
 			var partial_names, partial_regex = /\s?{>\s?([a-zA-Z]{1}[^\r\n\t\f }]+)/gi;

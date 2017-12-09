@@ -1,17 +1,17 @@
 {% raw %}
 {{#if description}}<!-- {{description}} -->{{/if}}
 <div class="d-flex align-items-center flex-row mt-1 list-item{{#if class}} {{class}}{{/if}}">
-	<a class="align-self-center d-flex delete" href="#" title="{{delete}}">
+	<a class="align-self-center d-flex delete icon" href="#" title="{{delete}}">
 		<i class="align-self-center mr-2 material-icons text-danger">delete_forever</i>
 	</a>
-	<p class="align-self-center{{#present icon}} d-flex{{/present}} px-0 py-0 mx-0 my-0">
-		{{#present icon_url}}<img class="ml-1 mr-2{{#if class}} {{class}}{{/if}}" src="{{icon_url}}"/>{{else}}{{#present icon}}<i class="align-self-center mr-2 material-icons{{#if class}} {{class}}{{/if}}">{{icon}}</i>{{/present}}{{/present}}
+	<p data-output-name="Items" class="align-self-center{{#present icon}} d-flex{{/present}} px-0 py-0 mx-0 my-0">
+		{{#present icon_url}}<img data-output-name="Icon_Url" class="ml-1 mr-2{{#if class}} {{class}}{{/if}}" src="{{icon_url}}"/>{{else}}{{#present icon}}<i data-output-name="Icon" class="align-self-center mr-2 material-icons{{#if class}} {{class}}{{/if}}">{{icon}}</i>{{/present}}{{/present}}
 		{{#if url}}
-		<a {{#present id}}id="{{id}}" {{else}}{{#present for}}id="{{for}}" {{/present}}{{/present}}href="{{url}}" target="_blank">{{details}}</a>
+		<a data-output-name="Value" {{#present id}}id="{{id}}" {{else}}{{#present for}}id="{{for}}" {{/present}}{{/present}}href="{{url}}" target="_blank">{{details}}</a>
 		{{else}}
-		{{details}}
+		<span data-output-name="Value">{{details}}</span>
 		{{/if}}
-		<span class="badge badge-secondary ml-2 align-self-center">{{type}}</span>
+		<span data-output-name="Type" class="badge badge-secondary ml-2 align-self-center">{{type}}</span>
 	</p>
 </div>
 {% endraw %}

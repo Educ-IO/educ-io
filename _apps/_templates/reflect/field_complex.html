@@ -1,11 +1,11 @@
 {% raw %}
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row">
+<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}>
 	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
 	<div class="col-md-9">
 		<div class="input-group">
 			{{#if icon}}<div class="input-group-addon d-none d-md-flex"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">{{icon}}</i></div>{{/if}}
-			<input id="{{id}}" name="{{id}}" data-field="{{field}}" hidden="hidden" type="checkbox"{{#if order}} data-order="{{order}}"{{/if}}>
+			<input id="{{id}}" name="{{id}}" hidden="hidden" type="checkbox">
 			<textarea id="{{id}}_DETAILS" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional" rows="1" aria-label="{{#if details}}{{details}}{{else}}Details{{/if}}" placeholder="{{#if details}}{{details}}{{else}}Details{{/if}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
 			<span class="input-group-btn{{#if large}} input-group-btn-lg{{/if}}">
 				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-secondary eraser d-flex h-100" title="Clear / Reset" data-target="{{id}}_DETAILS" data-reset="{{id}}_TYPE">

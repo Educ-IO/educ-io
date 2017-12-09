@@ -1,6 +1,6 @@
 {% raw %}
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row">
+<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}>
 	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
 	<div class="col-md-9">
 		<div class="btn-group{{#if large}} btn-group-lg{{/if}}" data-toggle="buttons" id="{{id}}_BUTTONS">
@@ -17,7 +17,7 @@
 		</div>
 		<div class="input-group{{#if large}} input-group-lg{{/if}} mt-1">
 			{{#if icon}}<div class="input-group-addon d-none d-md-flex"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">{{icon}}</i></div>{{/if}}
-			<textarea id="{{id}}" name="{{id}}" type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional" readonly="readonly" data-field="{{field}}" rows="1"{{#if order}} data-order="{{order}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
+			<textarea id="{{id}}" name="{{id}}" data-output-name="Value" type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional" readonly="readonly" rows="1"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
 		</div>
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}
 	</div>

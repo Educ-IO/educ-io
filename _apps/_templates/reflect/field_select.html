@@ -1,6 +1,6 @@
 {% raw %}
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row">
+<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-=order="{{order}}"{{/if}}>
 	<label class="col-md-3 col-form-label" for="{{id}}_SELECTOR">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
 	<div class="col-md-9">
 		<div class="input-group{{#if large}} input-group-lg{{/if}}">
@@ -11,7 +11,7 @@
 				{{/each}}
 			</select>
 		</div>
-		<input id="{{id}}" name="{{id}}" type="text" readonly="readonly"{{#if required}} required="required"{{/if}} data-field="{{field}}"{{#if order}} data-order="{{order}}"{{/if}} style="display: none;" />
+		<input id="{{id}}" name="{{id}}" data-output-name="Value" type="text" readonly="readonly"{{#if required}} required="required"{{/if}} style="display: none;" />
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}
 	</div>
 </div>
