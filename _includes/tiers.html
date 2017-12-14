@@ -3,16 +3,16 @@
 		{% for value in site.data.tiers %}{% assign tier = value[1] %}<div class="col-xs-12 col-lg-4">
 			<div class="card text-center">
 				<div class="card-header">
-					<h5 class="display-2"><span class="currency text-muted">£</span>{{ tier.cost }}<span class="period">/month</span></h5>
+					<h5 class="display-2"><span class="currency text-muted">£</span>{{tier.cost}}<span class="period">/month</span></h5>
 				</div>
 				<div class="card-block">
-					<h5 class="card-title align-middle">{{ tier.name }}</h5>
+					<h5 class="card-title align-middle">{{tier.name}}</h5>
 					<ul class="list-group">
-						<li class="list-group-item">{{ tier.desc }}</li>
+						<li class="list-group-item">{{tier.desc}}</li>
 						<li class="list-group-item">Unlimited Technical Support</li>
 						<li class="list-group-item">Priority Additional Feature Requests</li>
 					</ul>
-					<a href="#" class="btn btn-gradient mt-2">Subscribe Now</a>
+					<a href="#" class="btn btn-gradient mt-2" data-tier="{{tier.name}}" data-tier-button="{{tier.button}}" data-tier-data="{{tier.data}}" data-tier-details="{{tier.details}}">Subscribe Now</a>
 				</div>
 			</div>
 		</div>{% endfor %}

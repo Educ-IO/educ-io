@@ -52,3 +52,4 @@ analytics:
 app:
   content:            content
   namespace:          educ
+  unsubscribe:        https://www.paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=TVU44HN7F5YE8

@@ -13,6 +13,8 @@ App = function() {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Constants --> */
+	const _email = /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi;
+	
 	const _types = [
 		"application/x.educ-io.reflect-scale",
 		"application/x.educ-io.reflect-form",

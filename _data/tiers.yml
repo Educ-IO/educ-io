@@ -1,12 +1,21 @@
 individual:
   name: Individual
   desc: For a Single User
-  cost: 1
+  cost: 2
+  data: Subscriber Email Address
+  details: Please supply the email address of the user who will be using this subscription. This need not be your email address, as you can purchase a subscription for another person!
+  button: TWG2WG3HF78H2
 team:
   name: Team
-  desc: For up to 10 Users in a single domain
+  desc: For up to 5 Users in a single domain
   cost: 5
+  data: Team Email Addresses
+  details: Please supply the email addresses of your team (up to 5 addresses), separated by spaces, commas or semi-colons.
+  button: 6YQCLJTVBPWD6
 organisation:
   name: Organisation
   desc: For all users in a Google Apps domain
   cost: 20
+  data: Organisation Email Domain
+  details: Please supply the domain name for your organisation. This is the part of your email address after the @ symbol.
+  button: 2CZBV6H9YR97Q

@@ -74,18 +74,16 @@ Reflect
 -------
 * ** IMPORTANT ** Save, Send & Complete Instructions / About
 * ** IMPORTANT ** Re-Hydrate Functionality
-* Optional Gradings against standards
-* Google Drive File / Folder ID Match : return url.match(/[-\w]{25,}/) (NEED TO CHECK FOLDER ID LENGTHS) 28 | 44
+* ** IMPORTANT ** * Optional Gradings against standards
 * Change UI Buttons (Save, Complete etc) for Report / Form
 * Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL
 * Email group from above.
 * Picker seems to have problems overlaying card for Report Form?
-* Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS
-* Picker problems on IOS
-* Regex to extract Email Address from person fields (with various types of surrounding brackets)
+* Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS
 
 Complete
 --------
+* Regex to extract Email Address from person fields (with various types of surrounding brackets) <-- DONE
 * ** IMPORTANT ** Thumbnail of Saved Report / Form -> Uploaded with file to Google Drive <== DONE
 * Load Text from Doc for Textual Control <== DONE
 * ** IMPORTANT ** De-Hydrate Functionality <-- DONE
@@ -120,7 +118,7 @@ Complete
 `     var je=function(e){var r=[];for(var t=0;t<e[0].length;++t){r.push.apply(r,e[0][t])}return r};   `
     WITH:
 `     var __toBuffer = function(bufs) { return [].concat.apply([], bufs[0]); };   `
-`     var je=function(e){return [].concat.apply([], e[0])};   `
+`     var je=function(e){return [].concat.apply([], e[0])};  `
 * Add Material Icons to Pages <-- DONE
 * Default Button for Textual Field <-- DONE
 * Add Fonts to Credits page.... <-- DONE

@@ -2,6 +2,32 @@
 layout: page
 title: Support
 permalink: /support/
+modules:
+  - controller
+  - service
+  - flags
+  - display
+  - page
+  - support
+imports:
+- name: jquery
+  load: first
+- name: popper
+  load: first
+- name: bootstrap-css
+  load: first
+- name: bootstrap-js
+  load: last
+- name: underscore
+  load: last
+- name: handlebars
+  load: last
+- name: urlparser
+  load: last
+templates:
+    - support/subscribe
+docs:
+    - support/SUBSCRIBE
 lead: Great tools take __a lot__ of building. Using our tools is `free for everyone`, but we would encourage anyone who finds them __really useful__, or who wants __amazing support__ or a voice in their __future development__ to subscribe below.
 ---
 
@@ -20,7 +46,7 @@ We want to continue to __develop new tools__ (as well as maintain and update exi
 - - -
 
 ### Subscribing
-We wanted this to be as simple as possible. We have one plan, for three 'tiers' of users. Just click on the buttons above to begin the process of subscription. It's __quick__, __secure__, and you can __cancel at any time__.
+We wanted this to be as simple as possible. We have one plan, for three 'tiers' of users. Just click on the buttons above to begin the process of subscription. It's __quick__, __secure__, and you can __[cancel]({{site.app.unsubscribe}}){:target="_blank"} at any time__.
 
 - - -
 
