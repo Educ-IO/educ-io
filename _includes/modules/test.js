@@ -264,7 +264,7 @@ Page = function() {
 			failure: {
 				icon: "priority_high",
 				class: "text-warning",
-				message: "Unfortunately, your browser doesn't support the File API. This is only used for uploading local files, so most apps and features will still work."
+				message: "Unfortunately, your browser doesn't support the File API. This is only used for uploading local files and downloading file, so most apps (apart from Reflect) and features will still work."
 			},
 			type: {
 				name: "feature",

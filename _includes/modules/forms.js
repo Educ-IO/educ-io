@@ -406,7 +406,7 @@ Forms = function() {
 	/* <!-- == UK Teachers' Standards == --> */
 	
 	/* <!-- == Form Template Form == --> */
-	var template = (markdown) => ({
+	var form = (markdown) => ({
 		name : "Form Template",
 		title : "Create a new Reflective Form",
 		groups : {
@@ -528,9 +528,12 @@ Forms = function() {
 					},
 					further_reflections : {
 						template: "field_textual",
-						title: "Any further reflections on this week",
+						title: "Any further reflections on this period",
 						field: "Further Reflections",
 						rows: 5,
+						wide: true,
+						button: "Load",
+						action: "load-g-doc",
 						help: "Please record further thoughts about your progress here.",
 					},
 					overall_assessment : {
@@ -607,7 +610,7 @@ Forms = function() {
 	var _default = function(type, markdown) {
 		if (type == "forms") {
 			return {
-				template: template(markdown),
+				form: form(markdown),
 				report: report(markdown),
 			};
 		} else if (type == "evidence") {
@@ -675,7 +678,7 @@ Forms = function() {
     
     has : (name) => !!(_forms[name]),
 		
-		get : (name) => _create(name, _forms[name]),
+		get : (name) => ({template: _forms[name], form : _create(name, _forms[name])}),
 		
 		create : (id, template) => _create(id, template),
 		

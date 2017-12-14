@@ -14,6 +14,7 @@ TODO LIST
 * Contrite Penguin 404 Page
 * Links to ISSUE trackers for APPS and EXTENSIONS ??
 * Branding License
+* Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency?
 
 Router
 ------
@@ -28,6 +29,8 @@ Apps
 * ** IMPORTANT ** Move tooltips to RHS/LHS for larger screens (responsive breakpoints?)
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
+* Javascript/CSS to move / expand busy Loader when App page is scrolled and not locked to top
+* Success / Failure response in Busy Loader? E.g. Animate to cross if it fails?
 
 Mobile
 ------
@@ -41,7 +44,7 @@ Mobile
 View
 ----
 * ** IMPORTANT ** Column Filters (Type)
-* Do went need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view
+* ** IMPORTANT ** Do went need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view <++ YES
 * Write Flexbox-based Fit Algorithm
   + Categorised data to 'pills' for display?
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
@@ -70,21 +73,29 @@ Merge
 Reflect
 -------
 * ** IMPORTANT ** Save, Send & Complete Instructions / About
-* ** IMPORTANT ** De-Hydrate Functionality <-- DONE
 * ** IMPORTANT ** Re-Hydrate Functionality
-* ** IMPORTANT ** JSON <-> Sheets Functionality for saving
+* Optional Gradings against standards
+* Google Drive File / Folder ID Match : return url.match(/[-\w]{25,}/) (NEED TO CHECK FOLDER ID LENGTHS) 28 | 44
+* Change UI Buttons (Save, Complete etc) for Report / Form
 * Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL
 * Email group from above.
 * Picker seems to have problems overlaying card for Report Form?
 * Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS
 * Picker problems on IOS
 * Regex to extract Email Address from person fields (with various types of surrounding brackets)
-* Load Text from Doc for Textual Control
-* Download needs Filesaver -> But Lazy load needs declarative import, similar issue to picker loading from form. How to pull in at 'compile' time?
-* Should everything be written as sheets or JSON? .reflect files? With output to spreadsheet? How does this impact analytics?
 
 Complete
 --------
+* ** IMPORTANT ** Thumbnail of Saved Report / Form -> Uploaded with file to Google Drive <== DONE
+* Load Text from Doc for Textual Control <== DONE
+* ** IMPORTANT ** De-Hydrate Functionality <-- DONE
+* Recently Saved Reports <== DONE
+* Should everything be written as sheets or JSON? .reflect files? With output to spreadsheet? How does this impact analytics? <== DONE
+* Drive UI Integration = Reflect Files / mime-type = .reflect <-- DONE
+  application/x.educ-io.reflect-scale
+  application/x.educ-io.reflect-form
+  application/x.educ-io.reflect-report
+  application/x.educ-io.reflect-review
 * File Upload to Google Drive (File From Evidence Menu) <-- DONE
 * URL for Evidence <-- DONE
 * Paper / Offline for Evidence <-- DONE
@@ -298,4 +309,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2017-12-08
+ᕕ( ᐛ )ᕗ JD - 2017-12-13

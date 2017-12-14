@@ -5,7 +5,7 @@ Recent = function() {
 	if (this && this._isF && this._isF(this.Recent)) {return new this.Recent().initialise(this);}
 	
 	/* <!-- Internal Constants --> */
-	const SEP = "___";
+	const SEP = "___", TEST = /___/;
   /* <!-- Internal Constants --> */
 	
 	/* <!-- Internal Variables --> */
@@ -64,7 +64,10 @@ Recent = function() {
 
 			}),
 		
-		remove : (key) => _db.removeItem(key),
+		remove : (key) => new Promise((resolve, reject) => {
+			key = TEST.test(key) ? key : _key(_app, key);
+			_db.removeItem(key).then(() => resolve(key)).catch(e => ಠ_ಠ.Flags.error("Delete Recent Item Failure", e ? e : "No Inner Error") && reject(e));
+		}),
 		
 		clean : () => {
 			if (_app) {

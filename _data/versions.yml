@@ -1,4 +1,8 @@
 site :
+  0.0.6z :
+    name : Reflect 0.0.3b-alpha
+    desc : Saving Methods in Reflect App
+    type : minor
   0.0.6y :
     name : Reflect 0.0.3a-alpha
     desc : Saving Methods
@@ -311,6 +315,9 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.3b-alpha :
+    name : Form Saving Methods
+    type : minor
   0.0.3a-alpha :
     name : Form Saving Methods
     type : minor

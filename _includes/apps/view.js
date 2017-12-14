@@ -54,7 +54,7 @@ App = function() {
 
 	};
 
-	var _clear = function() {
+	var _clear = function(fn) {
 
 		/* <!-- Clear the existing state --> */
 		if (_sheets) {
@@ -64,6 +64,8 @@ App = function() {
 			ಠ_ಠ.container.empty();
 		}
 
+		if (fn) fn();
+		
 	};
 
 	var _default = function() {
@@ -168,7 +170,7 @@ App = function() {
 
 			} else if ((/REMOVE/i).test(command)) {
 
-				if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then(() => $("#" + command[1]).remove());
+				if (command[1].length > 1) ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());
 
 			} else if ((/VISIBILITY/i).test(command)) {
 
@@ -230,11 +232,8 @@ App = function() {
 
 			} else if ((/CLOSE/i).test(command)) {
 
-				/* <!-- Clear the existing state --> */
-				_clear();
-
-				/* <!-- Load the Initial Instructions --> */
-				_default();
+				/* <!-- Clear the existing state & Load Initial Instructions --> */
+				_clear(_default);
 
 			} else if ((/VIEW/i).test(command)) {
 

@@ -881,3 +881,22 @@ transducers:
       integrity: sha256-r8uF868DbAonzuKCZfUCa19lpcTue85DPCS3fuMlo2o=
       crossorigin: anonymous
       id: __tranducers
+
+html2canvas:
+  name: html2canvas
+  desc: Screenshots with JavaScript
+  url: https://cdnjs.com/libraries/html2canvas
+  project: http://html2canvas.hertzen.com/
+  version: 0.5.0-beta4
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js
+      integrity: sha256-w6/1B0uwkpR3uX0YUw3k2zzHnq6xDNdVZHLIdz8xV6I=
+      crossorigin: anonymous
+      id: __html2canvas
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.js
+      integrity: sha256-EzjZPP7sOCQ+ugF/U8x2VH3PEvg3NFjis/dpwogN3T0=
+      crossorigin: anonymous
+      id: __html2canvas

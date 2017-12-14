@@ -245,7 +245,8 @@ Display = function() {
 		busy: function(options) {
 
 			var _element = _target(options);
-			if (!options.class) options.class = "loader-large";
+			
+			if (!options || !options.class) options ? options.class = "loader-large" : options = {class: "loader-large"};
 			(options && options.clear === true) || _element.find(".loader").length > 0 ?
 				_element.find(".loader").remove() : _element.prepend(_template("loader")(options));
 
@@ -538,6 +539,60 @@ Display = function() {
 					if (files && files.length > 0) resolve(files);
 
 				});
+				dialog.on("hidden.bs.modal", function() {
+					dialog.remove();
+					reject();
+				});
+
+				/* <!-- Show the Modal Dialog --> */
+				dialog.modal("show");
+
+			});
+
+		},
+		
+		/* <!--
+			Options are : {
+				title : main title of the action dialog,
+				instructions: optional instructions
+				actions : array or objects for actions to be attached to {
+					name, desc, options
+				}
+				target : optional name / element / jquery of containing element
+			}
+		--> */
+		action: function(options) {
+
+			return new Promise((resolve, reject) => {
+
+				if (!options || !options.actions) return reject();
+
+				/* <!-- Get the Options Length --> */
+				var _length = Array.isArray(options.actions) ?
+					_length = options.actions.length : _length = Object.keys(options.actions).length;
+				options.__LONG = (_length > MAX_ITEMS);
+				
+				/* <!-- Great Modal Options Dialog --> */
+				var dialog = $(_template("action")(options));
+				_target(options).append(dialog);
+				dialog.find("a[data-toggle='tooltip']").tooltip({animation: false});
+
+				/* <!-- Set Event Handlers --> */
+				dialog.find("button[data-action]").click(function(e) {
+					
+					e.preventDefault();
+					
+					/* <!-- Weird Modal Not Hiding Bug --> */
+					$(".modal-backdrop").remove();
+					
+					var _this = $(this), _action = options.actions[_this.data("action")];
+					resolve({
+						action: _action,
+						option: _action.options ? _action.options[_this.parents(".action").find("select option:selected").val()] : null
+					});
+					
+				});
+				dialog.on("shown.bs.modal", function() {});
 				dialog.on("hidden.bs.modal", function() {
 					dialog.remove();
 					reject();

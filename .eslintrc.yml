@@ -29,6 +29,7 @@ globals:
   Clipboard: false
   moment: false
   autosize: false
+  html2canvas: false
   _: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false

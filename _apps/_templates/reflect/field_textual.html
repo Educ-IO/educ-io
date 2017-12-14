@@ -1,8 +1,8 @@
 {% raw %}
 {{#if description}}<!-- {{description}} -->{{/if}}
 <div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}>
-	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
-	<div class="col-md-9">
+	<label class="{{#if wide}}col-12{{else}}col-md-3{{/if}} col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
+	<div class="{{#if wide}}col-12{{else}}col-md-9{{/if}}">
 		<div class="input-group{{#if large}} input-group-lg{{/if}}">
 		{{#if icon}}<div class="input-group-addon d-none d-md-flex"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">{{icon}}</i></div>{{/if}}
 			{{#if rows}}
@@ -14,7 +14,7 @@
 				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-secondary eraser d-flex h-100" title="Clear / Reset" data-target="{{id}}">
 					<i class="pr-1 material-icons {{#if large}}md-24{{else}}md-18{{/if}} md-dark align-self-center">refresh</i>
 				</button>
-        <button id="{{id}}_BUTTON" class="btn{{#if large}} btn-lg{{/if}} btn-primary textual-input-button" type="button" data-target="{{id}}"{{#if action}} data-action="{{action}}"{{/if}}>{{button}}</button>
+        <button id="{{id}}_BUTTON" class="btn{{#if large}} btn-lg{{/if}} btn-primary textual-input-button d-flex h-100" type="button" data-target="{{id}}"{{#if action}} data-action="{{action}}"{{/if}}>{{button}}</button>
       </span>{{/if}}
 		</div>
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}

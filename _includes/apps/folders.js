@@ -281,7 +281,7 @@ App = function() {
 					
 				} else {
 					
-					if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then(() => $("#" + command[1]).remove());	
+					if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());	
 					
 				}
 				

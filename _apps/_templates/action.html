@@ -1,0 +1,30 @@
+{% raw %}
+<div id="{{id}}" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal_options_title">{{title}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{#if instructions}}{{{instructions}}}{{/if}}
+        <div class="d-flex flex-column align-items-center">
+          {{#each actions}}<div id="{{../id}}_{{@index}}" class="action input-group col-md-12 p-1 no-gutters flex-row{{#if options}}{{else}}col-lg-10 col-xl-8{{/if}} align-items-center">
+            {{#if options}}<select class="form-control custom-select" id="{{../id}}_{{@index}}_select" name="{{../id}}_{{@index}}_select">
+              {{#each options}}<option value="{{@key}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</option>{{/each}}
+            </select>{{else}}<input data-field="{{@index}}" type="text" class="form-control disabled" value="{{#if name}}{{name}}{{else}}{{this}}{{/if}}" disabled>{{/if}}
+            <div class="input-group-btn">
+              <button id="{{../id}}_{{@index}}_btn" data-action="{{@key}}" type="button" href="#" class="btn btn-action ml-md-1 ml-lg-2 ml-xl-3">{{#if desc}}{{desc}}{{else}}{{name}}{{/if}}</button>
+            </div>
+          </div>{{/each}}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endraw %}

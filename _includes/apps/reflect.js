@@ -1,4 +1,4 @@
- App = function() {
+App = function() {
 	"use strict";
 
 	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
@@ -8,15 +8,43 @@
 		return new this.App().initialise(this);
 	}
 
-	/* <!-- Internal Constants --> */
-	/* <!-- Internal Constants --> */
-
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _last, _forms, _form;
+	var ಠ_ಠ, _last, _forms, _template, _form, _folder, _file;
 	/* <!-- Internal Variables --> */
 
-	/* <!-- Internal Functions --> */
-	var _pick = function() {
+	/* <!-- Internal Constants --> */
+	const _types = [
+		"application/x.educ-io.reflect-scale",
+		"application/x.educ-io.reflect-form",
+		"application/x.educ-io.reflect-report",
+		"application/x.educ-io.reflect-review"
+	];
+
+	const _reader = function() {
+
+		var reader = new FileReader(),
+			promisify = (fn) =>
+			function() {
+				var _arguments = arguments;
+				return new Promise((resolve, reject) => {
+					var clean = (events) => _.each(events, (handler, event) => reader.removeEventListener(event, handler)),
+						events = {
+							load: () => clean(events) && resolve(reader.result),
+							abort: () => clean(events) && reject(),
+							error: () => clean(events) && reject(reader.error),
+						};
+					_.each(events, (handler, event) => reader.addEventListener(event, handler));
+					fn.apply(reader, _arguments);
+				});
+			};
+
+		_.each(_.filter(_.allKeys(reader), name => (/^READAS/i).test(name) && _.isFunction(reader[name])),
+			fn => reader[fn.replace(/^READAS/i, "promiseAs")] = promisify(reader[fn]));
+
+		return reader;
+	};
+
+	const _pick = function() {
 
 		return new Promise((resolve, reject) => {
 
@@ -30,36 +58,16 @@
 		});
 
 	};
-
-	var _default = function() {
-
-		/* <!-- Load the Initial Instructions --> */
-		ಠ_ಠ.Recent.last(5).then((recent) => ಠ_ಠ.Display.doc.show({
-			name: "README",
-			content: recent && recent.length > 0 ? ಠ_ಠ.Display.template.get({
-				template: "recent",
-				recent: recent
-			}) : "",
-			target: ಠ_ಠ.container,
-			clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
-		})).catch((e) => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error"));
-
-	};
-
-	var _clear = function() {
-
-		ಠ_ಠ.Display.state().exit([]).protect("a.jump").off();
-		ಠ_ಠ.container.empty();
-
-	};
-	/* <!-- Internal Functions --> */
+	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Handlers --> */
 	var _evidence = {
+
 		default: (e) => {
 			e.preventDefault();
 			return $(e.currentTarget).parents(".evidence-holder");
 		},
+
 		add: (o, list, check) => {
 
 			if (check !== false) {
@@ -82,6 +90,7 @@
 				}
 			);
 		},
+
 		picker: (e) => {
 			var _pickEvidence = (list) => {
 					_pick()
@@ -95,21 +104,9 @@
 						.catch(e => e ? ಠ_ಠ.Flags.error("Picking Google Drive File", e) : ಠ_ಠ.Flags.log("Google Drive Picker Cancelled"));
 				},
 				_list = _evidence.default(e);
-
-			if (typeof google === "undefined" || !google.picker) {
-				/* <!-- NEEDS TO BE A BETTER, DECLARATIVE, way of doing this? --> */
-				/* <!-- MAYBE THROUGH ROUTE CONTROL???? --> */
-				ಠ_ಠ.Controller.load([{
-						id: "__google",
-						url: "https://www.google.com/jsapi",
-						mode: "no-cors"
-					}])
-					.then(() => _pickEvidence(_list))
-					.catch(e => ಠ_ಠ.Flags.error("Loading Google API", e));
-			} else {
-				_pickEvidence(_list);
-			}
+			_pickEvidence(_list);
 		},
+
 		file: (e) => {
 			var _list = _evidence.default(e);
 			ಠ_ಠ.Display.files({
@@ -155,6 +152,7 @@
 
 			}).catch(e => e ? ಠ_ಠ.Flags.error("Displaying File Upload Prompt", e) : ಠ_ಠ.Flags.log("File Upload Cancelled"));
 		},
+
 		web: (e) => {
 			var _list = _evidence.default(e);
 			ಠ_ಠ.Display.text({
@@ -178,6 +176,7 @@
 				}, _list, true);
 			}).catch(e => e ? ಠ_ಠ.Flags.error("Displaying URL Prompt", e) : ಠ_ಠ.Flags.log("URL Prompt Cancelled"));
 		},
+
 		paper: (e) => {
 			var _list = _evidence.default(e);
 			_evidence.add({
@@ -186,15 +185,17 @@
 				icon: "local_printshop"
 			}, _list, true);
 		},
+
 	};
 	/* <!-- Internal Handlers --> */
 
 	/* <!-- Data Functions --> */
 	var _data = {
+
 		dehydrate: form => {
 
 			var value = el => {
-				
+
 				var simple = _el => {
 					var _type = _el.data("output-type"),
 						_val = (_el[0].type == "checkbox" || _el[0].type == "radio") ?
@@ -217,7 +218,7 @@
 						var _el = $(this);
 						if (_el.parents("*[data-output-name]")[0] === el[0]) { /* <!-- Only Process Direct Descendents --> */
 							var __val = value(_el);
-							if (!_.isEmpty(__val)) _val[_el.data("output-name")] = __val;	
+							if (!_.isEmpty(__val)) _val[_el.data("output-name")] = __val;
 						}
 					});
 					return _val;
@@ -245,23 +246,259 @@
 								}
 							} else {
 								_field[_$.data("output-name")] = _val;
-							}	
+							}
 						}
 					}
 				});
-				
+
 				if (!_.isEmpty(_field)) {
-					var _object = {Values : _field};
+					var _object = {
+						Values: _field
+					};
 					if (_$.data("output-order")) _object.Order = _$.data("output-order");
 					_return[_$.data("output-field")] = _object;
 				}
-				
+
 			});
+
+			ಠ_ಠ.Flags.log("Dehydrated Form Data:", _return);
 			return _return;
 		},
+
 		rehydrate: (form, data) => {}
+
 	};
 	/* <!-- Data Functions --> */
+
+	/* <!-- Action Functions --> */
+	var _actions = {
+
+		scales: () => ({
+			name: "Scale",
+			desc: "Create Scale",
+			command: "scale",
+			options: [{
+					name: "New ..."
+				},
+				{
+					value: "uk_teachers",
+					name: "UK Teachers' Standards"
+				}
+			]
+		}),
+
+		forms: () => ({
+			name: "Form",
+			desc: "Create Form",
+			command: "form",
+			options: [{
+					name: "New ..."
+				},
+				{
+					value: "report",
+					name: "Reflective Report"
+				}
+			]
+		}),
+
+		reports: () => ({
+			name: "Report",
+			desc: "Create Report",
+			command: "report",
+			options: [{
+				value: "report",
+				name: "Reflective Report"
+			}]
+		}),
+
+	};
+	/* <!-- Action Functions --> */
+
+	/* <!-- Create Functions --> */
+	var _create = {
+
+		display: (name, state) => {
+			var _return = _forms.get(name).form;
+			_return.target = ಠ_ಠ.container.empty();
+			ಠ_ಠ.Display.state().enter(state).protect("a.jump").on("JUMP");
+			return ಠ_ಠ.Fields().on(ಠ_ಠ.Display.template.show(_return));
+		},
+
+		parent: (id) => new Promise((resolve, reject) => ಠ_ಠ.google.files.get(id, true).then(f => {
+			ಠ_ಠ.google.folders.is(true)(f) ? resolve(f) : ಠ_ಠ.Flags.error(`Supplied ID is not a folder: ${id}`) && resolve();
+		}).catch(e => {
+			ಠ_ಠ.Flags.error(`Opening Google Drive Folder: ${id}`, e) && resolve();
+		})),
+
+		prompt: (actions, folder) => ಠ_ಠ.Display.action({
+			id: "create_chooser",
+			title: "Create with Reflect ...",
+			instructions: ಠ_ಠ.Display.doc.get({
+				name: "CREATE",
+				content: folder ? folder : "Google Drive"
+			}),
+			actions: actions
+		}).then(result => {
+			ಠ_ಠ.Flags.log("Create Action Selected:", result);
+			return result.action.command == "scale" ?
+				_create.scale(result.option.value) :
+				result.action.command == "form" ?
+				Promise.resolve(_create.display("template", "opened-form")) :
+				result.action.command == "report" ?
+				_create.report(result.option.value) : null;
+		}).catch(e => e ? ಠ_ಠ.Flags.error("Displaying Create Prompt", e) : ಠ_ಠ.Flags.log("Create Prompt Cancelled")),
+
+		report: (name) => {
+
+			/* <!-- Display Relevant Form --> */
+			var form = _create.display(name.toLowerCase(), "opened-report");
+
+			/* <!-- Handle Evidence Selection Buttons --> */
+			form.find("button.g-picker, a.g-picker").off("click.picker").on("click.picker", _evidence.picker);
+			form.find("button.g-file, a.g-file").off("click.file").on("click.file", _evidence.file);
+			form.find("button.web, a.web").off("click.web").on("click.web", _evidence.web);
+			form.find("button.paper, a.paper").off("click.paper").on("click.paper", _evidence.paper);
+
+			/* <!-- Handle Populate Textual Fields from Google Doc --> */
+			form.find("button[data-action='load-g-doc'], a[data-action='load-g-doc']").off("click.doc").on("click.doc", e => {
+				new Promise((resolve, reject) => {
+					ಠ_ಠ.google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
+						"Select a Reflect File to Open", false, true,
+						() => new google.picker.DocsView(google.picker.ViewId.DOCUMENTS).setIncludeFolders(true).setParent("root"),
+						file => file ? ಠ_ಠ.Flags.log("Google Drive Document Picked", file) && ಠ_ಠ.google.files.export(file.id, "text/plain")
+						.then(download => new _reader().promiseAsText(download).then(text => resolve(text))) : reject()
+					);
+				}).then(text => {
+					var _$ = $("#" + $(e.target).data("target")).val(text);
+					if (_$.is("textarea.resizable")) autosize.update(_$[0]);
+				}).catch();
+			});
+
+			return form;
+
+		},
+
+
+	};
+	/* <!-- Create Functions --> */
+
+	/* <!-- Internal Functions --> */
+	var _default = function() {
+
+		/* <!-- Load the Initial Instructions --> */
+		ಠ_ಠ.Recent.last(5).then((recent) => ಠ_ಠ.Display.doc.show({
+			name: "README",
+			content: recent && recent.length > 0 ? ಠ_ಠ.Display.template.get({
+				template: "recent",
+				recent: recent
+			}) : "",
+			target: ಠ_ಠ.container,
+			clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
+		})).catch((e) => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error"));
+
+	};
+
+	var _clear = function(fn) {
+
+		ಠ_ಠ.Display.state().exit(["opened-form", "opened-report"]).protect("a.jump").off();
+		ಠ_ಠ.container.empty();
+		_form = null;
+		_folder = null;
+		if (fn) fn();
+
+	};
+
+	var _prepare = function() {
+
+		var _title = _template && _template.title ? _template.title : _template && _template.name ? _template.name : "Report",
+			_date = new Date().toLocaleDateString();
+
+		return {
+			name: `${_title} [${_date}].reflect`,
+			data: {
+				form: _template,
+				report: _data.dehydrate(_form)
+			}
+		};
+
+	};
+
+	var _load = function(file) {
+		if (ಠ_ಠ.google.files.is("application/x.educ-io.reflect-report")(file)) {
+			_file = file;
+			ಠ_ಠ.google.download(file.id).then(download => _reader().promiseAsText(download).then(report => console.log("LOADED REPORT FILE", report)));
+		} else {
+			ಠ_ಠ.Flags.error(`Supplied ID is not a recognised Reflect File Type: ${file.id}`);
+		}
+	};
+
+	var _save = function(force) {
+
+		ಠ_ಠ.Display.busy({
+			target: $("body")
+		});
+
+		var _toSave = _prepare(),
+			saver = (thumbType, thumb) => {
+				var _meta = {
+						name: _toSave.name,
+						parents: (_folder ? _folder.id : null),
+						properties: {
+							reflectForm: "report"
+						},
+						contentHints: {
+							thumbnail: {
+								image: thumb,
+								mimeType: thumbType
+							}
+						}
+					},
+					_data = JSON.stringify(_toSave.data),
+					_mime = "application/x.educ-io.reflect-report";
+				((!_file || force) ?
+					ಠ_ಠ.google.upload(_meta, _data, _mime) :
+					ಠ_ಠ.google.upload(_meta, _data, _mime, null, _file.id))
+				.then(uploaded => {
+						_file = uploaded;
+						ಠ_ಠ.Recent.add(uploaded.id, uploaded.name.replace(/.REFLECT$/i, ""), "#google,load." + uploaded.id).then(() => {
+							ಠ_ಠ.Flags.log("Saved:", uploaded);
+							ಠ_ಠ.Display.busy({
+								clear: true,
+								target: $("body")
+							});
+						});
+					})
+					.catch(e => {
+						ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error");
+						ಠ_ಠ.Display.busy({
+							clear: true,
+							target: $("body")
+						});
+					});
+			};
+
+		(html2canvas ?
+			html2canvas($("form[role='form'][data-name]")[0]) :
+			Promise.reject(new Error(`HTML2Canvas Object Evalulates to ${html2canvas}`)))
+		.then(canvas => saver("image/png", canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/i, "").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")))
+			.catch(e => {
+				ಠ_ಠ.Flags.error("Screenshot Error", e ? e : "No Inner Error");
+				saver();
+			});
+
+	};
+
+	var _export = function() {
+		var _toExport = _prepare();
+		try {
+			saveAs(new Blob([JSON.stringify(_toExport.data)], {
+				type: "application/octet-stream"
+			}), _toExport.name);
+		} catch (e) {
+			ಠ_ಠ.Flags.error("Report Export", e);
+		}
+	};
+	/* <!-- Internal Functions --> */
 
 	/* <!-- External Visibility --> */
 	return {
@@ -279,6 +516,10 @@
 			/* <!-- Return for Chaining --> */
 			return this;
 
+		},
+
+		start: () => {
+			if (!_forms) _forms = ಠ_ಠ.Forms();
 		},
 
 		route: function(command) {
@@ -307,71 +548,97 @@
 					wrapper: "MODAL"
 				}).modal();
 
-				if ((/SAVE/i).test(command[1])) {
+				(/SAVE/i).test(command[1]) ?
+					show("SAVE_INSTRUCTIONS", "How to save your Form ...") : /* <!-- Load the Save Form Instructions --> */
+					(/SEND/i).test(command[1]) ?
+					show("SEND_INSTRUCTIONS", "How to send your Form ...") : /* <!-- Load the Send Form Instructions --> */
+					(/COMPLETE/i).test(command[1]) ?
+					show("COMPLETE_INSTRUCTIONS", "How to complete your Form ...") : /* <!-- Load the Send Form Instructions --> */
+					show("INSTRUCTIONS", "How to use Reflect ..."); /* <!-- Load the Generic Instructions --> */
 
-					/* <!-- Load the Save Form Instructions --> */
-					show("SAVE_INSTRUCTIONS", "How to save your Form ...");
+			} else if ((/CREATE/i).test(command)) { /* <!-- Create a new Form / Template --> */
 
-				} else if ((/SEND/i).test(command[1])) {
+				if (!_.isArray(command) || command.length == 1) { /* <!-- We're creating a new Form or Report, but we don't know which yet - need to ask! --> */
 
-					/* <!-- Load the Send Form Instructions --> */
-					show("SEND_INSTRUCTIONS", "How to send your Form ...");
+					(_.isArray(command) && command.length > 1 && command[1].length > 0 ? /* <!-- We've likely arrived here from the Google Drive UI, so this is a folder ID --> */
+						_create.parent(command[1]).then(folder => _create.prompt([_actions.scales(), _actions.forms(), _actions.reports()], folder)) :
+						_create.prompt([_actions.scales(), _actions.forms(), _actions.reports()])).then(form => _form = form);
 
-				} else if ((/COMPLETE/i).test(command[1])) {
+				} else if ((/REPORT/i).test(command[1])) { /* <!-- We're creating a new Report (e.g. Response to a Form) --> */
 
-					/* <!-- Load the Complete Form Instructions --> */
-					show("COMPLETE_INSTRUCTIONS", "How to complete your Form ...");
+					((command.length > 2 && _forms.has(command[2].toLowerCase())) ?
+						Promise.resolve(_create.report(command[2].toLowerCase())) :
+						command.length > 2 ?
+						_create.parent(command[2]).then(folder => _create.prompt([_actions.reports()], folder)) :
+						_create.prompt([_actions.reports()])).then(form => _form = form);
 
-				} else {
+				} else if ((/FORM/i).test(command[1])) { /* <!-- We're creating a new Form --> */
 
-					/* <!-- Load the Generic Instructions --> */
-					show("INSTRUCTIONS", "How to use Reflect ...");
-
-				}
-
-			} else if ((/CREATE/i).test(command)) {
-
-				/* <!-- Create a new Form / Template --> */
-				if (!_forms) _forms = ಠ_ಠ.Forms();
-				if (command[1] && _forms.has(command[1].toLowerCase())) {
-
-					_form = _forms.get(command[1].toLowerCase());
-					_form.target = ಠ_ಠ.container.empty();
-					_form = ಠ_ಠ.Fields().on(ಠ_ಠ.Display.template.show(_form));
-
-					/* <!-- Handle Evidence Selection Buttons --> */
-					_form.find("button.g-picker, a.g-picker").off("click.picker").on("click.picker", _evidence.picker);
-					_form.find("button.g-file, a.g-file").off("click.file").on("click.file", _evidence.file);
-					_form.find("button.web, a.web").off("click.web").on("click.web", _evidence.web);
-					_form.find("button.paper, a.paper").off("click.paper").on("click.paper", _evidence.paper);
+					((command.length > 2 && ((/FORM/i).test(command[2]) || (/TEMPLATE/i).test(command[2]))) ?
+						Promise.resolve(_create.display("form", "opened-form")) :
+						command.length > 2 ?
+						_create.parent(command[2]).then(folder => _create.prompt([_actions.forms()], folder)) :
+						_create.prompt([_actions.forms()])).then(form => _form = form);
 
 				}
+
+			} else if ((/LOAD/i).test(command) && command[1].length > 1) {
+
+				ಠ_ಠ.google.files.get(command[1], true).then(_load).catch(e => {
+					ಠ_ಠ.Flags.error(`Opening Google Drive File: ${command[1]}`, e);
+					ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());
+				});
 
 			} else if ((/OPEN/i).test(command)) {
 
-				/* <!-- Need to know the form, and have the data --> */
-				
-			} else if ((/SAVE/i).test(command)) {
+				new Promise((resolve, reject) => {
 
-				if (_form) {
+					/* <!-- Open Reflect File from Google Drive Picker --> */
+					ಠ_ಠ.google.pick(
+						"Select a Reflect File to Open", false, true,
+						() => [new google.picker.DocsView(google.picker.ViewId.DOCS).setMimeTypes(_types.join(",")),
+							new google.picker.DocsView(google.picker.ViewId.DOCS).setMimeTypes(_types.join(",")).setIncludeFolders(true).setParent("root")
+						],
+						file => file ? ಠ_ಠ.Flags.log("Google Drive Reflect File Picked", file) && resolve(file) : reject()
+					);
+				}).then(_load).catch();
 
-					var _deydrated = _data.dehydrate(_form);
+			} else if ((/SAVE/i).test(command) && _form) {
 
-					if ((/DOWNLOAD/i).test(command[1])) {
+				(/EXPORT/i).test(command[1]) ?
+					$("#_cmd_Report_Export").click() :
+					(/FORM/i).test(command[1]) ?
+					$("#_cmd_Report_Save").click() :
+					(/NEW/i).test(command[1]) ?
+					$("#_cmd_Report_New").click() : _save();
 
-					} else if ((/NEW/i).test(command[1])) {
+			} else if ((/NEW/i).test(command) && _form) {
 
-					} else {
+				_save(true);
 
-						console.log("Data", _deydrated);
+			} else if ((/EXPORT/i).test(command) && _form) {
 
-					}
+				_export();
 
-				}
-
-
+			} else if ((/SCALES/i).test(command)) { /* <!-- We're managing existing scales --> */
 
 			} else if ((/CLOSE/i).test(command)) {
+
+				/* <!-- Clear the existing state & Load Initial Instructions --> */
+				_clear(_default);
+
+			} else if ((/REMOVE/i).test(command)) {
+
+				if (command[1].length > 1) ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());
+
+			} else if ((/SPIN/i).test(command)) {
+
+				$(".spinner").length >= 1 ? ಠ_ಠ.Display.busy({
+					clear: true,
+					target: $("body")
+				}) : ಠ_ಠ.Display.busy({
+					target: $("body")
+				});
 
 			}
 

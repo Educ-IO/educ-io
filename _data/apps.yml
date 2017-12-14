@@ -261,6 +261,14 @@ reflect:
     - name: bootstrap-datepicker-js
       load: last
     - name: google
+      load: last
+    - name: xlsx
+      load: lazy
+    - name: filesaver
+      load: lazy
+    - name: clipboard
+      load: lazy
+    - name: html2canvas
       load: lazy
   modules:
     - flags
@@ -286,6 +294,7 @@ reflect:
     - text
     - files
     - upload
+    - action
     - shared/tab-links
     - shared/tab-list
     - shared/tab-tabs
@@ -300,10 +309,8 @@ reflect:
     - reflect/field_textual
     - reflect/group
     - reflect/list_item
-    - reflect/recovery
     - reflect/form
-    - reflect/report
-    - reflect/template
+    - reflect/recovery
   docs:
     - shared/JUMP
     - reflect/PUBLIC
@@ -315,6 +322,7 @@ reflect:
     - reflect/SEND_INSTRUCTIONS
     - reflect/URL
     - reflect/FILE
+    - reflect/CREATE
   scopes:
     google:
       - scope: email
@@ -329,6 +337,10 @@ reflect:
         name: View and manage Google Drive files and folders that you have opened or created with this app
         reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.
         request: login
+      - scope: https://www.googleapis.com/auth/drive.readonly
+        name: View the files in your Google Drive
+        reason: In order to read forms, scales and reports that have been sent to you, this 'readonly' permissions is required.
+        request: login
       - scope: https://www.googleapis.com/auth/spreadsheets
         name: View / Edit your Google Spreadsheets
         reason: This app needs to write data to your spreadsheets in order to record periodic progress from your reflections.
@@ -338,7 +350,7 @@ reflect:
         general: AIzaSyDCjK2aSKu9CAb3lCXxegwy-G9VTdNBAak
         oauth: 969160887251-lnkpkhpet6ojgtkposr49f0uuubbbpq2.apps.googleusercontent.com
   menus:
-    - name: Report
+    - name: Reports
       groups:
         all:
           commands:
@@ -346,67 +358,89 @@ reflect:
               desc: Create a new Report
               hash: create.report
               auth: google
-            - name: Open a saved Report
-              desc: Open a Save Report from your Drive
+            - name: Open
+              desc: Open a saved Report from your Drive
               hash: open.report
               imports:
                 - google
               auth: google
+            - name: New
+              desc: Save this as a New Report
+              hash: new
+              id: _cmd_Report_New
+              imports:
+                - html2canvas
+              disabled_until:
+                - opened-report
+              auth: google
             - name: Save
               desc: Save this Report
               hash: save
+              id: _cmd_Report_Save
+              imports:
+                - html2canvas
               disabled_until:
-                - opened
+                - opened-report
               auth: google
+            - name: Export
+              desc: Export this Report by downloading the data
+              hash: export
+              id: _cmd_Report_Export
+              disabled_until:
+                - opened-report
+              auth: google
+              imports:
+                - xlsx
+                - filesaver
             - name: Close
               desc: Close this Report
               hash: close
               disabled_until:
-                - opened
-    - name: Template
+                - opened-report
+    - name: Forms
       groups:
         all:
           commands:
             - name: Create
-              desc: Create a new Template for Reports
-              hash: create.template
+              desc: Create a new Form for Reports
+              hash: create.form
               auth: google
-            - name: Open a saved Template
-              desc: Open a Saved Template from your Drive
-              hash: open.template
+            - name: Open
+              desc: Open a Saved Form from your Drive
+              hash: open.form
               imports:
                 - google
               auth: google
-            - name: Share
-              desc: Share this Template
+            - name: Save
+              desc: Save this Form in your Drive
+              hash: save
+              disabled_until:
+                - opened-form
+              imports:
+                - google
+              auth: google
+            - name: Send
+              desc: Send this Form to be used for Reports
               hash: share
               disabled_until:
-                - opened
+                - opened-form
+              auth: google
+            - name: Manage Scales
+              desc: Manage Scales for your Forms
+              hash: scales
               auth: google
             - name: Close
-              desc: Close this Template
+              desc: Close this Form
               hash: close
               disabled_until:
-                - opened
+                - opened-form
     - name: Analyse
       groups:
         all:
           commands:
             - name: Progress
-              desc: Create a new Report
+              desc: Check progress on Report Completion
               hash: progress
-              auth: google
-            - name: Open a saved Report
-              desc: Open a Save Report from your Drive
-              hash: open
-              imports:
-                - google
-              auth: google
-            - name: Template
-              desc: Create a Report for Sharing
-              hash: template
-              imports:
-                - google
               auth: google
     - name: About
       short_name: Help
@@ -417,6 +451,11 @@ reflect:
               hash: instructions
               desc: More details about how to use this app
               divider: true
+            - name: Install
+              desc: Install this app into your Google Drive
+              hash: install
+              auth: google
+              scope: https://www.googleapis.com/auth/drive.install
             - name: Permissions
               url: /scopes/?highlight=view
               desc: Find out about the permissions and scopes that this app uses

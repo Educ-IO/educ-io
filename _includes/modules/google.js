@@ -192,8 +192,10 @@ Google_API = function(ಠ_ಠ, timeout) {
 				views.forEach(function(view) {
 					picker.addView(view.setEnableTeamDrives ? view.setEnableTeamDrives(team) : view);
 				});
+				if (views.length == 1) picker.enableFeature(google.picker.Feature.NAV_HIDDEN);
 			} else {
 				picker.addView(views.setEnableTeamDrives ? views.setEnableTeamDrives(team) : views);
+				picker.enableFeature(google.picker.Feature.NAV_HIDDEN);
 			}
 
 			picker.build().setVisible(true);
@@ -388,6 +390,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 			natives: () => NATIVES,
 			
+			is : (type) => (item) => item.mimeType === type,
+			
 			native : (type) => type && NATIVES.indexOf(type.toLowerCase()) >= 0,
 			
 			delete: (id, team, trash) => {
@@ -397,13 +401,19 @@ Google_API = function(ಠ_ಠ, timeout) {
 				return _call(_function, _url, _data);
 			},
 			
-			get: (id, team) => team ? 
-				_call(NETWORKS.general.get, "drive/v3/files/" + id, {
-					fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
-					teamDriveId : team, includeTeamDriveItems : true, supportsTeamDrives : true, corpora : "teamDrive"}) : 
-				_call(NETWORKS.general.get, "drive/v3/files/" + id, {
-					fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
-			}),
+			get: (id, team) => {
+				var _data = team ? 
+						team === true ? {	
+							fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
+							includeTeamDriveItems : true, supportsTeamDrives : true, corpora : "user,allTeamDrives"
+						} : {
+							fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
+							teamDriveId : team, includeTeamDriveItems : true, supportsTeamDrives : true, corpora : "teamDrive"
+						} : {
+							fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
+						};
+				return _call(NETWORKS.general.get, "drive/v3/files/" + id, _data);
+			},
 			
 			export: (id, format, team) => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {
 				mimeType: format

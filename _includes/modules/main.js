@@ -287,7 +287,7 @@ Main = function() {
 				ಠ_ಠ.Flags = flags;
 
 				/* <!-- Module Starts --> */
-				[ಠ_ಠ.Display, ಠ_ಠ.Recent].forEach((m) => {if (m.start) m.start();});
+				[ಠ_ಠ.Display, ಠ_ಠ.Recent, ಠ_ಠ.App].forEach((m) => {if (m.start) m.start();});
 				
 				/* <!-- Append Content Holder --> */
 				if (!ಠ_ಠ.container) ಠ_ಠ.container = $("#content");

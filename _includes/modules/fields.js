@@ -144,7 +144,9 @@ Fields = function() {
 		/* <!-- Wire up eraser actions --> */
 		form.find(".eraser").click(function(e) {
 			var _this = $(this);
-			if (_this.data("target")) $("#" + _this.data("target") + ", #" + _this.data("target") + "> input").val("").removeClass("invalid");
+			if (_this.data("target")) {
+				$("#" + _this.data("target") + ", #" + _this.data("target") + "> input").val("").removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));	
+			} 
 			if (_this.data("reset")) {
 				var _reset = $("#" + _this.data("reset"));
 				if (_reset.data("default")) _reset.text(_reset.data("default"));
