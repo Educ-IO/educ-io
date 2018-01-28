@@ -1,4 +1,8 @@
 site :
+  0.0.7b :
+    name : Accessibility Updates
+    desc : Updates to a visual contrasts for accessibility
+    type : minor
   0.0.7a :
     name : Significant Infrastructure Changes
     desc : Updates to a variety of templates and processes

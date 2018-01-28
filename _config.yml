@@ -28,9 +28,10 @@ permalink:						pretty
 title:								"Educ.io"
 byline:								""
   
-description:					"Web Apps & Tools built using Google Apps"
+description:					"Web Apps & Tools built for Google Apps"
 url:									https://educ.io
 baseurl:							/
+support:              "Get help, and support our work!"
 repo:                 https://github.com/Educ-IO/educ-io.github.io
 author:
   name:								"Educ.io"

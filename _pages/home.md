@@ -3,9 +3,9 @@ layout: simple
 title: Home
 permalink: /
 style: page
+title: Web Apps & Tools built for Google Apps
 ---
 {% capture text %}
-
 __Welcome__ to our place, __open it__ up and find a collection of `free web apps` that __integrate__ with the Google platform. They make complex and everyday tasks __easier__, __faster__ and more __intuitive__.
 {:class="lead"}
 

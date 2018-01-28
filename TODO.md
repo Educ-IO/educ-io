@@ -90,6 +90,7 @@ Reflect
 
 Complete
 --------
+* Accessibility Checks <-- DONE
 * Export -> Select Single, Multiple or All Tabs for export (need a custom template for this) <-- DONE
 * ** IMPORTANT ** Branding License <-- DONE
 * Scripts should have [aria-hidden="true"] on them? <-- DONE

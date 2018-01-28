@@ -2,14 +2,14 @@
 	
 	<div class="row align-items-center">
 		<div class="d-inline d-md-block col-12 mx-auto col-md-6 order-md-2 px-2 py-2">
-			<a class="img-fluid mb-3 mb-md-0" alt="{{ site.title }}: {{ site.description }}" href="{{ site.url }}">{% include {{ include.logo }} %}</a>
+			<div class="img-fluid mb-3 mb-md-0" alt="{{ site.title }}: {{ site.description }}">{% include {{ include.logo }} %}</div>
 		</div>
 		<div class="col-md-6 order-md-1 text-center text-md-left pr-md-5">
 			<h1 class="display-4 mb-3 font-sensitive">{{ site.title | upcase }}</h1>
 			{% if text %}{{ text | markdownify }}{% endif %}
 			<div class="d-flex flex-column flex-md-row lead mb-3">
-				<a href="/about/" class="btn btn-lg btn-outline-dark mb-3 mb-md-0 mr-md-3">Learn More</a>
-				<a href="/support/" class="btn btn-lg btn-outline-success">Support</a>
+				<a href="/about/" class="btn btn-lg btn-outline-dark mb-3 mb-md-0 mr-md-3" title="About this site and our approach">More About Us</a>
+				<a href="/support/" class="btn btn-lg btn-outline-success" title="{{ site.support }}">Support</a>
 			</div>
 		</div>
 	</div>

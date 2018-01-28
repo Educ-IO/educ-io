@@ -1,8 +1,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="{% if page.app %}{{ site.title }} | {{ page.title }} - {{ site.data.apps[page.app].desc | replace: '_', '' | replace: '`', '' }}{% else if page.lead %}{{ page.lead | replace: '_', '' | replace: '`', '' }}{% else %}{{ site.description }}{% endif %}">
-{% if site.keywords or page.keywords %}<meta name="keywords" content="{% if page.keywords %}{{ page.keywords }}{% else %}{{ site.keywords }}{% endif %}" />{% endif %}
+{% if include.desc and include.desc != ''  %}<meta name="description" content="{{ include.desc }}">{% endif %}
+{% if include.keywords and include.keywords != ''  %}<meta name="keywords" content="{{ include.keywords }}" />{% endif %}
 
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="{{ site.baseurl }}ico/ms-icon-144x144.png">

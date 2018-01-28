@@ -805,7 +805,7 @@ markbooks:
   name: Markbooks
   desc: A soon to be written tool.
   link: /markbooks/
-  colour: 6d9eeb
+  colour: 5891E9
   imports:
     - name: jquery
       load: first
@@ -876,7 +876,7 @@ cover:
   name: Cover
   desc: Run your lesson __cover__ system in Google Sheets, _efficiently_ and _brilliantly_
   link: /cover/
-  colour: 93c47d
+  colour: 54823A
   imports:
     - name: jquery
       load: first
