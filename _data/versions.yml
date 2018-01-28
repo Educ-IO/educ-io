@@ -1,4 +1,8 @@
 site :
+  0.0.7f :
+    name : Service Worker Updates
+    desc : Updates to service worker interfacing code
+    type : minor
   0.0.7d :
     name : Link Updates
     desc : Updates to a external links

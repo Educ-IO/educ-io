@@ -8,6 +8,78 @@ Service = function() {
 	/* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
+	var _message = function(sw, message) {
+
+		return new Promise(function(resolve, reject) {
+
+			if (!sw) reject();
+
+			var channel = new MessageChannel();
+			channel.port1.onmessage = function(e) {
+				if (e.data.error) {
+					reject(e.data.error);
+				} else {
+					resolve(e.data);
+				}
+			};
+
+			sw.postMessage({
+				action: message
+			}, [channel.port2]);
+
+		});
+
+	};
+	
+	var _notify = function(sw, urgency, details) {
+						
+		if (ಠ_ಠ.Display && !ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.alert({
+			type: urgency ? urgency : "info",
+			headline: "New Version Available",
+			message: details ? details.trim() : "",
+			action: "Update",
+			warning: "Updating will reload this app, and lose any un-saved work",
+			target: "body"
+		}).then(function(update) {
+			if (sw && update) _message(sw, "update").then(
+				m => {
+					if (m == "success") window.location.reload();
+				}
+			);
+		});
+
+	};
+	
+	var _update = function(sw) {
+					
+		if (window.fetch) {
+
+			fetch("/version.json?d=" + Date.now(), {cache: "no-store"}).then((response) => {
+
+				if (response.status == 200) return response.json();
+
+			}).then((version) => {
+
+				var _details, _urgency = "info";
+				if (version) {
+					if (version.VERSION_TYPE == "security") {
+						_urgency = "danger";
+					} else if (version.VERSION_TYPE == "major") {
+						_urgency = "warning";
+					}
+					if (version.VERSION_DETAILS) _details = version.VERSION_DETAILS + " [v" + version.APP_VERSION + "]";
+					_notify(sw, _urgency, _details);
+				}
+
+			}).catch((e) => _notify(sw));
+
+		} else {
+
+			_notify(sw);
+
+		}
+
+	};
 	/* <!-- Internal Functions --> */
 	
 	/* <!-- External Visibility --> */
@@ -31,83 +103,10 @@ Service = function() {
 
       if ("serviceWorker" in navigator) {
 
-        var _message = function(sw, message) {
-
-          return new Promise(function(resolve, reject) {
-
-            if (!sw) reject();
-
-            var channel = new MessageChannel();
-            channel.port1.onmessage = function(e) {
-              if (e.data.error) {
-                reject(e.data.error);
-              } else {
-                resolve(e.data);
-              }
-            };
-
-            sw.postMessage({
-              action: message
-            }, [channel.port2]);
-
-          });
-
-        };
-
-        var _updateReady = function(sw) {
-
-					var _update = function(urgency, details) {
-						
-						if (ಠ_ಠ.Display && !ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.alert({
-							type: urgency ? urgency : "info",
-							headline: "New Version Available",
-							message: details ? details.trim() : "",
-							action: "Update",
-							warning: "Updating will reload this app, and lose any un-saved work",
-							target: "body"
-						}).then(function(update) {
-							if (update) _message(sw, "update").then(
-								m => {
-									if (m == "success") window.location.reload();
-								}
-							);
-						});
-						
-					};
-					
-					if (window.fetch) {
-						
-						fetch("/version.json?d=" + Date.now(), {cache: "no-store"}).then((response) => {
-							
-							if (response.status == 200) return response.json();
-							
-						}).then((version) => {
-							
-							var _details, _urgency = "info";
-							if (version) {
-								if (version.VERSION_TYPE == "security") {
-									_urgency = "danger";
-								} else if (version.VERSION_TYPE == "major") {
-									_urgency = "warning";
-								}
-								if (version.VERSION_DETAILS) _details = version.VERSION_DETAILS + " [v" + version.APP_VERSION + "]";
-								_update(_urgency, _details);
-							}
-							
-						}).catch((e) => _update());
-						
-					} else {
-						
-						_update();
-						
-					}
-
-        };
-
         var _trackInstalling = function(sw) {
           sw.addEventListener("statechange", function() {
             if (sw.state == "installed") {
-              _updateReady(sw);
+              _update(sw);
             }
           });
         };
@@ -119,7 +118,7 @@ Service = function() {
 
             var _check = function(_reg) {
               if (_reg.waiting) {
-                _updateReady(_reg.waiting);
+                _update(_reg.waiting);
               } else if (_reg.installing) {
                 _trackInstalling(_reg.installing);
               } else {
@@ -127,7 +126,6 @@ Service = function() {
                   _trackInstalling(_reg.waiting || _reg.installing);
                 });
               }
-
             };
 
             /* <!-- Wait 3 seconds, then check for update! --> */
@@ -192,7 +190,11 @@ Service = function() {
 
               }
 
-            }
+            } else if (k == 85) {
+							
+							_update("serviceWorker" in navigator ? navigator.serviceWorker.controller : null);
+							
+						}
 
           }
         };
