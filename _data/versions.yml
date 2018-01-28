@@ -1,5 +1,5 @@
 site :
-  0.0.7c :
+  0.0.7d :
     name : Link Updates
     desc : Updates to a external links
     type : minor
