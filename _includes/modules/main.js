@@ -317,13 +317,13 @@ Main = function() {
 							
 							var refresh_race = Promise.race([
 								hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, { /* Try silent token refresh */
-									force: false, display : "none", scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")), // was none
+									force: false, display : "none", scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
 								}),
 								new Promise(function(resolve, reject) {
 									setTimeout(function() {
 										return Promise.race([
 											hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, { /* Try pop-up token refresh */
-												force: false, display : "popup", scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")), // was none
+												force: false, display : "popup", scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
 											}),
 											new Promise(function(resolve, reject){
 												setTimeout(function() { reject("Login Promise Timed Out"); }, LOGIN_RACE);

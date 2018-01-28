@@ -1,5 +1,5 @@
 site :
-  0.0.7 :
+  0.0.7a :
     name : Significant Infrastructure Changes
     desc : Updates to a variety of templates and processes
     type : major
