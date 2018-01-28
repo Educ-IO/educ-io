@@ -1,4 +1,8 @@
 site :
+  0.0.7c :
+    name : Link Updates
+    desc : Updates to a external links
+    type : minor
   0.0.7b :
     name : Accessibility Updates
     desc : Updates to a visual contrasts for accessibility

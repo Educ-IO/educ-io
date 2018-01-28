@@ -1,4 +1,4 @@
-Makes working with your files in your [Google Drive](https://www.google.com/drive/){:target="_blank"} quicker and easier:
+Makes working with your files in your [Google Drive](https://www.google.com/drive/){:target="_blank" rel="noopener"} quicker and easier:
 
 + Find and sort with folders __fast__ with free-text searching and simple querying.
 + Search within a __single folder__, or do a recursive search of all descendent folders as well.
