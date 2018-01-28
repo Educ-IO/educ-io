@@ -1,5 +1,5 @@
 site :
-  0.0.7f :
+  0.0.7g :
     name : Service Worker Updates
     desc : Updates to service worker interfacing code
     type : minor

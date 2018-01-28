@@ -70,6 +70,21 @@ Main = function() {
 		
 		start : function() {
 
+			var google_Success = (message) => (a) => ಠ_ಠ.Flags.log(message, a);
+			var google_Failure = (message) => (e) => ಠ_ಠ.Flags.error(message, e);
+			var google_Login = (scopes) => (display, force) => hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {
+					force: force, display : display, scope : scopes,
+				});
+			var google_Retry = (login, success, failure) => (e) => {
+					if (e.error && e.error.code && e.error.code == "blocked") {
+						login("page", true).then(success, failure);  /* <!-- TODO: Handle State for Full Page redirects.... --> */
+					} else if (e.error && e.error.code && e.error.code == "cancelled") {
+						ಠ_ಠ.Flags.log("Cancelled Signing into Google");
+					} else {
+						failure(e);
+					}
+				};
+			
 			var google_Initialise = function(auth) {
 
 				return ಠ_ಠ.Google_API(ಠ_ಠ).initialise(auth.access_token, auth.token_type, auth.expires, 
@@ -94,21 +109,11 @@ Main = function() {
 			};
 			
 			var google_SignIn = function() {
-        var _login = (display, force) => hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {
-					force: force, display : display,
-					scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
-				});
-				var _success = (a) => ಠ_ಠ.Flags.log("Signed into Google", a);
-				var _failure = (e) => ಠ_ಠ.Flags.error("Signed into Google", e);
-				var _retry = (e) => {
-					if (e.error && e.error.code && e.error.code == "blocked") {
-						_login("page", true).then(_success, _failure);
-					} else if (e.error && e.error.code && e.error.code == "cancelled") {
-						ಠ_ಠ.Flags.log("Cancelled Signing into Google");
-					} else {
-						ಠ_ಠ.Flags.error("Signed into Google", e);
-					}
-				};
+        var _login = google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" "))),
+						_action = "Signed into Google",
+						_success = google_Success(_action), 
+						_failure = google_Failure(_action),
+						_retry = google_Retry(_login, _success, _failure);
 				_login((ಠ_ಠ.SETUP.SINGLE_PAGE || ಠ_ಠ.Flags.page()) ? "page" : "popup", false).then(_success, _retry);
 			};
 
@@ -116,10 +121,8 @@ Main = function() {
 				hello.logout(ಠ_ಠ.SETUP.GOOGLE_AUTH).then(function(a) {
 					/* <!-- Module Cleans --> */
 					[ಠ_ಠ.Recent, ಠ_ಠ.App].forEach((m) => {if (m.clean) m.clean();});
-					ಠ_ಠ.Flags.log("Signed out of Google", a);
-				}, function(e) {
-					ಠ_ಠ.Flags.error("Signing out of Google", e);
-				});
+					google_Success("Signed out of Google")(a);
+				}, google_Failure("Signed out of Google"));
 			};
 			
 			var _routeIn = function() {if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(true);}, _routeOut = function() {if (ಠ_ಠ.App.route) ಠ_ಠ.App.route([false, true]);};
@@ -141,20 +144,18 @@ Main = function() {
 						
 					} else if ((/\|/i).test(directive)) {
 					
-						/* <!-- Scope Authorisation --> */
-						/* <!-- TODO: Handle State for Full Page redirects.... --> */
-						var scopes= directive.split("|")[1].split(";");
-						hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {
-							force: false, display : (ಠ_ಠ.SETUP.SINGLE_PAGE || ಠ_ಠ.Flags.page()) ? "page" : "popup",
-							scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.concat(scopes).join(" "))
-						}).then(
-							(a) => {
-								ಠ_ಠ.Flags.log("Signed into Google", a);
+						/* <!-- Extra Scope Authorisation --> */
+						var scopes = directive.split("|")[1].split(";"),
+							_login = google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.concat(scopes).join(" "))),
+							_action = "Signed into additional Google Scopes",
+							_success = (a) => {
+								google_Success(_action)(a);
 								if (!a.unchanged) ಠ_ಠ.google = google_Initialise(a.authResponse);
 								if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
 							}, 
-							(e) => ಠ_ಠ.Flags.error("Signed into Google", e)
-						);
+							_failure = google_Failure(_action),
+							_retry = google_Retry(_login, _success, _failure);
+						_login((ಠ_ಠ.SETUP.SINGLE_PAGE || ಠ_ಠ.Flags.page()) ? "page" : "popup", false).then(_success, _retry);
 						
 					} else {
 					

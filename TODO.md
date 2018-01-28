@@ -1,6 +1,7 @@
 TODO LIST 
 =========
 * ** IMPORTANT ** Google Crawl Fetch rendering nothing.
+* ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
 * ** IMPORTANT ** Make JS Request calls for SW cacheable resources with integrity flags if available
 
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
