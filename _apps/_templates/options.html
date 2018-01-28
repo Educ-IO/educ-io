@@ -14,7 +14,7 @@
           {{#each list}}
           <div class="input-group col-md-12 col-lg-8 col-xl-6 p-1 no-gutters">
             <input data-field="{{@index}}" type="text" class="form-control disabled" value="{{#if name}}{{name}}{{else}}{{this}}{{/if}}" disabled>
-            <div class="input-group-btn">
+            <div class="input-group-append">
               <button id="{{../id}}_{{@index}}_btn" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{#if current}}{{current}}{{else}}Select{{/if}}</button>
               <div class="dropdown-menu dropdown-menu-right" aria-label="{{../choices_label}}">
                 {{#each ../choices}}

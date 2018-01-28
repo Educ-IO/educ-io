@@ -1,0 +1,1 @@
+Please **select file** to import from your device. If you would like **remove** a chosen file, click on the small red cross on the right-hand side of the relevant item from the list below.

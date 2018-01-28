@@ -3,7 +3,8 @@
 </script>
 <style type="text/css">
   {% capture _scss_ %}
-    @import "_variables";
+    @import "_functions";
+		@import "_variables";
     {% if page.colour %}$colour-highlight: #{{ page.colour }};{% elsif layout.colour %}$colour-highlight: #{{ layout.colour }};{% elsif page.app and site.data.apps[page.app].colour %}$colour-highlight: #{{ site.data.apps[page.app].colour }};{% else %}$colour-highlight: {{ site.highlight }};{% endif %}
     @import "_common";
     @import "_fonts";

@@ -3,6 +3,10 @@ Main = function() {
 	/* <!-- Returns an instance of this if required --> */
   if (this && this._isF && this._isF(this.Main)) {return new this.Main().initialise(this);}
 	
+	/* <!-- Internal Constants --> */
+	const LOGIN_RACE = 2000;
+	/* <!-- Internal Constants --> */
+	
 	/* <!-- Internal Variables --> */
 	var ಠ_ಠ;
   /* <!-- Internal Variables --> */
@@ -52,6 +56,7 @@ Main = function() {
 			ಠ_ಠ = container;
 			
 			/* <!-- Initialise Objects --> */
+			if (ಠ_ಠ.Help) ಠ_ಠ.Help();
 			ಠ_ಠ.Recent();
 			ಠ_ಠ.App();
 			
@@ -302,18 +307,29 @@ Main = function() {
 
 					/* <!-- Start Auth Flow --> */
 					try {
-						var g = hello(ಠ_ಠ.SETUP.GOOGLE_AUTH).getAuthResponse();
+						var g = hello(ಠ_ಠ.SETUP.GOOGLE_AUTH).getAuthResponse(), exp = g ? new Date(g.expires * 1000) : null;
 
 						if (is_SignedIn(g)) { /* Signed In */
 							google_LoggedIn(g);
-						} else if (g && new Date(g.expires * 1000) < new Date()) { /* Expired Token */
+						} else if (g && exp < new Date()) { /* Expired Token */
 
+							ಠ_ಠ.Flags.log(`Google Auth Token Expired: ${exp}`);
+							
 							var refresh_race = Promise.race([
 								hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, { /* Try silent token refresh */
-									force: false, display : "none", scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
+									force: false, display : "none", scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")), // was none
 								}),
-								new Promise(function(resolve, reject){
-									setTimeout(function() { reject("Login Promise Timed Out"); }, 2000);
+								new Promise(function(resolve, reject) {
+									setTimeout(function() {
+										return Promise.race([
+											hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, { /* Try pop-up token refresh */
+												force: false, display : "popup", scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")), // was none
+											}),
+											new Promise(function(resolve, reject){
+												setTimeout(function() { reject("Login Promise Timed Out"); }, LOGIN_RACE);
+											})
+										]);
+									}, LOGIN_RACE / 3);
 								})
 							]);
 

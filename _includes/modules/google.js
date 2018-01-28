@@ -25,7 +25,12 @@ Google_API = function(ಠ_ಠ, timeout) {
 		url: "https://sheets.googleapis.com/",
 		rate: 1
 	};
-	const URLS = [GENERAL_URL, SHEETS_URL];
+	const SCRIPTS_URL = {
+		name: "scripts",
+		url: "https://script.googleapis.com/",
+		rate: 1
+	};
+	const URLS = [GENERAL_URL, SHEETS_URL, SCRIPTS_URL];
 	/* <!-- Network Constants --> */
 
 	/* <!-- Internal Constants --> */
@@ -159,7 +164,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 	var _pick = function(title, multiple, team, views, callback, context) {
 
 		if (google.picker) {
-
+			
 			var picker = new google.picker.PickerBuilder()
 				.setTitle(title)
 				.setAppId(CLIENT_ID)
@@ -341,6 +346,11 @@ Google_API = function(ಠ_ಠ, timeout) {
 		/* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
 		me: () => _call(NETWORKS.general.get, "oauth2/v1/userinfo?alt=json&key=" + KEY),
 
+		execute: (id, method, data) => _call(NETWORKS.scripts.post, `/v1/scripts/${id}:run`, {
+			function : method,
+			parameters : data,
+		}),
+		
 		scripts: () => _list(
 			"drive/v3/files", "files", [], {
 				q: "mimeType = 'application/vnd.google-apps.script' and trashed = false",

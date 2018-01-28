@@ -1,10 +1,10 @@
 {% raw %}
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-=order="{{order}}"{{/if}}>
+<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}>
 	<label class="col-md-3 col-form-label" for="{{id}}_SELECTOR">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
 	<div class="col-md-9">
 		<div class="input-group{{#if large}} input-group-lg{{/if}}">
-			{{#if icon}}<div class="input-group-addon d-none d-md-flex"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">{{icon}}</i></div>{{/if}}
+			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
 			<select id="{{id}}_SELECTOR" class="form-control{{#if large}} form-control-lg{{/if}}" data-for="{{id}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>
 				{{#each options}}
 					<option value="{{#if value}}{{value}}{{else}}{{this}}{{/if}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</option>

@@ -148,26 +148,26 @@ App = function() {
 
 			} else if ((/OPEN/i).test(command)) {
 
-				/* <!-- Clear the existing state --> */
-				_clear();
-
 				/* <!-- Pick, then Load the Selected File --> */
 				_pick().then((f) => _load(f, (/FULL/i).test(command[1]), ಠ_ಠ.Sheets, true).then((s) => {
+					_clear(); /* <!-- Clear the existing state --> */
 					_sheets = s;
 					_resize();
 				})).catch(() => _sheets = null);
 
 			} else if ((/LOAD/i).test(command)) {
 
-				/* <!-- Clear the existing state --> */
-				_clear();
-
 				/* <!-- Load the Supplied File Id --> */
 				_load(command[1], (/FULL/i).test(command[2]), ಠ_ಠ.Sheets, true).then((s) => {
+					_clear(); /* <!-- Clear the existing state --> */
 					_sheets = s;
 					_resize();
 				}).catch(() => _sheets = null);
 
+			} else if ((/LOAD/i).test(command)) {
+				
+				/* <!-- Save As JSON to Google Drive --> */
+				
 			} else if ((/REMOVE/i).test(command)) {
 
 				if (command[1].length > 1) ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());
@@ -358,6 +358,10 @@ App = function() {
 					wrapper: "MODAL"
 				}).modal();
 
+			} else if ((/HELP/i).test(command)) { /* <!-- Request Help --> */
+
+				ಠ_ಠ.Help.provide(ಠ_ಠ.Flags.dir());
+							
 			}
 
 			/* <!-- Record the last command --> */

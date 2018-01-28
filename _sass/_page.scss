@@ -124,3 +124,7 @@ nav.navbar.bg-faded {
 .wrap-break {
   overflow-wrap: break-word;
 }
+
+a.no-underline {
+	&:hover {text-decoration: none;}
+}

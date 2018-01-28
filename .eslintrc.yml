@@ -27,6 +27,8 @@ globals:
   google: false
   localforage: false
   Clipboard: false
+  Hashes: false
+  fetchJsonp: false
   moment: false
   autosize: false
   html2canvas: false
@@ -55,3 +57,4 @@ globals:
   Page: true
   Fields: true
   Forms: true
+  Help: true

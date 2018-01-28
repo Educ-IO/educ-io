@@ -3,20 +3,20 @@
 <div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}>
 	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
 	<div class="col-md-9">
-		<div class="btn-group{{#if large}} btn-group-lg{{/if}}" data-toggle="buttons" id="{{id}}_BUTTONS">
+		<div class="btn-group{{#if large}} btn-group-lg{{/if}} btn-group-toggle d-flex flex-wrap" data-toggle="buttons" id="{{id}}_BUTTONS">
 			{{#each options}}
 				<label class="btn{{#if ../large}} btn-lg{{/if}} {{class}} d-flex h-100">
 					<input type="radio" name="{{../id}}_OPTIONS" autocomplete="off" data-target="{{../id}}" data-value="{{value}}" />
-					<i class="material-icons {{#if ../large}}md-24{{else}}md-18{{/if}} md-light md-inactive to-dim align-self-center">{{#if icon}}{{icon}}{{else}}check{{/if}}</i>
+					<i class="material-icons {{#if ../large}}md-24{{else}}md-18{{/if}} md-light md-inactive to-dim">{{#if icon}}{{icon}}{{else}}check{{/if}}</i>
 				</label>
 			{{/each}}
 			<label class="btn btn-secondary d-flex{{#if large}} btn-lg{{/if}} h-100" title="Clear / Reset">
 				<input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-target="{{id}}" />
-				<i class="pl-1 material-icons {{#if large}}md-24{{else}}md-18{{/if}} md-dark align-self-center">refresh</i>
+				<i class="pl-1 material-icons {{#if large}}md-24{{else}}md-18{{/if}} md-dark">refresh</i>
 			</label>
 		</div>
 		<div class="input-group{{#if large}} input-group-lg{{/if}} mt-1">
-			{{#if icon}}<div class="input-group-addon d-none d-md-flex"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">{{icon}}</i></div>{{/if}}
+			{{#if icon}}{{> control_icon visible_at="lg" large=large icon=icon }}{{/if}}
 			<textarea id="{{id}}" name="{{id}}" data-output-name="Value" type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional" readonly="readonly" rows="1"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
 		</div>
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}

@@ -15,7 +15,7 @@
             {{#if options}}<select class="form-control custom-select" id="{{../id}}_{{@index}}_select" name="{{../id}}_{{@index}}_select">
               {{#each options}}<option value="{{@key}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</option>{{/each}}
             </select>{{else}}<input data-field="{{@index}}" type="text" class="form-control disabled" value="{{#if name}}{{name}}{{else}}{{this}}{{/if}}" disabled>{{/if}}
-            <div class="input-group-btn">
+            <div class="input-group-append">
               <button id="{{../id}}_{{@index}}_btn" data-action="{{@key}}" type="button" href="#" class="btn btn-action ml-md-1 ml-lg-2 ml-xl-3">{{#if desc}}{{desc}}{{else}}{{name}}{{/if}}</button>
             </div>
           </div>{{/each}}

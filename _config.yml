@@ -1,7 +1,7 @@
 # Global
 safe:									true
 exclude:							[TODO.md, REPOSITORY.md, CNAME, Gemfile, Gemfile.lock]
-include:							[__tests__, __puppeteer__, _pages, _apps, _extensions, _others, _extras, _scripts]
+include:							[__tests__, __puppeteer__, _pages, _apps, _guides, _extensions, _others, _extras, _scripts]
 timezone:							Europe/London
 
 # Dependencies
@@ -53,3 +53,5 @@ app:
   content:            content
   namespace:          educ
   unsubscribe:        https://www.paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=TVU44HN7F5YE8
+  check:
+    url:              https://script.google.com/macros/s/AKfycbxSo9ufMpvyNVI9nkNDCOVI8E3xSbU7OHlfMhNIx8lJZ6zSY0Jo/exec

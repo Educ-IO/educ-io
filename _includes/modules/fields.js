@@ -145,7 +145,7 @@ Fields = function() {
 		form.find(".eraser").click(function(e) {
 			var _this = $(this);
 			if (_this.data("target")) {
-				$("#" + _this.data("target") + ", #" + _this.data("target") + "> input").val("").removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));	
+				$("#" + _this.data("target") + ", #" + _this.data("target") + "> input").val("").removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
 			} 
 			if (_this.data("reset")) {
 				var _reset = $("#" + _this.data("reset"));
@@ -198,7 +198,7 @@ Fields = function() {
 
 				/* <!-- Get Type and Defaults --> */
 				var _selector = form.find("#" + _this.data("type")),
-					_type = _selector.text(),
+					_type = _selector.text().trim(),
 					_default = _selector.data("default");
 				if (_type == _default) _type = "";
 
@@ -221,7 +221,7 @@ Fields = function() {
 				);
 
 				/* <!-- Clear Up ready for next list item --> */
-				_holder.off("change.validity.test").removeClass("invalid").val("");
+				_holder.off("change.validity.test").val("").removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
 				_selector.text(_default);
 
 			} else {
@@ -240,7 +240,9 @@ Fields = function() {
 	};
 
 	var _autosize = function(form) {
-		autosize(form.find("textarea.resizable"));
+		
+		form.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
+		
 	};
 
 	var _reveal = function(form) {

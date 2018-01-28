@@ -1,5 +1,6 @@
 // -- Loading Container -- //
 $spinner-size-large: 100px;
+$spinner-size-medium: 60px;
 $spinner-size-small: 22px;
 $spinner-duration: 0.8s;
 
@@ -30,17 +31,30 @@ $spinner-duration: 0.8s;
 		}
 	}	
 	// -- Size Options -- //
-	&.loader-large {
+	&.loader-large, &.loader-medium {
 		height: 100%;
 		background-color: rgba($colour-background, 0.9);
 		position: fixed;
 		.loading {
 			position: fixed;
+			transform: translate(-50%, -50%);
+		}
+	}
+	&.loader-large {
+		.loading {
 			width: $spinner-size-large;
 			height: $spinner-size-large;
-			transform: translate(-50%, -50%);
 			.spinner {
 				border: solid $spinner-size-large/10 rgba(0,0,0,0);
+			}
+		}
+	}
+	&.loader-medium {
+		.loading {
+			width: $spinner-size-medium;
+			height: $spinner-size-medium;
+			.spinner {
+				border: solid $spinner-size-medium/10 rgba(0,0,0,0);
 			}
 		}
 	}

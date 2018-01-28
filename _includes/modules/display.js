@@ -67,6 +67,12 @@ Display = function() {
 			_compile(name) : Handlebars.templates[name];
 
 	};
+	
+	var _clean = function() {
+		/* <!-- Weird Modal Not Hiding Bug --> */
+		$(".modal-backdrop").remove();
+		$(".modal-open").removeClass("modal-open");
+	};
 	/* <!-- Internal Functions --> */
 
 	/* <!-- External Visibility --> */
@@ -246,11 +252,14 @@ Display = function() {
 
 			var _element = _target(options);
 			
-			if (!options || !options.class) options ? options.class = "loader-large" : options = {class: "loader-large"};
 			(options && options.clear === true) || _element.find(".loader").length > 0 ?
-				_element.find(".loader").remove() : _element.prepend(_template("loader")(options));
+				_element.find(".loader").remove() : _element.prepend(_template("loader")(options ? options : {}));
 
-			return this;
+			return options && !options.clear && (options === true || options.fn === true) ? ((fn, opts) => {
+  			opts.clear = true;
+				return () => fn(opts);
+			})(this.busy, options === true ? {} : options) : this;
+			
 		},
 
 		/*
@@ -270,7 +279,7 @@ Display = function() {
 
 				/* <!-- Set Event Handlers --> */
 				dialog.find("button.btn-primary").click(function() {
-					$(".modal-backdrop").remove();
+					_clean();
 					resolve(true);
 				});
 				dialog.on("hidden.bs.modal", function() {
@@ -290,7 +299,7 @@ Display = function() {
 
 			}
 		*/
-		modal: function(template, options) {
+		modal: function(template, options, shown) {
 
 			return new Promise((resolve, reject) => {
 
@@ -303,21 +312,19 @@ Display = function() {
 				if (dialog.find("button.btn-primary").length > 0 && dialog.find("form").length > 0) {
 					/* <!-- Set Form / Return Event Handlers --> */
 					dialog.find("button.btn-primary").click(function() {
-						/* <!-- Weird Modal Not Hiding Bug --> */
-						$(".modal-backdrop").remove();
+						_clean();
 						resolve(dialog.find("form").serializeArray());
 					});
-					dialog.on("hidden.bs.modal", function() {
-						dialog.remove();
-						reject();
-					});
-				} else {
-					/* <!-- Set Basic Event Handlers --> */
-					dialog.on("hidden.bs.modal", function() {
-						dialog.remove();
-						resolve();
-					});
 				}
+				
+				/* <!-- Set Shown Event Handler (if present) --> */
+				if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
+				
+				/* <!-- Set Basic Event Handlers --> */
+				dialog.on("hidden.bs.modal", function() {
+					dialog.remove();
+					resolve();
+				});
 
 				/* <!-- Show the Modal Dialog --> */
 				dialog.modal("show");
@@ -387,8 +394,9 @@ Display = function() {
 				/* <!-- Set Event Handlers --> */
 				dialog.find("button.btn-primary").click(function() {
 					var _value = dialog.find("input[name='choices']:checked, select[name='choices'] option:selected").val();
-					/* <!-- Weird Modal Not Hiding Bug --> */
-					$(".modal-backdrop").remove();
+					
+					_clean();
+					
 					if (_value && options.choices[_value]) resolve(options.choices[_value]);
 
 				});
@@ -423,7 +431,7 @@ Display = function() {
 				/* <!-- Great Modal Options Dialog --> */
 				var dialog = $(_template("options")(options));
 				_target(options).append(dialog);
-				dialog.find("a.dropdown-item").on("click.toggler", (e) => $(e.target).closest(".input-group-btn").children("button")[0].innerText = e.target.innerText);
+				dialog.find("a.dropdown-item").on("click.toggler", (e) => $(e.target).closest(".input-group-append, .input-group-prepend").children("button")[0].innerText = e.target.innerText);
 				dialog.find("a[data-toggle='tooltip']").tooltip({
 					animation: false
 				});
@@ -478,8 +486,7 @@ Display = function() {
 				dialog.find("button.btn-primary").click(function() {
 					var _name = dialog.find("textarea[name='name'], input[type='text'][name='name']").val();
 					var _value = dialog.find("textarea[name='value'], input[type='text'][name='value']").val();
-					/* <!-- Weird Modal Not Hiding Bug --> */
-					$(".modal-backdrop").remove();
+					_clean();
 					if (_value && (!options.validate || options.validate.test(_value))) 
 						resolve(_name ? {name: _name, value: _value} : _value);
 
@@ -527,17 +534,14 @@ Display = function() {
 				
 				/* <!-- Handle File Upload --> */
 				dialog.find("input[type='file']").on("change", function upload(e) {
-					files = files.concat(_.toArray(e.target.files));
+					files = options.single ? _.toArray(e.target.files) : files.concat(_.toArray(e.target.files));
 					if (files.length > 0) _populate();
   			});
 				
 				/* <!-- Set Event Handlers --> */
 				dialog.find("button.btn-primary").click(function() {
-					
-					/* <!-- Weird Modal Not Hiding Bug --> */
-					$(".modal-backdrop").remove();
-					if (files && files.length > 0) resolve(files);
-
+					_clean();
+					if (files && files.length > 0) resolve(options.single ? files[0] : files);
 				});
 				dialog.on("hidden.bs.modal", function() {
 					dialog.remove();
@@ -582,8 +586,7 @@ Display = function() {
 					
 					e.preventDefault();
 					
-					/* <!-- Weird Modal Not Hiding Bug --> */
-					$(".modal-backdrop").remove();
+					_clean();
 					
 					var _this = $(this), _action = options.actions[_this.data("action")];
 					resolve({

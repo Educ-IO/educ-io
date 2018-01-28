@@ -36,7 +36,7 @@ Page = function() {
 					_button = _$.data("tier-button"),
 					_data = _$.data("tier-data"),
 					_details = _$.data("tier-details");
-				/* ಠ_ಠ.Display.modal("subscribe", {
+				ಠ_ಠ.Display.modal("subscribe", {
 					title: `${_tier} Subscription`,
 					message: ಠ_ಠ.Display.doc.get({
 						name: "SUBSCRIBE",
@@ -44,7 +44,7 @@ Page = function() {
 					button: _button,
 					data: _data,
 					details: _details
-				}); */
+				});
 			});
 
 		},

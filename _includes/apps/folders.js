@@ -20,7 +20,7 @@ App = function() {
 
 		return new Promise((resolve, reject) => {
 
-			/* <!-- Open Sheet from Google Drive Picker --> */
+			/* <!-- Open Folder from Google Drive Picker --> */
 			ಠ_ಠ.google.pick(
 				"Select a Folder to Open", false, true,
 				() => [new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"), 
@@ -306,6 +306,10 @@ App = function() {
 			} else if ((/DELETE/i).test(command)) {
 
 				if (_folder) _folder.delete();
+			
+			} else if ((/HELP/i).test(command)) { /* <!-- Request Help --> */
+
+				ಠ_ಠ.Help.provide(ಠ_ಠ.Flags.dir());
 				
 			}
 

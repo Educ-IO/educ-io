@@ -1,4 +1,4 @@
-Network = function(base, timeout, rate, retry) {
+Network = function(base, timeout, rate, retry, type) {
 	"use strict";
 
 	/* <!-- Backoff Constants --> */
@@ -85,11 +85,12 @@ Network = function(base, timeout, rate, retry) {
 			verb = verb.toUpperCase();
 			var _url = new URL(url, base);
 			var _request = {
-				mode: "cors",
+				mode: type ? type : "cors",
 				method: verb,
 				headers: {
 					"Content-Type": contentType ? contentType : "application/json"
 				},
+				redirect: "follow",
 				body: verb != "GET" ? !contentType || contentType == "application/json" ? JSON.stringify(data) : data : null
 			};
 
@@ -129,6 +130,10 @@ Network = function(base, timeout, rate, retry) {
 						
 						/* <!-- 500 errors or 413 (Entity Too Large) means rejection --> */
 						reject({name: "HTTP 50x Error", url: response.url, status: response.status, statusText: response.statusText});
+					
+					} else if (response.status == 301 || response.status == 302) {
+							
+						reject({name: "Got Redirect", url: response.url, status: response.status, statusText: response.statusText});
 						
 					} else if (response.status == 401 && a--) {
 
@@ -144,6 +149,12 @@ Network = function(base, timeout, rate, retry) {
 								}, RANDOM(RETRY_WAIT_LOWER, RETRY_WAIT_UPPER) * (RETRY_MAX - a)) : 
 							reject({name: "Failed Auth Check", url: response.url, status: response.status, statusText: response.statusText});
 
+					} else if (response.status === 0 && response.type == "opaque") {
+						
+						response.text()
+							.then(value => resolve(value))
+							.catch(e => reject({name: "Unhandled Response Error", url: response.url, status: response.status, statusText: response.statusText}));
+						
 					} else if (retry && a--) {
 						
 						/* <!-- If we can retry ... give it a whirl --> */

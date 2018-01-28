@@ -1,0 +1,3 @@
+Unfortunately, we are __currently not able to confirm__ your subscription status. This is likely due to a technical issue rather than any problem with your subscription! If __you are subscriber__ then you can get answers or guidance by email. Simply [click here](mailto:help@educ.io?subject=Help Request for {{app}} App){:target="_blank"} to send us an email and we'll reply as soon as possible. 
+
+Please make sure you send this email from your __subscribed account__. If you are not a subscriber, you can send us a problem report via our [issues tracker]({{ site.repo }}/issues/new). If you need urgent help, you are welcome to __[subscribe](/support){:target="_blank"}__ right now and then send us an email. We'll respond as quickly as we can.

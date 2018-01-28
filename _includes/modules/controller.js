@@ -23,7 +23,7 @@ Controller = function() {
 		a.setAttribute("id", g.id);
 		a.setAttribute("data-type", "import");
 		a.setAttribute("data-src", g.url);
-		if (o == "style") m = s.getElementsByTagName(o)[0];
+		if (o == "style") m = s.getElementsByTagName(o)[0]; else if (o == "script") a.setAttribute("aria-hidden", "true");
 		var t = g.text;
 		if (g.map === true) {
 			var map_regex = /[\/\*|\/\/]#[\s]*sourceMappingURL=(\S+)[\s]*[\*\/]?/gi, map_urls;

@@ -473,7 +473,6 @@ Forms = function() {
 						field: "Span",
 						icon: "query_builder",
 						help: markdown("For which assessment period is this report for?"),
-						large: true,
 						required: true,
 						type: "Custom",
 						options: [
@@ -680,7 +679,7 @@ Forms = function() {
 		
 		get : (name) => ({template: _forms[name], form : _create(name, _forms[name])}),
 		
-		create : (id, template) => _create(id, template),
+		create : (id, template) => ({template: template, form : _create(id, template)}),
 		
   };
   /* <!-- External Visibility --> */

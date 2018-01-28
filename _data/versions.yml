@@ -1,4 +1,8 @@
 site :
+  0.0.7 :
+    name : Significant Infrastructure Changes
+    desc : Updates to a variety of templates and processes
+    type : major
   0.0.6z :
     name : Reflect 0.0.3b-alpha
     desc : Saving Methods in Reflect App
@@ -315,6 +319,9 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.3c-alpha :
+    name : Form Saving Methods
+    type : minor
   0.0.3b-alpha :
     name : Form Saving Methods
     type : minor

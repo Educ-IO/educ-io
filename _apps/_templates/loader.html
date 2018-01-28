@@ -1,5 +1,5 @@
 {% raw %}
-<div class="loader{{#if class}} {{class}}{{/if}}">
+<div class="loader{{#exists class}} {{class}}{{else}} loader-large{{/exists}}">
   <div class="loading">
     <div class="spinner"></div>
   </div>

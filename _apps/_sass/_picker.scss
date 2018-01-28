@@ -1,4 +1,8 @@
 // -- Google Drive File Picker -- //
+.picker.modal-dialog.picker-dialog {
+	pointer-events: all !important;	
+}
+
 .picker.modal-dialog-content.picker-dialog-content {
 	max-width: 100% !important;
 }

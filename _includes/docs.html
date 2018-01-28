@@ -38,9 +38,7 @@
 
     {% capture markdown %}{% include_relative _docs/{{ doc }}.md %}{% endcapture %}
 
-    <script id="__doc__{% if doc contains '/' %}{{ doc | split: '/' | last }}{% else %}{{ doc }}{% endif %}" type="text/template"  data-src="docs">
-     {{ markdown | markdownify }}
-    </script>
+    <script id="__doc__{% if doc contains '/' %}{{ doc | split: '/' | last }}{% else %}{{ doc }}{% endif %}" type="text/template"  data-src="docs">{{ markdown | markdownify | strip }}</script>
 
   {% endfor %}
 

@@ -7,10 +7,10 @@ form {
     opacity: 0.25;
   }
   .optional {
-    background-color: $colour-optional;
+    background-color: $colour-optional !important;
   }
   .invalid {
-    background-color: $colour-invalid;
+    background-color: $colour-invalid !important;
   }
   textarea, .resizable {
     width: 100%;

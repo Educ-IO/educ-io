@@ -4,9 +4,36 @@ html, body {
   height: 100vh;
 }
 
+// -- Google Button -- //
+.google-logo-wrapper {
+	padding: 10px 12px 10px 10px;
+	background: $colour-background;
+	float: left;
+}
+
+.google-logo {
+	width: 18px;
+	height: 18px;
+}
+// -- Google Button -- //
+
 // -- Action Button -- //
+#sign_in .btn, #sign_out .btn {
+	border-radius: 2px;
+}
+
 #sign_in .btn {
 	background-color: $colour-background;
+	padding: 0;
+  
+	span {
+		font-size:16px;
+		line-height:38px;
+		padding-left: 12px;
+		padding-right: 8px;
+    letter-spacing: .21px;
+    vertical-align: top;
+	}
 }
 
 .btn-outline-action {
@@ -162,3 +189,62 @@ a.disabled, input.disabled {
 a.download {
 	&:hover {text-decoration: none; font-weight: bold;}
 }
+
+// -- Results -- //
+.results {
+	
+	$result-height: 100px;
+	min-height: $result-height;
+	
+	.result {
+		
+		&.success svg path.result-result {
+			stroke: $colour-success;
+		}
+		
+		&.failure path.result-result {
+			stroke: $colour-error;
+		}
+		
+		&.indeterminate path.result-result {
+			stroke: $colour-warning;
+		}
+		
+		svg {
+	
+			max-height: $result-height;
+
+			path {
+				fill: none;
+				stroke-linejoin: round;
+				stroke-linecap: butt;
+				
+				&.result-container {
+					stroke: $colour-deemphasise;
+					stroke-width: 2.0;
+					opacity: 0;
+					stroke-dasharray: 130;
+					stroke-dashoffset: 130;
+					@include transition(all 1s);
+				}
+
+				&.result-result {
+					stroke-width: 4.0;
+					opacity: 0;
+					stroke-dasharray: 50;
+					stroke-dashoffset: 50;
+					@include transition(stroke-dashoffset 1s 0.5s ease-out);
+				}
+				
+			}
+
+		}
+		
+		.details, .details a {
+			color: transparent;
+			@include transition(all 1.5s 0.5s ease-out);
+		}
+	}
+	
+}
+// -- Results -- //

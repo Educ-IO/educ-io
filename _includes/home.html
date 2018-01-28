@@ -16,12 +16,13 @@
 
 	{% if apps and apps.size > 0 %}
 	<div class="d-flex flex-row flex-wrap mx-1 my-2 border border-white">
-		{% for app in apps %}{% capture c %}{% cycle 'odd', 'even' %}{% endcapture %}
+		{% for app in apps %}{% capture c %}{% cycle 'odd', 'even' %}{% endcapture %}{% capture t %}btn-outline-{% if c == 'odd' %}primary{% else %}secondary{% endif %}{% endcapture %}{% capture i %}{{ app.name | replace: '_', '' | replace: '`', '' | replace: '?', '' | replace: '!', '' | replace: ' ', '' | downcase }}{% endcapture %}
 			<div class="col-12 col-md-4 p-2 p-md-4{% if c == 'odd' %} bg-light{% endif %} border border-white rounded">
-    		<h3{% if app.colour %} style="color: #{{ app.colour }} !important;"{% endif %}>{{ app.name }}</h3>
+    		{% if app.learn %}<a id="title_{{ i }}" class="no-underline" href="{{ app.learn }}"{% if app.ext %} target="_new"{% endif %}>{% endif %}<h3{% if app.colour %} style="color: #{{ app.colour }} !important;"{% endif %}>{{ app.name }}</h3>{% if app.learn %}</a>{% endif %}
     		<p>{{ app.desc | markdownify }}</p>
     		<hr class="half-rule">
-    		<a id="open_{{ app.name | replace: '_', '' | replace: '`', '' | replace: '?', '' | replace: '!', '' | replace: ' ', '' | downcase }}" class="btn btn-outline-{% if c == 'odd' %}primary{% else %}secondary{% endif %}" href="{{ app.link }}"{% if app.ext %} target="_new"{% endif %}>{% if app.action %}{{ app.action }}{% else %}Open {{ app.name }}{% endif %}</a>
+    		<a id="open_{{ i }}" class="btn {{ t }}{% if app.learn %} mb-1 mb-lg-2{% endif %}" href="{{ app.link }}"{% if app.ext %} target="_new"{% endif %}>{% if app.action %}{{ app.action }}{% else %}<strong>Open</strong> {{ app.name }}{% endif %}</a>
+				{% if app.learn %}<a id="learn_{{ i }}" class="btn btn-outline-dark mb-1 mb-lg-2" href="{{ app.learn }}"{% if app.ext %} target="_new"{% endif %}>Learn about {{ app.name }}</a>{% endif %}
   		</div>
 		{% endfor %}
 	</div>

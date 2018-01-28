@@ -8,10 +8,9 @@
 				{{ app.desc | replace: '_', '' }}
 			</p>
 			{{ text | markdownify }}
-			<div class="d-flex flex-column flex-lg-row lead mb-3 mt-4">
-				{% if include.start_url %}<a href="{{ include.start_url }}"{% if include.start %} onclick="event.preventDefault(); document.getElementById('{{ include.start }}').click(); event.target.removeAttribute('onclick');"{% endif %} class="btn btn-lg btn-action mb-3 mb-lg-0 mr-lg-3">{{ include.start_desc }}</a>{% endif %}
-				{% if include.secondary_url %}<a href="{{ include.secondary_url }}"{% if include.secondary %} onclick="event.preventDefault(); document.getElementById('{{ include.secondary }}').click(); event.target.removeAttribute('onclick');"{% endif %} class="btn btn-lg btn-action mb-3 mb-lg-0 mr-lg-3">{{ include.secondary_desc }}</a>{% endif %}
-				<a href="/support/" class="btn btn-lg btn-outline-success">Support</a>
+			<div class="d-flex flex-column flex-lg-row flex-wrap lead mb-3 mt-4">
+				{% for button in include.buttons %}<a href="{{ button.url }}"{% if button.menu %} onclick="event.preventDefault(); document.getElementById('{{ button.menu }}').click(); event.target.removeAttribute('onclick');"{% endif %} class="btn btn-lg btn-action mb-3 mb-lg-2 mr-lg-3">{{ button.desc }}</a>{% endfor %}
+				<a href="/support/" class="btn btn-lg mb-3 mb-lg-2 btn-outline-success">Support</a>
 			</div>
 			<div class="d-flex flex-column flex-md-row mb-3 mt-2">
 				{% raw %}{{content}}{% endraw %}

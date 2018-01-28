@@ -1,7 +1,8 @@
 TODO LIST 
 =========
-* ** IMPORTANT ** Put placeholder dialogs on Subscription options
+* ** IMPORTANT ** Google Crawl Fetch rendering nothing.
 * ** IMPORTANT ** Make JS Request calls for SW cacheable resources with integrity flags if available
+
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo
 * Favicon Background?
@@ -13,7 +14,6 @@ TODO LIST
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
 * Contrite Penguin 404 Page
 * Links to ISSUE trackers for APPS and EXTENSIONS ??
-* Branding License
 * Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency?
 
 Router
@@ -22,7 +22,8 @@ Router
 
 Apps
 ----
-* ** IMPORTANT ** Clear process instructions? Visual?
+* ** IMPORTANT ** Clear process instructions? Visual? <- App Guides
+* ** IMPORTANT ** Getting Help Instructions and Process
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
 * ** IMPORTANT ** Retries (in network.js) takes too long when handling security (401) errors
@@ -31,6 +32,7 @@ Apps
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 * Javascript/CSS to move / expand busy Loader when App page is scrolled and not locked to top
 * Success / Failure response in Busy Loader? E.g. Animate to cross if it fails?
+* Picker can be difficult if third party cookies or referral headers are blocked.....
 
 Mobile
 ------
@@ -43,6 +45,8 @@ Mobile
 
 View
 ----
+* Occasional Problems with Picker... <-- Seems to be related to scopes. Have added https://www.googleapis.com/auth/drive.readonly and that has cleared it up? <==DONE
+
 * ** IMPORTANT ** Column Filters (Type)
 * ** IMPORTANT ** Do went need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view <++ YES
 * Write Flexbox-based Fit Algorithm
@@ -55,7 +59,7 @@ View
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
 * Numerical Filter implies re-sort?
 * Auto-hide hidden columns (from original sheet)
-* Export -> Select Single, Multiple or All Tabs for export (need a custom template for this)
+
 * Include instructions about Exporting only exporting values rather than formulas or formats.
 
 Folders
@@ -72,20 +76,36 @@ Merge
 
 Reflect
 -------
+* ** IMPORTANT ** >1 Evidence Items not outputted in JSON (De-Hydrate)
+* ** IMPORTANT ** Evidence Check Boxes not being toggled (Re-Hydrate)
+* ** IMPORTANT ** Feedback on successful save?
 * ** IMPORTANT ** Save, Send & Complete Instructions / About
 * ** IMPORTANT ** Re-Hydrate Functionality
 * ** IMPORTANT ** * Optional Gradings against standards
+* 'Save' Screenshot does not work with dynamic / loaded Stylesheets -> Fixed in Version 1.0.0 but not on CDN-JS
 * Change UI Buttons (Save, Complete etc) for Report / Form
 * Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL
 * Email group from above.
-* Picker seems to have problems overlaying card for Report Form?
 * Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS
 
 Complete
 --------
+* Export -> Select Single, Multiple or All Tabs for export (need a custom template for this) <-- DONE
+* ** IMPORTANT ** Branding License <-- DONE
+* Scripts should have [aria-hidden="true"] on them? <-- DONE
+* Integrate new Bootstrap Beta <-- DONE
+* Add Item doesn't reset size of textarea <-- DONE
+* Occasional min sizing of TEXTAREA to 50px on smaller screens? <-- DONE
+* Picker seems to have problems overlaying card for Report Form? <-- DONE
+* Upload Control from Menu (for exported report) -> Use upload dialog (IMPORT) <-- DONE
+* Clean Up Display.Busy for simplified calling <-- DONE
+* Screenshot / Snapshot not working properly from button at bottom of form. <-- DONE
+* Guides functionality for Apps <-- DONE
+* ** IMPORTANT ** 'Get Help' Pages and Services <-- DONE
+* Add scss mixins functionality <-- DONE
 * Regex to extract Email Address from person fields (with various types of surrounding brackets) <-- DONE
 * ** IMPORTANT ** Thumbnail of Saved Report / Form -> Uploaded with file to Google Drive <== DONE
-* Load Text from Doc for Textual Control <== DONE
+* Load Text from Doc for Textual Control <-- DONE
 * ** IMPORTANT ** De-Hydrate Functionality <-- DONE
 * Recently Saved Reports <== DONE
 * Should everything be written as sheets or JSON? .reflect files? With output to spreadsheet? How does this impact analytics? <== DONE
@@ -307,4 +327,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2017-12-13
+ᕕ( ᐛ )ᕗ JD - 2018-01-28

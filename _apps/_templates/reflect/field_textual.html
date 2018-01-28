@@ -4,17 +4,15 @@
 	<label class="{{#if wide}}col-12{{else}}col-md-3{{/if}} col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
 	<div class="{{#if wide}}col-12{{else}}col-md-9{{/if}}">
 		<div class="input-group{{#if large}} input-group-lg{{/if}}">
-		{{#if icon}}<div class="input-group-addon d-none d-md-flex"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">{{icon}}</i></div>{{/if}}
+			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
 			{{#if rows}}
 			<textarea id="{{id}}" name="{{id}}" data-output-name="Value" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional"{{#if required}} required="required"{{/if}} rows="{{rows}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
 			{{else}}
 			<input id="{{id}}" name="{{id}}" data-output-name="Value" type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable"{{#if required}} required="required"{{/if}} {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}/>
 			{{/if}}
-			{{#if button}}<span class="input-group-btn{{#if large}} input-group-btn-lg{{/if}}">
-				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-secondary eraser d-flex h-100" title="Clear / Reset" data-target="{{id}}">
-					<i class="pr-1 material-icons {{#if large}}md-24{{else}}md-18{{/if}} md-dark align-self-center">refresh</i>
-				</button>
-        <button id="{{id}}_BUTTON" class="btn{{#if large}} btn-lg{{/if}} btn-primary textual-input-button d-flex h-100" type="button" data-target="{{id}}"{{#if action}} data-action="{{action}}"{{/if}}>{{button}}</button>
+			{{#if button}}<span class="input-group-append">
+				{{> control_button b_class="btn-secondary eraser" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
+				{{> control_button b_id=(concat id "_BUTTON") b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button }}
       </span>{{/if}}
 		</div>
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}
