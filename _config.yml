@@ -1,7 +1,7 @@
 # Global
 safe:									true
 exclude:							[TODO.md, REPOSITORY.md, CNAME, Gemfile, Gemfile.lock]
-include:							[__tests__, __puppeteer__, _pages, _apps, _guides, _extensions, _others, _extras, _scripts]
+include:							[__tests__, __puppeteer__, _pages, _apps, _guides, _extensions, _tools, _others, _extras, _scripts]
 timezone:							Europe/London
 
 # Dependencies
@@ -10,6 +10,10 @@ markdown:							kramdown
 # Styling
 sass:
   sass_dir:						_sass
+  load_paths:
+                      - _sass
+                      - _sass/bootstrap
+                      - _sass/custom
   style:							compressed
 
 # Compression
@@ -43,7 +47,7 @@ debug:                "debug"
 performance:          "perf"
 compress:             "compress"
 array:                []
-highlight:            "#af0ad9"
+highlight:            "af0ad9"
 
 # Extras
 analytics:

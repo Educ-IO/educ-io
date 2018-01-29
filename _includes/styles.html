@@ -1,0 +1,15 @@
+{% if include.sensitive %}<script type="text/javascript" charset="utf-8" data-type="script" data-src="sensitive">
+	{% include scripts/sensitive.js %}
+</script>{% endif %}
+<style type="text/css">
+  {% capture _scss_ %}
+		$colour-highlight: #{% if include.colour and include.colour | size > 0 %}{{ include.colour }}{% else %}{{ site.highlight }}{% endif %};
+		{% if include.imports and include.imports | size > 0 %}{% for import in include.imports %}
+			@import "{{ import }}";	
+		{% endfor %}{% endif %}
+		{% if include.icons %}{% if site.data.fonts["Material Icons"].for contains page.app or site.data.fonts["Material Icons"].for contains page.name %}@import "custom/icons";{% endif %}{% endif %}
+		{% if include.sensitive %}{% include css.html %}{% endif %}
+    {% if include.logo %}.logo {background-image: url('data:image/svg+xml;utf8,{% include images/logo.svg %}'), none;}{% endif %}
+  {% endcapture %}
+  {{ _scss_ | scssify }}
+</style>

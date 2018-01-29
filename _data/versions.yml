@@ -1,4 +1,8 @@
 site :
+  0.0.7h :
+    name : Switch in inline CSS
+    desc : Switch to inline CSS to fix some bugs and improve performance
+    type : minor
   0.0.7g :
     name : Service Worker Updates
     desc : Updates to service worker interfacing code

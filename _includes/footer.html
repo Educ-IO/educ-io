@@ -1,4 +1,4 @@
-{% if include.type == "app" or page.templates or layout.templates or page.docs or layout.docs %}
+{% assign colour = false %}{% if page.colour %}{% assign colour = page.colour %}{% elsif layout.colour %}{% assign colour = layout.colour %}{% elsif page.app and site.data.apps[page.app].colour %}{% assign colour = site.data.apps[page.app].colour %}{% endif %}{% assign css = false %}{% if page.css %}{% assign css = page.css.secondary %}{% elsif layout.css %}{% assign css = layout.css.secondary %}{% elsif page.app and site.data.apps[page.app].css %}{% assign css = site.data.apps[page.app].css.secondary %}{% endif %}{% if include.type == "app" or page.templates or layout.templates or page.docs or layout.docs %}
   {% include docs.html %}
   {% include templates.html %}
 {% endif %}
@@ -41,3 +41,4 @@
     {% endfor %}
   {% endif %}
 {% endif %}
+{% include styles.html icons="true" colour=colour imports=css %}

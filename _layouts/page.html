@@ -1,6 +1,5 @@
 ---
 layout: compress
-style: page
 modules:
   - controller
   - service
@@ -11,19 +10,53 @@ imports:
   load: first
 - name: popper
   load: first
-- name: bootstrap-css
-  load: first
 - name: bootstrap-js
   load: last
 - name: urlparser
   load: last
+css:
+  primary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/root
+    - bootstrap/reboot
+    - bootstrap/type
+    - bootstrap/images
+    - bootstrap/grid
+    - bootstrap/buttons
+    - bootstrap/dropdown
+    - bootstrap/nav
+    - bootstrap/navbar
+    - bootstrap/card
+    - bootstrap/badge
+    - bootstrap/jumbotron
+    - bootstrap/utilities
+    - custom/functions
+    - custom/variables
+    - custom/common
+    - custom/fonts
+    - custom/page
+  secondary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/transitions
+    - bootstrap/alert
+    - bootstrap/close
+    - bootstrap/modal
+    - bootstrap/tooltip
+    - bootstrap/popover
+    - bootstrap/list-group
+    - bootstrap/forms
+    - bootstrap/print
 ---
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
 	{% include head.html %}
 	<body class="container">
 		{% include nav.html type="sticky-top" %}
-		<div class="container css-sensitive pb-4 px-0">
+		<div class="container pb-4 px-0">
 			<div class="jumbotron pt-4 pb-2">
   			<h1 class="display-4">{{ page.title }}</h1>
   			{% if page.lead %}<p class="lead">{{ page.lead | markdownify | remove: "<p>" | remove: "</p>" }}</p>{% endif %}

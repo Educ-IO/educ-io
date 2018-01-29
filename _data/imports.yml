@@ -213,27 +213,6 @@ tether:
       crossorigin: anonymous
       id: __tether
 
-bootstrap-css:
-  name: Bootstrap (CSS)
-  desc: This is a toolkit / framework for site design, layout and presentation.
-  url: https://cdnjs.com/libraries/twitter-bootstrap
-  project: http://getbootstrap.com/
-  version: 4.0.0
-  license: MIT
-  type: css
-  prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css
-      integrity: sha256-LA89z+k9fjgMKQ/kq4OO2Mrf8VltYml/VES+Rg0fh20=
-      crossorigin: anonymous
-      map: true
-      id: __bootstrap-css
-  dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css
-      integrity: sha256-jBpMJWNNWEGSSqsYSKzJ3Lw9VnIYMFPItx/yE5tl18M=
-      crossorigin: anonymous
-      map: true
-      id: __bootstrap-css
-
 bootstrap-js:
   name: Bootstrap (JS)
   desc: This is a toolkit / framework for site design, layout and presentation.

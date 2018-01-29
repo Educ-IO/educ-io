@@ -1,7 +1,9 @@
 TODO LIST 
 =========
 * ** IMPORTANT ** Google Crawl Fetch rendering nothing.
+
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
+
 * ** IMPORTANT ** Make JS Request calls for SW cacheable resources with integrity flags if available
 
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
@@ -24,7 +26,7 @@ Router
 Apps
 ----
 * ** IMPORTANT ** Clear process instructions? Visual? <- App Guides
-* ** IMPORTANT ** Getting Help Instructions and Process
+
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
 * ** IMPORTANT ** Retries (in network.js) takes too long when handling security (401) errors
@@ -91,6 +93,7 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT ** Getting Help Instructions and Process <-- DONE
 * Accessibility Checks <-- DONE
 * Export -> Select Single, Multiple or All Tabs for export (need a custom template for this) <-- DONE
 * ** IMPORTANT ** Branding License <-- DONE
@@ -329,4 +332,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-01-28
+ᕕ( ᐛ )ᕗ JD - 2018-01-29

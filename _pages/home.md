@@ -4,6 +4,30 @@ title: Home
 permalink: /
 style: page
 title: Web Apps & Tools built for Google Apps
+css:
+  primary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/root
+    - bootstrap/reboot
+    - bootstrap/type
+    - bootstrap/images
+    - bootstrap/grid
+    - bootstrap/buttons
+    - bootstrap/utilities
+    - custom/functions
+    - custom/variables
+    - custom/common
+    - custom/fonts
+    - custom/logo
+  secondary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/alert
+    - bootstrap/close
+    - bootstrap/print
 ---
 {% capture text %}
 __Welcome__ to our place, __open it__ up and find a collection of `free web apps` that __integrate__ with the Google platform. They make complex and everyday tasks __easier__, __faster__ and more __intuitive__.

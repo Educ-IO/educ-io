@@ -9,7 +9,7 @@ We __support__{:.text-success} the most recent versions of all major browsers:
 
 As these are __client-side__ web apps, they require Javascript for their operation. If you don't have Javascript enabled in your browser, you will be able to __read all the pages__ on this site, but __not__ use the apps.
 
-__We do not support__{:.text-danger} __Internet Explorer__ or older versions (pre-2017) or the native __Android Browser__. If you are using an Android tablet or phone, we strongly recommend using [Chrome for Android](https://play.google.com/store/apps/details?id=com.android.chrome){:target="_blank"} rel="noopener" instead.
+__We do not support__{:.text-danger} __Internet Explorer__ or older versions (pre-2017) or the native __Android Browser__. If you are using an Android tablet or phone, we strongly recommend using [Chrome for Android](https://play.google.com/store/apps/details?id=com.android.chrome){:target="_blank" rel="noopener"} instead.
 
 Some features will __not be available__{:.text-warning} on all platforms:
 

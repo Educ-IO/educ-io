@@ -9,16 +9,6 @@ nav.navbar.bg-faded {
 	background-color: $colour-section;
 }
 
-.lead {
-	code {
-		font: inherit;
-		color: $colour-support;
-		font-weight: bold;
-		padding: 0;
-		background-color: inherit;
-	}
-}
-
 .highlight_all {
 	border-bottom: thin solid $colour-emphasis;
 }
@@ -120,11 +110,3 @@ nav.navbar.bg-faded {
 	
 }
 // -- Support / Pricing Page -- //
-
-.wrap-break {
-  overflow-wrap: break-word;
-}
-
-a.no-underline {
-	&:hover {text-decoration: none;}
-}

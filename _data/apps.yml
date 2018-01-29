@@ -5,7 +5,7 @@
 #   `8bd8'    .88.   88.     `8b d8'8b d8'
 #     YP    Y888888P Y88888P  `8b8' `8d8' 
 
-###################################################################################################################
+##########################################
 
 view:
   name: View
@@ -18,8 +18,6 @@ view:
     - name: underscore
       load: first
     - name: jquery
-      load: first
-    - name: bootstrap-css
       load: first
     - name: popper
       load: first
@@ -115,7 +113,7 @@ view:
       - scope: https://www.googleapis.com/auth/drive.readonly
         name: View the files in your Google Drive
         reason: In order to read previously saved view files, this 'readonly' permissions is required.
-        request: lazy
+        request: login
       - scope: https://www.googleapis.com/auth/urlshortener
         name: Manage your goo.gl short URLs
         reason: Once you have created a link to share in this app, you have the option of using the Google Link Shortener to 'compress' it. This scope allows access to that feature.
@@ -278,7 +276,7 @@ view:
 #  88`8b   88~~~~~ 88~~~   88      88~~~~~ 8b         88   
 #  88 `88. 88.     88      88booo. 88.     Y8b  d8    88   
 #  88   YD Y88888P YP      Y88888P Y88888P  `Y88P'    YP   
-###################################################################################################################
+###########################################################
 
 reflect:
   name: Reflect
@@ -291,8 +289,6 @@ reflect:
     - name: underscore
       load: first
     - name: jquery
-      load: first
-    - name: bootstrap-css
       load: first
     - name: popper
       load: first
@@ -571,7 +567,7 @@ reflect:
 #  88~~~   88    88 88      88   88 88~~~~~ 88`8b     `Y8b.
 #  88      `8b  d8' 88booo. 88  .8D 88.     88 `88. db   8D
 #  YP       `Y88P'  Y88888P Y8888D' Y88888P 88   YD `8888Y'
-###################################################################################################################
+###########################################################
 
 folders:
   name: Folders
@@ -584,8 +580,6 @@ folders:
     - name: underscore
       load: first
     - name: jquery
-      load: first
-    - name: bootstrap-css
       load: first
     - name: popper
       load: first
@@ -799,7 +793,7 @@ folders:
 #  88  88  88 88~~~88 88`8b   88`8b   88~~~b. 88    88 88    88 88`8b     `Y8b.
 #  88  88  88 88   88 88 `88. 88 `88. 88   8D `8b  d8' `8b  d8' 88 `88. db   8D
 #  YP  YP  YP YP   YP 88   YD YP   YD Y8888P'  `Y88P'   `Y88P'  YP   YD `8888Y'
-###################################################################################################################
+###############################################################################
 
 markbooks:
   name: Markbooks
@@ -808,8 +802,6 @@ markbooks:
   colour: 5891E9
   imports:
     - name: jquery
-      load: first
-    - name: bootstrap-css
       load: first
     - name: popper
       load: first
@@ -870,7 +862,7 @@ markbooks:
 #  8b      88    88 `8b  d8' 88~~~~~ 88`8b  
 #  Y8b  d8 `8b  d8'  `8bd8'  88.     88 `88.
  #  `Y88P'  `Y88P'     YP    Y88888P 88   YD
-###################################################################################################################
+############################################
 
 cover:
   name: Cover
@@ -879,8 +871,6 @@ cover:
   colour: 54823A
   imports:
     - name: jquery
-      load: first
-    - name: bootstrap-css
       load: first
     - name: popper
       load: first
@@ -944,8 +934,6 @@ merge:
     - name: underscore
       load: first
     - name: jquery
-      load: first
-    - name: bootstrap-css
       load: first
     - name: popper
       load: first
@@ -1050,7 +1038,7 @@ merge:
 #    `Y8b. 8b      88`8b      88    88~~~      88    88`8b  
 #  db   8D Y8b  d8 88 `88.   .88.   88         88    88 `88.
 #  `8888Y'  `Y88P' 88   YD Y888888P 88         YP    88   YD
-###################################################################################################################
+############################################################
 
 scriptr:
   name: Scriptr
@@ -1068,7 +1056,7 @@ scriptr:
 #    `Y8b. 88~~~88 88~~~~~ 88      88~~~   88   88 88    88 88  ooo
 #  db   8D 88   88 88.     88booo. 88      88  .8D `8b  d8' 88. ~8~
 #  `8888Y' YP   YP Y88888P Y88888P YP      Y8888D'  `Y88P'   Y888P 
-###################################################################################################################
+###################################################################
 
 shelfdog:
   name: Shelf Dog
@@ -1086,7 +1074,7 @@ shelfdog:
   #  `Y8b. 88~~~88    88    88 V8o88    88   
 #  db   8D 88   88   .88.   88  V888    88   
 #  `8888Y' YP   YP Y888888P VP   V8P    YP   
-###################################################################################################################
+#############################################
 
 shiny:
   name: Shiny! Shiny!
@@ -1105,7 +1093,7 @@ shiny:
 #  88  ooo 88~~~88 88~~~b. 88`8b      88    88~~~~~ 88     
 #  88. ~8~ 88   88 88   8D 88 `88.   .88.   88.     88booo.
 #   Y888P  YP   YP Y8888P' 88   YD Y888888P Y88888P Y88888P
-###################################################################################################################
+###########################################################
 
 gabriel:
   name: Gabriel
@@ -1124,7 +1112,7 @@ gabriel:
 #     88      `Y8b. 88~~~88 88  88  88   `Y8b.
 #    .88.   db   8D 88   88 88  88  88 db   8D
 #  Y888888P `8888Y' YP   YP YP  YP  YP `8888Y'
-###################################################################################################################
+##############################################
 
 isams:
   name: Sheets for iSAMS
@@ -1143,7 +1131,7 @@ isams:
 #  8b      88      88    88 88    88 88   88    88      `Y8b. 88`8b      88   
 #  Y8b  d8 88booo. `8b  d8' 88b  d88 88  .8D    88    db   8D 88 `88.    88   
 #   `Y88P' Y88888P  `Y88P'  ~Y8888P' Y8888D'    YP    `8888Y' YP   YD    YP   
-###################################################################################################################
+##############################################################################
 
 cloudysky:
   name: Cloudy Sky
@@ -1189,3 +1177,22 @@ cloudysky:
       changes :
         - details: Initial Code Commit
           url : https://github.com/thiscouldbejd/cloudysky-extension
+
+
+
+# d8888b. d8888b. d888888b db    db d88888b   .88b  d88. d888888b  d888b  d8888b.  .d8b.  d888888b d888888b  .d88b.  d8b   db
+# 88  `8D 88  `8D   `88'   88    88 88'       88'YbdP`88   `88'   88' Y8b 88  `8D d8' `8b `~~88~~'   `88'   .8P  Y8. 888o  88
+# 88   88 88oobY'    88    Y8    8P 88ooooo   88  88  88    88    88      88oobY' 88ooo88    88       88    88    88 88V8o 88
+# 88   88 88`8b      88    `8b  d8' 88~~~~~   88  88  88    88    88  ooo 88`8b   88~~~88    88       88    88    88 88 V8o88
+# 88  .8D 88 `88.   .88.    `8bd8'  88.       88  88  88   .88.   88. ~8~ 88 `88. 88   88    88      .88.   `8b  d8' 88  V888
+# Y8888D' 88   YD Y888888P    YP    Y88888P   YP  YP  YP Y888888P  Y888P  88   YD YP   YP    YP    Y888888P  `Y88P'  VP   V8P
+#############################################################################################################################
+
+drive-migration:
+  name: Drive Migration
+  desc: Easily migrate __files__ and __folders__ to Google Drive, directly to __individual user accounts__ if required
+  link: /tools/drive-migration
+  published: false
+  ext: true
+  colour: 0f5c60
+  action: Find out more

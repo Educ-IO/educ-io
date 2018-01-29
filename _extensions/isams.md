@@ -1,8 +1,7 @@
 ---
-layout: simple
+layout: extension
 title: Sheets for iSAMS
 permalink: /extensions/isams
-style: page
 colour: 38761d
 lead: An easy to use Chrome Extension, making working with iSAMS and Google Apps even better.
 ---

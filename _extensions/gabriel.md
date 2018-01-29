@@ -1,8 +1,7 @@
 ---
-layout: simple
+layout: extension
 title: Gabriel
 permalink: /extensions/gabriel
-style: page
 colour: 333333
 ---
 {% capture lead %}

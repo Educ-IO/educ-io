@@ -111,3 +111,21 @@ a {color: $colour-contrasting-link;}
 		border-color: $colour-contrasting-success;
 	}
 }
+
+.lead {
+	code {
+		font: inherit;
+		color: $colour-support;
+		font-weight: bold;
+		padding: 0;
+		background-color: inherit;
+	}
+}
+
+.wrap-break {
+  overflow-wrap: break-word;
+}
+
+a.no-underline {
+	&:hover {text-decoration: none;}
+}

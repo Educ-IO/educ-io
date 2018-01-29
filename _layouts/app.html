@@ -1,15 +1,58 @@
 ---
 layout: compress
+css:
+  primary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/root
+    - bootstrap/reboot
+    - bootstrap/type
+    - bootstrap/images
+    - bootstrap/grid
+    - bootstrap/buttons
+    - bootstrap/nav
+    - bootstrap/navbar
+    - bootstrap/card
+    - bootstrap/badge
+    - bootstrap/jumbotron
+    - bootstrap/dropdown
+    - bootstrap/utilities
+    - custom/functions
+    - custom/variables
+    - custom/common
+    - custom/fonts
+  secondary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/transitions
+    - bootstrap/alert
+    - bootstrap/close
+    - bootstrap/modal
+    - bootstrap/tables
+    - bootstrap/forms
+    - bootstrap/breadcrumb
+    - bootstrap/button-group
+    - bootstrap/input-group
+    - bootstrap/tooltip
+    - bootstrap/popover
+    - bootstrap/list-group
+    - bootstrap/custom-forms
+    - custom/functions
+    - custom/variables
+    - custom/app
+    - custom/tables
+    - custom/forms
+    - custom/loader
+    - custom/icons
 ---
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
-
-{% include head.html %}
-
+	{% include head.html %}
 	<body>
 		{% include nav.html %}
 		<div id="{{ site.app.content }}" class="content">{{ content }}</div>
 		{% include footer.html type="app" %}
 	</body>
-
 </html>

@@ -14,8 +14,6 @@ imports:
   load: first
 - name: popper
   load: first
-- name: bootstrap-css
-  load: first
 - name: bootstrap-js
   load: last
 - name: underscore

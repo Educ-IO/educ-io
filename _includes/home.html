@@ -1,8 +1,8 @@
-{% assign apps = site.array %}{% for app in site.data.apps %}{% if jekyll.environment == site.debug or app[1].published == true %}{% assign apps = apps | push: app[1] %}{% endif %}{% endfor %}<div class="container css-sensitive pt-1 pt-md-2 pt-lg-4 pt-xl-5">
+{% assign apps = site.array %}{% for app in site.data.apps %}{% if jekyll.environment == site.debug or app[1].published == true %}{% assign apps = apps | push: app[1] %}{% endif %}{% endfor %}<div class="container pt-1 pt-md-2 pt-lg-4 pt-xl-5">
 	
 	<div class="row align-items-center">
 		<div class="d-inline d-md-block col-12 mx-auto col-md-6 order-md-2 px-2 py-2">
-			<div class="img-fluid mb-3 mb-md-0" alt="{{ site.title }}: {{ site.description }}">{% include {{ include.logo }} %}</div>
+			<div id="logo" class="img-fluid mb-3 mb-md-0" alt="{{ site.title }}: {{ site.description }}">{% include {{ include.logo }} %}</div>
 		</div>
 		<div class="col-md-6 order-md-1 text-center text-md-left pr-md-5">
 			<h1 class="display-4 mb-3 font-sensitive">{{ site.title | upcase }}</h1>
