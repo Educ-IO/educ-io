@@ -1,4 +1,8 @@
 site :
+  0.0.7i :
+    name : Icons Bug Fix
+    desc : Material Icons available to all apps
+    type : minor
   0.0.7h :
     name : Switch in inline CSS
     desc : Switch to inline CSS to fix some bugs and improve performance
