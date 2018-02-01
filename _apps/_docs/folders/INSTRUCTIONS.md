@@ -2,6 +2,8 @@ Once you have __signed in__ to this app, you'll be able to __open Your Drive__ o
 
 If you have opened any other folders during this logged in session (e.g. until you __sign out__), they will appear on the opening screen of the app, giving you a __quick way__ to open sheets that you commonly use. Just click on them to open directly, or click on the small cross to remove them from this page.
 
+You can also view [tutorials](#tutorials) about specific __use cases__ for this app.
+
 ##### Navigation
 
 Upon opening a folder, the contents of that folder will be shown in the first tab. You can open files from your drive by clicking on their associated links. You can also preview a thumbnail of compatible files by click on their names (similar to the _thumbnail_ view in Google Drive). By clicking on folder name links, these will then open for you. You can also use the browser back / forward buttons to navigate through folders you have opened. As you begin to navigate deeper into a tree of folders, a _breadcrumb_ will be populated above your tabs, which allows you to quickly jump back up to an ancestor folder in the hierarchy.

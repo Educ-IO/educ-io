@@ -279,7 +279,7 @@ Fields = function() {
 
 	var _datetime = function(form) {
 
-		form.find("div.dt-picker, input.dt-picker").datepicker({
+		if ($.fn.datepicker) form.find("div.dt-picker, input.dt-picker").datepicker({
 			format: DATE_FORMAT,
 			todayBtn: "linked",
 			todayHighlight: true,

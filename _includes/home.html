@@ -29,7 +29,7 @@
 	{% endif %}
 
 	<p class="text-muted mb-3">
-		&copy; {% capture year %}{{ site.time | date: '%Y' }}{% endcapture %}{% if year != site.launched %}{{ site.launched }}-{% endif%}{{ year }} <a href="{{site.baseurl}}about/?highlight=transparency"><strong>{{site.author.name | downcase }}</strong></a>. Current site version is <a href="/changes?highlight=site">{{ site.data.versions["site"].first[0] }}</a>
+		&copy; {% capture year %}{{ site.time | date: '%Y' }}{% endcapture %}{% if year != site.launched %}{{ site.launched }}-{% endif%}{{ year }} <a href="{{site.baseurl}}about/?highlight=transparency"><strong>{{site.author.name | downcase }}</strong></a>. Current site version is <a href="{{site.baseurl}}changes/?highlight=site">{{ site.data.versions["site"].first[0] }}</a>
 	</p>
 
 </div>

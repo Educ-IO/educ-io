@@ -3,6 +3,7 @@ layout: page
 title: A Guide to Folders
 permalink: /guides/folders/
 support: true
+app: folders
 ---
 
 #### Introduction
@@ -15,6 +16,8 @@ Makes working with your files in your [Google Drive](https://www.google.com/driv
 + __Bulk export__ native file formats to PDF, including updating already exported versions.
 
 #### Use Cases
+
+{% include tutorials.md app=page.app %}
 
 - - -
 

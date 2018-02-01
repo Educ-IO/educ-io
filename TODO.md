@@ -1,6 +1,7 @@
 TODO LIST 
 =========
-* ** IMPORTANT ** Google Crawl Fetch rendering nothing.
+
+* ** IMPORTANT ** Clean up Page Titles -> too much duplication on XL page sizes.
 
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
 
@@ -26,6 +27,9 @@ Router
 Apps
 ----
 * ** IMPORTANT ** Clear process instructions? Visual? <- App Guides
+* ** IMPORTANT ** Tutorial Pages
+
+* ** IMPORTANT ** Modal from a modal - close the first one...
 
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
@@ -48,8 +52,6 @@ Mobile
 
 View
 ----
-* Occasional Problems with Picker... <-- Seems to be related to scopes. Have added https://www.googleapis.com/auth/drive.readonly and that has cleared it up? <==DONE
-
 * ** IMPORTANT ** Column Filters (Type)
 * ** IMPORTANT ** Do went need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view <++ YES
 * Write Flexbox-based Fit Algorithm
@@ -67,6 +69,8 @@ View
 
 Folders
 -------
+* ** CLEAR Ticks on re-convert ** 
+* ** IMPORTANT ** Save Conversion Definition
 * ** IMPORTANT ** Tally should break down file / folder counts by MimeType?
 * ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
@@ -93,6 +97,18 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT ** Google Crawl Fetch rendering nothing. <-- DONE
+
+* View Drive UI Integration = Folders Files / mime-type = .view <-- DONE
+  application/x.educ-io.view
+  application/x.educ-io.view-definition
+  
+* Folders Drive UI Integration = Folders Files / mime-type = .folders <-- DONE
+  application/x.educ-io.folders-convert
+  
+* Occasional Problems with Picker... <-- Seems to be related to scopes. Have added https://www.googleapis.com/auth/drive.readonly and that has cleared it up? <==DONE
+* ** IMPORTANT ** Mirror To Folder <-- DONE
+* ** IMPORTANT ** Highlight currently processing row (spinner and......) <-- DONE
 * ** IMPORTANT ** Getting Help Instructions and Process <-- DONE
 * Accessibility Checks <-- DONE
 * Export -> Select Single, Multiple or All Tabs for export (need a custom template for this) <-- DONE
@@ -114,11 +130,13 @@ Complete
 * ** IMPORTANT ** De-Hydrate Functionality <-- DONE
 * Recently Saved Reports <== DONE
 * Should everything be written as sheets or JSON? .reflect files? With output to spreadsheet? How does this impact analytics? <== DONE
+
 * Drive UI Integration = Reflect Files / mime-type = .reflect <-- DONE
   application/x.educ-io.reflect-scale
   application/x.educ-io.reflect-form
   application/x.educ-io.reflect-report
   application/x.educ-io.reflect-review
+  
 * File Upload to Google Drive (File From Evidence Menu) <-- DONE
 * URL for Evidence <-- DONE
 * Paper / Offline for Evidence <-- DONE
@@ -332,4 +350,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-01-29
+ᕕ( ᐛ )ᕗ JD - 2018-02-01

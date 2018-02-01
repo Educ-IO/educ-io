@@ -348,6 +348,16 @@ App = function() {
 					}).catch(() => _sheets = null);
 				}
 
+			} else if ((/TUTORIALS/i).test(command)) {
+
+				/* <!-- Load the Tutorials --> */
+				ಠ_ಠ.Display.doc.show({
+					name: "TUTORIALS",
+					title: "Tutorials for View ...",
+					target: ಠ_ಠ.container,
+					wrapper: "MODAL"
+				}).modal();
+					
 			} else if ((/INSTRUCTIONS/i).test(command)) {
 
 				/* <!-- Load the Instructions --> */

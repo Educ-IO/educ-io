@@ -92,6 +92,7 @@ view:
     - view/LINK_INSTRUCTIONS
     - view/EXPORT_FORMATS
     - view/EXPORT_SIZE
+    - view/TUTORIALS
   scopes:
     google:
       - scope: email
@@ -233,6 +234,9 @@ view:
             - name: Instructions
               hash: instructions
               desc: More details about how to use this app
+            - name: Tutorials
+              hash: tutorials
+              desc: Ways in which you can use this app
             - name: Guide
               url: /guides/view
               desc: A guide to using this app
@@ -388,6 +392,7 @@ reflect:
     - reflect/FILE
     - reflect/CREATE
     - reflect/IMPORT
+    - reflect/TUTORIALS
   scopes:
     google:
       - scope: email
@@ -521,6 +526,9 @@ reflect:
             - name: Instructions
               hash: instructions
               desc: More details about how to use this app
+            - name: Tutorials
+              hash: tutorials
+              desc: Ways in which you can use this app
             - name: Guide
               url: /guides/reflect
               desc: A guide to using this app
@@ -612,6 +620,7 @@ folders:
     - css
     - recent
     - datatable
+    - fields
     - folder
   scripts: 
     - extends/regex
@@ -652,6 +661,7 @@ folders:
     - folders/INSTRUCTIONS
     - folders/SEARCH_INSTRUCTIONS
     - folders/CONVERT_INSTRUCTIONS
+    - folders/TUTORIALS
   scopes:
     google:
       - scope: email
@@ -724,6 +734,8 @@ folders:
               hash: convert
               disabled_until:
                 - opened
+              imports:
+                - google
             - name: Delete
               desc: Delete the files in these search results
               hash: delete
@@ -742,6 +754,9 @@ folders:
             - name: Instructions
               hash: instructions
               desc: More details about how to use this app
+            - name: Tutorials
+              hash: tutorials
+              desc: Ways in which you can use this app
             - name: Guide
               url: /guides/folders
               desc: A guide to using this app
@@ -834,6 +849,7 @@ markbooks:
     - markbooks/PUBLIC
     - markbooks/README
     - markbooks/INSTRUCTIONS
+    - markbooks/TUTORIALS
   scopes:
     google:
       - scope: email
@@ -861,7 +877,7 @@ markbooks:
 #  8P      88    88 Y8    8P 88ooooo 88oobY'
 #  8b      88    88 `8b  d8' 88~~~~~ 88`8b  
 #  Y8b  d8 `8b  d8'  `8bd8'  88.     88 `88.
- #  `Y88P'  `Y88P'     YP    Y88888P 88   YD
+#   `Y88P'  `Y88P'     YP    Y88888P 88   YD
 ############################################
 
 cover:
@@ -903,6 +919,7 @@ cover:
     - cover/PUBLIC
     - cover/README
     - cover/INSTRUCTIONS
+    - cover/TUTORIALS
   scopes:
     google:
       - scope: email
@@ -923,7 +940,15 @@ cover:
         oauth: 1093927740269-ssddiv25h6o3vodg878mr7bcbnc6iop4.apps.googleusercontent.com
   published: false
 
-###################################################################################################################
+
+
+#  .88b  d88. d88888b d8888b.  d888b  d88888b
+#  88'YbdP`88 88'     88  `8D 88' Y8b 88'    
+#  88  88  88 88ooooo 88oobY' 88      88ooooo
+#  88  88  88 88~~~~~ 88`8b   88  ooo 88~~~~~
+#  88  88  88 88.     88 `88. 88. ~8~ 88.    
+#  YP  YP  YP Y88888P 88   YD  Y888P  Y88888P
+##############################################
 
 merge:
   name: Merge
@@ -980,6 +1005,7 @@ merge:
     - merge/FEATURES
     - merge/README
     - merge/INSTRUCTIONS
+    - merge/TUTORIALS
   scopes:
     google:
       - scope: email
@@ -1180,13 +1206,13 @@ cloudysky:
 
 
 
-# d8888b. d8888b. d888888b db    db d88888b   .88b  d88. d888888b  d888b  d8888b.  .d8b.  d888888b d888888b  .d88b.  d8b   db
-# 88  `8D 88  `8D   `88'   88    88 88'       88'YbdP`88   `88'   88' Y8b 88  `8D d8' `8b `~~88~~'   `88'   .8P  Y8. 888o  88
-# 88   88 88oobY'    88    Y8    8P 88ooooo   88  88  88    88    88      88oobY' 88ooo88    88       88    88    88 88V8o 88
-# 88   88 88`8b      88    `8b  d8' 88~~~~~   88  88  88    88    88  ooo 88`8b   88~~~88    88       88    88    88 88 V8o88
-# 88  .8D 88 `88.   .88.    `8bd8'  88.       88  88  88   .88.   88. ~8~ 88 `88. 88   88    88      .88.   `8b  d8' 88  V888
-# Y8888D' 88   YD Y888888P    YP    Y88888P   YP  YP  YP Y888888P  Y888P  88   YD YP   YP    YP    Y888888P  `Y88P'  VP   V8P
-#############################################################################################################################
+# d8888b. d8888b. d888888b db    db d88888b     .88b  d88. d888888b  d888b  d8888b.  .d8b.  d888888b d888888b  .d88b.  d8b   db
+# 88  `8D 88  `8D   `88'   88    88 88'         88'YbdP`88   `88'   88' Y8b 88  `8D d8' `8b `~~88~~'   `88'   .8P  Y8. 888o  88
+# 88   88 88oobY'    88    Y8    8P 88ooooo     88  88  88    88    88      88oobY' 88ooo88    88       88    88    88 88V8o 88
+# 88   88 88`8b      88    `8b  d8' 88~~~~~     88  88  88    88    88  ooo 88`8b   88~~~88    88       88    88    88 88 V8o88
+# 88  .8D 88 `88.   .88.    `8bd8'  88.         88  88  88   .88.   88. ~8~ 88 `88. 88   88    88      .88.   `8b  d8' 88  V888
+# Y8888D' 88   YD Y888888P    YP    Y88888P     YP  YP  YP Y888888P  Y888P  88   YD YP   YP    YP    Y888888P  `Y88P'  VP   V8P
+###############################################################################################################################
 
 drive-migration:
   name: Drive Migration

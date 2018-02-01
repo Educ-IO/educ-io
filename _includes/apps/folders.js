@@ -9,6 +9,8 @@ App = function() {
 	}
 
 	/* <!-- Internal Constants --> */
+	const TYPE_CONVERT = "application/x.educ-io.folders-convert",
+			_types = [TYPE_CONVERT];
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -120,22 +122,35 @@ App = function() {
 	
 	var _load = function(loader, rootTeamDrive, log, teamDrive) {
 		
-		ಠ_ಠ.Display.busy({
-			target: ಠ_ಠ.container
+		var _finish = ಠ_ಠ.Display.busy({
+			target: ಠ_ಠ.container,
+			fn: true
 		});
 
-		loader.then(folder => {
+		loader.then(file => {
 
-			ಠ_ಠ.Display.busy({
-				target: ಠ_ಠ.container,
-				clear: true
-			});
+			_finish();
 
-			folder.team = rootTeamDrive;
-			_openFolder(folder, log, teamDrive);
+			if (ಠ_ಠ.google.files.is(TYPE_CONVERT)(file)) {
+				
+				ಠ_ಠ.google.download(file.id).then(loaded => {
+					return ಠ_ಠ.google.reader().promiseAsText(loaded).then(convert => {
+						ಠ_ಠ.Flags.log(`Loaded Convert File: ${convert}`);
+						convert = JSON.parse(convert);
+						/* <!-- Pass Convert and Search / Convert Here --> */
+					});
+				});
+				
+			} else if (ಠ_ಠ.google.folders.check(true)(file)) {
+				
+				file.team = rootTeamDrive;
+				_openFolder(file, log, teamDrive);
+				
+			}
+			
 
 		}).catch((e) => {
-			ಠ_ಠ.Display.busy({clear: true});
+			_finish();
 			ಠ_ಠ.Flags.error("File / Folder Load Failure", e ? e : "No Inner Error");
 		});
 		
@@ -284,6 +299,16 @@ App = function() {
 					if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());	
 					
 				}
+				
+			} else if ((/TUTORIALS/i).test(command)) {
+
+				/* <!-- Load the Tutorials --> */
+				ಠ_ಠ.Display.doc.show({
+					name: "TUTORIALS",
+					title: "Tutorials for Folders ...",
+					target: ಠ_ಠ.container,
+					wrapper: "MODAL"
+				}).modal();
 				
 			} else if ((/INSTRUCTIONS/i).test(command)) {
 

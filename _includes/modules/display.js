@@ -309,12 +309,26 @@ Display = function() {
 				var dialog = $(_template(template)(options));
 				_target(options).append(dialog);
 
-				if (dialog.find("button.btn-primary").length > 0 && dialog.find("form").length > 0) {
+				if (dialog.find("form").length > 0) {
+				
 					/* <!-- Set Form / Return Event Handlers --> */
-					dialog.find("button.btn-primary").click(function() {
-						_clean();
-						resolve(dialog.find("form").serializeArray());
-					});
+					if (dialog.find("button.btn-primary").length > 0) {
+						
+						dialog.find("button.btn-primary").click(function() {
+							_clean();
+							resolve(dialog.find("form").serializeArray());
+						});
+					}
+					
+					if (options.actions && dialog.find("button[data-action]").length > 0) {
+						dialog.find("button[data-action]").each((i, el) => {
+							$(el).on("click.action", (e) => {
+								var _action = $(e.target).data("action").split("_");
+								if (_action[0] == "actions") options.actions[_action[1]].handler(dialog.find("form").serializeArray());
+							});
+						});
+					}
+					
 				}
 				
 				/* <!-- Set Shown Event Handler (if present) --> */

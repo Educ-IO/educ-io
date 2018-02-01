@@ -21,30 +21,6 @@ App = function() {
 				TYPE_REVIEW = "application/x.educ-io.reflect-review",
 				_types = [TYPE_SCALE, TYPE_FORM, TYPE_REPORT, TYPE_REVIEW];
 
-	const _reader = function() {
-
-		var reader = new FileReader(),
-			promisify = (fn) =>
-			function() {
-				var _arguments = arguments;
-				return new Promise((resolve, reject) => {
-					var clean = (events) => _.each(events, (handler, event) => reader.removeEventListener(event, handler)),
-						events = {
-							load: () => clean(events) && resolve(reader.result),
-							abort: () => clean(events) && reject(),
-							error: () => clean(events) && reject(reader.error),
-						};
-					_.each(events, (handler, event) => reader.addEventListener(event, handler));
-					fn.apply(reader, _arguments);
-				});
-			};
-
-		_.each(_.filter(_.allKeys(reader), name => (/^READAS/i).test(name) && _.isFunction(reader[name])),
-			fn => reader[fn.replace(/^READAS/i, "promiseAs")] = promisify(reader[fn]));
-
-		return reader;
-	};
-
 	const _pick = function() {
 
 		return new Promise((resolve, reject) => {
@@ -507,7 +483,7 @@ App = function() {
 						"Select a Reflect File to Open", false, true,
 						() => new google.picker.DocsView(google.picker.ViewId.DOCUMENTS).setIncludeFolders(true).setParent("root"),
 						file => file ? ಠ_ಠ.Flags.log("Google Drive Document Picked", file) && ಠ_ಠ.google.files.export(file.id, "text/plain")
-						.then(download => new _reader().promiseAsText(download).then(text => resolve(text))) : reject()
+						.then(download => new ಠ_ಠ.google.reader().promiseAsText(download).then(text => resolve(text))) : reject()
 					);
 				}).then(text => {
 					var _$ = $("#" + $(e.target).data("target")).val(text);
@@ -566,7 +542,7 @@ App = function() {
 	};
 
 	var _process = function(loaded) {
-		return _reader().promiseAsText(loaded).then(report => {
+		return ಠ_ಠ.google.reader().promiseAsText(loaded).then(report => {
 			ಠ_ಠ.Flags.log(`Loaded Report File: ${report}`);
 			report = JSON.parse(report);
 			_form = _data.rehydrate(_create.load(report.form), report.report);
@@ -681,6 +657,16 @@ App = function() {
 
 				_default();
 
+			} else if ((/TUTORIALS/i).test(command)) {
+
+				/* <!-- Load the Tutorials --> */
+				ಠ_ಠ.Display.doc.show({
+					name: "TUTORIALS",
+					title: "Tutorials for Reflect ...",
+					target: ಠ_ಠ.container,
+					wrapper: "MODAL"
+				}).modal();
+					
 			} else if ((/INSTRUCTIONS/i).test(command)) {
 
 				var show = (name, title) => ಠ_ಠ.Display.doc.show({

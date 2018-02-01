@@ -3,6 +3,7 @@ layout: page
 title: A Guide to Reflect
 permalink: /guides/reflect/
 support: true
+app: reflect
 ---
 
 #### Introduction

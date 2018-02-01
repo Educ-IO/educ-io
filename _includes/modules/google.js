@@ -12,6 +12,30 @@ Google_API = function(ಠ_ಠ, timeout) {
 	const BATCH_SIZE = 50;
 	const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
 	const RANDOM = (lower, higher) => Math.random() * (higher - lower) + lower;
+	
+	const READER = function() {
+
+		var reader = new FileReader(),
+			promisify = (fn) =>
+			function() {
+				var _arguments = arguments;
+				return new Promise((resolve, reject) => {
+					var clean = (events) => _.each(events, (handler, event) => reader.removeEventListener(event, handler)),
+						events = {
+							load: () => clean(events) && resolve(reader.result),
+							abort: () => clean(events) && reject(),
+							error: () => clean(events) && reject(reader.error),
+						};
+					_.each(events, (handler, event) => reader.addEventListener(event, handler));
+					fn.apply(reader, _arguments);
+				});
+			};
+
+		_.each(_.filter(_.allKeys(reader), name => (/^READAS/i).test(name) && _.isFunction(reader[name])),
+			fn => reader[fn.replace(/^READAS/i, "promiseAs")] = promisify(reader[fn]));
+
+		return reader;
+	};
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Network Constants --> */
@@ -367,7 +391,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 		}),
 
 		upload: (metadata, binary, mimeType, team, id) => {
-
+			
 			var _boundary = "**********%%**********";
 
 			var _payload = new Blob([
@@ -503,6 +527,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 			}, "application/json"),
 
 		},
+		
+		reader: READER
 
 	};
 	/* === External Visibility === */

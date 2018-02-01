@@ -1,5 +1,5 @@
 <div class="container">
-	<div class="row align-items-center">
+	<div class="row row align-items-start align-items-lg-center">
 		<div class="d-none d-md-block col-12 mx-auto col-md-6 order-md-2 px-2 py-2">
 			<a class="app-logo" href="#instructions">{% include {{ include.logo }} %}</a>
 		</div>
@@ -13,7 +13,7 @@
 				<a href="/support/" class="btn btn-lg btn-outline-success">Support</a>
 			</div>
 			<p class="text-muted mb-0">
-				Current app version is <a href="/changes/?highlight={{ app.name | downcase }}">{% assign _app = app.name | downcase %}{{ site.data.versions[_app].first[0] }}</a>. To find out more about the <strong>permissions</strong> this app requires, and how they are used, have a look at its <a href="/scopes/?highlight={{ app.name | downcase }}">scopes</a>.
+				Current app version is <a href="{{site.baseurl}}changes/?highlight={{ app.name | downcase }}">{% assign _app = app.name | downcase %}{{ site.data.versions[_app].first[0] }}</a>. To find out more about the <strong>permissions</strong> this app requires, and how they are used, have a look at its <a href="{{site.baseurl}}scopes/?highlight={{ app.name | downcase }}">scopes</a>.
 			</p>
 		</div>
 	</div>

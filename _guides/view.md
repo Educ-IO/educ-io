@@ -3,6 +3,7 @@ layout: page
 title: A Guide to View
 permalink: /guides/view/
 support: true
+app: view
 ---
 
 #### Introduction
@@ -30,6 +31,8 @@ Making sharing parts (what we call _views_) of your [Google Sheets](https://www.
 All of this is delivered __without modifying__ your original data in any way. In line with our [zero knowledge](/about#privacy) approach to privacy, your sheets data never leaves the browser and is __never__, __ever__ sent to us. For more information, read the [instructions](#instructions) or click on the buttons below.
 
 #### Use Cases
+
+{% include tutorials.md app=page.app %}
 
 - - -
 

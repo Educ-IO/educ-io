@@ -1,6 +1,7 @@
 // -- Google Drive File Picker -- //
 .picker.modal-dialog.picker-dialog {
-	pointer-events: all !important;	
+	pointer-events: all !important;
+	z-index: 1100!important;
 }
 
 .picker.modal-dialog-content.picker-dialog-content {

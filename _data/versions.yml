@@ -1,4 +1,8 @@
 site :
+  0.0.7j :
+    name : Folders 0.0.3b-alpha
+    desc : Exporting works with mirrored folders, and savable.
+    type : minor
   0.0.7i :
     name : Icons Bug Fix
     desc : Material Icons available to all apps
@@ -281,6 +285,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.4c-alpha :
+    name : Feature Improvements
+    desc : Exporting works with mirrored folders, and savable.
+    type : minor
   0.0.4b-alpha :
     name : Feature Improvements
     desc : Added bulk export functionality to folders and search results

@@ -4,13 +4,17 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 	const BATCH_SIZE = 50;
 	const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
 	const SEARCH_TRIGGER = 20;
+	
+	const TYPE_CONVERT = "application/x.educ-io.folders-convert",
+				_types = [TYPE_CONVERT];
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
 	var _db = new loki("folders.db"),
 		_tables = {},
 		_search,
-		_team = team;
+		_team = team,
+		_searches = {};
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -21,6 +25,17 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 			sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
 			i = Math.floor(Math.log(bytes) / Math.log(k));
 		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+	};
+	
+	var busy = (cell, row, css_class) => (on) => {
+		on ? ಠ_ಠ.Display.busy({
+				target: cell,
+				class: "loader-small"
+			}) && row.addClass(css_class ? css_class : "bg-warning") :
+			ಠ_ಠ.Display.busy({
+				target: cell,
+				clear: true
+			}) && row.removeClass(css_class ? css_class : "bg-warning");
 	};
 
 	var mapItems = (v) => ({
@@ -227,6 +242,13 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 			var _include = _.map(_.find(values, v => v.name == "include").value.split("\n"), r => _regex(r.trim(), true));
 			var _recurse = !!(_.find(values, v => v.name == "recurse"));
 
+			_searches[id] = {
+				recurse: _recurse,
+				mime: _mime,
+				exclude: _exclude,
+				include: _include
+			};
+			
 			ಠ_ಠ.google.folders.search(id, _recurse, _mime, _exclude, _include, null, _team).then((results) => {
 				_showResults(_name, results);
 				ಠ_ಠ.Display.busy({
@@ -332,7 +354,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 	};
 
-	var _exportFile = function(file, targetMimeType, inPlace) {
+	var _exportFile = function(file, targetMimeType, inPlace, mirror) {
 		
 		return new Promise((resolve, reject) => {
 			
@@ -344,7 +366,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 					
 					ಠ_ಠ.google.upload(metadata ? metadata : {
 						name: _name,
-						parents: file.parents,
+						parents: mirror ? (file.parents ? file.parents : []).concat(mirror) : file.parents,
 						teamDriveId: _team,
 					}, binary, targetMimeType, _team, id)
 						.then(uploadedFile => resolve({new: uploadedFile}))
@@ -380,13 +402,13 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 		
 	};
 	
-	var _convertFile = function(file, sourceMimeType, targetMimeType, prefixAfterConversion, inPlace) {
+	var _convertFile = function(file, sourceMimeType, targetMimeType, prefixAfterConversion, inPlace, mirror) {
 
 		return new Promise((resolve, reject) => {
 
 			var metadata = inPlace ? {} : {
 				name: file.name.substr(0, file.name.lastIndexOf(".")),
-				parents: file.parents,
+				parents: mirror ? (file.parents ? file.parents : []).concat(mirror) : file.parents,
 				teamDriveId: _team,
 			};
 			metadata.mimeType = targetMimeType;
@@ -488,13 +510,48 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 		var _collection;
 		if(!(_collection = _db.getCollection(id))) return;
-		
-		ಠ_ಠ.Display.modal("convert", {
-			id: "convert_results",
+		var _id = "convert_results", _convert = ಠ_ಠ.Display.modal("convert", {
+			id: _id,
 			target: ಠ_ಠ.container,
 			title: "Convert Files",
-			instructions: ಠ_ಠ.Display.doc.get("CONVERT_INSTRUCTIONS")
-		}).then((values) => {
+			instructions: ಠ_ಠ.Display.doc.get("CONVERT_INSTRUCTIONS"),
+			actions: [{text : "Save", handler : (values) => {
+				
+				var finish = ಠ_ಠ.Display.busy({
+					target : $(`#${_id}`),
+					fn : true
+				});
+				
+				var _meta = {
+						name: `Convert: ${folder.name} [${new Date().toLocaleDateString()}].folders`,
+						parents: (folder ? [folder.id] : null)
+					},
+					_data = JSON.stringify({
+							folder: folder,
+							convert: values,
+							search: _search ? _searches[id] : null
+						}),
+					_mime = TYPE_CONVERT;
+				ಠ_ಠ.google.upload(_meta, _data, _mime).then(uploaded => ಠ_ಠ.Flags.log("Folders Convert File Saved", uploaded))
+					.catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error"))
+					.then(finish);
+			}}]
+		}), _form = ಠ_ಠ.container.find(`#${_id}`);
+		
+		/* <!-- Wire Up Fields and Handle Populate URL Fields from Google Drive --> */
+		ಠ_ಠ.Fields().on(_form).find("button[data-action='load-g-folder'], a[data-action='load-g-folder']").off("click.folder").on("click.folder", e => {
+			new Promise((resolve, reject) => {
+				ಠ_ಠ.google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
+					"Select a Folder", false, true,
+					() => new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"),
+					folder => folder && ಠ_ಠ.google.folders.is(folder.mimeType) ? ಠ_ಠ.Flags.log("Google Drive Folder Picked", folder) && resolve(folder) : reject()
+				);
+			}).then(folder => {
+				var _$ = $("#" + $(e.target).data("target")).val(folder.id).attr("title", folder.name);
+			}).catch();
+		});
+		
+		_convert.then((values) => {
 
 			var _results = _collection.chain().data();
 
@@ -507,6 +564,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 			var _inplace = !!(_.find(values, v => v.name == "inplace"));
 			var _log = (_batchSize && _batchSize > 0);
 			if (!_log) _batchSize = 50;
+			var _mirror = _.find(values, v => v.name == "mirror") ? _.find(values, v => v.name == "mirror").value : null;
 
 			if (_targetMimeType) {
 
@@ -526,15 +584,12 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 								var _container = $("#" + id + "_" + file.id), _result = _collection.by("id", file.id);
 								if (!_container || _container.length === 0) _container = $("#" + file.id);
-								
-								ಠ_ಠ.Display.busy({
-									target: _container.find(".file-name").parent(),
-									class: "loader-small"
-								});
+								var _cell = _container.find(".file-name").parent(), _row = _cell.parent(), _busy = busy(_cell, _row);
+								_busy(true);
 
 								(_sourceMimeType ? 
-									_convertFile(file, _sourceMimeType, _targetMimeType, _prefixAfterConversion, _inplace) :
-									_exportFile(file, _targetMimeType, _inplace))
+									_convertFile(file, _sourceMimeType, _targetMimeType, _prefixAfterConversion, _inplace, _mirror) :
+									_exportFile(file, _targetMimeType, _inplace, _mirror))
 								.then(converted => {
 									if (_container) _container.find(".file-name").addClass("action-succeeded text-success font-weight-bold");
 									if (_result) _result.name_class = "action-succeeded text-success font-weight-bold";
@@ -545,9 +600,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 									if (_result) _collection.update(_result);
 									ಠ_ಠ.Flags.debug("CONVERTED ITEM " + file_index, converted);
 									if (converted) _successes.push(converted);
-									ಠ_ಠ.Display.busy({
-										clear: true
-									});
+									_busy(false);
 									_process_Result(files.shift(), files, file_index + 1, id, last, complete);
 								}).catch(e => {
 									if (_container) _container.find(".file-name").addClass("action-failed text-danger font-weight-bold");
@@ -557,9 +610,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 									}
 									ಠ_ಠ.Flags.error("File " + file_index + " Conversion Error", e ? e : "No Inner Error");
 									_failures.push(file);
-									ಠ_ಠ.Display.busy({
-										clear: true
-									});
+									_busy(false);
 									_process_Result(files.shift(), files, file_index + 1, id, last, complete);
 								});
 								
@@ -727,12 +778,8 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 					if (item) {
 
-						var _container = $("#" + _search + "_" + item.id).find(".file-name").parent();
-
-						ಠ_ಠ.Display.busy({
-							target: _container,
-							class: "loader-small"
-						});
+						var _cell = $("#" + _search + "_" + item.id).find(".file-name").parent(), _busy = busy(_cell, _cell.parent());
+						_busy(true);
 
 						var _result = _collection.by("id", item.id);
 
@@ -749,28 +796,18 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 								_collection.update(_result);
 
 								/* <!-- Show Results --> */
-								_container.append(ಠ_ಠ.Display.template.get("status")(_result));
+								_cell.append(ಠ_ಠ.Display.template.get("status")(_result));
 
 								/* <!-- Debug Log Results --> */
 								ಠ_ಠ.Flags.log("DELETED ITEM:", item.id);
 
 							}
 
-							ಠ_ಠ.Display.busy({
-								target: _container,
-								clear: true
-							});
+							_busy(false);
 
 							_delete_Item(items.shift(), items, totals);
 
-						}).catch((e) => {
-
-							ಠ_ಠ.Display.busy({
-								target: _container,
-								clear: true,
-							});
-							ಠ_ಠ.Flags.error("Deletion Error", e ? e : "No Inner Error");
-						});
+						}).catch((e) => _busy(false) && ಠ_ಠ.Flags.error("Deletion Error", e ? e : "No Inner Error"));
 
 					} else {
 
@@ -896,12 +933,8 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 			if (folder) {
 
-				var _container = $("#" + folder.id).find(".file-name").closest("td");
-
-				ಠ_ಠ.Display.busy({
-					target: _container,
-					class: "loader-small"
-				});
+				var _cell = $("#" + folder.id).find(".file-name").closest("td"), _busy = busy(_cell, _cell.parent());
+				_busy(true);
 
 				var _result = _collection.by("id", folder.id);
 
@@ -925,15 +958,12 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 					_collection.update(_result);
 
 					/* <!-- Show Results --> */
-					_container.append(ಠ_ಠ.Display.template.get("tally")(results));
+					_cell.append(ಠ_ಠ.Display.template.get("tally")(results));
 
 					/* <!-- Debug Log Results --> */
 					ಠ_ಠ.Flags.log("TALLIED FOLDER " + folder.id + ":", results);
 
-					ಠ_ಠ.Display.busy({
-						target: _container,
-						clear: true
-					});
+					_busy(false);
 
 					_process_Folder(folders.shift(), folders, totals);
 
