@@ -26,6 +26,8 @@ Router
 
 Apps
 ----
+* ** IMPORTANT ** Token Expiration and Pop-Up?
+
 * ** IMPORTANT ** Clear process instructions? Visual? <- App Guides
 * ** IMPORTANT ** Tutorial Pages
 
@@ -69,6 +71,7 @@ View
 
 Folders
 -------
+* ** IMPORTANT ** Convert and Delete etc should operate on filtered views (need to hook back after_update mechanism)
 * ** CLEAR Ticks on re-convert ** 
 * ** IMPORTANT ** Save Conversion Definition
 * ** IMPORTANT ** Tally should break down file / folder counts by MimeType?
@@ -97,6 +100,8 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT ** Download Files from filtered rows results doesn't seem to be hooked up! <-- DONE
+* Only add folders (by Mime Type) to recent list <-- DONE
 * ** IMPORTANT ** Google Crawl Fetch rendering nothing. <-- DONE
 
 * View Drive UI Integration = Folders Files / mime-type = .view <-- DONE

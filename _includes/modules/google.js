@@ -426,6 +426,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 			
 			is : (type) => (item) => item.mimeType === type,
 			
+			in : (type) => (item) => item.mimeType && item.mimeType.startsWith(type),
+			
 			native : (type) => type && NATIVES.indexOf(type.toLowerCase()) >= 0,
 			
 			delete: (id, team, trash) => {

@@ -9,8 +9,7 @@ App = function() {
 	}
 
 	/* <!-- Internal Constants --> */
-	const TYPE_CONVERT = "application/x.educ-io.folders-convert",
-			_types = [TYPE_CONVERT];
+	const TYPE = "application/x.educ-io.folders-";
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -82,7 +81,7 @@ App = function() {
 		});
 	};
 
-	var _openFolder = function(folder, log, teamDrive) {
+	var _openFolder = function(folder, log, teamDrive, state) {
 		
 		folder.url = "#google,load." + (folder.team ? "team." : "") + folder.id + (teamDrive ? "." + teamDrive : "");
 
@@ -115,12 +114,12 @@ App = function() {
 		}
 		
 		_showPath(_path, ಠ_ಠ.container);
-		_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive);
+		_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state);
 		if (log) ಠ_ಠ.Recent.add(folder.id, folder.name, folder.url).then(() => _resize());
 
 	};
 	
-	var _load = function(loader, rootTeamDrive, log, teamDrive) {
+	var _load = function(loader, rootTeamDrive, log, teamDrive, state) {
 		
 		var _finish = ಠ_ಠ.Display.busy({
 			target: ಠ_ಠ.container,
@@ -131,24 +130,26 @@ App = function() {
 
 			_finish();
 
-			if (ಠ_ಠ.google.files.is(TYPE_CONVERT)(file)) {
+			ಠ_ಠ.Flags.log(`Loaded: ${JSON.stringify(file)}`);
+			
+			if (ಠ_ಠ.google.files.in(TYPE)(file)) {
 				
 				ಠ_ಠ.google.download(file.id).then(loaded => {
-					return ಠ_ಠ.google.reader().promiseAsText(loaded).then(convert => {
-						ಠ_ಠ.Flags.log(`Loaded Convert File: ${convert}`);
-						convert = JSON.parse(convert);
-						/* <!-- Pass Convert and Search / Convert Here --> */
+					return ಠ_ಠ.google.reader().promiseAsText(loaded).then(parsed => {
+						ಠ_ಠ.Flags.log(`Loaded Folders File [${file.mimeType}]: ${parsed}`);
+						convert = JSON.parse(parsed);
+						if (parsed && parsed.folder) 
+							_load(Promise.resolve(parsed.folder), !!parsed.folder.team, false, parsed.folder.team, parsed.state);
 					});
 				});
 				
 			} else if (ಠ_ಠ.google.folders.check(true)(file)) {
 				
 				file.team = rootTeamDrive;
-				_openFolder(file, log, teamDrive);
+				_openFolder(file, log, teamDrive, state);
 				
 			}
 			
-
 		}).catch((e) => {
 			_finish();
 			ಠ_ಠ.Flags.error("File / Folder Load Failure", e ? e : "No Inner Error");

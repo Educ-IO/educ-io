@@ -1,6 +1,10 @@
 site :
+  0.0.7k :
+    name : Folders 0.0.4d-alpha
+    desc : Bug Fixes and Tutorial
+    type : minor
   0.0.7j :
-    name : Folders 0.0.3b-alpha
+    name : Folders 0.0.4c-alpha
     desc : Exporting works with mirrored folders, and savable.
     type : minor
   0.0.7i :
@@ -285,6 +289,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.4d-alpha :
+    name : Bug Fixes
+    desc : Bug Fixes and PDF Conversion Tutorial
+    type : minor
   0.0.4c-alpha :
     name : Feature Improvements
     desc : Exporting works with mirrored folders, and savable.

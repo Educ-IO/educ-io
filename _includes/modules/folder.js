@@ -1,4 +1,4 @@
-Folder = function(ಠ_ಠ, folder, target, team) {
+Folder = function(ಠ_ಠ, folder, target, team, state) {
 
 	/* <!-- Internal Constants --> */
 	const BATCH_SIZE = 50;
@@ -6,7 +6,8 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 	const SEARCH_TRIGGER = 20;
 	
 	const TYPE_CONVERT = "application/x.educ-io.folders-convert",
-				_types = [TYPE_CONVERT];
+				TYPE_SEARCH = "application/x.educ-io.folders-search",
+				_types = [TYPE_CONVERT, TYPE_SEARCH];
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -59,6 +60,18 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 			url: "/view/#google,load." + v.id + ".lazy"
 		} : null
 	});
+	
+	var _enableDownloads = function(target) {
+		target.find("a.download").on("click.download", e => {
+			ಠ_ಠ.google.download($(e.target).data("id"), _team).then(binary => {
+				try {
+					saveAs(binary, $(e.target).data("name"));
+				} catch (e) {
+					ಠ_ಠ.Flags.error("Drive File Download", e);
+				}
+			});
+		});
+	};
 
 	var _showData = function(id, name, values, target) {
 
@@ -85,17 +98,10 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 			headers: headers
 		}, {
 			advanced: false
-		}, target);
+		}, target, (target) => _enableDownloads(target));
 
-		target.find("a.download").on("click.download", e => {
-			ಠ_ಠ.google.download($(e.target).data("id"), _team).then(binary => {
-				try {
-					saveAs(binary, $(e.target).data("name"));
-				} catch (e) {
-					ಠ_ಠ.Flags.error("Drive File Download", e);
-				}
-			});
-		});
+		/* <!-- Wire Up Downloads --> */
+		_enableDownloads(target);
 
 		return _return;
 
@@ -216,18 +222,7 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 		/* <!-- Measure the Performance (start) --> */
 		ಠ_ಠ.Flags.time(_name);
 
-		ಠ_ಠ.Display.modal("search", {
-			id: "start_search",
-			target: ಠ_ಠ.container,
-			title: "Search Google Drive",
-			instructions: ಠ_ಠ.Display.doc.get("SEARCH_INSTRUCTIONS")
-		}).then((values) => {
-
-			ಠ_ಠ.Display.busy({
-				target: ಠ_ಠ.container
-			});
-
-			var _mime = _.map(_.find(values, v => v.name == "mime").value.split("\n"), m => m.trim());
+		var _decode = (values) => {
 			var _regex = (regex, fallback) => f => {
 				if (regex.indexOf("||") > 0) {
 					return f.mimeType === regex.split("||")[0] && new RegExp(regex.split("||")[1], "i").test(f.name);
@@ -237,25 +232,66 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 					return fallback;
 				}
 			};
-			var _properties = _.map(_.find(values, v => v.name == "properties").value.split("\n"), r => _regex(r.trim(), true));
-			var _exclude = _.map(_.find(values, v => v.name == "exclude").value.split("\n"), r => _regex(r.trim(), false));
-			var _include = _.map(_.find(values, v => v.name == "include").value.split("\n"), r => _regex(r.trim(), true));
-			var _recurse = !!(_.find(values, v => v.name == "recurse"));
-
-			_searches[id] = {
-				recurse: _recurse,
-				mime: _mime,
-				exclude: _exclude,
-				include: _include
+			var _return = {
+				mime : _.map(_.find(values, v => v.name == "mime").value.split("\n"), m => m.trim()),
+				properties : _.map(_.find(values, v => v.name == "properties").value.split("\n"), r => _regex(r.trim(), true)),
+				exclude : _.map(_.find(values, v => v.name == "exclude").value.split("\n"), r => _regex(r.trim(), false)),
+				include : _.map(_.find(values, v => v.name == "include").value.split("\n"), r => _regex(r.trim(), true)),
+				recurse : !!(_.find(values, v => v.name == "recurse"))
 			};
-			
-			ಠ_ಠ.google.folders.search(id, _recurse, _mime, _exclude, _include, null, _team).then((results) => {
-				_showResults(_name, results);
-				ಠ_ಠ.Display.busy({
-					clear: true
+			return _return;
+		};
+		var _encode = (values) => _.each(_.clone(values), (value, key, list) => _.isArray(value) ? list[key] = value.join("\n") : false);
+		
+		var _id = "start_search", _search = ಠ_ಠ.Display.modal("search", {
+			id: "start_search",
+			target: ಠ_ಠ.container,
+			title: "Search Google Drive",
+			instructions: ಠ_ಠ.Display.doc.get("SEARCH_INSTRUCTIONS"),
+			state: state && state.search ? state.search : null,
+			actions: [{text : "Save", handler : (values) => {
+				
+				var finish = ಠ_ಠ.Display.busy({
+					target : $(`#${_id}`),
+					fn : true
 				});
-			});
+				
+				var _meta = {
+						name: `Search: ${folder.name} [${new Date().toLocaleDateString()}].folders`,
+						parents: (folder ? [folder.id] : null)
+					},
+					_data = JSON.stringify({
+							folder: folder,
+							state: {
+								search: _encode(_decode(values))	/* <!-- Need to join the arrays back together here --> */
+							}
+						}),
+					_mime = TYPE_SEARCH;
+				ಠ_ಠ.google.upload(_meta, _data, _mime).then(uploaded => ಠ_ಠ.Flags.log("Folders Search File Saved", uploaded))
+					.catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error"))
+					.then(finish);
+			}}]
+		});
+		
+		_search.then((values) => {
 
+			if (values) {
+				
+				var _finish = ಠ_ಠ.Display.busy({
+					target: ಠ_ಠ.container,
+					fn: true
+				});
+
+				values = _decode(values);
+				_searches[id] = _encode(values);
+
+				ಠ_ಠ.google.folders.search(id, values.recurse, values.mime, values.exclude, values.include, null, _team).then((results) => {
+					_showResults(_name, results);
+					_finish();
+				});
+				
+			}
+			
 		}).catch((e) => {
 			if (e) ಠ_ಠ.Flags.error("Search Error", e);
 		});
@@ -298,6 +334,15 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 					$("#includeRegexes").val(["(\\.xlsx)$", "(\\.xls)$"].join("\n"));
 					break;
 				
+				case "pdf":
+					
+					$("#mimeTypes").val([
+						"application/pdf"
+					].join("\n"));
+					$("#excludeRegexes").val(_excludes);
+					$("#includeRegexes").val([].join("\n"));
+					break;
+					
 				case "sheets":
 					
 					$("#mimeTypes").val([
@@ -510,11 +555,25 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 
 		var _collection;
 		if(!(_collection = _db.getCollection(id))) return;
+		
+		var _decode = (values) => {
+			var _return = {
+				source : _.find(values, v => v.name == "source") ? _.find(values, v => v.name == "source").value : null,
+				target : _.find(values, v => v.name == "target").value,
+				prefix : _.find(values, v => v.name == "prefix") ? _.find(values, v => v.name == "prefix").value : null,
+				batch : _.find(values, v => v.name == "batch").value,
+				inplace : !!(_.find(values, v => v.name == "inplace")),
+				mirror : _.find(values, v => v.name == "mirror") ? _.find(values, v => v.name == "mirror").value : null
+			};
+			(!_return.batch || _return.batch <= 0) ? _return.batch = 50 : _return.log = true;
+			return _return;
+		};
 		var _id = "convert_results", _convert = ಠ_ಠ.Display.modal("convert", {
 			id: _id,
 			target: ಠ_ಠ.container,
 			title: "Convert Files",
 			instructions: ಠ_ಠ.Display.doc.get("CONVERT_INSTRUCTIONS"),
+			state: state && state.convert ? state.convert : null,
 			actions: [{text : "Save", handler : (values) => {
 				
 				var finish = ಠ_ಠ.Display.busy({
@@ -528,8 +587,10 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 					},
 					_data = JSON.stringify({
 							folder: folder,
-							convert: values,
-							search: _search ? _searches[id] : null
+							state: {
+								convert: _decode(values),
+								search: _search ? _searches[id] : null	
+							}
 						}),
 					_mime = TYPE_CONVERT;
 				ಠ_ಠ.google.upload(_meta, _data, _mime).then(uploaded => ಠ_ಠ.Flags.log("Folders Convert File Saved", uploaded))
@@ -553,125 +614,123 @@ Folder = function(ಠ_ಠ, folder, target, team) {
 		
 		_convert.then((values) => {
 
-			var _results = _collection.chain().data();
+			if (values) {
+			
+				var _results = _collection.chain().data();
 
-			ಠ_ಠ.Flags.log(`CONVERSION STARTED: ${_results.length} items to convert`);
+				ಠ_ಠ.Flags.log(`CONVERSION STARTED: ${_results.length} items to convert`);
 
-			var _sourceMimeType = _.find(values, v => v.name == "source") ? _.find(values, v => v.name == "source").value : null;
-			var _targetMimeType = _.find(values, v => v.name == "target").value;
-			var _prefixAfterConversion = _.find(values, v => v.name == "prefix") ? _.find(values, v => v.name == "prefix").value : null;
-			var _batchSize = _.find(values, v => v.name == "batch").value;
-			var _inplace = !!(_.find(values, v => v.name == "inplace"));
-			var _log = (_batchSize && _batchSize > 0);
-			if (!_log) _batchSize = 50;
-			var _mirror = _.find(values, v => v.name == "mirror") ? _.find(values, v => v.name == "mirror").value : null;
+				values = _decode(values);
+				var _batch = values.batch ? values.batch : 50;
 
-			if (_targetMimeType) {
+				if (values.target) {
 
-				var _process_Batch = function(batch, batches, batch_index, length, id, last) {
+					var _process_Batch = function(batch, batches, batch_index, length, id, last) {
 
-					/* <!-- Reset Variables  --> */
-					var _successes = [],
-						_failures = [];
+						/* <!-- Reset Variables  --> */
+						var _successes = [],
+							_failures = [];
 
-					var _process_Result = function(file, files, file_index, id, last, complete) {
+						var _process_Result = function(file, files, file_index, id, last, complete) {
 
-						if (file) {
+							if (file) {
 
-							if ((_sourceMimeType || ಠ_ಠ.google.files.native(file.type))) {
-								
-								ಠ_ಠ.Flags.log("PROCESSING FILE " + file_index);
+								if ((values.source || ಠ_ಠ.google.files.native(file.type))) {
 
-								var _container = $("#" + id + "_" + file.id), _result = _collection.by("id", file.id);
-								if (!_container || _container.length === 0) _container = $("#" + file.id);
-								var _cell = _container.find(".file-name").parent(), _row = _cell.parent(), _busy = busy(_cell, _row);
-								_busy(true);
+									ಠ_ಠ.Flags.log("PROCESSING FILE " + file_index);
 
-								(_sourceMimeType ? 
-									_convertFile(file, _sourceMimeType, _targetMimeType, _prefixAfterConversion, _inplace, _mirror) :
-									_exportFile(file, _targetMimeType, _inplace, _mirror))
-								.then(converted => {
-									if (_container) _container.find(".file-name").addClass("action-succeeded text-success font-weight-bold");
-									if (_result) _result.name_class = "action-succeeded text-success font-weight-bold";
-									if (converted && converted.old) {
-										if (_container) _container.find(".file-name").text(converted.old.name);
-										if (_result) _result.name = converted.old.name;
-									}
-									if (_result) _collection.update(_result);
-									ಠ_ಠ.Flags.debug("CONVERTED ITEM " + file_index, converted);
-									if (converted) _successes.push(converted);
-									_busy(false);
+									var _container = $("#" + id + "_" + file.id), _result = _collection.by("id", file.id);
+									if (!_container || _container.length === 0) _container = $("#" + file.id);
+									var _cell = _container.find(".file-name").parent(), _row = _cell.parent(), _busy = busy(_cell, _row);
+									_busy(true);
+
+									(values.source ? 
+										_convertFile(file, values.source, values.target, values.prefix, values.inplace, values.mirror) :
+										_exportFile(file, values.target, values.inplace, values.mirror))
+									.then(converted => {
+										if (_container) _container.find(".file-name").addClass("action-succeeded text-success font-weight-bold");
+										if (_result) _result.name_class = "action-succeeded text-success font-weight-bold";
+										if (converted && converted.old) {
+											if (_container) _container.find(".file-name").text(converted.old.name);
+											if (_result) _result.name = converted.old.name;
+										}
+										if (_result) _collection.update(_result);
+										ಠ_ಠ.Flags.debug("CONVERTED ITEM " + file_index, converted);
+										if (converted) _successes.push(converted);
+										_busy(false);
+										_process_Result(files.shift(), files, file_index + 1, id, last, complete);
+									}).catch(e => {
+										if (_container) _container.find(".file-name").addClass("action-failed text-danger font-weight-bold");
+										if (_result) {
+											_result.name_class = "action-failed text-danger font-weight-bold";
+											_collection.update(_result);
+										}
+										ಠ_ಠ.Flags.error("File " + file_index + " Conversion Error", e ? e : "No Inner Error");
+										_failures.push(file);
+										_busy(false);
+										_process_Result(files.shift(), files, file_index + 1, id, last, complete);
+									});
+
+								} else {
+
+									ಠ_ಠ.Flags.log("FILE WILL NOT BE PROCESSED:", file);
 									_process_Result(files.shift(), files, file_index + 1, id, last, complete);
-								}).catch(e => {
-									if (_container) _container.find(".file-name").addClass("action-failed text-danger font-weight-bold");
-									if (_result) {
-										_result.name_class = "action-failed text-danger font-weight-bold";
-										_collection.update(_result);
-									}
-									ಠ_ಠ.Flags.error("File " + file_index + " Conversion Error", e ? e : "No Inner Error");
-									_failures.push(file);
-									_busy(false);
-									_process_Result(files.shift(), files, file_index + 1, id, last, complete);
-								});
-								
+
+								}
+
 							} else {
-								
-								ಠ_ಠ.Flags.log("FILE WILL NOT BE PROCESSED:", file);
-								_process_Result(files.shift(), files, file_index + 1, id, last, complete);
-								
+
+								ಠ_ಠ.Flags.log("FILE CONVERSION COMPLETE: " + _successes.length + " successfully converted, " + _failures.length + " failed to convert.");
+
+								if (values.batch) {
+									var _saveRetries = 3;
+									var _save = function() {
+										_saveConversionResults(_successes, _failures, id, last).then((v) => {
+											complete(v);
+										}).catch(() => _saveRetries-- ? DELAY(2000).then(_save()) : complete({id: id, last: last}));
+									};
+									_save();
+
+								} else {
+
+									complete({
+										id: id,
+										last: last
+									});
+
+								}
+
 							}
+
+						};
+
+						if (batch) {
+
+							ಠ_ಠ.Flags.log("PROCESSING BATCH " + batch_index + " of " + length);
+
+							var _next = (value) => {
+								if (value && (!_batch || value.id)) {
+									_process_Batch(batches.shift(), batches, batch_index + 1, length, value.id, value.last);
+								} else {
+									ಠ_ಠ.Flags.error("Failed to Complete Batch Conversion");
+								}
+							};
+
+							_process_Result(batch.shift(), batch, 1, id, last, _next);
 
 						} else {
 
-							ಠ_ಠ.Flags.log("FILE CONVERSION COMPLETE: " + _successes.length + " successfully converted, " + _failures.length + " failed to convert.");
-
-							if (_log) {
-								var _saveRetries = 3;
-								var _save = function() {
-									_saveConversionResults(_successes, _failures, id, last).then((v) => {
-										complete(v);
-									}).catch(() => _saveRetries-- ? DELAY(2000).then(_save()) : complete({id: id, last: last}));
-								};
-								_save();
-
-							} else {
-
-								complete({
-									id: id,
-									last: last
-								});
-
-							}
+							ಠ_ಠ.Flags.log("BATCH PROCESSING COMPLETE");
 
 						}
 
 					};
 
-					if (batch) {
+					var batches = _.chain(_results).groupBy((v, i) => Math.floor(i / _batch)).toArray().value();
+					_process_Batch(batches.shift(), batches, 1, batches.length + 1);
 
-						ಠ_ಠ.Flags.log("PROCESSING BATCH " + batch_index + " of " + length);
-
-						var _next = (value) => {
-							if (value && (!_log || value.id)) {
-								_process_Batch(batches.shift(), batches, batch_index + 1, length, value.id, value.last);
-							} else {
-								ಠ_ಠ.Flags.error("Failed to Complete Batch Conversion");
-							}
-						};
-
-						_process_Result(batch.shift(), batch, 1, id, last, _next);
-
-					} else {
-
-						ಠ_ಠ.Flags.log("BATCH PROCESSING COMPLETE");
-
-					}
-
-				};
-
-				var batches = _.chain(_results).groupBy((v, i) => Math.floor(i / _batchSize)).toArray().value();
-				_process_Batch(batches.shift(), batches, 1, batches.length + 1);
-
+				}
+				
 			}
 
 		}).catch(e => {

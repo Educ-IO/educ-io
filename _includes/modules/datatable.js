@@ -1,4 +1,4 @@
-Datatable = function(ಠ_ಠ, table, options, target) {
+Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 	/* <!-- table = {id, name, data, headers} --> */
 	/* <!-- options = {filters, inverted_Filters, sorts, widths, frozen, readonly, advanced, collapsed} --> */
@@ -328,6 +328,7 @@ Datatable = function(ಠ_ಠ, table, options, target) {
 				trigger: "focus"
 			});
 		}
+		if (after_update) after_update(target);
 	};
 
 	var _update = function(rows, headers, container, defaults) {

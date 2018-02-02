@@ -22,18 +22,18 @@
 				<form>
 					<div class="form-group">
     				<label for="sourceMimeType">Source Mime Type</label>
-						<input type="text" id="sourceMimeType" name="source" class="form-control" />
+						<input type="text" id="sourceMimeType" name="source" class="form-control"{{#if state}}{{#if state.source}} value="{{state.source}}"{{/if}}{{/if}} />
 						<small class="form-text text-muted">Mime Type to convert from.</small>
   				</div>
 					<div class="row">
 						<div class="form-group col-lg-8">
 							<label for="targetMimeType">Target Mime Type</label>
-							<input type="text" id="targetMimeType" name="target" class="form-control" />
+							<input type="text" id="targetMimeType" name="target" class="form-control"{{#if state}}{{#if state.target}} value="{{state.target}}"{{/if}}{{/if}} />
 							<small class="form-text text-muted">Mime Type to convert to.</small>
 						</div>
 						<div class="col-lg-4 d-flex align-items-end">
 							<div class="custom-control custom-checkbox">
-								<input type="checkbox" class="custom-control-input" id="convertInplace" name="inplace">
+								<input type="checkbox" class="custom-control-input" id="convertInplace" name="inplace"{{#if state}}{{#if state.inplace}} checked{{/if}}{{/if}}>
 								<label class="custom-control-label" for="convertInplace">Convert In Place?</label>
 								<small class="form-text text-muted">Don't create new files unless required.</small>
 							</div>
@@ -42,19 +42,19 @@
 					<div class="row">
 						<div class="form-group col-lg-6">
 							<label for="prefixAfterConversion">Prefix</label>
-							<input type="text" id="prefixAfterConversion" name="prefix" class="form-control" />
+							<input type="text" id="prefixAfterConversion" name="prefix" class="form-control"{{#if state}}{{#if state.prefix}} value="{{state.prefix}}"{{/if}}{{/if}} />
 							<small class="form-text text-muted">After successful conversion, prefix source with this.</small>
 						</div>
 						<div class="form-group col-lg-6">
 							<label for="batchSize">Batch Size</label>
-							<input type="number" id="batchSize" name="batch" class="form-control" value="0"/>
+							<input type="number" id="batchSize" name="batch" class="form-control" value="{{#if state}}{{#if state.batch}}{{state.batch}}{{else}}0{{/if}}{{else}}0{{/if}}"/>
 							<small class="form-text text-muted">Number of batches to break conversion task into (results written after each batch). A zero or negative number will <strong>disable logging</strong>.</small>
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="mirrorOutputTo">Mirror To</label>
 						<div class="input-group">
-							<input type="text" id="mirrorOutputTo" name="mirror" class="form-control" readonly />
+							<input type="text" id="mirrorOutputTo" name="mirror" class="form-control"{{#if state}}{{#if state.mirror}} value="{{state.mirror}}"{{/if}}{{/if}} readonly />
 							<div class="input-group-append">
 								{{> control_button b_class="btn-outline-primary" b_title="Select Folder from Google Drive" b_target="mirrorOutputTo" b_action="load-g-folder" b_text="Browse" }}
 								{{> control_button b_class="btn-secondary eraser" b_title="Clear / Reset" b_target="mirrorOutputTo" b_icon="refresh" }}
