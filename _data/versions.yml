@@ -1,5 +1,9 @@
 site :
   0.0.7k :
+    name : Folders 0.0.4e-alpha
+    desc : Bug Fixes and Code Clean Up
+    type : minor
+  0.0.7k :
     name : Folders 0.0.4d-alpha
     desc : Bug Fixes and Tutorial
     type : minor
@@ -289,6 +293,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.4e-alpha :
+    name : Bug Fixes
+    desc : Bug Fixes and Code Clean Up
+    type : minor
   0.0.4d-alpha :
     name : Bug Fixes
     desc : Bug Fixes and PDF Conversion Tutorial

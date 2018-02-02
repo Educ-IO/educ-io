@@ -19,15 +19,6 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var _formatBytes = function(bytes, decimals) {
-		if (!bytes || _.isNaN(bytes) || bytes === 0 || bytes === "0") return "";
-		var k = 1024,
-			dm = decimals || 2,
-			sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
-			i = Math.floor(Math.log(bytes) / Math.log(k));
-		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-	};
-	
 	var busy = (cell, row, css_class) => (on) => {
 		on ? ಠ_ಠ.Display.busy({
 				target: cell,
@@ -54,10 +45,15 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		properties: v.properties,
 		team: _team,
 		size: v.size,
-		display_size: v.size ? _formatBytes(v.size, 2) : "",
-		out: v.mimeType === "application/vnd.google-apps.spreadsheet" ? {
+		out: v.mimeType === "application/vnd.google-apps.spreadsheet" || ಠ_ಠ.google.files.in("application/x.educ-io.view")(v) ? {
 			text: "Open in View",
 			url: "/view/#google,load." + v.id + ".lazy"
+		} : ಠ_ಠ.google.files.in("application/x.educ-io.folders")(v) ? {
+			text: "Open in Folders",
+			url: "/folders/#google,load." + v.id + ".lazy"
+		} : ಠ_ಠ.google.files.in("application/x.educ-io.reflect")(v) ? {
+			text: "Open in Reflect",
+			url: "/reflect/#google,load." + v.id + ".lazy"
 		} : null
 	});
 	
@@ -210,7 +206,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 			title: "Search Results",
 			folders: _folder_Count,
 			files: _file_Count,
-			size: _formatBytes(_file_Size, 2),
+			size: _file_Size,
 		});
 
 	};
@@ -568,6 +564,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 			(!_return.batch || _return.batch <= 0) ? _return.batch = 50 : _return.log = true;
 			return _return;
 		};
+		
+		
 		var _id = "convert_results", _convert = ಠ_ಠ.Display.modal("convert", {
 			id: _id,
 			target: ಠ_ಠ.container,
@@ -615,7 +613,10 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		_convert.then((values) => {
 
 			if (values) {
-			
+				
+				$(".tab-pane.active .file-name.action-succeeded, .tab-pane.active .file-name.action-failed")
+					.removeClass("action-succeeded text-success action-failed text-danger font-weight-bold");
+				
 				var _results = _collection.chain().data();
 
 				ಠ_ಠ.Flags.log(`CONVERSION STARTED: ${_results.length} items to convert`);
@@ -877,7 +878,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 							title: "Deletion Results",
 							folders: totals.folders,
 							files: totals.files,
-							size: _formatBytes(totals.size, 2),
+							size: totals.size,
 						});
 
 					}
@@ -1010,7 +1011,6 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 
 					/* <!-- Format Results --> */
 					results.empty = !!(!results.files && !results.folders && !results.size);
-					results.size = _formatBytes(results.size, 2);
 
 					/* <!-- Save Results (for filtering etc) --> */
 					_result.results = results;
@@ -1040,7 +1040,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 					title: "Tally Results",
 					folders: totals.folders,
 					files: totals.files,
-					size: _formatBytes(totals.size, 2),
+					size: totals.size,
 				});
 
 			}

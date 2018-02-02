@@ -27,12 +27,7 @@ Router
 Apps
 ----
 * ** IMPORTANT ** Token Expiration and Pop-Up?
-
 * ** IMPORTANT ** Clear process instructions? Visual? <- App Guides
-* ** IMPORTANT ** Tutorial Pages
-
-* ** IMPORTANT ** Modal from a modal - close the first one...
-
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
 * ** IMPORTANT ** Retries (in network.js) takes too long when handling security (401) errors
@@ -66,20 +61,16 @@ View
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
 * Numerical Filter implies re-sort?
 * Auto-hide hidden columns (from original sheet)
-
 * Include instructions about Exporting only exporting values rather than formulas or formats.
 
 Folders
 -------
 * ** IMPORTANT ** Convert and Delete etc should operate on filtered views (need to hook back after_update mechanism)
-* ** CLEAR Ticks on re-convert ** 
-* ** IMPORTANT ** Save Conversion Definition
-* ** IMPORTANT ** Tally should break down file / folder counts by MimeType?
 * ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
+* ** IMPORTANT ** Tally should break down file / folder counts by MimeType?
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Properties-based Search?
-* Replace calls to _formatBytes with formatBytes Template Handler
 
 Merge
 -----
@@ -100,6 +91,10 @@ Reflect
 
 Complete
 --------
+* ** CLEAR Ticks on re-convert ** <-- DONE
+* ** IMPORTANT ** Tutorial Pages <-- DONE
+* Replace calls to _formatBytes with formatBytes Template Handler <-- DONE
+* ** IMPORTANT ** Save Conversion Definition <-- DONE
 * ** IMPORTANT ** Download Files from filtered rows results doesn't seem to be hooked up! <-- DONE
 * Only add folders (by Mime Type) to recent list <-- DONE
 * ** IMPORTANT ** Google Crawl Fetch rendering nothing. <-- DONE
@@ -355,4 +350,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-02-01
+ᕕ( ᐛ )ᕗ JD - 2018-02-02
