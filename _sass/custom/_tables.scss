@@ -44,6 +44,17 @@ table {
 				display: none;
 			}
 		}
+		.wrap-text {
+			overflow-wrap: break-word;
+    	word-wrap: break-word;
+    	display: inline-block;
+			&.w-25 {max-width: 25pc;}
+			&.w-50 {max-width: 50pc;}
+			&.w-75 {max-width: 75pc;}
+			&.w-80 {max-width: 80pc;}
+			&.w-90 {max-width: 90pc;}
+		}
+		
 	}
 }
 

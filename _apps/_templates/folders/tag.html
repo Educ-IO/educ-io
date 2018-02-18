@@ -1,0 +1,59 @@
+{% raw %}
+<div id="{{id}}" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal_options_title">{{title}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{#if instructions}}{{{instructions}}}{{/if}}
+				<div class="d-flex flex-column flex-wrap flex-md-row lead mb-3 mt-1">
+          <button class="btn btn-dark mb-3 mb-md-0 mr-md-3 mt-2 btn-disabled" type="button" aria-disabled="true" tabindex="-1">Confidentiality</button>
+          <button data-action="populate" data-populate="Confidentiality|High" type="button" class="btn btn-outline-danger mb-3 mb-md-0 mr-md-2 mt-2">High</button>
+					<button data-action="populate" data-populate="Confidentiality|Medium" type="button" class="btn btn-outline-warning mb-3 mb-md-0 mr-md-2 mt-2">Medium</button>
+					<button data-action="populate" data-populate="Confidentiality|Low" type="button" class="btn btn-outline-success mb-3 mb-md-0 mr-md-2 mt-2">Low</button>
+          <button data-action="populate" data-populate="Confidentiality|None" type="button" class="btn btn-outline-info mb-3 mb-md-0 mr-md-2 mt-2">None</button>
+				</div>
+        <div class="d-flex flex-column flex-wrap flex-md-row lead mb-3 mt-1">
+          <button class="btn btn-dark mb-3 mb-md-0 mr-md-3 mt-2 btn-disabled" type="button" aria-disabled="true" tabindex="-1">Importance</button>
+					<button data-action="populate" data-populate="Importance|High" type="button" class="btn btn-outline-danger mb-3 mb-md-0 mr-md-2 mt-2">High</button>
+					<button data-action="populate" data-populate="Importance|Medium" type="button" class="btn btn-outline-warning mb-3 mb-md-0 mr-md-2 mt-2">Medium</button>
+					<button data-action="populate" data-populate="Importance|Low" type="button" class="btn btn-outline-success mb-3 mb-md-0 mr-md-2 mt-2">Low</button>
+          <button data-action="populate" data-populate="Importance|None" type="button" class="btn btn-outline-info mb-3 mb-md-0 mr-md-2 mt-2">None</button>
+				</div>
+				<form class="needs-validation" novalidate>
+					<div class="row">
+						<div class="form-group col-lg-8">
+							<label for="tagName">Name</label>
+						  <input type="text" id="tagName" name="name" class="form-control"{{#if state}}{{#if state.name}} value="{{state.name}}"{{/if}}{{/if}} pattern="^[a-zA-Z0-9.!@$%^&*()\-_/]*$" required/>
+						  <small class="form-text text-muted">The name of the tag to set.</small>
+							<div class="invalid-feedback">Tag Names may only contain only the letters a-z and A-Z, the numbers 0-9, and the characters .!@$%^&amp;*()-_/</div>
+						</div>
+						<div class="col-lg-4 d-flex align-items-center">
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="tagPrivate" name="private"{{#if state}}{{#if state.private}} checked{{/if}}{{/if}}>
+								<label class="custom-control-label" for="tagPrivate">Private Tag?</label>
+								<small class="form-text text-muted">Can only be read with this app.</small>
+							</div>
+						</div>
+					</div>
+          <div class="form-group">
+    				<label for="tagName">Value</label>
+            <button type="button" class="close" data-action="clear" data-clear="tagValue" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+    				<textarea id="tagValue" name="value" class="form-control" rows="2" required>{{#if state}}{{state.value}}{{/if}}</textarea>
+						<small class="form-text text-muted">The value of the tag to set.</small>
+  				</div>
+				</form>
+      </div>
+      <div class="modal-footer">
+        {{# if actions}}{{#each actions}}{{> control_button b_class="btn-light" b_id=id b_action=(concat "actions_" @index) b_title=desc b_text=text }}{{/each}}{{/if}}
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Tag</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endraw %}

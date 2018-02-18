@@ -1,4 +1,8 @@
 site :
+  0.0.7m :
+    name : Folders 0.0.4f-alpha
+    desc : Feature Improvements (Tags)
+    type : minor
   0.0.7l :
     name : Folders 0.0.4e-alpha
     desc : Bug Fixes and Code Clean Up
@@ -293,6 +297,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.4f-alpha :
+    name : Feature Improvements
+    desc : Ability to add/remove tags from files (individually or in bulk)
+    type : minor
   0.0.4e-alpha :
     name : Bug Fixes
     desc : Bug Fixes and Code Clean Up

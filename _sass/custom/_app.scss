@@ -62,6 +62,10 @@ html, body {
     box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
 	}
 }
+
+.btn-disabled {
+	pointer-events: none;
+}
 // -- Action Button -- //
 
 // -- Keyboard Shortcuts -- //
@@ -248,3 +252,18 @@ a.download {
 	
 }
 // -- Results -- //
+
+// -- Badges -- //
+.badge {
+	.close {
+		margin-left: .25rem;
+		color: inherit;
+		font-size: 100%;
+		text-shadow: 0 1px 0 rgba(#000, .5);
+	}
+	.material-icons {
+		color: inherit;
+		font-size: 85%;
+	}
+}
+// -- Badges -- //

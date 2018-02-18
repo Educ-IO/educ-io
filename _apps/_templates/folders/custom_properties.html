@@ -1,0 +1,3 @@
+{% raw %}
+{{#each properties}}{{#if this}}<span class="custom-property badge badge-secondary{{#si this "High"}} badge-danger{{/si}}{{#si this "Medium"}} badge-warning{{/si}}{{#si this "Low"}} badge-success{{/si}}{{#si this "None"}} badge-info{{/si}} ml-1" title="">{{#exists ../private}}<i class="material-icons h-100 d-inline-flex pr-1" title="Visible only with this App">lock</i>{{/exists}}{{@key}} - {{this}}<a role="button" class="close" aria-label="Close" href="#remove.tag.{{../id}}.{{@key}}" title="Remove Tag"><span aria-hidden="true">&times;</span></a></span>{{/if}}{{/each}}
+{% endraw %}

@@ -648,6 +648,8 @@ folders:
     - folders/results
     - folders/tally
     - folders/status
+    - folders/tag
+    - folders/custom_properties
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -661,6 +663,7 @@ folders:
     - folders/INSTRUCTIONS
     - folders/SEARCH_INSTRUCTIONS
     - folders/CONVERT_INSTRUCTIONS
+    - folders/TAG_INSTRUCTIONS
     - folders/TUTORIALS
   scopes:
     google:
@@ -732,6 +735,13 @@ folders:
             - name: Convert
               desc: Convert files in the current folder or search results
               hash: convert
+              disabled_until:
+                - opened
+              imports:
+                - google
+            - name: Tag
+              desc: Tag files in the current folder or search results
+              hash: tag
               disabled_until:
                 - opened
               imports:

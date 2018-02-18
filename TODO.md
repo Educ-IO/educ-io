@@ -68,6 +68,10 @@ Folders
 * ** IMPORTANT ** Convert and Delete etc should operate on filtered views (need to hook back after_update mechanism)
 * ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
 * ** IMPORTANT ** Tally should break down file / folder counts by MimeType?
+* Swap table from expanding to fixed with flex wrapping for custom properties and long ids
+* Make folders more visually obvious for clicking
+* Potential bug - name: `Tag: ${folder.name} [${new Date().toLocaleDateString()}].folders`, ON SEARCH NOT FOLDER?
+* Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => {
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Properties-based Search?
@@ -91,6 +95,7 @@ Reflect
 
 Complete
 --------
+* Add / Remove Tags (Custom Properties) from Files <== DONE
 * ** CLEAR Ticks on re-convert ** <-- DONE
 * ** IMPORTANT ** Tutorial Pages <-- DONE
 * Replace calls to _formatBytes with formatBytes Template Handler <-- DONE

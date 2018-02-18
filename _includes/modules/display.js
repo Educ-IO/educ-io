@@ -131,33 +131,34 @@ Display = function() {
 					}
 				});
 
-				Handlebars.registerHelper({
-					eq: function(v1, v2) {
-						return v1 === v2;
-					},
-					ne: function(v1, v2) {
-						return v1 !== v2;
-					},
-					lt: function(v1, v2) {
-						return v1 < v2;
-					},
-					gt: function(v1, v2) {
-						return v1 > v2;
-					},
-					lte: function(v1, v2) {
-						return v1 <= v2;
-					},
-					gte: function(v1, v2) {
-						return v1 >= v2;
-					},
-					and: function(v1, v2) {
-						return v1 && v2;
-					},
-					or: function(v1, v2) {
-						return v1 || v2;
-					}
-				});
+				Handlebars.registerHelper("si", function (v1, operator, v2, options) {
 
+					if (arguments.length < 3) throw new Error("SI expects 2 or 3 parameters");
+					if (options === undefined) {
+							options = v2;
+							v2 = operator;
+							operator = "===";
+					}
+
+					var operators = {
+						"==" : (a, b) => a == b,
+						"===" : (a, b) => a === b,
+						"!=" : (a, b) => a != b,
+						"!==" : (a, b) => a !== b,
+						"<" : (a, b) => a < b,
+						">" : (a, b) => a > b,
+						"<=" : (a, b) => a <= b,
+						">=" : (a, b) => a = b,
+						"typeof" : (a, b) => typeof a == b,
+						"and" : (a, b) => a && b,
+						"or" : (a, b) => a || b,
+					};
+
+					if (!operators[operator]) throw new Error(`SI doesn't understand the operator ${operator}`);
+					return operators[operator](v1, v2) ? options.fn(this) : options.inverse(this);
+
+				});
+				
 				Handlebars.registerHelper("concat", function() {
 					var _return = "";
 					for(var argument in arguments){
@@ -314,10 +315,24 @@ Display = function() {
 					/* <!-- Set Form / Return Event Handlers --> */
 					if (dialog.find("button.btn-primary").length > 0) {
 						
-						dialog.find("button.btn-primary").click(function() {
-							_clean();
-							resolve(dialog.find("form").serializeArray());
+						dialog.find("button.btn-primary").click(function(evt) {
+							
+							var _valid = true;
+							dialog.find("form.needs-validation").each((i,form) => {
+								if (form.checkValidity() === false) _valid = false;
+								form.classList.add("was-validated");
+							});
+							var _values = dialog.find("form").serializeArray();
+							if (options.validate && !options.validate(_values)) _valid = false;
+							if (_valid) {
+								_clean();
+								resolve(_values);
+							} else {
+								evt.preventDefault();
+								evt.stopPropagation();
+							}
 						});
+						
 					}
 					
 					if (options.actions && dialog.find("button[data-action]").length > 0) {

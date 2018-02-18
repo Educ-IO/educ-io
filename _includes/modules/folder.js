@@ -7,7 +7,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 	
 	const TYPE_CONVERT = "application/x.educ-io.folders-convert",
 				TYPE_SEARCH = "application/x.educ-io.folders-search",
-				_types = [TYPE_CONVERT, TYPE_SEARCH];
+				TYPE_TAG = "application/x.educ-io.folders-tag",
+				_types = [TYPE_CONVERT, TYPE_SEARCH, TYPE_TAG];
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -43,16 +44,20 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		download: !!v.webContentLink,
 		paths: v.paths,
 		properties: v.properties,
+		appProperties: v.appProperties,
 		team: _team,
 		size: v.size,
 		out: v.mimeType === "application/vnd.google-apps.spreadsheet" || ಠ_ಠ.google.files.in("application/x.educ-io.view")(v) ? {
-			text: "Open in View",
+			name: "View",
+			desc: "Open in View",
 			url: "/view/#google,load." + v.id + ".lazy"
 		} : ಠ_ಠ.google.files.in("application/x.educ-io.folders")(v) ? {
-			text: "Open in Folders",
+			name: "Folders",
+			desc: "Open in Folders",
 			url: "/folders/#google,load." + v.id + ".lazy"
 		} : ಠ_ಠ.google.files.in("application/x.educ-io.reflect")(v) ? {
-			text: "Open in Reflect",
+			name: "Reflect",
+			desc: "Open in Reflect",
 			url: "/reflect/#google,load." + v.id + ".lazy"
 		} : null
 	});
@@ -71,7 +76,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 
 	var _showData = function(id, name, values, target) {
 
-		var headers = ["Star", "Name", "Type", "ID"].map((v) => ({
+		var headers = ["Star", "Name", "ID", "Type"].map((v) => ({
 			name: v,
 			hide: function(initial) {
 				return !!(this.hide_now || (initial && this.hide_initially));
@@ -230,7 +235,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 			};
 			var _return = {
 				mime : _.map(_.find(values, v => v.name == "mime").value.split("\n"), m => m.trim()),
-				properties : _.map(_.find(values, v => v.name == "properties").value.split("\n"), r => _regex(r.trim(), true)),
+				properties : _.find(values, v => v.name == "properties").value.trim() ? _.map(_.find(values, v => v.name == "properties").value.split("\n"), m => m.trim()) : "",
 				exclude : _.map(_.find(values, v => v.name == "exclude").value.split("\n"), r => _regex(r.trim(), false)),
 				include : _.map(_.find(values, v => v.name == "include").value.split("\n"), r => _regex(r.trim(), true)),
 				recurse : !!(_.find(values, v => v.name == "recurse"))
@@ -271,21 +276,25 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		
 		_search.then((values) => {
 
+			
+			
 			if (values) {
-				
+			
 				var _finish = ಠ_ಠ.Display.busy({
 					target: ಠ_ಠ.container,
 					fn: true
 				});
-
+				
 				values = _decode(values);
+				ಠ_ಠ.Flags.log(`Searching folder ${id} with terms: ${JSON.stringify(values)}`);
 				_searches[id] = _encode(values);
 
-				ಠ_ಠ.google.folders.search(id, values.recurse, values.mime, values.exclude, values.include, null, _team).then((results) => {
+				ಠ_ಠ.google.folders.search(id, values.recurse, values.mime, values.exclude, values.include, values.properties, _team).then((results) => {
 					_showResults(_name, results);
-					_finish();
-				});
-				
+				}).catch((e) => {
+					if (e) ಠ_ಠ.Flags.error("Search Error", e);
+				}).then(_finish);
+
 			}
 			
 		}).catch((e) => {
@@ -739,7 +748,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		});
 
 		/* <!-- Handle the Populate Buttons --> */
-		ಠ_ಠ.container.find("#convert_results button[data-action='populate']").on("click.populate", e => {
+		ಠ_ಠ.container.find(`#${_id} button[data-action='populate']`).on("click.populate", e => {
 
 			var _populate = $(e.target).data("populate"),
 				_natives = ಠ_ಠ.google.files.natives(),
@@ -820,6 +829,114 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 
 	};
 
+	var _tagItems = function(id, file_id) {
+
+		var _collection;
+		if(!(_collection = _db.getCollection(id))) return;
+		
+		var _decode = (values) => {
+			var _return = {
+				name : _.find(values, v => v.name == "name") ? _.find(values, v => v.name == "name").value : null,
+				value : _.find(values, v => v.name == "value") ? _.find(values, v => v.name == "value").value : null,
+				private : !!(_.find(values, v => v.name == "private"))
+			};
+			return _return;
+		};
+		
+		var _id = "tag_results", _tag = ಠ_ಠ.Display.modal("tag", {
+			id: _id,
+			target: ಠ_ಠ.container,
+			title: "Tag Files",
+			instructions: ಠ_ಠ.Display.doc.get("TAG_INSTRUCTIONS"),
+			state: state && state.tag ? state.tag : null,
+			validate : values => {
+				values = _decode(values);
+				return values.name && values.value && (values.name.length + values.value.length) <= 124;
+			},
+			actions: [{text : "Save", handler : (values) => {
+				
+				var finish = ಠ_ಠ.Display.busy({
+					target : $(`#${_id}`),
+					fn : true
+				});
+				
+				var _meta = {
+						name: `Tag: ${folder.name} [${new Date().toLocaleDateString()}].folders`,
+						parents: (folder ? [folder.id] : null)
+					},
+					_data = JSON.stringify({
+							folder: folder,
+							state: {
+								tag: _decode(values),
+								search: _search ? _searches[id] : null	
+							}
+						}),
+					_mime = TYPE_TAG;
+				ಠ_ಠ.google.upload(_meta, _data, _mime).then(uploaded => ಠ_ಠ.Flags.log("Folders Tag File Saved", uploaded))
+					.catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error"))
+					.then(finish);
+			}}]
+		}), _form = ಠ_ಠ.container.find(`#${_id}`);
+		
+		_tag.then((values) => {
+
+			if (!values) return;
+			
+			var _results = file_id ? [ _collection.by("id", file_id)] : _collection.chain().data();
+
+			ಠ_ಠ.Flags.log(`TAG STARTED: ${_results.length} items to tag`);
+
+			values = _decode(values);
+
+			var _properties = {};
+			_properties[values.name] = values.value;
+			var _data = values.private ? {appProperties : _properties} : {properties : _properties};
+
+			_.each(_results, file => {
+
+				if (!file) return;
+				ಠ_ಠ.Flags.log(`TAGGING FILE: ${file.name} (${file.id}) with ${JSON.stringify(_data)}`);
+
+				var _container = $("#" + id + "_" + file.id), _result = _collection.by("id", file.id);
+				if (!_container || _container.length === 0) _container = $("#" + file.id);
+				var _cell = _container.find(".file-name").parent(), _row = _cell.parent(), _busy = busy(_cell, _row);
+				_busy(true);
+
+				ಠ_ಠ.google.update(file.id, _data, _team).then(updated => {
+					if (!_result[values.private ? "appProperties" : "properties"]) _result[values.private ? "appProperties" : "properties"] = {};
+					(_result[values.private ? "appProperties" : "properties"][values.name] = values.value) && _collection.update(_result);
+					ಠ_ಠ.Flags.log(`FILE UPDATED: ${JSON.stringify(updated)}`);
+				}).catch(e => {
+					ಠ_ಠ.Flags.error("File " + file.id + " Updating Error", e ? e : "No Inner Error");
+				}).then(() => _tables[id].update() && _busy(false));
+
+			});
+
+		}).catch(e => {
+			if (e) ಠ_ಠ.Flags.error("Tagging Error", e);
+		});
+
+		/* <!-- Handle the Populate Buttons --> */
+		ಠ_ಠ.container.find(`#${_id} button[data-action='populate']`).on("click.populate", e => {
+
+			var _populate = $(e.target).data("populate");
+			if (_populate) $("#tagName").val(_populate.split("|")[0]) && $("#tagValue").val(_populate.split("|")[1]);
+			
+		});
+
+		/* <!-- Update whether we can do an inplace conversion, depending on the Target MIME Type --> */
+		$("#targetMimeType").on("change", (e) => {
+			var _native = ಠ_ಠ.google.files.native($(e.target).val());
+			$("#convertInplace").prop("disabled", _native).prop("checked", !_native);
+		});
+
+		/* <!-- If we are working inplace, we're not renaming --> */
+		$("#convertInplace").on("change", (e) => {
+			if (e.currentTarget.checked) $("#prefixAfterConversion").val("");
+		});
+
+	};
+	
 	var _deleteItems = function() {
 
 		var _collection;
@@ -1071,6 +1188,52 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		_tables[_id].update();
 
 	};
+	
+	var _detag = function(id, tag) {
+		
+		var _id = _search ? _search : folder.id;
+		var _collection = _db.getCollection(_id);
+		var _candidate = _collection.by("id", id);
+		
+		if (_candidate && (_candidate.properties[tag] || _candidate.appProperties[tag])) {
+			
+			ಠ_ಠ.Display.confirm({
+				id: "remove_Tag",
+				target: ಠ_ಠ.container,
+				message: `Please confirm that you want to remove the ${tag} tag from ${_candidate.name}`,
+				action: "Remove"
+			}).then((confirm) => {
+
+				if (confirm) {
+
+					var _container = $("#" + _id + "_" + _candidate.id);
+					if (!_container || _container.length === 0) _container = $("#" + _candidate.id);
+					var _cell = _container.find(".file-name").parent(), _row = _cell.parent(), _busy = busy(_cell, _row);
+					_busy(true);
+					
+					var _private = _candidate.appProperties && _candidate.appProperties[tag];
+					var _properties = _private ? _candidate.appProperties : _candidate.properties;
+					_properties[tag] = null;
+					var _data = _private ? {appProperties : _properties} : {properties : _properties};
+					
+					ಠ_ಠ.Flags.log(`DE-TAGGING FILE: ${_candidate.name} (${_candidate.id}) with ${JSON.stringify(_data)}`);
+						
+					ಠ_ಠ.google.update(_candidate.id, _data, _team).then(updated => {
+						_collection.update(_candidate);
+						ಠ_ಠ.Flags.log(`FILE UPDATED: ${JSON.stringify(updated)}`);
+					}).catch(e => {
+						ಠ_ಠ.Flags.error("File " + _candidate.name + " De-Tagging Error", e ? e : "No Inner Error");
+					}).then(() => _tables[_id].update() && _busy(false));
+
+				}
+
+			}).catch(e => {
+				if (e) ಠ_ಠ.Flags.error("Removal Error", e);
+			});
+			
+		}
+		
+	};
 	/* <!-- Internal Functions --> */
 
 	/* <!-- Initial Calls --> */
@@ -1086,6 +1249,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		search: (id) => _searchFolder(id ? id : folder.id),
 
 		convert: () => _convertItems(_search ? _search : folder.id),
+		
+		tag: (id) => _tagItems(_search ? _search : folder.id, id),
 
 		close: () => _closeSearch(),
 
@@ -1094,6 +1259,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		tally: (id) => _tally(id ? id : folder.id),
 
 		remove: (id) => _removeItem(id),
+		
+		detag: (id, tag) => _detag(id, tag),
 
 	};
 	/* <!-- External Visibility --> */

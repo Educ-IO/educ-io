@@ -137,7 +137,7 @@ App = function() {
 				ಠ_ಠ.google.download(file.id).then(loaded => {
 					return ಠ_ಠ.google.reader().promiseAsText(loaded).then(parsed => {
 						ಠ_ಠ.Flags.log(`Loaded Folders File [${file.mimeType}]: ${parsed}`);
-						convert = JSON.parse(parsed);
+						parsed = JSON.parse(parsed);
 						if (parsed && parsed.folder) 
 							_load(Promise.resolve(parsed.folder), !!parsed.folder.team, false, parsed.folder.team, parsed.state);
 					});
@@ -281,6 +281,22 @@ App = function() {
 					
 				}
 
+			} else if ((/REMOVE/i).test(command)) {
+
+				if ((/LIST/i).test(command[1])) {
+					
+					if (_folder && command[2]) _folder.remove(command[2]);
+				
+				} else if ((/TAG/i).test(command[1])) {
+					
+					if (_folder && command[2] && command[3]) _folder.detag(command[2], command[3]);
+					
+				} else {
+					
+					if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());	
+					
+				}
+					
 			} else if ((/TALLY/i).test(command)) {
 
 				if (_folder) _folder.tally();
@@ -288,19 +304,11 @@ App = function() {
 			} else if ((/CONVERT/i).test(command)) {
 
 				if (_folder) _folder.convert();
-
-			} else if ((/REMOVE/i).test(command)) {
-
-				if ((/LIST/i).test(command[1])) {
-					
-					if (_folder && command[2]) _folder.remove(command[2]);
-					
-				} else {
-					
-					if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());	
-					
-				}
 				
+			} else if ((/TAG/i).test(command)) {
+
+				if (_folder) _folder.tag(((/TAG/i).test(command[0])) ? command[1] : null);
+	
 			} else if ((/TUTORIALS/i).test(command)) {
 
 				/* <!-- Load the Tutorials --> */
