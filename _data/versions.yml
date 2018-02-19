@@ -1,4 +1,8 @@
 site :
+  0.0.7n :
+    name : Meta Tags Update
+    desc : Added Open Grade Tags to Meta Information
+    type : minor
   0.0.7m :
     name : Folders 0.0.4f-alpha
     desc : Feature Improvements (Tags)
