@@ -1,4 +1,8 @@
 site :
+  0.0.7o :
+    name : Folders 0.0.4g-alpha
+    desc : Default hiding of ID columns
+    type : minor
   0.0.7n :
     name : Meta Tags Update
     desc : Added Open Grade Tags to Meta Information
@@ -301,6 +305,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.4g-alpha :
+    name : Feature Improvements
+    desc : Default hiding of the file/folder ID in table view
+    type : minor
   0.0.4f-alpha :
     name : Feature Improvements
     desc : Ability to add/remove tags from files (individually or in bulk)

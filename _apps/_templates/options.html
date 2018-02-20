@@ -18,7 +18,7 @@
               <button id="{{../id}}_{{@index}}_btn" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{#if current}}{{current}}{{else}}Select{{/if}}</button>
               <div class="dropdown-menu dropdown-menu-right" aria-label="{{../choices_label}}">
                 {{#each ../choices}}
-                <a class="dropdown-item" href="#" data-field="{{@index}}"{{# if desc}} data-toggle="tooltip" data-placement="left" title="{{desc}}"{{/if}}>{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
+                {{#if this}}<a class="dropdown-item" href="#" data-field="{{@index}}"{{# if desc}} data-toggle="tooltip" data-placement="left" title="{{desc}}"{{/if}}>{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>{{/if}}
                 {{/each}}
               </div>
             </div>

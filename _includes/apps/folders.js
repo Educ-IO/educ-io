@@ -309,6 +309,10 @@ App = function() {
 
 				if (_folder) _folder.tag(((/TAG/i).test(command[0])) ? command[1] : null);
 	
+			} else if ((/VISIBILITY/i).test(command)) {
+
+				if ((/COLUMNS/i).test(command[1]) && _folder) _folder.table().columns.visibility();
+							
 			} else if ((/TUTORIALS/i).test(command)) {
 
 				/* <!-- Load the Tutorials --> */

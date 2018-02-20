@@ -32,9 +32,7 @@
             Visibility
           </button>
         <div class="dropdown-menu dropdown-menu-right" aria-label="Menu for controlling the visibility of this column" data-heading="heading_{{../id}}_{{@index}}" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}">
-          <a class="dropdown-item" href="#" data-command="hide" data-action="now" data-toggle="tooltip" data-placement="left" title="Hide this column">Hide now</a>
-          <a class="dropdown-item" href="#" data-command="hide" data-action="always" data-toggle="tooltip" data-placement="left" title="Just hide this column on the view that you create">Hide always</a>
-          <a class="dropdown-item" href="#" data-command="hide" data-action="initially" data-toggle="tooltip" data-placement="left" title="Just hide this column on the view, but allow it to be un-hidden">Hide initially</a>
+          {{#each ../choices}}{{#if this}}{{#if menu}}<a class="dropdown-item" href="#" data-command="hide" data-action="{{@key}}" data-toggle="tooltip" data-placement="left" title="{{desc}}">{{name}}</a>{{/if}}{{/if}}{{/each}}
         </div>
       </div>
       <button type="button" class="close ml-2" aria-label="Close" onclick="event.preventDefault(); $('#collapse_{{../id}}_{{@index}}').fadeOut();" data-toggle="tooltip" data-placement="bottom" title="Close this panel but retain the filter"><span aria-hidden="true">&times;</span></button>

@@ -128,7 +128,28 @@ Sheets = function(sheet, ಠ_ಠ) {
 		}, {
 			widths: widths,
 			frozen: frozen,
-			advanced: true
+			advanced: true,
+			visibilities : {
+				visible: {
+					name: "Visible",
+					desc: "Show this column"
+				},
+				now: {
+					name: "Hide Now",
+					desc: "Hide this column",
+					menu: true
+				},
+				always: {
+					name: "Hide Always",
+					desc: "Just hide this column on the view that you create",
+					menu: true
+				},
+				initially: {
+					name: "Hide Initially",
+					desc: "Just hide this column on the view, but allow it to be un-hidden",
+					menu: true
+				}
+			}
 		}, target);
 
 	};

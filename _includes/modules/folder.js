@@ -76,13 +76,17 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 
 	var _showData = function(id, name, values, target) {
 
-		var headers = ["Star", "Name", "ID", "Type"].map((v) => ({
+		var headers = ["Star", "Name", "Actions", "ID", "Type"].map((v) => ({
 			name: v,
 			hide: function(initial) {
-				return !!(this.hide_now || (initial && this.hide_initially));
+				return !!(initial && this.hide_initially);
 			},
+			set_hide: function(now, always, initially) {
+				this.hide_initially = initially;
+			},
+			hide_always: false,
 			hide_now: false,
-			hide_initially: false,
+			hide_initially: v === "ID" ? true : false,
 			field: v.toLowerCase(),
 		}));
 
@@ -98,7 +102,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 			data: _data,
 			headers: headers
 		}, {
-			advanced: false
+			advanced: false,
+			collapsed: true
 		}, target, (target) => _enableDownloads(target));
 
 		/* <!-- Wire Up Downloads --> */
@@ -920,7 +925,11 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		ಠ_ಠ.container.find(`#${_id} button[data-action='populate']`).on("click.populate", e => {
 
 			var _populate = $(e.target).data("populate");
-			if (_populate) $("#tagName").val(_populate.split("|")[0]) && $("#tagValue").val(_populate.split("|")[1]);
+			if (_populate) {
+				var _name = _populate.split("|")[0], _value = _populate.split("|")[1];
+				if (_value === "@@NOW@@") _value = new Date().toLocaleDateString();
+				$("#tagName").val(_name) && $("#tagValue").val(_value);
+			}
 			
 		});
 
@@ -1261,6 +1270,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		remove: (id) => _removeItem(id),
 		
 		detag: (id, tag) => _detag(id, tag),
+		
+		table: () => _search ? _tables[_search] : _tables[folder.id],
 
 	};
 	/* <!-- External Visibility --> */

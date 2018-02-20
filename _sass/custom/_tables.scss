@@ -87,6 +87,7 @@ table {
 				bottom: -0.1em;
 				color: darken($colour-deemphasise, 10%);
 				content: "+/-";
+				text-align: left;
 			}
 		}
 		th:not(.to-hide):not(.d-none) + .to-hide, th.to-hide + :not(.to-hide) {

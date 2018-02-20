@@ -198,6 +198,21 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 		/* <!-- Remove / Create Custom CSS Sheet --> */
 		_css = _css ? _css.deleteAll() : ಠ_ಠ.Css(_name);
+		
+		/* <!-- Add default visibilities if none suppled --> */
+		if (!options.visibilities) options.visibilities = {
+			visible: {
+				name: "Visible",
+				desc: "Show this column"
+			},
+			initially: {
+				name: "Hide",
+				desc: "Hide this column, but allow it to be un-hidden",
+				menu: true
+			},
+			now: null,
+			always : null
+		};
 
 	};
 	_initialise(); /* <!-- Run initial variable initialisation --> */
@@ -304,7 +319,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			(container ? container.find(query) : target.find(query)).each(function(i, el) {
 				if (!el.nextElementSibling || !$(el.nextElementSibling).hasClass("to-hide")) {
 					var _target = $(el),
-					_last = (!_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0),
+					_last = (_target.hasClass("to-hide") && !_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0),
 					_result = _toggleColumn(_target, (el) => el.prev());
 					if (_last) _result.addClass("to-hide-prefix");
 				}
@@ -366,6 +381,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 	var _createDisplayFilters = () => ಠ_ಠ.Display.template.get("filters")({
 		id: _name,
 		headers: table.headers,
+		choices: options.visibilities,
 		instructions: ಠ_ಠ.Display.doc.get("FILTERS")
 	});
 
@@ -423,18 +439,21 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		});
 		target.find("[data-toggle='tooltip']").tooltip({});
 
+		/* <!-- Show/Hide Column (expandable table) --> */
 		target.find(".table-headers").on("click", (e) => {
 			if (e.target.classList.contains("table-header")) {
 				var _target = $(e.target),
-					_last = (!_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0);
+					_last = (_target.hasClass("to-hide") && !_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0);
 				if (_last) _target.prev().addClass("to-hide-prefix");
 				_toggleColumn(_target.hasClass("to-hide") || _target.hasClass("to-hide-prefix") ? (_target.hasClass("to-hide-prefix") ? _target.next() : _target) : _target.prev(), _target.hasClass("to-hide") || _target.hasClass("to-hide-prefix") ? (el) => el.next() : (el) => el.prev());
 				if (_target.hasClass("to-hide-prefix")) _target.removeClass("to-hide-prefix");
 			}
 		});
 
+		/* <!-- Clear Column Filter --> */
 		target.find("button[data-command='clear']").on("click", (e) => _clearFilter(e.target));
 
+		/* <!-- Apply Table Sort --> */
 		target.find("a[data-command='sort'], button[data-command='sort']").on("click", (e) => {
 			var _target = $(e.target);
 			var _field = _target.data("field");
@@ -448,6 +467,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			_update(true, true, target);
 		});
 
+		/* <!-- Update Column Visibility --> */
 		target.find("a[data-command='hide']").on("click", (e) => {
 			var _target = $(e.target);
 			var _action = _target.data("action");
@@ -474,7 +494,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 				table.headers[_field].hide_initially = !table.headers[_field].hide_initially;
 				if (table.headers[_field].hide_initially) {
 					_complete = () => {
-						if (_heading.prev().is(":hidden") || _heading.next().is(":hidden")) _toggleColumn(_heading);
+						if (!options.collapsed && (_heading.prev().is(":hidden") || _heading.next().is(":hidden"))) _toggleColumn(_heading);
 					};
 				}
 			}
@@ -503,25 +523,8 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 	var _columnVisibility = function() {
 
-		var _choices = {
-			visible: {
-				name: "Visible",
-				desc: "Show this column"
-			},
-			now: {
-				name: "Hide Now",
-				desc: "Hide this column"
-			},
-			always: {
-				name: "Hide Always",
-				desc: "Just hide this column on the view that you create"
-			},
-			initially: {
-				name: "Hide Initially",
-				desc: "Just hide this column on the view, but allow it to be un-hidden"
-			}
-		};
-
+		var _choices = options.visibilities;
+		
 		ಠ_ಠ.Display.options({
 			id: "column_visibilities",
 			title: "Column Visibilities",
@@ -546,7 +549,10 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 				ಠ_ಠ.Flags.log("Current Headers", table.headers).log("Received Options", options);
 
 				/* <!-- Send List of Columns to hide --> */
-				options.forEach((v) => table.headers[v.name].set_hide(v.value === _choices.now.name, v.value === _choices.always.name, v.value === _choices.initially.name));
+				options.forEach((v) => table.headers[v.name].set_hide(
+					_choices.now && v.value === _choices.now.name, 
+					_choices.always && v.value === _choices.always.name, 
+					_choices.initially && v.value === _choices.initially.name));
 
 				/* <!-- Update Visual Display --> */
 				_update(true, true);

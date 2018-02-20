@@ -756,6 +756,15 @@ folders:
               hash: close.results
               disabled_until:
                 - searched
+    - name: Settings
+      groups:
+        all:
+          commands:
+            - name: Show / Hide Columns
+              desc: Select which columns are visible
+              hash: visibility.columns
+              disabled_until:
+                - opened
     - name: About
       short_name: Help
       groups:

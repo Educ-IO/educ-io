@@ -257,7 +257,7 @@ Display = function() {
 				_element.find(".loader").remove() : _element.prepend(_template("loader")(options ? options : {}));
 
 			return options && !options.clear && (options === true || options.fn === true) ? ((fn, opts) => {
-  			opts.clear = true;
+				opts.clear = true;
 				return () => fn(opts);
 			})(this.busy, options === true ? {} : options) : this;
 			
@@ -565,7 +565,7 @@ Display = function() {
 				dialog.find("input[type='file']").on("change", function upload(e) {
 					files = options.single ? _.toArray(e.target.files) : files.concat(_.toArray(e.target.files));
 					if (files.length > 0) _populate();
-  			});
+				});
 				
 				/* <!-- Set Event Handlers --> */
 				dialog.find("button.btn-primary").click(function() {

@@ -7,6 +7,7 @@ TODO LIST
 
 * ** IMPORTANT ** Make JS Request calls for SW cacheable resources with integrity flags if available
 
+* App Guides need an 'open app' button
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo
 * Favicon Background?
@@ -23,6 +24,9 @@ TODO LIST
 Router
 ------
 * Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings.
+
+Datatable
+---------
 
 Apps
 ----
@@ -74,7 +78,7 @@ Folders
 * Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => {
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
-* Properties-based Search?
+* Properties-based Search? Add presence and complex searchs (e.g. for reviews)
 
 Merge
 -----
@@ -95,6 +99,12 @@ Reflect
 
 Complete
 --------
+* Add option to remove hide completely from column filter LINE 510 in Datatable.js <== DONE
+* Adding expanding column to left of existing one results in weird behaviour! | ONLY on collapsed: true <== DONE
+* LHS +/- hiding needs two clicks | ONLY on second to last column <-- DONE
+* +/- positioning bug for some columns? <== DONE
+* Add Review property tags <-- DONE
+* Make columns hidable <- Bug at the moment <-- DONE
 * Add / Remove Tags (Custom Properties) from Files <== DONE
 * ** CLEAR Ticks on re-convert ** <-- DONE
 * ** IMPORTANT ** Tutorial Pages <-- DONE
@@ -355,4 +365,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-02-18
+ᕕ( ᐛ )ᕗ JD - 2018-02-20
