@@ -10,47 +10,55 @@
       </div>
       <div class="modal-body">
         {{#if instructions}}{{{instructions}}}{{/if}}
-				<div class="d-flex flex-column flex-wrap flex-md-row lead mb-3 mt-1">
-					<button data-action="populate" data-populate="word" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Word Docs</button>
-					<button data-action="populate" data-populate="excel" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Excel Sheets</button>
-					<button data-action="populate" data-populate="powerpoint" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Powerpoint Slides</button>
-					<button data-action="populate" data-populate="pdf" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">PDFs</button>
-					<button data-action="populate" data-populate="docs" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Google Docs</button>
-					<button data-action="populate" data-populate="sheets" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Google Sheets</button>
-					<button data-action="populate" data-populate="slides" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Google Slides</button>
-					<button data-action="populate" data-populate="temp" type="button" class="btn btn-secondary mb-3 mb-md-0 mr-md-3 mt-2">Temp &amp; Thumbs</button>
+				<div class="d-flex flex-column flex-wrap flex-md-row mb-1 mb-lg-2">
+          <button class="btn btn-dark mr-1 mr-md-2 mr-lg-3 btn-disabled mb-2 mb-md-0" type="button" aria-disabled="true" tabindex="-1">Google Apps</button>
+          <button data-action="populate" data-populate="docs" type="button" class="btn btn-outline-primary mr-1 mr-md-2 mr-lg-3 mb-1 mb-md-0">Docs</button>
+					<button data-action="populate" data-populate="sheets" type="button" class="btn btn-outline-primary mr-1 mr-md-2 mr-lg-3 mb-1 mb-md-0">Sheets</button>
+					<button data-action="populate" data-populate="slides" type="button" class="btn btn-outline-primary mr-1 mr-md-2 mr-lg-3 mb-1 mb-md-0">Slides</button>
+				</div>
+				<div class="d-flex flex-column flex-wrap flex-md-row mb-1 mb-lg-2">
+          <button class="btn btn-dark mr-1 mr-md-2 mr-lg-3 mb-btn-disabled mb-2 mb-md-0" type="button" aria-disabled="true" tabindex="-1">Office Files</button>
+          <button data-action="populate" data-populate="word" type="button" class="btn btn-outline-secondary mr-1 mr-md-2 mr-lg-3 mb-1 mb-md-0">Word</button>
+					<button data-action="populate" data-populate="excel" type="button" class="btn btn-outline-secondary mr-1 mr-md-2 mr-lg-3 mb-1 mb-md-0">Excel</button>
+					<button data-action="populate" data-populate="powerpoint" type="button" class="btn btn-outline-secondary mr-1 mr-md-2 mr-lg-3 mb-1 mb-md-0">Powerpoint</button>
+				</div>
+				<div class="d-flex flex-column flex-wrap flex-md-row mb-1 mb-lg-2">
+          <button class="btn btn-dark mr-1 mr-md-2 mr-lg-3 btn-disabled mb-2 mb-md-0" type="button" aria-disabled="true" tabindex="-1">Others</button>
+          <button data-action="populate" data-populate="pdf" type="button" class="btn btn-outline-info mr-1 mr-md-2 mr-lg-3 mb-1 mb-md-0">PDFs</button>
+					<button data-action="populate" data-populate="temp" type="button" class="btn btn-outline-info mr-1 mr-md-2 mr-lg-3 mb-1 mb-md-0">Temp &amp; Thumbs</button>
 				</div>
 				<form>
 					<div class="form-group">
     				<label for="mimeTypes">Mime Types</label>
 						<button type="button" class="close" data-action="clear" data-clear="mimeTypes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="mimeTypes" name="mime" class="form-control" rows="2">{{#if state}}{{state.mime}}{{/if}}</textarea>
+    				<textarea id="mimeTypes" name="mime" class="form-control resizable optional" rows="1">{{#if state}}{{state.mime}}{{/if}}</textarea>
 						<small class="form-text text-muted">Mime Types to search for (OR), one per line.</small>
   				</div>
 					<div class="form-group">
     				<label for="includeProperties">Properties</label>
 						<button type="button" class="close" data-action="clear" data-clear="includeProperties" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="includeProperties" name="properties" class="form-control" rows="2">{{#if state}}{{state.properties}}{{/if}}</textarea>
+    				<textarea id="includeProperties" name="properties" class="form-control resizable optional" rows="1">{{#if state}}{{state.properties}}{{/if}}</textarea>
 						<small class="form-text text-muted">Properties to search for, one per line (you must use key=value format).</small>
   				</div>
-					<div class="form-group">
-    				<label for="excludeRegexes">Exclude (Regexes)</label>
+					<div class="row">
+						<div class="form-group col-lg-6">
+							<label for="excludeRegexes">Exclude (Regexes)</label>
 						<button type="button" class="close" data-action="clear" data-clear="excludeRegexes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="excludeRegexes" name="exclude" class="form-control" rows="2">{{#if state}}{{state.exclude}}{{/if}}</textarea>
+    				<textarea id="excludeRegexes" name="exclude" class="form-control resizable optional" rows="1">{{#if state}}{{state.exclude}}{{/if}}</textarea>
 						<small class="form-text text-muted">Regexes to exclude search results (OR), one per line.</small>
-  				</div>
-					<div class="form-group">
-    				<label for="includeRegexes">Include (Regexes)</label>
+						</div>
+						<div class="form-group col-lg-6">
+							<label for="includeRegexes">Include (Regexes)</label>
 						<button type="button" class="close" data-action="clear" data-clear="includeRegexes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="includeRegexes" name="include" class="form-control"  rows="2">{{#if state}}{{state.include}}{{/if}}</textarea>
+    				<textarea id="includeRegexes" name="include" class="form-control resizable optional"  rows="1">{{#if state}}{{state.include}}{{/if}}</textarea>
 						<small class="form-text text-muted">Regexes to include search results (OR), one per line.</small>
-  				</div>
-					<div class="form-check">
-    				<label class="form-check-label">
-      				<input name="recurse" type="checkbox" class="form-check-input"{{#if state}}{{#if state.recurse}} checked{{/if}}{{else}} checked{{/if}}>
-      				Search all Sub-Folders Too?
-    				</label>
-  				</div>
+						</div>
+					</div>
+					<div class="custom-control custom-checkbox">
+						<input id="recurseFolders" name="recurse" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.recurse}} checked{{/if}}{{else}} checked{{/if}}>
+						<label class="custom-control-label" for="recurseFolders">Search all Sub-Folders Too?</label>
+						<small class="form-text text-muted">If de-ticked, only the current folder will be searched (no sub-folders).</small>
+					</div>
 				</form>
       </div>
       <div class="modal-footer">

@@ -27,6 +27,7 @@ Router
 
 Datatable
 ---------
+Position of sorted icon sometimes clashes with expanding handles?
 
 Apps
 ----
@@ -78,6 +79,8 @@ Folders
 * Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => {
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
+
+* Document Preview for Google Docs?
 * Properties-based Search? Add presence and complex searchs (e.g. for reviews)
 
 Merge
@@ -99,6 +102,11 @@ Reflect
 
 Complete
 --------
+* Autosize search boxes <-- DONE
+* Update Search shortcut buttons <-- DONE
+* ID Column visible on search results by default? Bug? <-- DONE
+* Close button on results <== DONE
+* Add / Remove Stars from Files <== DONE
 * Add option to remove hide completely from column filter LINE 510 in Datatable.js <== DONE
 * Adding expanding column to left of existing one results in weird behaviour! | ONLY on collapsed: true <== DONE
 * LHS +/- hiding needs two clicks | ONLY on second to last column <-- DONE
@@ -365,4 +373,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-02-20
+ᕕ( ᐛ )ᕗ JD - 2018-02-21

@@ -1,7 +1,17 @@
 {% raw %}
 {{#each tabs}}
-<li id="nav_{{id}}" class="nav-item">
-  <a class="nav-link" href="#tab_{{id}}" role="tab" {{#if ../loader}} onclick="{{ ../loader }}"{{/if}} aria-controls="tab_{{id}}" data-toggle="tab" data-name="{{name}}" data-id="{{id}}" data-index="{{@index}}" data-target="#tab_{{id}}"{{#if type}} data-type="{{type}}"{{/if}}>{{name}}</a>
+<li id="nav_{{id}}" class="nav-item{{#if actions}} dropdown{{/if}}">
+  <a class="nav-link{{#if actions}} d-inline-block{{/if}}" href="#tab_{{id}}" role="tab" {{#if ../loader}} onclick="{{ ../loader }}"{{/if}} aria-controls="tab_{{id}}" data-toggle="tab" data-name="{{name}}" data-id="{{id}}" data-index="{{@index}}" data-target="#tab_{{id}}"{{#if type}} data-type="{{type}}"{{/if}}>
+    {{name}}
+  </a>
+  {{#if actions}}
+  <a href="#" class="dropdown-toggle dropdown-toggle-split d-inline-block h-100" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </a>
+  <div class="dropdown-menu">
+    {{#each actions}}<a class="dropdown-item" href="{{url}}"{{#if desc}} title="{{desc}}"{{/if}}>{{name}}</a>{{/each}}
+  </div>
+  {{/if}}
 </li>
 {{/each}}
 {% endraw %}

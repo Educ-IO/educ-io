@@ -308,14 +308,14 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		return new Promise((resolve, reject) => {
 
-			_contents(ids, mimeTypes, [], properties, false, team).then((c) => {
+			_contents(ids, mimeTypes, [], properties && properties.simple ? properties.simple : null, false, team).then((c) => {
 
 				/* <!-- Filter the results using the Exclude then Include methods --> */
 				c = _.reject(c, (item) => _.some(excludes, (e) => e(item)));
 				c = _.filter(c, (item) => _.some(includes, (i) => i(item)));
 
-				/* <!-- TODO: Properties filter to go here --> */
-
+				/* <!-- Filter the results using Advanced Properties --> */
+				if (properties && properties.advanced) c = _.filter(c, (item) => _.some(properties.advanced, (i) => i(item)));
 
 				/* <!-- Get the ids of all the folders included in the raw set --> */
 				var next = recurse ? _.filter(c, item => item.mimeType === FOLDER) : [];
@@ -493,7 +493,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 				var folders = (mimeTypes = _arrayize(mimeTypes, _.isString)).indexOf(FOLDER) >= 0;
 				return _search(
 					_arrayize(ids, _.isString), recurse, folders,
-					recurse && !folders ? [FOLDER].concat(_arrayize(mimeTypes, _.isString)) : _arrayize(mimeTypes, _.isString),
+					recurse && mimeTypes && mimeTypes.length >0 && !folders ? [FOLDER].concat(mimeTypes) : mimeTypes,
 					_arrayize(excludes, _.isFunction),
 					recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), properties, team, {});
 			},

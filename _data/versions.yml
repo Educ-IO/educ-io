@@ -1,4 +1,8 @@
 site :
+  0.0.7p :
+    name : Folders 0.0.4h-alpha
+    desc : Bug Fixes and Visual Improvements
+    type : minor
   0.0.7o :
     name : Folders 0.0.4g-alpha
     desc : Default hiding of ID columns
@@ -305,6 +309,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.4h-alpha :
+    name : Bug Fixes and Visual Improvements
+    desc : Better column ordering, visual updates to dialogs
+    type : minor
   0.0.4g-alpha :
     name : Feature Improvements
     desc : Default hiding of the file/folder ID in table view

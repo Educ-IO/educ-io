@@ -122,6 +122,20 @@ div.alert:first-child {
 	background-color: $colour-background;
 }
 
+ul.nav-tabs li.nav-item.dropdown {
+	.dropdown-toggle {
+		float: left;
+		background-color: $colour-deemphasise;
+		border: 1px solid transparent;
+    border-top-left-radius: 0.25rem;
+		margin-right: -0.25rem;
+		padding-right: 0.7rem;
+		padding-top: 0.5rem;
+		z-index: 2;
+	}
+	.dropdown-menu {width: 100%;}
+}
+
 div.tab-pane {
 	overflow-x: auto;
 	overflow-y: auto;
@@ -188,10 +202,6 @@ a.disabled, input.disabled {
 	&:after {
 		content: " \274c";
 	}
-}
-
-a.download {
-	&:hover {text-decoration: none; font-weight: bold;}
 }
 
 // -- Results -- //
@@ -267,3 +277,12 @@ a.download {
 	}
 }
 // -- Badges -- //
+
+// -- Folder Cells -- //
+td.folder {background-color: beige;}
+td a.star {
+	&.starred {color: $colour-general-light !important;}
+	&.un-starred {color: $colour-emphasis !important;}
+	&:hover {text-decoration: none; font-weight: bold;}
+}
+// -- Folder Cells -- //

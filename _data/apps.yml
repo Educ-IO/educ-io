@@ -603,6 +603,8 @@ folders:
       load: last
     - name: localforage
       load: last
+    - name: autosize
+      load: last
     - name: filesaver
       load: last
     - name: google

@@ -291,6 +291,10 @@ App = function() {
 					
 					if (_folder && command[2] && command[3]) _folder.detag(command[2], command[3]);
 					
+				} else if ((/TAB/i).test(command[1])) {
+					
+					if (_folder && command[2]) _folder.close(command[2]);
+				
 				} else {
 					
 					if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());	
@@ -309,6 +313,10 @@ App = function() {
 
 				if (_folder) _folder.tag(((/TAG/i).test(command[0])) ? command[1] : null);
 	
+			} else if ((/STAR/i).test(command[0]) && command[1]) {
+
+				if (_folder) _folder.star(command[1]);
+					
 			} else if ((/VISIBILITY/i).test(command)) {
 
 				if ((/COLUMNS/i).test(command[1]) && _folder) _folder.table().columns.visibility();

@@ -335,11 +335,16 @@ Display = function() {
 						
 					}
 					
-					if (options.actions && dialog.find("button[data-action]").length > 0) {
-						dialog.find("button[data-action]").each((i, el) => {
+					if ((options.actions || options.handlers) && dialog.find("button[data-action], a[data-action]").length > 0) {
+						dialog.find("button[data-action], a[data-action]").each((i, el) => {
 							$(el).on("click.action", (e) => {
-								var _action = $(e.target).data("action").split("_");
-								if (_action[0] == "actions") options.actions[_action[1]].handler(dialog.find("form").serializeArray());
+								var _target = $(e.currentTarget), _action = _target.data("action");
+								if (_action.indexOf("actions_") === 0) {
+									_action = $(e.target).data("action").split("_");
+									if (_action[0] == "actions") options.actions[_action[1]].handler(dialog.find("form").serializeArray());	
+								} else if (options.handlers && options.handlers[_action]) {
+									options.handlers[_action](_target, dialog);
+								}
 							});
 						});
 					}
