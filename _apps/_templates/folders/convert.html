@@ -10,15 +10,7 @@
       </div>
       <div class="modal-body">
         {{#if instructions}}{{{instructions}}}{{/if}}
-				<div class="d-flex flex-column flex-wrap flex-md-row lead mb-3 mt-1">
-					<button data-action="populate" data-populate="docs" type="button" class="btn btn-outline-dark mb-3 mb-md-0 mr-md-3 mt-2">Word -> Docs</button>
-					<button data-action="populate" data-populate="sheets" type="button" class="btn btn-outline-dark mb-3 mb-md-0 mr-md-3 mt-2">Excel -> Sheets</button>
-					<button data-action="populate" data-populate="slides" type="button" class="btn btn-outline-dark mb-3 mb-md-0 mr-md-3 mt-2">Powerpoint -> Slides</button>
-					<button data-action="populate" data-populate="word" type="button" class="btn btn-outline-dark mb-3 mb-md-0 mr-md-3 mt-2">Zip -> Word</button>
-					<button data-action="populate" data-populate="excel" type="button" class="btn btn-outline-dark mb-3 mb-md-0 mr-md-3 mt-2">Zip -> Excel</button>
-					<button data-action="populate" data-populate="powerpoint" type="button" class="btn btn-outline-dark mb-3 mb-md-0 mr-md-3 mt-2">Zip -> Powerpoint</button>
-					<button data-action="populate" data-populate="pdf" type="button" class="btn btn-outline-dark mb-3 mb-md-0 mr-md-3 mt-2">Google Formats -> PDF</button>
-				</div>
+				{{#if shortcuts}}{{> populate_buttons shortcuts}}{{/if}}
 				<form>
 					<div class="form-group">
     				<label for="sourceMimeType">Source Mime Type</label>

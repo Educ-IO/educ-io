@@ -343,7 +343,7 @@ Display = function() {
 									_action = $(e.target).data("action").split("_");
 									if (_action[0] == "actions") options.actions[_action[1]].handler(dialog.find("form").serializeArray());	
 								} else if (options.handlers && options.handlers[_action]) {
-									options.handlers[_action](_target, dialog);
+									options.handlers[_action](_target, dialog, options);
 								}
 							});
 						});

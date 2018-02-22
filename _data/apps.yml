@@ -605,6 +605,8 @@ folders:
       load: last
     - name: autosize
       load: last
+    - name: moment
+      load: lazy
     - name: filesaver
       load: last
     - name: google
@@ -644,6 +646,7 @@ folders:
     - shared/breadcrumbs
     - shared/control_icon
     - shared/control_button
+    - shared/populate_buttons
     - folders/rows
     - folders/search
     - folders/convert
@@ -718,6 +721,8 @@ folders:
               hash: search
               disabled_until:
                 - opened
+              imports:
+                - moment
               auth: google
             - name: Tally
               desc: Count Files / Folders within these Folders

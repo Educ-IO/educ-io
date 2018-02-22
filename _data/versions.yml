@@ -1,4 +1,8 @@
 site :
+  0.0.8 :
+    name : Folders 0.0.5-alpha
+    desc : Feature and Performance Improvements
+    type : minor
   0.0.7p :
     name : Folders 0.0.4h-alpha
     desc : Bug Fixes and Visual Improvements
@@ -309,6 +313,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.5-alpha :
+    name : Feature and Performance Improvements
+    desc : Property Searching of Drive
+    type : minor
   0.0.4h-alpha :
     name : Bug Fixes and Visual Improvements
     desc : Better column ordering, visual updates to dialogs

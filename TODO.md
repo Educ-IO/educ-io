@@ -74,14 +74,12 @@ Folders
 * ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
 * ** IMPORTANT ** Tally should break down file / folder counts by MimeType?
 * Swap table from expanding to fixed with flex wrapping for custom properties and long ids
-* Make folders more visually obvious for clicking
 * Potential bug - name: `Tag: ${folder.name} [${new Date().toLocaleDateString()}].folders`, ON SEARCH NOT FOLDER?
 * Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => {
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
 * Update Scroll Position on Large List Conversions - e.g. follow progress.
-
-* Document Preview for Google Docs?
-* Properties-based Search? Add presence and complex searchs (e.g. for reviews)
+* Highlight out-of-date reviews in red?
+* Occasional 404s on File Image Previews (notably, maybe exclusively, Google Formats)
 
 Merge
 -----
@@ -102,6 +100,10 @@ Reflect
 
 Complete
 --------
+* Shortcut searching for certain types of searches that don't need function filters? (e.g. recurse and mimetype and simple property from Drive Root?) - Need to work back from ID to root <== DONE
+* Make folders more visually obvious for clicking <== DONE
+* Clean up Dialogs with Shortcut buttons (templating!) <== DONE
+* Properties-based Search? Add presence and complex searchs (e.g. for reviews) <== DONE
 * Autosize search boxes <-- DONE
 * Update Search shortcut buttons <-- DONE
 * ID Column visible on search results by default? Bug? <-- DONE
@@ -373,4 +375,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-02-21
+ᕕ( ᐛ )ᕗ JD - 2018-02-22

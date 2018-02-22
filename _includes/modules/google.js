@@ -62,7 +62,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 	const DOC = "application/vnd.google-apps.document";
 	const SHEET = "application/vnd.google-apps.spreadsheet";
 	const SLIDE = "application/vnd.google-apps.presentation";
-	const NATIVES = [DOC, SHEET, SLIDE];
+	const DRAWING = "application/vnd.google-apps.drawing";
+	const NATIVES = [DOC, SHEET, SLIDE, DRAWING];
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -243,7 +244,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-	var _contents = function(ids, mimeTypes, excludeMimeTypes, properties, skeleton, team) {
+	var _contents = function(ids, mimeTypes, excludeMimeTypes, properties, skeleton, team, overrideType) {
 
 		/* <!-- Build the ID portion of the query --> */
 		var _i = ids && ids.length > 0 ?
@@ -258,9 +259,9 @@ Google_API = function(ಠ_ಠ, timeout) {
 			_.reduce(excludeMimeTypes, (q, m, i) => q + (i > 0 ? " and mimeType != '" : "mimeType != '") + m + "'", " and (") + ")" : "";
 
 		/* <!-- Build PROPERTIES portion of the query --> */
-		var _kv = (p) => "key='" + (p.indexOf("=")>0 ? (p.split("=")[0] + "' and value='" + p.split("=")[1] + "'") : (p + "' and value=''"));
+		var _kv = (p) => "key='" + (p.indexOf("=") > 0 ? (p.split("=")[0] + "' and value='" + p.split("=")[1] + "'") : (p + "' and value=''"));
 		var _p = properties && properties.length > 0 ?
-			_.reduce(properties, (q, p, i) => q + (i > 0 ? " and (properties has { " + _kv(p) + " } or appProperties has { " + _kv(p) + " })" : "(properties has { " + _kv(p) + "} or appProperties has { " + _kv(p) + "})"), " and (") + ")" : "";
+			_.reduce(properties, (q, p, i) => q + (i > 0 ? " and (properties has { " + _kv(p) + " } or appProperties has { " + _kv(p) + " })" : "(properties has { " + _kv(p) + "} or appProperties has { " + _kv(p) + "})"), " and (" + (overrideType ? "mimeType = '" + overrideType + "' or (" : "")) + (overrideType ? "))" : ")") : "";
 
 		var _data = {
 			pageSize: PAGE_SIZE,
@@ -308,14 +309,11 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		return new Promise((resolve, reject) => {
 
-			_contents(ids, mimeTypes, [], properties && properties.simple ? properties.simple : null, false, team).then((c) => {
+			_contents(ids, mimeTypes, [], properties && properties.simple ? properties.simple : null, false, team, recurse && mimeTypes.length === 0 ? FOLDER : null).then((c) => {
 
 				/* <!-- Filter the results using the Exclude then Include methods --> */
-				c = _.reject(c, (item) => _.some(excludes, (e) => e(item)));
-				c = _.filter(c, (item) => _.some(includes, (i) => i(item)));
-
-				/* <!-- Filter the results using Advanced Properties --> */
-				if (properties && properties.advanced) c = _.filter(c, (item) => _.some(properties.advanced, (i) => i(item)));
+				if (excludes) c = _.reject(c, (item) => _.some(excludes, (e) => e(item)));
+				if (includes) c = _.filter(c, (item) => _.some(includes, (i) => i(item)));
 
 				/* <!-- Get the ids of all the folders included in the raw set --> */
 				var next = recurse ? _.filter(c, item => item.mimeType === FOLDER) : [];
@@ -335,6 +333,9 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 				/* <!-- Filter to remove the folders if we are not returning them --> */
 				if (!folders) c = _.reject(c, item => item.mimeType === FOLDER);
+
+				/* <!-- Filter the results using Advanced Properties --> */
+				if (properties && properties.complex) c = _.filter(c, item => _.every(properties.complex, (i) => i(item)));
 
 				/* <!-- Add in the current path value to each item --> */
 				_.each(c, item => item.paths = _paths(item.parents, [], []));
@@ -489,13 +490,15 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 			is: (type) => type === FOLDER,
 
-			search: (ids, recurse, mimeTypes, excludes, includes, properties, team) => {
+			search: (ids, recurse, mimeTypes, excludes, includes, properties, team, basic) => {
 				var folders = (mimeTypes = _arrayize(mimeTypes, _.isString)).indexOf(FOLDER) >= 0;
-				return _search(
-					_arrayize(ids, _.isString), recurse, folders,
-					recurse && mimeTypes && mimeTypes.length >0 && !folders ? [FOLDER].concat(mimeTypes) : mimeTypes,
-					_arrayize(excludes, _.isFunction),
-					recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), properties, team, {});
+				return basic ? 
+					_search(null, false, false, mimeTypes, null, null, properties, team, {}) : 
+					_search(
+						_arrayize(ids, _.isString), recurse, folders,
+						recurse && mimeTypes && mimeTypes.length > 0 && !folders ? [FOLDER].concat(mimeTypes) : mimeTypes,
+						_arrayize(excludes, _.isFunction),
+						recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), properties, team, {});
 			},
 
 			contents: (ids, mimeTypes, team) => _contents(_arrayize(ids, _.isString), _arrayize(mimeTypes, _.isString), [], [], false, team),
