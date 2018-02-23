@@ -1,4 +1,8 @@
 site :
+  0.0.8a :
+    name: Folder 0.0.5a-alpha
+    desc: Improved Property Searches including File Paths
+    type: minor
   0.0.8 :
     name : Folders 0.0.5-alpha
     desc : Feature and Performance Improvements
@@ -313,6 +317,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.5a-alpha :
+    name : Bug Fixes and Feature Improvements
+    desc : Improved Property Searches including File Paths
+    type : minor
   0.0.5-alpha :
     name : Feature and Performance Improvements
     desc : Property Searching of Drive

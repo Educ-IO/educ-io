@@ -343,7 +343,13 @@ App = function() {
 
 			} else if ((/SEARCH/i).test(command)) {
 
-				if (_folder) _folder.search((/ROOT/i).test(command[1]) ? "root" : "");
+				if (_folder) {
+					if ((/PROPERTIES/i).test(command[1]) && command.length == 4) {
+						_folder.searchTag(command[2], command[3]);
+					} else {
+						_folder.search((/ROOT/i).test(command[1]) ? "root" : "");	
+					}
+				}
 				
 			} else if ((/REFINE/i).test(command)) {
 

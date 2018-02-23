@@ -186,6 +186,25 @@ Google_API = function(ಠ_ಠ, timeout) {
 		});
 	};
 
+	var _get = function(id, team) {
+		var _data = team ?
+			team === true ? {
+				fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
+				includeTeamDriveItems: true,
+				supportsTeamDrives: true,
+				corpora: "user,allTeamDrives"
+			} : {
+				fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
+				teamDriveId: team,
+				includeTeamDriveItems: true,
+				supportsTeamDrives: true,
+				corpora: "teamDrive"
+			} : {
+				fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
+			};
+		return _call(NETWORKS.general.get, "drive/v3/files/" + id, _data);
+	};
+	
 	var _pick = function(title, multiple, team, views, callback, context) {
 
 		if (google.picker) {
@@ -286,25 +305,42 @@ Google_API = function(ಠ_ಠ, timeout) {
 		var _paths = (parents, chain, all) => {
 
 			var _path = (parent, chain) => {
-				var _parent = cache[parent];
-				if (_parent) chain.push(_parent.name);
-				return _paths(_parent ? _parent.parents : [], chain, all);
+				
+				return new Promise((resolve) => {
+					
+					var _complete = () => {
+						var _parent = cache[parent];
+						if (_parent) chain.push(_parent.name);
+						resolve(_paths(_parent ? _parent.parents : [], chain, all));
+					};
+					
+					cache[parent] ? _complete() : _get(parent, team).then(item => {
+							cache[item.id] = {
+								name: item.name,
+								parents: item.parents
+							};
+							_complete();
+						});
+					
+				});
+
 			};
-
-			if (parents && parents.length > 0) {
-				if (parents.length == 1) {
-					return _path(parents[0], chain);
+			
+			return new Promise((resolve) => {
+				if (parents && parents.length > 0) {
+					if (parents.length == 1) {
+						_path(parents[0], chain).then(value => resolve(value));
+					} else {
+						var promises = [];
+						_.each(parents, parent => promises.push(_path(parent, _.clone(chain))));
+						Promise.all(promises).then(() => resolve(all));
+					}
 				} else {
-					_.each(parents, parent => {
-						_path(parent, _.clone(chain));
-					});
-					return all;
+					all.push(chain.reverse().join(" \\ "));
+					resolve(all);
 				}
-			} else {
-				all.push(chain.reverse().join("\\"));
-				return all;
-			}
-
+			});
+			
 		};
 
 		return new Promise((resolve, reject) => {
@@ -327,7 +363,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 				var batches = _.chain(next).groupBy((v, i) => Math.floor(i / BATCH_SIZE)).toArray().value();
 
 				/* <!-- Make an array of promises to resolve with the results of these searches --> */
-				var promises = recurse ? _.map(batches, (batch, i) => new Promise((resolve, reject) => {
+				var promises = recurse ? _.map(batches, (batch, i) => new Promise((resolve) => {
 					DELAY(RANDOM(100, 800) * i).then(_search(batch, recurse, folders, mimeTypes, excludes, includes, properties, team, cache).then((v) => resolve(v)));
 				})) : [];
 
@@ -338,13 +374,19 @@ Google_API = function(ಠ_ಠ, timeout) {
 				if (properties && properties.complex) c = _.filter(c, item => _.every(properties.complex, (i) => i(item)));
 
 				/* <!-- Add in the current path value to each item --> */
-				_.each(c, item => item.paths = _paths(item.parents, [], []));
+				c = _.map(c, item => new Promise((resolve) => _paths(item.parents, [], []).then(paths => {
+					item.paths = paths;
+					resolve(item);
+				})));
 
-				/* <!-- Resolve this promise whilst resolving the recursive promises too if available --> */
-				promises && promises.length > 0 ?
-					Promise.all(promises).then((recursed) => {
-						resolve(_.reduce(recursed, (current, value) => current.concat(value), c));
-					}).catch((e) => reject(e)) : resolve(c);
+				/* <!-- Resolve the paths promises before moving on --> */
+				Promise.all(c).then(items => {
+					/* <!-- Resolve this promise whilst resolving the recursive promises too if available --> */
+					promises && promises.length > 0 ?
+						Promise.all(promises).then((recursed) => {
+							resolve(_.reduce(recursed, (current, value) => value && value.length > 0 ? current.concat(value) : current, items));
+						}).catch((e) => reject(e)) : resolve(items);	
+				});
 
 			}).catch((e) => reject(e));
 
@@ -445,24 +487,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 				return _call(_function, _url, _data);
 			},
 
-			get: (id, team) => {
-				var _data = team ?
-					team === true ? {
-						fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
-						includeTeamDriveItems: true,
-						supportsTeamDrives: true,
-						corpora: "user,allTeamDrives"
-					} : {
-						fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
-						teamDriveId: team,
-						includeTeamDriveItems: true,
-						supportsTeamDrives: true,
-						corpora: "teamDrive"
-					} : {
-						fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
-					};
-				return _call(NETWORKS.general.get, "drive/v3/files/" + id, _data);
-			},
+			get: (id, team) => _get(id, team),
 
 			export: (id, format, team) => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {
 				mimeType: format

@@ -246,6 +246,31 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 
 	};
 
+	var _searchTag = function(name, value) {
+		
+		if (name && value) {
+		
+			var _name = "Search @ " + new Date().toLocaleTimeString();
+			
+			var _finish = ಠ_ಠ.Display.busy({
+				target: ಠ_ಠ.container,
+				fn: true
+			});
+
+			/* <!-- Measure the Performance (start) --> */
+			ಠ_ಠ.Flags.time(_name);
+
+			ಠ_ಠ.Flags.log(`Searching Drive for Files/Folders with Property: ${name} and Value: ${value}`);
+
+			ಠ_ಠ.google.folders.search("root", true, [], [], [], {simple: [`${name}=${value}`], complex: []}, _team, true).then((results) => {
+				_showResults(_name, results);
+			}).catch((e) => {
+				if (e) ಠ_ಠ.Flags.error("Search Error", e);
+			}).then(_finish);
+		}
+		
+	};
+	
 	var _searchFolder = function(id) {
 
 		var _name = "Search @ " + new Date().toLocaleTimeString();
@@ -324,7 +349,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 				exclude: _.map(_.find(values, v => v.name == "exclude").value.split("\n"), r => _regex(r.trim(), false)),
 				include: _.map(_.find(values, v => v.name == "include").value.split("\n"), r => _regex(r.trim(), true)),
 				recurse: !!(_.find(values, v => v.name == "recurse")),
-				entire: !!(_.find(values, v => v.name == "recurse"))
+				entire: !!(_.find(values, v => v.name == "entire"))
 			};
 			_return.basic = _return.entire &&
 				!(_.find(values, v => v.name == "exclude").value.trim()) &&
@@ -1519,6 +1544,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		name: () => folder.name,
 
 		search: (id) => _searchFolder(id ? id : folder.id),
+		
+		searchTag: (name, value) => _searchTag(name, value),
 
 		convert: () => _convertItems(_search ? _search : folder.id),
 

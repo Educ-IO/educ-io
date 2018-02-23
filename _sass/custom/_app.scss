@@ -272,8 +272,12 @@ a.disabled, input.disabled {
 		text-shadow: 0 1px 0 rgba(#000, .5);
 	}
 	.material-icons {
+		font-size: 90%;
 		color: inherit;
-		font-size: 85%;
+	}
+	a, a[role=button], a > .material-icons {
+		color: inherit;
+		&:hover {text-decoration: none; font-weight: bold;}
 	}
 }
 // -- Badges -- //
