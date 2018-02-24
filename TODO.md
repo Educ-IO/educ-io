@@ -5,8 +5,6 @@ TODO LIST
 
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
 
-* ** IMPORTANT ** Make JS Request calls for SW cacheable resources with integrity flags if available
-
 * App Guides need an 'open app' button
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo
@@ -91,6 +89,7 @@ Merge
 
 Reflect
 -------
+* ** IMPORTANT ** 401 on API requests <== DONE
 * ** IMPORTANT ** >1 Evidence Items not outputted in JSON (De-Hydrate)
 * ** IMPORTANT ** Evidence Check Boxes not being toggled (Re-Hydrate)
 * ** IMPORTANT ** Feedback on successful save?
@@ -105,6 +104,7 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT ** Make JS Request calls for SW cacheable resources with integrity flags if available <-- DONE
 * Basic Search -> Parents of files not in cache (fetch?) <== DONE
 * Add search for files with same tags icon to tags badge <== DONE
 * Shortcut searching for certain types of searches that don't need function filters? (e.g. recurse and mimetype and simple property from Drive Root?) - Need to work back from ID to root <== DONE

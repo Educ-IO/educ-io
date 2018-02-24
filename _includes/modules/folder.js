@@ -571,7 +571,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 
 		return new Promise((resolve, reject) => {
 
-			ಠ_ಠ.google.files.export(file.id, targetMimeType, _team).then(binary => {
+			ಠ_ಠ.google.files.export(file.id, targetMimeType).then(binary => {
 
 				var _name = file.name.lastIndexOf(".") > 0 ? file.name.substr(0, file.name.lastIndexOf(".")) : file.name;
 

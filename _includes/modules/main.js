@@ -85,13 +85,31 @@ Main = function() {
 					}
 				};
 			
-			var google_Initialise = function(auth) {
+      var google_Refresh = (scopes) => (force) => Promise.race([
+        hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, { /* Try silent token refresh */
+          force: false, display : "none", scope : scopes,
+        }),
+        new Promise(function(resolve, reject) {
+          setTimeout(function() {
+            return Promise.race([
+              hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, { /* Try pop-up token refresh */
+                force: false, display : "popup", scope : scopes,
+              }),
+              new Promise(function(resolve, reject){
+                setTimeout(function() { reject("Login Promise Timed Out"); }, LOGIN_RACE);
+              })
+            ]);
+          }, LOGIN_RACE / 3);
+        })
+      ]);
+      
+			var google_Initialise = auth => {
 
 				return ಠ_ಠ.Google_API(ಠ_ಠ).initialise(auth.access_token, auth.token_type, auth.expires, 
-					(function(s) {
-						return function() {
-							return new Promise(function(resolve, reject) {
-								hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, {force: false, display : "none", scope : s}).then(function(r) {
+					(refresher => {
+						return force => {
+							return new Promise((resolve, reject) => {
+                refresher(force).then(r => {
 									if (r.authResponse) {
 										resolve({
 											token : r.authResponse.access_token,
@@ -101,10 +119,10 @@ Main = function() {
 									} else {
 										resolve();
 									}
-								}, function(err) {reject(err);});
+								}, err => reject(err));
 							});
 						};
-					})(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" "))), ಠ_ಠ.Flags.key() || ಠ_ಠ.SETUP.GOOGLE_KEY, ಠ_ಠ.Flags.oauth() || ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID);
+					})(google_Refresh(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")))), ಠ_ಠ.Flags.key() || ಠ_ಠ.SETUP.GOOGLE_KEY, ಠ_ಠ.Flags.oauth() || ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID);
 				
 			};
 			
@@ -220,7 +238,7 @@ Main = function() {
 						/* Disable and Hide the Sign in */
 						$("#sign_in").hide().children(".btn").attr("title","").off("click.login");
 						
-						/* Enable and Shopw the Sign Out */
+						/* Enable and Show the Sign Out */
 						$("#user_details").text(ಠ_ಠ.me.display_name()).attr("title", "To remove from your account (" + ಠ_ಠ.me.email + "), click & follow instructions");
 						$("#sign_out .btn").on("click.logout", function(e) {e.preventDefault(); google_SignOut();});
 						$("#sign_out").show();
@@ -315,26 +333,7 @@ Main = function() {
 						} else if (g && exp < new Date()) { /* Expired Token */
 
 							ಠ_ಠ.Flags.log(`Google Auth Token Expired: ${exp}`);
-							
-							var refresh_race = Promise.race([
-								hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, { /* Try silent token refresh */
-									force: false, display : "none", scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
-								}),
-								new Promise(function(resolve, reject) {
-									setTimeout(function() {
-										return Promise.race([
-											hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, { /* Try pop-up token refresh */
-												force: false, display : "popup", scope : encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")),
-											}),
-											new Promise(function(resolve, reject){
-												setTimeout(function() { reject("Login Promise Timed Out"); }, LOGIN_RACE);
-											})
-										]);
-									}, LOGIN_RACE / 3);
-								})
-							]);
-
-							refresh_race.then(function(a) {
+							google_Refresh(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")))(false).then(function(a) {
 								if (is_SignedIn(a.authResponse)) {
 									google_LoggedIn(a.authResponse);
 								} else {

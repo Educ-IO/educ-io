@@ -138,7 +138,6 @@ Network = function(base, timeout, rate, retry, type) {
 					} else if (response.status == 401 && a--) {
 
 						/* <!-- Set Retries down to nothing --> */
-						/* <!-- TODO: This doesn't really work in the way intended - e.g. timeout is too long --> */
 						a = 0;
 						
 						/* <!-- 401 Likely Means an expired token, so retry --> */
@@ -146,7 +145,7 @@ Network = function(base, timeout, rate, retry, type) {
 							setTimeout(function() {
 									if (_before) _before(_request);
 									fetch(_target, _request).then(_success).catch(_failure);
-								}, RANDOM(RETRY_WAIT_LOWER, RETRY_WAIT_UPPER) * (RETRY_MAX - a)) : 
+								}, RANDOM(RETRY_WAIT_LOWER, RETRY_WAIT_UPPER) / 4) : 
 							reject({name: "Failed Auth Check", url: response.url, status: response.status, statusText: response.statusText});
 
 					} else if (response.status === 0 && response.type == "opaque") {

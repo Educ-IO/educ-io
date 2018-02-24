@@ -99,7 +99,7 @@ Controller = function() {
 			if (input.mode == "no-cors") {
 				deferreds.push(_include(input.url, is_css ? "style" : "script", input.id));
 			} else {
-				deferreds.push(window.fetch(input.url, {mode: input.mode ? input.mode : "cors"}).then(res => {
+				deferreds.push(window.fetch(input.url, {mode: input.mode ? input.mode : "cors", integrity : input.integrity ? input.integrity : ""}).then(res => {
 					return [res.text(), input.id, input.url, is_css, is_fonts, input.map === true, input.overrides];
 				}).then(promises => {
 					return Promise.all(promises).then(resolved => {

@@ -93,7 +93,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 					if (force || e <= new Date()) { /* Token Expired */
 
-						u().then(function(r) { /* Update token */
+            var _force = e <= new Date();
+						u(_force).then(function(r) { /* Update token */
 
 							if (r) _init(r.token, r.type, r.expires, u); /* Non-Null Response, so changes required */
 							resolve(true);
@@ -112,7 +113,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 			};
 
-		})(new Date((expires - 20) * 1000), update); /* 10 second shift in case of network delays! */
+		})(new Date((expires - 10) * 1000), update); /* 10 second shift in case of network delays! */
 
 		/* <!-- Pass Token to Network --> */
 		_before = (function(t, w) {
@@ -182,7 +183,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	var _call = function(method) {
 		return new Promise((resolve, reject) => {
-			_check().then(method.apply(this, _.rest(arguments)).then((value) => resolve(value)).catch((e) => reject(e)));
+			_check().then(() => method.apply(this, _.rest(arguments)).then((value) => resolve(value)).catch((e) => reject(e)));
 		});
 	};
 
@@ -489,7 +490,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 			get: (id, team) => _get(id, team),
 
-			export: (id, format, team) => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {
+			export: (id, format) => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {
 				mimeType: format
 			}, null, "application/binary"),
 

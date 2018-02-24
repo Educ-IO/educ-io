@@ -1,4 +1,8 @@
 site :
+  0.0.8b :
+    name: Folder 0.0.5b-alpha
+    desc: Auth-Flow Bug Fixes
+    type: minor
   0.0.8a :
     name: Folder 0.0.5a-alpha
     desc: Improved Property Searches including File Paths
@@ -317,6 +321,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.5b-alpha :
+    name : Bug Fixes
+    desc : Auth-Flow Bug Fixes
+    type : minor
   0.0.5a-alpha :
     name : Bug Fixes and Feature Improvements
     desc : Improved Property Searches including File Paths

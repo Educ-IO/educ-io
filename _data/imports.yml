@@ -148,8 +148,8 @@ hello:
       crossorigin: anonymous
       id: __hello
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.16.1/hello.min.js
-      integrity: sha256-eHEIQ59V8JGwNQ6tFLY5l8PJ7pgWWUXEgcbYJrsJwug=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.16.1/hello.js
+      integrity: sha256-mIUh1E36CeyWJlPvqZt0/jkm8ZScpnXqZs496CMZZBw=
       crossorigin: anonymous
       id: __hello
 
