@@ -1248,3 +1248,38 @@ drive-migration:
   ext: true
   colour: 0f5c60
   action: Find out more
+  
+
+
+# d888888b  .d8b.   d888b     .d8b.    d8888b.  .d88b.   .o88b.
+# `~~88~~' d8' `8b 88' Y8b   d8' `8b   88  `8D .8P  Y8. d8P  Y8
+#    88    88ooo88 88        88ooo88   88   88 88    88 8P     
+#    88    88~~~88 88  ooo   88~~~88   88   88 88    88 8b     
+#    88    88   88 88. ~8~   88   88   88  .8D `8b  d8' Y8b  d8
+#    YP    YP   YP  Y888P    YP   YP   Y8888D'  `Y88P'   `Y88P'
+################################################################
+
+tagadoc:
+  name: Tag-a-Doc
+  desc: View tags in Google Docs
+  link: /extensions/tag-a-doc
+  published: true
+  ext: true
+  colour: cc0
+  action: Find out more
+  versions:
+    1.0.3 :
+      name : Bug Fixes
+      desc : Correctly shows Highlight tag
+      type : minor
+    1.0.1 :
+      name : Minor Tweaks
+      desc : Spinners and updates after sign in/out
+      type : minor
+    1.0.0 :
+      name : Initial Version
+      desc : Initial version published online
+      type : major
+      changes :
+        - details: Initial Code Commit
+          url : https://github.com/thiscouldbejd/tagadoc-extension

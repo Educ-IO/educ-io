@@ -62,11 +62,27 @@ html, body {
     box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
 	}
 }
+// -- Action Button -- //
 
+// -- Other Buttons -- //
 .btn-disabled {
 	pointer-events: none;
 }
-// -- Action Button -- //
+
+.btn-bright {
+  color: $colour-bright-foreground !important;
+  border-color: $colour-bright-background;
+	background-color: $colour-bright-background;
+	&:hover {
+		border-color: darken($colour-bright-background, 10%);
+		background-color: darken($colour-bright-background, 10%) !important;;
+	}
+	&:focus {
+		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-bright-foreground, 20%), 0.5);
+    box-shadow: 0 0 0 2px rgba(darken($colour-bright-foreground, 20%), 0.5);
+	}
+}
+// -- Other Buttons -- //
 
 // -- Keyboard Shortcuts -- //
 em.kb-shortcut {
@@ -279,6 +295,11 @@ a.disabled, input.disabled {
 		color: inherit;
 		&:hover {text-decoration: none; font-weight: bold;}
 	}
+}
+
+.badge-bright {
+    color: $colour-bright-foreground;
+    background-color: $colour-bright-background;
 }
 // -- Badges -- //
 

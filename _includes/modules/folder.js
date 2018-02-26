@@ -1101,6 +1101,13 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 							class: "btn-success",
 							name: "Reviewed"
 						},
+					},
+					"Other": {
+						highlight: {
+							populate: "Highlight|TRUE",
+							class: "btn-bright",
+							name: "Highlight"
+						},
 					}
 				},
 				validate: values => {

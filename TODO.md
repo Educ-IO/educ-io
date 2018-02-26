@@ -1,6 +1,5 @@
 TODO LIST 
 =========
-
 * ** IMPORTANT ** Clean up Page Titles -> too much duplication on XL page sizes.
 
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
@@ -83,6 +82,8 @@ Folders
 * State Save needs updating for new fields
 
 * Use Events to track recusive folder searching progress (display to user)
+
+* Use TRUE as magic value in Tags (don't display)
 
 Merge
 -----
