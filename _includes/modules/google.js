@@ -287,7 +287,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 			pageSize: PAGE_SIZE,
 			q: "trashed = false" + _i + _m + _e + _p,
 			orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-			fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size,mimeType" + (team ? ",teamDriveId" : "") + ")" : "kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties,appProperties" + (team ? ",teamDriveId" : "") + ")",
+			fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size,parents,mimeType" + (team ? ",teamDriveId" : "") + ")" : "kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties,appProperties" + (team ? ",teamDriveId" : "") + ")",
 		};
 
 		if (team) {

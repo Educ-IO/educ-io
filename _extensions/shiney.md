@@ -43,4 +43,4 @@ The most recent versions of this tool are below, showing significant functionali
 {% endif %}
 
 {% endcapture %}
-{% include extension.html logo="images/shiny.svg" url="https://chrome.google.com/webstore/detail/shiny-shiny/ihigondjldgbcfcaabmplodljjliedaf" action="Install" %}
+{% include extension.html logo="images/shiny.svg" url="https://chrome.google.com/webstore/detail/shiny-shiny/ihigondjldgbcfcaabmplodljjliedaf" action="Install" support="https://github.com/thiscouldbejd/Shiny-Shiny/issues/new" %}

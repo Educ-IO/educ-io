@@ -1,4 +1,8 @@
 site :
+  0.0.8d :
+    name: Folders 0.0.5d-alpha
+    desc: Bug Fixes and Improvements
+    type: minor
   0.0.8c :
     name: Folders 0.0.5c-alpha
     desc: Bug Fixes
@@ -325,6 +329,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.5d-alpha :
+    name : Bug Fixes and Improvements
+    desc : Tally Improvements and various minor Bug Fixes
+    type : minor
   0.0.5c-alpha :
     name : Bug Fixes
     desc : Highlight Tags and Badges

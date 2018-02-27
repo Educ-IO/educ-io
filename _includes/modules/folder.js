@@ -1,4 +1,4 @@
-Folder = function(ಠ_ಠ, folder, target, team, state) {
+Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 	/* <!-- Internal Constants --> */
 	const BATCH_SIZE = 50;
@@ -16,25 +16,32 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		_tables = {},
 		_search,
 		_last,
+    _tallyCache = tally ? tally : {},
 		_team = team,
 		_searches = {};
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var busy = (cell, row, css_class) => (on) => {
+	var locate = (row) => {
+    row.parents("div.tab-pane").animate({
+        scrollTop: row.position().top - row.height()
+    }, 300);
+    return row;
+  }, busy = (cell, row, css_class) => (on) => {
 		on ? ಠ_ಠ.Display.busy({
 				target: cell,
 				class: "loader-small"
-			}) && row.addClass(css_class ? css_class : "bg-warning") :
+			}) && locate(row) && row.addClass(css_class ? css_class : "bg-active"):
 			ಠ_ಠ.Display.busy({
 				target: cell,
 				clear: true
-			}) && row.removeClass(css_class ? css_class : "bg-warning");
+			}) && row.removeClass(css_class ? css_class : "bg-active");
 	};
 
 	var mapItems = (v) => ({
 		id: v.id,
 		type: v.mimeType,
+    mimeType: v.mimeType,
 		name: v.name,
 		parents: v.parents,
 		icon: v.iconLink,
@@ -95,8 +102,11 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 			unique: ["id"],
 			indices: ["type", "starred", "name"]
 		});
+    if (_tallyCache && values && values.length > 0) _.each(values, value => {
+      if (_tallyCache[value.id]) value.results = _tallyCache[value.id];
+    });
 		_data.insert(values);
-
+    
 		var _return = ಠ_ಠ.Datatable(ಠ_ಠ, {
 			id: id,
 			name: name,
@@ -124,14 +134,14 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		var _loader = _team ? ಠ_ಠ.google.folders.contents(id, [], _team) : ಠ_ಠ.google.folders.contents(id);
 
 		/* <!-- Need to load the contents of the folder --> */
-		_loader.then((contents) => {
+		_loader.then(contents => {
 			ಠ_ಠ.Flags.log("Google Drive Folder Opened", contents);
 			_tables[id] = _showData(id, name, _.map(contents, mapItems), target);
 			ಠ_ಠ.Display.busy({
 				target: target,
 				clear: true
 			}).state().enter("opened").protect("a.jump").on("JUMP");
-		}).catch((e) => {
+		}).catch(e => {
 			ಠ_ಠ.Flags.error("Requesting Selected Google Drive Folder", e ? e : "No Inner Error");
 			ಠ_ಠ.Display.busy({
 				target: target,
@@ -174,8 +184,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 
 	var _activateTab = function(tabs) {
 		tabs.find("a.nav-link")
-			.off("click.tabs").on("click.tabs", (e) => $(e.target).data("refresh", e.shiftKey))
-			.off("shown.bs.tab").on("shown.bs.tab", (e) => _showTab($(e.target)))
+			.off("click.tabs").on("click.tabs", e => $(e.target).data("refresh", e.shiftKey))
+			.off("shown.bs.tab").on("shown.bs.tab", e => _showTab($(e.target)))
 			.last().tab("show");
 	};
 
@@ -1087,12 +1097,12 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 							name: "Monthly"
 						},
 						annually: {
-							populate: "Review|Monthly",
+							populate: "Review|Annually",
 							class: "btn-outline-secondary",
 							name: "Annually"
 						},
 						biennially: {
-							populate: "Review|Monthly",
+							populate: "Review|Biennially",
 							class: "btn-outline-secondary",
 							name: "Biennially"
 						},
@@ -1304,24 +1314,64 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 
 		/* <!-- Measure the Performance (start) --> */
 		ಠ_ಠ.Flags.time(_name);
+    
+    /* <!-- Clear the Tally Cache --> */
+    _tallyCache = {};
+    
+		var _collection = _db.getCollection(id), 
+        _isFile = ಠ_ಠ.google.folders.check(false), 
+        _isFolder = ಠ_ಠ.google.folders.check(true), 
+        _count = (items, results) => {
+      
+          /* <!-- Update File Count & Sizes --> */
+          results.files += _.reduce(items, (count, item) => _isFile(item) ? count + 1 : count, 0);
+          results.size += _.reduce(items, (total, item) => total + (item.size ? parseInt(item.size) : 0), 0);
+          results.folders += _.reduce(items, (count, item) => _isFolder(item) ? count + 1 : count, 0);
 
-		var _collection = _db.getCollection(id);
+          return results;
+
+        }, _aggregate = (values, results) => {
+
+          if (results.folders || values.folders) results.folders += values.folders;
+          results.files += values.files;
+          results.size += values.size;
+          if (results.mime && values.mime) _.each(values.mime, (mimes, mime) => {
+            if (results.mime[mime]) {
+              _aggregate(mimes, results.mime[mime]);
+            } else {
+              results.mime[mime] = mimes;
+            }
+          });
+
+          return results;
+        }, _update = (items, results) => {
+
+          /* <!-- Update Map of Size/Totals by Mime --> */
+          _.each(_.groupBy(items, "mimeType"), (mimeItems, mime) => {
+            if (!results.mime[mime]) {
+              results.mime[mime] = _count(mimeItems, {files: 0, size: 0});
+            } else {
+              _count(mimeItems, results.mime[mime]);
+            }
+          });
+      
+      /* <!-- Update Map of Folder Parent IDs and Size/Totals --> */
+      _.each(items, item => _.each(item.parents, parent => {
+        if (!_tallyCache[parent]) _tallyCache[parent] = {files: 0, folders: 0, size: 0};
+        _tallyCache[parent][_isFolder(item) ? "folders" : "files"] += 1;
+        _tallyCache[parent].size += (item.size ? parseInt(item.size) : 0);
+        if (_isFolder(item) && _tallyCache[item.id]) _aggregate(_tallyCache[item.id], _tallyCache[parent]);
+      }));
+      
+      return _count(items, results);
+      
+    };
 
 		var _tally_folders = function(folder_ids, results) {
 
 			return new Promise((resolve) => {
 
 				var _complete = (items) => {
-
-					/* <!-- Update File Count & Sizes --> */
-					var _isFile = ಠ_ಠ.google.folders.check(false);
-					var _isFolder = ಠ_ಠ.google.folders.check(true);
-
-					results.files += _.reduce(items, (count, item) => _isFile(item) ? count + 1 : count, 0);
-					results.size += _.reduce(items, (total, item) => total + (item.size ? parseInt(item.size) : 0), 0);
-
-					/* <!-- Update Folder Count --> */
-					results.folders += _.reduce(items, (count, item) => _isFolder(item) ? count + 1 : count, 0);
 
 					var _folders = _.filter(items, _isFolder);
 
@@ -1332,11 +1382,10 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 							_tally_folders(batch, {
 								files: 0,
 								folders: 0,
-								size: 0
+								size: 0,
+                mime: {}
 							}).then((values) => {
-								results.folders += values.folders;
-								results.files += values.files;
-								results.size += values.size;
+                _aggregate(values, results);
 								_iterate_batch(batches.shift(), batches, complete);
 							});
 						} else {
@@ -1345,16 +1394,18 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 
 					};
 
+          /* <!-- Update File & Folder Counts/Sizes before Resolving --> */
+          var _finish = () => _update(items, results) && resolve(results);
+          
 					if (_folders && _folders.length > 0) {
 
 						/* <!-- Batch these Child IDs into Arrays with length not longer than BATCH_SIZE --> */
 						var _batches = _.chain(_folders).map(folder => folder.id).groupBy((v, i) => Math.floor(i / BATCH_SIZE)).toArray().value();
-
-						_iterate_batch(_batches.shift(), _batches, () => resolve(results));
+						_iterate_batch(_batches.shift(), _batches, () => _finish());
 
 					} else {
 
-						resolve(results);
+						_finish();
 
 					}
 
@@ -1385,14 +1436,13 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 				_tally_folders(folder.id, {
 					files: 0,
 					folders: 0,
-					size: 0
+					size: 0,
+          mime: {}
 				}).then((results) => {
-
+                    
 					/* <!-- Aggregate Results --> */
-					totals.folders += results.folders;
-					totals.files += results.files;
-					totals.size += results.size;
-
+          _aggregate(results, totals);
+          
 					/* <!-- Format Results --> */
 					results.empty = !!(!results.files && !results.folders && !results.size);
 
@@ -1417,6 +1467,15 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 				/* <!-- Measure the Performance (end) --> */
 				ಠ_ಠ.Flags.time(_name, true);
 
+        /* <!-- Debug Log Results --> */
+				ಠ_ಠ.Flags.log("TALLY TOTAL RESULTS:", totals);
+        
+        /* <!-- Filter and sort Mime Types --> */
+        var _mimes = _.sortBy(_.reject(_.map(totals.mime, (value, mime) => {
+          value.mime = mime;
+          return value;
+        }), item => !item.files && !item.size), "size").reverse();
+        
 				/* <!-- Display the Results --> */
 				ಠ_ಠ.Display.modal("results", {
 					id: "tally_results",
@@ -1425,11 +1484,22 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 					folders: totals.folders,
 					files: totals.files,
 					size: totals.size,
+          mime: _mimes
 				});
 
 			}
 
 		};
+    
+    /* <!-- Check initial folder first --> */
+    var _results = _update(_collection.chain().find({
+			"folder": false
+		}).data(), {
+			files: 0,
+			folders: 0,
+			size: 0,
+      mime: {}
+		});
 
 		/* <!-- Get the Folders to Process --> */
 		var _folders = _collection.chain().find({
@@ -1437,11 +1507,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 		}).data();
 
 		/* <!-- Start Recursively Tallying Folders --> */
-		_process_Folder(_folders.shift(), _folders, {
-			files: 0,
-			folders: 0,
-			size: 0
-		});
+		_process_Folder(_folders.shift(), _folders, _results);
 
 	};
 
@@ -1562,8 +1628,12 @@ Folder = function(ಠ_ಠ, folder, target, team, state) {
 
 		delete: () => _deleteItems(),
 
-		tally: (id) => _tally(id ? id : folder.id),
-
+		tally: {
+      get : () => _tallyCache,
+      
+      run : (id) => _tally(id ? id : folder.id)
+    },
+    
 		remove: (id) => _removeItem(id),
 
 		detag: (id, tag) => _detag(id, tag),

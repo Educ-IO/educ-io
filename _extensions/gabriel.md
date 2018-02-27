@@ -59,4 +59,4 @@ The most recent versions of this add-on are below, showing significant functiona
 {% endif %}
 
 {% endcapture %}
-{% include extension.html logo="images/gabriel.svg" url="https://chrome.google.com/webstore/detail/gabriel-the-markdown-ange/okimajjeocnndpifeelaajdebkkbckff" action="Install" %}
+{% include extension.html logo="images/gabriel.svg" url="https://chrome.google.com/webstore/detail/gabriel-the-markdown-ange/okimajjeocnndpifeelaajdebkkbckff" action="Install" support="https://github.com/thiscouldbejd/Gabriel/issues/new" %}

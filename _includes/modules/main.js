@@ -85,15 +85,15 @@ Main = function() {
 					}
 				};
 			
-      var google_Refresh = (scopes) => (force) => Promise.race([
+      var google_Refresh = scopes => force => Promise.race([
         hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, { /* Try silent token refresh */
-          force: false, display : "none", scope : scopes,
+          force: force, display : "none", scope : scopes,
         }),
         new Promise(function(resolve, reject) {
           setTimeout(function() {
             return Promise.race([
               hello.login(ಠ_ಠ.SETUP.GOOGLE_AUTH, { /* Try pop-up token refresh */
-                force: false, display : "popup", scope : scopes,
+                force: force, display : "popup", scope : scopes,
               }),
               new Promise(function(resolve, reject){
                 setTimeout(function() { reject("Login Promise Timed Out"); }, LOGIN_RACE);

@@ -72,4 +72,4 @@ The most recent versions of this extension are below, showing significant functi
 {% endif %}
 
 {% endcapture %}
-{% include extension.html logo="images/cloudysky.svg" url="https://chrome.google.com/webstore/detail/cloudysky/ankfkbhcljebidkfgjkhgpkjmlbigkgd" action="Install" %}
+{% include extension.html logo="images/cloudysky.svg" url="https://chrome.google.com/webstore/detail/cloudysky/ankfkbhcljebidkfgjkhgpkjmlbigkgd" action="Install" support="https://github.com/thiscouldbejd/cloudysky-extension/issues/new" %}

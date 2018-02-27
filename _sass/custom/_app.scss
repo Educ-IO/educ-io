@@ -305,6 +305,7 @@ a.disabled, input.disabled {
 
 // -- Folder Cells -- //
 td.folder {background-color: beige;}
+tr.bg-active, tr.bg-active td {background-color: $colour-active !important;}
 td a.star {
 	&.starred {color: $colour-general-light !important;}
 	&.un-starred {color: $colour-emphasis !important;}

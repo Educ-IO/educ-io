@@ -19,7 +19,8 @@ logo: true
 			<div class="title">
 			  <h1 class="font-sensitive">{% if page.lead %}{{ page.lead }}{% else %}{{ page.title }}{% endif %}</h1>
 		  </div>
-		</div>
+		{{ content }}
+    </div>
 		{% include footer.html type="page" %}
   </body>
 </html>

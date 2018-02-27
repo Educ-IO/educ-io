@@ -15,8 +15,10 @@ TODO LIST
 * Filter for correctly returned doc type on picker (recent shows all types?)
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
 * Contrite Penguin 404 Page
-* Links to ISSUE trackers for APPS and EXTENSIONS ??
 * Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency?
+
+* ** BUG ** -> Token refresh (especially on folders) -> not triggering refresh properly
+* ** BUG ** -> Menus on guides ... shouldn't be there.
 
 Router
 ------
@@ -69,21 +71,12 @@ Folders
 -------
 * ** IMPORTANT ** Convert and Delete etc should operate on filtered views (need to hook back after_update mechanism)
 * ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
-* ** IMPORTANT ** Tally should break down file / folder counts by MimeType?
 * Swap table from expanding to fixed with flex wrapping for custom properties and long ids -> Also vertically centre row content.
 * Potential bug - name: `Tag: ${folder.name} [${new Date().toLocaleDateString()}].folders`, ON SEARCH NOT FOLDER?
-
-* Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)???
-* Update Scroll Position on Large List Conversions - e.g. follow progress.
 * Highlight out-of-date reviews in red?
-* Occasional 404s on File Image Previews (notably, maybe exclusively, Google Formats)
-
 * Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => { -- Better to save out form values than encode / decode
 * State Save needs updating for new fields
-
 * Use Events to track recusive folder searching progress (display to user)
-
-* Use TRUE as magic value in Tags (don't display)
 
 Merge
 -----
@@ -105,6 +98,13 @@ Reflect
 
 Complete
 --------
+* Occasional 404s on File Image Previews (notably, maybe exclusively, Google Formats) <-- DONE
+* Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)? <-- DONE
+* Update Scroll Position on Large List Conversions - e.g. follow progress. <-- DONE
+* BUG -> Tally badges cause wrapping. <-- DONE
+* ** IMPORTANT ** Tally should break down file / folder counts by MimeType? <-- DONE
+* Links to ISSUE trackers for APPS and EXTENSIONS ?? <-- DONE
+* Use TRUE as magic value in Tags (don't display) <== DONE
 * ** IMPORTANT ** Make JS Request calls for SW cacheable resources with integrity flags if available <-- DONE
 * Basic Search -> Parents of files not in cache (fetch?) <== DONE
 * Add search for files with same tags icon to tags badge <== DONE
@@ -383,4 +383,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-02-23
+ᕕ( ᐛ )ᕗ JD - 2018-02-27

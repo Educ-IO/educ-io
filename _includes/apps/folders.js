@@ -114,7 +114,7 @@ App = function() {
 		}
 		
 		_showPath(_path, ಠ_ಠ.container);
-		_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state);
+		_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state, _folder ? _folder.tally.get() : null);
 		if (log) ಠ_ಠ.Recent.add(folder.id, folder.name, folder.url).then(() => _resize());
 
 	};
@@ -303,7 +303,7 @@ App = function() {
 					
 			} else if ((/TALLY/i).test(command)) {
 
-				if (_folder) _folder.tally();
+				if (_folder) _folder.tally.run();
 						
 			} else if ((/CONVERT/i).test(command)) {
 

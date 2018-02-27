@@ -39,4 +39,4 @@ The most recent versions of this extension are below, showing significant functi
 {% endif %}
 
 {% endcapture %}
-{% include extension.html logo="images/sheets_downloader.svg" url="https://chrome.google.com/webstore/detail/isams-xls-reports-to-shee/kkahfpjmfgjidhahaapadhgcnecbfckl" action="Install" %}
+{% include extension.html logo="images/sheets_downloader.svg" url="https://chrome.google.com/webstore/detail/isams-xls-reports-to-shee/kkahfpjmfgjidhahaapadhgcnecbfckl" action="Install" support="https://github.com/thiscouldbejd/isams-extension/issues/new" %}

@@ -19,6 +19,11 @@
 		{{ text | markdownify }}
 	</div>{% endif %}
 
+  {% if include.support %}<h4 class="border border-left-0 border-right-0 border-top-0 mt-2 pb-1" id="need-help">Need Help?</h4>
+  <p>
+    If you are a <strong>subscriber</strong>, then please email us directly or use the <strong>Get Help</strong> command under the <strong>About</strong> menu in any of our web apps to get help with this extension. Otherwise, please feel free to raise an <a href="{{ include.support }}">issue</a> on the code repository for this tool (you will need to sign up for a <a href="https://github.com/join" target="_blank" rel="noopener">free Github account</a> if you don't already have one). Only <a href="/support">subscribers</a> have <strong>full access to technical support</strong>, but we'll do <strong>our best</strong> to answer every query if we are able.
+  </p>{% endif %}
+  
 	<p class="text-muted mb-3">
 		&copy; {% capture year %}{{ site.time | date: '%Y' }}{% endcapture %}{% if year != site.launched %}{{ site.launched }}-{% endif%}{{ year }} <a href="{{site.baseurl}}about/?highlight=transparency"><strong>{{site.author.name | downcase }}</strong></a>. Current site version is <a href="/changes?highlight=site">{{ site.data.versions["site"].first[0] }}</a>
 	</p>
