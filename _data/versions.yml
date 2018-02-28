@@ -1,5 +1,5 @@
 site :
-  0.0.8d :
+  0.0.8e :
     name: Tooltips Positioning Improvements
     desc: Menu tooltips position themselves better now, and show on disable menu items too
     type: minor
