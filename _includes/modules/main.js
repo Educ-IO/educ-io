@@ -208,14 +208,6 @@ Main = function() {
 			
 			_setup(hello);
 
-			/* <!-- Enable Tooltips --> */
-			$("[data-toggle='tooltip']").tooltip();
-
-			/* <!-- Enable Closing Bootstrap Menu after Action --> */
-			var navMain = $(".navbar-collapse");
-			navMain.on("click.collapse", "a:not([data-toggle='dropdown'])", () => navMain.collapse("hide"));
-			navMain.on("click.tooltip-remove", "a[data-toggle='tooltip']", (e) => $(e.target).tooltip("dispose"));
-			
 			/* <!-- Auth Triggers & Functions --> */
 			var is_SignedIn = function(session) {
 				return session && session.access_token && new Date(session.expires * 1000) >= new Date();

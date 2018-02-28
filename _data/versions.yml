@@ -1,5 +1,9 @@
 site :
   0.0.8d :
+    name: Tooltips Positioning Improvements
+    desc: Menu tooltips position themselves better now, and show on disable menu items too
+    type: minor
+  0.0.8d :
     name: Folders 0.0.5d-alpha
     desc: Bug Fixes and Improvements
     type: minor

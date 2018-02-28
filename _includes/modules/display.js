@@ -97,7 +97,7 @@ Display = function() {
 
 		start: function() {
 
-			if (Handlebars) {
+			if (window.Handlebars) {
 				
 				Handlebars.registerHelper("isDate", function(variable, options) {
 					if (variable && variable instanceof Date) {
@@ -178,6 +178,25 @@ Display = function() {
 				if (Handlebars.templates) Handlebars.partials = Handlebars.templates;
 				
 			}
+			
+			/* <!-- Enable Tooltips & Popovers --> */
+			var calculate = element => {
+				var _o = element.offset(), _l = _o.left, _w = element.width(), _r = _l + _w, _t = _o.top, _h = element.height(), _b = _t + _h,
+							_width = $(window).width(), _height = $(window).height();
+					return (_l < _w && (_width - _r) < _w) || _t < _h ? 
+						_t > (_height - _b) ? "top" : "bottom" :
+						_l > (_width - _r) ? "left" : "right";
+			};
+			var placement = (show, trigger) => $(trigger).data("placement") ? $(trigger).data("placement") : calculate($(trigger));
+			
+			$("[data-toggle='popover']").popover({trigger: "focus"});
+			$("#site_nav [data-toggle='popover']").popover({trigger: "hover"});
+			$("[data-toggle='tooltip']").tooltip({trigger: "hover focus", placement : placement});
+
+			/* <!-- Enable Closing Bootstrap Menu after Action --> */
+			var navMain = $(".navbar-collapse");
+			navMain.on("click.collapse", "a:not([data-toggle='dropdown'])", () => navMain.collapse("hide"));
+			navMain.on("click.tooltip-remove", "a[data-toggle='tooltip']", (e) => $(e.target).tooltip("dispose"));
 			
 		},
 

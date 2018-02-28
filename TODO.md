@@ -1,24 +1,18 @@
 TODO LIST 
 =========
 * ** IMPORTANT ** Clean up Page Titles -> too much duplication on XL page sizes.
-
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
-
-* App Guides need an 'open app' button
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo
 * Favicon Background?
 * BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
 * BUG -> ARROW functions in return object (e.g. View)???
 * More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');"
-* Remove .map / .filter etc calls so that polyfills can be removed in favour of using Underscore.
 * Filter for correctly returned doc type on picker (recent shows all types?)
-* Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set?
+* Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set? | Also JWT Token for Folders?
 * Contrite Penguin 404 Page
 * Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency?
-
-* ** BUG ** -> Token refresh (especially on folders) -> not triggering refresh properly
-* ** BUG ** -> Menus on guides ... shouldn't be there.
+* Remove .map / .filter etc calls so that polyfills can be removed in favour of using Underscore.
 
 Router
 ------
@@ -26,16 +20,18 @@ Router
 
 Datatable
 ---------
-Position of sorted icon sometimes clashes with expanding handles?
+* Position of sorted icon sometimes clashes with expanding handles?
 
 Apps
 ----
 * ** IMPORTANT ** Token Expiration and Pop-Up?
+* ** IMPORTANT ** Retries (in network.js) takes too long when handling security (401) errors
+* ** BUG ** -> Token refresh (especially on folders) -> not triggering refresh properly
+
 * ** IMPORTANT ** Clear process instructions? Visual? <- App Guides
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
-* ** IMPORTANT ** Retries (in network.js) takes too long when handling security (401) errors
-* ** IMPORTANT ** Move tooltips to RHS/LHS for larger screens (responsive breakpoints?)
+
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 * Javascript/CSS to move / expand busy Loader when App page is scrolled and not locked to top
@@ -59,8 +55,6 @@ View
   + Categorised data to 'pills' for display?
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Vertical Only Freeze should work better (e.g. not screw with table row cell heights?);
-* Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
-* Provide Aggregate Open and Load (accepts cross-app commands from Folders?) (Partially done, no aggregation mechanism yet!)
 * Handle Merged Cells and merged ranges.
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
 * Numerical Filter implies re-sort?
@@ -98,6 +92,9 @@ Reflect
 
 Complete
 --------
+* App Guides need an 'open app' button <-- DONE
+* ** IMPORTANT ** Move menu tooltips to RHS/LHS for larger screens (responsive breakpoints?) <== DONE
+* ** BUG ** -> Menus on guides ... shouldn't be there. <-- DONE
 * Occasional 404s on File Image Previews (notably, maybe exclusively, Google Formats) <-- DONE
 * Tally could parse out parents and persist 'map' of folder sizes (useful when navigating through)? <-- DONE
 * Update Scroll Position on Large List Conversions - e.g. follow progress. <-- DONE
@@ -383,4 +380,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-02-27
+ᕕ( ᐛ )ᕗ JD - 2018-02-28

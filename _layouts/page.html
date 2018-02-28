@@ -4,6 +4,7 @@ modules:
   - controller
   - service
   - flags
+  - display
   - page
 imports:
 - name: jquery
@@ -58,7 +59,10 @@ css:
 		{% include nav.html type="sticky-top" %}
 		<div class="container pb-4 px-0">
 			<div class="jumbotron pt-4 pb-2">
-  			<h1 class="display-4">{{ page.title }}</h1>
+  			{% if page.app and site.data.apps[page.app].link and site.data.apps[page.app].ext != "true" %}<a class="btn btn-outline-primary btn-lg float-lg-right d-none d-md-inline-block" href="{{ site.data.apps[page.app].link }}" role="button">Open {{ site.data.apps[page.app].name }}</a>{% endif %}
+				<h1 class="display-4">
+					{{ page.title }}
+				</h1>
   			{% if page.lead %}<p class="lead">{{ page.lead | markdownify | remove: "<p>" | remove: "</p>" }}</p>{% endif %}
 				{% if page.support %}
   				<hr class="my-4">

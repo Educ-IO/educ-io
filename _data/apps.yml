@@ -1268,6 +1268,10 @@ tagadoc:
   colour: cc0
   action: Find out more
   versions:
+    1.0.5 :
+      name : Added Folders App Link
+      desc : Add link (visible after sign in) to Folders App for managing tags
+      type : minor
     1.0.3 :
       name : Bug Fixes
       desc : Correctly shows Highlight tag

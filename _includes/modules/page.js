@@ -42,10 +42,7 @@ Main = function() {
 				(ಠ_ಠ.Page ? [ಠ_ಠ.Display, ಠ_ಠ.Page] : [ಠ_ಠ.Display])
 					.forEach((m) => {if (m && m.start) m.start();});
 				
-				/* <!-- Initialise Objects --> */
-				$("[data-toggle='popover']").popover({trigger: "focus"});
-				$("[data-toggle='tooltip']").tooltip({});
-				
+				/* <!-- Handle Highlights --> */	
 				if (ಠ_ಠ.Flags.highlight()) {
 					var _none = "highlight_none order-2";
 					var _highlight = "order-1";

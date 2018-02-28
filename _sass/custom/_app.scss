@@ -65,10 +65,6 @@ html, body {
 // -- Action Button -- //
 
 // -- Other Buttons -- //
-.btn-disabled {
-	pointer-events: none;
-}
-
 .btn-bright {
   color: $colour-bright-foreground !important;
   border-color: $colour-bright-background;
@@ -203,8 +199,12 @@ div.modal {
 	scroll-behavior: smooth;
 }
 
-a.disabled, input.disabled {
+a.disabled, input.disabled, .btn-disabled {
    pointer-events: none;  // Allows for touch scrolling on disabled elements
+}
+
+.holder {
+	&:focus {outline: none;}
 }
 
 .action-succeeded {
