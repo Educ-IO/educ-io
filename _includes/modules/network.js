@@ -102,8 +102,7 @@ Network = function(base, timeout, rate, retry, type) {
 			/* <!-- Get the URL, including appending data as the query string if required --> */
 			var _target = _url.href + (data && verb == "GET" && !contentType ? QUERY(data, _url.href.indexOf("?") > 0) : "");
 
-			var _failure = e => reject({url: _url.href, error: e});
-			var _success = response => {
+			var _failure = e => reject({url: _url.href, error: e}), _success = response => {
 				
 				/* <!-- Fetch Executed, but may have returned a non-200 status code --> */
 				if (response.ok) {
@@ -141,12 +140,13 @@ Network = function(base, timeout, rate, retry, type) {
 						a = 0;
 						
 						/* <!-- 401 Likely Means an expired token, so retry --> */
-						_check && _check(true) ?
-							setTimeout(function() {
+            _check(true).then(r => {
+              r ? setTimeout(function() {
 									if (_before) _before(_request);
 									fetch(_target, _request).then(_success).catch(_failure);
 								}, RANDOM(RETRY_WAIT_LOWER, RETRY_WAIT_UPPER) / 4) : 
 							reject({name: "Failed Auth Check", url: response.url, status: response.status, statusText: response.statusText});
+            });
 
 					} else if (response.status === 0 && response.type == "opaque") {
 						

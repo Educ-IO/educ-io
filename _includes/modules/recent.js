@@ -50,14 +50,14 @@ Recent = function() {
 			new Promise((resolve, reject) => {
 
 				if (_app) {
-					_db.keys().then((keys) => Promise.all(_.chain(keys)
-							.filter((key) => _is(_app, key))
-							.map((key) => _db.getItem(key))
+					_db.keys().then(keys => Promise.all(_.chain(keys)
+							.filter(key => _is(_app, key))
+							.map(key => _db.getItem(key))
 							.value()).then((values) => resolve(_.map(values.sort((a,b) => b.date - a.date).slice(0, number), (o) => _.omit(o, "app")))))
 					.catch((e) => reject(e));
 				} else {
 					_db.keys().then((keys) => Promise.all(_.chain(keys)
-							.map((key) => _db.getItem(key))
+							.map(key => _db.getItem(key))
 							.value()).then((values) => resolve(_.each(values.sort((a,b) => b.date - a.date).slice(0, number), (o) => o.url = "/" + o.app + "/" + o.url))))
 					.catch((e) => reject(e));
 				}
@@ -72,7 +72,7 @@ Recent = function() {
 		clean : () => {
 			if (_app) {
 				_db.keys().then(keys => {
-					_.chain(keys).filter((key) => _is(_app, key)).each(key => _db.removeItem(key).then(ಠ_ಠ.Flags.log("Cleared Recent Item: " + key)));
+					_.chain(keys).filter(key => _is(_app, key)).each(key => _db.removeItem(key).then(ಠ_ಠ.Flags.log("Cleared Recent Item: " + key)));
 				}).catch((e) => ಠ_ಠ.Flags.error("App Clear Recent Items Failure", e ? e : "No Inner Error"));
 			} else {
 				_db.clear().then(() => ಠ_ಠ.Flags.log("Globally Cleared Recent Items")).catch((e) => ಠ_ಠ.Flags.error("Global Clear Recent Items Failure", e ? e : "No Inner Error"));	

@@ -5,3 +5,9 @@
 			 -o-transition: $details;
 					transition: $details;
 }
+
+@mixin animation($details) {
+  -webkit-animation: $details;
+     -moz-animation: $details;
+					animation: $details;
+}

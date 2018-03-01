@@ -82,7 +82,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 	/* <!-- Network Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var _init = function(token, type, expires, update) {
+	var _init = (token, type, expires, update) => {
 
 		/* <!-- Check Function to ensure token validity --> */
 		_check = (function(e, u) {
@@ -93,15 +93,12 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 					if (force || e <= new Date()) { /* Token Expired */
 
-            var _force = e <= new Date();
-						u(_force).then(function(r) { /* Update token */
+						u(force).then(r => { /* Update token */
 
 							if (r) _init(r.token, r.type, r.expires, u); /* Non-Null Response, so changes required */
 							resolve(true);
 
-						}, function(err) {
-							reject(err);
-						});
+						}).catch(err =>	reject(err));
 
 					} else { /* Token Fine */
 
@@ -113,7 +110,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 			};
 
-		})(new Date((expires - 10) * 1000), update); /* 10 second shift in case of network delays! */
+		})(new Date((expires - 1) * 1000), update); /* 1 second shift in case of network delays! */
 
 		/* <!-- Pass Token to Network --> */
 		_before = (function(t, w) {
@@ -145,11 +142,11 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	var _arrayize = (value, test) => value && test(value) ? [value] : value;
 
-	var _list = function(url, property, list, data, next) {
+	var _list = (url, property, list, data, next) => {
 
-		return new Promise(function(resolve, reject) {
+		return new Promise((resolve, reject) => {
 
-			_check().then(function() {
+			_check().then(() => {
 
 				if (data) {
 					if (next) data.pageToken = next;
@@ -173,7 +170,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 						resolve(list);
 					}
 
-				}).catch((e) => reject(e));
+				}).catch(e => reject(e));
 
 			});
 
@@ -181,13 +178,13 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-	var _call = function(method) {
+  var _call = function(method) {
 		return new Promise((resolve, reject) => {
 			_check().then(() => method.apply(this, _.rest(arguments)).then((value) => resolve(value)).catch((e) => reject(e)));
 		});
 	};
 
-	var _get = function(id, team) {
+	var _get = (id, team) => {
 		var _data = team ?
 			team === true ? {
 				fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
@@ -206,7 +203,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 		return _call(NETWORKS.general.get, "drive/v3/files/" + id, _data);
 	};
 	
-	var _pick = function(title, multiple, team, views, callback, context) {
+	var _pick = (title, multiple, team, views, callback, context) => {
 
 		if (google.picker) {
 
@@ -264,7 +261,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-	var _contents = function(ids, mimeTypes, excludeMimeTypes, properties, skeleton, team, overrideType) {
+	var _contents = (ids, mimeTypes, excludeMimeTypes, properties, skeleton, team, overrideType) => {
 
 		/* <!-- Build the ID portion of the query --> */
 		var _i = ids && ids.length > 0 ?
@@ -301,7 +298,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-	var _search = function(ids, recurse, folders, mimeTypes, excludes, includes, properties, team, cache) {
+	var _search = (ids, recurse, folders, mimeTypes, excludes, includes, properties, team, cache) => {
 
 		var _paths = (parents, chain, all) => {
 
@@ -423,16 +420,13 @@ Google_API = function(ಠ_ಠ, timeout) {
 			parameters: data,
 		}),
 
-		scripts: () => _list(
-			"drive/v3/files", "files", [], {
-				q: "mimeType = 'application/vnd.google-apps.script' and trashed = false",
-				orderBy: "modifiedByMeTime desc,name",
-				fields: "files(description,id,modifiedByMeTime,name,version)",
-			}
-		),
+		scripts: () => _list("drive/v3/files", "files", [], {
+      q: "mimeType = 'application/vnd.google-apps.script' and trashed = false",
+      orderBy: "modifiedByMeTime desc,name",
+      fields: "files(description,id,modifiedByMeTime,name,version)",
+    }),
 
-		download: (id, team) => team ?
-			_call(NETWORKS.general.download, "drive/v3/files/" + id, {
+		download: (id, team) => team ? _call(NETWORKS.general.download, "drive/v3/files/" + id, {
 				alt: "media",
 				supportsTeamDrives: true
 			}) : _call(NETWORKS.general.download, "drive/v3/files/" + id, {

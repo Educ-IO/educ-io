@@ -1,6 +1,7 @@
 TODO LIST 
 =========
-* ** IMPORTANT ** Clean up Page Titles -> too much duplication on XL page sizes.
+General
+-------
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo
@@ -8,35 +9,34 @@ TODO LIST
 * BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
 * BUG -> ARROW functions in return object (e.g. View)???
 * More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');"
-* Filter for correctly returned doc type on picker (recent shows all types?)
-* Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set? | Also JWT Token for Folders?
 * Contrite Penguin 404 Page
 * Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency?
-* Remove .map / .filter etc calls so that polyfills can be removed in favour of using Underscore.
-
-Router
-------
-* Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings.
+* Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set? | Also JWT Token for Folders?
 
 Datatable
 ---------
-* Position of sorted icon sometimes clashes with expanding handles?
+
+Auth
+----
+
+Picker
+------
+* Filter for correctly returned doc type on picker (recent shows all types?)
+* Picker can be difficult if third party cookies or referral headers are blocked.....
+
+Router
+------
+* ** IMPORTANT ** Default Router Code for Apps?
+* Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings.
 
 Apps
 ----
-* ** IMPORTANT ** Token Expiration and Pop-Up?
-* ** IMPORTANT ** Retries (in network.js) takes too long when handling security (401) errors
-* ** BUG ** -> Token refresh (especially on folders) -> not triggering refresh properly
-
 * ** IMPORTANT ** Clear process instructions? Visual? <- App Guides
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
-
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
-* Javascript/CSS to move / expand busy Loader when App page is scrolled and not locked to top
 * Success / Failure response in Busy Loader? E.g. Animate to cross if it fails?
-* Picker can be difficult if third party cookies or referral headers are blocked.....
 
 Mobile
 ------
@@ -63,21 +63,20 @@ View
 
 Folders
 -------
-* ** IMPORTANT ** Convert and Delete etc should operate on filtered views (need to hook back after_update mechanism)
+* ** IMPORTANT ** Convert and Delete etc should operate on column filtered views (need to hook back after_update mechanism)
 * ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
 * Swap table from expanding to fixed with flex wrapping for custom properties and long ids -> Also vertically centre row content.
 * Potential bug - name: `Tag: ${folder.name} [${new Date().toLocaleDateString()}].folders`, ON SEARCH NOT FOLDER?
-* Highlight out-of-date reviews in red?
 * Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => { -- Better to save out form values than encode / decode
 * State Save needs updating for new fields
 * Use Events to track recusive folder searching progress (display to user)
+* Highlight out-of-date reviews in red?
 
 Merge
 -----
 
 Reflect
 -------
-* ** IMPORTANT ** 401 on API requests <== DONE
 * ** IMPORTANT ** >1 Evidence Items not outputted in JSON (De-Hydrate)
 * ** IMPORTANT ** Evidence Check Boxes not being toggled (Re-Hydrate)
 * ** IMPORTANT ** Feedback on successful save?
@@ -92,6 +91,17 @@ Reflect
 
 Complete
 --------
+* Position of sorted icon sometimes clashes with expanding handles? <-- DONE
+* Remove .map / .filter etc calls so that polyfills can be removed in favour of using Underscore. <== DONE
+* ** IMPORTANT ** Token Expiration and Pop-Up? <- Depends on what triggers the flow? -- Comes back to state handling <-- DONE
+* ** IMPORTANT ** Retries (in network.js) takes too long when handling security (401) errors <-- DONE
+* ** BUG ** -> Token refresh (especially on folders) -> not triggering refresh properly <-- DONE
+* ** BUG ** -> Sign Out does not return to un-auth state in Folders or Reflect <-- DONE
+* ** IMPORTANT ** Visual Feedback for Sign-In Process <-- DONE
+* ** IMPORTANT ** Clean up Page Titles -> too much duplication on XL page sizes. <-- DONE
+* Remove extrenuous wording on help dialog after successfull check <-- DONE
+* Make help dialog textarea resizable <-- DONE
+* ** IMPORTANT ** 401 on API requests <== DONE
 * App Guides need an 'open app' button <-- DONE
 * ** IMPORTANT ** Move menu tooltips to RHS/LHS for larger screens (responsive breakpoints?) <== DONE
 * ** BUG ** -> Menus on guides ... shouldn't be there. <-- DONE
@@ -380,4 +390,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-02-28
+ᕕ( ᐛ )ᕗ JD - 2018-03-01

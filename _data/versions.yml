@@ -1,4 +1,8 @@
 site :
+  0.0.8f :
+    name: Bug Fixes and Visual Improvements
+    desc: Sorted Column Icons, Bug Fixes and Auth improvements
+    type: minor
   0.0.8e :
     name: Tooltips Positioning Improvements
     desc: Menu tooltips position themselves better now, and show on disable menu items too

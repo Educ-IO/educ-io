@@ -125,7 +125,7 @@ App = function() {
 
 		},
 
-		route: function(command) {
+		route: command => {
 
 			if (!command || command === false || command[0] === false || (/PUBLIC/i).test(command)) {
 

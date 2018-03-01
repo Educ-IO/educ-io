@@ -24,6 +24,18 @@ Display = function() {
 			i = Math.floor(Math.log(bytes) / Math.log(k));
 		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 	};
+  
+  var _calculate = element => {
+    var _o = element.offset(), _l = _o.left, _w = element.width(), _r = _l + _w, _t = _o.top, _h = element.height(), _b = _t + _h,
+          _width = $(window).width(), _height = $(window).height();
+      return (_l < _w && (_width - _r) < _w) || _t < _h ? 
+        _t > (_height - _b) ? "top" : "bottom" :
+        _l > (_width - _r) ? "left" : "right";
+  };
+  var _placement = (show, trigger) => $(trigger).data("placement") ? $(trigger).data("placement") : _calculate($(trigger));
+  
+  var _popovers = (targets, options) => targets.popover(_.defaults(options ? options : {}, {trigger: "focus"}));
+  var _tooltips = (targets, options) => targets.tooltip(_.defaults(options ? options : {}, {trigger: "hover", placement : _placement}));
 	
 	var _target = function(options) {
 
@@ -95,7 +107,7 @@ Display = function() {
 
 		},
 
-		start: function() {
+		start: () => {
 
 			if (window.Handlebars) {
 				
@@ -180,18 +192,9 @@ Display = function() {
 			}
 			
 			/* <!-- Enable Tooltips & Popovers --> */
-			var calculate = element => {
-				var _o = element.offset(), _l = _o.left, _w = element.width(), _r = _l + _w, _t = _o.top, _h = element.height(), _b = _t + _h,
-							_width = $(window).width(), _height = $(window).height();
-					return (_l < _w && (_width - _r) < _w) || _t < _h ? 
-						_t > (_height - _b) ? "top" : "bottom" :
-						_l > (_width - _r) ? "left" : "right";
-			};
-			var placement = (show, trigger) => $(trigger).data("placement") ? $(trigger).data("placement") : calculate($(trigger));
-			
-			$("[data-toggle='popover']").popover({trigger: "focus"});
-			$("#site_nav [data-toggle='popover']").popover({trigger: "hover"});
-			$("[data-toggle='tooltip']").tooltip({trigger: "hover focus", placement : placement});
+      _popovers($("[data-toggle='popover']"));
+      _popovers($("#site_nav [data-toggle='popover']"), {trigger: "hover"});
+			_tooltips($("[data-toggle='tooltip']"));
 
 			/* <!-- Enable Closing Bootstrap Menu after Action --> */
 			var navMain = $(".navbar-collapse");
@@ -200,6 +203,10 @@ Display = function() {
 			
 		},
 
+    popovers: (targets, options) => _popovers(targets, options),
+    
+    tooltips: (targets, options) => _tooltips(targets, options),
+  
 		doc: {
 
 			wrap: function(wrapper, content, options) {
@@ -287,7 +294,7 @@ Display = function() {
 
 			}
 		*/
-		confirm: function(options) {
+		confirm: options => {
 
 			return new Promise((resolve, reject) => {
 
@@ -319,7 +326,7 @@ Display = function() {
 
 			}
 		*/
-		modal: function(template, options, shown) {
+		modal: (template, options, shown) => {
 
 			return new Promise((resolve, reject) => {
 
@@ -395,7 +402,7 @@ Display = function() {
 				target : optional name / element / jquery of containing element
 			}
 		--> */
-		alert: function(options) {
+		alert: options => {
 
 			return new Promise((resolve, reject) => {
 
@@ -429,7 +436,7 @@ Display = function() {
 				target : optional name / element / jquery of containing element
 			}
 		--> */
-		choose: function(options) {
+		choose: options => {
 
 			return new Promise((resolve, reject) => {
 
@@ -475,7 +482,7 @@ Display = function() {
 				target : optional name / element / jquery of containing element
 			}
 		--> */
-		options: function(options) {
+		options: options => {
 
 			return new Promise((resolve, reject) => {
 
@@ -486,7 +493,9 @@ Display = function() {
 				_target(options).append(dialog);
 				dialog.find("a.dropdown-item").on("click.toggler", (e) => $(e.target).closest(".input-group-append, .input-group-prepend").children("button")[0].innerText = e.target.innerText);
 				dialog.find("a[data-toggle='tooltip']").tooltip({
-					animation: false
+					animation: false,
+          trigger: "hover",
+          placement : _placement
 				});
 
 				/* <!-- Set Event Handlers --> */
@@ -525,7 +534,7 @@ Display = function() {
 				target : optional name / element / jquery of containing element
 			}
 		--> */
-		text: function(options) {
+		text: options => {
 
 			return new Promise((resolve, reject) => {
 
@@ -564,7 +573,7 @@ Display = function() {
 				target : optional name / element / jquery of containing element
 			}
 		--> */
-		files: function(options) {
+		files: options => {
 
 			return new Promise((resolve, reject) => {
 
@@ -618,7 +627,7 @@ Display = function() {
 				target : optional name / element / jquery of containing element
 			}
 		--> */
-		action: function(options) {
+		action: options => {
 
 			return new Promise((resolve, reject) => {
 
@@ -632,7 +641,11 @@ Display = function() {
 				/* <!-- Great Modal Options Dialog --> */
 				var dialog = $(_template("action")(options));
 				_target(options).append(dialog);
-				dialog.find("a[data-toggle='tooltip']").tooltip({animation: false});
+				dialog.find("a[data-toggle='tooltip']").tooltip({
+          animation: false,
+          trigger: "hover",
+          placement : _placement
+        });
 
 				/* <!-- Set Event Handlers --> */
 				dialog.find("button[data-action]").click(function(e) {

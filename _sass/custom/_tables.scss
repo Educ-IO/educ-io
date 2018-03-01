@@ -9,29 +9,15 @@ table {
 			background-color: $colour-background;
 			th {
 				position: relative;
-				
 			}
 		}
 		.sort {
-			&:after {
-				display: inline-block;
-				width: 0;
-				height: 0;
-				margin-left: 0.3em;
-				vertical-align: middle;
-				content: "";
-				border-right: 0.3em solid transparent;
-				border-left: 0.3em solid transparent;
+      a {&:after {margin-left: 0.3em;}}
+			&.asc a {
+				&:after {content: "🠟";}
 			}
-			&.asc {
-				&:after {
-					border-top: 0.3em solid;
-				}
-			}
-			&.desc {
-				&:after {
-					border-bottom: .3em solid;
-				}
+			&.desc a {
+				&:after {content: "🠝";}
 			}
 		}
 	}
@@ -70,11 +56,18 @@ table {
 				color: darken($colour-deemphasise, 25%);
 				a {
 					color: $colour-emphasis !important;
+          &:hover {color: darken($colour-emphasis, 10%) !important;}
+          &:before, &:after {color: rgba($colour-emphasis, 0.5) !important;}
 				}
 			}
 			a {
 				color: $colour-highlight;
 				text-align: center;
+        &:hover {
+          text-decoration: none;
+          color: darken($colour-highlight, 10%);
+        }
+        &:before, &:after {color: rgba($colour-highlight, 0.5);}
 			}
 		}
 	}

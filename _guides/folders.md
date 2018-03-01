@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: guide
 title: A Guide to Folders
 permalink: /guides/folders/
 support: true
@@ -14,11 +14,3 @@ Makes working with your files in your [Google Drive](https://www.google.com/driv
 + Search within a __single folder__, or do a recursive search of all descendent folders as well.
 + __Bulk convert__ files to native file formats (such as Word to Google Docs) in the browser.
 + __Bulk export__ native file formats to PDF, including updating already exported versions.
-
-#### Use Cases
-
-{% include tutorials.md app=page.app %}
-
-- - -
-
-{% include copyright.md %}

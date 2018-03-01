@@ -84,7 +84,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 	var _showData = function(id, name, values, target) {
 
-		var headers = ["Type", "Name", "Actions", "ID", "Star"].map((v) => ({
+		var headers = _.map(["Type", "Name", "Actions", "ID", "Star"], v => ({
 			name: v,
 			hide: function(initial) {
 				return !!(initial && this.hide_initially);

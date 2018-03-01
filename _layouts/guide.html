@@ -1,0 +1,18 @@
+---
+layout: page
+---
+{{ content }}
+{% capture tutorials %}{%- include tutorials.html app=page.app -%}{% endcapture %}
+{% capture cases %}
+- - -
+#### Use Cases
+{% endcapture %}
+{% if tutorials and tutorials.size > 0 %}
+{{ cases | markdownify }}
+{{ tutorials }}
+{% endif %}
+{% capture footer %}
+- - -
+{% include copyright.md %}
+{% endcapture %}
+{{ footer | markdownify }}

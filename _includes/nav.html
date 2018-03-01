@@ -8,7 +8,7 @@
 
   <div class="collapse navbar-collapse" id="main_Nav">
 
-    {% if page.app %}<a class="navbar-brand font-sensitive jump d-sm-none d-md-inline-block" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }}<span class="d-none d-lg-inline"> | {{ site.title }}</span><span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}</span></a>{% endif %}
+    {% if page.app and page.layout == "app" %}<a class="navbar-brand font-sensitive jump d-sm-none d-md-inline-block" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }}<span class="d-none d-lg-inline"> | {{ site.title }}</span><span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}</span></a>{% endif %}
 
     <ul class="navbar-nav mr-auto">
 
@@ -69,6 +69,9 @@
     </ul>
 
     {% if page.app or page.login %}
+    
+      <div id="auth_processing" class="form-inline mt-2 mt-md-0 text-muted font-weight-light waiting" style="display: none;">Checking</div>
+    
       <form id="sign_out" class="form-inline mt-2 mt-md-0" style="display: none;">
         <span class="navbar-text mr-2">Signed in as <a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions" rel="noopener" data-toggle="tooltip" ></a></span>
         <a class="btn btn-outline-success my-2 my-sm-0 btn-outline-action" href="#"><span>Sign Out</span></a>

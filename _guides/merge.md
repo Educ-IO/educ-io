@@ -7,11 +7,3 @@ app: merge
 ---
 
 #### Introduction
-
-#### Use Cases
-
-{% include tutorials.md app=page.app %}
-
-- - -
-
-{% include copyright.md %}

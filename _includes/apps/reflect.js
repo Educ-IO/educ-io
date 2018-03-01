@@ -518,10 +518,12 @@ App = function() {
 
 	var _clear = function(fn) {
 
-		ಠ_ಠ.Display.state().exit(["opened-form", "opened-report"]).protect("a.jump").off();
-		ಠ_ಠ.container.empty();
-		_form = null;
-		_folder = null;
+    if (_form || _folder) {
+		  _form = null;
+		  _folder = null;
+      ಠ_ಠ.Display.state().exit(["opened-form", "opened-report"]).protect("a.jump").off();
+		  ಠ_ಠ.container.empty();
+    }
 		if (fn) fn();
 
 	};
@@ -641,10 +643,13 @@ App = function() {
 			if (!_forms) _forms = ಠ_ಠ.Forms();
 		},
 
-		route: function(command) {
+		route: command => {
 
 			if (!command || command === false || command[0] === false || (/PUBLIC/i).test(command)) { /* <!-- Load the Public Instructions --> */
 
+        /* <!-- Clear the existing state (in case of logouts) --> */
+				if (command && command[1]) _clear();
+        
 				/* <!-- Don't use handlebar templates here as we may be routed from the controller, and it might not be loaded --> */
 				if (!command || !_last || command[0] !== _last[0]) ಠ_ಠ.Display.doc.show({
 					wrapper: "PUBLIC",

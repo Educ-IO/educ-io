@@ -70,20 +70,17 @@ Help = function() {
       }, modal => {
 				
 				var _target = modal.find(".modal-content"), 
-						_results =_target.find(".result").hide(),
+						_results =_target.find(".result").hide(200),
+						_busy = ಠ_ಠ.Display.busy({target: _target, fn: true}),
 						_complete = (selector, submit) => {
-							ಠ_ಠ.Display.busy({
-								clear: true,
-								target: _target
-							});
-							var _show = _results.filter(selector).show();
+							_busy();
+							_target.find(`.not-${selector}`).hide(600);
+							var _show = _results.filter(`.${selector}`).show();
 							_show.find("svg path").css("stroke-dashoffset", 0).css("opacity", 1);
 							_show.find(".details").css("color", "#212529").find("a").css("color", "#007bff");
 							_target.find(".btn-primary").toggle(submit === true);
+							if (window.autosize) autosize(modal.find("textarea.resizable"));
 						};
-				ಠ_ಠ.Display.busy({
-					target: _target
-				});
 
 				ಠ_ಠ.Flags.log(`Email: ${ಠ_ಠ.me.email.toLowerCase()}`);
 				ಠ_ಠ.Flags.log(`Domain: ${ಠ_ಠ.me.email.toLowerCase().split("@")[1]}`);
@@ -92,7 +89,7 @@ Help = function() {
 				fetchJsonp(`${ಠ_ಠ.SETUP.CHECK.url}?check=${_checks.join(";")}`)
 					.then(response => response.json())
 					.then(value => ಠ_ಠ.Flags.log(`Check Result: ${JSON.stringify(value)}`) && 
-								_complete(value.valid === true ? ".success" : value.valid === false ? ".failure" : ".unknown", value.valid === true))
+								_complete(value.valid === true ? "success" : value.valid === false ? "failure" : "unknown", value.valid === true))
 					.catch(e => ಠ_ಠ.Flags.error("Error checking support status", e) && _complete(".unknown"));
         
       }).then(data => data && data[0].value && data[1].value ?

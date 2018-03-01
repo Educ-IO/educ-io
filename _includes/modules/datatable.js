@@ -16,7 +16,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 		var _createQuery = function(filters, join) {
 			var _query, _join = join ? join : "$and";
-			Object.keys(filters).map((field => {
+			_.map(Object.keys(filters), field => {
 				var _condition = {};
 				_condition[field] = filters[field];
 				if (!_query) {
@@ -30,7 +30,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 						};
 					}
 				}
-			}));
+			});
 			return _query;
 		};
 
@@ -370,8 +370,8 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		headers: table.headers,
 		rows: _createRows(table.data.chain().data({
 			removeMeta: true
-		}).map((v) => {
-			table.headers.forEach((f, i) => {
+		}).map(v => {
+			_.each(table.headers, (f, i) => {
 				if (f.hide_default) delete v[i];
 			});
 			return v;
@@ -434,10 +434,8 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		});
 
 		/* <!-- Enable Pop-Overs and Tool-Tips --> */
-		target.find("[data-toggle='popover']").popover({
-			trigger: "focus"
-		});
-		target.find("[data-toggle='tooltip']").tooltip({});
+    ಠ_ಠ.Display.popovers(target.find("[data-toggle='popover']"));
+		ಠ_ಠ.Display.tooltips(target.find("[data-toggle='tooltip']"));
 
 		/* <!-- Show/Hide Column (expandable table) --> */
 		target.find(".table-headers").on("click", (e) => {
@@ -605,9 +603,9 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 		values: (filtered) => {
 			var _html = filtered ? $(_createDisplayTable()) : $(_createDefaultTable());
-			var _return = [_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray().map((el) => el.textContent.trim())];
+			var _return = [_.map(_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray(), el => el.textContent.trim())];
 			_html.find("tbody tr").each((i, el) => {
-				_return.push($(el).find("td").toArray().map((el) => el.textContent.trim()));
+				_.map(_return.push($(el).find("td").toArray(), (el) => el.textContent.trim()));
 			});
 			return _return;
 		},
@@ -618,7 +616,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			e: _filters.inverted(),
 			s: _sorts,
 			r: options.frozen && options.frozen.rows ? options.frozen.rows : 1,
-			h: _.chain(table.headers).filter((h) => h.hide(true)).map((h) => ({
+			h: _.chain(table.headers).filter(h => h.hide(true)).map(h => ({
 				n: h.name,
 				h: h.hide_always,
 				i: h.hide_initially

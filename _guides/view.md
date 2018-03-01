@@ -30,12 +30,4 @@ Making sharing parts (what we call _views_) of your [Google Sheets](https://www.
 
 All of this is delivered __without modifying__ your original data in any way. In line with our [zero knowledge](/about#privacy) approach to privacy, your sheets data never leaves the browser and is __never__, __ever__ sent to us. For more information, read the [instructions](#instructions) or click on the buttons below.
 
-#### Use Cases
-
-{% include tutorials.md app=page.app %}
-
-- - -
-
-{% include copyright.md %}
-
   [1]: https://support.google.com/docs/answer/3540681#filter_view "Use Filter Views"
