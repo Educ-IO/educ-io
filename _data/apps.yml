@@ -606,7 +606,7 @@ folders:
     - name: autosize
       load: last
     - name: moment
-      load: lazy
+      load: last
     - name: filesaver
       load: last
     - name: google
@@ -721,8 +721,6 @@ folders:
               hash: search
               disabled_until:
                 - opened
-              imports:
-                - moment
               auth: google
             - name: Tally
               desc: Count Files / Folders within these Folders

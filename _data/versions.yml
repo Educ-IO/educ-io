@@ -1,4 +1,8 @@
 site :
+  0.0.8g :
+    name: Folders 0.0.6-alpha
+    desc: API Bug Fixes and Improvements
+    type: minor
   0.0.8f :
     name: Bug Fixes and Visual Improvements
     desc: Sorted Column Icons, Bug Fixes and Auth improvements
@@ -337,6 +341,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.6-alpha :
+    name : API Bug Fixes and Improvements
+    desc : Searching Performance Improvements and Features
+    type : minor
   0.0.5d-alpha :
     name : Bug Fixes and Improvements
     desc : Tally Improvements and various minor Bug Fixes

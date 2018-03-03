@@ -8,10 +8,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 	/* === Internal Visibility === */
 
 	/* <!-- Internal Constants --> */
-	const PAGE_SIZE = 500;
-	const BATCH_SIZE = 50;
-	const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
-	const RANDOM = (lower, higher) => Math.random() * (higher - lower) + lower;
+	const PAGE_SIZE = 500, BATCH_SIZE = 50, PATH_LIMIT = 1000;
 
 	const READER = function() {
 
@@ -42,17 +39,23 @@ Google_API = function(ಠ_ಠ, timeout) {
 	const GENERAL_URL = {
 		name: "general",
 		url: "https://www.googleapis.com/",
-		rate: 3
-	}; /* <!-- 3 seems fine, 4 will tend to bust over the rate-limit --> */
+		rate: 4, /* <!-- 500 per 100 seconds --> */
+		concurrent: 8,
+		timeout: 30000,
+	};
 	const SHEETS_URL = {
 		name: "sheets",
 		url: "https://sheets.googleapis.com/",
-		rate: 1
+		rate: 1,
+		concurrent: 1,
+		timeout: 30000,
 	};
 	const SCRIPTS_URL = {
 		name: "scripts",
 		url: "https://script.googleapis.com/",
-		rate: 1
+		rate: 1,
+		concurrent: 1,
+		timeout: 30000,
 	};
 	const URLS = [GENERAL_URL, SHEETS_URL, SCRIPTS_URL];
 	/* <!-- Network Constants --> */
@@ -64,19 +67,23 @@ Google_API = function(ಠ_ಠ, timeout) {
 	const SLIDE = "application/vnd.google-apps.presentation";
 	const DRAWING = "application/vnd.google-apps.drawing";
 	const NATIVES = [DOC, SHEET, SLIDE, DRAWING];
+	
+	const EVENTS = {
+		SEARCH : {
+			PROGRESS : "google-search-progress",
+		},
+	};
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var KEY, CLIENT_ID, _check, _before, _token;
+	var KEY, CLIENT_ID, _check, _before, _token, _nameCache = {};
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Network Variables --> */
 	const NETWORKS = _.reduce(URLS, (networks, url) => {
-		networks[url.name] = ಠ_ಠ.Network(url.url, timeout ? timeout : 60000, url.rate ? url.rate : 0, r =>
-			new Promise(function(resolve) {
-				r.status == 403 || r.status == 429 ?
-					r.json().then(result => result.error.message && result.error.message.indexOf("Rate Limit Exceeded") >= 0 ? resolve(true) : resolve(false)) : resolve(false);
-			}));
+		networks[url.name] = ಠ_ಠ.Network(url.url, timeout ? timeout : url.timeout ? url.timeout : 60000, url.rate ? url.rate : 0, url.concurrent ? url.concurrent : 0, r =>
+			new Promise(resolve => r.status == 403 || r.status == 429 ? 
+									r.json().then(result => result.error.message && result.error.message.indexOf("Rate Limit Exceeded") >= 0 ? resolve(true) : resolve(false)) : resolve(false)));
 		return networks;
 	}, {});
 	/* <!-- Network Variables --> */
@@ -261,12 +268,16 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-	var _contents = (ids, mimeTypes, excludeMimeTypes, properties, skeleton, team, overrideType) => {
+	var _contents = (ids, names, mimeTypes, excludeMimeTypes, properties, skeleton, team, overrideType) => {
 
 		/* <!-- Build the ID portion of the query --> */
 		var _i = ids && ids.length > 0 ?
 			_.reduce(ids, (q, id, i) => q + (i > 0 ? " or '" + id + "' in parents" : "'" + id + "' in parents"), " and (") + ")" : "";
 
+		/* <!-- Build the MIME portion of the query --> */
+		var _n = names && names.length > 0 ?
+			_.reduce(names, (q, n, i) => q + (i > 0 ? " or name contains '" : "name contains '") + n + "'", " and (") + ")" : "";
+		
 		/* <!-- Build the MIME portion of the query --> */
 		var _m = mimeTypes && mimeTypes.length > 0 ?
 			_.reduce(mimeTypes, (q, m, i) => q + (i > 0 ? " or mimeType = '" : "mimeType = '") + m + "'", " and (") + ")" : "";
@@ -282,7 +293,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		var _data = {
 			pageSize: PAGE_SIZE,
-			q: "trashed = false" + _i + _m + _e + _p,
+			q: "trashed = false" + _i + _n + _m + _e + _p,
 			orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
 			fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size,parents,mimeType" + (team ? ",teamDriveId" : "") + ")" : "kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties,appProperties" + (team ? ",teamDriveId" : "") + ")",
 		};
@@ -298,56 +309,67 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-	var _search = (ids, recurse, folders, mimeTypes, excludes, includes, properties, team, cache) => {
+	var _paths = (parents, chain, all, cache, team) => {
 
-		var _paths = (parents, chain, all) => {
-
-			var _path = (parent, chain) => {
-				
-				return new Promise((resolve) => {
-					
-					var _complete = () => {
-						var _parent = cache[parent];
-						if (_parent) chain.push(_parent.name);
-						resolve(_paths(_parent ? _parent.parents : [], chain, all));
-					};
-					
-					cache[parent] ? _complete() : _get(parent, team).then(item => {
-							cache[item.id] = {
-								name: item.name,
-								parents: item.parents
-							};
-							_complete();
-						});
-					
-				});
-
-			};
+		var _path = (parent, chain) => {
 			
-			return new Promise((resolve) => {
-				if (parents && parents.length > 0) {
-					if (parents.length == 1) {
-						_path(parents[0], chain).then(value => resolve(value));
-					} else {
-						var promises = [];
-						_.each(parents, parent => promises.push(_path(parent, _.clone(chain))));
-						Promise.all(promises).then(() => resolve(all));
-					}
-				} else {
-					all.push(chain.reverse().join(" \\ "));
-					resolve(all);
+			return new Promise(resolve => {
+
+				var _complete = item => {
+					if (item) chain.push(item.name);
+					resolve(_paths(item ? item.parents : [], chain, all, cache, team));
+				};
+
+				if (cache[parent]) { /* <!-- Already Fetched --> */
+					_complete(cache[parent]);
+				} else if (cache.__pending && cache.__pending[parent]) {  /* <!-- Fetch already pending --> */
+					cache.__pending[parent].push(item => _complete(item));
+				} else {  /* <!-- Set-Up Fetch --> */
+					if (!cache.__pending) cache.__pending = {};
+					cache.__pending[parent] = [];
+					_get(parent, team).then(item => {
+						cache[item.id] = {
+							name: item.name,
+							parents: item.parents
+						};
+						_.each(cache.__pending[parent], f => f(item));
+						delete cache.__pending[parent];
+						_complete(item);
+					});	
 				}
 			});
-			
+
 		};
+
+		return new Promise(resolve => {
+			if (parents && parents.length > 0) {
+				if (parents.length == 1) {
+					_path(parents[0], chain).then(value => resolve(value));
+				} else {
+					var promises = [];
+					_.each(parents, parent => promises.push(_path(parent, _.clone(chain))));
+					Promise.all(promises).then(() => resolve(all));
+				}
+			} else {
+				all.push(chain.reverse().join(" \\ "));
+				resolve(all);
+			}
+		});
+
+	};
+	
+	var _search = (ids, recurse, folders, names, mimeTypes, excludes, includes, properties, team, cache, totals) => {
 
 		return new Promise((resolve, reject) => {
 
-			_contents(ids, mimeTypes, [], properties && properties.simple ? properties.simple : null, false, team, recurse && mimeTypes.length === 0 ? FOLDER : null).then((c) => {
+			_contents(ids, names, mimeTypes, [], properties && properties.simple ? properties.simple : null, false, team, recurse && mimeTypes.length === 0 ? FOLDER : null).then((c) => {
 
+				/* <!-- Update Progress Event --> */
+				if (totals && ids && window) (totals.folders += ids.length) && window.dispatchEvent(new CustomEvent(EVENTS.SEARCH.PROGRESS, { detail: totals }));
+				
 				/* <!-- Filter the results using the Exclude then Include methods --> */
-				if (excludes) c = _.reject(c, (item) => _.some(excludes, (e) => e(item)));
-				if (includes) c = _.filter(c, (item) => _.some(includes, (i) => i(item)));
+				if (excludes) c = _.reject(c, item => _.some(excludes, (e) => e(item)));
+				if (includes) c = _.filter(c, item => _.some(includes, (i) => i(item)));
 
 				/* <!-- Get the ids of all the folders included in the raw set --> */
 				var next = recurse ? _.filter(c, item => item.mimeType === FOLDER) : [];
@@ -361,32 +383,30 @@ Google_API = function(ಠ_ಠ, timeout) {
 				var batches = _.chain(next).groupBy((v, i) => Math.floor(i / BATCH_SIZE)).toArray().value();
 
 				/* <!-- Make an array of promises to resolve with the results of these searches --> */
-				var promises = recurse ? _.map(batches, (batch, i) => new Promise((resolve) => {
-					DELAY(RANDOM(100, 800) * i).then(_search(batch, recurse, folders, mimeTypes, excludes, includes, properties, team, cache).then((v) => resolve(v)));
-				})) : [];
+				var p = recurse ? _.map(batches, batch => _search(batch, recurse, folders, names, mimeTypes, excludes, includes, properties, team, cache, totals)) : [];
 
 				/* <!-- Filter to remove the folders if we are not returning them --> */
 				if (!folders) c = _.reject(c, item => item.mimeType === FOLDER);
 
 				/* <!-- Filter the results using Advanced Properties --> */
-				if (properties && properties.complex) c = _.filter(c, item => _.every(properties.complex, (i) => i(item)));
-
+				if (properties && properties.complex) c = _.filter(c, item => _.every(properties.complex, i => i(item)));
+				
+				/* <!-- Resolve this promise whilst resolving the recursive promises too if available --> */
+				var _finish = items => p && p.length > 0 ? Promise.all(p).then(r => resolve(_.reduce(r, (c, v) => v && v.length > 0 ? c.concat(v) : c, items))).catch(e => reject(e)) : resolve(items);
+				
 				/* <!-- Add in the current path value to each item --> */
-				c = _.map(c, item => new Promise((resolve) => _paths(item.parents, [], []).then(paths => {
-					item.paths = paths;
-					resolve(item);
-				})));
+				if (c.length <= PATH_LIMIT) {
+					
+					/* <!-- Resolve the paths promises before moving on --> */
+					Promise.all(_.map(c, item => new Promise(resolve => _paths(item.parents, [], [], cache, team).then(paths => (item.paths = paths) && resolve(item))))).then(_finish);
+					
+				}	else {
+					
+					_finish(c);
+					
+				}
 
-				/* <!-- Resolve the paths promises before moving on --> */
-				Promise.all(c).then(items => {
-					/* <!-- Resolve this promise whilst resolving the recursive promises too if available --> */
-					promises && promises.length > 0 ?
-						Promise.all(promises).then((recursed) => {
-							resolve(_.reduce(recursed, (current, value) => value && value.length > 0 ? current.concat(value) : current, items));
-						}).catch((e) => reject(e)) : resolve(items);	
-				});
-
-			}).catch((e) => reject(e));
+			}).catch(e => reject(e));
 
 		});
 
@@ -412,6 +432,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		},
 
+		networks: () => _.map(NETWORKS, network => network.details()),
+		
 		/* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
 		me: () => _call(NETWORKS.general.get, "oauth2/v1/userinfo?alt=json&key=" + KEY),
 
@@ -510,24 +532,24 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 			is: (type) => type === FOLDER,
 
-			search: (ids, recurse, mimeTypes, excludes, includes, properties, team, basic) => {
+			search: (ids, recurse, names, mimeTypes, excludes, includes, properties, team, basic) => {
 				var folders = (mimeTypes = _arrayize(mimeTypes, _.isString)).indexOf(FOLDER) >= 0;
 				return basic ? 
-					_search(null, false, false, mimeTypes, null, null, properties, team, {}) : 
+					_search(null, false, false, names, mimeTypes, null, null, properties, team, _nameCache, {folders: 0}) : 
 					_search(
-						_arrayize(ids, _.isString), recurse, folders,
+						_arrayize(ids, _.isString), recurse, folders, names,
 						recurse && mimeTypes && mimeTypes.length > 0 && !folders ? [FOLDER].concat(mimeTypes) : mimeTypes,
 						_arrayize(excludes, _.isFunction),
-						recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), properties, team, {});
+						recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), properties, team, _nameCache, {folders: 0});
 			},
 
-			contents: (ids, mimeTypes, team) => _contents(_arrayize(ids, _.isString), _arrayize(mimeTypes, _.isString), [], [], false, team),
+			contents: (ids, mimeTypes, team) => _contents(_arrayize(ids, _.isString), null, _arrayize(mimeTypes, _.isString), null, null, false, team),
 
-			children: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), [], [], [], skeleton, team),
+			children: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, null, null, null, skeleton, team),
 
-			folders: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), [FOLDER], [], [], skeleton, team),
+			folders: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, [FOLDER], null, null, skeleton, team),
 
-			files: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), [], [FOLDER], [], skeleton, team),
+			files: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, null, [FOLDER], null, skeleton, team),
 
 		},
 
@@ -565,7 +587,9 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		},
 
-		reader: READER
+		reader: READER,
+		
+		events: () => EVENTS
 
 	};
 	/* === External Visibility === */

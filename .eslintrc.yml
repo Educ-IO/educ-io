@@ -26,7 +26,7 @@ globals:
   loki: false
   google: false
   localforage: false
-  Clipboard: false
+  ClipboardJS: false
   Hashes: false
   fetchJsonp: false
   moment: false

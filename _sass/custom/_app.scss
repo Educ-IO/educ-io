@@ -322,7 +322,7 @@ td a.star {
     overflow: hidden;
     display: inline-block;
     vertical-align: bottom;
-    @include animation(ellipsis steps(4,end) 1.5s infinite 400ms);
+    @include animation(ellipsis steps(6,end) 1.5s infinite 400ms);
     content: "\2026";
     width: 0px;
   }

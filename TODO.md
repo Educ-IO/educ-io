@@ -7,11 +7,12 @@ General
 * Animated Logo
 * Favicon Background?
 * BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
-* BUG -> ARROW functions in return object (e.g. View)???
 * More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');"
 * Contrite Penguin 404 Page
 * Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency?
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set? | Also JWT Token for Folders?
+* ** BUG **? service.js:1 Failed SW Fetch: TypeError: Failed to execute 'fetch' on 'ServiceWorkerGlobalScope': 'only-if-cached' can be set only with 'same-origin' mode
+    at service.js:1 (on production deployed version)
 
 Datatable
 ---------
@@ -34,6 +35,7 @@ Apps
 * ** IMPORTANT ** Clear process instructions? Visual? <- App Guides
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
+
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 * Success / Failure response in Busy Loader? E.g. Animate to cross if it fails?
@@ -63,14 +65,13 @@ View
 
 Folders
 -------
-* ** IMPORTANT ** Convert and Delete etc should operate on column filtered views (need to hook back after_update mechanism)
-* ** IMPORTANT ** Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
-* Swap table from expanding to fixed with flex wrapping for custom properties and long ids -> Also vertically centre row content.
-* Potential bug - name: `Tag: ${folder.name} [${new Date().toLocaleDateString()}].folders`, ON SEARCH NOT FOLDER?
-* Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => { -- Better to save out form values than encode / decode
-* State Save needs updating for new fields
-* Use Events to track recusive folder searching progress (display to user)
-* Highlight out-of-date reviews in red?
+* ** IMPORTANT ** IMPROVEMENT : Convert and Delete etc should operate on column filtered views (need to hook back after update mechanism)
+* ** IMPORTANT ** FEATURE: Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
+* CODE : Swap table from expanding to fixed with flex wrapping for custom properties and long ids -> Also vertically centre row content.
+* CODE : Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => { -- Better to save out form values than encode / decode
+* CODE : State Save needs updating for new fields
+* FEATURE : Get Path by clicking on row in search?
+* FEATURE : Export Search Results to Sheets
 
 Merge
 -----
@@ -91,6 +92,18 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT ** ** BUG ** Timeout race promise on network needs to be cancelled on successful resolution of call. <-- DONE
+* Background colour highlighting for review doesn't go away when reviews are added / removed. <-- DONE
+* Busy Feedback on Search Requests for Paths (can be long for certain types of GD scenarios). <-- CAPPED AT 1000
+* Add All to Google Docs shortcuts on Search <-- DONE
+* Add Name Search <-- DONE
+* Use NULL Parents to infer route and pre-check basic search on just MIME Types <-- DONE
+* ** BUG ** - Search drive root for MimeType with 'Search Whole Drive' does not function properly - Bug in Paths Promise <-- DONE
+* Ellipsis Animation looks slightly wrong... <-- DONE
+* ** BUG ** -> ARROW functions in return object (e.g. View)??? <-- DONE
+* ** BUG ** - Locate on Tally for long tasks is broken?? <-- DONE
+* Highlight rows for out-of-date reviews in red? <-- DONE
+* Use Events to track recusive folder searching progress (display to user) <-- DONE
 * Position of sorted icon sometimes clashes with expanding handles? <-- DONE
 * Remove .map / .filter etc calls so that polyfills can be removed in favour of using Underscore. <== DONE
 * ** IMPORTANT ** Token Expiration and Pop-Up? <- Depends on what triggers the flow? -- Comes back to state handling <-- DONE

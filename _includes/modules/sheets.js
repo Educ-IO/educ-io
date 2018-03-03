@@ -6,7 +6,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var _currentSheet = () => _sheets[Object.keys(_sheets).filter((key) => _sheets[key].active())[0]];
+	var _currentSheet = () => _sheets[Object.keys(_sheets).filter(key => _sheets[key].active())[0]];
 
 	var _initSheet = function(data, name, index, target, widths, hide, frozen, locale, size) {
 
@@ -514,7 +514,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 								var _name = $(el).data("name");
 								var _get = !_sheets[_name] ?
 									new Promise((resolve) => {
-										ಠ_ಠ.google.sheets.values(_id, _name + "!A:ZZ").then((data) => resolve(data.values));
+										ಠ_ಠ.google.sheets.values(_id, _name + "!A:ZZ").then(data => resolve(data.values));
 									}) :
 									new Promise((resolve) => resolve(_sheets[_name].values(!full)));
 

@@ -204,7 +204,7 @@ App = function() {
 					if (_clipboard) _clipboard.destroy();
 				});
 
-				_clipboard = new Clipboard("#generate_link .copy-trigger", {
+				_clipboard = new ClipboardJS("#generate_link .copy-trigger", {
 					container: document.getElementById("generate_link")
 				});
 

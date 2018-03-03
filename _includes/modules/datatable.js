@@ -601,12 +601,10 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 		name: () => table.name,
 
-		values: (filtered) => {
+		values: filtered => {
 			var _html = filtered ? $(_createDisplayTable()) : $(_createDefaultTable());
 			var _return = [_.map(_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray(), el => el.textContent.trim())];
-			_html.find("tbody tr").each((i, el) => {
-				_.map(_return.push($(el).find("td").toArray(), (el) => el.textContent.trim()));
-			});
+			_html.find("tbody tr").each((i, el) => _return.push(_.map($(el).find("td").toArray(), el => el.textContent.trim())));
 			return _return;
 		},
 

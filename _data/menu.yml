@@ -12,7 +12,7 @@ drive:
     - folders
     - transfer
 team:
-  name: For your Team
+  name: Your Team
   apps:
     - markbooks
 school:

@@ -13,28 +13,36 @@
 				{{#if shortcuts}}{{> populate_buttons shortcuts}}{{/if}}
 				<form>
 					<div class="form-group">
-    				<label for="mimeTypes">Mime Types</label>
-						<button type="button" class="close" data-action="clear" data-clear="mimeTypes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="mimeTypes" name="mime" class="form-control resizable optional" rows="1">{{#if state}}{{state.mime}}{{/if}}</textarea>
-						<small class="form-text text-muted">Mime Types to search for (<strong>OR</strong>), one per line.</small>
+    				<label for="nameContains">Names</label>
+						<button type="button" class="close" data-action="clear" data-clear="nameContains" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+    				<textarea id="nameContains" name="names" class="form-control resizable optional" rows="1">{{#if state}}{{state.names}}{{/if}}</textarea>
+						<small class="form-text text-muted">File Names to search for (<strong>OR</strong>), one per line.</small>
   				</div>
-					<div class="form-group">
-    				<label for="includeProperties">Properties</label>
-						<button type="button" class="close" data-action="clear" data-clear="includeProperties" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="includeProperties" name="properties" class="form-control resizable optional" rows="1">{{#if state}}{{state.properties}}{{/if}}</textarea>
-						<small class="form-text text-muted">Properties to search for (<strong>AND</strong>), one per line (you can use key, key= | &gt;= | &lt;= | !=value format).</small>
-  				</div>
+					<div class="row">
+						<div class="col-12 col-lg-6">
+							<label for="mimeTypes">Mime Types</label>
+							<button type="button" class="close" data-action="clear" data-clear="mimeTypes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<textarea id="mimeTypes" name="mime" class="form-control resizable optional small" rows="1">{{#if state}}{{state.mime}}{{/if}}</textarea>
+							<small class="form-text text-muted">Mime Types to search for (<strong>OR</strong>), one per line.</small>	
+						</div>
+						<div class="col-12 col-lg-6">
+							<label for="includeProperties">Properties</label>
+							<button type="button" class="close" data-action="clear" data-clear="includeProperties" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+    					<textarea id="includeProperties" name="properties" class="form-control resizable optional small" rows="1">{{#if state}}{{state.properties}}{{/if}}</textarea>
+							<small class="form-text text-muted">Properties to search for (<strong>AND</strong>), one per line (you can use key, key= | &gt;= | &lt;= | !=value format).</small>	
+						</div>
+					</div>
 					<div class="row">
 						<div class="form-group col-12 col-lg-6">
 							<label for="excludeRegexes">Exclude (Regexes)</label>
 						<button type="button" class="close" data-action="clear" data-clear="excludeRegexes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="excludeRegexes" name="exclude" class="form-control resizable optional" rows="1">{{#if state}}{{state.exclude}}{{/if}}</textarea>
+    				<textarea id="excludeRegexes" name="exclude" class="form-control resizable optional small" rows="1">{{#if state}}{{state.exclude}}{{/if}}</textarea>
 						<small class="form-text text-muted">Regexes to exclude search results (<strong>OR</strong>), one per line.</small>
 						</div>
 						<div class="form-group col-12 col-lg-6">
 							<label for="includeRegexes">Include (Regexes)</label>
 						<button type="button" class="close" data-action="clear" data-clear="includeRegexes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="includeRegexes" name="include" class="form-control resizable optional"  rows="1">{{#if state}}{{state.include}}{{/if}}</textarea>
+    				<textarea id="includeRegexes" name="include" class="form-control resizable optional small"  rows="1">{{#if state}}{{state.include}}{{/if}}</textarea>
 						<small class="form-text text-muted">Regexes to include search results (<strong>OR</strong>), one per line.</small>
 						</div>
 					</div>

@@ -14,6 +14,12 @@ Display = function() {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
+	var _commarise = value => {
+		var s = (value += "").split("."), a = s[0], b = s.length > 1 ? "." + s[1] : "", r = /(\d+)(\d{3})/;
+		while (r.test(a)) a = a.replace(r, "$1" + "," + "$2");
+		return a + b;
+	};
+
 	var _arrayize = (value, test) => value && test(value) ? [value] : value;
 
 	var _bytes = function(bytes, decimals) {
@@ -206,6 +212,8 @@ Display = function() {
     popovers: (targets, options) => _popovers(targets, options),
     
     tooltips: (targets, options) => _tooltips(targets, options),
+		
+		commarise: value => _commarise(value),
   
 		doc: {
 
@@ -278,12 +286,18 @@ Display = function() {
 		busy: function(options) {
 
 			var _element = _target(options);
-			
-			(options && options.clear === true) || _element.find(".loader").length > 0 ?
-				_element.find(".loader").remove() : _element.prepend(_template("loader")(options ? options : {}));
+			var _clear = (options && options.clear === true) || _element.find(".loader").length > 0, _loader = _clear ?
+				options.clear = true && _element.find(".loader").remove() : _element.prepend(_template("loader")(options ? options : {})), _handler;
 
+			if (options && options.status) {
+				var _source = options.status.source ? options.status.source : window, _status = _loader.find(".status");
+				_handler = options.__statusHandler ? options.__statusHandler : e => _status.text(options.status.value(e.detail));
+				_source[_clear ? "removeEventListener" : "addEventListener"](options.status.event, _handler, false);
+			}
+			
 			return options && !options.clear && (options === true || options.fn === true) ? ((fn, opts) => {
 				opts.clear = true;
+				if (_handler) opts.__statusHandler = _handler;
 				return () => fn(opts);
 			})(this.busy, options === true ? {} : options) : this;
 			

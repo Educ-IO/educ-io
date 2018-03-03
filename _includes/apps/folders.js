@@ -363,7 +363,7 @@ App = function() {
 			} else if ((/DELETE/i).test(command)) {
 
 				if (_folder) _folder.delete();
-			
+				
 			} else if ((/HELP/i).test(command)) { /* <!-- Request Help --> */
 
 				ಠ_ಠ.Help.provide(ಠ_ಠ.Flags.dir());
