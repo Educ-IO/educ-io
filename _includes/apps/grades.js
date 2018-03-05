@@ -30,7 +30,7 @@ App = function() {
 			
 			/* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
-        name: "Merge",
+        name: "Grades",
         states: STATES
       });
 

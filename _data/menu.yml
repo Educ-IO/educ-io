@@ -1,20 +1,14 @@
-sheets:
-  name: For Sheets
+personal:
+  name: For You
   apps:
     - view
-docs:
-  name: For Docs
-  apps:
+    - merge
+    - grades
     - reflect
 drive:
   name: For Drive
   apps:
     - folders
-    - transfer
-team:
-  name: Your Team
-  apps:
-    - markbooks
 school:
   name: Whole School
   apps:

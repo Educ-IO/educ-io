@@ -1,4 +1,8 @@
 site :
+  0.0.8h :
+    name: Default Router for Apps
+    desc: Default router code to handle common routing scenarios
+    type: minor
   0.0.8g :
     name: Folders 0.0.6-alpha
     desc: API Bug Fixes and Improvements
@@ -462,6 +466,18 @@ reflect :
   0.0.2a-alpha :
     name : Basic Report Form Functionality
     type : minor
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+cover :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+grades :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+merge :
   0.0.1-alpha :
     name : Early testing version
     type : minor

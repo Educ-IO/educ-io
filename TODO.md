@@ -6,7 +6,7 @@ General
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo
 * Favicon Background?
-* BUG -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
+* ** BUG ** -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
 * More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');"
 * Contrite Penguin 404 Page
 * Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency?
@@ -23,11 +23,10 @@ Auth
 Picker
 ------
 * Filter for correctly returned doc type on picker (recent shows all types?)
-* Picker can be difficult if third party cookies or referral headers are blocked.....
+* Picker can be difficult if third party cookies or referral headers are blocked .....
 
 Router
 ------
-* ** IMPORTANT ** Default Router Code for Apps?
 * Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings.
 
 Apps
@@ -92,6 +91,9 @@ Reflect
 
 Complete
 --------
+* ** BUG ** Pop-Up block on un-authorised Apps from button or menu item (rather than sign-in buttton) -> Check full page fallback. (Including on requesting extra scopes, e.g. View) <== DONE
+* ** IMPORTANT ** Migrate View / Folders / Reflect to new Router <-- DONE
+* ** IMPORTANT ** Default Router Code for Apps? <-- DONE
 * ** IMPORTANT ** ** BUG ** Timeout race promise on network needs to be cancelled on successful resolution of call. <-- DONE
 * Background colour highlighting for review doesn't go away when reviews are added / removed. <-- DONE
 * Busy Feedback on Search Requests for Paths (can be long for certain types of GD scenarios). <-- CAPPED AT 1000

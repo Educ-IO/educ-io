@@ -14,12 +14,15 @@ App = function() {
 
 	/* <!-- Internal Constants --> */
 	const _email = /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi;
-	
+
 	const TYPE_SCALE = "application/x.educ-io.reflect-scale",
-				TYPE_FORM = "application/x.educ-io.reflect-form",
-				TYPE_REPORT = "application/x.educ-io.reflect-report",
-				TYPE_REVIEW = "application/x.educ-io.reflect-review",
-				_types = [TYPE_SCALE, TYPE_FORM, TYPE_REPORT, TYPE_REVIEW];
+		TYPE_FORM = "application/x.educ-io.reflect-form",
+		TYPE_REPORT = "application/x.educ-io.reflect-report",
+		TYPE_REVIEW = "application/x.educ-io.reflect-review",
+		_types = [TYPE_SCALE, TYPE_FORM, TYPE_REPORT, TYPE_REVIEW],
+		STATE_FORM_OPENED = "opened-form",
+		STATE_REPORT_OPENED = "opened-report",
+		STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED];
 
 	const _pick = function() {
 
@@ -84,7 +87,7 @@ App = function() {
 			_pickEvidence(_list);
 		},
 
-		file: (e) => {
+		file: e => {
 			var _list = _evidence.default(e);
 			ಠ_ಠ.Display.files({
 				id: "reflect_prompt_file",
@@ -128,7 +131,7 @@ App = function() {
 			}).catch(e => e ? ಠ_ಠ.Flags.error("Displaying File Upload Prompt", e) : ಠ_ಠ.Flags.log("File Upload Cancelled"));
 		},
 
-		web: (e) => {
+		web: e => {
 			var _list = _evidence.default(e);
 			ಠ_ಠ.Display.text({
 				id: "reflect_prompt_url",
@@ -168,7 +171,7 @@ App = function() {
 	var _data = {
 
 		dehydrate_NEW: form => {
-			
+
 			var value = el => {
 
 				var simple = _el => {
@@ -182,8 +185,8 @@ App = function() {
 							Text: _el.text()
 						} : (_el[0].nodeName == "IMG") ? {
 							Url: _el.prop("src")
-						} : (_el[0].nodeName == "BUTTON") ? 
-							(_el.data("default") && _el.data("default") == _el.text()) ? null : _el.text() : 
+						} : (_el[0].nodeName == "BUTTON") ?
+						(_el.data("default") && _el.data("default") == _el.text()) ? null : _el.text() :
 						_el.val();
 					/* <!-- TODO: Handle Parsing of types here --> */
 					return _val;
@@ -206,7 +209,7 @@ App = function() {
 			};
 
 			/* <!-- TODO: Evidence Only Outputs One List Item ** BUG ** --> */
-			
+
 			var _return = {};
 			form.find("*[data-output-field]").each(function() { /* <!-- Iterate through all the fields in the form --> */
 				var _$ = $(this),
@@ -241,9 +244,9 @@ App = function() {
 
 			ಠ_ಠ.Flags.log("Dehydrated Form Data:", _return);
 			return _return;
-			
+
 		},
-		
+
 		dehydrate: form => {
 
 			var value = el => {
@@ -259,8 +262,8 @@ App = function() {
 							Text: _el.text()
 						} : (_el[0].nodeName == "IMG") ? {
 							Url: _el.prop("src")
-						} : (_el[0].nodeName == "BUTTON") ? 
-							(_el.data("default") && _el.data("default") == _el.text()) ? null : _el.text() : 
+						} : (_el[0].nodeName == "BUTTON") ?
+						(_el.data("default") && _el.data("default") == _el.text()) ? null : _el.text() :
 						_el.val();
 					/* <!-- TODO: Handle Parsing of types here --> */
 					return _val;
@@ -283,7 +286,7 @@ App = function() {
 			};
 
 			/* <!-- TODO: Evidence Only Outputs One List Item ** BUG ** --> */
-			
+
 			var _return = {};
 			form.find("*[data-output-field]").each(function() { /* <!-- Iterate through all the fields in the form --> */
 				var _$ = $(this),
@@ -321,9 +324,9 @@ App = function() {
 		},
 
 		rehydrate: (form, data) => {
-			
+
 			ಠ_ಠ.Flags.log("Rehydrating Form Data:", data);
-			
+
 			var value = (el, val) => {
 
 				var simple = _el => {
@@ -335,11 +338,11 @@ App = function() {
 						var _option = _el.closest("*[data-output-field]").find(`*[data-value='${val}']`);
 						_option.length == 1 ? _option.click() : _el.text(val); /* <!-- Defer to click handler if available --> */
 					} else {
-						_el.val(val) && (_el.is("textarea.resizable")) ? 
+						_el.val(val) && (_el.is("textarea.resizable")) ?
 							autosize.update(_el[0]) : true; /* <!-- Fire autosize if required --> */
 					}
 					if (val.Items) _.each(_.isArray(val.Items) ? val.Items : [val.Items], item => {
-										
+
 					});
 				};
 
@@ -353,32 +356,36 @@ App = function() {
 
 				var descendants = el.find("*[data-output-name]");
 				return (descendants.length === 0) ? simple(el) : complex(descendants);
-				
+
 			};
-			
+
 			form.find("*[data-output-field]").each(function() { /* <!-- Iterate through all the fields in the form --> */
-				var _$ = $(this), _name = _$.data("output-field");
+				var _$ = $(this),
+					_name = _$.data("output-field");
 				if (_name && data[_name]) {
-					
-					var _values = data[_name].Values, _targets = _$.find("*[data-output-name]"), 
-							_text = _$.find("textarea, input[type='text']"), _button = _$.find("button.btn-primary");
-					
+
+					var _values = data[_name].Values,
+						_targets = _$.find("*[data-output-name]"),
+						_text = _$.find("textarea, input[type='text']"),
+						_button = _$.find("button.btn-primary");
+
 					_targets.each(function() { /* <!-- Iterate through all the field parts --> */
-						var __$ = $(this), __name = __$.data("output-name");
+						var __$ = $(this),
+							__name = __$.data("output-name");
 						if (__name && _values[__name]) {
-							_$.find(`*[data-value='${_values[__name]}']`).closest(".btn").addClass("active").find(".md-inactive").removeClass("md-inactive");/* <!-- Highlight Active Button --> */
+							_$.find(`*[data-value='${_values[__name]}']`).closest(".btn").addClass("active").find(".md-inactive").removeClass("md-inactive"); /* <!-- Highlight Active Button --> */
 							value(__$, _values[__name]);
 						}
 					});
-										
+
 					if (_values.Items && _text.length == 1 && _button.length == 1) _.each(_.isArray(_values.Items) ? _values.Items : [_values.Items], item => {
-						if (item.Value) _text.val(item.Value)	&& _button.click(); /* <!-- Iterate through all the Items --> */						
+						if (item.Value) _text.val(item.Value) && _button.click(); /* <!-- Iterate through all the Items --> */
 					});
-					
+
 				}
 
 			});
-			
+
 			return form;
 		}
 
@@ -433,7 +440,8 @@ App = function() {
 	var _create = {
 
 		display: (name, state, template) => {
-			var _initial = template ? _forms.create(name, template) : _forms.get(name), _return = _initial.form;
+			var _initial = template ? _forms.create(name, template) : _forms.get(name),
+				_return = _initial.form;
 			_template = _initial.template;
 			if (_template) _template.__name = name;
 			_return.target = ಠ_ಠ.container.empty();
@@ -494,40 +502,13 @@ App = function() {
 			return form;
 
 		},
-		
+
 		load: (form) => _create.report(form.__name, form)
 
 	};
 	/* <!-- Create Functions --> */
 
 	/* <!-- Internal Functions --> */
-	var _default = function() {
-
-		/* <!-- Load the Initial Instructions --> */
-		ಠ_ಠ.Recent.last(5).then((recent) => ಠ_ಠ.Display.doc.show({
-			name: "README",
-			content: recent && recent.length > 0 ? ಠ_ಠ.Display.template.get({
-				template: "recent",
-				recent: recent
-			}) : "",
-			target: ಠ_ಠ.container,
-			clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
-		})).catch((e) => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error"));
-
-	};
-
-	var _clear = function(fn) {
-
-    if (_form || _folder) {
-		  _form = null;
-		  _folder = null;
-      ಠ_ಠ.Display.state().exit(["opened-form", "opened-report"]).protect("a.jump").off();
-		  ಠ_ಠ.container.empty();
-    }
-		if (fn) fn();
-
-	};
-
 	var _prepare = function() {
 
 		var _title = _template && _template.title ? _template.title : _template && _template.name ? _template.name : "Report",
@@ -550,9 +531,9 @@ App = function() {
 			_form = _data.rehydrate(_create.load(report.form), report.report);
 		});
 	};
-	
+
 	/* <!-- TODO: Need to check type / format in process if route is from IMPORT - maybe need a further facading function? Maybe inference by properties? --> */
-	
+
 	var _load = function(file) {
 		if (ಠ_ಠ.google.files.is(TYPE_REPORT)(file)) {
 			_file = file;
@@ -566,8 +547,8 @@ App = function() {
 	var _save = function(force) {
 
 		var finish = ಠ_ಠ.Display.busy({
-			target : $("body"),
-			fn : true
+			target: $("body"),
+			fn: true
 		});
 
 		var _toSave = _prepare(),
@@ -594,12 +575,14 @@ App = function() {
 						_file = uploaded;
 						return ಠ_ಠ.Recent.add(uploaded.id, uploaded.name.replace(/.REFLECT$/i, ""), "#google,load." + uploaded.id).then(() => ಠ_ಠ.Flags.log("Saved:", uploaded));
 					})
-				.catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error"))
-				.then(finish);
+					.catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error"))
+					.then(finish);
 			};
-	
+
 		(html2canvas ?
-			html2canvas($("form[role='form'][data-name]")[0], {logging : window.scrollTo(0, 0)}) :
+			html2canvas($("form[role='form'][data-name]")[0], {
+				logging: window.scrollTo(0, 0)
+			}) :
 			Promise.reject(new Error(`HTML2Canvas Object Evalulates to ${html2canvas}`)))
 		.then(canvas => saver("image/png", canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/i, "").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")))
 			.catch(e => {
@@ -632,7 +615,128 @@ App = function() {
 
 			/* <!-- Set Container Reference to this --> */
 			container.App = this;
-			/* <!-- Set Container Reference to this --> */
+
+			/* <!-- Set Up the Default Router --> */
+			this.route = ಠ_ಠ.Router.create({
+				name: "Folders",
+				states: STATES,
+				test: () => !!(_form || _folder),
+				clear: () => {
+					_form = null;
+					_folder = null;
+				},
+				instructions: [{
+						match: /SAVE/i,
+						show: "SAVE_INSTRUCTIONS",
+						title: "How to save your Form ..."
+					},
+					{
+						match: /SEND/i,
+						show: "SEND_INSTRUCTIONS",
+						title: "How to send your Form ..."
+					},
+					{
+						match: /COMPLETE/i,
+						show: "COMPLETE_INSTRUCTIONS",
+						title: "How to complete your Form ..."
+					}
+				],
+				routes: [
+
+				],
+				route: (handled, command) => {
+
+					if (handled) return;
+
+					if ((/CREATE/i).test(command)) { /* <!-- Create a new Form / Template --> */
+
+						if (!_.isArray(command) || command.length == 1) { /* <!-- We're creating a new Form or Report, but we don't know which yet - need to ask! --> */
+
+							(_.isArray(command) && command.length > 1 && command[1].length > 0 ? /* <!-- We've likely arrived here from the Google Drive UI, so this is a folder ID --> */
+								_create.parent(command[1]).then(folder => _create.prompt([_actions.scales(), _actions.forms(), _actions.reports()], folder)) :
+								_create.prompt([_actions.scales(), _actions.forms(), _actions.reports()])).then(form => _form = form);
+
+						} else if ((/REPORT/i).test(command[1])) { /* <!-- We're creating a new Report (e.g. Response to a Form) --> */
+
+							((command.length > 2 && _forms.has(command[2].toLowerCase())) ?
+								Promise.resolve(_create.report(command[2].toLowerCase())) :
+								command.length > 2 ?
+								_create.parent(command[2]).then(folder => _create.prompt([_actions.reports()], folder)) :
+								_create.prompt([_actions.reports()])).then(form => _form = form);
+
+						} else if ((/FORM/i).test(command[1])) { /* <!-- We're creating a new Form --> */
+
+							((command.length > 2 && ((/FORM/i).test(command[2]) || (/TEMPLATE/i).test(command[2]))) ?
+								Promise.resolve(_create.display("form", "opened-form")) :
+								command.length > 2 ?
+								_create.parent(command[2]).then(folder => _create.prompt([_actions.forms()], folder)) :
+								_create.prompt([_actions.forms()])).then(form => _form = form);
+
+						}
+
+					} else if ((/LOAD/i).test(command) && command[1].length > 1) { /* <!-- We're loading an existing file, type is handled in load handler --> */
+
+						ಠ_ಠ.google.files.get(command[1], true).then(_load).catch(e => {
+							ಠ_ಠ.Flags.error(`Opening Google Drive File: ${command[1]}`, e);
+							return ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());
+						}).then(ಠ_ಠ.Display.busy(true));
+
+					} else if ((/OPEN/i).test(command)) { /* <!-- We're loading an existing file, but from the Picker --> */
+
+						new Promise((resolve, reject) => { /* <!-- Open Reflect File from Google Drive Picker --> */
+
+								ಠ_ಠ.google.pick(
+									"Select a Reflect File to Open", false, true,
+									() => [new google.picker.DocsView(google.picker.ViewId.DOCS).setMimeTypes(_types.join(",")),
+										new google.picker.DocsView(google.picker.ViewId.DOCS).setMimeTypes(_types.join(",")).setIncludeFolders(true).setParent("root")
+									],
+									file => file ? ಠ_ಠ.Flags.log("Google Drive Reflect File Picked", file) && resolve(file) : reject()
+								);
+							}).then(file => _load(file).then(ಠ_ಠ.Recent.add(file.id, file.name.replace(/.REFLECT$/i, ""), "#google,load." + file.id))
+								.catch(e => ಠ_ಠ.Flags.error(`Loading File from Google Drive: ${file.id}`, e))
+								.then(ಠ_ಠ.Display.busy(true)))
+							.catch(e => ಠ_ಠ.Flags.error("Picking Google Drive File", e));
+
+					} else if ((/IMPORT/i).test(command)) { /* <!-- We're importing from the FS, then passing to process --> */
+
+						ಠ_ಠ.Display.files({
+								id: "reflect_prompt_file",
+								title: "Please import file ...",
+								message: ಠ_ಠ.Display.doc.get("IMPORT"),
+								action: "Import",
+								single: true
+							}).then(file => _file = _process(file))
+							.catch(e => e ? ಠ_ಠ.Flags.error("Displaying File Upload Prompt", e) : ಠ_ಠ.Flags.log("File Upload Cancelled"));
+
+					} else if ((/SAVE/i).test(command) && _form) {
+
+						(/EXPORT/i).test(command[1]) ?
+							$("#_cmd_Report_Export").click() :
+							(/FORM/i).test(command[1]) ?
+							$("#_cmd_Report_Save").click() :
+							(/CLONE/i).test(command[1]) ?
+							$("#_cmd_Report_Clone").click() :
+							_save();
+
+					} else if ((/CLONE/i).test(command) && _form) { /* <!-- Force creation of a new file on save --> */
+
+						_save(true);
+
+					} else if ((/EXPORT/i).test(command) && _form) { /* <!-- Create and download a new saved file  --> */
+
+						_export();
+
+					} else if ((/SCALES/i).test(command)) { /* <!-- We're managing existing scales --> */
+
+					} else if ((/CLOSE/i).test(command)) { /* <!-- Clear the existing state & Load Initial Instructions --> */
+
+						ಠ_ಠ.Router.clean(true);
+
+					}
+
+				}
+
+			});
 
 			/* <!-- Return for Chaining --> */
 			return this;
@@ -643,153 +747,8 @@ App = function() {
 			if (!_forms) _forms = ಠ_ಠ.Forms();
 		},
 
-		route: command => {
-
-			if (!command || command === false || command[0] === false || (/PUBLIC/i).test(command)) { /* <!-- Load the Public Instructions --> */
-
-        /* <!-- Clear the existing state (in case of logouts) --> */
-				if (command && command[1]) _clear();
-        
-				/* <!-- Don't use handlebar templates here as we may be routed from the controller, and it might not be loaded --> */
-				if (!command || !_last || command[0] !== _last[0]) ಠ_ಠ.Display.doc.show({
-					wrapper: "PUBLIC",
-					name: "FEATURES",
-					target: ಠ_ಠ.container,
-					clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
-				});
-
-			} else if (command === true || (/AUTH/i).test(command)) { /* <!-- Load the Default Readme / Recent --> */
-
-				_default();
-
-			} else if ((/TUTORIALS/i).test(command)) {
-
-				/* <!-- Load the Tutorials --> */
-				ಠ_ಠ.Display.doc.show({
-					name: "TUTORIALS",
-					title: "Tutorials for Reflect ...",
-					target: ಠ_ಠ.container,
-					wrapper: "MODAL"
-				}).modal();
-					
-			} else if ((/INSTRUCTIONS/i).test(command)) {
-
-				var show = (name, title) => ಠ_ಠ.Display.doc.show({
-					name: name,
-					title: title,
-					target: ಠ_ಠ.container,
-					wrapper: "MODAL"
-				}).modal();
-
-				(/SAVE/i).test(command[1]) ?
-					show("SAVE_INSTRUCTIONS", "How to save your Form ...") : /* <!-- Load the Save Form Instructions --> */
-					(/SEND/i).test(command[1]) ?
-					show("SEND_INSTRUCTIONS", "How to send your Form ...") : /* <!-- Load the Send Form Instructions --> */
-					(/COMPLETE/i).test(command[1]) ?
-					show("COMPLETE_INSTRUCTIONS", "How to complete your Form ...") : /* <!-- Load the Send Form Instructions --> */
-					show("INSTRUCTIONS", "How to use Reflect ..."); /* <!-- Load the Generic Instructions --> */
-
-			} else if ((/CREATE/i).test(command)) { /* <!-- Create a new Form / Template --> */
-
-				if (!_.isArray(command) || command.length == 1) { /* <!-- We're creating a new Form or Report, but we don't know which yet - need to ask! --> */
-
-					(_.isArray(command) && command.length > 1 && command[1].length > 0 ? /* <!-- We've likely arrived here from the Google Drive UI, so this is a folder ID --> */
-						_create.parent(command[1]).then(folder => _create.prompt([_actions.scales(), _actions.forms(), _actions.reports()], folder)) :
-						_create.prompt([_actions.scales(), _actions.forms(), _actions.reports()])).then(form => _form = form);
-
-				} else if ((/REPORT/i).test(command[1])) { /* <!-- We're creating a new Report (e.g. Response to a Form) --> */
-
-					((command.length > 2 && _forms.has(command[2].toLowerCase())) ?
-						Promise.resolve(_create.report(command[2].toLowerCase())) :
-						command.length > 2 ?
-						_create.parent(command[2]).then(folder => _create.prompt([_actions.reports()], folder)) :
-						_create.prompt([_actions.reports()])).then(form => _form = form);
-
-				} else if ((/FORM/i).test(command[1])) { /* <!-- We're creating a new Form --> */
-
-					((command.length > 2 && ((/FORM/i).test(command[2]) || (/TEMPLATE/i).test(command[2]))) ?
-						Promise.resolve(_create.display("form", "opened-form")) :
-						command.length > 2 ?
-						_create.parent(command[2]).then(folder => _create.prompt([_actions.forms()], folder)) :
-						_create.prompt([_actions.forms()])).then(form => _form = form);
-
-				}
-
-			} else if ((/LOAD/i).test(command) && command[1].length > 1) { /* <!-- We're loading an existing file, type is handled in load handler --> */
-
-				ಠ_ಠ.google.files.get(command[1], true).then(_load).catch(e => {
-					ಠ_ಠ.Flags.error(`Opening Google Drive File: ${command[1]}`, e);
-					return ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());
-				}).then(ಠ_ಠ.Display.busy(true));
-
-			} else if ((/OPEN/i).test(command)) {/* <!-- We're loading an existing file, but from the Picker --> */
-
-				new Promise((resolve, reject) => { /* <!-- Open Reflect File from Google Drive Picker --> */
-
-					ಠ_ಠ.google.pick(
-						"Select a Reflect File to Open", false, true,
-						() => [new google.picker.DocsView(google.picker.ViewId.DOCS).setMimeTypes(_types.join(",")),
-							new google.picker.DocsView(google.picker.ViewId.DOCS).setMimeTypes(_types.join(",")).setIncludeFolders(true).setParent("root")
-						],
-						file => file ? ಠ_ಠ.Flags.log("Google Drive Reflect File Picked", file) && resolve(file) : reject()
-					);
-				}).then(file => _load(file).then(ಠ_ಠ.Recent.add(file.id, file.name.replace(/.REFLECT$/i, ""), "#google,load." + file.id))
-								.catch(e => ಠ_ಠ.Flags.error(`Loading File from Google Drive: ${file.id}`, e))
-								.then(ಠ_ಠ.Display.busy(true)))
-					.catch(e => ಠ_ಠ.Flags.error("Picking Google Drive File", e));
-
-			} else if ((/IMPORT/i).test(command)) { /* <!-- We're importing from the FS, then passing to process --> */
-								
-				ಠ_ಠ.Display.files({
-					id: "reflect_prompt_file",
-					title: "Please import file ...",
-					message: ಠ_ಠ.Display.doc.get("IMPORT"),
-					action: "Import",
-					single: true
-				}).then(file => _file = _process(file))
-					.catch(e => e ? ಠ_ಠ.Flags.error("Displaying File Upload Prompt", e) : ಠ_ಠ.Flags.log("File Upload Cancelled"));
-				
-			} else if ((/SAVE/i).test(command) && _form) {
-
-				(/EXPORT/i).test(command[1]) ?
-					$("#_cmd_Report_Export").click() :
-					(/FORM/i).test(command[1]) ?
-					$("#_cmd_Report_Save").click() :
-					(/CLONE/i).test(command[1]) ?
-					$("#_cmd_Report_Clone").click() : 
-				_save();
-
-			} else if ((/CLONE/i).test(command) && _form) { /* <!-- Force creation of a new file on save --> */
-
-				_save(true);
-
-			} else if ((/EXPORT/i).test(command) && _form) { /* <!-- Create and download a new saved file  --> */
-
-				_export();
-
-			} else if ((/SCALES/i).test(command)) { /* <!-- We're managing existing scales --> */
-
-			} else if ((/CLOSE/i).test(command)) { /* <!-- Clear the existing state & Load Initial Instructions --> */
-
-				_clear(_default);
-
-			} else if ((/REMOVE/i).test(command)) {
-
-				if (command[1].length > 1) ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());
-
-			} else if ((/HELP/i).test(command)) { /* <!-- Request Help --> */
-
-				ಠ_ಠ.Help.provide(ಠ_ಠ.Flags.dir());
-				
-			}
-
-			/* <!-- Record the last command --> */
-			_last = command;
-
-		},
-
 		/* <!-- Clear the existing state --> */
-		clean: () => _clear()
+		clean: () => ಠ_ಠ.Router.clean(false)
 
 	};
 

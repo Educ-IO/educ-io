@@ -58,3 +58,4 @@ globals:
   Fields: true
   Forms: true
   Help: true
+  Router: true

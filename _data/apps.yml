@@ -55,6 +55,7 @@ view:
     - table
     - css
     - recent
+    - router
     - datatable
     - sheets
   scripts: 
@@ -337,6 +338,7 @@ reflect:
     - network
     - google
     - recent
+    - router
     - help
     - service
     - main
@@ -623,6 +625,7 @@ folders:
     - table
     - css
     - recent
+    - router
     - datatable
     - fields
     - folder
@@ -826,159 +829,21 @@ folders:
 
 
 
-#  .88b  d88.  .d8b.  d8888b. db   dD d8888b.  .d88b.   .d88b.  db   dD .d8888.
-#  88'YbdP`88 d8' `8b 88  `8D 88 ,8P' 88  `8D .8P  Y8. .8P  Y8. 88 ,8P' 88'  YP
-#  88  88  88 88ooo88 88oobY' 88,8P   88oooY' 88    88 88    88 88,8P   `8bo.  
-#  88  88  88 88~~~88 88`8b   88`8b   88~~~b. 88    88 88    88 88`8b     `Y8b.
-#  88  88  88 88   88 88 `88. 88 `88. 88   8D `8b  d8' `8b  d8' 88 `88. db   8D
-#  YP  YP  YP YP   YP 88   YD YP   YD Y8888P'  `Y88P'   `Y88P'  YP   YD `8888Y'
-###############################################################################
+#   d888b  d8888b.  .d8b.  d8888b. d88888b .d8888.
+#  88' Y8b 88  `8D d8' `8b 88  `8D 88'     88'  YP
+#  88      88oobY' 88ooo88 88   88 88ooooo `8bo.  
+#  88  ooo 88`8b   88~~~88 88   88 88~~~~~   `Y8b.
+#  88. ~8~ 88 `88. 88   88 88  .8D 88.     db   8D
+ #  Y888P  88   YD YP   YP Y8888D' Y88888P `8888Y'
+##################################################
 
-markbooks:
-  name: Markbooks
-  desc: A soon to be written tool.
-  link: /markbooks/
+grades:
+  name: Grades
+  desc: The __big one__, creating, managing, link & aggregating markbooks. Everything you might want to do with your markbook in Google Sheets, but on the web.
+  link: /grades/
   colour: 5891E9
-  imports:
-    - name: jquery
-      load: first
-    - name: popper
-      load: first
-    - name: hello
-      load: last
-    - name: urlparser
-      load: last
-    - name: handlebars
-      load: last
-    - name: bootstrap-js
-      load: last
-    - name: google
-      load: defer
-  modules:
-    - flags
-    - controller
-    - display
-    - google
-    - service
-    - main
-  scripts: 
-    - extends/regex
-    - extends/array
-  templates:
-    - choose
-    - confirm
-    - alert
-    - loader
-  docs:
-    - markbooks/PUBLIC
-    - markbooks/README
-    - markbooks/INSTRUCTIONS
-    - markbooks/TUTORIALS
-  scopes:
-    google:
-      - scope: email
-        name: 
-        reason: 
-        request: login
-      - scope: profile
-        name: 
-        reason: 
-        request: login
-      - scope: https://www.googleapis.com/auth/drive.file
-        name: 
-        reason: 
-        request: login
-  keys:
-    google:
-        general: AIzaSyCkXehcKhAOef-mDo46zlySspVcxBV07ZA
-        oauth: 646093759430-ap8t1u3jirjki71vn35bvvuoq52fev30.apps.googleusercontent.com
-  published: false
-
-
-
-#   .o88b.  .d88b.  db    db d88888b d8888b.
-#  d8P  Y8 .8P  Y8. 88    88 88'     88  `8D
-#  8P      88    88 Y8    8P 88ooooo 88oobY'
-#  8b      88    88 `8b  d8' 88~~~~~ 88`8b  
-#  Y8b  d8 `8b  d8'  `8bd8'  88.     88 `88.
-#   `Y88P'  `Y88P'     YP    Y88888P 88   YD
-############################################
-
-cover:
-  name: Cover
-  desc: Run your lesson __cover__ system in Google Sheets, _efficiently_ and _brilliantly_
-  link: /cover/
-  colour: 54823A
-  imports:
-    - name: jquery
-      load: first
-    - name: popper
-      load: first
-    - name: hello
-      load: last
-    - name: urlparser
-      load: last
-    - name: handlebars
-      load: last
-    - name: bootstrap-js
-      load: last
-    - name: google
-      load: defer
-  modules:
-    - flags
-    - controller
-    - display
-    - google
-    - service
-    - main
-  scripts: 
-    - extends/regex
-    - extends/array
-  templates:
-    - choose
-    - confirm
-    - alert
-    - loader
-  docs:
-    - cover/PUBLIC
-    - cover/README
-    - cover/INSTRUCTIONS
-    - cover/TUTORIALS
-  scopes:
-    google:
-      - scope: email
-        name: 
-        reason: 
-        request: login
-      - scope: profile
-        name: 
-        reason: 
-        request: login
-      - scope: https://www.googleapis.com/auth/drive.file
-        name: 
-        reason: 
-        request: login
-  keys:
-    google:
-        general: AIzaSyCVlH0c5Td9hgJgHaafQLYgKWAmqyGh1Do
-        oauth: 1093927740269-ssddiv25h6o3vodg878mr7bcbnc6iop4.apps.googleusercontent.com
-  published: false
-
-
-
-#  .88b  d88. d88888b d8888b.  d888b  d88888b
-#  88'YbdP`88 88'     88  `8D 88' Y8b 88'    
-#  88  88  88 88ooooo 88oobY' 88      88ooooo
-#  88  88  88 88~~~~~ 88`8b   88  ooo 88~~~~~
-#  88  88  88 88.     88 `88. 88. ~8~ 88.    
-#  YP  YP  YP Y88888P 88   YD  Y888P  Y88888P
-##############################################
-
-merge:
-  name: Merge
-  desc: _Produce_ __merged__ documents from your sheets __data__
-  link: /merge/
-  colour: 818109
+  logo: images/grades_logo.svg
+  learn: /guides/grades
   imports:
     - name: underscore
       load: first
@@ -998,6 +863,10 @@ merge:
       load: last
     - name: localforage
       load: last
+    - name: autosize
+      load: last
+    - name: moment
+      load: last
     - name: google
       load: lazy
   modules:
@@ -1006,10 +875,12 @@ merge:
     - display
     - network
     - google
-    - recent
+    - help
     - service
     - main
     - css
+    - recent
+    - router
   scripts: 
     - extends/regex
     - extends/array
@@ -1020,11 +891,282 @@ merge:
     - alert
     - loader
     - recent
-    - shared/tab-links
-    - shared/tab-list
-    - shared/tab-tabs
+    - help
   docs:
+    - shared/FILTERS
     - shared/JUMP
+    - shared/HELP
+    - shared/HELP_AVAILABLE
+    - shared/HELP_INDETERMINATE
+    - shared/HELP_UNAVAILABLE
+    - grades/PUBLIC
+    - grades/FEATURES
+    - grades/README
+    - grades/INSTRUCTIONS
+    - grades/TUTORIALS
+  scopes:
+    google:
+      - scope: email
+        name: View your email address
+        reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+        request: login
+      - scope: profile
+        name: View your basic profile info
+        reason: In order to display your name on the navigation menu, once you have signed in.
+        request: login
+  keys:
+    google:
+        general: AIzaSyCZUU0M6VkZku047dgCYQRbwnra2IzcCSg
+        oauth: 117485642735-a5h270k9jo5d8hrg21v10si54u1l6noe.apps.googleusercontent.com
+  menus:
+    - name: Settings
+    - name: About
+      short_name: Help
+      groups:
+        all:
+          commands:
+            - name: Instructions
+              hash: instructions
+              desc: More details about how to use this app
+            - name: Tutorials
+              hash: tutorials
+              desc: Ways in which you can use this app
+            - name: Guide
+              url: /guides/grades
+              desc: A guide to using this app
+              divider: true
+            - name: Install
+              desc: Install this app into your Google Drive
+              hash: install
+              auth: google
+              scope: https://www.googleapis.com/auth/drive.install
+            - name: Permissions
+              url: /scopes/?highlight=grades
+              desc: Find out about the permissions and scopes that this app uses
+            - name: Changes
+              url: /changes?highlight=grades
+              desc: Find out about the most recent changes and features of this app
+              divider: true
+            - name: About
+              url: /about
+              desc: Find out about our platform, technology and approach
+              divider: true
+            - name: Get Help
+              hash: help
+              desc: Get help or request a feature
+              class: font-weight-bold
+              imports:
+                - jshashes
+                - fetchjsonp
+              auth: google
+  published: false
+
+
+
+#   .o88b.  .d88b.  db    db d88888b d8888b.
+#  d8P  Y8 .8P  Y8. 88    88 88'     88  `8D
+#  8P      88    88 Y8    8P 88ooooo 88oobY'
+#  8b      88    88 `8b  d8' 88~~~~~ 88`8b  
+#  Y8b  d8 `8b  d8'  `8bd8'  88.     88 `88.
+#   `Y88P'  `Y88P'     YP    Y88888P 88   YD
+############################################
+
+cover:
+  name: Cover
+  desc: Run your lesson __cover__ system in Google Sheets, _efficiently_ and _brilliantly_
+  link: /cover/
+  colour: 54823A
+  logo: images/cover_logo.svg
+  learn: /guides/cover
+  imports:
+    - name: underscore
+      load: first
+    - name: jquery
+      load: first
+    - name: popper
+      load: first
+    - name: handlebars
+      load: last
+    - name: hello
+      load: last
+    - name: urlparser
+      load: last
+    - name: bootstrap-js
+      load: last
+    - name: loki
+      load: last
+    - name: localforage
+      load: last
+    - name: autosize
+      load: last
+    - name: moment
+      load: last
+    - name: google
+      load: lazy
+  modules:
+    - flags
+    - controller
+    - display
+    - network
+    - google
+    - help
+    - service
+    - main
+    - css
+    - recent
+    - router
+  scripts: 
+    - extends/regex
+    - extends/array
+  templates:
+    - options
+    - choose
+    - confirm
+    - alert
+    - loader
+    - recent
+    - help
+  docs:
+    - shared/FILTERS
+    - shared/JUMP
+    - shared/HELP
+    - shared/HELP_AVAILABLE
+    - shared/HELP_INDETERMINATE
+    - shared/HELP_UNAVAILABLE
+    - cover/PUBLIC
+    - cover/FEATURES
+    - cover/README
+    - cover/INSTRUCTIONS
+    - cover/TUTORIALS
+  scopes:
+    google:
+      - scope: email
+        name: View your email address
+        reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+        request: login
+      - scope: profile
+        name: View your basic profile info
+        reason: In order to display your name on the navigation menu, once you have signed in.
+        request: login
+  keys:
+    google:
+        general: AIzaSyCVlH0c5Td9hgJgHaafQLYgKWAmqyGh1Do
+        oauth: 1093927740269-ssddiv25h6o3vodg878mr7bcbnc6iop4.apps.googleusercontent.com
+  menus:
+    - name: Settings
+    - name: About
+      short_name: Help
+      groups:
+        all:
+          commands:
+            - name: Instructions
+              hash: instructions
+              desc: More details about how to use this app
+            - name: Tutorials
+              hash: tutorials
+              desc: Ways in which you can use this app
+            - name: Guide
+              url: /guides/cover
+              desc: A guide to using this app
+              divider: true
+            - name: Install
+              desc: Install this app into your Google Drive
+              hash: install
+              auth: google
+              scope: https://www.googleapis.com/auth/drive.install
+            - name: Permissions
+              url: /scopes/?highlight=cover
+              desc: Find out about the permissions and scopes that this app uses
+            - name: Changes
+              url: /changes?highlight=cover
+              desc: Find out about the most recent changes and features of this app
+              divider: true
+            - name: About
+              url: /about
+              desc: Find out about our platform, technology and approach
+              divider: true
+            - name: Get Help
+              hash: help
+              desc: Get help or request a feature
+              class: font-weight-bold
+              imports:
+                - jshashes
+                - fetchjsonp
+              auth: google
+  published: false
+
+
+
+#  .88b  d88. d88888b d8888b.  d888b  d88888b
+#  88'YbdP`88 88'     88  `8D 88' Y8b 88'    
+#  88  88  88 88ooooo 88oobY' 88      88ooooo
+#  88  88  88 88~~~~~ 88`8b   88  ooo 88~~~~~
+#  88  88  88 88.     88 `88. 88. ~8~ 88.    
+#  YP  YP  YP Y88888P 88   YD  Y888P  Y88888P
+##############################################
+
+merge:
+  name: Merge
+  desc: _Produce_ __merged__ documents from your sheets __data__
+  link: /merge/
+  colour: 818109
+  logo: images/merge_logo.svg
+  learn: /guides/merge
+  imports:
+    - name: underscore
+      load: first
+    - name: jquery
+      load: first
+    - name: popper
+      load: first
+    - name: handlebars
+      load: last
+    - name: hello
+      load: last
+    - name: urlparser
+      load: last
+    - name: bootstrap-js
+      load: last
+    - name: loki
+      load: last
+    - name: localforage
+      load: last
+    - name: autosize
+      load: last
+    - name: moment
+      load: last
+    - name: google
+      load: lazy
+  modules:
+    - flags
+    - controller
+    - display
+    - network
+    - google
+    - help
+    - service
+    - main
+    - css
+    - recent
+    - router
+  scripts: 
+    - extends/regex
+    - extends/array
+  templates:
+    - options
+    - choose
+    - confirm
+    - alert
+    - loader
+    - recent
+    - help
+  docs:
+    - shared/FILTERS
+    - shared/JUMP
+    - shared/HELP
+    - shared/HELP_AVAILABLE
+    - shared/HELP_INDETERMINATE
+    - shared/HELP_UNAVAILABLE
     - merge/PUBLIC
     - merge/FEATURES
     - merge/README
@@ -1040,44 +1182,51 @@ merge:
         name: View your basic profile info
         reason: In order to display your name on the navigation menu, once you have signed in.
         request: login
-      - scope: https://www.googleapis.com/auth/drive
-        name: View and manage the files in your Google Drive
-        reason: In order to read you sheets, and create / aggregate your merged documents.
-        request: login
   keys:
     google:
         general: AIzaSyACPqbocW3AgV_wP4wCkhzmU7S_ASQtcNs
         oauth: 51509082175-cjimvgm2eo78evoqu2fokfmm3amai5sg.apps.googleusercontent.com
   menus:
-    - name: Reports
+    - name: Settings
+    - name: About
+      short_name: Help
       groups:
         all:
           commands:
-            - name: Create
-              desc: Create a new Report
-              hash: create
+            - name: Instructions
+              hash: instructions
+              desc: More details about how to use this app
+            - name: Tutorials
+              hash: tutorials
+              desc: Ways in which you can use this app
+            - name: Guide
+              url: /guides/merge
+              desc: A guide to using this app
+              divider: true
+            - name: Install
+              desc: Install this app into your Google Drive
+              hash: install
               auth: google
-            - name: Open a saved Report
-              desc: Open a Save Report from your Drive
-              hash: open
+              scope: https://www.googleapis.com/auth/drive.install
+            - name: Permissions
+              url: /scopes/?highlight=merge
+              desc: Find out about the permissions and scopes that this app uses
+            - name: Changes
+              url: /changes?highlight=merge
+              desc: Find out about the most recent changes and features of this app
+              divider: true
+            - name: About
+              url: /about
+              desc: Find out about our platform, technology and approach
+              divider: true
+            - name: Get Help
+              hash: help
+              desc: Get help or request a feature
+              class: font-weight-bold
               imports:
-                - google
+                - jshashes
+                - fetchjsonp
               auth: google
-            - name: Save
-              desc: Save this Report
-              hash: save
-              disabled_until:
-                - opened
-              auth: google
-            - name: Close
-              desc: Close this Report
-              hash: close
-              disabled_until:
-                - opened
-    - name: Instructions
-      short_name: Help
-      hash: instructions
-      desc: More details about how to use the Merge App
   published: false
 
 
@@ -1121,7 +1270,7 @@ shelfdog:
 #  .d8888. db   db d888888b d8b   db db    db
 #  88'  YP 88   88   `88'   888o  88 `8b  d8'
 #  `8bo.   88ooo88    88    88V8o 88  `8bd8' 
-  #  `Y8b. 88~~~88    88    88 V8o88    88   
+#    `Y8b. 88~~~88    88    88 V8o88    88   
 #  db   8D 88   88   .88.   88  V888    88   
 #  `8888Y' YP   YP Y888888P VP   V8P    YP   
 #############################################
@@ -1134,6 +1283,18 @@ shiny:
   ext: true
   colour: 000080
   action: Find out more
+  versions:
+    0.4 :
+      name : Minor Updates
+      desc : Updated Library Dependencies and Print Styling
+      type : beta
+      changes :
+        - details: Default printed output is now rendered in **12pt** with **double-line** spacing
+          url:
+        - details: Updated JQuery to v3.3.1, Ace to v1.3.1
+          url:
+        - details: Swapped to Showdown (v1.8.6) for Markdown Parsing
+          url : https://github.com/thiscouldbejd/Shiny-Shiny
 
 
 

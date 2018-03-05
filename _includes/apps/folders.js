@@ -4,16 +4,14 @@ App = function() {
 	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
 
 	/* <!-- Returns an instance of this if required --> */
-	if (this && this._isF && this._isF(this.App)) {
-		return new this.App().initialise(this);
-	}
+	if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
 	/* <!-- Internal Constants --> */
-	const TYPE = "application/x.educ-io.folders-";
+	const TYPE = "application/x.educ-io.folders-", STATE_OPENED = "opened", STATE_SEARCHED = "searched", STATES = [STATE_OPENED, STATE_SEARCHED];
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _folder, _path, _last;
+	var ಠ_ಠ, _folder, _path;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -30,21 +28,6 @@ App = function() {
 			);
 
 		});
-
-	};
-
-	var _default = function() {
-
-		/* <!-- Load the Initial Instructions --> */
-		ಠ_ಠ.Recent.last(5).then((recent) => ಠ_ಠ.Display.doc.show({
-			name: "README",
-			content: recent && recent.length > 0 ? ಠ_ಠ.Display.template.get({
-				template: "recent",
-				recent: recent
-			}) : "",
-			target: ಠ_ಠ.container,
-			clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
-		})).catch((e) => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error"));
 
 	};
 
@@ -169,19 +152,6 @@ App = function() {
 		
 	};
 	
-	var _clear = function(fn) {
-		
-		if (_folder || _path) {
-			_path = null;
-			_folder = null;
-			ಠ_ಠ.Display.state().exit(["opened", "searched"]).protect("a.jump").off();
-			ಠ_ಠ.container.empty();
-		}
-		
-    if (fn) fn();
-    
-	};
-	
 	var _openTeamDrive = function() {
 		
 		ಠ_ಠ.Display.busy({
@@ -229,154 +199,116 @@ App = function() {
 
 			/* <!-- Set Container Reference to this --> */
 			container.App = this;
+			
+			/* <!-- Set Up the Default Router --> */
+			this.route = ಠ_ಠ.Router.create({
+        name: "Folders",
+        states: STATES,
+				test: () => !!(_folder || _path),
+				clear : () => {
+					_path = null;
+					_folder = null;
+				},
+				route: (handled, command) => {
+					
+					if (handled) return;
+					
+					if ((/OPEN/i).test(command)) {
 
+						/* <!-- Pick, or Load the Root Folder --> */
+						if ((/ROOT/i).test(command[1])) {
+							_loadFolder("root", false);
+						} else if ((/TEAM/i).test(command[1])) {
+							_openTeamDrive();
+						} else {
+							_pick().then((folder) => {
+								_openFolder(folder, true);
+							}).catch((e) => ಠ_ಠ.Flags.error("Picker Failure", e ? e : "No Inner Error"));
+						}
+
+					} else if ((/LOAD/i).test(command)) {
+
+						(/TEAM/i).test(command[1]) ? _loadTeamDrive(command[2], true) : _loadFolder(command[1], true, command[2]);
+
+					} else if ((/CLOSE/i).test(command)) {
+
+						if (_folder) {
+
+							if ((/RESULTS/i).test(command[1])) {
+								ಠ_ಠ.Display.state().exit(["searched"]);
+								_folder.close();
+							} else {
+								ಠ_ಠ.Router.clean(true);
+							}
+
+						}
+
+					} else if ((/REMOVE/i).test(command)) {
+
+						if ((/LIST/i).test(command[1])) {
+
+							if (_folder && command[2]) _folder.remove(command[2]);
+
+						} else if ((/TAG/i).test(command[1])) {
+
+							if (_folder && command[2] && command[3]) _folder.detag(command[2], command[3]);
+
+						} else if ((/TAB/i).test(command[1])) {
+
+							if (_folder && command[2]) _folder.close(command[2]);
+
+						}
+
+					} else if ((/TALLY/i).test(command)) {
+
+						if (_folder) _folder.tally.run();
+
+					} else if ((/CONVERT/i).test(command)) {
+
+						if (_folder) _folder.convert();
+
+					} else if ((/TAG/i).test(command)) {
+
+						if (_folder) _folder.tag(((/TAG/i).test(command[0])) ? command[1] : null);
+
+					} else if ((/STAR/i).test(command[0]) && command[1]) {
+
+						if (_folder) _folder.star(command[1]);
+
+					} else if ((/VISIBILITY/i).test(command)) {
+
+						if ((/COLUMNS/i).test(command[1]) && _folder) _folder.table().columns.visibility();
+
+					} else if ((/SEARCH/i).test(command)) {
+
+						if (_folder) {
+							if ((/PROPERTIES/i).test(command[1]) && command.length == 4) {
+								_folder.searchTag(command[2], command[3]);
+							} else {
+								_folder.search((/ROOT/i).test(command[1]) ? "root" : "");	
+							}
+						}
+
+					} else if ((/REFINE/i).test(command)) {
+
+						if (_folder) _folder.refine();
+
+					} else if ((/DELETE/i).test(command)) {
+
+						if (_folder) _folder.delete();
+
+					}
+
+				}
+      });
+			
 			/* <!-- Return for Chaining --> */
 			return this;
 
 		},
 
-		route: command => {
-			
-			if (!command || command === false || command[0] === false || (/PUBLIC/i).test(command)) {
-
-        /* <!-- Clear the existing state (in case of logouts) --> */
-				if (command && command[1]) _clear();
-        
-				/* <!-- Load the Public Instructions --> */
-				/* <!-- Don't use handlebar templates here as we may be routed from the controller, and it might not be loaded --> */
-				if (!command || !_last || command[0] !== _last[0]) ಠ_ಠ.Display.doc.show({
-					wrapper: "PUBLIC",
-					name: "FEATURES",
-					target: ಠ_ಠ.container,
-					clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
-				});
-
-			} else if (command === true || (/AUTH/i).test(command)) {
-
-				_default();
-
-			} else if ((/OPEN/i).test(command)) {
-
-				/* <!-- Pick, or Load the Root Folder --> */
-				if ((/ROOT/i).test(command[1])) {
-					_loadFolder("root", false);
-				} else if ((/TEAM/i).test(command[1])) {
-					_openTeamDrive();
-				} else {
-					_pick().then((folder) => {
-						_openFolder(folder, true);
-					}).catch((e) => ಠ_ಠ.Flags.error("Picker Failure", e ? e : "No Inner Error"));
-				}
-
-			} else if ((/LOAD/i).test(command)) {
-
-				(/TEAM/i).test(command[1]) ? _loadTeamDrive(command[2], true) : _loadFolder(command[1], true, command[2]);
-
-			} else if ((/CLOSE/i).test(command)) {
-
-				if (_folder) {
-					
-					if ((/RESULTS/i).test(command[1])) {
-						ಠ_ಠ.Display.state().exit(["searched"]);
-						_folder.close();
-					} else {
-						_clear();
-						_default();
-					}
-					
-				}
-
-			} else if ((/REMOVE/i).test(command)) {
-
-				if ((/LIST/i).test(command[1])) {
-					
-					if (_folder && command[2]) _folder.remove(command[2]);
-				
-				} else if ((/TAG/i).test(command[1])) {
-					
-					if (_folder && command[2] && command[3]) _folder.detag(command[2], command[3]);
-					
-				} else if ((/TAB/i).test(command[1])) {
-					
-					if (_folder && command[2]) _folder.close(command[2]);
-				
-				} else {
-					
-					if (command[1]) ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());	
-					
-				}
-					
-			} else if ((/TALLY/i).test(command)) {
-
-				if (_folder) _folder.tally.run();
-						
-			} else if ((/CONVERT/i).test(command)) {
-
-				if (_folder) _folder.convert();
-				
-			} else if ((/TAG/i).test(command)) {
-
-				if (_folder) _folder.tag(((/TAG/i).test(command[0])) ? command[1] : null);
-	
-			} else if ((/STAR/i).test(command[0]) && command[1]) {
-
-				if (_folder) _folder.star(command[1]);
-					
-			} else if ((/VISIBILITY/i).test(command)) {
-
-				if ((/COLUMNS/i).test(command[1]) && _folder) _folder.table().columns.visibility();
-							
-			} else if ((/TUTORIALS/i).test(command)) {
-
-				/* <!-- Load the Tutorials --> */
-				ಠ_ಠ.Display.doc.show({
-					name: "TUTORIALS",
-					title: "Tutorials for Folders ...",
-					target: ಠ_ಠ.container,
-					wrapper: "MODAL"
-				}).modal();
-				
-			} else if ((/INSTRUCTIONS/i).test(command)) {
-
-				/* <!-- Load the Instructions --> */
-				ಠ_ಠ.Display.doc.show({
-					name: "INSTRUCTIONS",
-					title: "How to use Folders ...",
-					target: ಠ_ಠ.container,
-					wrapper: "MODAL"
-				}).modal();
-
-			} else if ((/SEARCH/i).test(command)) {
-
-				if (_folder) {
-					if ((/PROPERTIES/i).test(command[1]) && command.length == 4) {
-						_folder.searchTag(command[2], command[3]);
-					} else {
-						_folder.search((/ROOT/i).test(command[1]) ? "root" : "");	
-					}
-				}
-				
-			} else if ((/REFINE/i).test(command)) {
-
-				if (_folder) _folder.refine();
-
-			} else if ((/DELETE/i).test(command)) {
-
-				if (_folder) _folder.delete();
-				
-			} else if ((/HELP/i).test(command)) { /* <!-- Request Help --> */
-
-				ಠ_ಠ.Help.provide(ಠ_ಠ.Flags.dir());
-				
-			}
-
-			/* <!-- Record the last command --> */
-			_last = command;
-
-		},
-
 		/* <!-- Clear the existing state --> */
-		clean: () => _clear()
+		clean: () => ಠ_ಠ.Router.clean(false)
 		
 	};
 

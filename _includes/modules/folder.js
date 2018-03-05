@@ -335,7 +335,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 					var value = test.split("=")[1];
 
 					var _predicate = value.toUpperCase() == "[NEEDED]" ?
-						(review, reviewed) => review && (!reviewed || moment(reviewed[1]).isBefore(parseReview(review[1]))) : value.toUpperCase() == "[DONE]" ?
+						(review, reviewed) => review && review[1] && (!reviewed || !reviewed[1] || moment(reviewed[1]).isBefore(parseReview(review[1]))) : value.toUpperCase() == "[DONE]" ?
 						(review, reviewed) => review && (reviewed && moment(reviewed[1]).isAfter(parseReview(review[1]))) :
 						(review, reviewed) => review && (!reviewed || moment(reviewed[1]).isBefore(parseReview(review[1], value)));
 
