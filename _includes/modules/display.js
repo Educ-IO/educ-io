@@ -363,6 +363,8 @@ Display = function() {
 								form.classList.add("was-validated");
 							});
 							var _values = dialog.find("form").serializeArray();
+							var _indeterminate = dialog.find("form input:indeterminate");
+							$.each(_indeterminate, function(i, el) {_values.push({name : el.name, value : "all"})});
 							if (options.validate && !options.validate(_values)) _valid = false;
 							if (_valid) {
 								_clean();

@@ -12,12 +12,35 @@
         {{#if instructions}}{{{instructions}}}{{/if}}
 				{{#if shortcuts}}{{> populate_buttons shortcuts}}{{/if}}
 				<form>
-					<div class="form-group">
-    				<label for="nameContains">Names</label>
-						<button type="button" class="close" data-action="clear" data-clear="nameContains" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="nameContains" name="names" class="form-control resizable optional" rows="1">{{#if state}}{{state.names}}{{/if}}</textarea>
-						<small class="form-text text-muted">File Names to search for (<strong>OR</strong>), one per line.</small>
-  				</div>
+					<div class="row">
+						<div class="col-12 col-lg-6">
+							<label for="nameContains">Names</label>
+							<button type="button" class="close" data-action="clear" data-clear="nameContains" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+    					<textarea id="nameContains" name="names" class="form-control resizable optional" rows="1">{{#if state}}{{state.names}}{{/if}}</textarea>
+							<small class="form-text text-muted">File Names to search for (<strong>OR</strong>), one per line.</small>
+						</div>
+						<div class="col-12 col-lg-6 align-self-center">
+							<div class="d-flex flex-column flex-wrap flex-md-row">
+								<div class="custom-control custom-checkbox mr-2 mt-1">
+									<input id="visibility_limited" name="limited" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.limited}} checked{{/if}}{{/if}}>
+									<label class="custom-control-label" for="visibility_limited">Individual/s</label>	
+								</div>
+								<div class="custom-control custom-checkbox mr-2 mt-1">
+									<input id="visibility_Domain" name="domain" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.domain}} checked{{/if}}{{/if}}>
+									<label class="custom-control-label" for="visibility_Domain">Domain</label>	
+								</div>
+								<div class="custom-control custom-checkbox mr-2 mt-1">
+									<input id="visibility_Public" name="public" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.public}} checked{{/if}}{{/if}}>
+									<label class="custom-control-label" for="visibility_Public">Public</label>	
+								</div>
+								<div class="custom-control custom-checkbox mr-2 mt-1">
+									<input id="shared_WithMe" name="shared" type="checkbox" class="custom-control-input" disabled{{#if state}}{{#if state.shared}} checked{{/if}}{{/if}}>
+									<label class="custom-control-label" for="shared_WithMe">Shared with Me</label>
+								</div>
+								<small class="form-text text-muted mt-1">Visibility of items to search for (<strong>OR</strong> / <strong>AND</strong> only shared).</small>
+							</div>
+						</div>
+					</div>
 					<div class="row">
 						<div class="col-12 col-lg-6">
 							<label for="mimeTypes">Mime Types</label>

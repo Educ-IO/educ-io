@@ -3,13 +3,14 @@ TODO LIST
 General
 -------
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
+
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
-* Animated Logo
+* Animated Logo -- Via Javascript?
 
 * ** BUG ** -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
-* More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');"
 
-* Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency?
+* More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');" [https://support.google.com/analytics/answer/1033068] and [https://developers.google.com/analytics/devguides/collection/analyticsjs/events]
+
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set? | Also JWT Token for Folders?
 
 Datatable
@@ -31,7 +32,7 @@ Apps
 ----
 * ** IMPORTANT ** Clear process instructions? Visual? <- App Guides
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
-* ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
+* ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549 -> Re-submit form apparently!
 
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
@@ -40,7 +41,9 @@ Apps
 Mobile
 ------
 * ** IMPORTANT ** Full Page Lazy Scope Load may break app flow (need state object to pass back to app?) - also should test for scope before initiating flow?
+
 * ** IMPORTANT ** Incognito Mode on IOS fails on sign-in (issue with LocalForage again?) -> Issue on IOS 10.3 but not on 11? 11 seems to fix the Local Storage problem. Cookie problems on IOS?
+
 * Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
 * Top nav menu wastes space on mobile. Can it be shifted to sticky on mobile devices only with bootstrap? Maybe a media query if nothing else works.
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
@@ -55,6 +58,7 @@ Grades
 View
 ----
 * ** IMPORTANT ** Column Filters (Type)
+
 * ** IMPORTANT ** Do went need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view <++ YES
 * Write Flexbox-based Fit Algorithm
   + Categorised data to 'pills' for display?
@@ -75,7 +79,7 @@ Folders
 * CODE : State Save needs updating for new fields
 * FEATURE : Get Path by clicking on row in search?
 * FEATURE : Export Search Results to Sheets -> View
-* FEATURE : Accept Route in with File ID and Tag Value (from Tag-A-Doc for Reviewed)
+* FEATURE : Accept Route in with File ID and Tag Value (from Tag-A-Doc for Reviewed) (Partly done)
 
 Merge
 -----
@@ -96,6 +100,7 @@ Reflect
 
 Complete
 --------
+* Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency? <-- DONE
 * Contrite Penguin 404 Page <== DONE
 * ** BUG ** Pop-Up block on un-authorised Apps from button or menu item (rather than sign-in buttton) -> Check full page fallback. (Including on requesting extra scopes, e.g. View) <== DONE
 * ** IMPORTANT ** Migrate View / Folders / Reflect to new Router <-- DONE

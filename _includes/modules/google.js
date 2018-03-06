@@ -268,7 +268,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-	var _contents = (ids, names, mimeTypes, excludeMimeTypes, properties, skeleton, team, overrideType) => {
+	var _contents = (ids, names, mimeTypes, excludeMimeTypes, properties, visibilities, shared, skeleton, team, overrideType) => {
 
 		/* <!-- Build the ID portion of the query --> */
 		var _i = ids && ids.length > 0 ?
@@ -291,9 +291,16 @@ Google_API = function(ಠ_ಠ, timeout) {
 		var _p = properties && properties.length > 0 ?
 			_.reduce(properties, (q, p, i) => q + (i > 0 ? " and (properties has { " + _kv(p) + " } or appProperties has { " + _kv(p) + " })" : "(properties has { " + _kv(p) + "} or appProperties has { " + _kv(p) + "})"), " and (" + (overrideType ? "mimeType = '" + overrideType + "' or (" : "")) + (overrideType ? "))" : ")") : "";
 
+		/* <!-- Build VISIBILITY portion of the query --> */
+		var _v = visibilities && visibilities.length > 0 ?
+			_.reduce(visibilities, (q, v, i) => q + (i > 0 ? " or visibility = '" : "visibility = '") + v + "'", " and (") + ")" : "";
+		
+		/* <!-- Build SHARED portion of the query --> */
+		var _s = shared ? " and (sharedWithMe = true)" : "";
+		
 		var _data = {
 			pageSize: PAGE_SIZE,
-			q: "trashed = false" + _i + _n + _m + _e + _p,
+			q: "trashed = false" + _i + _n + _m + _e + _p + _v + _s,
 			orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
 			fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size,parents,mimeType" + (team ? ",teamDriveId" : "") + ")" : "kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties,appProperties" + (team ? ",teamDriveId" : "") + ")",
 		};
@@ -358,11 +365,11 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 	
-	var _search = (ids, recurse, folders, names, mimeTypes, excludes, includes, properties, team, cache, totals) => {
+	var _search = (ids, recurse, folders, names, mimeTypes, excludes, includes, properties, visibilities, shared, team, cache, totals) => {
 
 		return new Promise((resolve, reject) => {
 
-			_contents(ids, names, mimeTypes, [], properties && properties.simple ? properties.simple : null, false, team, recurse && mimeTypes.length === 0 ? FOLDER : null).then((c) => {
+			_contents(ids, names, mimeTypes, [], properties && properties.simple ? properties.simple : null, visibilities, shared, false, team, recurse && mimeTypes.length === 0 ? FOLDER : null).then((c) => {
 
 				/* <!-- Update Progress Event --> */
 				if (totals && ids && window) (totals.folders += ids.length) && window.dispatchEvent(new CustomEvent(EVENTS.SEARCH.PROGRESS, { detail: totals }));
@@ -532,24 +539,25 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 			is: (type) => type === FOLDER,
 
-			search: (ids, recurse, names, mimeTypes, excludes, includes, properties, team, basic) => {
+			search: (ids, recurse, names, mimeTypes, excludes, includes, properties, visibilities, shared, team, basic) => {
 				var folders = (mimeTypes = _arrayize(mimeTypes, _.isString)).indexOf(FOLDER) >= 0;
 				return basic ? 
-					_search(null, false, false, names, mimeTypes, null, null, properties, team, _nameCache, {folders: 0}) : 
+					_search(null, false, false, names, mimeTypes, null, null, properties, visibilities, shared, team, _nameCache, {folders: 0}) : 
 					_search(
 						_arrayize(ids, _.isString), recurse, folders, names,
 						recurse && mimeTypes && mimeTypes.length > 0 && !folders ? [FOLDER].concat(mimeTypes) : mimeTypes,
 						_arrayize(excludes, _.isFunction),
-						recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), properties, team, _nameCache, {folders: 0});
+						recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), 
+						properties, visibilities, shared, team, _nameCache, {folders: 0});
 			},
 
-			contents: (ids, mimeTypes, team) => _contents(_arrayize(ids, _.isString), null, _arrayize(mimeTypes, _.isString), null, null, false, team),
+			contents: (ids, mimeTypes, team) => _contents(_arrayize(ids, _.isString), null, _arrayize(mimeTypes, _.isString), null, null, null, null, false, team),
 
-			children: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, null, null, null, skeleton, team),
+			children: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, null, null, null, null, null, skeleton, team),
 
-			folders: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, [FOLDER], null, null, skeleton, team),
+			folders: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, [FOLDER], null, null, null, null, skeleton, team),
 
-			files: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, null, [FOLDER], null, skeleton, team),
+			files: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, null, [FOLDER], null, null, null, skeleton, team),
 
 		},
 

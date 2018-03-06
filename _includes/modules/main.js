@@ -139,7 +139,7 @@ Main = function() {
 
 		if ((/GOOGLE/i).test(directive)) {
 
-			if (!ಠ_ಠ.google) {
+			if (!ಠ_ಠ.Google) {
 
 				/* <!-- No existing sign-in, so full sign-in --> */
 				google_SignIn();
@@ -158,7 +158,7 @@ Main = function() {
 					_action = "Signed into additional Google Scopes",
 					_success = (a) => {
 						google_Success(_action)(a);
-						if (!a.unchanged) ಠ_ಠ.google = google_Initialise(a.authResponse);
+						if (!a.unchanged) ಠ_ಠ.Google = google_Initialise(a.authResponse);
 						if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
 					},
 					_failure = google_Failure(_action),
@@ -205,13 +205,13 @@ Main = function() {
 
 	var google_LoggedIn = auth => {
 
-		if (!ಠ_ಠ.google) {
+		if (!ಠ_ಠ.Google) {
 
 			/* <!-- Initialise Google Provider --> */
-			ಠ_ಠ.google = google_Initialise(auth);
+			ಠ_ಠ.Google = google_Initialise(auth);
 
 			/* <!-- Get User Info for Display --> */
-			ಠ_ಠ.google.me().then(function(user) {
+			ಠ_ಠ.Google.me().then(function(user) {
 
 				user.display_name = function() {
 					return this.name.length == 3 ? this.name.split(" ").join("") : this.name;
@@ -251,7 +251,7 @@ Main = function() {
 	var google_LoggedOut = () => {
 
 		/* <!-- Delete Objects dependent on being Logged in --> */
-		delete ಠ_ಠ.google;
+		delete ಠ_ಠ.Google;
 
 		/* <!-- Clean and Hide the Auth Processing --> */
 		$("#auth_processing").hide();

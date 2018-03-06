@@ -1,4 +1,8 @@
 site :
+  0.0.8k :
+    name: Folders 0.0.6a-alpha
+    desc: Visibility Searching (Domain, Public)
+    type: minor
   0.0.8j :
     name: Shiny! Shiny! Updates
     desc: Updated Extension Instructions
@@ -353,6 +357,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.6a-alpha :
+    name : Visibility Searching (Domain, Public)
+    desc : Added the ability to search by share visibility
+    type : minor
   0.0.6-alpha :
     name : API Bug Fixes and Improvements
     desc : Searching Performance Improvements and Features

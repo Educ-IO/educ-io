@@ -24,7 +24,7 @@ App = function() {
 		var result;
 
 		return new Promise((resolve, reject) => {
-			ಠ_ಠ.google.sheets.get(id, full).then(function(sheet) {
+			ಠ_ಠ.Google.sheets.get(id, full).then(function(sheet) {
 					ಠ_ಠ.Flags.log("Google Drive Sheet Opened", sheet);
 					result = sheet;
 				}).catch((e) => ಠ_ಠ.Flags.error("Requesting Selected Google Drive Sheet", e ? e : "No Inner Error"))
@@ -43,7 +43,7 @@ App = function() {
 		return new Promise((resolve, reject) => {
 
 			/* <!-- Open Sheet from Google Drive Picker --> */
-			ಠ_ಠ.google.pick(
+			ಠ_ಠ.Google.pick(
 				"Select a Sheet to Open", false, true,
 				() => [new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS).setIncludeFolders(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED],
 				(file) => file ? ಠ_ಠ.Flags.log("Google Drive File Picked from Open", file) && resolve(file.id) : reject()
@@ -114,7 +114,7 @@ App = function() {
 				});
 
 				/* <!-- Need to load the values --> */
-				ಠ_ಠ.google.sheets.values(sheet.spreadsheetId, p.n + "!A:ZZ")
+				ಠ_ಠ.Google.sheets.values(sheet.spreadsheetId, p.n + "!A:ZZ")
 					.then(data => {
 						_initSheet(data.values, target);
 					}).catch(err => {
@@ -247,7 +247,7 @@ App = function() {
 						});
 
 						ಠ_ಠ.container.find("#link_shorten").one("click.shorten", () => {
-							ಠ_ಠ.google.url.insert(_link).then((url) => {
+							ಠ_ಠ.Google.url.insert(_link).then((url) => {
 								_link = url.id;
 								var _qr = "https://chart.googleapis.com/chart?cht=qr&chs=540x540&choe=UTF-8&chl=" + encodeURIComponent(_link);
 								ಠ_ಠ.container.find("#link_text").text(_link);

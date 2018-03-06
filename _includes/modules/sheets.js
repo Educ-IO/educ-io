@@ -208,7 +208,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 		} else {
 
 			/* <!-- Need to load the values --> */
-			ಠ_ಠ.google.sheets.values(sheet.spreadsheetId, name + "!A:ZZ")
+			ಠ_ಠ.Google.sheets.values(sheet.spreadsheetId, name + "!A:ZZ")
 				.then((data) => _complete(data.values, name, index, target, [], [], _frozen, _locale, _size))
 				.catch((e) => {
 					ಠ_ಠ.Flags.error("Adding Content Table", e);
@@ -514,7 +514,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 								var _name = $(el).data("name");
 								var _get = !_sheets[_name] ?
 									new Promise((resolve) => {
-										ಠ_ಠ.google.sheets.values(_id, _name + "!A:ZZ").then(data => resolve(data.values));
+										ಠ_ಠ.Google.sheets.values(_id, _name + "!A:ZZ").then(data => resolve(data.values));
 									}) :
 									new Promise((resolve) => resolve(_sheets[_name].values(!full)));
 

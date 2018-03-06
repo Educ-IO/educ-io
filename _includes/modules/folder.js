@@ -72,7 +72,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 		thumbnail: v.thumbnailLink,
 		url: v.webViewLink,
 		star: v.starred,
-		folder: ಠ_ಠ.google.folders.is(v.mimeType),
+		folder: ಠ_ಠ.Google.folders.is(v.mimeType),
 		download: !!v.webContentLink,
 		paths: v.paths,
 		properties: v.properties,
@@ -80,15 +80,15 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 		needs_Review: needsReview(v),
 		team: _team,
 		size: v.size,
-		out: v.mimeType === "application/vnd.google-apps.spreadsheet" || ಠ_ಠ.google.files.in("application/x.educ-io.view")(v) ? {
+		out: v.mimeType === "application/vnd.google-apps.spreadsheet" || ಠ_ಠ.Google.files.in("application/x.educ-io.view")(v) ? {
 			name: "View",
 			desc: "Open in View",
 			url: "/view/#google,load." + v.id + ".lazy"
-		} : ಠ_ಠ.google.files.in("application/x.educ-io.folders")(v) ? {
+		} : ಠ_ಠ.Google.files.in("application/x.educ-io.folders")(v) ? {
 			name: "Folders",
 			desc: "Open in Folders",
 			url: "/folders/#google,load." + v.id + ".lazy"
-		} : ಠ_ಠ.google.files.in("application/x.educ-io.reflect")(v) ? {
+		} : ಠ_ಠ.Google.files.in("application/x.educ-io.reflect")(v) ? {
 			name: "Reflect",
 			desc: "Open in Reflect",
 			url: "/reflect/#google,load." + v.id + ".lazy"
@@ -97,7 +97,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 	var _enableDownloads = target => {
 		target.find("a.download").on("click.download", e => {
-			ಠ_ಠ.google.download($(e.target).data("id"), _team).then(binary => {
+			ಠ_ಠ.Google.download($(e.target).data("id"), _team).then(binary => {
 				try {
 					saveAs(binary, $(e.target).data("name"));
 				} catch (e) {
@@ -156,7 +156,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 			target: target
 		});
 
-		var _loader = _team ? ಠ_ಠ.google.folders.contents(id, [], _team) : ಠ_ಠ.google.folders.contents(id);
+		var _loader = _team ? ಠ_ಠ.Google.folders.contents(id, [], _team) : ಠ_ಠ.Google.folders.contents(id);
 
 		/* <!-- Need to load the contents of the folder --> */
 		_loader.then(contents => {
@@ -297,10 +297,10 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 			ಠ_ಠ.Flags.log(`Searching Drive for Files/Folders with Property: ${name} and Value: ${value}`);
 
-			ಠ_ಠ.google.folders.search("root", true, [], [], [], [], {
+			ಠ_ಠ.Google.folders.search("root", true, [], [], [], [], {
 				simple: [`${name}=${value}`],
 				complex: []
-			}, _team, true).then((results) => {
+			}, [], null, _team, true).then(results => {
 				_showResults(_name, results);
 			}).catch((e) => {
 				if (e) ಠ_ಠ.Flags.error("Search Error", e);
@@ -332,14 +332,12 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 				if (test.toUpperCase().indexOf("@@[REVIEW]=") === 0) {
 
-					var value = test.split("=")[1];
-
-					var _predicate = value.toUpperCase() == "[NEEDED]" ?
+					var value = test.split("=")[1], _predicate = value.toUpperCase() == "[NEEDED]" ?
 						(review, reviewed) => review && review[1] && (!reviewed || !reviewed[1] || moment(reviewed[1]).isBefore(parseReview(review[1]))) : value.toUpperCase() == "[DONE]" ?
 						(review, reviewed) => review && (reviewed && moment(reviewed[1]).isAfter(parseReview(review[1]))) :
 						(review, reviewed) => review && (!reviewed || moment(reviewed[1]).isBefore(parseReview(review[1], value)));
 
-					return (f) => {
+					return f => {
 						var _props = parseProperties(f);
 						return _predicate(_.find(_props, property => property[0] == "Review"), _.find(_props, property => property[0] == "Reviewed"));
 					};
@@ -351,10 +349,9 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 							"!=": (name, value) => (n, v) => n == name && v != value,
 							"<=": (name, value) => (n, v) => n == name && v <= value,
 							"<>": (name, value) => (n, v) => n == name && v != value
-						},
-						_operator = _.find(_.keys(_operators), operator => test.indexOf(operator) > 0);
+						}, _operator = _.find(_.keys(_operators), operator => test.indexOf(operator) > 0);
 
-					return (f) => _.some(parseProperties(f), property => property && (_operator ?
+					return f => _.some(parseProperties(f), property => property && (_operator ?
 						_operators[_operator](test.split(_operator)[0], test.split(_operator)[1]) :
 						n => n.toLowerCase() == test.toLowerCase())(property[0], property[1]));
 
@@ -373,15 +370,23 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				},
 				exclude: _.map(_.find(values, v => v.name == "exclude").value.split("\n"), r => _regex(r.trim(), false)),
 				include: _.map(_.find(values, v => v.name == "include").value.split("\n"), r => _regex(r.trim(), true)),
+				limited: !!(_.find(values, v => v.name == "limited")),
+				domain: !!(_.find(values, v => v.name == "domain")),
+				public: !!(_.find(values, v => v.name == "public")),
 				recurse: !!(_.find(values, v => v.name == "recurse")),
+				shared: !!(_.find(values, v => v.name == "shared")),
 				entire: !!(_.find(values, v => v.name == "entire"))
 			};
+			_return.visibilities = []
+				.concat(_return.limited ? ["limited"] : [])
+				.concat(_return.domain ? ["domainWithLink", "domainCanFind"] : [])
+				.concat(_return.public ? ["anyoneWithLink", "anyoneCanFind"] : []);
 			_return.basic = _return.entire &&
 				!(_.find(values, v => v.name == "exclude").value.trim()) &&
 				!(_.find(values, v => v.name == "include").value.trim()) && (!_return.properties.complex || _return.properties.complex.length === 0);
 			return _return;
 		};
-		var _encode = (values) => _.each(_.clone(values), (value, key, list) => _.isArray(value) ? list[key] = value.join("\n") : false);
+		var _encode = values => _.each(_.clone(values), (value, key, list) => _.isArray(value) ? list[key] = value.join("\n") : false);
 
 		var _id = "start_search",
 			_defaults = () => ["^(\\~\\$)", "^(\\*\\*\\*\\sARCHIVE\\s\\*\\*\\*\\s)", "\\$RECYCLE\\.BIN"],
@@ -398,7 +403,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 							name: "Docs",
 							include: [],
 							exclude: [],
-							mime: [ಠ_ಠ.google.files.natives()[0]],
+							mime: [ಠ_ಠ.Google.files.natives()[0]],
 							properties: []
 						},
 						sheets: {
@@ -406,7 +411,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 							name: "Sheets",
 							include: [],
 							exclude: [],
-							mime: [ಠ_ಠ.google.files.natives()[1]],
+							mime: [ಠ_ಠ.Google.files.natives()[1]],
 							properties: []
 						},
 						slides: {
@@ -414,7 +419,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 							name: "Slides",
 							include: [],
 							exclude: [],
-							mime: [ಠ_ಠ.google.files.natives()[2]],
+							mime: [ಠ_ಠ.Google.files.natives()[2]],
 							properties: []
 						},
 						drawings: {
@@ -422,7 +427,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 							name: "Drawings",
 							include: [],
 							exclude: [],
-							mime: [ಠ_ಠ.google.files.natives()[3]],
+							mime: [ಠ_ಠ.Google.files.natives()[3]],
 							properties: []
 						},
 						all: {
@@ -430,7 +435,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 							name: "All",
 							include: [],
 							exclude: [],
-							mime: ಠ_ಠ.google.files.natives(),
+							mime: ಠ_ಠ.Google.files.natives(),
 							properties: []
 						},
 					},
@@ -546,7 +551,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 								}
 							}),
 							_mime = TYPE_SEARCH;
-						ಠ_ಠ.google.upload(_meta, _data, _mime).then(uploaded => ಠ_ಠ.Flags.log("Folders Search File Saved", uploaded))
+						ಠ_ಠ.Google.upload(_meta, _data, _mime).then(uploaded => ಠ_ಠ.Flags.log("Folders Search File Saved", uploaded))
 							.catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error"))
 							.then(finish);
 					}
@@ -581,15 +586,15 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				}
 			}, dialog => {
 				autosize(dialog.find("textarea.resizable"));
-				dialog.find("#entireDrive").on("change", (e) => {
-					if (e.currentTarget.checked) $("#recurseFolders").prop("checked", true);
-				});
-				dialog.find("#recurseFolders").on("change", (e) => {
+				dialog.find("#entireDrive").on("change", e => (e.currentTarget.checked) ? 
+						$("#recurseFolders").prop("checked", true) && $("#shared_WithMe").removeAttr("disabled") :
+						$("#shared_WithMe").attr("disabled", true) && $("#shared_WithMe").prop("checked", false));
+				dialog.find("#recurseFolders").on("change", e => {
 					if (!e.currentTarget.checked) $("#entireDrive").prop("checked", false);
 				});
 			});
 
-		_search.then((values) => {
+		_search.then(values => {
 
 			if (values) {
 
@@ -598,7 +603,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 					fn: true,
 					status: { /* <!-- Hook up to Progress Event --> */
 						source: window,
-						event: ಠ_ಠ.google.events().SEARCH.PROGRESS,
+						event: ಠ_ಠ.Google.events().SEARCH.PROGRESS,
 						value: detail => `${ಠ_ಠ.Display.commarise(detail.folders)} ${detail.folders > 1 ? "folders" : "folder"} processed`
 					}
 				});
@@ -610,7 +615,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				ಠ_ಠ.Flags.log(`Searching folder ${id} with terms: ${JSON.stringify(values)}`);
 				_searches[id] = _encode(values);
 
-				ಠ_ಠ.google.folders.search(id, values.recurse, values.names, values.mime, values.exclude, values.include, values.properties, _team, values.basic).then(results => {
+				ಠ_ಠ.Google.folders.search(id, values.recurse, values.names, values.mime, values.exclude, values.include, 
+																	values.properties, values.visibilities, values.shared, _team, values.basic).then(results => {
 					_showResults(_name, results);
 				}).catch((e) => {
 					if (e) ಠ_ಠ.Flags.error("Search Error", e);
@@ -628,13 +634,13 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 		return new Promise((resolve, reject) => {
 
-			ಠ_ಠ.google.files.export(file.id, targetMimeType).then(binary => {
+			ಠ_ಠ.Google.files.export(file.id, targetMimeType).then(binary => {
 
 				var _name = file.name.lastIndexOf(".") > 0 ? file.name.substr(0, file.name.lastIndexOf(".")) : file.name;
 
 				var _upload = (metadata, id) => {
 
-					ಠ_ಠ.google.upload(metadata ? metadata : {
+					ಠ_ಠ.Google.upload(metadata ? metadata : {
 							name: _name,
 							parents: mirror ? (file.parents ? file.parents : []).concat(mirror) : file.parents,
 							teamDriveId: _team,
@@ -651,7 +657,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 				if (inPlace) {
 
-					ಠ_ಠ.google.folders.search(file.parents, false, [], targetMimeType, [], ((n, t) => f => (f.name == n) && f.mimeType == t)(_name, targetMimeType), null, _team, false).then((results) => {
+					ಠ_ಠ.Google.folders.search(file.parents, false, [], targetMimeType, [], ((n, t) => f => (f.name == n) && f.mimeType == t)(_name, targetMimeType), 
+																		[], [], null, _team, false).then(results => {
 						if (results && results.length == 1) {
 							_upload({}, results[0].id);
 						} else {
@@ -685,15 +692,15 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 			};
 			metadata.mimeType = targetMimeType;
 
-			ಠ_ಠ.google.download(file.id, _team).then(binary => {
+			ಠ_ಠ.Google.download(file.id, _team).then(binary => {
 
 				(inPlace ?
-					ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team, file.id) :
-					ಠ_ಠ.google.upload(metadata, binary, sourceMimeType, _team))
+					ಠ_ಠ.Google.upload(metadata, binary, sourceMimeType, _team, file.id) :
+					ಠ_ಠ.Google.upload(metadata, binary, sourceMimeType, _team))
 				.then(uploadedFile => {
 
 						prefixAfterConversion ?
-							ಠ_ಠ.google.update(file.id, {
+							ಠ_ಠ.Google.update(file.id, {
 								name: prefixAfterConversion + file.name
 							}, _team)
 							.then(updated => resolve({
@@ -737,7 +744,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 				var _total = failures.length + successes.length + last;
 
-				ಠ_ಠ.google.sheets.append(id, "A" + last + ":F" + _total, values)
+				ಠ_ಠ.Google.sheets.append(id, "A" + last + ":F" + _total, values)
 					.then(() => {
 						resolve({
 							id: id,
@@ -756,13 +763,13 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 			} else {
 
-				ಠ_ಠ.google.sheets.create("Folders - Conversion Results " + (folder && folder.name ? " for (" + folder.name + ") " : "") + "[" + new Date().toUTCString() + "]").then(sheet => {
+				ಠ_ಠ.Google.sheets.create("Folders - Conversion Results " + (folder && folder.name ? " for (" + folder.name + ") " : "") + "[" + new Date().toUTCString() + "]").then(sheet => {
 
 					var id = sheet.spreadsheetId,
 						values = [];
 					values.push(["Result", "Source File Id", "Source File Name", "Destination File Id", "Destination File Name", "Destination File Type"]);
 
-					ಠ_ಠ.google.sheets.update(id, "A1:F1", values)
+					ಠ_ಠ.Google.sheets.update(id, "A1:F1", values)
 						.then(() => _updateSheet(id, 2))
 						.catch(e => {
 							reject(e);
@@ -809,21 +816,21 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 							class: "btn-outline-primary",
 							name: "Word -> Docs",
 							source: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-							target: ಠ_ಠ.google.files.natives()[0],
+							target: ಠ_ಠ.Google.files.natives()[0],
 							prefix: "*** ARCHIVE *** "
 						},
 						sheets: {
 							class: "btn-outline-primary",
 							name: "Excel -> Sheets",
 							source: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-							target: ಠ_ಠ.google.files.natives()[1],
+							target: ಠ_ಠ.Google.files.natives()[1],
 							prefix: "*** ARCHIVE *** "
 						},
 						slides: {
 							class: "btn-outline-primary",
 							name: "Powerpoint -> Slides",
 							source: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-							target: ಠ_ಠ.google.files.natives()[2],
+							target: ಠ_ಠ.Google.files.natives()[2],
 							prefix: "*** ARCHIVE *** "
 						},
 					},
@@ -897,7 +904,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 								}
 							}),
 							_mime = TYPE_CONVERT;
-						ಠ_ಠ.google.upload(_meta, _data, _mime).then(uploaded => ಠ_ಠ.Flags.log("Folders Convert File Saved", uploaded))
+						ಠ_ಠ.Google.upload(_meta, _data, _mime).then(uploaded => ಠ_ಠ.Flags.log("Folders Convert File Saved", uploaded))
 							.catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error"))
 							.then(finish);
 					}
@@ -907,19 +914,17 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				/* <!-- Wire Up Fields and Handle Populate URL Fields from Google Drive --> */
 				ಠ_ಠ.Fields().on(dialog).find("button[data-action='load-g-folder'], a[data-action='load-g-folder']").off("click.folder").on("click.folder", e => {
 					new Promise((resolve, reject) => {
-						ಠ_ಠ.google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
+						ಠ_ಠ.Google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
 							"Select a Folder", false, true,
 							() => new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"),
-							folder => folder && ಠ_ಠ.google.folders.is(folder.mimeType) ? ಠ_ಠ.Flags.log("Google Drive Folder Picked", folder) && resolve(folder) : reject()
+							folder => folder && ಠ_ಠ.Google.folders.is(folder.mimeType) ? ಠ_ಠ.Flags.log("Google Drive Folder Picked", folder) && resolve(folder) : reject()
 						);
-					}).then(folder => {
-						var _$ = $("#" + $(e.target).data("target")).val(folder.id).attr("title", folder.name);
-					}).catch();
+					}).then(folder => $("#" + $(e.target).data("target")).val(folder.id).attr("title", folder.name)).catch();
 				});
 
 				/* <!-- Update whether we can do an inplace conversion, depending on the Target MIME Type --> */
 				dialog.find("#targetMimeType").on("change", (e) => {
-					var _native = ಠ_ಠ.google.files.native($(e.target).val());
+					var _native = ಠ_ಠ.Google.files.native($(e.target).val());
 					$("#convertInplace").prop("disabled", _native).prop("checked", !_native);
 				});
 
@@ -956,7 +961,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 							if (file) {
 
-								if ((values.source || ಠ_ಠ.google.files.native(file.type))) {
+								if ((values.source || ಠ_ಠ.Google.files.native(file.type))) {
 
 									ಠ_ಠ.Flags.log("PROCESSING FILE " + file_index);
 
@@ -1192,7 +1197,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 								}
 							}),
 							_mime = TYPE_TAG;
-						ಠ_ಠ.google.upload(_meta, _data, _mime).then(uploaded => ಠ_ಠ.Flags.log("Folders Tag File Saved", uploaded))
+						ಠ_ಠ.Google.upload(_meta, _data, _mime).then(uploaded => ಠ_ಠ.Flags.log("Folders Tag File Saved", uploaded))
 							.catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error"))
 							.then(finish);
 					}
@@ -1243,7 +1248,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 					_busy = busy(_cell, _row);
 				_busy(true);
 
-				ಠ_ಠ.google.update(file.id, _data, _team).then(updated => {
+				ಠ_ಠ.Google.update(file.id, _data, _team).then(updated => {
 					if (!_result[values.private ? "appProperties" : "properties"]) _result[values.private ? "appProperties" : "properties"] = {};
 					_result[values.private ? "appProperties" : "properties"][values.name] = values.value;
 					_result.needs_Review = needsReview(_result);
@@ -1285,12 +1290,12 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 						var _result = _collection.by("id", item.id);
 
-						ಠ_ಠ.google.files.delete(item.id, _team, true).then((value) => {
+						ಠ_ಠ.Google.files.delete(item.id, _team, true).then((value) => {
 
 							if (value) {
 
 								/* <!-- Aggregate Results --> */
-								ಠ_ಠ.google.folders.is(item.mimeType) ? totals.folders += 1 : totals.files += 1;
+								ಠ_ಠ.Google.folders.is(item.mimeType) ? totals.folders += 1 : totals.files += 1;
 								totals.size += item.size ? Number(item.size) : 0;
 
 								/* <!-- Save Results (for filtering etc) --> */
@@ -1368,8 +1373,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 		_tallyCache = {};
 
 		var _collection = _db.getCollection(id),
-			_isFile = ಠ_ಠ.google.folders.check(false),
-			_isFolder = ಠ_ಠ.google.folders.check(true),
+			_isFile = ಠ_ಠ.Google.folders.check(false),
+			_isFolder = ಠ_ಠ.Google.folders.check(true),
 			_count = (items, results) => {
 
 				/* <!-- Update File Count & Sizes --> */
@@ -1471,9 +1476,9 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 				/* <!-- Run the promise to fetch the data, with a delayed single retry (if required) --> */
 				/* <!-- Should be moved (DELAY / RETRY) to the Google Module, which will pass call retry details to network --> */
-				ಠ_ಠ.google.folders.children(folder_ids, true, _team).then(_complete).catch(() => {
+				ಠ_ಠ.Google.folders.children(folder_ids, true, _team).then(_complete).catch(() => {
 					DELAY(2000).then(() => {
-						ಠ_ಠ.google.folders.children(folder_ids, true, _team).then(_complete).catch((e) => ಠ_ಠ.Flags.error("Processing Tally for Google Drive Folders: " + JSON.stringify(folder_ids), e ? e : "No Inner Error"));
+						ಠ_ಠ.Google.folders.children(folder_ids, true, _team).then(_complete).catch((e) => ಠ_ಠ.Flags.error("Processing Tally for Google Drive Folders: " + JSON.stringify(folder_ids), e ? e : "No Inner Error"));
 					});
 				});
 
@@ -1615,7 +1620,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 					ಠ_ಠ.Flags.log(`DE-TAGGING FILE: ${_candidate.name} (${_candidate.id}) with ${JSON.stringify(_data)}`);
 
-					ಠ_ಠ.google.update(_candidate.id, _data, _team).then(updated => {
+					ಠ_ಠ.Google.update(_candidate.id, _data, _team).then(updated => {
 						_candidate.needs_Review = needsReview(_candidate);
 						_collection.update(_candidate);
 						ಠ_ಠ.Flags.log(`FILE UPDATED: ${JSON.stringify(updated)}`);
@@ -1650,7 +1655,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 			ಠ_ಠ.Flags.log(`${_candidate.star ? "UN-" : ""}STARRING FILE: ${_candidate.name} (${_candidate.id})`);
 
-			ಠ_ಠ.google.update(_candidate.id, {
+			ಠ_ಠ.Google.update(_candidate.id, {
 				starred: !_candidate.star
 			}, _team).then(updated => {
 				_candidate.star = !_candidate.star;

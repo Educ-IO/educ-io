@@ -20,7 +20,7 @@ App = function() {
 		return new Promise((resolve, reject) => {
 
 			/* <!-- Open Folder from Google Drive Picker --> */
-			ಠ_ಠ.google.pick(
+			ಠ_ಠ.Google.pick(
 				"Select a Folder to Open", false, true,
 				() => [new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"), 
 						google.picker.ViewId.RECENTLY_PICKED],
@@ -102,7 +102,7 @@ App = function() {
 
 	};
 	
-	var _load = function(loader, rootTeamDrive, log, teamDrive, state) {
+	var _load = function(loader, rootTeamDrive, log, teamDrive, state, tags) {
 		
 		var _finish = ಠ_ಠ.Display.busy({
 			target: ಠ_ಠ.container,
@@ -115,10 +115,10 @@ App = function() {
 
 			ಠ_ಠ.Flags.log(`Loaded: ${JSON.stringify(file)}`);
 			
-			if (ಠ_ಠ.google.files.in(TYPE)(file)) {
+			if (ಠ_ಠ.Google.files.in(TYPE)(file)) {
 				
-				ಠ_ಠ.google.download(file.id).then(loaded => {
-					return ಠ_ಠ.google.reader().promiseAsText(loaded).then(parsed => {
+				ಠ_ಠ.Google.download(file.id).then(loaded => {
+					return ಠ_ಠ.Google.reader().promiseAsText(loaded).then(parsed => {
 						ಠ_ಠ.Flags.log(`Loaded Folders File [${file.mimeType}]: ${parsed}`);
 						parsed = JSON.parse(parsed);
 						if (parsed && parsed.folder) 
@@ -126,10 +126,14 @@ App = function() {
 					});
 				});
 				
-			} else if (ಠ_ಠ.google.folders.check(true)(file)) {
+			} else if (ಠ_ಠ.Google.folders.check(true)(file)) {
 				
 				file.team = rootTeamDrive;
 				_openFolder(file, log, teamDrive, state);
+				
+			} else {
+				
+				ಠ_ಠ.Flags.log(`Tags: ${JSON.stringify(tags)}`);
 				
 			}
 			
@@ -140,15 +144,15 @@ App = function() {
 		
 	};
 	
-	var _loadFolder = function(id, log, teamDrive) {
+	var _loadFolder = function(id, log, teamDrive, tags) {
 		
-		if (id) _load(ಠ_ಠ.google.files.get(id, teamDrive), false, log, teamDrive);
+		if (id) _load(ಠ_ಠ.Google.files.get(id, teamDrive), false, log, teamDrive, null, tags);
 		
 	};
 	
 	var _loadTeamDrive = function(id, log) {
 		
-		if (id) _load(ಠ_ಠ.google.teamDrives.get(id), true, log);
+		if (id) _load(ಠ_ಠ.Google.teamDrives.get(id), true, log);
 		
 	};
 	
@@ -158,7 +162,7 @@ App = function() {
 			target: ಠ_ಠ.container
 		});
 		
-		ಠ_ಠ.google.teamDrives.list().then(drives => {
+		ಠ_ಠ.Google.teamDrives.list().then(drives => {
 		
 			ಠ_ಠ.Display.busy({
 				target: ಠ_ಠ.container,
@@ -227,15 +231,19 @@ App = function() {
 						}
 
 					} else if ((/LOAD/i).test(command)) {
-
-						(/TEAM/i).test(command[1]) ? _loadTeamDrive(command[2], true) : _loadFolder(command[1], true, command[2]);
+						
+						(/TEAM/i).test(command[1]) ? 
+							_loadTeamDrive(command[2], true) : 
+							_loadFolder(command[1], true, 
+													(/TAG/i).test(command[2]) ? null : command[2],
+													(/TAG/i).test(command[2]) ? command.slice(3) : (/TAG/i).test(command[3]) ? command.slice(4) : null);
 
 					} else if ((/CLOSE/i).test(command)) {
 
 						if (_folder) {
 
 							if ((/RESULTS/i).test(command[1])) {
-								ಠ_ಠ.Display.state().exit(["searched"]);
+								ಠ_ಠ.Display.state().exit([STATE_SEARCHED]);
 								_folder.close();
 							} else {
 								ಠ_ಠ.Router.clean(true);

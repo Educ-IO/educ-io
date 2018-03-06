@@ -29,7 +29,7 @@ App = function() {
 		return new Promise((resolve, reject) => {
 
 			/* <!-- Open Sheet from Google Drive Picker --> */
-			ಠ_ಠ.google.pick(
+			ಠ_ಠ.Google.pick(
 				"Select a File / Folder to Use", true, true,
 				() => [new google.picker.DocsView(google.picker.ViewId.DOCS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED],
 				(files) => files && files.length > 0 ? ಠ_ಠ.Flags.log("Google Drive Files Picked", files) && resolve(files) : reject()
@@ -109,10 +109,10 @@ App = function() {
 					if (++_current == _total) finish();
 				};
 				_.each(files, source => {
-					ಠ_ಠ.google.upload({
+					ಠ_ಠ.Google.upload({
 							name: source.name
 						}, source, source.type)
-						.then(uploaded => ಠ_ಠ.google.files.get(uploaded.id).then(file => {
+						.then(uploaded => ಠ_ಠ.Google.files.get(uploaded.id).then(file => {
 							_evidence.add({
 								id: file.id,
 								url: file.webViewLink,
@@ -449,8 +449,8 @@ App = function() {
 			return ಠ_ಠ.Fields().on(ಠ_ಠ.Display.template.show(_return));
 		},
 
-		parent: (id) => new Promise((resolve) => ಠ_ಠ.google.files.get(id, true).then(f => {
-			ಠ_ಠ.google.folders.is(true)(f) ? resolve(f) : ಠ_ಠ.Flags.error(`Supplied ID is not a folder: ${id}`) && resolve();
+		parent: (id) => new Promise((resolve) => ಠ_ಠ.Google.files.get(id, true).then(f => {
+			ಠ_ಠ.Google.folders.is(true)(f) ? resolve(f) : ಠ_ಠ.Flags.error(`Supplied ID is not a folder: ${id}`) && resolve();
 		}).catch(e => {
 			ಠ_ಠ.Flags.error(`Opening Google Drive Folder: ${id}`, e) && resolve();
 		})),
@@ -487,11 +487,11 @@ App = function() {
 			/* <!-- Handle Populate Textual Fields from Google Doc --> */
 			form.find("button[data-action='load-g-doc'], a[data-action='load-g-doc']").off("click.doc").on("click.doc", e => {
 				new Promise((resolve, reject) => {
-					ಠ_ಠ.google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
+					ಠ_ಠ.Google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
 						"Select a Reflect File to Open", false, true,
 						() => new google.picker.DocsView(google.picker.ViewId.DOCUMENTS).setIncludeFolders(true).setParent("root"),
-						file => file ? ಠ_ಠ.Flags.log("Google Drive Document Picked", file) && ಠ_ಠ.google.files.export(file.id, "text/plain")
-						.then(download => new ಠ_ಠ.google.reader().promiseAsText(download).then(text => resolve(text))) : reject()
+						file => file ? ಠ_ಠ.Flags.log("Google Drive Document Picked", file) && ಠ_ಠ.Google.files.export(file.id, "text/plain")
+						.then(download => new ಠ_ಠ.Google.reader().promiseAsText(download).then(text => resolve(text))) : reject()
 					);
 				}).then(text => {
 					var _$ = $("#" + $(e.target).data("target")).val(text);
@@ -525,7 +525,7 @@ App = function() {
 	};
 
 	var _process = function(loaded) {
-		return ಠ_ಠ.google.reader().promiseAsText(loaded).then(report => {
+		return ಠ_ಠ.Google.reader().promiseAsText(loaded).then(report => {
 			ಠ_ಠ.Flags.log(`Loaded Report File: ${report}`);
 			report = JSON.parse(report);
 			_form = _data.rehydrate(_create.load(report.form), report.report);
@@ -535,9 +535,9 @@ App = function() {
 	/* <!-- TODO: Need to check type / format in process if route is from IMPORT - maybe need a further facading function? Maybe inference by properties? --> */
 
 	var _load = function(file) {
-		if (ಠ_ಠ.google.files.is(TYPE_REPORT)(file)) {
+		if (ಠ_ಠ.Google.files.is(TYPE_REPORT)(file)) {
 			_file = file;
-			return ಠ_ಠ.google.download(file.id).then(_process);
+			return ಠ_ಠ.Google.download(file.id).then(_process);
 		} else {
 			ಠ_ಠ.Flags.error(`Supplied ID is not a recognised Reflect File Type: ${file.id}`);
 			return Promise.reject();
@@ -569,8 +569,8 @@ App = function() {
 					_data = JSON.stringify(_toSave.data),
 					_mime = TYPE_REPORT;
 				((!_file || force) ?
-					ಠ_ಠ.google.upload(_meta, _data, _mime) :
-					ಠ_ಠ.google.upload(_meta, _data, _mime, null, _file.id))
+					ಠ_ಠ.Google.upload(_meta, _data, _mime) :
+					ಠ_ಠ.Google.upload(_meta, _data, _mime, null, _file.id))
 				.then(uploaded => {
 						_file = uploaded;
 						return ಠ_ಠ.Recent.add(uploaded.id, uploaded.name.replace(/.REFLECT$/i, ""), "#google,load." + uploaded.id).then(() => ಠ_ಠ.Flags.log("Saved:", uploaded));
@@ -676,7 +676,7 @@ App = function() {
 
 					} else if ((/LOAD/i).test(command) && command[1].length > 1) { /* <!-- We're loading an existing file, type is handled in load handler --> */
 
-						ಠ_ಠ.google.files.get(command[1], true).then(_load).catch(e => {
+						ಠ_ಠ.Google.files.get(command[1], true).then(_load).catch(e => {
 							ಠ_ಠ.Flags.error(`Opening Google Drive File: ${command[1]}`, e);
 							return ಠ_ಠ.Recent.remove(command[1]).then((id) => $("#" + id).remove());
 						}).then(ಠ_ಠ.Display.busy(true));
@@ -685,7 +685,7 @@ App = function() {
 
 						new Promise((resolve, reject) => { /* <!-- Open Reflect File from Google Drive Picker --> */
 
-								ಠ_ಠ.google.pick(
+								ಠ_ಠ.Google.pick(
 									"Select a Reflect File to Open", false, true,
 									() => [new google.picker.DocsView(google.picker.ViewId.DOCS).setMimeTypes(_types.join(",")),
 										new google.picker.DocsView(google.picker.ViewId.DOCS).setMimeTypes(_types.join(",")).setIncludeFolders(true).setParent("root")
