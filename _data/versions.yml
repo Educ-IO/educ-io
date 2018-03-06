@@ -1,4 +1,8 @@
 site :
+  0.0.8j :
+    name: Shiny! Shiny! Updates
+    desc: Updated Extension Instructions
+    type: minor
   0.0.8i :
     name: Contrite Penguin 404 Page
     desc: Service worker responds with 404 page to not-found requests
