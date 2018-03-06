@@ -129,6 +129,12 @@ var URLS = [
 ];
 /*jshint ignore:end*/
 
+var content_NotFound = '{% include error.html %}';
+var response_NotFound = function() {
+  var penguin = new Blob([content_NotFound], {type : "text/html"});
+  return new Response(penguin, { "status" : 404 , "statusText" : "Contrite Penguin" });  
+};
+
 /* <!-- Get Caching Promises --> */
 var cache_Promises = function(now, cache) {
   return URLS.map(function(fetch_url) {
@@ -230,7 +236,7 @@ self.addEventListener("fetch", function(event) {
           
           /* <!-- console.log("Network Response", response); --> */
           if (response.status == 404) {
-            return new Response ("Contrite Penquin");
+            return response_NotFound();
           } else {
             return response;  
           }
@@ -238,7 +244,7 @@ self.addEventListener("fetch", function(event) {
         }).catch(function(e) {
 
           console.error("Failed SW Fetch:", e);
-          return new Response ("Contrite Penquin");
+          return response_NotFound();
           
         });
         

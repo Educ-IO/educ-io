@@ -8,9 +8,10 @@ General
 * Favicon Background?
 * ** BUG ** -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
 * More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');"
-* Contrite Penguin 404 Page
+
 * Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency?
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set? | Also JWT Token for Folders?
+
 * ** BUG **? service.js:1 Failed SW Fetch: TypeError: Failed to execute 'fetch' on 'ServiceWorkerGlobalScope': 'only-if-cached' can be set only with 'same-origin' mode
     at service.js:1 (on production deployed version)
 
@@ -48,6 +49,12 @@ Mobile
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 
+Cover
+-----
+
+Grades
+------
+
 View
 ----
 * ** IMPORTANT ** Column Filters (Type)
@@ -70,7 +77,8 @@ Folders
 * CODE : Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => { -- Better to save out form values than encode / decode
 * CODE : State Save needs updating for new fields
 * FEATURE : Get Path by clicking on row in search?
-* FEATURE : Export Search Results to Sheets
+* FEATURE : Export Search Results to Sheets -> View
+* FEATURE : Accept Route in with File ID and Tag Value (from Tag-A-Doc for Reviewed)
 
 Merge
 -----
@@ -91,6 +99,7 @@ Reflect
 
 Complete
 --------
+* Contrite Penguin 404 Page <== DONE
 * ** BUG ** Pop-Up block on un-authorised Apps from button or menu item (rather than sign-in buttton) -> Check full page fallback. (Including on requesting extra scopes, e.g. View) <== DONE
 * ** IMPORTANT ** Migrate View / Folders / Reflect to new Router <-- DONE
 * ** IMPORTANT ** Default Router Code for Apps? <-- DONE

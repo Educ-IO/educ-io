@@ -1,4 +1,8 @@
 site :
+  0.0.8i :
+    name: Contrite Penguin 404 Page
+    desc: Service worker responds with 404 page to not-found requests
+    type: minor
   0.0.8h :
     name: Default Router for Apps
     desc: Default router code to handle common routing scenarios
