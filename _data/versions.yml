@@ -1,4 +1,8 @@
 site :
+  0.0.8l :
+    name: More Contrition
+    desc: Even more penguin contrition!
+    type: minor
   0.0.8k :
     name: Folders 0.0.6a-alpha
     desc: Visibility Searching (Domain, Public)
