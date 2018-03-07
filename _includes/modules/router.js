@@ -32,6 +32,7 @@ Router = function() {
     if (test && test()) {
 			ಠ_ಠ.container.empty() && ಠ_ಠ.Display.state().exit(states).protect("a.jump").off();
 			if (fn) fn();
+			return true;
 		}
     
 	};
@@ -147,7 +148,7 @@ Router = function() {
       
 		},
     
-    clean: (restart) => _end() && (restart && _start()),
+    clean: restart => _end() && (restart && _start()),
 		
    /* <!-- External Functions --> */
     

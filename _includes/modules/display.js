@@ -22,7 +22,7 @@ Display = function() {
 
 	var _arrayize = (value, test) => value && test(value) ? [value] : value;
 
-	var _bytes = function(bytes, decimals) {
+	var _bytes = (bytes, decimals) => {
 		if (!bytes || _.isNaN(bytes) || bytes === 0 || bytes === "0") return "";
 		var k = 1024,
 			dm = decimals || 2,
@@ -43,7 +43,7 @@ Display = function() {
   var _popovers = (targets, options) => targets.popover(_.defaults(options ? options : {}, {trigger: "focus"}));
   var _tooltips = (targets, options) => targets.tooltip(_.defaults(options ? options : {}, {trigger: "hover", placement : _placement}));
 	
-	var _target = function(options) {
+	var _target = options => {
 
 		/* <!-- Ensure we have a target _element, and that it is wrapped in JQuery --> */
 		var _element = (options && options.target) ? options.target : (_root ? _root : $("body"));
@@ -52,7 +52,7 @@ Display = function() {
 
 	};
 
-	var _compile = function(name) {
+	var _compile = name => {
 		
 		var _template = $("#__template__" + name);
 		if (_template.length == 1) {
@@ -79,18 +79,14 @@ Display = function() {
 		}
 	};
 
-	var _template = function(name) {
+	var _template = name => {
 
 		return Handlebars.templates === undefined || Handlebars.templates[name] === undefined ?
 			_compile(name) : Handlebars.templates[name];
 
 	};
 	
-	var _clean = function() {
-		/* <!-- Weird Modal Not Hiding Bug --> */
-		$(".modal-backdrop").remove();
-		$(".modal-open").removeClass("modal-open");
-	};
+	var _clean = () => $(".modal-backdrop").remove() && $(".modal-open").removeClass("modal-open"); /* <!-- Weird Modal Not Hiding Bug --> */
 	/* <!-- Internal Functions --> */
 
 	/* <!-- External Visibility --> */
@@ -125,11 +121,11 @@ Display = function() {
 					}
 				});
 
-				Handlebars.registerHelper("localeDate", function(variable) {
+				Handlebars.registerHelper("localeDate", variable => {
 					if (variable && variable instanceof Date) return variable.toLocaleString();
 				});
 				
-				Handlebars.registerHelper("formatBytes", function(variable) {
+				Handlebars.registerHelper("formatBytes", variable => {
 					if (variable && !isNaN(variable) && variable > 0) return _bytes(variable, 2);
 				});
 
@@ -177,7 +173,7 @@ Display = function() {
 
 				});
 				
-				Handlebars.registerHelper("concat", function() {
+				Handlebars.registerHelper("concat", () => {
 					var _return = "";
 					for(var argument in arguments){
 						if (typeof arguments[argument] != "object") {
@@ -187,7 +183,7 @@ Display = function() {
 					return _return;
 				});
 
-				Handlebars.registerHelper("inc", function(number, options) {
+				Handlebars.registerHelper("inc", (number, options) => {
 					if(typeof(number) === "undefined" || number === null) return null;
 					return number + (options && options.hash.inc || 1);
 				});
@@ -259,7 +255,7 @@ Display = function() {
 
 		template: {
 
-			get: function(options) {
+			get: options => {
 
 				return (_ && _.isString(options)) ? _template(options) : _template(options.template ? options.template : options.name)(options);
 
@@ -319,14 +315,8 @@ Display = function() {
 				_target(options).append(dialog);
 
 				/* <!-- Set Event Handlers --> */
-				dialog.find("button.btn-primary").click(function() {
-					_clean();
-					resolve(true);
-				});
-				dialog.on("hidden.bs.modal", function() {
-					dialog.remove();
-					reject();
-				});
+				dialog.find("button.btn-primary").click(() => _clean() && resolve(true));
+				dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
 
 				/* <!-- Show the Modal Dialog --> */
 				dialog.modal("show");
@@ -355,7 +345,7 @@ Display = function() {
 					/* <!-- Set Form / Return Event Handlers --> */
 					if (dialog.find("button.btn-primary").length > 0) {
 						
-						dialog.find("button.btn-primary").click(function(evt) {
+						dialog.find("button.btn-primary").click(evt => {
 							
 							var _valid = true;
 							dialog.find("form.needs-validation").each((i,form) => {
@@ -364,7 +354,7 @@ Display = function() {
 							});
 							var _values = dialog.find("form").serializeArray();
 							var _indeterminate = dialog.find("form input:indeterminate");
-							$.each(_indeterminate, function(i, el) {_values.push({name : el.name, value : "all"})});
+							$.each(_indeterminate, (i, el) => {_values.push({name : el.name, value : "all"});});
 							if (options.validate && !options.validate(_values)) _valid = false;
 							if (_valid) {
 								_clean();
@@ -397,10 +387,7 @@ Display = function() {
 				if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
 				
 				/* <!-- Set Basic Event Handlers --> */
-				dialog.on("hidden.bs.modal", function() {
-					dialog.remove();
-					resolve();
-				});
+				dialog.on("hidden.bs.modal", () => dialog.remove() && resolve());
 
 				/* <!-- Show the Modal Dialog --> */
 				dialog.modal("show");
@@ -428,14 +415,12 @@ Display = function() {
 				_target(options).prepend(dialog);
 
 				/* <!-- Set Event Handler (if required) --> */
-				if (options.action) dialog.find("button.action").click(function() {
+				if (options.action) dialog.find("button.action").click(() => {
 					resolve(true);
 					dialog.alert("close");
 				});
 
-				dialog.on("closed.bs.alert", function() {
-					resolve(false);
-				});
+				dialog.on("closed.bs.alert", () => resolve(false));
 
 				/* <!-- Show the Alert --> */
 				dialog.alert();
@@ -468,18 +453,13 @@ Display = function() {
 				_target(options).append(dialog);
 
 				/* <!-- Set Event Handlers --> */
-				dialog.find("button.btn-primary").click(function() {
+				dialog.find("button.btn-primary").click(() => {
 					var _value = dialog.find("input[name='choices']:checked, select[name='choices'] option:selected").val();
-					
 					_clean();
-					
 					if (_value && options.choices[_value]) resolve(options.choices[_value]);
-
 				});
-				dialog.on("hidden.bs.modal", function() {
-					dialog.remove();
-					reject();
-				});
+				
+				dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
 
 				/* <!-- Show the Modal Dialog --> */
 				dialog.modal("show");
@@ -515,7 +495,7 @@ Display = function() {
 				});
 
 				/* <!-- Set Event Handlers --> */
-				dialog.find("button.btn-primary").click(function() {
+				dialog.find("button.btn-primary").click(() => {
 					var _return = [];
 					dialog.find("div.input-group").each(function() {
 						var e = $(this);
@@ -526,11 +506,8 @@ Display = function() {
 					});
 					resolve(_return);
 				});
-				dialog.on("shown.bs.modal", function() {});
-				dialog.on("hidden.bs.modal", function() {
-					dialog.remove();
-					reject();
-				});
+				dialog.on("shown.bs.modal", () => {});
+				dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
 
 				/* <!-- Show the Modal Dialog --> */
 				dialog.modal("show");
@@ -561,18 +538,14 @@ Display = function() {
 				_target(options).append(dialog);
 
 				/* <!-- Set Event Handlers --> */
-				dialog.find("button.btn-primary").click(function() {
+				dialog.find("button.btn-primary").click(() => {
 					var _name = dialog.find("textarea[name='name'], input[type='text'][name='name']").val();
 					var _value = dialog.find("textarea[name='value'], input[type='text'][name='value']").val();
 					_clean();
 					if (_value && (!options.validate || options.validate.test(_value))) 
 						resolve(_name ? {name: _name, value: _value} : _value);
-
 				});
-				dialog.on("hidden.bs.modal", function() {
-					dialog.remove();
-					reject();
-				});
+				dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
 
 				/* <!-- Show the Modal Dialog --> */
 				dialog.modal("show");
@@ -600,7 +573,7 @@ Display = function() {
 				_target(options).append(dialog);
 
 				/* <!-- Handle Files Population --> */
-				var _populate = function() {
+				var _populate = () => {
 					var _files = $(_template("files")(files));
 					_files.find("a.close").click(e => {
 						e.preventDefault();		
@@ -611,20 +584,17 @@ Display = function() {
 				};
 				
 				/* <!-- Handle File Upload --> */
-				dialog.find("input[type='file']").on("change", function upload(e) {
+				dialog.find("input[type='file']").on("change", e => {
 					files = options.single ? _.toArray(e.target.files) : files.concat(_.toArray(e.target.files));
 					if (files.length > 0) _populate();
 				});
 				
 				/* <!-- Set Event Handlers --> */
-				dialog.find("button.btn-primary").click(function() {
+				dialog.find("button.btn-primary").click(() => {
 					_clean();
 					if (files && files.length > 0) resolve(options.single ? files[0] : files);
 				});
-				dialog.on("hidden.bs.modal", function() {
-					dialog.remove();
-					reject();
-				});
+				dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
 
 				/* <!-- Show the Modal Dialog --> */
 				dialog.modal("show");
@@ -677,11 +647,8 @@ Display = function() {
 					});
 					
 				});
-				dialog.on("shown.bs.modal", function() {});
-				dialog.on("hidden.bs.modal", function() {
-					dialog.remove();
-					reject();
-				});
+				dialog.on("shown.bs.modal", () => {});
+				dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
 
 				/* <!-- Show the Modal Dialog --> */
 				dialog.modal("show");
@@ -697,15 +664,15 @@ Display = function() {
 
 			return {
 
-				on: function(message_doc, title) {
-					_selector.off("click.protect").on("click.protect", function(e) {
+				on: (message_doc, title) => {
+					_selector.off("click.protect").on("click.protect", e => {
 						e.preventDefault();
 						_parent.confirm({
 							id: "__protect_confirm",
 							title: title,
 							message: _parent.doc.get(message_doc),
 							action: "Proceed"
-						}).then(function() {
+						}).then(() => {
 							var link = $(e.target);
 							if (!link.is("a")) link = link.closest("a");
 							var target = link.attr("target");
@@ -714,12 +681,12 @@ Display = function() {
 							} else {
 								window.location = link.attr("href");
 							}
-						}).catch(function() {});
+						}).catch(() => {});
 					});
 					return _parent;
 				},
 
-				off: function() {
+				off: () => {
 					_selector.off("click.protect");
 					return _parent;
 				},
@@ -732,7 +699,7 @@ Display = function() {
 
 			var _parent = this;
 
-			var _add = function(name) {
+			var _add = name => {
 				if (!_state[name]) {
 					_state[name] = true;
 					return true;
@@ -740,7 +707,7 @@ Display = function() {
 				return false;
 			};
 
-			var _remove = function(name) {
+			var _remove = name => {
 				if (_state[name]) {
 					delete _state[name];
 					return true;
@@ -748,7 +715,7 @@ Display = function() {
 				return false;
 			};
 
-			var _all = function() {
+			var _all = () => {
 				var _ret = [];
 				for (var name in _state) {
 					if (_state.hasOwnProperty(name)) _ret.push(name);
@@ -757,7 +724,7 @@ Display = function() {
 			};
 
 			return {
-				enter: function(names) {
+				enter: names => {
 					names = _arrayize(names, _.isString);
 					_.each(names, name => {
 						if (_add(name)) $(".state-" + name).removeClass("disabled");
@@ -765,7 +732,7 @@ Display = function() {
 					return _parent;
 				},
 
-				exit: function(names) {
+				exit: names => {
 					names = _arrayize(names, _.isString);
 					_.each(names, name => {
 						if (_remove(name)) {
@@ -776,7 +743,7 @@ Display = function() {
 					return _parent;
 				},
 
-				clear: function() {
+				clear: () => {
 					_all().forEach((v) => _remove(v) ? $(".state-" + v).addClass("disabled") : null);
 					return _parent;
 				},

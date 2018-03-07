@@ -1,4 +1,8 @@
 site :
+  0.0.8m :
+    name: Folders 0.0.6b-alpha
+    desc: Bug Fixes
+    type: minor
   0.0.8l :
     name: More Contrition
     desc: Even more penguin contrition!
@@ -362,8 +366,8 @@ view :
     type : minor
 folders :
   0.0.6a-alpha :
-    name : Visibility Searching (Domain, Public)
-    desc : Added the ability to search by share visibility
+    name : Bug Fixes
+    desc : Improved Tag / Convert processes to reflect filtered selections (rather than everything)
     type : minor
   0.0.6-alpha :
     name : API Bug Fixes and Improvements

@@ -240,15 +240,11 @@ App = function() {
 
 					} else if ((/CLOSE/i).test(command)) {
 
-						if (_folder) {
-
-							if ((/RESULTS/i).test(command[1])) {
-								ಠ_ಠ.Display.state().exit([STATE_SEARCHED]);
-								_folder.close();
-							} else {
-								ಠ_ಠ.Router.clean(true);
-							}
-
+						if ((/RESULTS/i).test(command[1])) {
+							ಠ_ಠ.Display.state().exit([STATE_SEARCHED]);
+							if (_folder) _folder.close();
+						} else {
+							ಠ_ಠ.Router.clean(true);
 						}
 
 					} else if ((/REMOVE/i).test(command)) {

@@ -13,6 +13,8 @@ General
 
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set? | Also JWT Token for Folders?
 
+* ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
+
 Datatable
 ---------
 
@@ -49,6 +51,9 @@ Mobile
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 
+Links
+-----
+
 Cover
 -----
 
@@ -72,7 +77,7 @@ View
 
 Folders
 -------
-* ** IMPORTANT ** IMPROVEMENT : Convert and Delete etc should operate on column filtered views (need to hook back after update mechanism)
+
 * ** IMPORTANT ** FEATURE: Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
 * CODE : Swap table from expanding to fixed with flex wrapping for custom properties and long ids -> Also vertically centre row content.
 * CODE : Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => { -- Better to save out form values than encode / decode
@@ -100,6 +105,7 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT ** IMPROVEMENT : Convert and Delete etc should operate on column filtered views (need to hook back after update mechanism) <-- DONE
 * Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency? <-- DONE
 * Contrite Penguin 404 Page <== DONE
 * ** BUG ** Pop-Up block on un-authorised Apps from button or menu item (rather than sign-in buttton) -> Check full page fallback. (Including on requesting extra scopes, e.g. View) <== DONE

@@ -22,7 +22,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var locate = (row) => {
+	var locate = row => {
+			ಠ_ಠ.Flags.log(`Locating Row: ${row}`);
 			var _position = row.position().top - row.height();
 			ಠ_ಠ.Flags.log(`Setting scroll position for id=${row.attr("id")} to ${_position}`);
 			row.parents("div.tab-pane").animate({
@@ -785,10 +786,11 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 	};
 
-	var _convertItems = function(id) {
+	var _convertItems = function(id, file_id) {
 
 		var _collection;
 		if (!(_collection = _db.getCollection(id))) return;
+		var _results = file_id ? [_collection.by("id", file_id)] : _tables[id].data();
 
 		var _decode = (values) => {
 			var _return = {
@@ -807,7 +809,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 			_convert = ಠ_ಠ.Display.modal("convert", {
 				id: _id,
 				target: ಠ_ಠ.container,
-				title: "Convert Files",
+				title: `Convert <strong class="text-secondary">${ಠ_ಠ.Display.commarise(_results.length)}</strong> File${_results.length > 1 ? "s" : ""}`,
 				instructions: ಠ_ಠ.Display.doc.get("CONVERT_INSTRUCTIONS"),
 				state: state && state.convert ? state.convert : null,
 				shortcuts: {
@@ -935,14 +937,12 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 			});
 
-		_convert.then((values) => {
+		_convert.then(values => {
 
 			if (values) {
 
 				$(".tab-pane.active .file-name.action-succeeded, .tab-pane.active .file-name.action-failed")
 					.removeClass("action-succeeded text-success action-failed text-danger font-weight-bold");
-
-				var _results = _collection.chain().data();
 
 				ಠ_ಠ.Flags.log(`CONVERSION STARTED: ${_results.length} items to convert`);
 
@@ -1075,7 +1075,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 		var _collection;
 		if (!(_collection = _db.getCollection(id))) return;
-
+		var _results = file_id ? [_collection.by("id", file_id)] : _tables[id].data();
+		
 		var _decode = (values) => {
 			var _return = {
 				name: _.find(values, v => v.name == "name") ? _.find(values, v => v.name == "name").value : null,
@@ -1089,7 +1090,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 			_tag = ಠ_ಠ.Display.modal("tag", {
 				id: _id,
 				target: ಠ_ಠ.container,
-				title: "Tag Files",
+				title: `Tag <strong class="text-secondary">${ಠ_ಠ.Display.commarise(_results.length)}</strong> File${_results.length > 1 ? "s" : ""}`,
 				instructions: ಠ_ಠ.Display.doc.get("TAG_INSTRUCTIONS"),
 				state: state && state.tag ? state.tag : null,
 				shortcuts: {
@@ -1217,11 +1218,9 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				autosize(dialog.find("textarea.resizable"));
 			});
 
-		_tag.then((values) => {
+		_tag.then(values => {
 
 			if (!values) return;
-
-			var _results = file_id ? [_collection.by("id", file_id)] : _collection.chain().data();
 
 			ಠ_ಠ.Flags.log(`TAG STARTED: ${_results.length} items to tag`);
 
@@ -1270,11 +1269,12 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 		var _collection;
 		if (!_search || !(_collection = _db.getCollection(_search))) return;
-
+		var _items =  _tables[_search].data();
+		
 		ಠ_ಠ.Display.confirm({
 			id: "delete_results",
 			target: ಠ_ಠ.container,
-			message: "Please confirm that you want to delete " + _collection.count() + " items.",
+			message: "Please confirm that you want to delete " + _items.length + " items.",
 			action: "Delete"
 		}).then((confirm) => {
 
@@ -1331,8 +1331,6 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 					}
 
 				};
-
-				var _items = _collection.chain().data();
 
 				/* <!-- Start Recursively Deleting Items --> */
 				_delete_Item(_items.shift(), _items, {

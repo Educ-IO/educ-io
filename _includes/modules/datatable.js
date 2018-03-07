@@ -4,7 +4,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 	/* <!-- options = {filters, inverted_Filters, sorts, widths, frozen, readonly, advanced, collapsed} --> */
 
 	/* <!-- Filters --> */
-	var Filters = function(options) {
+	var Filters = options => {
 
 		/* <!-- Internal Variables --> */
 		var _normal = options.filters ? options.filters : {},
@@ -14,7 +14,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		/* <!-- Internal Methods --> */
 		var _padZero = (number, digits) => Array(Math.max(digits - String(number).length + 1, 0)).join(0) + number;
 
-		var _createQuery = function(filters, join) {
+		var _createQuery = (filters, join) => {
 			var _query, _join = join ? join : "$and";
 			_.map(Object.keys(filters), field => {
 				var _condition = {};
@@ -34,7 +34,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			return _query;
 		};
 
-		var _addFilter = function(field, value, normal, inverted) {
+		var _addFilter = (field, value, normal, inverted) => {
 			var _invert, _filter;
 			if (value.startsWith("!!")) {
 				_invert = true;
@@ -131,7 +131,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			}
 		};
 
-		var _removeFilter = function(field, normal, inverted) {
+		var _removeFilter = (field, normal, inverted) => {
 			if (normal[field]) {
 				delete normal[field];
 				return true;
@@ -147,16 +147,16 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 			add: (field, value) => _addFilter(field, value, _normal, _inverted),
 
-			get: (field) => _inverted[field] ? {
+			get: field => _inverted[field] ? {
 				filter: _inverted[field],
 				inverted: true
 			} : _normal[field] ? {
 				filter: _normal[field]
 			} : null,
 
-			remove: (field) => _removeFilter(field, _normal, _inverted),
+			remove: field => _removeFilter(field, _normal, _inverted),
 
-			filter: (rows) => {
+			filter: rows => {
 				if (!$.isEmptyObject(_inverted)) {
 					ಠ_ಠ.Flags.log("Applying Inverted Filters", _inverted);
 					var _inversion = _createQuery(_inverted, "$or");
@@ -187,7 +187,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Initialisation Functions --> */
-	var _initialise = function() {
+	var _initialise = () => {
 
 		/* <!-- Get 'Default' Filters and Searches if applicable --> */
 		_filters = Filters(options);
@@ -219,8 +219,8 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 	/* <!-- Initialisation Functions --> */
 
 	/* <!-- Internal Functions --> */
-	var _getRows = function() {
-
+	var _getData = () => {
+		
 		ಠ_ಠ.Flags.log("Getting Rows from Data");
 
 		var _rows = table.data.chain();
@@ -240,9 +240,17 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		});
 		
 		ಠ_ಠ.Flags.log("Data After Filtering & Sorting", _rows);
+		
+		return _rows;
+		
+	};
+	
+	var _getRows = () => {
+
+		var _rows = _getData();
 
 		ಠ_ಠ.Flags.log("Applying Column Hides", table.headers);
-		return _rows.map((v) => {
+		return _rows.map(v => {
 			table.headers.forEach((f, i) => {
 				if (f.hide()) delete v[f.field ? f.field : i];
 			});
@@ -251,7 +259,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 	};
 
-	var _clearVisibilities = function() {
+	var _clearVisibilities = () => {
 		_css.delete("table-column-visibility");
 		target.find(".to-hide-prefix").removeClass("to-hide-prefix");
 	};
@@ -268,14 +276,14 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		}
 	};
 	
-	var _updateHeaders = function(container, defaults) {
+	var _updateHeaders = (container, defaults) => {
 
 		var query = ".table-header[data-index]";
 		var _headers = (container ? container.find(query) : target.find(query)).sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index));
 
 		var _style = _css.sheet("table-column-tohide");
 
-		_headers.each(function(i, el) {
+		_headers.each((i, el) => {
 
 			var _t = $(el),
 				_i = parseInt(_t.data("index")),
@@ -316,7 +324,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		/* <!-- Collapse by default --> */
 		if (options.collapsed) {
 			query = ".table-header[data-index].to-hide";
-			(container ? container.find(query) : target.find(query)).each(function(i, el) {
+			(container ? container.find(query) : target.find(query)).each((i, el) => {
 				if (!el.nextElementSibling || !$(el.nextElementSibling).hasClass("to-hide")) {
 					var _target = $(el),
 					_last = (_target.hasClass("to-hide") && !_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0),
@@ -329,14 +337,12 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		return container;
 	};
 
-	var _updateRows = function() {
+	var _updateRows = () => {
 		var _rows = $(ಠ_ಠ.Display.template.get("rows")({
 			rows: _getRows()
 		}));
 		if (_advanced) {
-			_advanced.scroll.update(_rows.toArray().map(function(e) {
-				return e.outerHTML;
-			}));
+			_advanced.scroll.update(_rows.toArray().map(e =>e.outerHTML));
 		} else {
 			target.find("#" + _name + " tbody").empty().append(_rows);
 			target.find("[data-toggle='popover']").popover({
@@ -346,12 +352,12 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		if (after_update) after_update(target);
 	};
 
-	var _update = function(rows, headers, container, defaults) {
+	var _update = (rows, headers, container, defaults) => {
 		if (rows) _updateRows();
 		if (headers) _updateHeaders(container, defaults);
 	};
 
-	var _clearFilter = function(t) {
+	var _clearFilter = t => {
 		var _target = $(t);
 		_target.parents("div.input-group").find("input[type='text']").val("");
 		_filters.remove(_target.data("field"));
@@ -359,7 +365,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		_update(true, true, target);
 	};
 
-	var _createRows = (rows) => ಠ_ಠ.Display.template.get("rows")({
+	var _createRows = rows => ಠ_ಠ.Display.template.get("rows")({
 		rows: rows
 	});
 
@@ -399,7 +405,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		table: table ? table : _createDisplayTable()
 	}));
 
-	var _showValues = function() {
+	var _showValues = () => {
 
 		/* <!-- Get Table to Display (Updating the Headers at the same time) --> */
 		/* <!-- NEED TO APPEND LATER TO STOP VISUAL FLASH OF SCROLLBARS ?? --> */
@@ -419,7 +425,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			}
 		}).off("input").on("input", (e) => {
 			clearTimeout(_filter_Timeout);
-			_filter_Timeout = setTimeout(function() {
+			_filter_Timeout = setTimeout(() => {
 				if (e && e.target) {
 					var _target = $(e.target);
 					var _action = _target.data("action");
@@ -501,7 +507,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			if (_complete) _complete();
 		});
 
-		target.find(".table-header a").on("click", function(e) {
+		target.find(".table-header a").on("click", e => {
 			e.preventDefault();
 			var target = $($(e.target).data("target"));
 			target.fadeToggle().promise().done(() => target.find("input[type='text']:visible").first().focus());
@@ -519,7 +525,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		
 	}; /* <!-- End Show --> */
 
-	var _columnVisibility = function() {
+	var _columnVisibility = () => {
 
 		var _choices = options.visibilities;
 		
@@ -535,7 +541,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			inline: true,
 			choices_label: "Menu for controlling the visibility of this column",
 			choices: _choices
-		}).then(function(options) {
+		}).then(options => {
 
 			if (options && options.length > 0) {
 
@@ -547,7 +553,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 				ಠ_ಠ.Flags.log("Current Headers", table.headers).log("Received Options", options);
 
 				/* <!-- Send List of Columns to hide --> */
-				options.forEach((v) => table.headers[v.name].set_hide(
+				options.forEach(v => table.headers[v.name].set_hide(
 					_choices.now && v.value === _choices.now.name, 
 					_choices.always && v.value === _choices.always.name, 
 					_choices.initially && v.value === _choices.initially.name));
@@ -562,9 +568,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 			}
 
-		}, function(e) {
-			if (e) ಠ_ಠ.Flags.error("Select Column Visibility", e);
-		});
+		}, e => e ? ಠ_ಠ.Flags.error("Select Column Visibility", e) : false);
 
 	};
 	/* <!-- Internal Functions --> */
@@ -581,13 +585,11 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			visibility: () => _columnVisibility()
 		},
 
-		defaults: function() {
+		defaults: () => {
 
 			_initialise(); /* <!-- Run initial variable initialisation --> */
 
-			table.headers.forEach(function(v) {
-				if (v.set_hide) v.set_hide(v.hide_default, false, false);
-			});
+			table.headers.forEach(v =>  v.set_hide ? v.set_hide(v.hide_default, false, false) : false);
 
 			target.find("input.table-search").val("");
 			target.find("div.form.column-settings").hide();
@@ -595,12 +597,14 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			_update(true, true, target, true);
 		},
 
-		freeze: function(rows_only) {
+		freeze: rows_only => {
 			if (_advanced) _advanced.freeze.init((options.frozen && !rows_only) ? options.frozen.cols : 0).toggle();
 		},
 
 		name: () => table.name,
 
+		data: () => _getData(),
+		
 		values: filtered => {
 			var _html = filtered ? $(_createDisplayTable()) : $(_createDefaultTable());
 			var _return = [_.map(_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray(), el => el.textContent.trim())];
