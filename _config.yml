@@ -1,7 +1,7 @@
 # Global
 safe:									true
 exclude:							[TODO.md, REPOSITORY.md, CNAME, Gemfile, Gemfile.lock]
-include:							[__tests__, __puppeteer__, _pages, _apps, _guides, _tutorials, _extensions, _tools, _others, _extras, _scripts]
+include:							[_pages, _apps, _guides, _tutorials, _extensions, _tools, _others, _extras, _scripts]
 timezone:							Europe/London
 
 # Dependencies
@@ -29,7 +29,7 @@ compress_html:
 permalink:						pretty
 
 # Setup
-title:								"Educ.io"
+title:								"Educ.IO"
 byline:								""
   
 description:					"Web Apps & Tools built for Google Apps"
@@ -38,7 +38,7 @@ baseurl:							/
 support:              "Get help, and support our work!"
 repo:                 https://github.com/Educ-IO/educ-io.github.io
 author:
-  name:								"Educ.io"
+  name:								"Educ.IO"
   url:								https://github.com/educ-io
 
 # Custom variables

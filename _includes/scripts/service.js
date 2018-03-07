@@ -129,11 +129,18 @@ var URLS = [
 ];
 /*jshint ignore:end*/
 
-var content_NotFound = '{% include error.html %}';
-var response_NotFound = function() {
-  var penguin = new Blob([content_NotFound], {type : "text/html"});
-  return new Response(penguin, { "status" : 404 , "statusText" : "Contrite Penguin" });  
+var content_Error = '{% include error.html %}';
+var response_Error = function(code) {
+  var penguin = new Blob([content_Error], {type : "text/html"});
+  return new Response(penguin, { "status" : code , "statusText" : "Contrite Penguin" });  
 };
+var response_NotFound = function() {
+  return response_Error(404);
+};
+var response_ServerError = function() {
+  return response_Error(500);
+};
+
 
 /* <!-- Get Caching Promises --> */
 var cache_Promises = function(now, cache) {
@@ -244,7 +251,7 @@ self.addEventListener("fetch", function(event) {
         }).catch(function(e) {
 
           console.error("Failed SW Fetch:", e);
-          return response_NotFound();
+          return response_ServerError();
           
         });
         
