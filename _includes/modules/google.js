@@ -8,7 +8,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 	/* === Internal Visibility === */
 
 	/* <!-- Internal Constants --> */
-	const PAGE_SIZE = 500, BATCH_SIZE = 50, PATH_LIMIT = 1000;
+	const PAGE_SIZE = 500, BATCH_SIZE = 50, PATH_LIMIT = 100;
 
 	const READER = function() {
 
@@ -147,7 +147,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-	var _arrayize = (value, test) => value && test(value) ? [value] : value;
+	var _arrayize = (value, test) => value && test(value) ? [value] : !value ? [] : value;
 
 	var _list = (url, property, list, data, next) => {
 
@@ -302,7 +302,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 			pageSize: PAGE_SIZE,
 			q: "trashed = false" + _i + _n + _m + _e + _p + _v + _s,
 			orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-			fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,size,parents,mimeType" + (team ? ",teamDriveId" : "") + ")" : "kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties,appProperties" + (team ? ",teamDriveId" : "") + ")",
+			fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,name,size,parents,mimeType" + (team ? ",teamDriveId" : "") + ")" : "kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties,appProperties" + (team ? ",teamDriveId" : "") + ")",
 		};
 
 		if (team) {
@@ -323,7 +323,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 			return new Promise(resolve => {
 
 				var _complete = item => {
-					if (item) chain.push(item.name);
+					if (item) chain.push(item);
 					resolve(_paths(item ? item.parents : [], chain, all, cache, team));
 				};
 
@@ -334,8 +334,10 @@ Google_API = function(ಠ_ಠ, timeout) {
 				} else {  /* <!-- Set-Up Fetch --> */
 					if (!cache.__pending) cache.__pending = {};
 					cache.__pending[parent] = [];
+					/* <!-- Batcher to be inserted here --> */
 					_get(parent, team).then(item => {
 						cache[item.id] = {
+							id: item.id,
 							name: item.name,
 							parents: item.parents
 						};
@@ -358,7 +360,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 					Promise.all(promises).then(() => resolve(all));
 				}
 			} else {
-				all.push(chain.reverse().join(" \\ "));
+				all.push(chain.reverse());
 				resolve(all);
 			}
 		});
@@ -379,18 +381,20 @@ Google_API = function(ಠ_ಠ, timeout) {
 				if (includes) c = _.filter(c, item => _.some(includes, (i) => i(item)));
 
 				/* <!-- Get the ids of all the folders included in the raw set --> */
-				var next = recurse ? _.filter(c, item => item.mimeType === FOLDER) : [];
-				_.each(next, item => cache[item.id] = {
+				var _cache = item => cache[item.id] = {
+					id: item.id,
 					name: item.name,
 					parents: item.parents
-				});
+				};
+				var next = recurse ? _.filter(c, item => item.mimeType === FOLDER) : [];
+				_.each(next, _cache);
 				next = _.map(next, f => f.id);
 
 				/* <!-- Batch these IDs into Arrays with length not longer than BATCH_SIZE --> */
 				var batches = _.chain(next).groupBy((v, i) => Math.floor(i / BATCH_SIZE)).toArray().value();
 
 				/* <!-- Make an array of promises to resolve with the results of these searches --> */
-				var p = recurse ? _.map(batches, batch => _search(batch, recurse, folders, names, mimeTypes, excludes, includes, properties, team, cache, totals)) : [];
+				var p = recurse ? _.map(batches, batch => _search(batch, recurse, folders, names, mimeTypes, excludes, includes, properties, visibilities, shared, team, cache, totals)) : [];
 
 				/* <!-- Filter to remove the folders if we are not returning them --> */
 				if (!folders) c = _.reject(c, item => item.mimeType === FOLDER);
@@ -401,18 +405,14 @@ Google_API = function(ಠ_ಠ, timeout) {
 				/* <!-- Resolve this promise whilst resolving the recursive promises too if available --> */
 				var _finish = items => p && p.length > 0 ? Promise.all(p).then(r => resolve(_.reduce(r, (c, v) => v && v.length > 0 ? c.concat(v) : c, items))).catch(e => reject(e)) : resolve(items);
 				
+				/* <!-- Resolve the paths promises before moving on --> */
+				var _getPaths = () => Promise.all(_.map(c, item => new Promise(resolve => _paths(item.parents, [], [], cache, team).then(paths => (item.paths = paths) && resolve(item))))).then(_finish);
+				
 				/* <!-- Add in the current path value to each item --> */
-				if (c.length <= PATH_LIMIT) {
-					
-					/* <!-- Resolve the paths promises before moving on --> */
-					Promise.all(_.map(c, item => new Promise(resolve => _paths(item.parents, [], [], cache, team).then(paths => (item.paths = paths) && resolve(item))))).then(_finish);
-					
-				}	else {
-					
-					_finish(c);
-					
-				}
-
+				(c.length <= PATH_LIMIT) || recurse ? 
+					_getPaths() : 
+					_contents(null, null, [FOLDER], null, null, null, null, true, team, null).then(f => _.each(f, _cache)).then(_getPaths);
+				
 			}).catch(e => reject(e));
 
 		});
@@ -512,6 +512,12 @@ Google_API = function(ಠ_ಠ, timeout) {
 			},
 
 			get: (id, team) => _get(id, team),
+			
+			copy: (id, team, file) => {
+				var _team = team ? `?teamDriveId=${team}&supportsTeamDrives=true` : "", 
+						_url = `drive/v3/files/${id}/copy${_team}`;
+				return _call(NETWORKS.general.post, _url, file);
+			},
 
 			export: (id, format) => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {
 				mimeType: format
@@ -535,35 +541,38 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		folders: {
 
-			check: (is) => (item) => is ? item.mimeType === FOLDER : item.mimeType !== FOLDER,
+			check: is => item => is ? item.mimeType === FOLDER : item.mimeType !== FOLDER,
 
-			is: (type) => type === FOLDER,
-
+			is: type => type === FOLDER,
+			
 			search: (ids, recurse, names, mimeTypes, excludes, includes, properties, visibilities, shared, team, basic) => {
-				var folders = (mimeTypes = _arrayize(mimeTypes, _.isString)).indexOf(FOLDER) >= 0;
+				var _folders = (mimeTypes = _arrayize(mimeTypes, _.isString)).indexOf(FOLDER) >= 0;
 				return basic ? 
 					_search(null, false, false, names, mimeTypes, null, null, properties, visibilities, shared, team, _nameCache, {folders: 0}) : 
 					_search(
-						_arrayize(ids, _.isString), recurse, folders, names,
-						recurse && mimeTypes && mimeTypes.length > 0 && !folders ? [FOLDER].concat(mimeTypes) : mimeTypes,
+						_arrayize(ids, _.isString), recurse, _folders, names,
+						recurse && mimeTypes && mimeTypes.length > 0 && !_folders ? [FOLDER].concat(mimeTypes) : mimeTypes,
 						_arrayize(excludes, _.isFunction),
-						recurse && !folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), 
+						recurse && !_folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), 
 						properties, visibilities, shared, team, _nameCache, {folders: 0});
 			},
 
-			contents: (ids, mimeTypes, team) => _contents(_arrayize(ids, _.isString), null, _arrayize(mimeTypes, _.isString), null, null, null, null, false, team),
+			contents: (ids, mimeTypes, team, properties) => _contents(_arrayize(ids, _.isString), null, _arrayize(mimeTypes, _.isString), null, properties, null, null, false, team),
 
-			children: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, null, null, null, null, null, skeleton, team),
+			children: (ids, skeleton, team, properties) => _contents(_arrayize(ids, _.isString), null, null, null, properties, null, null, skeleton, team),
 
-			folders: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, [FOLDER], null, null, null, null, skeleton, team),
+			folders: (ids, skeleton, team, properties) => _contents(_arrayize(ids, _.isString), null, [FOLDER], null, properties, null, null, skeleton, team),
 
 			files: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, null, [FOLDER], null, null, null, skeleton, team),
+			
+			create: (name, parent, data, team) => _call(NETWORKS.general.post, "drive/v3/files" + (team ? "?supportsTeamDrives=true" : ""),
+																						_.defaults({mimeType: FOLDER, name: name, parents: _arrayize(parent, _.isString)}, data)),
 
 		},
 
 		sheets: {
 
-			create: (name) => _call(NETWORKS.sheets.post, "v4/spreadsheets", {
+			create: name => _call(NETWORKS.sheets.post, "v4/spreadsheets", {
 				"properties": {
 					"title": name
 				}

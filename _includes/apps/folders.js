@@ -269,11 +269,13 @@ App = function() {
 
 					} else if ((/CONVERT/i).test(command)) {
 
-						if (_folder) _folder.convert();
+						if (_folder) _folder.convert(((/TAG/i).test(command[0])) ? command[1] : null);
 
 					} else if ((/TAG/i).test(command)) {
 
 						if (_folder) _folder.tag(((/TAG/i).test(command[0])) ? command[1] : null);
+						
+
 
 					} else if ((/STAR/i).test(command[0]) && command[1]) {
 
@@ -292,10 +294,10 @@ App = function() {
 								_folder.search((/ROOT/i).test(command[1]) ? "root" : "");	
 							}
 						}
+						
+					} else if ((/CLONE/i).test(command)) {
 
-					} else if ((/REFINE/i).test(command)) {
-
-						if (_folder) _folder.refine();
+						if (_folder) _folder.clone(((/CLONE/i).test(command[0])) ? command[1] : null);
 
 					} else if ((/DELETE/i).test(command)) {
 

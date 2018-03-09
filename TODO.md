@@ -51,7 +51,7 @@ Mobile
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 
-Links
+Tiles
 -----
 
 Cover
@@ -65,6 +65,7 @@ View
 * ** IMPORTANT ** Column Filters (Type)
 
 * ** IMPORTANT ** Do went need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view <++ YES
+
 * Write Flexbox-based Fit Algorithm
   + Categorised data to 'pills' for display?
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
@@ -77,12 +78,14 @@ View
 
 Folders
 -------
+ 
+* ** BUG ** After refresh click (should be a menu item?) - ERROR - Requesting Selected Google Drive Folder Error: Duplicate key for property id: 
+* ** BUG ** Should pages (in searches) be relative to searched from root? Would be better for cloning.
 
-* ** IMPORTANT ** FEATURE: Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders
 * CODE : Swap table from expanding to fixed with flex wrapping for custom properties and long ids -> Also vertically centre row content.
 * CODE : Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => { -- Better to save out form values than encode / decode
 * CODE : State Save needs updating for new fields
-* FEATURE : Get Path by clicking on row in search?
+
 * FEATURE : Export Search Results to Sheets -> View
 * FEATURE : Accept Route in with File ID and Tag Value (from Tag-A-Doc for Reviewed) (Partly done)
 
@@ -103,8 +106,19 @@ Reflect
 * Email group from above.
 * Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS
 
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
 Complete
 --------
+* ** IMPORTANT ** FEATURE: Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders <-- DONE
+  + Get Full Path Details for Search Results <-- DONE
+  + Write 'Batcher' to minimise API calls for paths (timed and numbered?) <-- Not sure it's possible with searching by IDs <-- DONE
+  + Sync isn't really sync - but pick up where left off? - should be assumed or ticked by default? <-- DONE
+* FEATURE : Get Path by clicking on row in search? <-- NOT NEEDED
+* ** BUG ** Tag Progress - last item not visually updated (if it is a folder...) <-- DONE
+* FEATURE : Remove Tag option in tagging interface <-- DONE
+* ** IMPORTANT ** FEATURE : Add Padlock to input controls on modal dialog to prevent shortcuts from overwriting them <-- DONE
 * ** IMPORTANT ** IMPROVEMENT : Convert and Delete etc should operate on column filtered views (need to hook back after update mechanism) <-- DONE
 * Should ಠ_ಠ.google be renamed to ಠ_ಠ.Google for consistency? <-- DONE
 * Contrite Penguin 404 Page <== DONE

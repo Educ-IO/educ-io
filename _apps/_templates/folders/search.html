@@ -3,7 +3,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modal_options_title">{{title}}</h5>
+        <h5 class="modal-title" id="modal_options_title">{{{title}}}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -12,12 +12,12 @@
         {{#if instructions}}{{{instructions}}}{{/if}}
 				{{#if shortcuts}}{{> populate_buttons shortcuts}}{{/if}}
 				<form>
-					<div class="row">
+					<div class="row mt-3">
 						<div class="col-12 col-lg-6">
 							<label for="nameContains">Names</label>
 							<button type="button" class="close" data-action="clear" data-clear="nameContains" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
     					<textarea id="nameContains" name="names" class="form-control resizable optional" rows="1">{{#if state}}{{state.names}}{{/if}}</textarea>
-							<small class="form-text text-muted">File Names to search for (<strong>OR</strong>), one per line.</small>
+							<small class="form-text text-muted">File Names to search for (<strong>OR</strong>, <strong>ALL</strong> if blank), one per line.</small>
 						</div>
 						<div class="col-12 col-lg-6 align-self-center">
 							<div class="d-flex flex-column flex-wrap flex-md-row">
@@ -41,16 +41,18 @@
 							</div>
 						</div>
 					</div>
-					<div class="row">
+					<div class="row mt-3">
 						<div class="col-12 col-lg-6">
 							<label for="mimeTypes">Mime Types</label>
 							<button type="button" class="close" data-action="clear" data-clear="mimeTypes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="mimeTypes" aria-label="Lock"><i class="material-icons">lock_open</i></button>
 							<textarea id="mimeTypes" name="mime" class="form-control resizable optional small" rows="1">{{#if state}}{{state.mime}}{{/if}}</textarea>
-							<small class="form-text text-muted">Mime Types to search for (<strong>OR</strong>), one per line.</small>	
+							<small class="form-text text-muted">Mime Types to search for (<strong>OR</strong>, <strong>ALL</strong> if blank), one per line.</small>	
 						</div>
 						<div class="col-12 col-lg-6">
 							<label for="includeProperties">Properties</label>
 							<button type="button" class="close" data-action="clear" data-clear="includeProperties" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="includeProperties" aria-label="Lock"><i class="material-icons">lock_open</i></button>
     					<textarea id="includeProperties" name="properties" class="form-control resizable optional small" rows="1">{{#if state}}{{state.properties}}{{/if}}</textarea>
 							<small class="form-text text-muted">Properties to search for (<strong>AND</strong>), one per line (you can use key, key= | &gt;= | &lt;= | !=value format).</small>	
 						</div>
@@ -58,26 +60,28 @@
 					<div class="row">
 						<div class="form-group col-12 col-lg-6">
 							<label for="excludeRegexes">Exclude (Regexes)</label>
-						<button type="button" class="close" data-action="clear" data-clear="excludeRegexes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="excludeRegexes" name="exclude" class="form-control resizable optional small" rows="1">{{#if state}}{{state.exclude}}{{/if}}</textarea>
-						<small class="form-text text-muted">Regexes to exclude search results (<strong>OR</strong>), one per line.</small>
+							<button type="button" class="close" data-action="clear" data-clear="excludeRegexes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="excludeRegexes" aria-label="Lock"><i class="material-icons">lock_open</i></button>
+    					<textarea id="excludeRegexes" name="exclude" class="form-control resizable optional small" rows="1">{{#if state}}{{state.exclude}}{{/if}}</textarea>
+							<small class="form-text text-muted">Regexes to exclude search results (<strong>OR</strong>), one per line.</small>
 						</div>
 						<div class="form-group col-12 col-lg-6">
 							<label for="includeRegexes">Include (Regexes)</label>
-						<button type="button" class="close" data-action="clear" data-clear="includeRegexes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="includeRegexes" name="include" class="form-control resizable optional small"  rows="1">{{#if state}}{{state.include}}{{/if}}</textarea>
-						<small class="form-text text-muted">Regexes to include search results (<strong>OR</strong>), one per line.</small>
+							<button type="button" class="close" data-action="clear" data-clear="includeRegexes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="includeRegexes" aria-label="Lock"><i class="material-icons">lock_open</i></button>
+    					<textarea id="includeRegexes" name="include" class="form-control resizable optional small"  rows="1">{{#if state}}{{state.include}}{{/if}}</textarea>
+							<small class="form-text text-muted">Regexes to include search results (<strong>OR</strong>), one per line.</small>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-12 col-lg-6">
+						<div class="col-12 col-lg-6 d-flex align-items-start">
 							<div class="custom-control custom-checkbox">
 								<input id="recurseFolders" name="recurse" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.recurse}} checked{{/if}}{{else}} checked{{/if}}>
 								<label class="custom-control-label" for="recurseFolders">Search all Sub-Folders Too?</label>
 								<small class="form-text text-muted">If de-ticked, only the current folder will be searched (no sub-folders).</small>
 							</div>
 						</div>
-						<div class="col-12 col-lg-6">
+						<div class="col-12 col-lg-6 d-flex align-items-start">
 							<div class="custom-control custom-checkbox">
 								<input id="entireDrive" name="entire" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.entire}} checked{{/if}}{{/if}}>
 								<label class="custom-control-label" for="entireDrive">Search Entire Drive?</label>

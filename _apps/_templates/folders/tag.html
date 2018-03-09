@@ -11,7 +11,7 @@
       <div class="modal-body">
         {{#if instructions}}{{{instructions}}}{{/if}}
 				{{#if shortcuts}}{{> populate_buttons shortcuts}}{{/if}}
-				<form class="needs-validation" novalidate>
+				<form class="needs-validation mt-3" novalidate>
 					<div class="row">
 						<div class="form-group col-lg-8">
 							<label for="tagName">Name</label>
@@ -27,12 +27,21 @@
 							</div>
 						</div>
 					</div>
-          <div class="form-group">
-    				<label for="tagName">Value</label>
-            <button type="button" class="close" data-action="clear" data-clear="tagValue" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-    				<textarea id="tagValue" name="value" class="form-control resizable" rows="1" required>{{#if state}}{{state.value}}{{/if}}</textarea>
-						<small class="form-text text-muted">The value of the tag to set.</small>
-  				</div>
+					<div class="row">
+						<div class="form-group col-lg-8">
+							<label for="tagName">Value</label>
+							<button type="button" class="close" data-action="clear" data-clear="tagValue" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<textarea id="tagValue" name="value" class="form-control resizable" rows="1" required>{{#if state}}{{state.value}}{{/if}}</textarea>
+							<small class="form-text text-muted">The value of the tag to set.</small>
+						</div>
+						<div class="col-lg-4 d-flex align-items-center">
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="tagRemove" name="remove"{{#if state}}{{#if state.remove}} checked{{/if}}{{/if}}>
+								<label class="custom-control-label" for="tagRemove">Remove Tag?</label>
+								<small class="form-text text-muted">Remove Named Tag from items.</small>
+							</div>
+						</div>
+					</div>
 				</form>
       </div>
       <div class="modal-footer">

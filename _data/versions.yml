@@ -1,4 +1,8 @@
 site :
+  0.0.8n :
+    name: Folders 0.0.6c-alpha
+    desc: Feature Additions - Experimental Clone Support
+    type: minor
   0.0.8m :
     name: Folders 0.0.6b-alpha
     desc: Bug Fixes
@@ -365,6 +369,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.6c-alpha :
+    name : Feature Additions
+    desc : Experimental Cloning Support
+    type : minor
   0.0.6a-alpha :
     name : Bug Fixes
     desc : Improved Tag / Convert processes to reflect filtered selections (rather than everything)

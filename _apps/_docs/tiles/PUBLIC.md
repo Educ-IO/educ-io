@@ -1,2 +1,2 @@
-{% assign app = site.data.apps.view %}
+{% assign app = site.data.apps.tiles %}
 {% include public.html logo=app.logo start="#google,auth" %}

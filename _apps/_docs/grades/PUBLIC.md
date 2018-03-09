@@ -1,3 +1,2 @@
 {% assign app = site.data.apps.grades %}
-{% capture logo %}{{ app.logo }}{% endcapture %}
-{% include public.html logo=logo start="#google,auth" %}
+{% include public.html logo=app.logo start="#google,auth" %}

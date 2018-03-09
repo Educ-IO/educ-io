@@ -1,3 +1,2 @@
 {% assign app = site.data.apps.cover %}
-{% capture logo %}{{ app.logo }}{% endcapture %}
-{% include public.html logo=logo start="#google,auth" %}
+{% include public.html logo=app.logo start="#google,auth" %}

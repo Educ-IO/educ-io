@@ -12,15 +12,15 @@
         {{#if instructions}}{{{instructions}}}{{/if}}
 				{{#if shortcuts}}{{> populate_buttons shortcuts}}{{/if}}
 				<form>
-					<div class="row">
+					<div class="row mt-3">
 						<div class="form-group col-lg-6">
 							<label for="sourceMimeType">Source Mime Type</label>
-							<input type="text" id="sourceMimeType" name="source" class="form-control"{{#if state}}{{#if state.source}} value="{{state.source}}"{{/if}}{{/if}} />
+							<textarea id="sourceMimeType" name="source" class="form-control resizable"  rows="1">{{#if state}}{{state.source}}{{/if}}</textarea>
 							<small class="form-text text-muted">Mime Type to convert from.</small>	
 						</div>
 						<div class="form-group col-lg-6">
 							<label for="targetMimeType">Target Mime Type</label>
-							<input type="text" id="targetMimeType" name="target" class="form-control"{{#if state}}{{#if state.target}} value="{{state.target}}"{{/if}}{{/if}} />
+							<textarea id="targetMimeType" name="target" class="form-control resizable"  rows="1">{{#if state}}{{state.target}}{{/if}}</textarea>
 							<small class="form-text text-muted">Mime Type to convert to.</small>
 						</div>
 					</div>

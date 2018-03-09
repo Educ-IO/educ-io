@@ -355,6 +355,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 	var _update = (rows, headers, container, defaults) => {
 		if (rows) _updateRows();
 		if (headers) _updateHeaders(container, defaults);
+		return true;
 	};
 
 	var _clearFilter = t => {

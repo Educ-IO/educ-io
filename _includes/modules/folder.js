@@ -21,9 +21,283 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 		_searches = {};
 	/* <!-- Internal Variables --> */
 
+	/* <!-- Internal Objects --> */
+	var _exclude_Defaults = ["^(\\~\\$)", "^(\\*\\*\\*\\sARCHIVE\\s\\*\\*\\*\\s)", "\\$RECYCLE\\.BIN"],
+		_dialog_Shortcuts = {
+			search: {
+				"Google Apps": {
+					docs: {
+						class: "btn-outline-primary",
+						name: "Docs",
+						include: [],
+						exclude: [],
+						mime: [ಠ_ಠ.Google.files.natives()[0]],
+						properties: []
+					},
+					sheets: {
+						class: "btn-outline-primary",
+						name: "Sheets",
+						include: [],
+						exclude: [],
+						mime: [ಠ_ಠ.Google.files.natives()[1]],
+						properties: []
+					},
+					slides: {
+						class: "btn-outline-primary",
+						name: "Slides",
+						include: [],
+						exclude: [],
+						mime: [ಠ_ಠ.Google.files.natives()[2]],
+						properties: []
+					},
+					drawings: {
+						class: "btn-outline-primary",
+						name: "Drawings",
+						include: [],
+						exclude: [],
+						mime: [ಠ_ಠ.Google.files.natives()[3]],
+						properties: []
+					},
+					all: {
+						class: "btn-outline-success",
+						name: "All",
+						include: [],
+						exclude: [],
+						mime: ಠ_ಠ.Google.files.natives(),
+						properties: []
+					},
+				},
+				"Office Files": {
+					word: {
+						class: "btn-outline-secondary",
+						name: "Word",
+						include: ["(\\.docx)$", "(\\.doc)$"],
+						exclude: _exclude_Defaults,
+						mime: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/zip", "application/msword"],
+						properties: []
+					},
+					excel: {
+						class: "btn-outline-secondary",
+						name: "Excel",
+						include: ["(\\.xlsx)$", "(\\.xls)$"],
+						exclude: _exclude_Defaults,
+						mime: ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/zip", "application/vnd.ms-excel"],
+						properties: []
+					},
+					powerpoint: {
+						class: "btn-outline-secondary",
+						name: "Powerpoint",
+						include: ["(\\.pptx)$", "(\\.ppt)$"],
+						exclude: _exclude_Defaults,
+						mime: ["application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/zip", "application/vnd.ms-powerpoint"],
+						properties: []
+					},
+					pdf: {
+						class: "info",
+						name: "PDF",
+						include: [],
+						exclude: [],
+						mime: ["application/pdf"],
+						properties: []
+					},
+					temp: {
+						class: "info",
+						name: "Temp & Thumbs",
+						exclude: [],
+						include: ["^(\\s*\\~\\$).*(\\.docx)$", "^(\\s*\\~\\$).*(\\.doc)$",
+							"^(\\s*\\~\\$).*(\\.pptx)$", "^(\\s*\\~\\$).*(\\.ppt)$", "^(\\s*\\~\\$).*(\\.xlsx)$", "^(\\s*\\~\\$).*(\\.xls)$", "thumbs\\.db"
+						],
+						mime: [
+							"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+							"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+							"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+							"application/vnd.ms-excel", "application/msword", "application/vnd.ms-powerpoint",
+							"application/zip", "application/octet-stream"
+						],
+						properties: []
+					},
+				},
+				"Tag": {
+					reviewed: {
+						class: "btn-outline-success",
+						name: "Reviewed",
+						mime: [],
+						include: [],
+						exclude: [],
+						properties: ["@@[REVIEW]=[DONE]"]
+					},
+					review: {
+						class: "btn-outline-danger",
+						name: "Needs Review",
+						mime: [],
+						include: [],
+						exclude: [],
+						properties: ["@@[REVIEW]=[NEEDED]"]
+					},
+					important: {
+						class: "btn-warning",
+						name: "Important",
+						mime: [],
+						include: [],
+						exclude: [],
+						properties: ["Importance!=None", "Importance!=Low"]
+					},
+					confidential: {
+						class: "btn-warning",
+						name: "Confidential",
+						mime: [],
+						include: [],
+						exclude: [],
+						properties: ["Confidentiality!=None", "Confidentiality!=Low"]
+					},
+					highlight: {
+						class: "btn-bright",
+						name: "Highlight",
+						mime: [],
+						include: [],
+						exclude: [],
+						properties: ["Highlight=TRUE"]
+					},
+				},
+			},
+			convert: {
+				"To Google": {
+					docs: {
+						class: "btn-outline-primary",
+						name: "Word -> Docs",
+						source: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+						target: ಠ_ಠ.Google.files.natives()[0],
+						prefix: "*** ARCHIVE *** "
+					},
+					sheets: {
+						class: "btn-outline-primary",
+						name: "Excel -> Sheets",
+						source: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+						target: ಠ_ಠ.Google.files.natives()[1],
+						prefix: "*** ARCHIVE *** "
+					},
+					slides: {
+						class: "btn-outline-primary",
+						name: "Powerpoint -> Slides",
+						source: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+						target: ಠ_ಠ.Google.files.natives()[2],
+						prefix: "*** ARCHIVE *** "
+					},
+				},
+				"To Office": {
+					word: {
+						class: "btn-outline-secondary",
+						name: "Zip -> Word",
+						source: "application/zip",
+						target: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+					},
+					excel: {
+						class: "btn-outline-secondary",
+						name: "Zip -> Excel",
+						source: "application/zip",
+						target: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+					},
+					powerpoint: {
+						class: "btn-outline-secondary",
+						name: "Zip -> Powerpoint",
+						source: "application/zip",
+						target: "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+					},
+				},
+				"Others": {
+					pdf: {
+						class: "btn-outline-dark",
+						name: "Google Formats -> PDF",
+						source: "",
+						target: "application/pdf"
+					},
+				}
+			},
+			tag: {
+				"Confidentiality": {
+					high: {
+						populate: "Confidentiality|High",
+						class: "btn-outline-danger",
+						name: "High"
+					},
+					medium: {
+						populate: "Confidentiality|Medium",
+						class: "btn-outline-warning",
+						name: "Medium"
+					},
+					low: {
+						populate: "Confidentiality|Low",
+						class: "btn-outline-success",
+						name: "Low"
+					},
+					none: {
+						populate: "Confidentiality|None",
+						class: "btn-outline-info",
+						name: "None"
+					},
+				},
+				"Importance": {
+					high: {
+						populate: "Importance|High",
+						class: "btn-outline-danger",
+						name: "High"
+					},
+					medium: {
+						populate: "Importance|Medium",
+						class: "btn-outline-warning",
+						name: "Medium"
+					},
+					low: {
+						populate: "Importance|Low",
+						class: "btn-outline-success",
+						name: "Low"
+					},
+					none: {
+						populate: "Importance|None",
+						class: "btn-outline-info",
+						name: "None"
+					},
+				},
+				"Review": {
+					weekly: {
+						populate: "Review|Weekly",
+						class: "btn-outline-secondary",
+						name: "Weekly"
+					},
+					monthly: {
+						populate: "Review|Monthly",
+						class: "btn-outline-secondary",
+						name: "Monthly"
+					},
+					annually: {
+						populate: "Review|Annually",
+						class: "btn-outline-secondary",
+						name: "Annually"
+					},
+					biennially: {
+						populate: "Review|Biennially",
+						class: "btn-outline-secondary",
+						name: "Biennially"
+					},
+					reviewed: {
+						populate: "Reviewed|@@NOW",
+						class: "btn-success",
+						name: "Reviewed"
+					},
+				},
+				"Other": {
+					highlight: {
+						populate: "Highlight|TRUE",
+						class: "btn-bright",
+						name: "Highlight"
+					},
+				}
+			}
+		};
+	/* <!-- Internal Objects --> */
+
 	/* <!-- Internal Functions --> */
 	var locate = row => {
-			ಠ_ಠ.Flags.log(`Locating Row: ${row}`);
 			var _position = row.position().top - row.height();
 			ಠ_ಠ.Flags.log(`Setting scroll position for id=${row.attr("id")} to ${_position}`);
 			row.parents("div.tab-pane").animate({
@@ -31,7 +305,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 			}, 300);
 			return row;
 		},
-		busy = (cell, row, css_class) => (on) => {
+		busy = (cell, row, css_class) => on => {
 			on ? ಠ_ಠ.Display.busy({
 					target: cell,
 					class: "loader-small"
@@ -53,7 +327,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				case "Annually":
 					return _m.subtract(1, "years");
 				case "Biennially":
-					return _m.subtract(1, "years");
+					return _m.subtract(2, "years");
 			}
 		};
 
@@ -75,9 +349,10 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 		star: v.starred,
 		folder: ಠ_ಠ.Google.folders.is(v.mimeType),
 		download: !!v.webContentLink,
-		paths: v.paths,
-		properties: v.properties,
-		appProperties: v.appProperties,
+		ancestors: v.paths,
+		paths: _.map(v.paths, paths => _.pluck(paths, "name").join(" \\ ")),
+		properties: v.properties ? v.properties : {},
+		appProperties: v.appProperties ? v.appProperties : {},
 		needs_Review: needsReview(v),
 		team: _team,
 		size: v.size,
@@ -95,6 +370,105 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 			url: "/reflect/#google,load." + v.id + ".lazy"
 		} : null
 	});
+
+	var _populateShortcuts = (target, dialog, options, pairs) => {
+		var _populate = target.data("populate"),
+			_shortcuts = _.reduce(options.shortcuts, (all, shortcut) => _.extendOwn(all, shortcut), {}),
+			_shortcut = _shortcuts[_populate];
+		if (_shortcut) _.each(pairs, pair => {
+			var _target = dialog.find(pair[1]);
+			if (_target.length == 1 && !_target.hasClass("locked")) {
+				if (_shortcut[pair[0]]) {
+					dialog.find(pair[1]).val(_.isArray(_shortcut[pair[0]]) ? _shortcut[pair[0]].join("\n") : _shortcut[pair[0]]).prop("disabled", false);
+				} else {
+					dialog.find(pair[1]).val("").prop("disabled", (_shortcut[pair[0]] === ""));
+				}
+			}
+		});
+		return _shortcut;
+	};
+
+	var _dialogFormHandlers = {
+
+		picker: dialog => {
+
+			/* <!-- Wire Up Fields and Handle Populate URL Fields from Google Drive --> */
+			ಠ_ಠ.Fields().on(dialog).find("button[data-action='load-g-folder'], a[data-action='load-g-folder']").off("click.folder").on("click.folder", e => {
+				new Promise((resolve, reject) => {
+					ಠ_ಠ.Google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
+						"Select a Folder", false, true,
+						() => new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"),
+						folder => folder && ಠ_ಠ.Google.folders.is(folder.mimeType) ? ಠ_ಠ.Flags.log("Google Drive Folder Picked", folder) && resolve(folder) : reject()
+					);
+				}).then(folder => $("#" + $(e.target).data("target")).val(folder.id).attr("title", folder.name)).catch();
+			});
+
+		},
+
+		lock: (target, dialog) => {
+
+			var _el = dialog.find("#" + target.data("lock")).toggleClass("locked");
+			target.find("i.material-icons").text(_el.hasClass("locked") ? "lock" : "lock_open");
+
+		},
+
+		clear: (target, dialog) => dialog.find("#" + target.data("clear")).val("").filter("textarea.resizable").map((i, el) => autosize.update(el)),
+	};
+
+	var _processItems = (name, action, parameters, items, collection, table, id, batch, highlight) => {
+
+		var _step = (step, all, index, fn) => {
+				var _next = all.splice(0, step);
+				if (_next.length > 0) fn(_next, all, index += _next.length, step);
+			},
+			_process = (items, remaining, index, step) => {
+
+				var _count = items.length,
+					_current = 0,
+					_complete = () => table.update() && _step(step, remaining, index, _process);
+
+				_.each(items, item => {
+
+					ಠ_ಠ.Flags.log(`${name} item: ${item.name} (${item.id})`);
+
+					var _container = $("#" + id + "_" + item.id),
+						_result = collection.by("id", item.id);
+					if (!_container || _container.length === 0) _container = $("#" + item.id);
+					var _cell = _container.find(".file-name").parents("td"),
+						_row = _cell.parents("tr"),
+						_busy = busy(_cell, _row);
+					_busy(true);
+
+					action(item, parameters)
+						.then(result => {
+							if (result) {
+								ಠ_ಠ.Flags.log(`Item (${name}) Success: ${JSON.stringify(result)}`);
+								if (highlight) _result.__success = true;
+							} else {
+
+							}
+						})
+						.catch(e => {
+							ಠ_ಠ.Flags.error(`"Item ${item.id} ${name} error`, e ? e : "No Inner Error");
+							if (highlight) _result.__failure = true;
+						})
+						.then(() => {
+							_busy(false);
+							collection.update(_result);
+							if ((_current += 1) == _count) _complete();
+						});
+
+				});
+
+			};
+
+		if (highlight) _.each(items, item => _.each(["__success", "__failure"], key => delete item[key]));
+
+		batch = batch ? batch : 1;
+		ಠ_ಠ.Flags.log(`${name} started: ${items.length} items to process (in batches of ${batch}) using parameters: ${JSON.stringify(parameters)}`);
+		_step(batch, items, 0, _process);
+
+	};
 
 	var _enableDownloads = target => {
 		target.find("a.download").on("click.download", e => {
@@ -333,7 +707,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 				if (test.toUpperCase().indexOf("@@[REVIEW]=") === 0) {
 
-					var value = test.split("=")[1], _predicate = value.toUpperCase() == "[NEEDED]" ?
+					var value = test.split("=")[1],
+						_predicate = value.toUpperCase() == "[NEEDED]" ?
 						(review, reviewed) => review && review[1] && (!reviewed || !reviewed[1] || moment(reviewed[1]).isBefore(parseReview(review[1]))) : value.toUpperCase() == "[DONE]" ?
 						(review, reviewed) => review && (reviewed && moment(reviewed[1]).isAfter(parseReview(review[1]))) :
 						(review, reviewed) => review && (!reviewed || moment(reviewed[1]).isBefore(parseReview(review[1], value)));
@@ -350,7 +725,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 							"!=": (name, value) => (n, v) => n == name && v != value,
 							"<=": (name, value) => (n, v) => n == name && v <= value,
 							"<>": (name, value) => (n, v) => n == name && v != value
-						}, _operator = _.find(_.keys(_operators), operator => test.indexOf(operator) > 0);
+						},
+						_operator = _.find(_.keys(_operators), operator => test.indexOf(operator) > 0);
 
 					return f => _.some(parseProperties(f), property => property && (_operator ?
 						_operators[_operator](test.split(_operator)[0], test.split(_operator)[1]) :
@@ -390,152 +766,16 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 		var _encode = values => _.each(_.clone(values), (value, key, list) => _.isArray(value) ? list[key] = value.join("\n") : false);
 
 		var _id = "start_search",
-			_defaults = () => ["^(\\~\\$)", "^(\\*\\*\\*\\sARCHIVE\\s\\*\\*\\*\\s)", "\\$RECYCLE\\.BIN"],
 			_search = ಠ_ಠ.Display.modal("search", {
 				id: "start_search",
 				target: ಠ_ಠ.container,
 				title: "Search Google Drive",
 				instructions: ಠ_ಠ.Display.doc.get("SEARCH_INSTRUCTIONS"),
 				state: state && state.search ? state.search : null,
-				shortcuts: {
-					"Google Apps": {
-						docs: {
-							class: "btn-outline-primary",
-							name: "Docs",
-							include: [],
-							exclude: [],
-							mime: [ಠ_ಠ.Google.files.natives()[0]],
-							properties: []
-						},
-						sheets: {
-							class: "btn-outline-primary",
-							name: "Sheets",
-							include: [],
-							exclude: [],
-							mime: [ಠ_ಠ.Google.files.natives()[1]],
-							properties: []
-						},
-						slides: {
-							class: "btn-outline-primary",
-							name: "Slides",
-							include: [],
-							exclude: [],
-							mime: [ಠ_ಠ.Google.files.natives()[2]],
-							properties: []
-						},
-						drawings: {
-							class: "btn-outline-primary",
-							name: "Drawings",
-							include: [],
-							exclude: [],
-							mime: [ಠ_ಠ.Google.files.natives()[3]],
-							properties: []
-						},
-						all: {
-							class: "btn-outline-success",
-							name: "All",
-							include: [],
-							exclude: [],
-							mime: ಠ_ಠ.Google.files.natives(),
-							properties: []
-						},
-					},
-					"Office Files": {
-						word: {
-							class: "btn-outline-secondary",
-							name: "Word",
-							include: ["(\\.docx)$", "(\\.doc)$"],
-							exclude: _defaults(),
-							mime: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/zip", "application/msword"],
-							properties: []
-						},
-						excel: {
-							class: "btn-outline-secondary",
-							name: "Excel",
-							include: ["(\\.xlsx)$", "(\\.xls)$"],
-							exclude: _defaults(),
-							mime: ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/zip", "application/vnd.ms-excel"],
-							properties: []
-						},
-						powerpoint: {
-							class: "btn-outline-secondary",
-							name: "Powerpoint",
-							include: ["(\\.pptx)$", "(\\.ppt)$"],
-							exclude: _defaults(),
-							mime: ["application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/zip", "application/vnd.ms-powerpoint"],
-							properties: []
-						},
-						pdf: {
-							class: "info",
-							name: "PDF",
-							include: [],
-							exclude: _defaults(),
-							mime: ["application/pdf"],
-							properties: []
-						},
-						temp: {
-							class: "info",
-							name: "Temp & Thumbs",
-							exclude: [],
-							include: ["^(\\s*\\~\\$).*(\\.docx)$", "^(\\s*\\~\\$).*(\\.doc)$",
-								"^(\\s*\\~\\$).*(\\.pptx)$", "^(\\s*\\~\\$).*(\\.ppt)$", "^(\\s*\\~\\$).*(\\.xlsx)$", "^(\\s*\\~\\$).*(\\.xls)$", "thumbs\\.db"
-							],
-							mime: [
-								"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-								"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-								"application/vnd.openxmlformats-officedocument.presentationml.presentation",
-								"application/vnd.ms-excel", "application/msword", "application/vnd.ms-powerpoint",
-								"application/zip", "application/octet-stream"
-							],
-							properties: []
-						},
-					},
-					"Tag": {
-						reviewed: {
-							class: "btn-outline-success",
-							name: "Reviewed",
-							mime: [],
-							include: [],
-							exclude: [],
-							properties: ["@@[REVIEW]=[DONE]"]
-						},
-						review: {
-							class: "btn-outline-danger",
-							name: "Needs Review",
-							mime: [],
-							include: [],
-							exclude: [],
-							properties: ["@@[REVIEW]=[NEEDED]"]
-						},
-						important: {
-							class: "btn-warning",
-							name: "Important",
-							mime: [],
-							include: [],
-							exclude: [],
-							properties: ["Importance!=None", "Importance!=Low"]
-						},
-						confidential: {
-							class: "btn-warning",
-							name: "Confidential",
-							mime: [],
-							include: [],
-							exclude: [],
-							properties: ["Confidentiality!=None", "Confidentiality!=Low"]
-						},
-						highlight: {
-							class: "btn-bright",
-							name: "Highlight",
-							mime: [],
-							include: [],
-							exclude: [],
-							properties: ["Highlight=TRUE"]
-						},
-					},
-				},
+				shortcuts: _dialog_Shortcuts.search,
 				actions: [{
 					text: "Save",
-					handler: (values) => {
+					handler: values => {
 						var finish = ಠ_ಠ.Display.busy({
 							target: $(`#${_id}`),
 							fn: true
@@ -558,19 +798,16 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 					}
 				}],
 				handlers: {
-					clear: (target, dialog) => dialog.find("#" + target.data("clear")).val("").filter("textarea.resizable").map((i, el) => autosize.update(el)),
+					lock: _dialogFormHandlers.lock,
+					clear: _dialogFormHandlers.clear,
 					populate: (target, dialog, options) => {
-						var _populate = target.data("populate"),
-							_shortcuts = _.reduce(options.shortcuts, (all, shortcut) => _.extendOwn(all, shortcut), {}),
-							_shortcut = _shortcuts[_populate];
-						if (_shortcut) _.each([
+
+						var _shortcut = _populateShortcuts(target, dialog, options, [
 							["mime", "#mimeTypes"],
 							["include", "#includeRegexes"],
 							["exclude", "#excludeRegexes"],
 							["properties", "#includeProperties"]
-						], pair => {
-							if (_shortcut[pair[0]]) dialog.find(pair[1]).val(_shortcut[pair[0]].join("\n"));
-						});
+						]);
 						dialog.find("textarea.resizable").each((i, el) => autosize.update(el));
 
 						/* <!-- Tick Search All Drive if Possible --> */
@@ -587,9 +824,9 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				}
 			}, dialog => {
 				autosize(dialog.find("textarea.resizable"));
-				dialog.find("#entireDrive").on("change", e => (e.currentTarget.checked) ? 
-						$("#recurseFolders").prop("checked", true) && $("#shared_WithMe").removeAttr("disabled") :
-						$("#shared_WithMe").attr("disabled", true) && $("#shared_WithMe").prop("checked", false));
+				dialog.find("#entireDrive").on("change", e => (e.currentTarget.checked) ?
+					$("#recurseFolders").prop("checked", true) && $("#shared_WithMe").removeAttr("disabled") :
+					$("#shared_WithMe").attr("disabled", true) && $("#shared_WithMe").prop("checked", false));
 				dialog.find("#recurseFolders").on("change", e => {
 					if (!e.currentTarget.checked) $("#entireDrive").prop("checked", false);
 				});
@@ -616,16 +853,16 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				ಠ_ಠ.Flags.log(`Searching folder ${id} with terms: ${JSON.stringify(values)}`);
 				_searches[id] = _encode(values);
 
-				ಠ_ಠ.Google.folders.search(id, values.recurse, values.names, values.mime, values.exclude, values.include, 
-																	values.properties, values.visibilities, values.shared, _team, values.basic).then(results => {
+				ಠ_ಠ.Google.folders.search(id, values.recurse, values.names, values.mime, values.exclude, values.include,
+					values.properties, values.visibilities, values.shared, _team, values.basic).then(results => {
 					_showResults(_name, results);
-				}).catch((e) => {
+				}).catch(e => {
 					if (e) ಠ_ಠ.Flags.error("Search Error", e);
 				}).then(_finish);
 
 			}
 
-		}).catch((e) => {
+		}).catch(e => {
 			if (e) ಠ_ಠ.Flags.error("Search Error", e);
 		});
 
@@ -658,8 +895,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 				if (inPlace) {
 
-					ಠ_ಠ.Google.folders.search(file.parents, false, [], targetMimeType, [], ((n, t) => f => (f.name == n) && f.mimeType == t)(_name, targetMimeType), 
-																		[], [], null, _team, false).then(results => {
+					ಠ_ಠ.Google.folders.search(file.parents, false, [], targetMimeType, [], ((n, t) => f => (f.name == n) && f.mimeType == t)(_name, targetMimeType), [], [], null, _team, false).then(results => {
 						if (results && results.length == 1) {
 							_upload({}, results[0].id);
 						} else {
@@ -790,7 +1026,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 		var _collection;
 		if (!(_collection = _db.getCollection(id))) return;
-		var _results = file_id ? [_collection.by("id", file_id)] : _tables[id].data();
+		var _results = _.reject(file_id ? [_collection.by("id", file_id)] : _tables[id].data(), item => ಠ_ಠ.Google.folders.is(item.mimeType));
 
 		var _decode = (values) => {
 			var _return = {
@@ -809,78 +1045,17 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 			_convert = ಠ_ಠ.Display.modal("convert", {
 				id: _id,
 				target: ಠ_ಠ.container,
-				title: `Convert <strong class="text-secondary">${ಠ_ಠ.Display.commarise(_results.length)}</strong> File${_results.length > 1 ? "s" : ""}`,
+				title: `Convert using <strong class="text-secondary">${ಠ_ಠ.Display.commarise(_results.length)}</strong> File${_results.length > 1 ? "s" : ""}`,
 				instructions: ಠ_ಠ.Display.doc.get("CONVERT_INSTRUCTIONS"),
 				state: state && state.convert ? state.convert : null,
-				shortcuts: {
-					"To Google": {
-						docs: {
-							class: "btn-outline-primary",
-							name: "Word -> Docs",
-							source: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-							target: ಠ_ಠ.Google.files.natives()[0],
-							prefix: "*** ARCHIVE *** "
-						},
-						sheets: {
-							class: "btn-outline-primary",
-							name: "Excel -> Sheets",
-							source: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-							target: ಠ_ಠ.Google.files.natives()[1],
-							prefix: "*** ARCHIVE *** "
-						},
-						slides: {
-							class: "btn-outline-primary",
-							name: "Powerpoint -> Slides",
-							source: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-							target: ಠ_ಠ.Google.files.natives()[2],
-							prefix: "*** ARCHIVE *** "
-						},
-					},
-					"To Office": {
-						word: {
-							class: "btn-outline-secondary",
-							name: "Zip -> Word",
-							source: "application/zip",
-							target: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-						},
-						excel: {
-							class: "btn-outline-secondary",
-							name: "Zip -> Excel",
-							source: "application/zip",
-							target: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-						},
-						powerpoint: {
-							class: "btn-outline-secondary",
-							name: "Zip -> Powerpoint",
-							source: "application/zip",
-							target: "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-						},
-					},
-					"Others": {
-						pdf: {
-							class: "btn-outline-dark",
-							name: "Google Formats -> PDF",
-							source: "",
-							target: "application/pdf"
-						},
-					}
-				},
+				shortcuts: _dialog_Shortcuts.convert,
 				handlers: {
 					populate: (target, dialog, options) => {
-						var _populate = target.data("populate"),
-							_shortcuts = _.reduce(options.shortcuts, (all, shortcut) => _.extendOwn(all, shortcut), {}),
-							_shortcut = _shortcuts[_populate];
-						if (_shortcut) _.each([
+						_populateShortcuts(target, dialog, options, [
 							["source", "#sourceMimeType"],
 							["target", "#targetMimeType"],
 							["prefix", "#prefixAfterConversion"]
-						], pair => {
-							if (_shortcut[pair[0]]) {
-								dialog.find(pair[1]).val(_shortcut[pair[0]]).prop("disabled", false);
-							} else {
-								dialog.find(pair[1]).val("").prop("disabled", (_shortcut[pair[0]] === ""));
-							}
-						});
+						]);
 						dialog.find("#convertInplace").prop("disabled", !!(dialog.find("#prefixAfterConversion").val()))
 							.prop("checked", !(dialog.find("#prefixAfterConversion").val())); /* <!-- Reconcile Interface --> */
 					}
@@ -913,25 +1088,17 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				}]
 			}, dialog => {
 
-				/* <!-- Wire Up Fields and Handle Populate URL Fields from Google Drive --> */
-				ಠ_ಠ.Fields().on(dialog).find("button[data-action='load-g-folder'], a[data-action='load-g-folder']").off("click.folder").on("click.folder", e => {
-					new Promise((resolve, reject) => {
-						ಠ_ಠ.Google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
-							"Select a Folder", false, true,
-							() => new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"),
-							folder => folder && ಠ_ಠ.Google.folders.is(folder.mimeType) ? ಠ_ಠ.Flags.log("Google Drive Folder Picked", folder) && resolve(folder) : reject()
-						);
-					}).then(folder => $("#" + $(e.target).data("target")).val(folder.id).attr("title", folder.name)).catch();
-				});
+				autosize(dialog.find("textarea.resizable"));
+				_dialogFormHandlers.picker(dialog);
 
 				/* <!-- Update whether we can do an inplace conversion, depending on the Target MIME Type --> */
-				dialog.find("#targetMimeType").on("change", (e) => {
+				dialog.find("#targetMimeType").on("change", e => {
 					var _native = ಠ_ಠ.Google.files.native($(e.target).val());
 					$("#convertInplace").prop("disabled", _native).prop("checked", !_native);
 				});
 
 				/* <!-- If we are working inplace, we're not renaming --> */
-				dialog.find("#convertInplace").on("change", (e) => {
+				dialog.find("#convertInplace").on("change", e => {
 					if (e.currentTarget.checked) $("#prefixAfterConversion").val("");
 				});
 
@@ -1075,12 +1242,14 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 		var _collection;
 		if (!(_collection = _db.getCollection(id))) return;
-		var _results = file_id ? [_collection.by("id", file_id)] : _tables[id].data();
-		
+		var _table = _tables[id],
+			_results = file_id ? [_collection.by("id", file_id)] : _table.data();
+
 		var _decode = (values) => {
 			var _return = {
 				name: _.find(values, v => v.name == "name") ? _.find(values, v => v.name == "name").value : null,
 				value: _.find(values, v => v.name == "value") ? _.find(values, v => v.name == "value").value : null,
+				remove: !!(_.find(values, v => v.name == "remove")),
 				private: !!(_.find(values, v => v.name == "private"))
 			};
 			return _return;
@@ -1090,96 +1259,17 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 			_tag = ಠ_ಠ.Display.modal("tag", {
 				id: _id,
 				target: ಠ_ಠ.container,
-				title: `Tag <strong class="text-secondary">${ಠ_ಠ.Display.commarise(_results.length)}</strong> File${_results.length > 1 ? "s" : ""}`,
+				title: `Tag <strong class="text-secondary">${ಠ_ಠ.Display.commarise(_results.length)}</strong> Item${_results.length > 1 ? "s" : ""}`,
 				instructions: ಠ_ಠ.Display.doc.get("TAG_INSTRUCTIONS"),
 				state: state && state.tag ? state.tag : null,
-				shortcuts: {
-					"Confidentiality": {
-						high: {
-							populate: "Confidentiality|High",
-							class: "btn-outline-danger",
-							name: "High"
-						},
-						medium: {
-							populate: "Confidentiality|Medium",
-							class: "btn-outline-warning",
-							name: "Medium"
-						},
-						low: {
-							populate: "Confidentiality|Low",
-							class: "btn-outline-success",
-							name: "Low"
-						},
-						none: {
-							populate: "Confidentiality|None",
-							class: "btn-outline-info",
-							name: "None"
-						},
-					},
-					"Importance": {
-						high: {
-							populate: "Importance|High",
-							class: "btn-outline-danger",
-							name: "High"
-						},
-						medium: {
-							populate: "Importance|Medium",
-							class: "btn-outline-warning",
-							name: "Medium"
-						},
-						low: {
-							populate: "Importance|Low",
-							class: "btn-outline-success",
-							name: "Low"
-						},
-						none: {
-							populate: "Importance|None",
-							class: "btn-outline-info",
-							name: "None"
-						},
-					},
-					"Review": {
-						weekly: {
-							populate: "Review|Weekly",
-							class: "btn-outline-secondary",
-							name: "Weekly"
-						},
-						monthly: {
-							populate: "Review|Monthly",
-							class: "btn-outline-secondary",
-							name: "Monthly"
-						},
-						annually: {
-							populate: "Review|Annually",
-							class: "btn-outline-secondary",
-							name: "Annually"
-						},
-						biennially: {
-							populate: "Review|Biennially",
-							class: "btn-outline-secondary",
-							name: "Biennially"
-						},
-						reviewed: {
-							populate: "Reviewed|@@NOW",
-							class: "btn-success",
-							name: "Reviewed"
-						},
-					},
-					"Other": {
-						highlight: {
-							populate: "Highlight|TRUE",
-							class: "btn-bright",
-							name: "Highlight"
-						},
-					}
-				},
+				shortcuts: _dialog_Shortcuts.tag,
 				validate: values => {
 					values = _decode(values);
-					return values.name && values.value && (values.name.length + values.value.length) <= 124;
+					return values.name && (values.value || values.remove) && (values.name.length + (values.remove ? 0 : values.value.length)) <= 124;
 				},
 				actions: [{
 					text: "Save",
-					handler: (values) => {
+					handler: values => {
 
 						var finish = ಠ_ಠ.Display.busy({
 							target: $(`#${_id}`),
@@ -1216,52 +1306,41 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				}
 			}, dialog => {
 				autosize(dialog.find("textarea.resizable"));
+
+				/* <!-- Disabled the Value Text Box if Remove is checked --> */
+				dialog.find("#tagRemove").on("change", e => {
+					$("#tagValue").prop("disabled", e.currentTarget.checked);
+				});
+
 			});
 
 		_tag.then(values => {
 
-			if (!values) return;
+			if (values) {
 
-			ಠ_ಠ.Flags.log(`TAG STARTED: ${_results.length} items to tag`);
+				values = _decode(values);
+				var _properties = {};
+				_properties[values.name] = values.remove ? null : values.value;
+				var _data = values.private ? {
+					appProperties: _properties
+				} : {
+					properties: _properties
+				};
 
-			values = _decode(values);
+				_processItems("Tagging", (item, parameters) => new Promise(resolve => {
 
-			var _properties = {};
-			_properties[values.name] = values.value;
-			var _data = values.private ? {
-				appProperties: _properties
-			} : {
-				properties: _properties
-			};
+					ಠ_ಠ.Google.update(item.id, parameters, _team).then(() => {
+						if (!item[values.private ? "appProperties" : "properties"]) item[values.private ? "appProperties" : "properties"] = {};
+						item[values.private ? "appProperties" : "properties"][values.name] = values.value;
+						item.needs_Review = needsReview(item);
+						resolve(item);
+					});
 
-			_.each(_results, file => {
+				}), _data, _results, _collection, _table, id);
 
-				if (!file) return;
-				ಠ_ಠ.Flags.log(`TAGGING FILE: ${file.name} (${file.id}) with ${JSON.stringify(_data)}`);
+			}
 
-				var _container = $("#" + id + "_" + file.id),
-					_result = _collection.by("id", file.id);
-				if (!_container || _container.length === 0) _container = $("#" + file.id);
-				var _cell = _container.find(".file-name").parent(),
-					_row = _cell.parent(),
-					_busy = busy(_cell, _row);
-				_busy(true);
-
-				ಠ_ಠ.Google.update(file.id, _data, _team).then(updated => {
-					if (!_result[values.private ? "appProperties" : "properties"]) _result[values.private ? "appProperties" : "properties"] = {};
-					_result[values.private ? "appProperties" : "properties"][values.name] = values.value;
-					_result.needs_Review = needsReview(_result);
-					_collection.update(_result);
-					ಠ_ಠ.Flags.log(`FILE UPDATED: ${JSON.stringify(updated)}`);
-				}).catch(e => {
-					ಠ_ಠ.Flags.error("File " + file.id + " Updating Error", e ? e : "No Inner Error");
-				}).then(() => _tables[id].update() && _busy(false));
-
-			});
-
-		}).catch(e => {
-			if (e) ಠ_ಠ.Flags.error("Tagging Error", e);
-		});
+		}).catch(e => e ? ಠ_ಠ.Flags.error("Tagging Error", e) : ಠ_ಠ.Flags.error("Tagging Cancelled"));
 
 	};
 
@@ -1269,14 +1348,14 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 		var _collection;
 		if (!_search || !(_collection = _db.getCollection(_search))) return;
-		var _items =  _tables[_search].data();
-		
+		var _items = _tables[_search].data();
+
 		ಠ_ಠ.Display.confirm({
 			id: "delete_results",
 			target: ಠ_ಠ.container,
 			message: "Please confirm that you want to delete " + _items.length + " items.",
 			action: "Delete"
-		}).then((confirm) => {
+		}).then(confirm => {
 
 			if (confirm) {
 
@@ -1344,6 +1423,142 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 		}).catch(e => {
 			if (e) ಠ_ಠ.Flags.error("Deletion Error", e);
 		});
+
+	};
+
+	var _cloneItems = function(id, file_id) {
+
+		var _collection;
+		if (!(_collection = _db.getCollection(id))) return;
+		var _table = _tables[id],
+			_results = _.reject(file_id ? [_collection.by("id", file_id)] : _table.data(), item => ಠ_ಠ.Google.folders.is(item.mimeType)),
+			_decode = values => {
+				var _return = {
+					folders: !!(_.find(values, v => v.name == "folders")),
+					properties: !!(_.find(values, v => v.name == "properties")),
+					merge: !!(_.find(values, v => v.name == "merge")),
+					prefix: _.find(values, v => v.name == "prefix") ? `${_.find(values, v => v.name == "prefix").value.trim()} ` : "",
+					output: _.find(values, v => v.name == "output") ? _.find(values, v => v.name == "output").value : null
+				};
+				return _return;
+			};
+
+		var _id = "clone_results",
+			_clone = ಠ_ಠ.Display.modal("clone", {
+				id: _id,
+				target: ಠ_ಠ.container,
+				title: `Clone <strong class="text-secondary">${ಠ_ಠ.Display.commarise(_results.length)}</strong> File${_results.length > 1 ? "s" : ""}`,
+				instructions: ಠ_ಠ.Display.doc.get("CLONE_INSTRUCTIONS"),
+				state: state && state.clone ? state.clone : null,
+				handlers: {
+					clear: _dialogFormHandlers.clear,
+					populate: (target, dialog) => dialog.find("textarea.resizable").each((i, el) => autosize.update(el))
+				}
+			}, dialog => {
+				autosize(dialog.find("textarea.resizable"));
+				_dialogFormHandlers.picker(dialog);
+
+				dialog.find("#folders").on("change", e => {
+					if (!e.currentTarget.checked) $("#merge").prop("checked", false);
+				});
+
+			});
+
+		_clone.then(values => {
+
+			var _folderCache = {};
+
+			if (values) _processItems("Cloning", (item, parameters) => new Promise(resolve => {
+
+				var prop_Name = "Cloned-From",
+					prop_Value = item.id;
+
+				var _root = parameters.output ? parameters.output : "root",
+					_copy = parent => {
+
+						var _action = () => {
+							var _props = parameters.properties ? _.clone(item.properties) : null,
+								_appProps = parameters.properties ? _.clone(item.appProperties) : {};
+							_appProps[prop_Name] = prop_Value;
+							ಠ_ಠ.Google.files.copy(item.id, _team, {
+								name: `${parameters.prefix}${item.name}`,
+								properties: _props,
+								appProperties: _appProps,
+								parents: [parent]
+							}).then(cloned => resolve(cloned));
+						};
+
+						/* <!-- Need to test for existing file if merge --> */
+						parameters.merge ? ಠ_ಠ.Google.folders.contents(parent, item.mimeType, _team, {
+							simple: [`${prop_Name}=${prop_Value}`]
+						}).then(results => {
+							!results || results.length === 0 ? _action() : resolve(false);
+						}) : _action();
+
+					};
+
+				if (!parameters.folders || !item.parents || item.parents.length === 0) {
+
+					_copy(_root);
+
+				} else {
+
+					/* <!-- Check for Merge Here and search for folders --> */
+					var _createFolderFrom = (folder, parent) => new Promise(resolve => {
+
+						var _create = () => {
+							var _props = parameters.properties && folder.properties ? _.clone(folder.properties) : null,
+								_appProps = parameters.properties && folder.appProperties ? _.clone(folder.appProperties) : {};
+							_appProps[prop_Name] = folder.id;
+
+							ಠ_ಠ.Google.folders.create(`${parameters.prefix}${folder.name}`, parent, {
+								appProperties: _appProps,
+								properties: _props
+							}, _team).then(created => {
+								ಠ_ಠ.Flags.log(`Created Clone Tree Folder for ${folder.name} (${folder.id}):`, JSON.stringify(created));
+								_folderCache[folder.id] = created.id;
+								resolve(created);
+							});
+						};
+
+						/* <!-- Need to test for existing folder if merge --> */
+						parameters.merge ?
+							ಠ_ಠ.Google.folders.folders(parent, true, _team, {
+								simple: [`${prop_Name}=${folder.id}`]
+							}).then(results => {
+								!results || results.length === 0 ? _create() : (_folderCache[folder.id] = results[0].id) && resolve(results[0]);
+							}) : _create();
+
+					});
+
+					/* <!-- Need to create folder structure --> */
+					if (_folderCache[item.parents[0]]) {
+
+						/* <!-- Cloned Folder already created, so use that --> */
+						_copy(_folderCache[item.parents[0]]);
+
+					} else if (!item.ancestors || item.ancestors.length === 0) {
+
+						/* <!-- No paths, but a parent, so clone that--> */
+						ಠ_ಠ.Google.files.get(item.parents[0], _team).then(parent => {
+							_createFolderFrom(parent, _root).then(folder => _copy(folder.id));
+						});
+
+					} else {
+
+						/* <!-- Recursively Create Folder Tree --> */
+						var _createAncestor = (ancestors, index, _last) =>
+							_createFolderFrom(ancestors[index], _last).then(folder =>
+								(index += 1) >= ancestors.length ? _copy(folder.id) : _createAncestor(ancestors, index, folder.id));
+
+						_createAncestor(item.ancestors[0], 0, _root);
+					}
+
+				}
+
+			}), _decode(values), _results, _collection, _table, id, 1, true);
+
+		}).catch(e => e ? ಠ_ಠ.Flags.error("Cloning Error", e) : ಠ_ಠ.Flags.error("Clone Cancelled"));
 
 	};
 
@@ -1678,31 +1893,33 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 		name: () => folder.name,
 
-		search: (id) => _searchFolder(id ? id : folder.id),
+		search: id => _searchFolder(id ? id : folder.id),
 
 		searchTag: (name, value) => _searchTag(name, value),
 
-		convert: () => _convertItems(_search ? _search : folder.id),
+		clone: id => _cloneItems(_search ? _search : folder.id, id),
 
-		tag: (id) => _tagItems(_search ? _search : folder.id, id),
+		convert: id => _convertItems(_search ? _search : folder.id, id),
 
-		close: (id) => _closeSearch(id),
+		tag: id => _tagItems(_search ? _search : folder.id, id),
+
+		close: id => _closeSearch(id),
 
 		delete: () => _deleteItems(),
 
 		tally: {
 			get: () => _tallyCache,
 
-			run: (id) => _tally(id ? id : folder.id)
+			run: id => _tally(id ? id : folder.id)
 		},
 
-		remove: (id) => _removeItem(id),
+		remove: id => _removeItem(id),
 
 		detag: (id, tag) => _detag(id, tag),
 
 		table: () => _search ? _tables[_search] : _tables[folder.id],
 
-		star: (id) => _starItem(id)
+		star: id => _starItem(id)
 
 	};
 	/* <!-- External Visibility --> */
