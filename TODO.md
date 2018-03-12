@@ -40,6 +40,8 @@ Apps
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 * Success / Failure response in Busy Loader? E.g. Animate to cross if it fails?
 
+* Document Templates (Comments?)
+
 Mobile
 ------
 * ** IMPORTANT ** Full Page Lazy Scope Load may break app flow (need state object to pass back to app?) - also should test for scope before initiating flow?
@@ -78,14 +80,10 @@ View
 
 Folders
 -------
- 
-* ** BUG ** After refresh click (should be a menu item?) - ERROR - Requesting Selected Google Drive Folder Error: Duplicate key for property id: 
-* ** BUG ** Should pages (in searches) be relative to searched from root? Would be better for cloning.
-
 * CODE : Swap table from expanding to fixed with flex wrapping for custom properties and long ids -> Also vertically centre row content.
 * CODE : Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => { -- Better to save out form values than encode / decode
 * CODE : State Save needs updating for new fields
-
+* CODE : Move convert to new 'stepping' method (have to include batches / need two levels of batches, one parallel etc)
 * FEATURE : Export Search Results to Sheets -> View
 * FEATURE : Accept Route in with File ID and Tag Value (from Tag-A-Doc for Reviewed) (Partly done)
 
@@ -111,6 +109,10 @@ Reflect
 
 Complete
 --------
+* FEATURE ** IMPORTANT ** Allow properties to be AND / OR <-- DONE
+* ** BUG ** After refresh click (should be a menu item?) - ERROR - Requesting Selected Google Drive Folder Error: Duplicate key for property id: <== DONE
+* FEATURE : Wildcard Mime Searches
+* ** BUG ** Should paths (in searches) be relative to searched from root? Would be better for cloning. No - better handled in cloning method <-- DONE
 * ** IMPORTANT ** FEATURE: Copy from Team Drive [feature](https://www.cloudconnect.goog/thread/21004) for Folders <-- DONE
   + Get Full Path Details for Search Results <-- DONE
   + Write 'Batcher' to minimise API calls for paths (timed and numbered?) <-- Not sure it's possible with searching by IDs <-- DONE

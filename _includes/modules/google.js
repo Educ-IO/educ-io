@@ -8,7 +8,9 @@ Google_API = function(ಠ_ಠ, timeout) {
 	/* === Internal Visibility === */
 
 	/* <!-- Internal Constants --> */
-	const PAGE_SIZE = 500, BATCH_SIZE = 50, PATH_LIMIT = 100;
+	const PAGE_SIZE = 500,
+		BATCH_SIZE = 50,
+		PATH_LIMIT = 150;
 
 	const READER = function() {
 
@@ -33,13 +35,24 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		return reader;
 	};
+
+	const WILDCARD = test => (value, remove) => {
+		var present = value.indexOf(test) === 0 || value.indexOf(test) == (value.length - 1);
+		return remove ?
+			present < 0 ?
+			value :
+			present === 0 ?
+			value.slice(present + test.length) : value.slice(0, value.length - test.length) :
+			present >= 0;
+	};
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Network Constants --> */
 	const GENERAL_URL = {
 		name: "general",
 		url: "https://www.googleapis.com/",
-		rate: 4, /* <!-- 500 per 100 seconds --> */
+		rate: 4,
+		/* <!-- 500 per 100 seconds --> */
 		concurrent: 8,
 		timeout: 30000,
 	};
@@ -61,16 +74,17 @@ Google_API = function(ಠ_ಠ, timeout) {
 	/* <!-- Network Constants --> */
 
 	/* <!-- Internal Constants --> */
+	const ALL = "application/vnd.google-apps.*";
 	const FOLDER = "application/vnd.google-apps.folder";
 	const DOC = "application/vnd.google-apps.document";
 	const SHEET = "application/vnd.google-apps.spreadsheet";
 	const SLIDE = "application/vnd.google-apps.presentation";
 	const DRAWING = "application/vnd.google-apps.drawing";
 	const NATIVES = [DOC, SHEET, SLIDE, DRAWING];
-	
+
 	const EVENTS = {
-		SEARCH : {
-			PROGRESS : "google-search-progress",
+		SEARCH: {
+			PROGRESS: "google-search-progress",
 		},
 	};
 	/* <!-- Internal Constants --> */
@@ -82,8 +96,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 	/* <!-- Network Variables --> */
 	const NETWORKS = _.reduce(URLS, (networks, url) => {
 		networks[url.name] = ಠ_ಠ.Network(url.url, timeout ? timeout : url.timeout ? url.timeout : 60000, url.rate ? url.rate : 0, url.concurrent ? url.concurrent : 0, r =>
-			new Promise(resolve => r.status == 403 || r.status == 429 ? 
-									r.json().then(result => result.error.message && result.error.message.indexOf("Rate Limit Exceeded") >= 0 ? resolve(true) : resolve(false)) : resolve(false)));
+			new Promise(resolve => r.status == 403 || r.status == 429 ?
+				r.json().then(result => result.error.message && result.error.message.indexOf("Rate Limit Exceeded") >= 0 ? resolve(true) : resolve(false)) : resolve(false)));
 		return networks;
 	}, {});
 	/* <!-- Network Variables --> */
@@ -105,7 +119,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 							if (r) _init(r.token, r.type, r.expires, u); /* Non-Null Response, so changes required */
 							resolve(true);
 
-						}).catch(err =>	reject(err));
+						}).catch(err => reject(err));
 
 					} else { /* Token Fine */
 
@@ -185,7 +199,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-  var _call = function(method) {
+	var _call = function(method) {
 		return new Promise((resolve, reject) => {
 			_check().then(() => method.apply(this, _.rest(arguments)).then((value) => resolve(value)).catch((e) => reject(e)));
 		});
@@ -209,7 +223,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 			};
 		return _call(NETWORKS.general.get, "drive/v3/files/" + id, _data);
 	};
-	
+
 	var _pick = (title, multiple, team, views, callback, context) => {
 
 		if (google.picker) {
@@ -268,36 +282,38 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	};
 
-	var _contents = (ids, names, mimeTypes, excludeMimeTypes, properties, visibilities, shared, skeleton, team, overrideType) => {
+	var _contents = (ids, names, mimeTypes, excludeMimeTypes, properties, visibilities, shared, skeleton, team, overrideType, propertyModifier) => {
 
 		/* <!-- Build the ID portion of the query --> */
 		var _i = ids && ids.length > 0 ?
 			_.reduce(ids, (q, id, i) => q + (i > 0 ? " or '" + id + "' in parents" : "'" + id + "' in parents"), " and (") + ")" : "";
 
-		/* <!-- Build the MIME portion of the query --> */
+		/* <!-- Build the NAME portion of the query --> */
 		var _n = names && names.length > 0 ?
 			_.reduce(names, (q, n, i) => q + (i > 0 ? " or name contains '" : "name contains '") + n + "'", " and (") + ")" : "";
-		
+
 		/* <!-- Build the MIME portion of the query --> */
-		var _m = mimeTypes && mimeTypes.length > 0 ?
-			_.reduce(mimeTypes, (q, m, i) => q + (i > 0 ? " or mimeType = '" : "mimeType = '") + m + "'", " and (") + ")" : "";
+		var _wild = WILDCARD("*"),
+			_m = mimeTypes && mimeTypes.length > 0 ?
+			_.reduce(mimeTypes, (q, m, i) => q + (i > 0 ? " or mimeType" : "mimeType") +
+				(_wild(m) ? " contains " : " = ") + "'" + _wild(m, true) + "'", " and (") + ")" : "";
 
 		/* <!-- Build exclude MIME portion of the query --> */
 		var _e = excludeMimeTypes && excludeMimeTypes.length > 0 ?
 			_.reduce(excludeMimeTypes, (q, m, i) => q + (i > 0 ? " and mimeType != '" : "mimeType != '") + m + "'", " and (") + ")" : "";
 
 		/* <!-- Build PROPERTIES portion of the query --> */
-		var _kv = (p) => "key='" + (p.indexOf("=") > 0 ? (p.split("=")[0] + "' and value='" + p.split("=")[1] + "'") : (p + "' and value=''"));
+		var _kv = p => "key='" + (p.indexOf("=") > 0 ? (p.split("=")[0] + "' and value='" + p.split("=")[1] + "'") : (p + "' and value=''"));
 		var _p = properties && properties.length > 0 ?
-			_.reduce(properties, (q, p, i) => q + (i > 0 ? " and (properties has { " + _kv(p) + " } or appProperties has { " + _kv(p) + " })" : "(properties has { " + _kv(p) + "} or appProperties has { " + _kv(p) + "})"), " and (" + (overrideType ? "mimeType = '" + overrideType + "' or (" : "")) + (overrideType ? "))" : ")") : "";
+			_.reduce(properties, (q, p, i) => q + (i > 0 ? " " + propertyModifier + " (properties has { " + _kv(p) + " } or appProperties has { " + _kv(p) + " })" : "(properties has { " + _kv(p) + "} or appProperties has { " + _kv(p) + "})"), " and (" + (overrideType ? "mimeType = '" + overrideType + "' or (" : "")) + (overrideType ? "))" : ")") : "";
 
 		/* <!-- Build VISIBILITY portion of the query --> */
 		var _v = visibilities && visibilities.length > 0 ?
 			_.reduce(visibilities, (q, v, i) => q + (i > 0 ? " or visibility = '" : "visibility = '") + v + "'", " and (") + ")" : "";
-		
+
 		/* <!-- Build SHARED portion of the query --> */
 		var _s = shared ? " and (sharedWithMe = true)" : "";
-		
+
 		var _data = {
 			pageSize: PAGE_SIZE,
 			q: "trashed = false" + _i + _n + _m + _e + _p + _v + _s,
@@ -319,7 +335,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 	var _paths = (parents, chain, all, cache, team) => {
 
 		var _path = (parent, chain) => {
-			
+
 			return new Promise(resolve => {
 
 				var _complete = item => {
@@ -329,9 +345,9 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 				if (cache[parent]) { /* <!-- Already Fetched --> */
 					_complete(cache[parent]);
-				} else if (cache.__pending && cache.__pending[parent]) {  /* <!-- Fetch already pending --> */
+				} else if (cache.__pending && cache.__pending[parent]) { /* <!-- Fetch already pending --> */
 					cache.__pending[parent].push(item => _complete(item));
-				} else {  /* <!-- Set-Up Fetch --> */
+				} else { /* <!-- Set-Up Fetch --> */
 					if (!cache.__pending) cache.__pending = {};
 					cache.__pending[parent] = [];
 					/* <!-- Batcher to be inserted here --> */
@@ -344,7 +360,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 						_.each(cache.__pending[parent], f => f(item));
 						delete cache.__pending[parent];
 						_complete(item);
-					});	
+					});
 				}
 			});
 
@@ -366,16 +382,18 @@ Google_API = function(ಠ_ಠ, timeout) {
 		});
 
 	};
-	
+
 	var _search = (ids, recurse, folders, names, mimeTypes, excludes, includes, properties, visibilities, shared, team, cache, totals) => {
 
 		return new Promise((resolve, reject) => {
 
-			_contents(ids, names, mimeTypes, [], properties && properties.simple ? properties.simple : null, visibilities, shared, false, team, recurse && mimeTypes.length === 0 ? FOLDER : null).then((c) => {
+			_contents(ids, names, mimeTypes, [], properties && properties.simple ? properties.simple : null, visibilities, shared, false, team, recurse && mimeTypes.length === 0 ? FOLDER : null, properties.modifier ? properties.modifier : "and").then(c => {
 
 				/* <!-- Update Progress Event --> */
-				if (totals && ids && window) (totals.folders += ids.length) && window.dispatchEvent(new CustomEvent(EVENTS.SEARCH.PROGRESS, { detail: totals }));
-				
+				if (totals && ids && window)(totals.folders += ids.length) && window.dispatchEvent(new CustomEvent(EVENTS.SEARCH.PROGRESS, {
+					detail: totals
+				}));
+
 				/* <!-- Filter the results using the Exclude then Include methods --> */
 				if (excludes) c = _.reject(c, item => _.some(excludes, (e) => e(item)));
 				if (includes) c = _.filter(c, item => _.some(includes, (i) => i(item)));
@@ -394,25 +412,27 @@ Google_API = function(ಠ_ಠ, timeout) {
 				var batches = _.chain(next).groupBy((v, i) => Math.floor(i / BATCH_SIZE)).toArray().value();
 
 				/* <!-- Make an array of promises to resolve with the results of these searches --> */
-				var p = recurse ? _.map(batches, batch => _search(batch, recurse, folders, names, mimeTypes, excludes, includes, properties, visibilities, shared, team, cache, totals)) : [];
+				var p = recurse ? _.map(batches,
+					batch => _search(batch, recurse, folders, names, mimeTypes, excludes, includes, properties, visibilities, shared, team, cache, totals)) : [];
 
 				/* <!-- Filter to remove the folders if we are not returning them --> */
 				if (!folders) c = _.reject(c, item => item.mimeType === FOLDER);
 
 				/* <!-- Filter the results using Advanced Properties --> */
-				if (properties && properties.complex) c = _.filter(c, item => _.every(properties.complex, i => i(item)));
-				
+				if (properties && properties.complex && properties.complex.length > 0) c = _.filter(c, item => properties.modifier && properties.modifier == "or" ?
+					_.some(properties.complex, i => i(item)) : _.every(properties.complex, i => i(item)));
+
 				/* <!-- Resolve this promise whilst resolving the recursive promises too if available --> */
 				var _finish = items => p && p.length > 0 ? Promise.all(p).then(r => resolve(_.reduce(r, (c, v) => v && v.length > 0 ? c.concat(v) : c, items))).catch(e => reject(e)) : resolve(items);
-				
+
 				/* <!-- Resolve the paths promises before moving on --> */
 				var _getPaths = () => Promise.all(_.map(c, item => new Promise(resolve => _paths(item.parents, [], [], cache, team).then(paths => (item.paths = paths) && resolve(item))))).then(_finish);
-				
+
 				/* <!-- Add in the current path value to each item --> */
-				(c.length <= PATH_LIMIT) || recurse ? 
-					_getPaths() : 
+				(c.length <= PATH_LIMIT) || recurse ?
+					_getPaths() :
 					_contents(null, null, [FOLDER], null, null, null, null, true, team, null).then(f => _.each(f, _cache)).then(_getPaths);
-				
+
 			}).catch(e => reject(e));
 
 		});
@@ -440,7 +460,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 		},
 
 		networks: () => _.map(NETWORKS, network => network.details()),
-		
+
 		/* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
 		me: () => _call(NETWORKS.general.get, "oauth2/v1/userinfo?alt=json&key=" + KEY),
 
@@ -450,17 +470,17 @@ Google_API = function(ಠ_ಠ, timeout) {
 		}),
 
 		scripts: () => _list("drive/v3/files", "files", [], {
-      q: "mimeType = 'application/vnd.google-apps.script' and trashed = false",
-      orderBy: "modifiedByMeTime desc,name",
-      fields: "files(description,id,modifiedByMeTime,name,version)",
-    }),
+			q: "mimeType = 'application/vnd.google-apps.script' and trashed = false",
+			orderBy: "modifiedByMeTime desc,name",
+			fields: "files(description,id,modifiedByMeTime,name,version)",
+		}),
 
 		download: (id, team) => team ? _call(NETWORKS.general.download, "drive/v3/files/" + id, {
-				alt: "media",
-				supportsTeamDrives: true
-			}) : _call(NETWORKS.general.download, "drive/v3/files/" + id, {
-				alt: "media",
-			}),
+			alt: "media",
+			supportsTeamDrives: true
+		}) : _call(NETWORKS.general.download, "drive/v3/files/" + id, {
+			alt: "media",
+		}),
 
 		upload: (metadata, binary, mimeType, team, id) => {
 
@@ -494,6 +514,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		files: {
 
+			all: () => ALL,
+
 			natives: () => NATIVES,
 
 			is: (type) => (item) => item.mimeType === type,
@@ -512,10 +534,10 @@ Google_API = function(ಠ_ಠ, timeout) {
 			},
 
 			get: (id, team) => _get(id, team),
-			
+
 			copy: (id, team, file) => {
-				var _team = team ? `?teamDriveId=${team}&supportsTeamDrives=true` : "", 
-						_url = `drive/v3/files/${id}/copy${_team}`;
+				var _team = team ? `?teamDriveId=${team}&supportsTeamDrives=true` : "",
+					_url = `drive/v3/files/${id}/copy${_team}`;
 				return _call(NETWORKS.general.post, _url, file);
 			},
 
@@ -544,17 +566,21 @@ Google_API = function(ಠ_ಠ, timeout) {
 			check: is => item => is ? item.mimeType === FOLDER : item.mimeType !== FOLDER,
 
 			is: type => type === FOLDER,
-			
+
 			search: (ids, recurse, names, mimeTypes, excludes, includes, properties, visibilities, shared, team, basic) => {
 				var _folders = (mimeTypes = _arrayize(mimeTypes, _.isString)).indexOf(FOLDER) >= 0;
-				return basic ? 
-					_search(null, false, false, names, mimeTypes, null, null, properties, visibilities, shared, team, _nameCache, {folders: 0}) : 
+				return basic ?
+					_search(null, false, false, names, mimeTypes, null, null, properties, visibilities, shared, team, _nameCache, {
+						folders: 0
+					}) :
 					_search(
 						_arrayize(ids, _.isString), recurse, _folders, names,
 						recurse && mimeTypes && mimeTypes.length > 0 && !_folders ? [FOLDER].concat(mimeTypes) : mimeTypes,
 						_arrayize(excludes, _.isFunction),
-						recurse && !_folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction), 
-						properties, visibilities, shared, team, _nameCache, {folders: 0});
+						recurse && !_folders ? [f => f.mimeType === FOLDER].concat(_arrayize(includes, _.isFunction)) : _arrayize(includes, _.isFunction),
+						properties, visibilities, shared, team, _nameCache, {
+							folders: 0
+						});
 			},
 
 			contents: (ids, mimeTypes, team, properties) => _contents(_arrayize(ids, _.isString), null, _arrayize(mimeTypes, _.isString), null, properties, null, null, false, team),
@@ -564,9 +590,13 @@ Google_API = function(ಠ_ಠ, timeout) {
 			folders: (ids, skeleton, team, properties) => _contents(_arrayize(ids, _.isString), null, [FOLDER], null, properties, null, null, skeleton, team),
 
 			files: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, null, [FOLDER], null, null, null, skeleton, team),
-			
+
 			create: (name, parent, data, team) => _call(NETWORKS.general.post, "drive/v3/files" + (team ? "?supportsTeamDrives=true" : ""),
-																						_.defaults({mimeType: FOLDER, name: name, parents: _arrayize(parent, _.isString)}, data)),
+				_.defaults({
+					mimeType: FOLDER,
+					name: name,
+					parents: _arrayize(parent, _.isString)
+				}, data)),
 
 		},
 
@@ -605,7 +635,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 		},
 
 		reader: READER,
-		
+
 		events: () => EVENTS
 
 	};

@@ -1,4 +1,8 @@
 site :
+  0.0.8o :
+    name : Folders 0.0.6d-alpha
+    name : Improvements - Better Cloning and Property Searching
+    type : minor
   0.0.8n :
     name: Folders 0.0.6c-alpha
     desc: Feature Additions - Experimental Clone Support
@@ -369,6 +373,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.6d-alpha :
+    name : Improvements
+    desc : Better Cloning and Property Searching
+    type : minor
   0.0.6c-alpha :
     name : Feature Additions
     desc : Experimental Cloning Support

@@ -1,4 +1,10 @@
 {% raw %}
+{{!--
+	Clone Dialog Box - Accepts the following options:
+		id : Used to identify the dialog box
+		title : Header Title for the Modal, can be HTML
+		instructions : Instructions to appear at the top of the Modal
+--}}
 <div id="{{id}}" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -32,24 +38,37 @@
 					<div class="row">
 						<div class="col-lg-4 d-flex align-items-start">
 							<div class="custom-control custom-checkbox">
-								<input type="checkbox" class="custom-control-input" id="folders" name="folders"{{#if state}}{{#if state.folders}} checked{{/if}}{{else}} checked{{/if}}>
-								<label class="custom-control-label" for="folders">Folders?</label>
+								<input type="checkbox" class="custom-control-input" id="folders" name="folders"{{#if advanced}}{{#if state}}{{#if state.folders}} checked{{/if}}{{else}} checked{{/if}}{{else}}disabled{{/if}}>
+								<label class="custom-control-label" for="folders">Clone Folders</label>
 								<small class="form-text text-muted small">Maintain Folder structure for cloned files (this will potentially create a folder tree beneath your output folder).</small>
 							</div>
 						</div>
 						<div class="col-lg-4 d-flex align-items-start">
 							<div class="custom-control custom-checkbox">
-								<input type="checkbox" class="custom-control-input" id="merge" name="merge"{{#if state}}{{#if state.merge}} checked{{/if}}{{else}} checked{{/if}}>
-								<label class="custom-control-label" for="merge">Merge?</label>
+								<input type="checkbox" class="custom-control-input" id="merge" name="merge"{{#if advanced}}{{#if state}}{{#if state.merge}} checked{{/if}}{{else}} checked{{/if}}{{else}}disabled{{/if}}>
+								<label class="custom-control-label" for="merge">Merge</label>
 								<small class="form-text text-muted small">Merge into previously cloned tree (if available).</small>
 							</div>
 						</div>
 						<div class="col-lg-4 d-flex align-items-start">
 							<div class="custom-control custom-checkbox">
 								<input type="checkbox" class="custom-control-input" id="properties" name="properties"{{#if state}}{{#if state.properties}} checked{{/if}}{{else}} checked{{/if}}>
-								<label class="custom-control-label" for="properties">Properties?</label>
+								<label class="custom-control-label" for="properties">Properties</label>
 								<small class="form-text text-muted small">Copy all properties/tags for items as well.</small>
 							</div>
+						</div>
+					</div>
+					<div class="row mt-2">
+						<div class="form-group col-12{{#if advanced}}{{else}} d-none{{/if}}" data-controlled="folders">
+							<label for="outputTo">Folders Relative To</label>
+							<div class="input-group">
+								<input type="text" id="relativeTo" name="relative" class="form-control"{{#if advanced}}{{#if relative}} title="{{relative.name}}" value="{{relative.id}}"{{/if}}{{/if}} readonly />
+								<div class="input-group-append">
+									{{> control_button b_class="btn-outline-primary" b_title="Select Folder from Google Drive" b_target="relativeTo" b_action="load-g-folder" b_text="Browse" }}
+									{{> control_button b_class="btn-secondary eraser" b_title="Clear / Reset" b_target="relativeTo" b_icon="refresh" }}
+								</div>
+							</div>
+							<small class="form-text text-muted">Will only create Cloned Folders relative to this folder.</small>
 						</div>
 					</div>
 				</form>

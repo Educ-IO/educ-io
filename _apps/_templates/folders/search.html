@@ -51,10 +51,13 @@
 						</div>
 						<div class="col-12 col-lg-6">
 							<label for="includeProperties">Properties</label>
+							<a href="#" class="ml-1 badge badge-light" data-action="options" data-target="modifierProperties" data-value="or">OR</a>
+							<a href="#" class="ml-1 badge badge-dark" data-action="options" data-target="modifierProperties" data-value="and">AND</a>
+							<input id="modifierProperties" name="properties_modifier" class="d-none" data-click="[data-action='options']" type="text" value="and" />
 							<button type="button" class="close" data-action="clear" data-clear="includeProperties" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-							<button type="button" class="close mr-1" data-action="lock" data-lock="includeProperties" aria-label="Lock"><i class="material-icons">lock_open</i></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="includeProperties,modifierProperties" aria-label="Lock"><i class="material-icons">lock_open</i></button>
     					<textarea id="includeProperties" name="properties" class="form-control resizable optional small" rows="1">{{#if state}}{{state.properties}}{{/if}}</textarea>
-							<small class="form-text text-muted">Properties to search for (<strong>AND</strong>), one per line (you can use key, key= | &gt;= | &lt;= | !=value format).</small>	
+							<small class="form-text text-muted">One per line, use key, key= | &gt;= | &lt;= | !=value format.</small>	
 						</div>
 					</div>
 					<div class="row">
@@ -83,9 +86,9 @@
 						</div>
 						<div class="col-12 col-lg-6 d-flex align-items-start">
 							<div class="custom-control custom-checkbox">
-								<input id="entireDrive" name="entire" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.entire}} checked{{/if}}{{/if}}>
+								<input id="entireDrive" name="entire" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.entire}} checked{{/if}}{{else}}{{#if entire}} checked{{/if}}{{/if}}>
 								<label class="custom-control-label" for="entireDrive">Search Entire Drive?</label>
-								<small class="form-text text-muted">If ticked, and the search is basic (Mime Types and Properties=Values only) then it will be <strong>much</strong> faster.</small>
+								<small class="form-text text-muted">Basic searches (mime, name and property<strong>=</strong>value) of entire drive will be <strong>much</strong> faster.</small>
 							</div>
 						</div>
 					</div>

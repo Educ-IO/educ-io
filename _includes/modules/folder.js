@@ -63,7 +63,14 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 						name: "All",
 						include: [],
 						exclude: [],
-						mime: ಠ_ಠ.Google.files.natives(),
+						mime: ಠ_ಠ.Google.files.all(),
+						properties: []
+					},
+					audio: {
+						name: "Audio",
+						include: [],
+						exclude: [],
+						mime: "audio/*",
 						properties: []
 					},
 				},
@@ -121,7 +128,6 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 					reviewed: {
 						class: "btn-outline-success",
 						name: "Reviewed",
-						mime: [],
 						include: [],
 						exclude: [],
 						properties: ["@@[REVIEW]=[DONE]"]
@@ -129,7 +135,6 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 					review: {
 						class: "btn-outline-danger",
 						name: "Needs Review",
-						mime: [],
 						include: [],
 						exclude: [],
 						properties: ["@@[REVIEW]=[NEEDED]"]
@@ -137,23 +142,22 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 					important: {
 						class: "btn-warning",
 						name: "Important",
-						mime: [],
 						include: [],
 						exclude: [],
-						properties: ["Importance!=None", "Importance!=Low"]
+						properties: ["Importance=High", "Importance=Medium"],
+						properties_modifier: "or"
 					},
 					confidential: {
 						class: "btn-warning",
 						name: "Confidential",
-						mime: [],
 						include: [],
 						exclude: [],
-						properties: ["Confidentiality!=None", "Confidentiality!=Low"]
+						properties: ["Confidentiality=High", "Confidentiality=Medium"],
+						properties_modifier: "or"
 					},
 					highlight: {
 						class: "btn-bright",
 						name: "Highlight",
-						mime: [],
 						include: [],
 						exclude: [],
 						properties: ["Highlight=TRUE"]
@@ -371,17 +375,28 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 		} : null
 	});
 
+	var _makeIds = value => _.map(value.split(","), id => `#${id}`).join(", ");
+
+	var _extractDataValueOrText = element => element.data("value") ? element.data("value") : element.text();
+
 	var _populateShortcuts = (target, dialog, options, pairs) => {
 		var _populate = target.data("populate"),
 			_shortcuts = _.reduce(options.shortcuts, (all, shortcut) => _.extendOwn(all, shortcut), {}),
 			_shortcut = _shortcuts[_populate];
 		if (_shortcut) _.each(pairs, pair => {
-			var _target = dialog.find(pair[1]);
-			if (_target.length == 1 && !_target.hasClass("locked")) {
-				if (_shortcut[pair[0]]) {
-					dialog.find(pair[1]).val(_.isArray(_shortcut[pair[0]]) ? _shortcut[pair[0]].join("\n") : _shortcut[pair[0]]).prop("disabled", false);
-				} else {
-					dialog.find(pair[1]).val("").prop("disabled", (_shortcut[pair[0]] === ""));
+			if (_shortcut[pair[0]] !== undefined) {
+				var _target = dialog.find(pair[1]);
+				if (_target.length == 1 && !_target.hasClass("locked")) {
+					if (_target.data("click")) {
+						$(_.find(dialog.find(_target.data("click") + `[data-target='${_target[0].id}']`).toArray(),
+							element => _extractDataValueOrText($(element)) == _shortcut[pair[0]])).click();
+					} else {
+						if (_shortcut[pair[0]]) {
+							dialog.find(pair[1]).val(_.isArray(_shortcut[pair[0]]) ? _shortcut[pair[0]].join("\n") : _shortcut[pair[0]]).prop("disabled", false);
+						} else {
+							dialog.find(pair[1]).val("").prop("disabled", (_shortcut[pair[0]] === ""));
+						}
+					}
 				}
 			}
 		});
@@ -407,12 +422,26 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 		lock: (target, dialog) => {
 
-			var _el = dialog.find("#" + target.data("lock")).toggleClass("locked");
+			var _el = dialog.find(_makeIds(target.data("lock"))).toggleClass("locked");
 			target.find("i.material-icons").text(_el.hasClass("locked") ? "lock" : "lock_open");
 
 		},
 
-		clear: (target, dialog) => dialog.find("#" + target.data("clear")).val("").filter("textarea.resizable").map((i, el) => autosize.update(el)),
+		clear: (target, dialog) => dialog.find(_makeIds(target.data("clear"))).val("").filter("textarea.resizable").map((i, el) => autosize.update(el)),
+
+		options: (target, dialog) => {
+			var value = _extractDataValueOrText(target),
+				destination = dialog.find(_makeIds(target.data("target"))),
+				current = destination.val();
+			if (value != current) {
+				var _siblings = target.siblings("[data-action='options']").toArray(),
+					_selected = _.find(_siblings, sibling => _extractDataValueOrText($(sibling)) == current),
+					_classes = _selected.className;
+				_selected.className = target[0].className;
+				target[0].className = _classes;
+				destination.val(value);
+			}
+		},
 	};
 
 	var _processItems = (name, action, parameters, items, collection, table, id, batch, highlight) => {
@@ -505,6 +534,10 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 		if (_tallyCache && values && values.length > 0) _.each(values, value => {
 			if (_tallyCache[value.id]) value.results = _tallyCache[value.id];
 		});
+
+		_data.clear({
+			removeIndices: false
+		}); /* <!-- Clear in case this is a refresh --> */
 		_data.insert(values);
 
 		var _return = ಠ_ಠ.Datatable(ಠ_ಠ, {
@@ -742,6 +775,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				mime: _.find(values, v => v.name == "mime").value.trim() ?
 					_.map(_.find(values, v => v.name == "mime").value.split("\n"), m => m.trim()) : [],
 				properties: {
+					modifier: _.find(values, v => v.name == "properties_modifier").value,
 					simple: _properties ? _.map(_.filter(_properties, p => p && _simple(p)), m => m.trim()) : null,
 					complex: _properties ? _.map(_.reject(_properties, p => !p || _simple(p)), t => _complex(t.trim())) : null,
 				},
@@ -765,7 +799,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 		};
 		var _encode = values => _.each(_.clone(values), (value, key, list) => _.isArray(value) ? list[key] = value.join("\n") : false);
 
-		var _id = "start_search",
+		var _root = folder.name == "root" || !folder.parents || folder.parents.length === 0,
+			_id = "start_search",
 			_search = ಠ_ಠ.Display.modal("search", {
 				id: "start_search",
 				target: ಠ_ಠ.container,
@@ -773,6 +808,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				instructions: ಠ_ಠ.Display.doc.get("SEARCH_INSTRUCTIONS"),
 				state: state && state.search ? state.search : null,
 				shortcuts: _dialog_Shortcuts.search,
+				entire: _root,
 				actions: [{
 					text: "Save",
 					handler: values => {
@@ -800,18 +836,19 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				handlers: {
 					lock: _dialogFormHandlers.lock,
 					clear: _dialogFormHandlers.clear,
+					options: _dialogFormHandlers.options,
 					populate: (target, dialog, options) => {
 
 						var _shortcut = _populateShortcuts(target, dialog, options, [
 							["mime", "#mimeTypes"],
 							["include", "#includeRegexes"],
 							["exclude", "#excludeRegexes"],
-							["properties", "#includeProperties"]
+							["properties", "#includeProperties"],
+							["properties_modifier", "#modifierProperties"]
 						]);
 						dialog.find("textarea.resizable").each((i, el) => autosize.update(el));
 
 						/* <!-- Tick Search All Drive if Possible --> */
-						var _root = folder.name == "root" || !folder.parents || folder.parents.length === 0;
 						var _basic = false;
 						if (_shortcut && _root) {
 							if (!dialog.find("#includeRegexes, #excludeRegexes").val().trim()) {
@@ -1438,7 +1475,8 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 					properties: !!(_.find(values, v => v.name == "properties")),
 					merge: !!(_.find(values, v => v.name == "merge")),
 					prefix: _.find(values, v => v.name == "prefix") ? `${_.find(values, v => v.name == "prefix").value.trim()} ` : "",
-					output: _.find(values, v => v.name == "output") ? _.find(values, v => v.name == "output").value : null
+					output: _.find(values, v => v.name == "output") ? _.find(values, v => v.name == "output").value : null,
+					relative: _.find(values, v => v.name == "relative") ? _.find(values, v => v.name == "relative").value : null
 				};
 				return _return;
 			};
@@ -1450,6 +1488,11 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 				title: `Clone <strong class="text-secondary">${ಠ_ಠ.Display.commarise(_results.length)}</strong> File${_results.length > 1 ? "s" : ""}`,
 				instructions: ಠ_ಠ.Display.doc.get("CLONE_INSTRUCTIONS"),
 				state: state && state.clone ? state.clone : null,
+				relative: {
+					id: folder.id,
+					name: folder.name
+				},
+				advanced: !!_search,
 				handlers: {
 					clear: _dialogFormHandlers.clear,
 					populate: (target, dialog) => dialog.find("textarea.resizable").each((i, el) => autosize.update(el))
@@ -1460,6 +1503,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 				dialog.find("#folders").on("change", e => {
 					if (!e.currentTarget.checked) $("#merge").prop("checked", false);
+					dialog.find(`[data-controlled='${e.currentTarget.id}']`).toggle(!!e.currentTarget.checked);
 				});
 
 			});
@@ -1537,22 +1581,36 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 						/* <!-- Cloned Folder already created, so use that --> */
 						_copy(_folderCache[item.parents[0]]);
 
-					} else if (!item.ancestors || item.ancestors.length === 0) {
-
-						/* <!-- No paths, but a parent, so clone that--> */
-						ಠ_ಠ.Google.files.get(item.parents[0], _team).then(parent => {
-							_createFolderFrom(parent, _root).then(folder => _copy(folder.id));
-						});
-
 					} else {
 
-						/* <!-- Recursively Create Folder Tree --> */
-						var _createAncestor = (ancestors, index, _last) =>
-							_createFolderFrom(ancestors[index], _last).then(folder =>
-								(index += 1) >= ancestors.length ? _copy(folder.id) : _createAncestor(ancestors, index, folder.id));
+						/* <!-- Filter out ancestors on and above a certain level --> */
+						var _filterAncestors = (ancestors, from) => {
+								var _position = _.findIndex(ancestors, ancestor => ancestor.id == from);
+								return _position >= 0 ? ancestors.slice(_position + 1) : ancestors;
+							},
+							_ancestors = (!item.ancestors || item.ancestors.length === 0) ? [] : parameters.relative ? _filterAncestors(item.ancestors[0], parameters.relative) : item.ancestors[0];
 
-						_createAncestor(item.ancestors[0], 0, _root);
+						if (_ancestors.length === 0) {
+
+							/* <!-- No paths, but a parent, so clone that--> */
+							(parameters.relative && item.parents[0] == parameters.relative) ?
+							_copy(_root): ಠ_ಠ.Google.files.get(item.parents[0], _team).then(parent => {
+								_createFolderFrom(parent, _root).then(folder => _copy(folder.id));
+							});
+
+						} else {
+
+							/* <!-- Recursively Create Folder Tree --> */
+							var _createAncestor = (ancestors, index, _last) =>
+								_createFolderFrom(ancestors[index], _last).then(folder =>
+									(index += 1) >= ancestors.length ? _copy(folder.id) : _createAncestor(ancestors, index, folder.id));
+
+							_createAncestor(_ancestors, 0, _root);
+
+						}
+
 					}
+
 
 				}
 
@@ -1687,13 +1745,9 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally) {
 
 				};
 
-				/* <!-- Run the promise to fetch the data, with a delayed single retry (if required) --> */
-				/* <!-- Should be moved (DELAY / RETRY) to the Google Module, which will pass call retry details to network --> */
-				ಠ_ಠ.Google.folders.children(folder_ids, true, _team).then(_complete).catch(() => {
-					DELAY(2000).then(() => {
-						ಠ_ಠ.Google.folders.children(folder_ids, true, _team).then(_complete).catch((e) => ಠ_ಠ.Flags.error("Processing Tally for Google Drive Folders: " + JSON.stringify(folder_ids), e ? e : "No Inner Error"));
-					});
-				});
+				ಠ_ಠ.Google.folders.children(folder_ids, true, _team)
+					.then(_complete)
+					.catch(e => ಠ_ಠ.Flags.error("Processing Tally for Google Drive Folders: " + JSON.stringify(folder_ids), e ? e : "No Inner Error"));
 
 			});
 
