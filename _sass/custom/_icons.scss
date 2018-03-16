@@ -15,6 +15,14 @@
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 // -- Material Design Icons -- //
 
+td .icon {
+  margin-bottom: -1em;
+  margin-top: 0.1em;
+  &:not(.float-left):not(.float-right) {
+    i {padding-top: 0.25em;}
+  }
+}
+
 a.icon, a .material-icons {
   color: $colour-highlight;
   text-decoration: none !important;

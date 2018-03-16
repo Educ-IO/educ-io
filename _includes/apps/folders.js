@@ -15,9 +15,7 @@ App = function() {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var _pick = function() {
-
-		return new Promise((resolve, reject) => {
+	var _pick = () => new Promise((resolve, reject) => {
 
 			/* <!-- Open Folder from Google Drive Picker --> */
 			ಠ_ಠ.Google.pick(
@@ -29,15 +27,13 @@ App = function() {
 
 		});
 
-	};
-
-	var _resize = function() {
+	var _resize = () => {
 
 		var _css = ಠ_ಠ.Css("folders");
 		var _style = _css.sheet("resizer");
 
 		/* <!-- Handle Screen / Window Resize Events --> */
-		var _resizer = function() {
+		var _resizer = () => {
 			var _height = 0;
 			$("#site_nav, #paths, #folder_tabs").each(function() {
 				_height += $(this).outerHeight(true);
@@ -53,7 +49,7 @@ App = function() {
 
 	};
 	
-	var _showPath = function(path, target) {
+	var _showPath = (path, target) => {
 		ಠ_ಠ.Display.template.show({
 			template: "breadcrumbs",
 			id: "paths",
@@ -64,7 +60,7 @@ App = function() {
 		});
 	};
 
-	var _openFolder = function(folder, log, teamDrive, state) {
+	var _openFolder = (folder, log, teamDrive, state, complete) => {
 		
 		folder.url = "#google,load." + (folder.team ? "team." : "") + folder.id + (teamDrive ? "." + teamDrive : "");
 
@@ -81,7 +77,7 @@ App = function() {
 		} else {
 			
 			/* <!-- Check if it's in the paths already --> */
-			var _existing = _.findIndex(_path, (p) => p.id === folder.id) + 1;
+			var _existing = _.findIndex(_path, p => p.id === folder.id) + 1;
 			if (_existing > 0) {
 				
 				/* <!-- Existing in Current Path, so splice back to it --> */
@@ -97,12 +93,12 @@ App = function() {
 		}
 		
 		_showPath(_path, ಠ_ಠ.container);
-		_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state, _folder ? _folder.tally.get() : null);
+		_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state, _folder ? _folder.tally.get() : null, complete);
 		if (log) ಠ_ಠ.Recent.add(folder.id, folder.name, folder.url).then(() => _resize());
 
 	};
 	
-	var _load = function(loader, rootTeamDrive, log, teamDrive, state, tags) {
+	var _load = (loader, rootTeamDrive, log, teamDrive, state, tags) => {
 		
 		var _finish = ಠ_ಠ.Display.busy({
 			target: ಠ_ಠ.container,
@@ -117,6 +113,7 @@ App = function() {
 			
 			if (ಠ_ಠ.Google.files.in(TYPE)(file)) {
 				
+				/* <!-- This is a folders file to load and read/action --> */
 				ಠ_ಠ.Google.download(file.id).then(loaded => {
 					return ಠ_ಠ.Google.reader().promiseAsText(loaded).then(parsed => {
 						ಠ_ಠ.Flags.log(`Loaded Folders File [${file.mimeType}]: ${parsed}`);
@@ -128,67 +125,67 @@ App = function() {
 				
 			} else if (ಠ_ಠ.Google.folders.check(true)(file)) {
 				
+				/* <!-- This is a folder to display --> */
 				file.team = rootTeamDrive;
 				_openFolder(file, log, teamDrive, state);
 				
 			} else {
 				
-				ಠ_ಠ.Flags.log(`Tags: ${JSON.stringify(tags)}`);
+				/* <!-- This is a file, so open the parent and process any extra instructions via a complete method --> */
+				if (file.parents && file.parents.length > 0) ಠ_ಠ.Google.files.get(file.parents[0], teamDrive).then(folder => {
+						_openFolder(folder, log, teamDrive, state, () => {
+							if (tags && _.isArray(tags)) _folder.tag(file.id, tags[0], tags.length > 1 ? tags[1] : "");
+							return true;
+						});
+					});
 				
 			}
 			
-		}).catch((e) => {
+		}).catch(e => {
 			_finish();
 			ಠ_ಠ.Flags.error("File / Folder Load Failure", e ? e : "No Inner Error");
 		});
 		
 	};
 	
-	var _loadFolder = function(id, log, teamDrive, tags) {
+	var _loadFolder = (id, log, teamDrive, tags) => {
 		
 		if (id) _load(ಠ_ಠ.Google.files.get(id, teamDrive), false, log, teamDrive, null, tags);
 		
 	};
 	
-	var _loadTeamDrive = function(id, log) {
+	var _loadTeamDrive = (id, log) => {
 		
 		if (id) _load(ಠ_ಠ.Google.teamDrives.get(id), true, log);
 		
 	};
 	
-	var _openTeamDrive = function() {
+	var _openTeamDrive = () => {
 		
-		ಠ_ಠ.Display.busy({
-			target: ಠ_ಠ.container
+		var _busy = ಠ_ಠ.Display.busy({
+			target: ಠ_ಠ.container,
+			fn: true
 		});
 		
 		ಠ_ಠ.Google.teamDrives.list().then(drives => {
 		
-			ಠ_ಠ.Display.busy({
-				target: ಠ_ಠ.container,
-				clear: true
-			});
+			_busy();
 			
 			ಠ_ಠ.Display.choose({
 				id: "folders_teamDrives",
 				title: "Please Choose a Team Drive to Open ...",
 				action: "Open",
 				choices: _.map(drives, (drive) => ({id: drive.id, name: drive.name}))
-			}).then(function(option) {
+			}).then(option => {
 
 				if (option) {
 					option.team = true;
 					_openFolder(option, true);
 				}
 
-			}).catch((e) => {
-				
-				ಠ_ಠ.Flags.error("Team Drive Select:", e);
-				ಠ_ಠ.Display.busy({clear: true});
-				
-			});
+			}).catch(e => _busy() && ಠ_ಠ.Flags.error("Team Drive Select:", e));
 			
-		}).catch((e) => ಠ_ಠ.Flags.error("Team Drive Load Failure", e ? e : "No Inner Error"));
+		}).catch(e => ಠ_ಠ.Flags.error("Team Drive Load Failure", e ? e : "No Inner Error"));
 	};
 	/* <!-- Internal Functions --> */
 
@@ -225,7 +222,7 @@ App = function() {
 						} else if ((/TEAM/i).test(command[1])) {
 							_openTeamDrive();
 						} else {
-							_pick().then((folder) => {
+							_pick().then(folder => {
 								_openFolder(folder, true);
 							}).catch((e) => ಠ_ಠ.Flags.error("Picker Failure", e ? e : "No Inner Error"));
 						}
@@ -265,22 +262,20 @@ App = function() {
 
 					} else if ((/TALLY/i).test(command)) {
 
-						if (_folder) _folder.tally.run();
+						if (_folder) _folder.tally.run(((/TALLY/i).test(command[0])) ? command[1] : null);
 
 					} else if ((/CONVERT/i).test(command)) {
 
-						if (_folder) _folder.convert(((/TAG/i).test(command[0])) ? command[1] : null);
+						if (_folder) _folder.convert(((/CONVERT/i).test(command[0])) ? command[1] : null);
 
 					} else if ((/TAG/i).test(command)) {
 
 						if (_folder) _folder.tag(((/TAG/i).test(command[0])) ? command[1] : null);
 						
+					} else if ((/STAR/i).test(command)) {
 
-
-					} else if ((/STAR/i).test(command[0]) && command[1]) {
-
-						if (_folder) _folder.star(command[1]);
-
+						if (_folder) _folder.star(((/STAR/i).test(command[0])) ? command[1] : null);
+						
 					} else if ((/VISIBILITY/i).test(command)) {
 
 						if ((/COLUMNS/i).test(command[1]) && _folder) _folder.table().columns.visibility();
@@ -299,10 +294,26 @@ App = function() {
 
 						if (_folder) _folder.clone(((/CLONE/i).test(command[0])) ? command[1] : null);
 
+					} else if ((/AUDIT/i).test(command)) {
+
+						if (_folder) _folder.audit(((/AUDIT/i).test(command[0])) ? command[1] : null);
+												
 					} else if ((/DELETE/i).test(command)) {
 
-						if (_folder) _folder.delete();
+						if (_folder) _folder.delete(((/DELETE/i).test(command[0])) ? command[1] : null);
 
+					} else if ((/REFRESH/i).test(command)) {
+
+						if (_folder) _openFolder(_folder.folder(), false);
+
+					} else if ((/TEST/i).test(command)) {
+
+						if (_folder) _folder.test(
+							((/TEST/i).test(command[0])) ? command[1] : null, 
+							((/TEST/i).test(command[0])) ? command[2] : null,
+							((/TEST/i).test(command[0])) ? command[3] ? true : null : null
+						);
+						
 					}
 
 				}

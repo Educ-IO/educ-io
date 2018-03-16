@@ -106,11 +106,11 @@ Google_API = function(ಠ_ಠ, timeout) {
 	var _init = (token, type, expires, update) => {
 
 		/* <!-- Check Function to ensure token validity --> */
-		_check = (function(e, u) {
+		_check = ((e, u) => {
 
-			return function(force) {
+			return force => {
 
-				return new Promise(function(resolve, reject) {
+				return new Promise((resolve, reject) => {
 
 					if (force || e <= new Date()) { /* Token Expired */
 
@@ -134,24 +134,16 @@ Google_API = function(ಠ_ಠ, timeout) {
 		})(new Date((expires - 1) * 1000), update); /* 1 second shift in case of network delays! */
 
 		/* <!-- Pass Token to Network --> */
-		_before = (function(t, w) {
+		_before = ((t, w) => {
 			/* "Authorization: token OAUTH-TOKEN" */
-			return function(r) {
+			return r => {
 				if (r.headers) r.headers.Authorization = (w + " " + t);
 				return true;
 			};
 
 		})(token, type);
 
-		_token = (function(t) {
-
-			return function() {
-
-				return t;
-
-			};
-
-		})(token);
+		_token = (t => () => t)(token);
 
 		/* <!-- Before Network Call : Request Authorisation Closure --> */
 		_.each(NETWORKS, network => {
@@ -201,25 +193,26 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	var _call = function(method) {
 		return new Promise((resolve, reject) => {
-			_check().then(() => method.apply(this, _.rest(arguments)).then((value) => resolve(value)).catch((e) => reject(e)));
+			_check().then(() => method.apply(this, _.rest(arguments)).then(value => resolve(value)).catch(e => reject(e)));
 		});
 	};
 
 	var _get = (id, team) => {
-		var _data = team ?
+		var _fields = "id,name,description,mimeType,version,parents,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties",
+			_data = team ?
 			team === true ? {
-				fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
+				fields: _fields,
 				includeTeamDriveItems: true,
 				supportsTeamDrives: true,
 				corpora: "user,allTeamDrives"
 			} : {
-				fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
+				fields: _fields,
 				teamDriveId: team,
 				includeTeamDriveItems: true,
 				supportsTeamDrives: true,
 				corpora: "teamDrive"
 			} : {
-				fields: "kind,id,name,mimeType,version,parents,webViewLink,webContentLink,iconLink,size",
+				fields: _fields,
 			};
 		return _call(NETWORKS.general.get, "drive/v3/files/" + id, _data);
 	};
@@ -318,7 +311,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 			pageSize: PAGE_SIZE,
 			q: "trashed = false" + _i + _n + _m + _e + _p + _v + _s,
 			orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-			fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,name,size,parents,mimeType" + (team ? ",teamDriveId" : "") + ")" : "kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,properties,appProperties" + (team ? ",teamDriveId" : "") + ")",
+			fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,name,size,parents,mimeType" + (team ? ",teamDriveId" : "") + ")" : "kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,shared,properties,appProperties" + (team ? ",teamDriveId" : "") + ")",
 		};
 
 		if (team) {
@@ -512,13 +505,26 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		pick: (title, multiple, team, views, callback, context) => _pick(title, multiple, team, views, callback, context),
 
+		permissions: {
+
+			get: (id, team) => {
+				var _team = team ? `?teamDriveId=${team}&supportsTeamDrives=true` : "",
+					_url = `drive/v3/files/${id}/permissions${_team}`,
+					_fields = "id,type,emailAddress,domain,role,allowFileDiscovery,displayName,photoLink,expirationTime,deleted";
+				return _list(_url, "permissions", [], {
+					fields: `kind,nextPageToken,permissions(${_fields}${team ? ",teamDrivePermissionDetails" : ""})`
+				});
+			},
+
+		},
+
 		files: {
 
 			all: () => ALL,
 
 			natives: () => NATIVES,
 
-			is: (type) => (item) => item.mimeType === type,
+			is: type => item => item.mimeType === type,
 
 			in: (type) => (item) => item.mimeType && item.mimeType.startsWith(type),
 
@@ -602,10 +608,21 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 		sheets: {
 
-			create: name => _call(NETWORKS.sheets.post, "v4/spreadsheets", {
+			create: (name, tab, colour) => _call(NETWORKS.sheets.post, "v4/spreadsheets", {
 				"properties": {
 					"title": name
-				}
+				},
+				"sheets": [{
+					"properties": {
+						"sheetId": 0,
+						"title": tab ? tab : "Sheet1",
+						"tabColor": colour ? colour : {
+							"red": 0.0,
+							"green": 0.0,
+							"blue": 0.0
+						}
+					}
+				}]
 			}, "application/json"),
 
 			get: (id, all) => _call(NETWORKS.sheets.get, "v4/spreadsheets/" + id + (all ? "?includeGridData=true" : "")),
@@ -622,6 +639,12 @@ Google_API = function(ಠ_ಠ, timeout) {
 				"range": range,
 				"majorDimension": "ROWS",
 				"values": values
+			}, "application/json"),
+
+			batch: (id, updates, returnSheet, returnData) => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}:batchUpdate`, {
+				"requests": _arrayize(updates, value => !_.isArray(value)),
+				"includeSpreadsheetInResponse": returnSheet ? true : false,
+				"responseIncludeGridData": returnData ? true : false,
 			}, "application/json"),
 
 		},

@@ -34,11 +34,12 @@ table {
 			overflow-wrap: break-word;
     	word-wrap: break-word;
     	display: inline-block;
-			&.w-25 {max-width: 25pc;}
-			&.w-50 {max-width: 50pc;}
-			&.w-75 {max-width: 75pc;}
-			&.w-80 {max-width: 80pc;}
-			&.w-90 {max-width: 90pc;}
+			&.mw-25 {max-width: 25pc !important;}
+			&.mw-50 {max-width: 50pc !important;}
+			&.mw-60 {max-width: 60pc !important;}
+			&.mw-75 {max-width: 75pc !important;}
+			&.mw-80 {max-width: 80pc !important;}
+			&.mw-90 {max-width: 90pc !important;}
 		}
 		
 	}

@@ -34,7 +34,9 @@ Apps
 ----
 * ** IMPORTANT ** Clear process instructions? Visual? <- App Guides
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
-* ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549 -> Re-submit form apparently!
+* ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?)
+  -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
+  -> Re-submit form apparently!
 
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
@@ -81,11 +83,8 @@ View
 Folders
 -------
 * CODE : Swap table from expanding to fixed with flex wrapping for custom properties and long ids -> Also vertically centre row content.
-* CODE : Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) => { -- Better to save out form values than encode / decode
-* CODE : State Save needs updating for new fields
-* CODE : Move convert to new 'stepping' method (have to include batches / need two levels of batches, one parallel etc)
-* FEATURE : Export Search Results to Sheets -> View
-* FEATURE : Accept Route in with File ID and Tag Value (from Tag-A-Doc for Reviewed) (Partly done)
+* FEATURE : Audit Search Results for Sharing [PARTLY DONE]
+* FEATURE : Auto-Size Log Spreadsheet Columns
 
 Merge
 -----
@@ -109,6 +108,14 @@ Reflect
 
 Complete
 --------
+* CODE : Move convert to new 'stepping' method (have to include batches / need two levels of batches, one parallel etc - to avoid blowing the stack) <-- DONE
+* CODE : State Save needs updating for new fields <-- DONE
+* CODE : Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) <-- DONE
+* FEATURE : Accept Route in with File ID and Tag Value (from Tag-A-Doc for Reviewed) <-- DONE
+* ** BUG ** : Tally misreports top level folder when tallying below it (in badges, just shows the direct children) <-- DONE
+* FEATURE : Convert Single Item -> Click on Type, populate source MimeType (give output mime type options?) <-- DONE
+* CODE : Convert Tally to use: _processCollection(_cloneItems, id, results => _.reject(results, item => ಠ_ಠ.Google.folders.is(item.mimeType))) <-- DONE
+* CODE : Convert Star, Delete to use: _processCollection(_cloneItems, id, results => _.reject(results, item => ಠ_ಠ.Google.folders.is(item.mimeType))) <-- DONE
 * FEATURE ** IMPORTANT ** Allow properties to be AND / OR <-- DONE
 * ** BUG ** After refresh click (should be a menu item?) - ERROR - Requesting Selected Google Drive Folder Error: Duplicate key for property id: <== DONE
 * FEATURE : Wildcard Mime Searches

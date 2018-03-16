@@ -654,10 +654,9 @@ folders:
     - folders/search
     - folders/convert
     - folders/results
-    - folders/tally
-    - folders/status
     - folders/tag
     - folders/clone
+    - folders/audit
     - folders/custom_properties
   docs:
     - shared/FILTERS
@@ -674,6 +673,7 @@ folders:
     - folders/CONVERT_INSTRUCTIONS
     - folders/TAG_INSTRUCTIONS
     - folders/CLONE_INSTRUCTIONS
+    - folders/AUDIT_INSTRUCTIONS
     - folders/TUTORIALS
   scopes:
     google:
@@ -721,6 +721,12 @@ folders:
                 - google
               auth: google
               id: _cmd_Start_Team
+            - name: Refresh
+              desc: Refresh the Folder View
+              hash: refresh
+              disabled_until:
+                - opened
+              auth: google
             - name: Search
               desc: Search a Google Drive Folder
               hash: search
@@ -763,6 +769,16 @@ folders:
                 - opened
               imports:
                 - google
+            - name: Audit
+              desc: Audit the files in these search results
+              hash: audit
+              disabled_until:
+                - searched
+            - name: Star
+              desc: Star the files in these search results
+              hash: star
+              disabled_until:
+                - searched
             - name: Delete
               desc: Delete the files in these search results
               hash: delete

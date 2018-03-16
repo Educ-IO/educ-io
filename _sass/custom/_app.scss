@@ -180,6 +180,13 @@ div.tab-pane {
 	
 }
 
+a.link[data-type='out'] {
+	&:after {
+		content: "\21D7";
+		padding-left: 5px;
+	}
+}
+
 a.nav-link[data-type='folder'] {
 	&:after {
 		content: "\2691";
@@ -306,10 +313,27 @@ a.disabled, input.disabled, .btn-disabled {
 // -- Folder Cells -- //
 td.folder {background-color: beige;}
 tr.bg-active, tr.bg-active td {background-color: $colour-active !important;}
-td a.star {
-	&.starred {color: $colour-general-light !important;}
-	&.un-starred {color: $colour-emphasis !important;}
-	&:hover {text-decoration: none; font-weight: bold;}
+td a.action {
+	&.action-on {
+		color: lighten($colour-general, 30%) !important;
+		i {color: lighten($colour-general, 30%) !important;}
+		&:hover {
+			color: $colour-general !important;
+			i {color: $colour-general !important;}
+		}
+	}
+	&.action-off {
+		color: $colour-emphasis !important;
+		i {color: $colour-emphasis !important;}
+		&:hover {
+			color: darken($colour-emphasis, 20%) !important;
+			i {color: darken($colour-emphasis, 20%) !important;}
+		}
+	}
+	&:hover {
+		text-decoration: none;
+		i {text-decoration: none;}
+	}
 }
 // -- Folder Cells -- //
 

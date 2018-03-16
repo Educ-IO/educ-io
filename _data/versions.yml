@@ -1,4 +1,8 @@
 site :
+  0.0.8p :
+    name : Folders 0.0.6e-alpha
+    name : Significant Improvements - Improved Logging and Stepped Processes
+    type : minor
   0.0.8o :
     name : Folders 0.0.6d-alpha
     name : Improvements - Better Cloning and Property Searching
@@ -373,6 +377,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.6e-alpha :
+    name : Improvements
+    desc : Improved Logging and Stepped Processes
+    type : minor
   0.0.6d-alpha :
     name : Improvements
     desc : Better Cloning and Property Searching

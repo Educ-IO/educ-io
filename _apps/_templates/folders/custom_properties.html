@@ -1,7 +1,7 @@
 {% raw %}
-{{#each properties}}{{#if this}}<span class="custom-property badge badge-secondary{{#si this "High"}} badge-danger{{/si}}{{#si this "Medium"}} badge-warning{{/si}}{{#si this "Low"}} badge-success{{/si}}{{#si this "None"}} badge-info{{/si}}{{#si @key "Review"}} badge-dark{{/si}}{{#si @key "Reviewed"}} badge-light{{/si}}{{#si @key "Highlight"}} badge-bright{{/si}} ml-lg-1  mr-1" title="">
+{{#each properties}}{{#if this}}<span class="custom-property badge badge-secondary{{#is this "High"}} badge-danger{{/is}}{{#is this "Medium"}} badge-warning{{/is}}{{#is this "Low"}} badge-success{{/is}}{{#is this "None"}} badge-info{{/is}}{{#is @key "Review"}} badge-dark{{/is}}{{#is @key "Reviewed"}} badge-light{{/is}}{{#is @key "Highlight"}} badge-bright{{/is}} ml-lg-1  mr-1" title="">
   {{#exists ../private}}<i class="material-icons h-100 d-inline-flex pr-1" title="Visible only with this App">lock</i>{{/exists}}
   <a role="button" aria-label="Search" href="#search.properties.{{@key}}.{{this}}" title="Find all files with the same Tag/Value"><i class="material-icons h-100 d-inline-flex" >search</i></a>
-  {{@key}}{{#si this "!==" "TRUE"}} - {{this}}{{/si}}
+  {{@key}}{{#is this "!==" "TRUE"}} - {{this}}{{/is}}
   <a role="button" class="close" aria-label="Close" href="#remove.tag.{{../id}}.{{@key}}" title="Remove Tag"><span aria-hidden="true">&times;</span></a></span>{{/if}}{{/each}}
 {% endraw %}

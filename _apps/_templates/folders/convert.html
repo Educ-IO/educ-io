@@ -15,12 +15,16 @@
 					<div class="row mt-3">
 						<div class="form-group col-lg-6">
 							<label for="sourceMimeType">Source Mime Type</label>
-							<textarea id="sourceMimeType" name="source" class="form-control resizable"  rows="1">{{#if state}}{{state.source}}{{/if}}</textarea>
+							<button type="button" class="close" data-action="clear" data-clear="sourceMimeType" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="sourceMimeType" aria-label="Lock"><i class="material-icons">lock_open</i></button>
+							<textarea id="sourceMimeType" name="source" class="form-control resizable"  rows="1">{{#if state}}{{#if state.source}}{{state.source}}{{/if}}{{/if}}</textarea>
 							<small class="form-text text-muted">Mime Type to convert from.</small>	
 						</div>
 						<div class="form-group col-lg-6">
 							<label for="targetMimeType">Target Mime Type</label>
-							<textarea id="targetMimeType" name="target" class="form-control resizable"  rows="1">{{#if state}}{{state.target}}{{/if}}</textarea>
+							<button type="button" class="close" data-action="clear" data-clear="targetMimeType" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="targetMimeType" aria-label="Lock"><i class="material-icons">lock_open</i></button>
+							<textarea id="targetMimeType" name="target" class="form-control resizable"  rows="1">{{#if state}}{{#if state.target}}{{state.target}}{{/if}}{{/if}}</textarea>
 							<small class="form-text text-muted">Mime Type to convert to.</small>
 						</div>
 					</div>

@@ -145,7 +145,7 @@ Display = function() {
 					}
 				});
 
-				Handlebars.registerHelper("si", function (v1, operator, v2, options) {
+				Handlebars.registerHelper("is", function (v1, operator, v2, options) {
 
 					if (arguments.length < 3) throw new Error("SI expects 2 or 3 parameters");
 					if (options === undefined) {
@@ -287,15 +287,16 @@ Display = function() {
 
 			if (options && options.status) {
 				var _source = options.status.source ? options.status.source : window, _status = _loader.find(".status");
-				_handler = options.__statusHandler ? options.__statusHandler : e => _status.text(options.status.value(e.detail));
+				_handler = options.__statusHandler ? options.__statusHandler : e => _status.text(options.status.value ? options.status.value(e.detail) : e.detail);
 				_source[_clear ? "removeEventListener" : "addEventListener"](options.status.event, _handler, false);
 			}
 			
 			return options && !options.clear && (options === true || options.fn === true) ? ((fn, opts) => {
 				opts.clear = true;
 				if (_handler) opts.__statusHandler = _handler;
+				opts.__return = this;
 				return () => fn(opts);
-			})(this.busy, options === true ? {} : options) : this;
+			})(this.busy, options === true ? {} : options) : options.__return ? options.__return : this;
 			
 		},
 
