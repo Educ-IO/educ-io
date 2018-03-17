@@ -42,7 +42,6 @@ Apps
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 * Success / Failure response in Busy Loader? E.g. Animate to cross if it fails?
 
-* Document Templates (Comments?)
 
 Mobile
 ------
@@ -82,9 +81,6 @@ View
 
 Folders
 -------
-* CODE : Swap table from expanding to fixed with flex wrapping for custom properties and long ids -> Also vertically centre row content.
-* FEATURE : Audit Search Results for Sharing [PARTLY DONE]
-* FEATURE : Auto-Size Log Spreadsheet Columns
 
 Merge
 -----
@@ -108,6 +104,11 @@ Reflect
 
 Complete
 --------
+* FEATURE : Audit Search Results for Sharing <-- DONE
+* BUG : Set second 'focus' click to remove thumbnail popover <-- DONE
+* CODE : Swap table from expanding to fixed with flex wrapping for custom properties and long ids -> Also vertically centre row content. <-- DONE
+* FEATURE : Add batches to Convert <-- DONE
+* FEATURE : Auto-Size Log Spreadsheet Columns <-- DONE
 * CODE : Move convert to new 'stepping' method (have to include batches / need two levels of batches, one parallel etc - to avoid blowing the stack) <-- DONE
 * CODE : State Save needs updating for new fields <-- DONE
 * CODE : Make dialog save handler generic second order function -> E.g. actions: [{text : "Save", handler : (values) <-- DONE

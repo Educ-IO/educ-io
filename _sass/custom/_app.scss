@@ -115,7 +115,7 @@ div.alert:first-child {
 .content {
 	margin-bottom: 0.5rem;
 	> .container {
-		margin-top: 0.5rem;
+		&:first-child {margin-top: 0.5rem;}
 	}
 }
 

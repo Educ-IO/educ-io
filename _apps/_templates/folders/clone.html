@@ -18,11 +18,18 @@
         {{#if instructions}}{{{instructions}}}{{/if}}
 				{{#if shortcuts}}{{> populate_buttons shortcuts}}{{/if}}
 				<form>
-					<div class="form-group">
-						<label for="prefix_Name">Name Prefix</label>
-						<button type="button" class="close" data-action="clear" data-clear="prefix_Name" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-						<textarea id="prefix_Name" name="prefix" class="form-control resizable optional small" rows="1">{{#if state}}{{state.prefix}}{{/if}}</textarea>
-						<small class="form-text text-muted">Prefix Cloned Files with this (e.g. [Clone of] ).</small>
+					<div class="row">
+						<div class="form-group col-lg-6">
+							<label for="prefix_Name">Name Prefix</label>
+							<button type="button" class="close" data-action="clear" data-clear="prefix_Name" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<textarea id="prefix_Name" name="prefix" class="form-control resizable optional small" rows="1">{{#if state}}{{state.prefix}}{{/if}}</textarea>
+							<small class="form-text text-muted">Prefix Cloned Files with this (e.g. [Clone of] ).</small>
+						</div>
+						<div class="form-group col-lg-6">
+							<label for="batchSize">Batch Size</label>
+							<input type="number" id="batchSize" name="batch" class="form-control optional" value="{{#if state}}{{#if state.batch}}{{state.batch}}{{else}}0{{/if}}{{else}}0{{/if}}"/>
+							<small class="form-text text-muted">Batches to break task into (results written to sheet after each). Zero/negative will <strong>disable logging</strong>.</small>
+						</div>
 					</div>
 					<div class="form-group">
 						<label for="outputTo">Output To</label>

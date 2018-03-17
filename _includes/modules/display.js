@@ -147,7 +147,7 @@ Display = function() {
 
 				Handlebars.registerHelper("is", function (v1, operator, v2, options) {
 
-					if (arguments.length < 3) throw new Error("SI expects 2 or 3 parameters");
+					if (arguments.length < 3) throw new Error("IS expects 2 or 3 parameters");
 					if (options === undefined) {
 							options = v2;
 							v2 = operator;
@@ -168,7 +168,7 @@ Display = function() {
 						"or" : (a, b) => a || b,
 					};
 
-					if (!operators[operator]) throw new Error(`SI doesn't understand the operator ${operator}`);
+					if (!operators[operator]) throw new Error(`IS doesn't understand the operator ${operator}`);
 					return operators[operator](v1, v2) ? options.fn(this) : options.inverse(this);
 
 				});

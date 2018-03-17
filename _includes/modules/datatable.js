@@ -373,7 +373,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 	var _createDefaultTable = () => ಠ_ಠ.Display.template.get("table")({
 		id: _name,
 		links: false,
-		classes: [],
+		classes: options.classes ? options.classes : [],
 		headers: table.headers,
 		rows: _createRows(table.data.chain().data({
 			removeMeta: true
@@ -395,7 +395,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 	var _createDisplayTable = () => ಠ_ಠ.Display.template.get("table")({
 		id: _name,
 		links: !options.readonly,
-		classes: options.widths && options.widths.lengths > 0 ? ["table-fixed-width"] : [],
+		classes: (options.classes ? options.classes : []).concat(options.widths && options.widths.lengths > 0 ? ["table-fixed-width"] : []),
 		headers: table.headers,
 		widths: options.widths,
 		rows: _createRows(_getRows()),

@@ -656,8 +656,9 @@ folders:
     - folders/results
     - folders/tag
     - folders/clone
-    - folders/audit
     - folders/custom_properties
+    - folders/permissions
+    - folders/audit
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -673,7 +674,7 @@ folders:
     - folders/CONVERT_INSTRUCTIONS
     - folders/TAG_INSTRUCTIONS
     - folders/CLONE_INSTRUCTIONS
-    - folders/AUDIT_INSTRUCTIONS
+    - folders/AUDIT_EXPLANATION
     - folders/TUTORIALS
   scopes:
     google:
@@ -770,10 +771,10 @@ folders:
               imports:
                 - google
             - name: Audit
-              desc: Audit the files in these search results
+              desc: Audit folders and files in the current folder or search results
               hash: audit
               disabled_until:
-                - searched
+                - opened
             - name: Star
               desc: Star the files in these search results
               hash: star

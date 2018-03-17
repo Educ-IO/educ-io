@@ -1,14 +1,16 @@
 Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 
 	/* <!-- Internal Constants --> */
-	const BATCH_SIZE = 50;
+	const BATCH_SIZE = 50,
+		CONCURRENT_SIZE = 2,
+		TRACK_TIME = 200;
 	const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
 	const SEARCH_TRIGGER = 20;
 
 	const TYPE_CONVERT = "application/x.educ-io.folders-convert",
 		TYPE_SEARCH = "application/x.educ-io.folders-search",
 		TYPE_TAG = "application/x.educ-io.folders-tag",
-		TYPE_CLONE = "application/x.educ-io.folders-tag",
+		TYPE_CLONE = "application/x.educ-io.folders-clone",
 		_types = [TYPE_CONVERT, TYPE_SEARCH, TYPE_TAG, TYPE_CLONE];
 	/* <!-- Internal Constants --> */
 
@@ -321,14 +323,14 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 			ಠ_ಠ.Flags.log(`Setting scroll position for id=${row.attr("id")} to ${_position}`);
 			row.parents("div.tab-pane").animate({
 				scrollTop: _position
-			}, 300);
+			}, TRACK_TIME);
 			return row;
 		},
-		busy = (cell, row, css_class) => on => {
+		busy = (cell, row, css_class, track) => on => {
 			on ? ಠ_ಠ.Display.busy({
 					target: cell,
 					class: "loader-small"
-				}) && locate(row) && row.addClass(css_class ? css_class : "bg-active") :
+				}) && (track ? locate(row) : true) && row.addClass(css_class ? css_class : "bg-active") :
 				ಠ_ಠ.Display.busy({
 					target: cell,
 					clear: true
@@ -361,6 +363,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 		type: v.mimeType,
 		mimeType: v.mimeType,
 		name: v.name,
+		description: v.description,
 		parents: v.parents,
 		icon: v.iconLink,
 		thumbnail: v.thumbnailLink,
@@ -485,7 +488,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 			.then(finish);
 	};
 
-	var _processItems = (name, action, parameters, values, collection, table, id, concurrent, highlight, batch, log) => new Promise(resolve => {
+	var _processItems = (name, action, parameters, values, collection, table, id, concurrent, highlight, batch, log, no_track) => new Promise(resolve => {
 
 		var _range = (sheet, start_Row, end_Row, start_Col, end_Col) => ({
 				"sheetId": sheet ? sheet : 0,
@@ -494,6 +497,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 				"startColumnIndex": start_Col,
 				"endColumnIndex": end_Col,
 			}),
+			_results = [],
 			_fn = ಠ_ಠ._isF(name),
 			_log = log || (parameters && parameters.log) ? `${_fn ? name() : name} Results ${folder && folder.name ? `for ${folder.name}` : ""} [${new Date().toUTCString()}]` : false,
 			_logger,
@@ -537,7 +541,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 					if (!_container || _container.length === 0) _container = $("#" + item.id);
 					var _cell = _container.find(".file-name").parents("td"),
 						_row = _cell.parents("tr"),
-						_busy = busy(_cell, _row);
+						_busy = busy(_cell, _row, null, !no_track);
 					_busy(true);
 
 					action(_result, parameters)
@@ -551,6 +555,10 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 									end: result
 								});
 							}
+							_results.push({
+								item: _result,
+								result: result
+							});
 						})
 						.catch(e => {
 							ಠ_ಠ.Flags.error(`"Item ${item.id} ${_name} error`, e ? e : "No Inner Error");
@@ -582,6 +590,122 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 
 			};
 
+		/* <!-- Create/End Sheets Log --> */
+		var _createLog = name => new Promise((resolve, reject) => {
+
+				var _event = "log-creation-progress",
+					_notify = message => window.dispatchEvent(new CustomEvent(_event, {
+						detail: message
+					})),
+					_busy = ಠ_ಠ.Display.busy({
+						target: ಠ_ಠ.container,
+						fn: true,
+						status: {
+							event: _event
+						}
+					}),
+					_complete;
+
+				_notify("Creating Log");
+				ಠ_ಠ.Google.sheets.create(name, "Results", {
+						"red": 0.545,
+						"green": 0.153,
+						"blue": 0.153
+					})
+					.then(sheet => {
+						_complete = (sheet => () => resolve(sheet))(sheet);
+						ಠ_ಠ.Flags.log(`Created Log File: ${_log} - [${sheet.spreadsheetId}]`);
+						return sheet;
+					})
+					.then(sheet => {
+						_notify("Adding Headers");
+						return ಠ_ಠ.Google.sheets.update(sheet.spreadsheetId, "A1:H2", [
+							[
+								"Result", "Source", "", "", "Destination", "", "", "Details"
+							],
+							[
+								"", "ID", "Name", "Paths", "ID", "Name", "Type", ""
+							]
+						]);
+					})
+					.then(sheet => {
+						_notify("Formatting Log");
+						return ಠ_ಠ.Google.sheets.batch(sheet.spreadsheetId, [{
+							"mergeCells": {
+								"range": _range(0, 0, 2, 0, 1),
+								"mergeType": "MERGE_ALL",
+							}
+						}, {
+							"mergeCells": {
+								"range": _range(0, 0, 1, 1, 4),
+								"mergeType": "MERGE_ALL",
+							}
+						}, {
+							"mergeCells": {
+								"range": _range(0, 0, 1, 4, 7),
+								"mergeType": "MERGE_ALL",
+							}
+						}, {
+							"mergeCells": {
+								"range": _range(0, 0, 2, 7, 8),
+								"mergeType": "MERGE_ALL",
+							}
+						}, {
+							"repeatCell": {
+								"range": {
+									"sheetId": 0,
+									"startRowIndex": 0,
+									"endRowIndex": 2
+								},
+								"cell": {
+									"userEnteredFormat": {
+										"backgroundColor": {
+											"red": 0.0,
+											"green": 0.0,
+											"blue": 0.0
+										},
+										"horizontalAlignment": "CENTER",
+										"verticalAlignment": "MIDDLE",
+										"textFormat": {
+											"foregroundColor": {
+												"red": 1.0,
+												"green": 1.0,
+												"blue": 1.0
+											},
+											"fontSize": 12,
+											"bold": true
+										}
+									}
+								},
+								"fields": "userEnteredFormat(backgroundColor,textFormat,horizontalAlignment)"
+							}
+						}, {
+							"updateSheetProperties": {
+								"properties": {
+									"sheetId": 0,
+									"gridProperties": {
+										"frozenRowCount": 2
+									}
+								},
+								"fields": "gridProperties.frozenRowCount"
+							}
+						}]);
+					})
+					.catch(e => reject(e))
+					.then(result => _busy() && result ? _complete() : reject());
+
+			}),
+			_endLog = () => ಠ_ಠ.Google.sheets.batch(_logger.log.spreadsheetId, [{
+				"autoResizeDimensions": {
+					"dimensions": {
+						"sheetId": 0,
+						"dimension": "COLUMNS",
+						"startIndex": 0,
+						"endIndex": 8
+					}
+				}
+			}]);
+
 		/* <!-- Default to concurrency of 1 if none supplied --> */
 		concurrent = concurrent ? concurrent : 1;
 
@@ -600,114 +724,10 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 				failures: []
 			};
 			ಠ_ಠ.Flags.log(`${_fn ? name() : name} started: ${values.length} items to process`);
-			_step(batch ? batch : values.length, values, 0, _batch, resolve);
+			_step(batch ? batch : values.length, values, 0, _batch, () => {
+				(_logger ? _endLog() : Promise.resolve(true)).then(() => resolve(_results));
+			});
 		};
-
-		/* <!-- Create Sheets Log --> */
-		var _createLog = name => new Promise((resolve, reject) => {
-
-			var _event = "log-creation-progress",
-				_notify = message => window.dispatchEvent(new CustomEvent(_event, {
-					detail: message
-				})),
-				_busy = ಠ_ಠ.Display.busy({
-					target: ಠ_ಠ.container,
-					fn: true,
-					status: {
-						event: _event
-					}
-				}),
-				_complete;
-
-			_notify("Creating Log");
-			ಠ_ಠ.Google.sheets.create(name, "Results", {
-					"red": 0.545,
-					"green": 0.153,
-					"blue": 0.153
-				})
-				.then(sheet => {
-					_complete = (sheet => () => resolve(sheet))(sheet);
-					ಠ_ಠ.Flags.log(`Created Log File: ${_log} - [${sheet.spreadsheetId}]`);
-					return sheet;
-				})
-				.then(sheet => {
-					_notify("Adding Headers");
-					return ಠ_ಠ.Google.sheets.update(sheet.spreadsheetId, "A1:H2", [
-						[
-							"Result", "Source", "", "", "Destination", "", "", "Details"
-						],
-						[
-							"", "ID", "Name", "Paths", "ID", "Name", "Type", ""
-						]
-					]);
-				})
-				.then(sheet => {
-					_notify("Formatting Log");
-					return ಠ_ಠ.Google.sheets.batch(sheet.spreadsheetId, [{
-						"mergeCells": {
-							"range": _range(0, 0, 2, 0, 1),
-							"mergeType": "MERGE_ALL",
-						}
-					}, {
-						"mergeCells": {
-							"range": _range(0, 0, 1, 1, 4),
-							"mergeType": "MERGE_ALL",
-						}
-					}, {
-						"mergeCells": {
-							"range": _range(0, 0, 1, 4, 7),
-							"mergeType": "MERGE_ALL",
-						}
-					}, {
-						"mergeCells": {
-							"range": _range(0, 0, 2, 7, 8),
-							"mergeType": "MERGE_ALL",
-						}
-					}, {
-						"repeatCell": {
-							"range": {
-								"sheetId": 0,
-								"startRowIndex": 0,
-								"endRowIndex": 2
-							},
-							"cell": {
-								"userEnteredFormat": {
-									"backgroundColor": {
-										"red": 0.0,
-										"green": 0.0,
-										"blue": 0.0
-									},
-									"horizontalAlignment": "CENTER",
-									"verticalAlignment": "MIDDLE",
-									"textFormat": {
-										"foregroundColor": {
-											"red": 1.0,
-											"green": 1.0,
-											"blue": 1.0
-										},
-										"fontSize": 12,
-										"bold": true
-									}
-								}
-							},
-							"fields": "userEnteredFormat(backgroundColor,textFormat,horizontalAlignment)"
-						}
-					}, {
-						"updateSheetProperties": {
-							"properties": {
-								"sheetId": 0,
-								"gridProperties": {
-									"frozenRowCount": 2
-								}
-							},
-							"fields": "gridProperties.frozenRowCount"
-						}
-					}]);
-				})
-				.catch(e => reject(e))
-				.then(result => _busy() && result ? _complete() : reject());
-
-		});
 
 		(_log ? _createLog(_log) : Promise.resolve(false))
 		.then(_start)
@@ -754,18 +774,35 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 		}); /* <!-- Clear in case this is a refresh --> */
 		_data.insert(values);
 
-		var _return = ಠ_ಠ.Datatable(ಠ_ಠ, {
-			id: id,
-			name: name,
-			data: _data,
-			headers: headers
-		}, {
-			advanced: false,
-			collapsed: true
-		}, target, (target) => _enableDownloads(target));
+		var _update = target => {
 
-		/* <!-- Wire Up Downloads --> */
-		_enableDownloads(target);
+				/* <!-- Wire Up Download Buttons --> */
+				_enableDownloads(target);
+
+				/* <!-- Hide popovers on second click --> */
+				var _popped = null;
+				target.find(".name-link[data-toggle='popover']").on("click.again", e => {
+					var _$ = $(e.currentTarget),
+						_popover = _$.attr("aria-describedby");
+					if (_popover && _popover.indexOf("popover") === 0) {
+						(_popover == _popped) ? _$.popover("hide"): _popped = _popover;
+					}
+				});
+
+			},
+			_return = ಠ_ಠ.Datatable(ಠ_ಠ, {
+				id: id,
+				name: name,
+				data: _data,
+				headers: headers,
+				classes: ["table-responsive"]
+			}, {
+				advanced: false,
+				collapsed: true
+			}, target, target => _update(target));
+
+		/* <!-- Wire-Up Events --> */
+		_update(target);
 
 		return _return;
 
@@ -1130,47 +1167,97 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 
 		audit: (id, collection, table, results) => {
 
-			var _decode = values => ({});
+			_processItems("Auditing", item => new Promise((resolve, reject) => {
+				(!item.shared && !item.teamDriveId) ? resolve(item.permissions = [{
+						me: true,
+						mine: true,
+						mock: true
+					}]):
+					ಠ_ಠ.Google.permissions.get(item.id, _team).then(permissions => {
+						var _confidential = item.properties && (item.properties.Confidentiality == "Medium" || item.properties.Confidentiality == "High");
+						_.each(permissions, p => {
+							p.me = (p.emailAddress && p.emailAddress.toLowerCase() == ಠ_ಠ.me.email.toLowerCase());
+							p.mine = (p.me && p.role == "owner");
+							p.class = (_confidential && p.allowFileDiscovery) ?
+								"alert-danger" : (_confidential && (p.type == "domain" || p.type == "anyone")) ? "alert-warning" : "";
+						});
+						resolve(item.permissions = permissions);
+					}).catch(e => reject(e));
+			}), {}, results, collection, table, id, 5, null, null, null, true).then(permissions => {
 
-			var _id = "audit_results",
-				_audit = results.length == 1 ? Promise.resolve(true) : ಠ_ಠ.Display.modal("audit", {
-					id: _id,
-					target: ಠ_ಠ.container,
-					title: `Audit <strong class="text-secondary">${ಠ_ಠ.Display.commarise(results.length)}</strong> Item${results.length > 1 ? "s" : ""}`,
-					instructions: ಠ_ಠ.Display.doc.get("AUDIT_INSTRUCTIONS"),
-					state: state && state.audit ? state.audit : null,
-					relative: {
-						id: folder.id,
-						name: folder.name
-					},
-					advanced: !!_search,
-					handlers: {
-						clear: _dialogFormHandlers.clear,
-						populate: (target, dialog) => dialog.find("textarea.resizable").each((i, el) => autosize.update(el))
-					}
-				}, dialog => {
-					autosize(dialog.find("textarea.resizable"));
-				});
+				if (permissions && (permissions = _.filter(permissions, i => i.item.shared)).length > 1) {
 
-			_audit.then(values => {
+					var _details = {
+						searchable: 0,
+						domain: 0,
+						anyone: 0,
+						group: 0,
+						user: 0,
+						read: 0,
+						write: 0,
+						comment: 0,
+						domains: {},
+						emails: {}
+					};
 
-				if (values && (values = _decode(values)))
-					_processItems("Auditing", (item, parameters) => ಠ_ಠ.Google.permissions.get(item.id, _team), values, results, collection, table, id, 1, true);
+					_.each(permissions, i => _.each(i.result, p => {
 
-			}).catch(e => e ? ಠ_ಠ.Flags.error("Auditing Error", e) : ಠ_ಠ.Flags.error("Auditing Cancelled"));
+						_details.searchable += (p.allowFileDiscovery ? 1 : 0);
+
+						_details.domain += (p.type && p.type == "domain" ? 1 : 0);
+						_details.anyone += (p.type && p.type == "anyone" ? 1 : 0);
+						_details.user += (p.type && p.type == "user" ? 1 : 0);
+						_details.group += (p.type && p.type == "group" ? 1 : 0);
+
+						_details.read += (p.role && p.role == "reader" ? 1 : 0);
+						_details.write += (p.role && p.role == "writer" ? 1 : 0);
+						_details.comment += (p.role && p.role == "commenter" ? 1 : 0);
+
+						if (p.domain) _details.domains[p.domain] ?
+							_details.domains[p.domain] += 1 : _details.domains[p.domain] = 1;
+						if (p.emailAddress) _details.emails[p.emailAddress] ?
+							_details.emails[p.emailAddress] += 1 : _details.emails[p.emailAddress] = 1;
+
+					}));
+
+					_details.id = "audit_results";
+					_details.target = ಠ_ಠ.container;
+					_details.title = "Audit Results";
+					_details.instructions = ಠ_ಠ.Display.doc.get("AUDIT_EXPLANATION");
+
+					_details.domains = _.sortBy(_.map(_details.domains, (value, domain) => ({
+						value: domain,
+						count: value
+					})), "count").reverse();
+					_details.emails = _.sortBy(_.map(_details.emails, (value, emails) => ({
+						value: emails,
+						count: value
+					})), "count").reverse();
+
+					/* <!-- Display the Results --> */
+					ಠ_ಠ.Display.modal("audit", _details);
+
+				}
+
+			});
 
 		},
 
 		clone: (id, collection, table, results) => {
 
-			var _decode = values => ({
-				folders: !!(_.find(values, v => v.name == "folders")),
-				properties: !!(_.find(values, v => v.name == "properties")),
-				merge: !!(_.find(values, v => v.name == "merge")),
-				prefix: _.find(values, v => v.name == "prefix") ? `${_.find(values, v => v.name == "prefix").value.trim()} ` : "",
-				output: _.find(values, v => v.name == "output") ? _.find(values, v => v.name == "output").value : null,
-				relative: _.find(values, v => v.name == "relative") ? _.find(values, v => v.name == "relative").value : null
-			});
+			var _decode = values => {
+				var _return = {
+					folders: !!(_.find(values, v => v.name == "folders")),
+					properties: !!(_.find(values, v => v.name == "properties")),
+					merge: !!(_.find(values, v => v.name == "merge")),
+					prefix: _.find(values, v => v.name == "prefix") ? `${_.find(values, v => v.name == "prefix").value.trim()} ` : "",
+					batch: _.find(values, v => v.name == "batch").value,
+					output: _.find(values, v => v.name == "output") ? _.find(values, v => v.name == "output").value : null,
+					relative: _.find(values, v => v.name == "relative") ? _.find(values, v => v.name == "relative").value : null
+				};
+				(!_return.batch || _return.batch <= 0) ? _return.batch = BATCH_SIZE: _return.log = true;
+				return _return;
+			};
 
 			var _id = "clone_results",
 				_clone = ಠ_ಠ.Display.modal("clone", {
@@ -1309,7 +1396,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 
 					}
 
-				}), _decode(values), results, collection, table, id, 1, true);
+				}), _decode(values), results, collection, table, id, CONCURRENT_SIZE, true, values.batch);
 
 			}).catch(e => e ? ಠ_ಠ.Flags.error("Cloning Error", e) : ಠ_ಠ.Flags.error("Clone Cancelled"));
 
@@ -1327,7 +1414,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 						inplace: !!(_.find(values, v => v.name == "inplace")),
 						mirror: _.find(values, v => v.name == "mirror") ? _.find(values, v => v.name == "mirror").value : null
 					};
-					(!_return.batch || _return.batch <= 0) ? _return.batch = 50: _return.log = true;
+					(!_return.batch || _return.batch <= 0) ? _return.batch = BATCH_SIZE: _return.log = true;
 					return _return;
 				},
 				_export = (file, targetMimeType, inPlace, mirror) => new Promise((resolve, reject) => {
@@ -1434,7 +1521,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 				if (values && (values = _decode(values))) _processItems(values.source ? "Converting" : "Exporting",
 					(item, parameters) => (!(parameters.source || ಠ_ಠ.Google.files.native(item.type))) ? Promise.resolve(false) : parameters.source ?
 					_convert(item, parameters.source, parameters.target, parameters.prefix, parameters.inplace, parameters.mirror) :
-					_export(item, parameters.target, parameters.inplace, parameters.mirror), values, results, collection, table, id, 2, true, values.batch ? values.batch : 50);
+					_export(item, parameters.target, parameters.inplace, parameters.mirror), values, results, collection, table, id, CONCURRENT_SIZE, true, values.batch);
 
 			}).catch(e => e ? ಠ_ಠ.Flags.error("Converting Error", e) : ಠ_ಠ.Flags.error("Converting Cancelled"));
 

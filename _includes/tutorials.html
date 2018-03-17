@@ -1,10 +1,13 @@
 {% for tutorial in site.pages %}{% if tutorial.layout == "tutorial" and tutorial.path contains include.app %}
 {% capture details %}{% if tutorial.lead %}{{ tutorial.lead | strip_html }}{% elsif tutorial.content contains '<!--more-->' %}{{ tutorial.content | split:'<!--more-->' | first | strip_html }}{% else %}{{ tutorial.content | strip_html | truncatewords: 40 , "  .." }}{% endif %}{% endcapture %}
-<div class="card">
-  <h5 class="card-header text-center">{{ tutorial.title }}</h5>
+<div class="card mt-2">
+  {% if include.mode == "expanded"%}<h5 class="card-header text-center">{{ tutorial.title }}</h5>{% else %}<div class="card-header">
+    <h5 class="text-left float-left pt-1">{{ tutorial.title }}</h5>
+    <a href="{{ tutorial.url }}" class="btn btn-primary float-right"{% if include.blank %} target="_blank" rel="noopener"{% endif %}>View Tutorial</a>
+  </div>{% endif %}
   <div class="card-body">
     {{ details | markdownify }}
-    <a href="{{ tutorial.url }}" class="btn btn-primary float-right"{% if include.blank %} target="_blank" rel="noopener"{% endif %}>View Tutorial</a>
+    {% if include.mode == "expanded"%}<a href="{{ tutorial.url }}" class="btn btn-primary float-right"{% if include.blank %} target="_blank" rel="noopener"{% endif %}>View Tutorial</a>{% endif %}
   </div>
 </div>
 {% endif %}{% endfor %}

@@ -54,9 +54,9 @@ App = function() {
 			template: "breadcrumbs",
 			id: "paths",
 			class: "mb-0 px-3 py-2",
-			items: path,
+			items: (path && path.length > 1) ? path : null,
 			target: target,
-			clear: true
+			clear: true,
 		});
 	};
 

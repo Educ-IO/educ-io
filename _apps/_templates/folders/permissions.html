@@ -1,0 +1,8 @@
+{% raw %}
+{{#each permissions}}{{#if this}}{{#if mine}}<div id="{{../id}}.{{#if mine}}mine{{else}}{{id}}{{/if}}" class="mr-2 d-inline-flex justify-content-center align-items-center ,t-1"><i class="material-icons text-success" title="Owned by you">cloud_done</i></div>{{else}}<div id="{{../id}}.{{id}}" class="mr-2 mt-1 px-1 d-inline-flex justify-content-center align-items-center border rounded {{#if class}}{{class}}{{else}}text-muted border-secondary{{/if}}">
+  <i class="material-icons md-1" title="{{#is role "owner"}}Owner{{else}}{{#is type "group"}}Group{{/is}}{{#is type "domain"}}Entire Domain{{/is}}{{#is type "anyone"}}Whole World{{/is}}{{/is}}">{{#is type "user"}}{{#is role "owner"}}pets{{else}}{{#if me}}mood{{else}}face{{/if}}{{/is}}{{/is}}{{#is type "group"}}group{{/is}}{{#is type "domain"}}domain{{/is}}{{#is type "anyone"}}public{{/is}}</i>
+  {{#if allowFileDiscovery}}<i class="material-icons pl-1 md-1 text-danger" title="Searchable without link!">new_releases</i>{{/if}}
+  {{#is role "writer"}}<i class="material-icons pl-1 md-1" title="Can Edit">mode_edit</i>{{/is}}
+  {{#is me false}}{{#if displayName}}<span class="px-1"{{#if emailAddress}} title="{{emailAddress}}"{{/if}}{{#if domain}} title="{{domain}}"{{/if}}>{{displayName}}</span>{{/if}}{{/is}}
+</div>{{/if}}{{/if}}{{/each}}
+{% endraw %}
