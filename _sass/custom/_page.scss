@@ -4,9 +4,24 @@ nav.navbar.bg-faded {
 }
 // -- Border the bottom of the Navbar -- //
 
+// -- Offset Anchors so they are not hidden by the Navbar -- //
+.anchor {
+	padding-top: 4rem;
+	margin-top: -4rem;
+	display: inline-block;
+	vertical-align: top;
+}
+// -- Offset Anchors so they are not hidden by the Navbar -- //
+
 // -- Tweak Jumbotron -- //
 .jumbotron {
 	background-color: $colour-section;
+	h1 svg {
+		display: inline;
+		max-height: 1em;
+    max-width: 1em;
+    margin: 0 0.4em -0.1em -0.2em;
+	}
 }
 
 .highlight_all {

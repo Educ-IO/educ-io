@@ -1,4 +1,5 @@
 ### Transparency
+{:.anchor}
 
 The best technology is __open__, and the best education thrives in the __light__. Closed systems do little but perpetuate closed minds. We __passionately believe__ that everyone should have access to the best possible tools, everywhere.
 

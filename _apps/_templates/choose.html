@@ -36,7 +36,7 @@
         </form>        
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">{{action}}</button>
+        {{#if action}}<button type="button" class="btn btn-primary" data-dismiss="modal">{{action}}</button>{{/if}}
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>

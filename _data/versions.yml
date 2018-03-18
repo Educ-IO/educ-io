@@ -1,4 +1,8 @@
 site :
+  0.0.8r :
+    name : Updated Documentation
+    name : Updated Documentation and Bug Fixes
+    type : minor
   0.0.8q :
     name : Folders 0.0.6f-alpha
     name : Audit Features and Bug Fixes

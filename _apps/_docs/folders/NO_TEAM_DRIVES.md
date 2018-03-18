@@ -1,0 +1,1 @@
+Unfortunately, you have __no__ [team drives](https://gsuite.google.com/learning-center/products/drive/get-started-team-drive/#!/){:target="_blank" rel="noopener"} available to open!

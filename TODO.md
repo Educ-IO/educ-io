@@ -2,6 +2,8 @@ TODO LIST
 =========
 General
 -------
+* ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
+
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
 
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
@@ -12,8 +14,6 @@ General
 * More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');" [https://support.google.com/analytics/answer/1033068] and [https://developers.google.com/analytics/devguides/collection/analyticsjs/events]
 
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set? | Also JWT Token for Folders?
-
-* ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
 
 Datatable
 ---------
@@ -82,6 +82,7 @@ View
 Folders
 -------
 
+
 Merge
 -----
 
@@ -104,6 +105,9 @@ Reflect
 
 Complete
 --------
+* ** BUG ** Cancelling out of team drive selector leads to perpetual spinner. <-- DONE
+* ** BUG ** No team drives in selector should either cause informational message or no selector <-- DONE
+* Anchor offsets for sticky headers <-- DONE
 * FEATURE : Audit Search Results for Sharing <-- DONE
 * BUG : Set second 'focus' click to remove thumbnail popover <-- DONE
 * CODE : Swap table from expanding to fixed with flex wrapping for custom properties and long ids -> Also vertically centre row content. <-- DONE

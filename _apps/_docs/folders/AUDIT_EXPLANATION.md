@@ -1,2 +1,2 @@
-The __results__ below show _how_ the items in your audit are __shared__. Permission details are also visible in the __actions column__, with any _potential_ issues colour highlighted.
+The __results__ below show _how_ the items in your audit are __shared__. Permission details are also visible in the __actions column__, with any _potential_ issues colour highlighted. Further information about audting can be found in this [tutorial]({% link _tutorials/folders/audit_permissions.md %}){:target="_blank" rel="noopener"}.
 {:.small .mb-2}

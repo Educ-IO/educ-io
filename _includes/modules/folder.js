@@ -230,6 +230,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 						class: "btn-outline-dark",
 						name: "Google Formats -> PDF",
 						source: "",
+						prefix: "",
 						target: "application/pdf"
 					},
 				}
@@ -1398,7 +1399,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 
 				}), _decode(values), results, collection, table, id, CONCURRENT_SIZE, true, values.batch);
 
-			}).catch(e => e ? ಠ_ಠ.Flags.error("Cloning Error", e) : ಠ_ಠ.Flags.error("Clone Cancelled"));
+			}).catch(e => e ? ಠ_ಠ.Flags.error("Cloning Error", e) : ಠ_ಠ.Flags.log("Clone Cancelled"));
 
 		},
 
@@ -1523,7 +1524,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 					_convert(item, parameters.source, parameters.target, parameters.prefix, parameters.inplace, parameters.mirror) :
 					_export(item, parameters.target, parameters.inplace, parameters.mirror), values, results, collection, table, id, CONCURRENT_SIZE, true, values.batch);
 
-			}).catch(e => e ? ಠ_ಠ.Flags.error("Converting Error", e) : ಠ_ಠ.Flags.error("Converting Cancelled"));
+			}).catch(e => e ? ಠ_ಠ.Flags.error("Converting Error", e) : ಠ_ಠ.Flags.log("Converting Cancelled"));
 
 		},
 
@@ -1532,7 +1533,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 			ಠ_ಠ.Display.confirm({
 					id: "delete_results",
 					target: ಠ_ಠ.container,
-					message: `Please confirm that you wish to delete <strong>${items.length === 1 ? items[0].name : items.length}</strong>${items.length > 1 ? " Items." : ""}`,
+					message: `Please confirm that you wish to delete <strong>${items.length === 1 ? items[0].name : items.length}</strong>${items.length > 1 ? " Items" : ""} from Google Drive.`,
 					action: "Delete"
 				})
 				.then(confirm => {
@@ -1578,7 +1579,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 
 					}
 				})
-				.catch(e => e ? ಠ_ಠ.Flags.error("Deletion Error", e) : ಠ_ಠ.Flags.error("Deletion Cancelled"));
+				.catch(e => e ? ಠ_ಠ.Flags.error("Deletion Error", e) : ಠ_ಠ.Flags.log("Deletion Cancelled"));
 
 		},
 
@@ -1608,7 +1609,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 
 					}), null, items, collection, table, id);
 
-				}).catch(e => e ? ಠ_ಠ.Flags.error("De-Tagging Error", e) : ಠ_ಠ.Flags.error("De-Tagging Cancelled"));
+				}).catch(e => e ? ಠ_ಠ.Flags.error("De-Tagging Error", e) : ಠ_ಠ.Flags.log("De-Tagging Cancelled"));
 
 		},
 
@@ -1648,7 +1649,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 						action: "Star"
 					})
 					.then(confirm => confirm ? _star() : false)
-					.catch(e => e ? ಠ_ಠ.Flags.error("Starring Error", e) : ಠ_ಠ.Flags.error("Starring Cancelled"));
+					.catch(e => e ? ಠ_ಠ.Flags.error("Starring Error", e) : ಠ_ಠ.Flags.log("Starring Cancelled"));
 
 			}
 
@@ -1729,7 +1730,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 
 				}
 
-			}).catch(e => e ? ಠ_ಠ.Flags.error("Tagging Error", e) : ಠ_ಠ.Flags.error("Tagging Cancelled"));
+			}).catch(e => e ? ಠ_ಠ.Flags.error("Tagging Error", e) : ಠ_ಠ.Flags.log("Tagging Cancelled"));
 
 		},
 

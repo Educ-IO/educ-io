@@ -675,6 +675,7 @@ folders:
     - folders/TAG_INSTRUCTIONS
     - folders/CLONE_INSTRUCTIONS
     - folders/AUDIT_EXPLANATION
+    - folders/NO_TEAM_DRIVES
     - folders/TUTORIALS
   scopes:
     google:
