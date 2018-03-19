@@ -1,23 +1,27 @@
 site :
+  0.0.8t :
+    name : View Documentation
+    desc : Updated Documentation and Bug Fixes
+    type : minor
   0.0.8s :
     name : Visual Bug Fix
-    name : Bug Fixes (Tutorials Card Boxes)
+    desc : Bug Fixes (Tutorials Card Boxes)
     type : minor
   0.0.8r :
     name : Updated Documentation
-    name : Updated Documentation and Bug Fixes
+    desc : Updated Documentation and Bug Fixes
     type : minor
   0.0.8q :
     name : Folders 0.0.6f-alpha
-    name : Audit Features and Bug Fixes
+    desc : Audit Features and Bug Fixes
     type : minor
   0.0.8p :
     name : Folders 0.0.6e-alpha
-    name : Significant Improvements - Improved Logging and Stepped Processes
+    desc : Significant Improvements - Improved Logging and Stepped Processes
     type : minor
   0.0.8o :
     name : Folders 0.0.6d-alpha
-    name : Improvements - Better Cloning and Property Searching
+    desc : Improvements - Better Cloning and Property Searching
     type : minor
   0.0.8n :
     name: Folders 0.0.6c-alpha

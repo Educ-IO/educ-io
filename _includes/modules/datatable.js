@@ -341,8 +341,8 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		var _rows = $(ಠ_ಠ.Display.template.get("rows")({
 			rows: _getRows()
 		}));
-		if (_advanced) {
-			_advanced.scroll.update(_rows.toArray().map(e =>e.outerHTML));
+		if (_advanced && _advanced.scroll.initialised()) { /* <!-- Complex Scrolling may have been requested but not initialised --> */
+			_advanced.scroll.update(_rows.toArray().map(e => e.outerHTML));
 		} else {
 			target.find("#" + _name + " tbody").empty().append(_rows);
 			target.find("[data-toggle='popover']").popover({
@@ -516,9 +516,12 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 		/* <!-- Set up Table --> */
 		if (options.advanced) {
+			
 			_advanced = _advanced ? _advanced : ಠ_ಠ.Table(target.find("table"), target, ಠ_ಠ);
+			
 			/* <!-- Init Scroll Cache for Larger Tables --> */
 			if (table.data.count() > 200) _advanced.scroll.init(target.find("tbody"), options.blocks_to_show, options.rows_to_show).toggle();
+			
 		}
 		
 		/* <!-- Collapse Columns if required --> */

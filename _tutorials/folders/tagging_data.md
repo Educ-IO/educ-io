@@ -7,10 +7,12 @@ app: folders
 ---
 
 #### Introduction
+{:.pb-1}
 
 Tags (or _properties_ in Google-speak) are built into the Google Drive [eco-system](https://developers.google.com/drive/v3/web/properties){:target="_blank" rel="noopener"}. They are an incredibly useful way to store __metadata__ about files, which can be easily accessed by all users of that file.
 
 #### Tags
+{:.pt-2 .pb-1}
 
 Within the __Folders__ app, we have pre-defined some tags you might like to use to help manage your data (with particular attention to data protection legislation):
 
@@ -23,6 +25,7 @@ Within the __Folders__ app, we have pre-defined some tags you might like to use 
 You can also use __your own tags__, to help manage __any information__ you need to store regarding a file (client, project, trainee, due date etc.). These sort of tags will quickly become an __indispensible aid__ to the way that you work in Google Drive.
 
 #### Editing Tags
+{:.pt-2 .pb-1}
 
 Tags can be edited, added or removed using the __Folders__ interface, using the <i class="material-icons md-1 bg-dark text-light p-1">create</i> button link for individual items, or the __Tag__ command (_Results_ menu) to perform bulk tagging operations.
 
@@ -31,12 +34,14 @@ Tags can be edited, added or removed using the __Folders__ interface, using the 
 The tag dialog (shown above) has a series of shortcut buttons for our pre-defined tags, and the ability to set your tag names/values. __Private__ tags can only be viewed and edited via the __Folders__ app, so we would __not recommend using these__ unless you have very particular requirements.
 
 #### Searching for Tags
+{:.pt-2 .pb-1}
 
 Using our [search]({% link _tutorials/folders/advanced_searching.md %}) tools, you can easily search for tags that correspond to particular names/values. If you want to find all items (in your Drive) that have the same name/value tag, you can also click on the <i class="material-icons md-1">search</i> icon within the tag as a __search shortcut__. If you click on the × icon (right-hand side of the tag), you will be prompted to remove the tag from the item.
 
 If you are using the __review__ and __reviewed__ tags to get track of which documents need periodic review, items that are overdue reviews will be highlighted in a light red in __Folders__. You can also search for documents needing reviews using a shortcut button in the __search__ dialog.
 
 #### Viewing Tags
+{:.pt-2 .pb-1}
 
 While you can always use the __Folders__ app to view tags if you are using a Chromebook or a Chrome browser on Mac/Linux/PC device, you can install our [Tag-a-Doc]({% link _extensions/tagadoc.md %}) extension. This extension will show tags at the top of your Google Docs, Sheets, Slides and Drawings. This is a very useful way to remind users when they are dealing with confidential or important data - or absolutely anything else you want to use tags for!
 

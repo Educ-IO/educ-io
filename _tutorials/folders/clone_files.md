@@ -7,12 +7,14 @@ app: folders
 ---
 
 #### Introduction
+{:.pb-1}
 
 Cloning a folder structure, or duplicating a large set of files, is a __rarely required__ task because sharing is normally the best way to achieve any collaborative goal. There are, though, some __legitimate times when such a need arises__. You might want to transfer files between users/domains or make a working copy of a set of template files (e.g. re-using them on a new project).
 
 When it is required, you will quickly find it's a very laborious and boring task if you have to do it manually. With __Folders__ you can achieve the same outcome in __minutes__, rather than __hours__.
 
 #### Process
+{:.pt-2 .pb-1}
 
 You can clone an existing folder, or use our [search]({% link _tutorials/folders/advanced_searching.md %}) tool to more __deftly select__ the files you wish to clone. You could even use [tags]({% link _tutorials/folders/tagging_data.md %}) to __identify common templates__ you might wish to clone for new projects!
 

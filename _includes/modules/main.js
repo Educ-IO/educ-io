@@ -6,7 +6,7 @@ Main = function() {
 	}
 
 	/* <!-- Internal Constants --> */
-	const LOGIN_RACE = 2000;
+	const LOGIN_RACE = 5000;
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */

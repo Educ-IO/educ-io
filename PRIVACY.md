@@ -1,4 +1,5 @@
 ### Privacy
+{:.anchor}
 
 As well as an unswerving commitment to __transparency__, we are determined to protect your __privacy__, __security__ and the __confidentiality__ of your data.
 

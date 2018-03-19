@@ -7,12 +7,14 @@ app: folders
 ---
 
 #### Introduction
+{:.pb-1}
 
 If you use a [command line](https://github.com/prasmussen/gdrive){:target="_blank" rel="noopener"} tool to migrate your files to Google Drive, you might find that you need to convert a large number of uploaded files to their native [Google formats](https://support.google.com/drive/answer/2424368){:target="_blank" rel="noopener"}. You might also have uploaded files through the web interface but forgotton to select 'Convert Uploads' in the Google Drive [settings](https://drive.google.com/drive/settings){:target="_blank" rel="noopener"} before doing so.
 
 Whatever the cause, if you need to convert a significant number of files and don't fancy doing it manually, __Folders__ can help.
 
 #### Searching for Files to Convert
+{:.pt-2 .pb-1}
 
 Before you can convert any files, you first need to __find__ the files you wish to convert. You can use our [search]({% link _tutorials/folders/advanced_searching.md %}) command to do this, and there is even a convenient shortcut button to find common __Office__ file types. You will need to convert each type separately, so this process will need to be run three times if you want to convert __Word__, __Excel__ and __Powerpoint__ files.
 
@@ -21,6 +23,7 @@ Some upload processes (particular from older computers or servers) can result in
 Once you have run your search, and you are happy with the results (which will be the list of files you want to convert), you can go ahead and click on the __Convert__ command in the _Results_ menu. If you need to remove a small number of files from the results (as you don't want to convert them), you can use the small remove icon (×) on the far right of the __Actions__ column to clear those items from the search results. Those items will then not be converted.
 
 #### Converting Files
+{:.pt-2 .pb-1}
 
 ![Convert Dialog Screenshot][1]{:class="img-fluid img-thumbnail mx-auto d-block"}
 
@@ -31,6 +34,7 @@ By default, the __Prefix__ input box will be pre-populated with ***** ARCHIVE **
 If you would like __Folders__ to create a log of the conversion process, then set the __Batch__ field to greater than zero. Log entries will be written to a __Google Sheet__ after each batch is complete, so for faster results when processing a large number of items, this should be set to a relatively high number (50 is a sensible figure).
 
 #### Re-Running the Conversion
+{:.pt-2 .pb-1}
 
 Conversions will __take a significant amount of time__ (and also network bandwidth) to complete, as each file needs to be downloaded and then re-uploaded to Google Drive. You probably __shouldn't run__ this sort of conversion if you are on a __data-limited__ connection. If you have a large number of files (thousands+), then it may take hours to complete (depending on the size of your files, speed of your connection etc.).
 

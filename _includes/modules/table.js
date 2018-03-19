@@ -146,6 +146,8 @@ Table = function(table, outside, ಠ_ಠ) {
 				
 			},
 			
+			initialised : () => _content ? true : false,
+			
 			toggle : function(toggle) {
 				
 				if (toggle === false || _rows) {
@@ -197,7 +199,7 @@ Table = function(table, outside, ಠ_ಠ) {
 				
 				_rows = _.isArray(new_rows) ? new_rows : [];
 				var scroll_top = _outside[0].scrollTop;
-				/* <!-- fixes #39 --> */
+
 				if(_rows.length * _row_height < scroll_top) {
 					_outside[0].scrollTop = 0;
 					_last_cluster = 0;

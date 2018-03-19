@@ -65,6 +65,9 @@ Grades
 
 View
 ----
+* ** BUG ** Opening instructions from the guide means you can't dismiss the modal (Maybe because sign-in has not completed?)
+* ** BUG ** Column names can sometimes still get out of sync! Arghhh :)
+
 * ** IMPORTANT ** Column Filters (Type)
 
 * ** IMPORTANT ** Do went need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view <++ YES
