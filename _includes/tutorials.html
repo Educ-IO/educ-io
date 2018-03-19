@@ -6,7 +6,9 @@
     <a href="{{ tutorial.url }}" class="btn btn-primary float-right"{% if include.blank %} target="_blank" rel="noopener"{% endif %}>View Tutorial</a>
   </div>{% endif %}
   <div class="card-body{% if include.mode != "expanded"%} pt-3 pb-1{% endif %}">
-    {{ details | markdownify }}
-    {% if include.mode == "expanded"%}<a href="{{ tutorial.url }}" class="btn btn-primary"{% if include.blank %} target="_blank" rel="noopener"{% endif %}>View Tutorial</a>{% endif %}
+    <div>{{ details | replace: "`", "__" | markdownify }}</div>
+    {% if include.mode == "expanded"%}
+    <a href="{{ tutorial.url }}" class="btn btn-primary"{% if include.blank %} target="_blank" rel="noopener"{% endif %}>View Tutorial</a>
+    {% endif %}
   </div>
 </div>{% endif %}{% endfor %}{% if include.mode == "expanded"%}</div>{% endif %}

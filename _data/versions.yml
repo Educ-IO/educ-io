@@ -1,4 +1,8 @@
 site :
+  0.0.8s :
+    name : Visual Bug Fix
+    name : Bug Fixes (Tutorials Card Boxes)
+    type : minor
   0.0.8r :
     name : Updated Documentation
     name : Updated Documentation and Bug Fixes

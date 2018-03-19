@@ -105,6 +105,7 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT ** Tutorials CSS on Guides isn't perfect... <-- DONE
 * ** BUG ** Cancelling out of team drive selector leads to perpetual spinner. <-- DONE
 * ** BUG ** No team drives in selector should either cause informational message or no selector <-- DONE
 * Anchor offsets for sticky headers <-- DONE
@@ -450,4 +451,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-03-01
+ᕕ( ᐛ )ᕗ JD - 2018-03-18
