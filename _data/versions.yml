@@ -1,4 +1,8 @@
 site :
+  0.0.8u :
+    name : Visual Bug Fix
+    desc : Bug Fix with Padded Anchor Links
+    type : minor
   0.0.8t :
     name : View Documentation
     desc : Updated Documentation and Bug Fixes

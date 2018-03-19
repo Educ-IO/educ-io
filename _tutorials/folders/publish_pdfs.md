@@ -19,12 +19,12 @@ The drawbacks of this method are obvious when you have a large number of documen
 With __Folders__, you can help streamline this process and save yourself a __lot__ of time.
 
 ##### Step 1
-{:.anchor .pt-2 .pb-1}
+{:.anchor}
 
 Open the folder containing the original (Google Doc / Sheet / Slide) documents that you would like to publish. This can be done from directly inside the __Folders App__ or from Google Drive if you have installed the app to your drive by clicking __About__ -> __Install__. Once installed, you can right-click on any folder and '_Open With_' __Folders__.Open
 
 ##### Step 2
-{:.anchor .pt-2 .pb-1}
+{:.anchor}
 
 Once your folder is open in the __Folders__ app, you are ready to __convert all the files__ it contains to PDFs. Any existing PDFs or files that are not native Google files will be ignored. If you would like to reduce the set of documents which are converted, you can do so by using:
 
@@ -33,7 +33,7 @@ Once your folder is open in the __Folders__ app, you are ready to __convert all 
 - __COMING SOON__ : By filtering particular columns. Click on the column headings and start typing to filter the files. __COMING SOON__{:.badge badge-info}
 
 ##### Step 3
-{:.anchor .pt-2 .pb-1}
+{:.anchor}
 
 Click on __Results__ -> __Convert__ to bring up the _Convert Files_ dialog. Here, you can customise how the conversion should proceed. To save you time, you can simply click the __Google Formats -> PDF__ button to set the correct options for this task.
 
@@ -42,17 +42,17 @@ Click on __Results__ -> __Convert__ to bring up the _Convert Files_ dialog. Here
 If you are publishing from a folder (see the section below), then you can select the folder you are publishing in the __Mirror To__ section of the form, using the __Browse__ button to select the folder from your Google Drive. If you wish to clear this field, click the __Clear / Reset__ button.
 
 ##### Step 4
-{:.anchor .pt-2 .pb-1}
+{:.anchor}
 
 If you are likely to be publishing documents from this folder, using these settings, on a regular basis, then you can __Save__ these settings to your Google Drive. They will then appear as a file in this folder, which you can open in the __Folders__ app (directly from Google Drive) to save you time in the future. The correct folder will be opened, and your chosen settings will be pre-populated in the conversion dialog box when you click on __Results__ -> __Convert__.
 
 ##### Step 5
-{:.anchor .pt-2 .pb-1}
+{:.anchor}
 
 Click on the __Convert__ action button to start the conversion. If you have selected the __Convert In Place__ option (default if you used the __Google Formats -> PDF__ button) then any existing PDFs that are named the same as the source files __will updated with new versions__. If these PDFs are already published or shared, then the new version will be available straightaway. You will see each document being individually processed, and a tick will appear next to each one as it is successfully converted.
 
 ##### Step 6
-{:.anchor .pt-2 .pb-1}
+{:.anchor}
 
 If you are publishing, or sharing, individual PDF files and have not done so previously, you can now share these newly created files through the normal Google Drive sharing procedure. When you next run the convert, these same files __will be updated__ from your source documents, meaning your published files will then have the __same content__ as your working files.
 
