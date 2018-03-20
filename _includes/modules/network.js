@@ -12,7 +12,7 @@ Network = function(base, timeout, per_sec, concurrent, retry, type) {
 	const RANDOM = (lower, higher) => Math.random() * (higher - lower) + lower;
 	const QUERY = (value, append) => _.reduce(_.keys(value), (str, key, i) => {
 		var delimiter, val;
-		delimiter = (i === 0 || append) ? "?" : "&";
+		delimiter = (i === 0 && !append) ? "?" : "&";
 		key = encodeURIComponent(key);
 		val = encodeURIComponent(value[key]);
 		return [str, delimiter, key, "=", val].join("");

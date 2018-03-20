@@ -127,7 +127,7 @@ App = function() {
 					});
 				});
 
-			} else if (ಠ_ಠ.Google.folders.check(true)(file)) {
+			} else if (file.kind == "drive#teamDrive" || ಠ_ಠ.Google.folders.check(true)(file)) {
 
 				/* <!-- This is a folder to display --> */
 				file.team = rootTeamDrive;

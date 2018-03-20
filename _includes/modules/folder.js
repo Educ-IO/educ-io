@@ -379,6 +379,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 		appProperties: v.appProperties ? v.appProperties : {},
 		needs_Review: needsReview(v),
 		team: _team,
+		teamDriveId: v.teamDriveId,
 		size: v.size,
 		out: v.mimeType === "application/vnd.google-apps.spreadsheet" || ಠ_ಠ.Google.files.in("application/x.educ-io.view")(v) ? {
 			name: "View",
@@ -1175,18 +1176,22 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 						mock: true
 					}]):
 					ಠ_ಠ.Google.permissions.get(item.id, _team).then(permissions => {
-						var _confidential = item.properties && (item.properties.Confidentiality == "Medium" || item.properties.Confidentiality == "High");
+						var _owner = _.find(permissions, p => p.role == "owner" || p.role == "organizer"),
+																_owningDomain = _owner && _owner.emailAddress ? _owner.emailAddress.split("@")[1].toLowerCase() : false;
+						var _confidential = item.properties && (item.properties.Confidentiality == "Medium" || item.properties.Confidentiality == "High"),
+								_slightlyConfidential = item.properties && item.properties.Confidentiality == "Low";
 						_.each(permissions, p => {
 							p.me = (p.emailAddress && p.emailAddress.toLowerCase() == ಠ_ಠ.me.email.toLowerCase());
-							p.mine = (p.me && p.role == "owner");
-							p.class = (_confidential && p.allowFileDiscovery) ?
-								"alert-danger" : (_confidential && (p.type == "domain" || p.type == "anyone")) ? "alert-warning" : "";
+							p.mine = (p.me && (p.role == "owner" || p.role == "organizer"));
+							p.class = ((_confidential || _slightlyConfidential) && p.allowFileDiscovery) ?
+								"alert-danger" : (_confidential && (p.type == "domain" || p.type == "anyone")) ? "alert-warning" : 
+									_owningDomain && p.emailAddress && p.emailAddress.split("@")[1].toLowerCase() != _owningDomain ? "alert-dark" : "";
 						});
 						resolve(item.permissions = permissions);
 					}).catch(e => reject(e));
 			}), {}, results, collection, table, id, 5, null, null, null, true).then(permissions => {
 
-				if (permissions && (permissions = _.filter(permissions, i => i.item.shared)).length > 1) {
+				if (permissions && (permissions = _.filter(permissions, i => i.item.shared || i.item.teamDriveId)).length > 1) {
 
 					var _details = {
 						searchable: 0,

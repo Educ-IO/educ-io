@@ -32,7 +32,6 @@ Router
 
 Apps
 ----
-* ** IMPORTANT ** Clear process instructions? Visual? <- App Guides
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?)
   -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
@@ -80,11 +79,10 @@ View
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
 * Numerical Filter implies re-sort?
 * Auto-hide hidden columns (from original sheet)
-* Include instructions about Exporting only exporting values rather than formulas or formats.
+
 
 Folders
 -------
-
 
 Merge
 -----
@@ -108,6 +106,9 @@ Reflect
 
 Complete
 --------
+* ** BUG ** Recent Items -> Which are Team Drives -> Fail to Open <-- DONE
+* Include instructions about Exporting only exporting values rather than formulas or formats. <-- DONE
+* ** IMPORTANT ** Clear process instructions? Visual? <- App Guides <-- DONE
 * ** IMPORTANT ** Tutorials CSS on Guides isn't perfect... <-- DONE
 * ** BUG ** Cancelling out of team drive selector leads to perpetual spinner. <-- DONE
 * ** BUG ** No team drives in selector should either cause informational message or no selector <-- DONE
@@ -454,4 +455,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-03-18
+ᕕ( ᐛ )ᕗ JD - 2018-03-20

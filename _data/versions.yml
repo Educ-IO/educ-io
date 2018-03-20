@@ -1,4 +1,8 @@
 site :
+  0.0.8v :
+    name : Folders 0.0.7-beta
+    desc : Bug Fixes and Documentation Updates
+    type : minor
   0.0.8u :
     name : Visual Bug Fix
     desc : Bug Fix with Padded Anchor Links
@@ -397,6 +401,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.7-beta :
+    name : Bug Fixes
+    desc : Bug Fixes and Documentation Updates
+    type : minor
   0.0.6f-alpha :
     name : Improvements
     desc : Audit Features and Bug Fixes
