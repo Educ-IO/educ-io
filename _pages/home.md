@@ -16,11 +16,13 @@ css:
     - bootstrap/grid
     - bootstrap/buttons
     - bootstrap/utilities
+    - bootstrap/carousel
     - custom/functions
     - custom/variables
     - custom/common
     - custom/fonts
     - custom/logo
+    - custom/home
   secondary:
     - bootstrap/functions
     - bootstrap/variables
@@ -28,6 +30,10 @@ css:
     - bootstrap/alert
     - bootstrap/close
     - bootstrap/print
+modules:
+  - controller
+  - service
+  - home
 ---
 {% capture text %}
 __Welcome__ to our place, __open it__ up and find a collection of `free web apps` that __integrate__ with the Google platform. They make complex and everyday tasks __easier__, __faster__ and more __intuitive__.
@@ -37,7 +43,7 @@ Running __entirely__ in __your web browser__{:class="text-success"} and using th
 {:class="text-justify"}
 
 The apps are below and ready to use straight away, `so jump in` and __give them a go__!
-{:class="lead mb-4"}
+{:class="lead mb-3"}
 
 {% endcapture %}
 {% include home.html logo="images/logo.svg" %}

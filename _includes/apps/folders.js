@@ -66,6 +66,7 @@ App = function() {
 
 	var _openFolder = (folder, log, teamDrive, state, complete) => {
 
+
 		folder.url = "#google,load." + (folder.team ? "team." : "") + folder.id + (teamDrive ? "." + teamDrive : "");
 
 		if (!_folder || !_path) {
@@ -99,7 +100,8 @@ App = function() {
 		_showPath(_path, ಠ_ಠ.container);
 		_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state, _folder ? _folder.tally.get() : null, complete);
 		if (log) ಠ_ಠ.Recent.add(folder.id, folder.name, folder.url).then(() => _resize());
-
+		ಠ_ಠ.Display.state().enter(STATE_OPENED);
+		
 	};
 
 	var _load = (loader, rootTeamDrive, log, teamDrive, state, tags) => {

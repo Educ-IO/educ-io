@@ -3,7 +3,9 @@ layout: extension
 title: Tag-a-Doc
 permalink: /extensions/tag-a-doc
 colour: cc0
-lead: Show tags directly in Google Docs!
+lead: Show __Tags__ when editing documents in G-Suite!
+headline: Tag-a-Doc Extensions Released
+date: 2018-02-28
 ---
 {% capture lead %}
 

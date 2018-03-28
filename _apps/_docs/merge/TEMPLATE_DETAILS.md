@@ -1,0 +1,1 @@
+An __output template__ is the [document](https://www.google.com/docs/about/){:target="_blank" rel="noopener"} or [spreadsheet](https://www.google.com/sheets/about/){:target="_blank" rel="noopener"} that will be used as the _reference_ for the merge. This template will be duplicated and highlighted merge fields will be populated using the __data selected__ for this merge.

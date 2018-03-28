@@ -148,7 +148,7 @@ ul.nav-tabs li.nav-item.dropdown {
 	.dropdown-menu {width: 100%;}
 }
 
-div.tab-pane {
+div.tab-pane, .scroller {
 	overflow-x: auto;
 	overflow-y: auto;
 	width: 100%;

@@ -1,0 +1,33 @@
+{% assign _recent_articles = site.articles | sort: 'date' | reverse | limit:10 %}{% assign _recent_news = site.news | sort: 'date' | reverse | limit:10 %}{% assign _recent_extensions = site.extensions | where_exp:"e", "e.headline != nil" | sort: 'date' | reverse | limit:10 %}{% assign _recent_apps = site.apps | where_exp:"a", "a.headline != nil" | sort: 'date' | reverse | limit:10 %}{% assign _recent = "" | split: "" %}{% for _article in _recent_articles %}{% assign _recent = _recent | push: _article %}{% endfor %}{% for _news in _recent_news %}{% assign _recent = _recent | push: _news %}{% endfor %}{% for _extension in _recent_extensions %}{% assign _recent = _recent | push: _extension %}{% endfor %}{% for _app in _recent_apps %}{% assign _recent = _recent | push: _app %}{% endfor %}{% assign _recent = _recent | sort: 'date' | reverse | limit:5 %}
+{% if _recent.size > 0 %}<div id="headlines" class="carousel slide mt-1 mb-4" data-ride="carousel" data-interval="6000">
+  
+  <ol class="carousel-indicators mb-1">
+    {% for post in _recent %}
+    <li data-target="#headlines" data-slide-to="{{ forloop.index0 }}"{% if forloop.first %} class="active"{% endif %}></li>
+    {% endfor %}
+  </ol>
+  
+  <div class="carousel-inner">
+    {% for post in _recent %}<div class="carousel-item{% if forloop.first %} active{% endif %}">
+      <div class="carousel-background border rounded" alt="Headline {{ forloop.index }}">
+        <div class="row align-items-center justify-content-center">
+          <div class="col col-8 col-lg-10 text-center py-4 py-md-3">
+            <h5><a href="{{ post.url }}">{% if post.headline %}{{ post.headline }}{% else %}{{ post.title }}{% endif %}</a></h5>
+            <p class="d-none d-lg-block">{% if post.app %}{{ site.data.apps[post.app].desc | markdownify }}{% elsif post.lead %}{{ post.lead | markdownify }}{% else %}{{ post.content | strip_html | truncatewords: 16 , "  .." }}{% endif %}</p>
+          </div>
+        </div>
+      </div>
+    </div>{% endfor %}
+  </div>        
+  
+  <a class="carousel-control-prev" href="#headlines" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  
+  <a class="carousel-control-next" href="#headlines" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+  
+</div>{% endif %}

@@ -1,4 +1,8 @@
 site :
+  0.0.8w :
+    name : Site Updates
+    desc : Headlines and Articles
+    type : minor
   0.0.8v :
     name : Folders 0.0.7-beta
     desc : Bug Fixes and Documentation Updates

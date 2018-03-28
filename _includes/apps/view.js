@@ -138,25 +138,6 @@ App = function() {
 
 	};
 
-	var _resize = () => {
-
-		/* <!-- Handle Screen / Window Resize Events --> */
-		var _resizer = () => {
-			var _height = 0;
-			$("#site_nav, #sheet_tabs").each(function() {
-				_height += $(this).outerHeight(true);
-			});
-			$("div.tab-pane").css("max-height", $(window).height() - _height - 20);
-		};
-		var _resize_Timeout = 0;
-		$(window).off("resize").on("resize", () => {
-			clearTimeout(_resize_Timeout);
-			_resize_Timeout = setTimeout(_resize, 50);
-		});
-		_resizer();
-
-	};
-
 	/* <!-- See: https://developer.mozilla.org/en/docs/Web/API/WindowBase64/Base64_encoding_and_decoding --> */
 	var _encode = value => btoa(encodeURIComponent(value).replace(/%([0-9A-F]{2})/g, (m, p) => String.fromCharCode("0x" + p)));
 	var _decode = value => decodeURIComponent(_.map(atob(value).split(""), (c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join(""));
@@ -194,7 +175,7 @@ App = function() {
 						_pick().then((f) => _load(f, (/FULL/i).test(command[1]), ಠ_ಠ.Sheets, true).then(s => {
 							ಠ_ಠ.Router.clean(false); /* <!-- Clear the existing state --> */
 							_sheets = s;
-							_resize();
+							ಠ_ಠ.Display.size.resizer.height("#site_nav, #sheet_tabs", "div.tab-pane");
 						})).catch(() => _sheets = null);
 
 					} else if ((/LOAD/i).test(command)) {
@@ -203,7 +184,7 @@ App = function() {
 						_load(command[1], (/FULL/i).test(command[2]), ಠ_ಠ.Sheets, true).then(s => {
 							ಠ_ಠ.Router.clean(false); /* <!-- Clear the existing state --> */
 							_sheets = s;
-							_resize();
+							ಠ_ಠ.Display.size.resizer.height("#site_nav, #sheet_tabs", "div.tab-pane");
 						}).catch(() => _sheets = null);
 
 					} else if ((/SAVE/i).test(command)) {
@@ -289,7 +270,7 @@ App = function() {
 						if (params && params.i) {
 							_load(params.i, false, _view(params), false).then((s) => {
 								_sheets = s;
-								_resize();
+								ಠ_ಠ.Display.size.resizer.height("#site_nav, #sheet_tabs", "div.tab-pane");
 							}).catch(() => _sheets = null);
 						}
 

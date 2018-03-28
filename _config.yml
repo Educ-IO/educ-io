@@ -41,7 +41,20 @@ author:
   name:								"Educ.IO"
   url:								https://github.com/educ-io
 
-# Custom variables
+# Collections
+collections:
+  articles:
+    output: true
+    permalink: /:collection/:path/
+  news:
+    output: true
+    permalink: /:collection/:path/
+  apps:
+    output: true
+  extensions:
+    output: true
+    
+# Custom Variables
 launched:							"2015"
 debug:                "debug"
 performance:          "perf"

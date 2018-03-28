@@ -87,6 +87,14 @@ Display = function() {
 	};
 	
 	var _clean = () => $(".modal-backdrop").remove() && $(".modal-open").removeClass("modal-open"); /* <!-- Weird Modal Not Hiding Bug --> */
+	
+	var _toggle = (state, toggle, container) => {
+		var _$ = (container ? container.find : $);
+		_$(".state-" + state).toggleClass("disabled", !toggle);
+		_$(".hide-" + state).toggleClass("d-none", toggle);
+		_$(".show-" + state).toggleClass("d-none", !toggle);
+		return true;
+	};
 	/* <!-- Internal Functions --> */
 
 	/* <!-- External Visibility --> */
@@ -273,6 +281,42 @@ Display = function() {
 
 		},
 
+		size: {
+			
+			resizer: {
+				
+				height: (measure, target, property, bottom, source) => {
+					
+					var _resize = () => {
+						
+						/* <!-- Handle Screen / Window Resize Events --> */
+						var _source = source ? source : window, _resizer = () => {
+							var _height = 0;
+							$(measure).each(function() {
+								_height += $(this).outerHeight(true);
+							});
+							$(target).css(property ? property : "max-height", $(_source).height() - _height - 
+														((bottom !== null && bottom !== undefined) ? bottom : 20));
+						};
+						var _resize_Timeout = 0;
+						$(_source).off("resize.height").on("resize.height", () => {
+							clearTimeout(_resize_Timeout);
+							_resize_Timeout = setTimeout(_resize, 50);
+						});
+						_resizer();
+
+						return () => $(_source).off("resize.height");
+						
+					};
+					
+					return _resize();
+					
+				},
+				
+			},
+
+		},
+		
 		/* <!--
 			Options are : {
 				target : element to append the loader to,
@@ -725,10 +769,13 @@ Display = function() {
 			};
 
 			return {
+				
+				all: () => _all(),
+				
 				enter: names => {
 					names = _arrayize(names, _.isString);
 					_.each(names, name => {
-						if (_add(name)) $(".state-" + name).removeClass("disabled");
+						if (_add(name)) _toggle(name, true);
 					});
 					return _parent;
 				},
@@ -736,17 +783,22 @@ Display = function() {
 				exit: names => {
 					names = _arrayize(names, _.isString);
 					_.each(names, name => {
-						if (_remove(name)) {
-							$(".state-" + name).addClass("disabled");
-							_all().forEach((v) => $(".state-" + v).removeClass("disabled"));
-						}
+						if (_remove(name)) _toggle(name, false) && _all().forEach(v => $(".state-" + v).removeClass("disabled"));
 					});
 					return _parent;
 				},
 
 				clear: () => {
-					_all().forEach((v) => _remove(v) ? $(".state-" + v).addClass("disabled") : null);
+					$(".d-none[class^='.hide-']", ".d-none[class*=' .hide-']").removeClass("d-none");
+					$("[class^='.show-']", "[class*=' .show-']").addClass("d-none");
+					_all().forEach(v => _remove(v) ? $(".state-" + v).addClass("disabled") : null);
 					return _parent;
+				},
+				
+				in: (names, or) => {
+					names = _arrayize(names, _.isString);
+					var all = _all();
+					return (or ? _.some : _.every)(names, name => all.indexOf(name) >= 0);
 				},
 			};
 

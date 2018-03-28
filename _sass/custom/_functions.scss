@@ -11,3 +11,7 @@
      -moz-animation: $details;
 					animation: $details;
 }
+
+@function ratio($width, $height) {
+  @return percentage( $height / $width);
+}

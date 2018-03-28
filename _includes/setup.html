@@ -4,6 +4,7 @@
     _isF : function(o) {return !!(o && o.constructor && o.call && o.apply);},
     _root : "{{ site.app.content }}",
     SETUP : {
+			{% if site.data.apps[page.app].config %}CONFIG: {{ site.data.apps[page.app].config | jsonify }},{% endif %}
 			CHECK : {{ site.app.check | jsonify }},
       SINGLE_PAGE : !!(window.navigator.standalone || window.navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)),
       {% if jekyll.environment == site.debug %}DEBUG : true{% elsif jekyll.environment == site.performance %}DEBUG : false{% elsif jekyll.environment == site.compress %}DEBUG : false{% else %}SERVICE : true{% endif %},

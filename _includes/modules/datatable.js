@@ -1,19 +1,40 @@
 Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 	/* <!-- table = {id, name, data, headers} --> */
-	/* <!-- options = {filters, inverted_Filters, sorts, widths, frozen, readonly, advanced, collapsed} --> */
+	/* <!-- options = {filters, inverted_Filters, sorts, widths, frozen, readonly, advanced, collapsed, template, removable} --> */
 
+	/* <!-- Internal Consts --> */
+	const LARGE_ROWS = 200, FILTER_DELAY = 200, defaults = {
+    template : "rows",
+		filters : {},
+		inverted_Filters : {},
+		sorts : {},
+		classes : [],
+		visibilities : {
+			visible: {
+				name: "Visible",
+				desc: "Show this column"
+			},
+			initially: {
+				name: "Hide",
+				desc: "Hide this column, but allow it to be un-hidden",
+				menu: true
+			},
+			now: null,
+			always : null
+		}
+  };
+	options = _.defaults(options, defaults);
+	/* <!-- Internal Consts --> */
+	
 	/* <!-- Filters --> */
 	var Filters = options => {
 
 		/* <!-- Internal Variables --> */
-		var _normal = options.filters ? options.filters : {},
-			_inverted = options.inverted_Filters ? options.inverted_Filters : {};
+		var _normal = options.filters, _inverted = options.inverted_Filters;
 		/* <!-- Internal Variables --> */
 
 		/* <!-- Internal Methods --> */
-		var _padZero = (number, digits) => Array(Math.max(digits - String(number).length + 1, 0)).join(0) + number;
-
 		var _createQuery = (filters, join) => {
 			var _query, _join = join ? join : "$and";
 			_.map(Object.keys(filters), field => {
@@ -181,8 +202,6 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 	/* <!-- Filters --> */
 
 	/* <!-- Internal Variables --> */
-
-	/* <!-- Internal Variables --> */
 	var _filters, _sorts, _advanced, _name, _css;
 	/* <!-- Internal Variables --> */
 
@@ -191,28 +210,13 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 		/* <!-- Get 'Default' Filters and Searches if applicable --> */
 		_filters = Filters(options);
-		_sorts = options.sorts ? options.sorts : {};
+		_sorts = options.sorts;
 
 		/* <!-- Get 'Default' Filters and Searches if applicable --> */
 		_name = ("table_" + table.id).replace(/[^a-z0-9\-_:\.]|^[^a-z]+/gi, "");
 
 		/* <!-- Remove / Create Custom CSS Sheet --> */
 		_css = _css ? _css.deleteAll() : ಠ_ಠ.Css(_name);
-		
-		/* <!-- Add default visibilities if none suppled --> */
-		if (!options.visibilities) options.visibilities = {
-			visible: {
-				name: "Visible",
-				desc: "Show this column"
-			},
-			initially: {
-				name: "Hide",
-				desc: "Hide this column, but allow it to be un-hidden",
-				menu: true
-			},
-			now: null,
-			always : null
-		};
 
 	};
 	_initialise(); /* <!-- Run initial variable initialisation --> */
@@ -328,7 +332,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 				if (!el.nextElementSibling || !$(el.nextElementSibling).hasClass("to-hide")) {
 					var _target = $(el),
 					_last = (_target.hasClass("to-hide") && !_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0),
-					_result = _toggleColumn(_target, (el) => el.prev());
+					_result = _toggleColumn(_target, el => el.prev());
 					if (_last) _result.addClass("to-hide-prefix");
 				}
 			});
@@ -338,8 +342,9 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 	};
 
 	var _updateRows = () => {
-		var _rows = $(ಠ_ಠ.Display.template.get("rows")({
-			rows: _getRows()
+		var _rows = $(ಠ_ಠ.Display.template.get(options.template)({
+			rows: _getRows(),
+			removable: options.removable
 		}));
 		if (_advanced && _advanced.scroll.initialised()) { /* <!-- Complex Scrolling may have been requested but not initialised --> */
 			_advanced.scroll.update(_rows.toArray().map(e => e.outerHTML));
@@ -366,14 +371,15 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		_update(true, true, target);
 	};
 
-	var _createRows = rows => ಠ_ಠ.Display.template.get("rows")({
-		rows: rows
+	var _createRows = rows => ಠ_ಠ.Display.template.get(options.template)({
+		rows: rows,
+		removable: options.removable
 	});
 
 	var _createDefaultTable = () => ಠ_ಠ.Display.template.get("table")({
 		id: _name,
 		links: false,
-		classes: options.classes ? options.classes : [],
+		classes: options.classes,
 		headers: table.headers,
 		rows: _createRows(table.data.chain().data({
 			removeMeta: true
@@ -395,7 +401,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 	var _createDisplayTable = () => ಠ_ಠ.Display.template.get("table")({
 		id: _name,
 		links: !options.readonly,
-		classes: (options.classes ? options.classes : []).concat(options.widths && options.widths.lengths > 0 ? ["table-fixed-width"] : []),
+		classes: options.classes.concat(options.widths && options.widths.lengths > 0 ? ["table-fixed-width"] : []),
 		headers: table.headers,
 		widths: options.widths,
 		rows: _createRows(_getRows()),
@@ -414,7 +420,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 
 		/* <!-- Set Filter Handlers --> */
 		var _filter_Timeout = 0;
-		target.find("input.table-search").off("keyup").on("keyup", (e) => {
+		target.find("input.table-search").off("keyup").on("keyup", e => {
 			var _target, keycode = ((typeof e.keyCode != "undefined" && e.keyCode) ? e.keyCode : e.which);
 			if (keycode === 27) { /* <!-- Escape Key Pressed --> */
 				e.preventDefault();
@@ -424,7 +430,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 				_target = $(e.target);
 				_target.parents("div.form").fadeOut();
 			}
-		}).off("input").on("input", (e) => {
+		}).off("input").on("input", e => {
 			clearTimeout(_filter_Timeout);
 			_filter_Timeout = setTimeout(() => {
 				if (e && e.target) {
@@ -437,7 +443,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 						_update(true, true, target);
 					}
 				}
-			}, 200);
+			}, FILTER_DELAY);
 		});
 
 		/* <!-- Enable Pop-Overs and Tool-Tips --> */
@@ -445,7 +451,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		ಠ_ಠ.Display.tooltips(target.find("[data-toggle='tooltip']"));
 
 		/* <!-- Show/Hide Column (expandable table) --> */
-		target.find(".table-headers").on("click", (e) => {
+		target.find(".table-headers").on("click", e => {
 			if (e.target.classList.contains("table-header")) {
 				var _target = $(e.target),
 					_last = (_target.hasClass("to-hide") && !_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0);
@@ -456,10 +462,10 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		});
 
 		/* <!-- Clear Column Filter --> */
-		target.find("button[data-command='clear']").on("click", (e) => _clearFilter(e.target));
+		target.find("button[data-command='clear']").on("click", e => _clearFilter(e.target));
 
 		/* <!-- Apply Table Sort --> */
-		target.find("a[data-command='sort'], button[data-command='sort']").on("click", (e) => {
+		target.find("a[data-command='sort'], button[data-command='sort']").on("click", e => {
 			var _target = $(e.target);
 			var _field = _target.data("field");
 			if (_sorts[_field]) {
@@ -473,7 +479,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		});
 
 		/* <!-- Update Column Visibility --> */
-		target.find("a[data-command='hide']").on("click", (e) => {
+		target.find("a[data-command='hide']").on("click", e => {
 			var _target = $(e.target);
 			var _action = _target.data("action");
 			var _field = _target.parent().data("index");
@@ -520,7 +526,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			_advanced = _advanced ? _advanced : ಠ_ಠ.Table(target.find("table"), target, ಠ_ಠ);
 			
 			/* <!-- Init Scroll Cache for Larger Tables --> */
-			if (table.data.count() > 200) _advanced.scroll.init(target.find("tbody"), options.blocks_to_show, options.rows_to_show).toggle();
+			if (table.data.count() > LARGE_ROWS) _advanced.scroll.init(target.find("tbody"), options.blocks_to_show, options.rows_to_show).toggle();
 			
 		}
 		
@@ -550,8 +556,9 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			if (options && options.length > 0) {
 
 				/* <!-- Trigger Loader --> */
-				ಠ_ಠ.Display.busy({
-					target: target
+				var _busy = ಠ_ಠ.Display.busy({
+					target: target,
+					fn: true
 				});
 
 				ಠ_ಠ.Flags.log("Current Headers", table.headers).log("Received Options", options);
@@ -566,9 +573,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 				_update(true, true);
 
 				/* <!-- Un-Trigger Loader --> */
-				ಠ_ಠ.Display.busy({
-					clear: true
-				});
+				_busy();
 
 			}
 

@@ -54,9 +54,11 @@ view:
     - main
     - table
     - css
+    - items
     - recent
     - router
     - datatable
+    - sheet
     - sheets
   scripts: 
     - extends/regex
@@ -337,6 +339,7 @@ reflect:
     - display
     - network
     - google
+    - items
     - recent
     - router
     - help
@@ -624,6 +627,7 @@ folders:
     - main
     - table
     - css
+    - items
     - recent
     - router
     - datatable
@@ -848,7 +852,7 @@ folders:
       menu: _cmd_Start_Folder
       desc: Open a Folder
       url: "#google,open"
-    - name: Teriary
+    - name: Tertiary
       menu: _cmd_Start_Team
       desc: Open a Team Drive
       url: "#google,open.team"
@@ -866,7 +870,7 @@ folders:
 
 grades:
   name: Grades
-  desc: The __big one__, creating, managing, link & aggregating markbooks. Everything you might want to do with your markbook in Google Sheets, but on the web.
+  desc: The __big one__, creating, managing, link & aggregating student data. Everything you might want to do with your Google Sheet markbook, on the web.
   link: /grades/
   colour: 5891E9
   logo: images/grades_logo.svg
@@ -906,6 +910,7 @@ grades:
     - service
     - main
     - css
+    - items
     - recent
     - router
   scripts: 
@@ -1040,6 +1045,7 @@ cover:
     - service
     - main
     - css
+    - items
     - recent
     - router
   scripts: 
@@ -1174,8 +1180,11 @@ merge:
     - service
     - main
     - css
+    - items
     - recent
     - router
+    - datatable
+    - sheet
   scripts: 
     - extends/regex
     - extends/array
@@ -1187,6 +1196,18 @@ merge:
     - loader
     - recent
     - help
+    - shared/filters
+    - shared/control_icon
+    - shared/control_button
+    - shared/tab-links
+    - shared/tab-list
+    - shared/tab-tabs
+    - shared/filters
+    - shared/table
+    - shared/rows
+    - shared/datatable
+    - merge/split
+    - merge/meta_rows
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -1199,6 +1220,9 @@ merge:
     - merge/README
     - merge/INSTRUCTIONS
     - merge/TUTORIALS
+    - merge/IMPORT_CHOOSE_SHEET
+    - merge/DATA_DETAILS
+    - merge/TEMPLATE_DETAILS
   scopes:
     google:
       - scope: email
@@ -1209,11 +1233,117 @@ merge:
         name: View your basic profile info
         reason: In order to display your name on the navigation menu, once you have signed in.
         request: login
+      - scope: https://www.googleapis.com/auth/drive
+        name: View and manage the files in your Google Drive
+        reason: In order to search, manage and convert your Drive files.
+        request: login
+      - scope: https://www.googleapis.com/auth/documents
+        name: View and manage the documents in your Google Drive 
+        reason: In order to perform a Document Merge.
+        request: lazy
+      - scope: https://www.googleapis.com/auth/drive.install
+        name: Special scope used to let users approve installation of an app.
+        reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
+        request: lazy
   keys:
     google:
         general: AIzaSyACPqbocW3AgV_wP4wCkhzmU7S_ASQtcNs
         oauth: 51509082175-cjimvgm2eo78evoqu2fokfmm3amai5sg.apps.googleusercontent.com
   menus:
+    - name: Merges
+      groups:
+        all:
+          commands:
+            - name: Create
+              desc: Create a new Merge
+              hash: create
+              auth: google
+              id: _cmd_Create
+            - name: Open
+              desc: Open an existing Merge
+              hash: open
+              auth: google
+              id: _cmd_Open
+              imports:
+                - google
+            - name: Save
+              desc: Save the current Merge Details
+              hash: save
+              disabled_until:
+                - opened
+              auth: google
+            - name: Merge
+              desc: Execute Merge in Google Drive
+              hash: merge.doc
+              auth: google
+              disabled_until:
+              - loaded-template
+              - loaded-data
+              scope: https://www.googleapis.com/auth/documents
+            - name: Upload Document
+              desc: Upload Document back to Google Drive
+              hash: upload.doc
+              auth: google
+              disabled_until:
+              - loaded-template
+            - name: Upload PDF
+              desc: Export PDF back to Google Drive
+              hash: upload.pdf
+              auth: google
+              disabled_until:
+              - loaded-template
+              imports:
+              - html2canvas
+              - jspdf
+            - name: Save PDF
+              desc: Download PDF
+              hash: save.pdf
+              disabled_until:
+              - loaded-template
+              imports:
+              - html2canvas
+              - jspdf
+            - name: Close
+              desc: Close the current Merge
+              hash: close
+              disabled_until:
+                - opened
+    - name: Data
+      groups:
+          all:
+            commands:
+              - name: Open Sheet
+                desc: Load data (to merge) from a Google Sheet
+                hash: load.data.sheet
+                auth: google
+                id: _cmd_Data_Sheet
+                imports:
+                - google
+              - name: Open Form
+                desc: Load data (to merge) from a Google Form
+                hash: load.data.form
+                auth: google
+                id: _cmd_Data_Form
+                imports:
+                - google
+    - name: Template
+      groups:
+          all:
+            commands:
+              - name: Load Doc
+                desc: Load a template (to merge into) from a Google Doc
+                hash: load.template.doc
+                auth: google
+                id: _cmd_Template_Doc
+                imports:
+                - google
+              - name: Load Sheet
+                desc: Load a template (to merge into) from a Google Sheet
+                hash: load.template.sheet
+                auth: google
+                id: _cmd_Template_Sheet
+                imports:
+                - google         
     - name: Settings
     - name: About
       short_name: Help
@@ -1254,7 +1384,18 @@ merge:
                 - jshashes
                 - fetchjsonp
               auth: google
+  buttons:
+  - name: Primary
+    menu: _cmd_Create
+    desc: Create a Merge
+    url: "#google,create"
+  - name: Secondary
+    menu: _cmd_Open
+    desc: Open Existing
+    url: "#google,open"
   published: false
+  config:
+    api: "MN_prIAeoOzt-NF-8uwlGE9Wlbr8Kyl43"
 
 
 
@@ -1308,6 +1449,7 @@ tiles:
     - service
     - main
     - css
+    - items
     - recent
     - router
   scripts: 
@@ -1385,7 +1527,7 @@ tiles:
               hash: tutorials
               desc: Ways in which you can use this app
             - name: Guide
-              url: /guides/grades
+              url: /guides/tiles
               desc: A guide to using this app
               divider: true
             - name: Install

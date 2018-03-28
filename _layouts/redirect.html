@@ -1,0 +1,14 @@
+{% capture redirect %}{% if page.redirect %}{{ page.redirect }}{% else %}{{ content | strip_html | strip }}{% endif %}{% endcapture %}<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting</title>
+    <link rel="canonical" href="{{ redirect }}">
+    <meta http-equiv="refresh" content="0; url={{ redirect }}">
+  </head>
+  <body>
+    <h1>Redirecting …</h1>
+    <a href="{{ redirect }}">Click here if you are not redirected.</a>
+    <script>location="{{ redirect }}"</script>
+  <body>
+</html>

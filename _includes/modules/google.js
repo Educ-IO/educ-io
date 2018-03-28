@@ -80,7 +80,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 	const SHEET = "application/vnd.google-apps.spreadsheet";
 	const SLIDE = "application/vnd.google-apps.presentation";
 	const DRAWING = "application/vnd.google-apps.drawing";
-	const NATIVES = [DOC, SHEET, SLIDE, DRAWING];
+	const FORM = "application/vnd.google-apps.form";
+	const NATIVES = [DOC, SHEET, SLIDE, DRAWING, FORM];
 
 	const EVENTS = {
 		SEARCH: {

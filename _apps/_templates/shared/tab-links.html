@@ -9,7 +9,7 @@
     <span class="sr-only">Toggle Dropdown</span>
   </a>
   <div class="dropdown-menu">
-    {{#each actions}}<a class="dropdown-item" href="{{url}}"{{#if desc}} title="{{desc}}"{{/if}}>{{name}}</a>{{/each}}
+    {{#each actions}}<a class="dropdown-item{{#if class}} {{class}}{{/if}}" href="{{url}}"{{#if desc}} title="{{desc}}"{{/if}}>{{name}}</a>{{/each}}
   </div>
   {{/if}}
 </li>

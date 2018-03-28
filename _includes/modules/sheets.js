@@ -8,116 +8,37 @@ Sheets = function(sheet, ಠ_ಠ) {
 	/* <!-- Internal Functions --> */
 	var _currentSheet = () => _sheets[Object.keys(_sheets).filter(key => _sheets[key].active())[0]];
 
-	var _initSheet = function(data, name, index, target, widths, hide, frozen, locale, size) {
+	var _initSheet = function(data, name, index, target, widths, hide, sheet, sheets) {
 
 		ಠ_ಠ.Flags.log("Google Sheet Values [" + name + "]", data);
-		var headers = [];
-
-		if (data && data.length > 0) {
-
-			/* <!-- Check for fully 'blank' columns --> */
-			ಠ_ಠ.Flags.time("Checking Blank Columns");
-			var _hasValues = Array.apply(null, {
-				length: size.cols
-			}).map(Number.call, Number);
-			_.find(data, (row) => {
-				_.each(row, (cell, index) => {
-					if (cell) _hasValues = _.filter(_hasValues, (number) => number !== index);
-				});
-				return (_hasValues.length === 0);
-			});
-			if (_hasValues && _hasValues.length > 0) {
-				ಠ_ಠ.Flags.log("Blank Columns in Sheet:", JSON.stringify(_hasValues));
-				_hasValues.reverse();
-				data = _.map(data, (row) => {
-					_.each(_hasValues, function(index) {
-						if (row.length > index + 1) row.splice(index, 1);
-					});
-					return row;
-				});
-			}
-			ಠ_ಠ.Flags.time("Checking Blank Columns", true);
-
-			/* <!-- Handle Headers --> */
-			ಠ_ಠ.Flags.time("Generating Headers");
-			headers = data.shift();
-			var rows = frozen.rows ? frozen.rows - 1 : 0;
-			while (rows > 0) {
-				headers = data.shift().map((v, i) => v ? (headers[i] ? headers[i] + " / " + v : v) : headers[i]);
-				rows--;
-			}
-
-			/* <!-- Create Headers Object --> */
-			headers = headers.map((v, i) => ({
-				name: v ? v : "-" + i + "-",
-				hide: function(initial) {
-					return !!(this.hide_now || this.hide_always || (initial && this.hide_initially));
-				},
-				set_hide: function(now, always, initially) {
-					this.hide_now = now;
-					this.hide_always = always;
-					this.hide_initially = initially;
-				},
-				hide_now: !!hide[i],
-				hide_always: false,
-				hide_initially: false,
-				hide_default: !!hide[i]
-			}));
-			ಠ_ಠ.Flags.time("Generating Headers", true);
-
-		}
-
-		/* <!-- Check Array for Dates --> */
-		ಠ_ಠ.Flags.time("Checking for Dates in Sheet Values");
-		var _formats;
-		if (locale && moment.locale(locale) == locale.toLowerCase()) {
-			ಠ_ಠ.Flags.log("Spreadsheet Locale:", locale);
-			var _locales = moment.localeData()._longDateFormat;
-			_formats = [moment.ISO_8601];
-			if (_locales) {
-				if (_locales.L) {
-					_formats.unshift(_locales.L);
-					if (_locales.LT) _formats.unshift(_locales.L + " " + _locales.LT);
-					if (_locales.LT) _formats.unshift(_locales.L + " " + _locales.LTS);
-				}
-				if (_locales.LL) _formats.unshift(_locales.LL);
-				if (_locales.LLL) _formats.unshift(_locales.LLL);
-				if (_locales.LLLL) _formats.unshift(_locales.LLLL);
-			}
-			ಠ_ಠ.Flags.log("Date Parsing Formats:", _formats);
-		} else {
-			ಠ_ಠ.Flags.error("Could Not Set Date/Time Locale to " + locale, "");
-		}
-
-		if (data && data.length > 0) {
-			var _date_Indexes = _.reduce(data[0], (dates, value, index) => {
-				if (value && _.isString(value) && moment(value, _formats, true).isValid()) dates.push(index);
-				return dates;
-			}, []);
-			ಠ_ಠ.Flags.log("Date Column Indexes:", _date_Indexes);
-			if (_date_Indexes.length > 0) _.each(data, (row) => _.each(_date_Indexes, (index) => {
-				row[index] = row[index] ? moment(row[index], _formats, true).toDate() : row[index];
-			}));
-		}
-		ಠ_ಠ.Flags.time("Checking for Dates in Sheet Values", true);
-
-		ಠ_ಠ.Flags.time("Creating Object Array from Sheet Values");
-		var values = data && data.length > 0 ? data.map((v) => {
-			return Object.assign({}, v);
-		}) : [];
-		var fields = Array.apply(null, {
-			length: size.cols
-		}).map(Number.call, Number);
-		ಠ_ಠ.Flags.time("Creating Object Array from Sheet Values", true);
-
+		
+		var _sheet = ಠ_ಠ.Sheet(ಠ_ಠ, data, {sheet: sheet, sheets: sheets});
+		
+		/* <!-- Create Headers Object --> */
+		var headers = _sheet.headers().map((v, i) => ({
+			name: v ? v : "-" + i + "-",
+			hide: function(initial) {
+				return !!(this.hide_now || this.hide_always || (initial && this.hide_initially));
+			},
+			set_hide: function(now, always, initially) {
+				this.hide_now = now;
+				this.hide_always = always;
+				this.hide_initially = initially;
+			},
+			hide_now: !!hide[i],
+			hide_always: false,
+			hide_initially: false,
+			hide_default: !!hide[i]
+		}));
+		
 		var table = _db.getCollection(name);
 
 		if (!table) {
 			table = _db.addCollection(name, {
-				indices: fields,
+				indices: _sheet.fields(),
 				serializableIndices: false
 			});
-			table.insert(values);
+			table.insert(_sheet.values());
 		}
 
 		_sheets[name] = ಠ_ಠ.Datatable(ಠ_ಠ, {
@@ -127,7 +48,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 			data: table
 		}, {
 			widths: widths,
-			frozen: frozen,
+			frozen: _sheet.frozen(),
 			advanced: true,
 			visibilities : {
 				visible: {
@@ -156,43 +77,27 @@ Sheets = function(sheet, ಠ_ಠ) {
 
 	var _loadValues = function(sheet, name, index, target) {
 
-		ಠ_ಠ.Display.busy({
-			target: target
+		var _busy = ಠ_ಠ.Display.busy({
+			target: target,
+			fn: true
 		});
 
 		/* <!-- Clean Up CSS etc --> */
 		if (_sheets[name]) _sheets[name].defaults();
 
-		/* <!-- Grab and correct locale (if required) --> */
-		var _locale = sheet.properties.locale;
-		if (_locale) _locale = _locale.replace("_", "-");
-
-		var _frozen = {
-			cols: sheet.sheets[index].properties.gridProperties.frozenColumnCount,
-			rows: sheet.sheets[index].properties.gridProperties.frozenRowCount
-		};
-
-		var _size = {
-			cols: sheet.sheets[index].properties.gridProperties.columnCount,
-			rows: sheet.sheets[index].properties.gridProperties.rowCount
-		};
-
 		/* <!-- Initiatilise Sheet, Protect Jump Links & Remove the Loader --> */
-		var _complete = (d, n, i, t, w, h, f, l, s) => {
-			_initSheet(d, n, i, t, w, h, f, l, s);
-			ಠ_ಠ.Display.busy({
-				target: target,
-				clear: true
-			}).state().enter("opened").protect("a.jump").on("JUMP");
-		};
+		var _complete = (d, n, i, t, w, h, s) => {
+			_initSheet(d, n, i, t, w, h, s, sheet);
+			_busy().state().enter("opened").protect("a.jump").on("JUMP");
+		}, _sheet = sheet.sheets[index];
 
 		/* <!-- ARRAY OF: {startRowIndex: 0, endRowIndex: 1, startColumnIndex: 1, endColumnIndex: 3} --> */
-		ಠ_ಠ.Flags.log("Google Sheet Merges [" + name + "]", sheet.sheets[index].merges);
+		ಠ_ಠ.Flags.log("Google Sheet Merges [" + name + "]", _sheet.merges);
 
-		if (sheet.sheets[index].data && sheet.sheets[index].data.length == 1) {
+		if (_sheet.data && _sheet.data.length == 1) {
 
 			/* <!-- Already have loaded values --> */
-			var _data = sheet.sheets[index].data[0];
+			var _data = _sheet.data[0];
 			var _fontSizes = Array(_data.columnMetadata.length).fill(sheet.properties.defaultFormat.textFormat.fontSize);
 			var _rows = _data.rowData.map((r) => r.values.map((c, i) => {
 				if (c.effectiveFormat) _fontSizes[i] = Math.max(_fontSizes[i], c.effectiveFormat.textFormat.fontSize);
@@ -202,21 +107,15 @@ Sheets = function(sheet, ಠ_ಠ) {
 			_complete(
 				_rows.clean(false, true).trim(_rows[0].length), name, index, target,
 				_data.columnMetadata.map((c, i) => (c.pixelSize / _fontSizes[i]) * parseFloat(getComputedStyle(document.documentElement).fontSize)),
-				_data.columnMetadata.map((c) => !!c.hiddenByUser), _frozen, _locale, _size
+				_data.columnMetadata.map(c => !!c.hiddenByUser), _sheet
 			);
 
 		} else {
 
 			/* <!-- Need to load the values --> */
 			ಠ_ಠ.Google.sheets.values(sheet.spreadsheetId, name + "!A:ZZ")
-				.then((data) => _complete(data.values, name, index, target, [], [], _frozen, _locale, _size))
-				.catch((e) => {
-					ಠ_ಠ.Flags.error("Adding Content Table", e);
-					ಠ_ಠ.Display.busy({
-						target: target,
-						clear: true
-					});
-				});
+				.then(data => _complete(data.values, name, index, target, [], [], _sheet))
+				.catch(e => _busy() && ಠ_ಠ.Flags.error("Adding Content Table", e));
 
 		}
 
@@ -255,9 +154,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 		});
 
 		/* <!-- Set Load Tab Handler & Load Initial Values --> */
-		_tabs.find("a.nav-link").on("click", (e) => $(e.target).data("refresh", e.shiftKey)).on("show.bs.tab", function(e) {
-			if (e && e.target) _showTab($(e.target), sheet);
-		}).first().tab("show");
+		_tabs.find("a.nav-link").on("click", e => $(e.target).data("refresh", e.shiftKey)).on("show.bs.tab", e => (e && e.target) ? _showTab($(e.target), sheet) : false).first().tab("show");
 
 	};
 

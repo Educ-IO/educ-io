@@ -95,7 +95,7 @@ Router = function() {
 
         } else if ((/REMOVE/i).test(command) && command[1] && command.length == 2) {
 
-          ಠ_ಠ.Recent.remove(command[1]).then(id => $("#" + id).remove());
+          ಠ_ಠ.Recent.remove(command[1]).then(id => $(`#${id}`).remove());
           
         } else if ((/TUTORIALS/i).test(command)) {
 

@@ -16,7 +16,7 @@
             {{#if desc}}<label for="choices">{{desc}}</label>{{/if}}
             <select class="form-control" id="choices" name="choices">
               {{#each choices}}
-              {{#exists name}}{{#if name}}<option value="{{@key}}">{{name}}{{#if desc}} - {{desc}}{{/if}}</option>{{/if}}{{/exists}}
+              <option value="{{@key}}">{{#exists name}}{{#if name}}{{name}}{{#exists desc}}{{#if desc}} - {{desc}}{{/if}}{{/exists}}{{/if}}{{else}}{{this}}{{/exists}}</option>
               {{/each}}
             </select>
           </div>
@@ -24,12 +24,12 @@
           {{#if desc}}<label for="choices">{{desc}}</label>{{/if}}
           <fieldset class="form-group" id="choices">
             {{#each choices}}
-              {{#exists name}}{{#if name}}<div class="form-check">
+              <div class="form-check">
                 <label class="form-check-label">
                   <input class="form-check-input" type="radio" name="choices" id="choice_{{@key}}" value="{{@key}}"{{#if @first}} checked{{/if}}>
-                  {{name}}{{#if desc}} - {{desc}}{{/if}}
+                  {{#exists name}}{{#if name}}{{name}}{{#exists desc}}{{#if desc}} - {{desc}}{{/if}}{{/exists}}{{/if}}{{else}}{{this}}{{/exists}}
                 </label>
-              </div>{{/if}}{{/exists}}
+              </div>
             {{/each}}
           </fieldset>
         {{/if}}

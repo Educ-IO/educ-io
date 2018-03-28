@@ -1,0 +1,16 @@
+{% raw %}
+{{#each rows}}<tr>
+  <td>{{name}}</td>
+  <td class="text-center">{{#if field}}{{field}}{{else}}
+    \{{ {{name}} }}
+  {{/if}}</td>
+  <td>
+    {{#if mapped}}<span class="badge badge-dark ml-lg-1 mr-1">
+      <span>Mapped</span>
+      <a role="button" class="close" aria-label="Remove" href="#" title="Remove Mapping"><span aria-hidden="true">&times;</span></a>
+    </span>{{else}}
+    <a href="#" class="badge badge-bright text-dark mr-1" title="Add Field to Template">Add<i class="material-icons h-100 d-inline-flex pl-1">timeline</i></a>{{/if}}
+    {{#if ../removable}}<a role="button" class="close float-right" aria-label="Close" href="#" title="Remove from List"><span aria-hidden="true">&times;</span></a>{{/if}}
+  </td>
+</tr>{{/each}}
+{% endraw %}

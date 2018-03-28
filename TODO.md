@@ -32,6 +32,7 @@ Router
 
 Apps
 ----
+* ** IMPORTANT ** Router and subsequent anchor routes -> how do we handle duplicates?
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?)
   -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
@@ -81,11 +82,15 @@ View
 * Auto-hide hidden columns (from original sheet)
 
 
-Folders
--------
-
 Merge
 -----
+* Table -> Height locked with scroll.
+* ** BUG ** Cancel on Pickers...
+
+Folders
+-------
+* Check Spreadsheet API Permission for logging! Is this covered by drive permission?
+
 
 Reflect
 -------
@@ -106,6 +111,8 @@ Reflect
 
 Complete
 --------
+* ** BUG ** Data Table Filter doesn't work (Capitalisation of property names...) <-- DONE
+* ** IMPORTANT ** -> Move Sheets Line 15 -> Functionality in Sheet Module <== DONE
 * ** BUG ** Recent Items -> Which are Team Drives -> Fail to Open <-- DONE
 * Include instructions about Exporting only exporting values rather than formulas or formats. <-- DONE
 * ** IMPORTANT ** Clear process instructions? Visual? <- App Guides <-- DONE
@@ -455,4 +462,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-03-20
+ᕕ( ᐛ )ᕗ JD - 2018-03-25

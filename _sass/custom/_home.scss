@@ -1,0 +1,18 @@
+#apps .border.rounded {border-radius: 1rem !important;}
+
+#headlines {
+  .carousel-inner {
+    .carousel-item {
+      color: $colour-background;
+      a {color: inherit !important;}
+      p {color: transparentize($colour-background, 0.1);}
+    }
+    @for $i from 1 through 5 {
+      .carousel-item:nth-child(#{$i}) .carousel-background {
+        border-color: darken(nth($colours-headline, $i), 30%) !important;
+        background-color: nth($colours-headline, $i);
+        background: linear-gradient(to right, lighten(nth($colours-headline, $i), 25%),nth($colours-headline, $i) 30%,darken(nth($colours-headline, $i), 10%) 50%,nth($colours-headline, $i) 70%,lighten(nth($colours-headline, $i), 25%)) !important;
+      }
+    } 
+  }  
+}

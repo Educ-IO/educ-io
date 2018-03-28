@@ -4,19 +4,9 @@ Recent = function() {
 	/* <!-- Returns an instance of this if required --> */
 	if (this && this._isF && this._isF(this.Recent)) {return new this.Recent().initialise(this);}
 	
-	/* <!-- Internal Constants --> */
-	const SEP = "___", TEST = /___/;
-  /* <!-- Internal Constants --> */
-	
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _db, _app;
+	var ಠ_ಠ, _items;
   /* <!-- Internal Variables --> */
-	
-	/* <!-- Internal Functions --> */
-	var _camel = (value) => value.toLowerCase().replace(/(?:(^.)|(\s+.))/g, (match) => match.charAt(match.length-1).toUpperCase());
-	var _key = (app, key) => app.toUpperCase() + SEP + key;
-	var _is = (app, key) => key.indexOf(app.toUpperCase() + SEP) === 0;
-	/* <!-- Internal Functions --> */
 	
 	/* <!-- External Visibility --> */
   return {
@@ -35,54 +25,15 @@ Recent = function() {
 		},
 
     /* <!-- External Functions --> */
-		add: (key, name, url, details) => _db.setItem(_key(_app, key), {
-			app: _camel(_app),
-			name: name,
-			url: url,
-			date: new Date(),
-			date_string: new Date().toDateString(),
-			details: details,
-			key: _key(_app, key)
-		}),
+		add: (key, name, url, details) => _items.add(key, name, url, details),
 		
-		last : (number) => 
-			
-			new Promise((resolve, reject) => {
-
-				if (_app) {
-					_db.keys().then(keys => Promise.all(_.chain(keys)
-							.filter(key => _is(_app, key))
-							.map(key => _db.getItem(key))
-							.value()).then((values) => resolve(_.map(values.sort((a,b) => b.date - a.date).slice(0, number), (o) => _.omit(o, "app")))))
-					.catch((e) => reject(e));
-				} else {
-					_db.keys().then((keys) => Promise.all(_.chain(keys)
-							.map(key => _db.getItem(key))
-							.value()).then((values) => resolve(_.each(values.sort((a,b) => b.date - a.date).slice(0, number), (o) => o.url = "/" + o.app + "/" + o.url))))
-					.catch((e) => reject(e));
-				}
-
-			}),
+		last : number => _items.last(number),
 		
-		remove : (key) => new Promise((resolve, reject) => {
-			key = TEST.test(key) ? key : _key(_app, key);
-			_db.removeItem(key).then(() => resolve(key)).catch(e => ಠ_ಠ.Flags.error("Delete Recent Item Failure", e ? e : "No Inner Error") && reject(e));
-		}),
+		remove : key => _items.remove(key),
 		
-		clean : () => {
-			if (_app) {
-				_db.keys().then(keys => {
-					_.chain(keys).filter(key => _is(_app, key)).each(key => _db.removeItem(key).then(ಠ_ಠ.Flags.log("Cleared Recent Item: " + key)));
-				}).catch((e) => ಠ_ಠ.Flags.error("App Clear Recent Items Failure", e ? e : "No Inner Error"));
-			} else {
-				_db.clear().then(() => ಠ_ಠ.Flags.log("Globally Cleared Recent Items")).catch((e) => ಠ_ಠ.Flags.error("Global Clear Recent Items Failure", e ? e : "No Inner Error"));	
-			}
-		},
+		clean : () => _items.clean(),
 		
-		start : () => {
-			_app = ಠ_ಠ.Flags.dir();
-			_db = localforage.createInstance({name : "Educ-Recent", version : 1.0, description : "Educ.IO | Recent"});
-		}
+		start : () => _items = ಠ_ಠ.Items(ಠ_ಠ, ಠ_ಠ.Flags.dir())
 		/* <!-- External Functions --> */
 		
 	};

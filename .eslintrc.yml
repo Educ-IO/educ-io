@@ -32,6 +32,7 @@ globals:
   moment: false
   autosize: false
   html2canvas: false
+  jsPDF: false
   _: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
@@ -59,3 +60,4 @@ globals:
   Forms: true
   Help: true
   Router: true
+  Items: true
