@@ -4,7 +4,7 @@ title: Tag-a-Doc
 permalink: /extensions/tag-a-doc
 colour: cc0
 lead: Show __Tags__ when editing documents in G-Suite!
-headline: Tag-a-Doc Extensions Released
+headline: Tag-a-Doc Extension Released
 date: 2018-02-28
 ---
 {% capture lead %}
