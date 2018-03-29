@@ -1,4 +1,8 @@
 site :
+  0.0.8y :
+    name : View 0.2.1a-alpha
+    desc : Bug Fixes and Feature Enhancements
+    type : minor
   0.0.8x :
     name : Site Updates
     desc : Headlines and Articles
@@ -348,6 +352,10 @@ site :
     changes :
       - Initial Service Work Testing
 view :
+  0.2.1a-alpha :
+    name : Minor Improvements
+    desc : Bug Fixes and Feature Enhancements
+    type : minor
   0.2.1-alpha :
     name : Feature Improvements
     desc : Installable in Google Drive and Lazy Scope Requests

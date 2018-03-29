@@ -65,21 +65,27 @@ Grades
 
 View
 ----
-* ** BUG ** Opening instructions from the guide means you can't dismiss the modal (Maybe because sign-in has not completed?)
+* Time between Load and Display (still busy?)
+* Increase / Decrease Column Headers
+* Clock Icon for Date Columns
+* Linking...
+
 * ** BUG ** Column names can sometimes still get out of sync! Arghhh :)
 
 * ** IMPORTANT ** Column Filters (Type)
 
-* ** IMPORTANT ** Do went need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view <++ YES
+* ** IMPORTANT ** Do we need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view <++ YES
+  + Implement Save Route Handler
 
 * Write Flexbox-based Fit Algorithm
   + Categorised data to 'pills' for display?
+  
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Vertical Only Freeze should work better (e.g. not screw with table row cell heights?);
 * Handle Merged Cells and merged ranges.
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
+
 * Numerical Filter implies re-sort?
-* Auto-hide hidden columns (from original sheet)
 
 
 Merge
@@ -111,6 +117,10 @@ Reflect
 
 Complete
 --------
+* ** BUG ** Date Formats <-- DONE
+* Auto-hide hidden columns (from original sheet) <-- DONE
+* ** BUG ** Subsequent Open Route has null target element (or rather, non-existent target element) :) <-- DONE
+* ** BUG ** Opening instructions from the guide means you can't dismiss the modal (Maybe because sign-in has not completed?) | Caused by the target/container being async cleared after successfull logon, which leads to a race condition between that an the instructions show, so the instructions gets cleared as well (but reference held, so re-attached to the DOM without click events) SOLVED by switching container to: target: $("body") for initial MODALS <-- DONE
 * ** BUG ** Data Table Filter doesn't work (Capitalisation of property names...) <-- DONE
 * ** IMPORTANT ** -> Move Sheets Line 15 -> Functionality in Sheet Module <== DONE
 * ** BUG ** Recent Items -> Which are Team Drives -> Fail to Open <-- DONE

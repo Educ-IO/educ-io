@@ -103,20 +103,20 @@ Router = function() {
           ಠ_ಠ.Display.doc.show({
             name: "TUTORIALS",
             title: `Tutorials for ${options.name ? options.name : "App"} ...`,
-            target: ಠ_ಠ.container,
+            target: $("body"),
             wrapper: "MODAL"
-          }).modal();
+          }).modal("show");
           
         } else if ((/INSTRUCTIONS/i).test(command)) {
 
           /* <!-- Load the Instructions --> */
 					var show = (name, title) => ಠ_ಠ.Display.doc.show({
-						name: name,
-						title: title,
-						target: ಠ_ಠ.container,
-						wrapper: "MODAL"
-					}).modal();
-
+							name: name,
+							title: title,
+							target: $("body"),
+							wrapper: "MODAL"
+						}).modal("show");
+					
 					/* <!-- Process Specific App Instructions --> */
 					var _shown = false;
 					if (options.instructions && command[1] && command.length > 1) {
@@ -148,8 +148,7 @@ Router = function() {
       
 		},
     
-    clean: restart => _end() && (restart && _start()),
-		
+    clean: restart => _end() && (!restart || _start()),
    /* <!-- External Functions --> */
     
 	};

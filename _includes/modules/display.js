@@ -130,7 +130,7 @@ Display = function() {
 				});
 
 				Handlebars.registerHelper("localeDate", variable => {
-					if (variable && variable instanceof Date) return variable.toLocaleString();
+					if (variable && variable instanceof Date) return (variable.getHours() === 0 && variable.getMinutes() === 0 && variable.getSeconds() === 0 && variable.getMilliseconds() === 0) ? variable.toLocaleDateString() : variable.toLocaleString();
 				});
 				
 				Handlebars.registerHelper("formatBytes", variable => {
@@ -146,7 +146,9 @@ Display = function() {
 				});
 				
 				Handlebars.registerHelper("present", function(variable, options) {
-					if (typeof variable !== "undefined" && variable) {
+					if (typeof variable !== "undefined" && 
+							variable !== null && 
+							!(Object.keys(variable).length === 0 && variable.constructor === Object)) {
 						return options.fn(this);
 					} else {
 						return options.inverse(this);
@@ -253,7 +255,7 @@ Display = function() {
 
 				/* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
 				var _element = options.clear === true ? _target(options).empty() : _target(options);
-
+				
 				return options.prepend === true ?
 					$(this.get(options)).prependTo(_element) : $(this.get(options)).appendTo(_element);
 
@@ -414,7 +416,7 @@ Display = function() {
 					
 					if ((options.actions || options.handlers) && dialog.find("button[data-action], a[data-action]").length > 0) {
 						dialog.find("button[data-action], a[data-action]").each((i, el) => {
-							$(el).on("click.action", (e) => {
+							$(el).on("click.action", e => {
 								var _target = $(e.currentTarget), _action = _target.data("action");
 								if (_action.indexOf("actions_") === 0) {
 									_action = $(e.target).data("action").split("_");

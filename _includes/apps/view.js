@@ -7,7 +7,8 @@ App = function() {
 	if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
 	/* <!-- Internal Constants --> */
-	const STATE_OPENED = "opened", STATES = [STATE_OPENED];
+	const STATE_OPENED = "opened",
+		STATES = [STATE_OPENED];
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -18,19 +19,26 @@ App = function() {
 	var _load = (id, full, complete, log) => {
 
 		/* <!-- Start the Loader --> */
-		ಠ_ಠ.Display.busy({
-			target: ಠ_ಠ.container
+		var _busy = ಠ_ಠ.Display.busy({
+			target: ಠ_ಠ.container,
+			fn: true
 		});
 		var result;
 
 		return new Promise((resolve, reject) => {
-			ಠ_ಠ.Google.sheets.get(id, full).then(function(sheet) {
+			(full ?
+				ಠ_ಠ.Google.sheets.get(id, true) :
+				ಠ_ಠ.Google.sheets.get(id)
+				.then(sheet => ಠ_ಠ.Google.sheets.get(id, true, "A:ZZ").then(data => {
+					sheet.sheets[0] = data.sheets[0];
+					return sheet;
+				}))
+			)
+			.then(sheet => {
 					ಠ_ಠ.Flags.log("Google Drive Sheet Opened", sheet);
 					result = sheet;
-				}).catch((e) => ಠ_ಠ.Flags.error("Requesting Selected Google Drive Sheet", e ? e : "No Inner Error"))
-				.then(() => ಠ_ಠ.Display.busy({
-					clear: true
-				}))
+				}).catch(e => ಠ_ಠ.Flags.error("Requesting Selected Google Drive Sheet", e ? e : "No Inner Error"))
+				.then(_busy)
 				.then(() => result ?
 					log ? ಠ_ಠ.Recent.add(result.spreadsheetId, result.properties.title, "#google,load." + result.spreadsheetId + (full ? ".full" : ".lazy")).then(() => resolve(complete(result, ಠ_ಠ))) :
 					resolve(complete(result, ಠ_ಠ)) : reject());
@@ -46,7 +54,7 @@ App = function() {
 			ಠ_ಠ.Google.pick(
 				"Select a Sheet to Open", false, true,
 				() => [new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS).setIncludeFolders(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED],
-				(file) => file ? ಠ_ಠ.Flags.log("Google Drive File Picked from Open", file) && resolve(file.id) : reject()
+				file => file ? ಠ_ಠ.Flags.log("Google Drive File Picked from Open", file) && resolve(file.id) : reject()
 			);
 
 		});
@@ -71,8 +79,8 @@ App = function() {
 					rows--;
 				}
 
-				headers = headers.map((v) => {
-					var h = _.find(p.h, (h) => h.n == v);
+				headers = headers.map(v => {
+					var h = _.find(p.h, h => h.n == v);
 					if (h === undefined) h = false;
 					return {
 						name: v,
@@ -86,7 +94,7 @@ App = function() {
 				});
 
 				var length = 0,
-					values = data.map((v) => {
+					values = data.map(v => {
 						length = Math.max(length, v.length);
 						return Object.assign({}, v);
 					});
@@ -99,10 +107,19 @@ App = function() {
 				});
 				table.insert(values);
 
-				_sheet = ಠ_ಠ.Datatable(ಠ_ಠ,
-					{id : "view", name : name, headers : headers, data : table}, 
-					{readonly : true, filters : p.f, inverted_Filters : p.e, sorts : p.s, collapsed: true},
-				target);
+				_sheet = ಠ_ಠ.Datatable(ಠ_ಠ, {
+						id: "view",
+						name: name,
+						headers: headers,
+						data: table
+					}, {
+						readonly: true,
+						filters: p.f,
+						inverted_Filters: p.e,
+						sorts: p.s,
+						collapsed: true
+					},
+					target);
 
 			};
 
@@ -155,41 +172,50 @@ App = function() {
 
 			/* <!-- Set Container Reference to this --> */
 			container.App = this;
-			
+
 			/* <!-- Set Up the Default Router --> */
 			this.route = ಠ_ಠ.Router.create({
-        name: "View",
-        states: STATES,
+				name: "View",
+				states: STATES,
 				test: () => !!(_sheets),
-				clear : () => {
+				clear: () => {
 					_sheets.sheet().defaults();
 					_sheets = null;
 				},
 				route: (handled, command) => {
-					
+
 					if (handled) return;
-					
+
 					if ((/OPEN/i).test(command)) {
 
 						/* <!-- Pick, then Load the Selected File --> */
-						_pick().then((f) => _load(f, (/FULL/i).test(command[1]), ಠ_ಠ.Sheets, true).then(s => {
-							ಠ_ಠ.Router.clean(false); /* <!-- Clear the existing state --> */
-							_sheets = s;
-							ಠ_ಠ.Display.size.resizer.height("#site_nav, #sheet_tabs", "div.tab-pane");
-						})).catch(() => _sheets = null);
+						_pick()
+							.then(f => {
+								ಠ_ಠ.Router.clean(false); /* <!-- Clear the existing state --> */
+								return _load(f, (/FULL/i).test(command[1]), ಠ_ಠ.Sheets, true);
+							})
+							.then(s => {
+								_sheets = s;
+								ಠ_ಠ.Display.size.resizer.height("#site_nav, #sheet_tabs", "div.tab-pane");
+							})
+							.catch(() => _sheets = null);
 
 					} else if ((/LOAD/i).test(command)) {
 
+						ಠ_ಠ.Router.clean(false); /* <!-- Clear the existing state --> */
+
 						/* <!-- Load the Supplied File Id --> */
-						_load(command[1], (/FULL/i).test(command[2]), ಠ_ಠ.Sheets, true).then(s => {
-							ಠ_ಠ.Router.clean(false); /* <!-- Clear the existing state --> */
-							_sheets = s;
-							ಠ_ಠ.Display.size.resizer.height("#site_nav, #sheet_tabs", "div.tab-pane");
-						}).catch(() => _sheets = null);
+						_load(command[1], (/FULL/i).test(command[2]), ಠ_ಠ.Sheets, true)
+							.then(s => {
+								_sheets = s;
+								ಠ_ಠ.Display.size.resizer.height("#site_nav, #sheet_tabs", "div.tab-pane");
+							})
+							.catch(() => _sheets = null);
 
 					} else if ((/SAVE/i).test(command)) {
 
 						/* <!-- Save As JSON to Google Drive --> */
+
 
 					} else if ((/VISIBILITY/i).test(command)) {
 
@@ -277,13 +303,13 @@ App = function() {
 					}
 
 				}
-      });
+			});
 
 			/* <!-- Return for Chaining --> */
 			return this;
 
 		},
-		
+
 		/* <!-- Clear the existing state --> */
 		clean: () => ಠ_ಠ.Router.clean(false),
 

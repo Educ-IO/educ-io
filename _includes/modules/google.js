@@ -626,7 +626,8 @@ Google_API = function(ಠ_ಠ, timeout) {
 				}]
 			}, "application/json"),
 
-			get: (id, all) => _call(NETWORKS.sheets.get, "v4/spreadsheets/" + id + (all ? "?includeGridData=true" : "")),
+			get: (id, all, range) => _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}${all ? 
+																`?includeGridData=true${range ? `&ranges=${encodeURIComponent(range)}` : ""}` : ""}`),
 
 			values: (id, range) => _call(NETWORKS.sheets.get, "v4/spreadsheets/" + id + "/values/" + encodeURIComponent(range)),
 

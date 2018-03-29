@@ -71,7 +71,7 @@ Main = function() {
 					clearTimeout(__id);
 					resolve(r);
 				}).catch(e => reject(e));
-			}, LOGIN_RACE / 2);
+			}, LOGIN_RACE / 3);
 		});
 
 		return Promise.race([
@@ -156,7 +156,7 @@ Main = function() {
 				var scopes = directive.split("|")[1].split(";"),
 					_login = google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.concat(scopes).join(" "))),
 					_action = "Signed into additional Google Scopes",
-					_success = (a) => {
+					_success = a => {
 						google_Success(_action)(a);
 						if (!a.unchanged) ಠ_ಠ.Google = google_Initialise(a.authResponse);
 						if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
@@ -192,7 +192,7 @@ Main = function() {
 
 		/* <!-- Add Router Method --> */
 		window.onhashchange = router;
-		window.onpopstate = (e) => {
+		window.onpopstate = e => {
 			if (ಠ_ಠ.Flags && e && e.state && e.state.command) ಠ_ಠ.Flags.route(event.state.command, _route);
 		};
 
@@ -211,7 +211,7 @@ Main = function() {
 			ಠ_ಠ.Google = google_Initialise(auth);
 
 			/* <!-- Get User Info for Display --> */
-			ಠ_ಠ.Google.me().then(function(user) {
+			ಠ_ಠ.Google.me().then(user => {
 
 				user.display_name = function() {
 					return this.name.length == 3 ? this.name.split(" ").join("") : this.name;
@@ -229,7 +229,7 @@ Main = function() {
 
 				/* Enable and Show the Sign Out */
 				$("#user_details").text(ಠ_ಠ.me.display_name()).attr("title", "To remove from your account (" + ಠ_ಠ.me.email + "), click & follow instructions");
-				$("#sign_out .btn").on("click.logout", function(e) {
+				$("#sign_out .btn").on("click.logout", e => {
 					e.preventDefault();
 					google_SignOut();
 				});
@@ -238,7 +238,7 @@ Main = function() {
 				/* <!-- Route Authenticated --> */
 				setupRouter(_routeIn);
 
-			}).catch(function(e) {
+			}).catch(e => {
 				ಠ_ಠ.Flags.error("Google Me", e);
 				/* <!-- Maybe user has revoked scopes, so default back to unauthenticated --> */
 				if (e.status == 401) google_SignOut();
@@ -261,14 +261,15 @@ Main = function() {
 		$("#user_details").text("").attr("title", "");
 
 		/* Enable and Shopw the Sign In */
-		$("#sign_in").show(200).children(".btn").attr("title", "Click here to log into this app, you will be promped to authorise the app on your account if required").on("click.login", function(e) {
-			e.preventDefault();
-			google_SignIn();
-		});
+		$("#sign_in").show(200).children(".btn").attr("title", "Click here to log into this app, you will be promped to authorise the app on your account if required")
+			.on("click.login", e => {
+				e.preventDefault();
+				google_SignIn();
+			});
 		$(".auth-only").hide();
 
 		/* <!-- Route Un-Authenticated --> */
-		setupRouter(_routeOut());
+		setupRouter(_routeOut);
 
 	};
 	/* <!-- Auth Triggers --> */
@@ -304,17 +305,13 @@ Main = function() {
 			_setup(hello);
 
 			/* <!-- Auth Handlers --> */
-			hello.on("auth.login", function(auth) {
+			hello.on("auth.login", auth => {
 
-				if (auth.network == ಠ_ಠ.SETUP.GOOGLE_AUTH) {
-
-					google_LoggedIn(auth.authResponse);
-
-				}
+				if (auth.network == ಠ_ಠ.SETUP.GOOGLE_AUTH) google_LoggedIn(auth.authResponse);
 
 			});
 
-			hello.on("auth.logout", function(auth) {
+			hello.on("auth.logout", auth => {
 
 				if (auth.network == ಠ_ಠ.SETUP.GOOGLE_AUTH) {
 
@@ -334,13 +331,13 @@ Main = function() {
 			/* <!-- Auth Handler --> */
 
 			/* <!-- Get Global Flags --> */
-			ಠ_ಠ.Flags.initialise().then(function(flags) {
+			ಠ_ಠ.Flags.initialise().then(flags => {
 
 				ಠ_ಠ.Flags = flags;
 				_default = (ಠ_ಠ.SETUP.SINGLE_PAGE || ಠ_ಠ.Flags.page()) ? "page" : "popup";
 
 				/* <!-- Module Starts --> */
-				[ಠ_ಠ.Display, ಠ_ಠ.Recent, ಠ_ಠ.App].forEach((m) => {
+				[ಠ_ಠ.Display, ಠ_ಠ.Recent, ಠ_ಠ.App].forEach(m => {
 					if (m.start) m.start();
 				});
 
@@ -376,7 +373,7 @@ Main = function() {
 								} else {
 									google_LoggedOut();
 								}
-							}, function(e) {
+							}, e => {
 								ಠ_ಠ.Flags.error("Signing into Google", e);
 								google_LoggedOut();
 							});
@@ -398,7 +395,7 @@ Main = function() {
 
 		},
 
-		refresh: (force) => google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")))(_default, force === true ? true : false),
+		refresh: force => google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")))(_default, force === true ? true : false),
 		/* <!-- External Functions --> */
 
 	};

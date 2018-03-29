@@ -8,14 +8,14 @@ Sheets = function(sheet, ಠ_ಠ) {
 	/* <!-- Internal Functions --> */
 	var _currentSheet = () => _sheets[Object.keys(_sheets).filter(key => _sheets[key].active())[0]];
 
-	var _initSheet = function(data, name, index, target, widths, hide, sheet, sheets) {
+	var _initSheet = value => {
 
-		ಠ_ಠ.Flags.log("Google Sheet Values [" + name + "]", data);
+		ಠ_ಠ.Flags.log(`Google Sheet Values [${value.name}]`, value.data);
 		
-		var _sheet = ಠ_ಠ.Sheet(ಠ_ಠ, data, {sheet: sheet, sheets: sheets});
+		var _sheet = ಠ_ಠ.Sheet(ಠ_ಠ, value.data, value);
 		
 		/* <!-- Create Headers Object --> */
-		var headers = _sheet.headers().map((v, i) => ({
+		var headers = _.map(_sheet.headers(), (v, i) => ({
 			name: v ? v : "-" + i + "-",
 			hide: function(initial) {
 				return !!(this.hide_now || this.hide_always || (initial && this.hide_initially));
@@ -25,31 +25,29 @@ Sheets = function(sheet, ಠ_ಠ) {
 				this.hide_always = always;
 				this.hide_initially = initially;
 			},
-			hide_now: !!hide[i],
+			hide_now: false,
 			hide_always: false,
-			hide_initially: false,
-			hide_default: !!hide[i]
+			hide_initially: !!value.hide[i],
+			hide_default: false
 		}));
 		
-		var table = _db.getCollection(name);
+		var table = _db.getCollection(value.name);
 
-		if (!table) {
-			table = _db.addCollection(name, {
+		if (!table) (table = _db.addCollection(value.name, {
 				indices: _sheet.fields(),
 				serializableIndices: false
-			});
-			table.insert(_sheet.values());
-		}
+			})) &&	table.insert(_sheet.values());
 
-		_sheets[name] = ಠ_ಠ.Datatable(ಠ_ಠ, {
-			id: index,
-			name: name,
+		_sheets[value.name] = ಠ_ಠ.Datatable(ಠ_ಠ, {
+			id: value.index,
+			name: value.name,
 			headers: headers,
 			data: table
 		}, {
-			widths: widths,
+			widths: value.widths,
 			frozen: _sheet.frozen(),
 			advanced: true,
+			collapsed: true,
 			visibilities : {
 				visible: {
 					name: "Visible",
@@ -71,53 +69,57 @@ Sheets = function(sheet, ಠ_ಠ) {
 					menu: true
 				}
 			}
-		}, target);
+		}, value.target);
 
+		return true;
 	};
-
+	
 	var _loadValues = function(sheet, name, index, target) {
 
 		var _busy = ಠ_ಠ.Display.busy({
 			target: target,
 			fn: true
-		});
+		}), _sheet = sheet.sheets[index];
 
 		/* <!-- Clean Up CSS etc --> */
 		if (_sheets[name]) _sheets[name].defaults();
-
-		/* <!-- Initiatilise Sheet, Protect Jump Links & Remove the Loader --> */
-		var _complete = (d, n, i, t, w, h, s) => {
-			_initSheet(d, n, i, t, w, h, s, sheet);
-			_busy().state().enter("opened").protect("a.jump").on("JUMP");
-		}, _sheet = sheet.sheets[index];
-
+	
 		/* <!-- ARRAY OF: {startRowIndex: 0, endRowIndex: 1, startColumnIndex: 1, endColumnIndex: 3} --> */
-		ಠ_ಠ.Flags.log("Google Sheet Merges [" + name + "]", _sheet.merges);
-
-		if (_sheet.data && _sheet.data.length == 1) {
-
-			/* <!-- Already have loaded values --> */
+		ಠ_ಠ.Flags.log(`Google Sheet Merges [${name}]`, _sheet.merges);
+		
+		/* <!-- Get Value Functions --> */
+		var _process = () => {
+			
 			var _data = _sheet.data[0];
 			var _fontSizes = Array(_data.columnMetadata.length).fill(sheet.properties.defaultFormat.textFormat.fontSize);
-			var _rows = _data.rowData.map((r) => r.values.map((c, i) => {
+			var _rows = _data.rowData.map(r => r.values.map((c, i) => {
 				if (c.effectiveFormat) _fontSizes[i] = Math.max(_fontSizes[i], c.effectiveFormat.textFormat.fontSize);
-				return c.formattedValue;
+				return c.formattedValue === undefined ? null : c.formattedValue;
 			}));
 
-			_complete(
-				_rows.clean(false, true).trim(_rows[0].length), name, index, target,
-				_data.columnMetadata.map((c, i) => (c.pixelSize / _fontSizes[i]) * parseFloat(getComputedStyle(document.documentElement).fontSize)),
-				_data.columnMetadata.map(c => !!c.hiddenByUser), _sheet
-			);
-
-		} else {
-
-			/* <!-- Need to load the values --> */
-			ಠ_ಠ.Google.sheets.values(sheet.spreadsheetId, name + "!A:ZZ")
-				.then(data => _complete(data.values, name, index, target, [], [], _sheet))
-				.catch(e => _busy() && ಠ_ಠ.Flags.error("Adding Content Table", e));
-
-		}
+			return Promise.resolve({
+				data: _rows.clean(false, true).trim(_rows[0].length),
+				widths: _data.columnMetadata.map((c, i) => (c.pixelSize / _fontSizes[i]) * parseFloat(getComputedStyle(document.documentElement).fontSize)),
+				hide: _data.columnMetadata.map(c => !!c.hiddenByUser)
+			});
+			
+		}, _fetch = id => ಠ_ಠ.Google.sheets.get(id, true, `${name}!A:ZZ`).then(data => (_sheet.data = data.sheets[0].data));
+		
+		/* <!-- Initiatilise Sheet, Protect Jump Links & Remove the Loader --> */
+		((_sheet.data && _sheet.data.length == 1) ? _process() : _fetch(sheet.spreadsheetId).then(_process))
+			.then(value => _.defaults(value, {
+				data: [],
+				name: name,
+				index: index,
+				target: target,
+				sheet: _sheet,
+				sheets: sheet,
+				widths: [],
+				hide: []
+			}))
+			.then(_initSheet)
+			.then(() => _busy().state().enter("opened").protect("a.jump").on("JUMP"))
+			.catch(_busy);
 
 	};
 
@@ -132,7 +134,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 		tab.closest(".nav-item").addClass("order-1").siblings(".order-1").removeClass("order-1");
 	};
 
-	var _showSheet = function(sheet) {
+	var _showSheet = sheet => {
 
 		var _data = {
 			tabs: sheet.sheets.map((v, i) => ({
@@ -315,7 +317,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 	/* <!-- Output File Function (once choices have been made) --> */
 	var _exportSheet = function(full, all) {
 
-		var error = (e) => e ? ಠ_ಠ.Flags.error("Google Sheet Export", e) : ಠ_ಠ.Flags.log("Google Sheet Export Cancelled");
+		var error = e => e ? ಠ_ಠ.Flags.error("Google Sheet Export", e) : ಠ_ಠ.Flags.log("Google Sheet Export Cancelled");
 
 		ಠ_ಠ.Display.choose({
 			id: "view_export_format",
