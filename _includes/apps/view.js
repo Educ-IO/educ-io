@@ -21,6 +21,7 @@ App = function() {
 		/* <!-- Start the Loader --> */
 		var _busy = ಠ_ಠ.Display.busy({
 			target: ಠ_ಠ.container,
+			status: "Loading Sheet",
 			fn: true
 		});
 		var result;
@@ -29,19 +30,17 @@ App = function() {
 			(full ?
 				ಠ_ಠ.Google.sheets.get(id, true) :
 				ಠ_ಠ.Google.sheets.get(id)
-				.then(sheet => ಠ_ಠ.Google.sheets.get(id, true, "A:ZZ").then(data => {
-					sheet.sheets[0] = data.sheets[0];
-					return sheet;
-				}))
+					.then(sheet => _busy({message: "Loading Data"}) ? ಠ_ಠ.Google.sheets.get(id, true, "A:ZZ")
+					.then(data => (sheet.sheets[0] = data.sheets[0]) ? sheet : sheet) : sheet)
 			)
 			.then(sheet => {
 					ಠ_ಠ.Flags.log("Google Drive Sheet Opened", sheet);
 					result = sheet;
 				}).catch(e => ಠ_ಠ.Flags.error("Requesting Selected Google Drive Sheet", e ? e : "No Inner Error"))
-				.then(_busy)
-				.then(() => result ?
-					log ? ಠ_ಠ.Recent.add(result.spreadsheetId, result.properties.title, "#google,load." + result.spreadsheetId + (full ? ".full" : ".lazy")).then(() => resolve(complete(result, ಠ_ಠ))) :
-					resolve(complete(result, ಠ_ಠ)) : reject());
+				.then(() => result && log ? ಠ_ಠ.Recent.add(result.spreadsheetId, result.properties.title, "#google,load." + result.spreadsheetId + (full ? ".full" : ".lazy")) : true)
+				.then(() => result = result && _busy({message: "Parsing Data"}) ? complete(result, ಠ_ಠ) : false)
+				.then(result => !result ? _busy() : false)
+				.then(() => result ? resolve(result) : reject());
 		});
 
 	};
@@ -127,6 +126,7 @@ App = function() {
 
 				var _finish = ಠ_ಠ.Display.busy({
 					target: target,
+					status: "Loading Data",
 					fn: true
 				});
 
@@ -179,7 +179,7 @@ App = function() {
 				states: STATES,
 				test: () => !!(_sheets),
 				clear: () => {
-					_sheets.sheet().defaults();
+					_sheets.table().defaults();
 					_sheets = null;
 				},
 				route: (handled, command) => {
@@ -216,10 +216,23 @@ App = function() {
 
 						/* <!-- Save As JSON to Google Drive --> */
 
-
+					} else if ((/HEADERS/i).test(command)) {
+						
+						if (_sheets) {
+							if ((/INCREMENT/i).test(command[1])) {
+								_sheets.headers.increment();
+							} else if ((/DECREMENT/i).test(command[1])) {
+								_sheets.headers.decrement();
+							} else if ((/MANAGE/i).test(command[1])) {
+								_sheets.headers.manage();
+							} else if ((/RESTORE/i).test(command[1])) {
+								_sheets.headers.restore();
+							}
+						}
+						
 					} else if ((/VISIBILITY/i).test(command)) {
 
-						if ((/COLUMNS/i).test(command[1]) && _sheets) _sheets.sheet().columns.visibility();
+						if ((/COLUMNS/i).test(command[1]) && _sheets) _sheets.table().columns.visibility();
 
 					} else if ((/EXPORT/i).test(command)) {
 
@@ -227,11 +240,11 @@ App = function() {
 
 					} else if ((/FREEZE/i).test(command)) {
 
-						if (_sheets) _sheets.sheet().freeze((/ROWS/i).test(command[1]));
+						if (_sheets) _sheets.table().freeze((/ROWS/i).test(command[1]));
 
 					} else if ((/LINK/i).test(command)) {
 
-						var _data = _sheets.sheet().dehydrate();
+						var _data = _sheets.table().dehydrate();
 						_data.i = _sheets.id();
 
 						var _link = ಠ_ಠ.Flags.full("view/#google,view." + _encode(JSON.stringify(_data))),
@@ -269,7 +282,7 @@ App = function() {
 
 					} else if ((/DEFAULTS/i).test(command)) {
 
-						if (_sheets) _sheets.sheet().defaults();
+						if (_sheets) _sheets.table().defaults();
 
 					} else if ((/REFRESH/i).test(command)) {
 

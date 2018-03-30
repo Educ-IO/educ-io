@@ -327,21 +327,28 @@ Display = function() {
 		--> */
 		busy: function(options) {
 
-			var _element = _target(options);
+			var _element = _target(options), _status;
 			var _clear = (options && options.clear === true) || _element.find(".loader").length > 0, _loader = _clear ?
 				options.clear = true && _element.find(".loader").remove() : _element.prepend(_template("loader")(options ? options : {})), _handler;
 
 			if (options && options.status) {
-				var _source = options.status.source ? options.status.source : window, _status = _loader.find(".status");
-				_handler = options.__statusHandler ? options.__statusHandler : e => _status.text(options.status.value ? options.status.value(e.detail) : e.detail);
-				_source[_clear ? "removeEventListener" : "addEventListener"](options.status.event, _handler, false);
+				_status = _loader.find(".status");
+				if (_.isString(options.status)) {
+					/* <!-- Status is a string, so display it	--> */
+					_status.text(options.status);
+				} else {
+					/* <!-- Status should describe an event to listen for	--> */
+					var _source = options.status.source ? options.status.source : window;
+					_handler = options.__statusHandler ? options.__statusHandler : e => _status.text(options.status.value ? options.status.value(e.detail) : e.detail);
+					_source[_clear ? "removeEventListener" : "addEventListener"](options.status.event, _handler, false);	
+				}
 			}
 			
 			return options && !options.clear && (options === true || options.fn === true) ? ((fn, opts) => {
 				opts.clear = true;
 				if (_handler) opts.__statusHandler = _handler;
 				opts.__return = this;
-				return () => fn(opts);
+				return value => value && value.message ? _status.text(value.message) : fn(opts);
 			})(this.busy, options === true ? {} : options) : options.__return ? options.__return : this;
 			
 		},

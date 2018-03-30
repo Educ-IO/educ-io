@@ -122,6 +122,15 @@ table {
 	th {
 		text-align: center;
 		pointer-events: none;
+		&.table-header {
+			.heading-icons {
+				position: absolute;
+				right: 0.1em;
+				top: 0em;
+				.material-icons {margin: 0 0 0 0.1em;}
+			}
+		}
+		.material-icons {font-size: 0.90rem;}
 		&.filtered {
 			background-color: lighten($colour-highlight, 52%);
 			&.inverse {

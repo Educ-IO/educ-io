@@ -2,21 +2,21 @@ Sheets = function(sheet, ಠ_ಠ) {
 
 	/* <!-- Internal Variables --> */
 	var _db = new loki("view.db"),
-		_sheets = {};
+		_sheets = {}, _raw = {}, _tables = {};
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var _currentSheet = () => _sheets[Object.keys(_sheets).filter(key => _sheets[key].active())[0]];
+	var _currentTable = () => _tables[Object.keys(_tables).filter(key => _tables[key].active())[0]];
 
-	var _initSheet = value => {
+	var _initTable = value => {
 
 		ಠ_ಠ.Flags.log(`Google Sheet Values [${value.name}]`, value.data);
 		
-		var _sheet = ಠ_ಠ.Sheet(ಠ_ಠ, value.data, value);
+		var _sheet = (_sheets[value.name] = ಠ_ಠ.Sheet(ಠ_ಠ, value.data.slice(0), value));
 		
 		/* <!-- Create Headers Object --> */
-		var headers = _.map(_sheet.headers(), (v, i) => ({
-			name: v ? v : "-" + i + "-",
+		var dates = _sheet.dates(), headers = _.map(_sheet.headers(), (v, i) => ({
+			name: v ? v : `-${i}-`,
 			hide: function(initial) {
 				return !!(this.hide_now || this.hide_always || (initial && this.hide_initially));
 			},
@@ -28,17 +28,18 @@ Sheets = function(sheet, ಠ_ಠ) {
 			hide_now: false,
 			hide_always: false,
 			hide_initially: !!value.hide[i],
-			hide_default: false
+			hide_default: false,
+			icons: dates.indexOf(i) >= 0 ? ["access_time"] : null
 		}));
 		
-		var table = _db.getCollection(value.name);
-
-		if (!table) (table = _db.addCollection(value.name, {
+		var table =_db.getCollection(value.name);
+		table ? table.clear() : table = _db.addCollection(value.name, {
 				indices: _sheet.fields(),
 				serializableIndices: false
-			})) &&	table.insert(_sheet.values());
-
-		_sheets[value.name] = ಠ_ಠ.Datatable(ಠ_ಠ, {
+			});
+		table.insert(_sheet.values());
+		
+		_tables[value.name] = ಠ_ಠ.Datatable(ಠ_ಠ, {
 			id: value.index,
 			name: value.name,
 			headers: headers,
@@ -74,15 +75,12 @@ Sheets = function(sheet, ಠ_ಠ) {
 		return true;
 	};
 	
-	var _loadValues = function(sheet, name, index, target) {
+	var _loadValues = (sheet, name, index, target) => {
 
-		var _busy = ಠ_ಠ.Display.busy({
-			target: target,
-			fn: true
-		}), _sheet = sheet.sheets[index];
+		var _sheet = sheet.sheets[index];
 
 		/* <!-- Clean Up CSS etc --> */
-		if (_sheets[name]) _sheets[name].defaults();
+		if (_tables[name]) _tables[name].defaults();
 	
 		/* <!-- ARRAY OF: {startRowIndex: 0, endRowIndex: 1, startColumnIndex: 1, endColumnIndex: 3} --> */
 		ಠ_ಠ.Flags.log(`Google Sheet Merges [${name}]`, _sheet.merges);
@@ -103,7 +101,19 @@ Sheets = function(sheet, ಠ_ಠ) {
 				hide: _data.columnMetadata.map(c => !!c.hiddenByUser)
 			});
 			
-		}, _fetch = id => ಠ_ಠ.Google.sheets.get(id, true, `${name}!A:ZZ`).then(data => (_sheet.data = data.sheets[0].data));
+		}, _fetch = id => {
+			var _busy = ಠ_ಠ.Display.busy({clear: true}).busy({
+				target: target,
+				fn: true,
+				status: "Loading Tab"
+			});
+			return ಠ_ಠ.Google.sheets.get(id, true, `${name}!A:ZZ`)
+				.then(data => (_sheet.data = data.sheets[0].data))
+				.then(sheet => {
+					_busy();
+					return sheet;
+				});
+		};
 		
 		/* <!-- Initiatilise Sheet, Protect Jump Links & Remove the Loader --> */
 		((_sheet.data && _sheet.data.length == 1) ? _process() : _fetch(sheet.spreadsheetId).then(_process))
@@ -117,18 +127,18 @@ Sheets = function(sheet, ಠ_ಠ) {
 				widths: [],
 				hide: []
 			}))
-			.then(_initSheet)
-			.then(() => _busy().state().enter("opened").protect("a.jump").on("JUMP"))
-			.catch(_busy);
+			.then(value => (_raw[name] = value))
+			.then(_initTable)
+			.then(() => ಠ_ಠ.Display.state().enter("opened").protect("a.jump").on("JUMP"));
 
 	};
 
-	var _refreshTab = function() {
+	var _refreshTab = () => {
 		var target = $("div.tab-pane.active");
 		_loadValues(sheet, target.data("name"), target.data("index"), target.empty());
 	};
 
-	var _showTab = function(tab, sheet) {
+	var _showTab = (tab, sheet) => {
 		var target = $(tab.data("target"));
 		if (target.children().length === 0 || tab.data("refresh")) _loadValues(sheet, tab.data("name"), tab.data("index"), target.empty());
 		tab.closest(".nav-item").addClass("order-1").siblings(".order-1").removeClass("order-1");
@@ -139,7 +149,34 @@ Sheets = function(sheet, ಠ_ಠ) {
 		var _data = {
 			tabs: sheet.sheets.map((v, i) => ({
 				id: i,
-				name: v.properties.title
+				name: v.properties.title,
+				actions_current_only: true,
+				actions: {
+						headers: {
+							url: "#headers.manage",
+							name: "Headers",
+							desc: "Manage the headers"
+						},
+						increment: {
+							url: "#headers.increment",
+							icon: "vertical_align_bottom",
+							name: "Increase",
+							desc: "Increase Headers by one Row"
+						},
+						decrement: {
+							url: "#headers.decrement",
+							icon: "vertical_align_top",
+							name: "Decrease",
+							desc: "Decrease Headers by one Row",
+						},
+						restore: {
+							url: "#headers.restore",
+							icon: "undo",
+							name: "Restore",
+							desc: "Restore Original Headers",
+							divider: true
+						}
+					}
 			}))
 		};
 
@@ -336,28 +373,25 @@ Sheets = function(sheet, ಠ_ಠ) {
 				var __exportSheet = function() {
 
 					/* <!-- Trigger Loader --> */
-					ಠ_ಠ.Display.busy({
-						target: $("div.tab-content div.tab-pane.active")
+					var _busy = ಠ_ಠ.Display.busy({
+						target: $("div.tab-content div.tab-pane.active"),
+						status: "Exporting Data",
+						fn: true
 					});
 
-					var error = (e) => {
+					var error = e => {
 							if (e) ಠ_ಠ.Flags.error("Google Sheet Export:", e);
-							ಠ_ಠ.Display.busy({
-								clear: true
-							});
+							_busy();
 						},
-						complete = () => ಠ_ಠ.Display.busy({
-							clear: true
-						}),
 						_content = $(".tab-content"),
 						_id = _content.data("id"),
 						_title = _content.data("name");
 
 					if (option.type == "md") {
 
-						var _md_sheet = _currentSheet(),
-							_md_name = _md_sheet.name();
-						var _md_values = _md_sheet.values(!full);
+						var _md_table = _currentTable(),
+							_md_name = _md_table.name();
+						var _md_values = _md_table.values(!full);
 
 						var _md_output = "|---\n";
 						if (_md_values && _md_values.length > 0) {
@@ -368,7 +402,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 							/* <!-- Output Separator Row --> */
 							_md_output += (_.times(_md_headers.length, () => "|:-").join("") + "\n");
 							if (_md_values.length > 0) {
-								_md_output += _.map(_md_values, (values) => _.reduce(values, (row, value, index) => row + (index > 0 ? " | " + value : value), "")).join("\n");
+								_md_output += _.map(_md_values, values => _.reduce(values, (row, value, index) => row + (index > 0 ? " | " + value : value), "")).join("\n");
 							}
 
 						}
@@ -377,7 +411,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 							saveAs(new Blob([_md_output], {
 								type: "text/markdown"
 							}), _title + " - " + _md_name + option.ext);
-							complete();
+							_busy();
 						} catch (e) {
 							error(e);
 						}
@@ -400,7 +434,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 							"]": ""
 						};
 
-						var save = (title) => _outputAndSave(_exportBook, option.type, title + option.ext).then(complete).catch(error);
+						var save = title => _outputAndSave(_exportBook, option.type, title + option.ext).then(_busy).catch(error);
 
 						if (all && option.size == "multi") {
 
@@ -411,11 +445,11 @@ Sheets = function(sheet, ಠ_ಠ) {
 
 							_tabs.each((i, el) => {
 								var _name = $(el).data("name");
-								var _get = !_sheets[_name] ?
-									new Promise((resolve) => {
+								var _get = !_tables[_name] ?
+									new Promise(resolve => {
 										ಠ_ಠ.Google.sheets.values(_id, _name + "!A:ZZ").then(data => resolve(data.values));
 									}) :
-									new Promise((resolve) => resolve(_sheets[_name].values(!full)));
+									new Promise(resolve => resolve(_tables[_name].values(!full)));
 
 								_get.then((data) => {
 									if (data && data.length > 0) {
@@ -431,9 +465,9 @@ Sheets = function(sheet, ಠ_ಠ) {
 
 						} else {
 
-							var _sheet = _currentSheet(),
-								_name = RegExp.replaceChars(_sheet.name(), _safeName),
-								_values = _sheet.values(!full);
+							var _table = _currentTable(),
+								_name = RegExp.replaceChars(_table.name(), _safeName),
+								_values = _table.values(!full);
 							_exportBook.SheetNames.push(_name);
 							_exportBook.Sheets[_name] = XLSX.utils.aoa_to_sheet(_values && _values.length > 0 ? _values : []);
 							save(_title + " - " + _name);
@@ -461,11 +495,11 @@ Sheets = function(sheet, ಠ_ಠ) {
 							},
 							single: {
 								name: "Current Tab",
-								desc: _currentSheet().name(),
+								desc: _currentTable().name(),
 								all: false,
 							}
 						}
-					}).then(function(option) {
+					}).then(option => {
 
 						all = option.all;
 						__exportSheet();
@@ -483,6 +517,24 @@ Sheets = function(sheet, ಠ_ಠ) {
 		}).catch(error);
 
 	};
+	
+	var _updateHeaders = value => {
+
+		var _table = _currentTable(), _name = _table.name();
+		if (value === null || value === undefined) {
+			
+			_raw[_name].target.empty() && _initTable(_raw[_name]);
+			
+		} else {
+			
+			var _sheet = _sheets[_name],
+					_rows = _sheet.header_rows(), _values = _sheet.values().length;
+			if ((_rows += value) >= 0 && value < _values) 
+				_raw[_name].target.empty() && _initTable(_.extend({header_rows : _rows}, _raw[_name]));
+			
+		}
+
+	};
 	/* <!-- Internal Functions --> */
 
 	/* <!-- Initial Calls --> */
@@ -494,9 +546,22 @@ Sheets = function(sheet, ಠ_ಠ) {
 
 		export: (full, all) => _exportSheet(full, all),
 
-		sheet: () => _currentSheet(),
+		table: () => _currentTable(),
 
 		refresh: () => _refreshTab(),
+		
+		headers: {
+			
+			decrement: value => _updateHeaders(0 - (value ? value : 1)),
+			
+			increment: value => _updateHeaders(value ? value : 1),
+			
+			restore: () => _updateHeaders(),
+			
+			manage: () => false,
+			
+		},
+		
 	};
 	/* <!-- External Visibility --> */
 

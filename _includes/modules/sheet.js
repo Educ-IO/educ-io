@@ -22,8 +22,10 @@ Sheet = function(ಠ_ಠ, data, options) {
 	/* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-	var headers = [], fields = [], values = [];
-  options = _.defaults(options, defaults);
+	options = _.defaults(options, defaults);
+	var headers = [], fields = [], values = [], dates = [],
+			rows = options.header_rows !== undefined ? options.header_rows : options.frozen.rows ? options.frozen.rows  : 1,
+			cols;
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
@@ -44,26 +46,20 @@ Sheet = function(ಠ_ಠ, data, options) {
       ಠ_ಠ.Flags.log("Blank Columns in Sheet:", JSON.stringify(_hasValues));
       _hasValues.reverse();
       data = _.map(data, row => {
-        _.each(_hasValues, function(index) {
-          if (row.length > index + 1) row.splice(index, 1);
-        });
+        _.each(_hasValues, index => row.length > (index + 1) ? row.splice(index, 1) : false);
         return row;
       });
     }
     ಠ_ಠ.Flags.time("Checking Blank Columns", true);
-    
+    return options.size.cols - _hasValues.length;
   };
   
-  var _headers = () => {
+  var _headers = count => {
     
     /* <!-- Handle Headers --> */
     ಠ_ಠ.Flags.time("Generating Headers");
-    headers = data.shift();
-    var rows = options.frozen.rows ? options.frozen.rows - 1 : 0;
-    while (rows > 0) {
-      headers = data.shift().map((v, i) => v ? (headers[i] ? headers[i] + " / " + v : v) : headers[i]);
-      rows--;
-    }
+    while (count-- > 0) headers = data.shift().map((v, i) => v ? (headers[i] ? `${headers[i]} / ${v}` : v) : headers[i]);
+		if (cols && headers.length === 0) headers = Array.apply(null, {length: cols});
     ಠ_ಠ.Flags.time("Generating Headers", true);
     
   };
@@ -94,12 +90,13 @@ Sheet = function(ಠ_ಠ, data, options) {
 			ಠ_ಠ.Flags.log("No Locale Supplied for Parsing");
 		}
 		
-    var _date_Indexes = _.reduce(data[0], (dates, value, index) => {
+		dates = _.reduce(data[0], (dates, value, index) => {
       if (value && _.isString(value) && moment(value, _formats, true).isValid()) dates.push(index);
       return dates;
     }, []);
-    ಠ_ಠ.Flags.log("Date Column Indexes:", _date_Indexes);
-    if (_date_Indexes.length > 0) _.each(data, row => _.each(_date_Indexes, index => {
+    ಠ_ಠ.Flags.log("Date Column Indexes:", dates);
+		
+    if (dates.length > 0) _.each(data, row => _.each(dates, index => {
       row[index] = row[index] ? moment(row[index], _formats, true).toDate() : row[index];
     }));
 		ಠ_ಠ.Flags.time("Checking for Dates in Sheet Values", true);
@@ -110,7 +107,7 @@ Sheet = function(ಠ_ಠ, data, options) {
     
     /* <!-- Generate Objects from Row/Col Array --> */
 		ಠ_ಠ.Flags.time("Creating Object Array from Sheet Values");
-		values = data.map(v => Object.assign({}, v));
+		values = _.map(data, v => Object.assign({}, v));
 		fields = Array.apply(null, {
 			length: options.size.cols
 		}).map(Number.call, Number);
@@ -121,15 +118,17 @@ Sheet = function(ಠ_ಠ, data, options) {
 	
   /* <!-- Internal Initialisation --> */
   if (data && data.length > 0) {
-    options.process.blanks ? _blanks() : false;
-    options.process.headers ? _headers() : false;
+    cols = options.process.blanks ? _blanks() : options.size.cols;
+    options.process.headers ? _headers(rows) : false;
     options.process.dates && moment ? _dates() : false;
-    options.process.values ? _values() : false;  
+    options.process.values ? _values() : false;
   }
   /* <!-- Internal Initialisation --> */
   
 	/* <!-- External Visibility --> */
   return {
+		
+		dates : () => dates,
 		
     headers : () => headers,
     
@@ -141,8 +140,9 @@ Sheet = function(ಠ_ಠ, data, options) {
 		
 		size : () => options.size,
 		
-		locale : () => options.locale
+		locale : () => options.locale,
 		
+		header_rows : () => rows,
 	};
   /* <!-- External Visibility --> */
 	

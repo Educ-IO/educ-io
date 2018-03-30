@@ -1,4 +1,8 @@
 site :
+  0.0.8z :
+    name : View 0.2.1b-alpha
+    desc : Bug Fixes and Feature Enhancements
+    type : minor
   0.0.8y :
     name : View 0.2.1a-alpha
     desc : Bug Fixes and Feature Enhancements
@@ -352,6 +356,10 @@ site :
     changes :
       - Initial Service Work Testing
 view :
+  0.2.1b-alpha :
+    name : Minor Improvements
+    desc : Bug Fixes and Feature Enhancements
+    type : minor
   0.2.1a-alpha :
     name : Minor Improvements
     desc : Bug Fixes and Feature Enhancements

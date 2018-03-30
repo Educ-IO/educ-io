@@ -5,11 +5,13 @@
     {{name}}
   </a>
   {{#if actions}}
-  <a href="#" class="dropdown-toggle dropdown-toggle-split d-inline-block h-100" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <a href="#" class="dropdown-toggle dropdown-toggle-split {{#if actions_current_only}}d-none d-current{{else}}d-inline-block{{/if}} h-100" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <span class="sr-only">Toggle Dropdown</span>
   </a>
   <div class="dropdown-menu">
-    {{#each actions}}<a class="dropdown-item{{#if class}} {{class}}{{/if}}" href="{{url}}"{{#if desc}} title="{{desc}}"{{/if}}>{{name}}</a>{{/each}}
+    {{#each actions}}<a class="dropdown-item{{#if class}} {{class}}{{/if}}" href="{{url}}"{{#if desc}} title="{{desc}}"{{/if}}>
+      {{#exists icon}}<i class="material-icons md-24 float-left mr-1">{{icon}}</i>{{/exists}}{{#if name}}{{name}}{{/if}}
+    </a>{{#if divider}}<div class="dropdown-divider"></div>{{/if}}{{/each}}
   </div>
   {{/if}}
 </li>

@@ -65,12 +65,13 @@ Grades
 
 View
 ----
-* Time between Load and Display (still busy?)
-* Increase / Decrease Column Headers
-* Clock Icon for Date Columns
-* Linking...
+* ** BUG ** Why does the border thicken on freeze? .... (Something to do with Flex)
+
+* ** BUG ** Sparse Date Columns not recognised as such .... 
 
 * ** BUG ** Column names can sometimes still get out of sync! Arghhh :)
+
+* Linking...
 
 * ** IMPORTANT ** Column Filters (Type)
 
@@ -117,6 +118,9 @@ Reflect
 
 Complete
 --------
+* Time between Load and Display (still busy?) <== DONE
+* Increase / Decrease Column Headers <== DONE
+* Clock Icon for Date Columns <-- DONE
 * ** BUG ** Date Formats <-- DONE
 * Auto-hide hidden columns (from original sheet) <-- DONE
 * ** BUG ** Subsequent Open Route has null target element (or rather, non-existent target element) :) <-- DONE

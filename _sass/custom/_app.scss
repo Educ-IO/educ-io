@@ -135,6 +135,7 @@ div.alert:first-child {
 }
 
 ul.nav-tabs li.nav-item.dropdown {
+	a.nav-link.show + .dropdown-toggle.d-current {display: inline-block !important;}
 	.dropdown-toggle {
 		float: left;
 		background-color: $colour-deemphasise;

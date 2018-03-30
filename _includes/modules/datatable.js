@@ -593,7 +593,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		columns: {
 			visibility: () => _columnVisibility()
 		},
-
+		
 		defaults: () => {
 
 			_initialise(); /* <!-- Run initial variable initialisation --> */

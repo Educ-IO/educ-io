@@ -9,6 +9,7 @@
         {{else}}
         <a id="heading_{{../id}}_{{@index}}" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" data-placement="top" title="Click to sort by this column">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
         {{/if}}
+        {{#if icons}}<div class="heading-icons">{{#each icons}}<i class="material-icons text-muted"{{#exists desc}} title="{{desc}}"{{/exists}}>{{#exists icon}}{{icon}}{{else}}{{this}}{{/exists}}</i>{{/each}}</div>{{/if}}
       </th>
       {{/each}}
     </tr>

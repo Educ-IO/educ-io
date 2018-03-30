@@ -131,7 +131,28 @@ App = function() {
 							}, {}) : null
 						}, {
 							id: "rows",
-							name: "Data"
+							name: "Data",
+							actions_current_only: true,
+							actions: {
+									headers: {
+										url: "#headers.manage",
+										name: "Headers",
+										desc: "Increase Headers by one Row"
+									},
+									increment: {
+										url: "#headers.increment",
+										icon: "vertical_align_bottom",
+										name: "Increase",
+										desc: "Increase Headers by one Row"
+									},
+									decrement: {
+										url: "#headers.decrement",
+										icon: "vertical_align_top",
+										name: "Decrease",
+										desc: "Decrease Headers by one Row",
+										divider: true
+									}
+								}
 						}]
 					},
 					_tabs = ಠ_ಠ.Display.template.show({
@@ -389,6 +410,7 @@ App = function() {
 
 						_busy = ಠ_ಠ.Display.busy({
 							target: ಠ_ಠ.container,
+							status: "Processing Merge",
 							fn: true
 						});
 
@@ -401,6 +423,7 @@ App = function() {
 
 						_busy = ಠ_ಠ.Display.busy({
 							target: ಠ_ಠ.container,
+							status: "Processing Merge",
 							fn: true
 						});
 
@@ -426,6 +449,7 @@ App = function() {
 
 						_busy = ಠ_ಠ.Display.busy({
 							target: ಠ_ಠ.container,
+							status: "Processing Merge",
 							fn: true
 						});
 
@@ -444,6 +468,7 @@ App = function() {
 
 						_busy = ಠ_ಠ.Display.busy({
 							target: ಠ_ಠ.container,
+							status: "Loading",
 							fn: true
 						});
 
