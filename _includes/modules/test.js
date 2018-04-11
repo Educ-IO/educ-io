@@ -70,6 +70,29 @@ Page = function() {
 			},
 		},
 		{
+			name: "Rest Parameters",
+			desc: "Javascript Rest Parameters",
+			url: "https://caniuse.com/#feat=rest-parameters",
+			required: true,
+			test: function() {
+				return evaluate("var f = (...args) => 1");
+			},
+			success: {
+				icon: "check",
+				class: "text-success",
+				message: ""
+			},
+			failure: {
+				icon: "close",
+				class: "text-danger",
+				message: "Unfortunately, your browser doesn't support Javascript ES6 Rest Parameters."
+			},
+			type: {
+				name: "language",
+				class: ""
+			},
+		},									
+		{
 			name: "Constants",
 			desc: "Javascript Const Statements",
 			url: "https://caniuse.com/#feat=const",

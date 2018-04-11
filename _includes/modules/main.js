@@ -1,9 +1,7 @@
 Main = function() {
 
 	/* <!-- Returns an instance of this if required --> */
-	if (this && this._isF && this._isF(this.Main)) {
-		return new this.Main().initialise(this);
-	}
+	if (this && this._isF && this._isF(this.Main)) return new this.Main().initialise(this);
 
 	/* <!-- Internal Constants --> */
 	const LOGIN_RACE = 5000;
@@ -95,7 +93,7 @@ Main = function() {
 	};
 
 	var google_Initialise = auth => {
-		return ಠ_ಠ.Google_API(ಠ_ಠ).initialise(auth.access_token, auth.token_type, auth.expires,
+		return ಠ_ಠ.Google_API(ಠ_ಠ.Network).initialise(auth.access_token, auth.token_type, auth.expires,
 			(refresher => {
 				return force => new Promise((resolve, reject) => {
 					refresher(_default, force).then(r => r.authResponse ? resolve({
@@ -213,12 +211,10 @@ Main = function() {
 			/* <!-- Get User Info for Display --> */
 			ಠ_ಠ.Google.me().then(user => {
 
-				user.display_name = function() {
-					return this.name.length == 3 ? this.name.split(" ").join("") : this.name;
-				};
-				user.full_name = function() {
-					return this.display_name() + " (" + this.email + ")";
-				};
+				user.display_name = (u => () => u.name.length == 3 ? u.name.split(" ").join("") : u.name)(user);
+														 
+				user.full_name = (u => () => `${u.display_name()} (${u.email})`)(user);
+					
 				ಠ_ಠ.me = user;
 
 				/* <!-- Clean and Hide the Auth Processing --> */

@@ -53,6 +53,7 @@ App = function() {
 
 	var _loadMerge = id => ಠ_ಠ.Google.download(id)
 		.then(loaded => {
+			ಠ_ಠ.Display.log("Loaded:", loaded);
 			ಠ_ಠ.Display.state().enter(STATE_OPENED);
 		});
 
@@ -134,25 +135,31 @@ App = function() {
 							name: "Data",
 							actions_current_only: true,
 							actions: {
-									headers: {
-										url: "#headers.manage",
-										name: "Headers",
-										desc: "Increase Headers by one Row"
-									},
-									increment: {
-										url: "#headers.increment",
-										icon: "vertical_align_bottom",
-										name: "Increase",
-										desc: "Increase Headers by one Row"
-									},
-									decrement: {
-										url: "#headers.decrement",
-										icon: "vertical_align_top",
-										name: "Decrease",
-										desc: "Decrease Headers by one Row",
-										divider: true
-									}
+								headers: {
+									url: "#headers.manage",
+									name: "Headers",
+									desc: "Manage the headers"
+								},
+								increment: {
+									url: "#headers.increment",
+									icon: "vertical_align_bottom",
+									name: "Increase",
+									desc: "Increase Headers by one Row"
+								},
+								decrement: {
+									url: "#headers.decrement",
+									icon: "vertical_align_top",
+									name: "Decrease",
+									desc: "Decrease Headers by one Row",
+								},
+								restore: {
+									url: "#headers.restore",
+									icon: "undo",
+									name: "Restore",
+									desc: "Restore Original Headers",
+									divider: true
 								}
+							}
 						}]
 					},
 					_tabs = ಠ_ಠ.Display.template.show({
@@ -342,7 +349,7 @@ App = function() {
 
 	};
 
-	var _savePDF = template => {
+	var _savePDF = () => {
 		var _frame = $(`#${ID}_template iframe`),
 			_doc = _frame[0].contentDocument || _frame[0].contentWindow.document;
 		ಠ_ಠ.Flags.log("DOC:", _doc);
@@ -415,7 +422,7 @@ App = function() {
 						});
 
 						((/PDF/i).test(command[1]) ?
-							_savePDF(_result) : Promise.reject("Missing Uploader"))
+							_savePDF() : Promise.reject("Missing Uploader"))
 						.catch(e => ಠ_ಠ.Flags.error("Uploading Failure: ", e ? e : "No Inner Error"))
 							.then(_busy);
 
@@ -506,6 +513,10 @@ App = function() {
 
 					} else if ((/TEST/i).test(command)) {
 
+						ಠ_ಠ.Flags.log("Data:", _data);
+						ಠ_ಠ.Flags.log("Template:", _template);
+						ಠ_ಠ.Flags.log("Nodes:", _nodes);
+						
 					}
 
 				}

@@ -213,7 +213,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		_sorts = options.sorts;
 
 		/* <!-- Get 'Default' Filters and Searches if applicable --> */
-		_name = ("table_" + table.id).replace(/[^a-z0-9\-_:\.]|^[^a-z]+/gi, "");
+		_name = ("table_" + table.id).replace(/[^a-z0-9\-_:.]|^[^a-z]+/gi, "");
 
 		/* <!-- Remove / Create Custom CSS Sheet --> */
 		_css = _css ? _css.deleteAll() : ಠ_ಠ.Css(_name);
@@ -523,7 +523,7 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		/* <!-- Set up Table --> */
 		if (options.advanced) {
 			
-			_advanced = _advanced ? _advanced : ಠ_ಠ.Table(target.find("table"), target, ಠ_ಠ);
+			_advanced = _advanced ? _advanced : ಠ_ಠ.Table(target.find("table"), target, ಠ_ಠ.Css);
 			
 			/* <!-- Init Scroll Cache for Larger Tables --> */
 			if (table.data.count() > LARGE_ROWS) _advanced.scroll.init(target.find("tbody"), options.blocks_to_show, options.rows_to_show).toggle();
@@ -607,7 +607,12 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 		},
 
 		freeze: rows_only => {
-			if (_advanced) _advanced.freeze.init((options.frozen && !rows_only) ? options.frozen.cols : 0).toggle();
+			if (_advanced) {
+				_advanced.freeze.init((options.frozen && !rows_only) ? options.frozen.cols : 0).toggle();
+				_advanced.freeze.toggled() ?
+					ಠ_ಠ.Display.state().enter(rows_only ? "frozen-rows" : "frozen") :
+					ಠ_ಠ.Display.state().exit(rows_only ? "frozen-rows" : "frozen");
+			}
 		},
 
 		name: () => table.name,

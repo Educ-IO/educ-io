@@ -1,15 +1,24 @@
 Sheets = function(sheet, ಠ_ಠ) {
 
+	/* <!-- Internal Constants --> */
+	/* <!-- Internal Constants --> */
+	
 	/* <!-- Internal Variables --> */
 	var _db = new loki("view.db"),
 		_sheets = {}, _raw = {}, _tables = {};
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var _currentTable = () => _tables[Object.keys(_tables).filter(key => _tables[key].active())[0]];
-
+	var _view = {
+		table : () => _tables[Object.keys(_tables).filter(key => _tables[key].active())[0]],
+		sheet : () => _sheets[Object.keys(_tables).filter(key => _tables[key].active())[0]],
+		raw : () => _raw[Object.keys(_tables).filter(key => _tables[key].active())[0]]
+	};
+	
 	var _initTable = value => {
 
+		if (!value) return;
+		
 		ಠ_ಠ.Flags.log(`Google Sheet Values [${value.name}]`, value.data);
 		
 		var _sheet = (_sheets[value.name] = ಠ_ಠ.Sheet(ಠ_ಠ, value.data.slice(0), value));
@@ -105,7 +114,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 			var _busy = ಠ_ಠ.Display.busy({clear: true}).busy({
 				target: target,
 				fn: true,
-				status: "Loading Tab"
+				status: "Loading Data"
 			});
 			return ಠ_ಠ.Google.sheets.get(id, true, `${name}!A:ZZ`)
 				.then(data => (_sheet.data = data.sheets[0].data))
@@ -389,7 +398,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 
 					if (option.type == "md") {
 
-						var _md_table = _currentTable(),
+						var _md_table = _view.table(),
 							_md_name = _md_table.name();
 						var _md_values = _md_table.values(!full);
 
@@ -465,7 +474,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 
 						} else {
 
-							var _table = _currentTable(),
+							var _table = _view.table(),
 								_name = RegExp.replaceChars(_table.name(), _safeName),
 								_values = _table.values(!full);
 							_exportBook.SheetNames.push(_name);
@@ -495,7 +504,7 @@ Sheets = function(sheet, ಠ_ಠ) {
 							},
 							single: {
 								name: "Current Tab",
-								desc: _currentTable().name(),
+								desc: _view.table().name(),
 								all: false,
 							}
 						}
@@ -517,24 +526,6 @@ Sheets = function(sheet, ಠ_ಠ) {
 		}).catch(error);
 
 	};
-	
-	var _updateHeaders = value => {
-
-		var _table = _currentTable(), _name = _table.name();
-		if (value === null || value === undefined) {
-			
-			_raw[_name].target.empty() && _initTable(_raw[_name]);
-			
-		} else {
-			
-			var _sheet = _sheets[_name],
-					_rows = _sheet.header_rows(), _values = _sheet.values().length;
-			if ((_rows += value) >= 0 && value < _values) 
-				_raw[_name].target.empty() && _initTable(_.extend({header_rows : _rows}, _raw[_name]));
-			
-		}
-
-	};
 	/* <!-- Internal Functions --> */
 
 	/* <!-- Initial Calls --> */
@@ -546,19 +537,19 @@ Sheets = function(sheet, ಠ_ಠ) {
 
 		export: (full, all) => _exportSheet(full, all),
 
-		table: () => _currentTable(),
+		table: () => _view.table(),
 
 		refresh: () => _refreshTab(),
 		
 		headers: {
 			
-			decrement: value => _updateHeaders(0 - (value ? value : 1)),
+			decrement: value =>  ಠ_ಠ.Headers(ಠ_ಠ).update(_view.sheet(), _view.raw(), 0 - (value ? value : 1)).then(_initTable),
 			
-			increment: value => _updateHeaders(value ? value : 1),
+			increment: value =>  ಠ_ಠ.Headers(ಠ_ಠ).update(_view.sheet(), _view.raw(), value ? value : 1).then(_initTable),
 			
-			restore: () => _updateHeaders(),
+			restore: () => ಠ_ಠ.Headers(ಠ_ಠ).update(_view.sheet(), _view.raw()).then(_initTable),
 			
-			manage: () => false,
+			manage: () => ಠ_ಠ.Headers(ಠ_ಠ).manage(_view.sheet(), _view.raw()).then(_initTable),
 			
 		},
 		

@@ -43,23 +43,27 @@ view:
       load: lazy
     - name: clipboard
       load: lazy
+  helpers:
+    - network
+    - data
+    - google
+    - table
+    - css
+    - fields
   modules:
     - flags
     - controller
     - display
-    - network
-    - google
     - help
     - service
     - main
-    - table
-    - css
     - items
     - recent
     - router
     - datatable
     - sheet
     - sheets
+    - headers
   scripts: 
     - extends/regex
     - extends/array
@@ -73,6 +77,7 @@ view:
     - help
     - shared/control_icon
     - shared/control_button
+    - shared/populate_buttons
     - shared/tab-links
     - shared/tab-list
     - shared/tab-tabs
@@ -80,6 +85,8 @@ view:
     - shared/table
     - shared/rows
     - shared/datatable
+    - shared/headers
+    - fields/field_numeric
     - view/link
   docs:
     - shared/FILTERS
@@ -88,6 +95,7 @@ view:
     - shared/HELP_AVAILABLE
     - shared/HELP_INDETERMINATE
     - shared/HELP_UNAVAILABLE
+    - shared/HEADERS
     - view/PUBLIC
     - view/FEATURES
     - view/README
@@ -219,11 +227,15 @@ view:
               hash: freeze.rows
               disabled_until:
                 - opened
+              toggle:
+                - frozen-rows
             - name: Freeze
               desc: Locks the position of both Frozen Columns and Rows
               hash: freeze
               disabled_until:
                 - opened
+              toggle:
+                - frozen
             - name: Restore Defaults
               desc: Remove all filters, sorts & restore all columns to visible
               hash: defaults
@@ -333,12 +345,15 @@ reflect:
       load: lazy
     - name: html2canvas
       load: lazy
+  helpers:
+    - data
+    - network
+    - google
+    - fields
   modules:
     - flags
     - controller
     - display
-    - network
-    - google
     - items
     - recent
     - router
@@ -346,7 +361,6 @@ reflect:
     - service
     - main
     - forms
-    - fields
   scripts: 
     - extends/regex
     - extends/array
@@ -367,15 +381,15 @@ reflect:
     - shared/tab-tabs
     - shared/control_icon
     - shared/control_button
-    - reflect/field_complex
-    - reflect/field_evidence
-    - reflect/field_numeric
-    - reflect/field_marker
-    - reflect/field_radio
-    - reflect/field_scale
-    - reflect/field_select
-    - reflect/field_span
-    - reflect/field_textual
+    - fields/field_complex
+    - fields/field_evidence
+    - fields/field_numeric
+    - fields/field_marker
+    - fields/field_radio
+    - fields/field_scale
+    - fields/field_select
+    - fields/field_span
+    - fields/field_textual
     - reflect/group
     - reflect/list_item
     - reflect/form
@@ -616,22 +630,23 @@ folders:
       load: last
     - name: google
       load: lazy
+  helpers:
+    - network
+    - google
+    - table
+    - css
+    - fields
   modules:
     - flags
     - controller
     - display
-    - network
-    - google
     - help
     - service
     - main
-    - table
-    - css
     - items
     - recent
     - router
     - datatable
-    - fields
     - folder
   scripts: 
     - extends/regex
@@ -900,16 +915,17 @@ grades:
       load: last
     - name: google
       load: lazy
+  helpers:
+    - network
+    - google
+    - css
   modules:
     - flags
     - controller
     - display
-    - network
-    - google
     - help
     - service
     - main
-    - css
     - items
     - recent
     - router
@@ -1035,16 +1051,17 @@ cover:
       load: last
     - name: google
       load: lazy
+  helpers:
+    - network
+    - google
+    - css
   modules:
     - flags
     - controller
     - display
-    - network
-    - google
     - help
     - service
     - main
-    - css
     - items
     - recent
     - router
@@ -1170,21 +1187,24 @@ merge:
       load: last
     - name: google
       load: lazy
+  helpers:
+    - network
+    - google
+    - table
+    - css
   modules:
     - flags
     - controller
     - display
-    - network
-    - google
     - help
     - service
     - main
-    - css
     - items
     - recent
     - router
     - datatable
     - sheet
+    - headers
   scripts: 
     - extends/regex
     - extends/array
@@ -1206,6 +1226,7 @@ merge:
     - shared/table
     - shared/rows
     - shared/datatable
+    - shared/headers
     - merge/split
     - merge/meta_rows
   docs:
@@ -1215,6 +1236,7 @@ merge:
     - shared/HELP_AVAILABLE
     - shared/HELP_INDETERMINATE
     - shared/HELP_UNAVAILABLE
+    - shared/HEADERS
     - merge/PUBLIC
     - merge/FEATURES
     - merge/README
@@ -1439,16 +1461,17 @@ tiles:
       load: last
     - name: google
       load: lazy
+  helpers:
+    - network
+    - google
+    - css
   modules:
     - flags
     - controller
     - display
-    - network
-    - google
     - help
     - service
     - main
-    - css
     - items
     - recent
     - router

@@ -10,7 +10,7 @@ Display = function() {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var _root, _state = {}, _debug = false;
+	var ಠ_ಠ, _root, _state = {}, _debug = false;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -103,6 +103,9 @@ Display = function() {
 		/* <!-- External Functions --> */
 		initialise: function(container) {
 
+			/* <!-- Get Reference to Container --> */
+			ಠ_ಠ = container;
+			
 			/* <!-- Set Debug Flag, used for Template Compile etc --> */
 			if (container.SETUP && container.SETUP.DEBUG) _debug = true;
 
@@ -183,15 +186,7 @@ Display = function() {
 
 				});
 				
-				Handlebars.registerHelper("concat", () => {
-					var _return = "";
-					for(var argument in arguments){
-						if (typeof arguments[argument] != "object") {
-							_return += arguments[argument];
-						}
-					}
-					return _return;
-				});
+				Handlebars.registerHelper("concat", (...args) => _.reduce(args, (m, a) => _.isObject(a) ? m : (m + a), ""));
 
 				Handlebars.registerHelper("inc", (number, options) => {
 					if(typeof(number) === "undefined" || number === null) return null;
@@ -369,7 +364,7 @@ Display = function() {
 				_target(options).append(dialog);
 
 				/* <!-- Set Event Handlers --> */
-				dialog.find("button.btn-primary").click(() => _clean() && resolve(true));
+				dialog.find(".modal-footer button.btn-primary").click(() => _clean() && resolve(true));
 				dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
 
 				/* <!-- Show the Modal Dialog --> */
@@ -395,34 +390,35 @@ Display = function() {
 				_target(options).append(dialog);
 
 				if (dialog.find("form").length > 0) {
-				
+
 					/* <!-- Set Form / Return Event Handlers --> */
-					if (dialog.find("button.btn-primary").length > 0) {
+					if (dialog.find(".modal-footer button.btn-primary").length > 0) {
 						
-						dialog.find("button.btn-primary").click(evt => {
+						dialog.find(".modal-footer button.btn-primary").on("click.submit", e => {
 							
 							var _valid = true;
-							dialog.find("form.needs-validation").each((i,form) => {
+							_.each(dialog.find("form.needs-validation"), form => {
 								if (form.checkValidity() === false) _valid = false;
 								form.classList.add("was-validated");
 							});
-							var _values = dialog.find("form").serializeArray();
-							var _indeterminate = dialog.find("form input:indeterminate");
-							$.each(_indeterminate, (i, el) => {_values.push({name : el.name, value : "all"});});
+							
+							var _form = dialog.find("form"), _values = ಠ_ಠ.Data ? ಠ_ಠ.Data().dehydrate(_form) : _form.serializeArray();
+							if (!ಠ_ಠ.Data) _.each(_form.find("input:indeterminate"), el => _values.push({name : el.name, value : "all"}));
+							
 							if (options.validate && !options.validate(_values)) _valid = false;
 							if (_valid) {
 								_clean();
 								resolve(_values);
 							} else {
-								evt.preventDefault();
-								evt.stopPropagation();
+								e.preventDefault();
+								e.stopPropagation();
 							}
 						});
 						
 					}
 					
 					if ((options.actions || options.handlers) && dialog.find("button[data-action], a[data-action]").length > 0) {
-						dialog.find("button[data-action], a[data-action]").each((i, el) => {
+						_.each(dialog.find("button[data-action], a[data-action]"), el => {
 							$(el).on("click.action", e => {
 								var _target = $(e.currentTarget), _action = _target.data("action");
 								if (_action.indexOf("actions_") === 0) {
@@ -507,7 +503,7 @@ Display = function() {
 				_target(options).append(dialog);
 
 				/* <!-- Set Event Handlers --> */
-				dialog.find("button.btn-primary").click(() => {
+				dialog.find(".modal-footer button.btn-primary").click(() => {
 					var _value = dialog.find("input[name='choices']:checked, select[name='choices'] option:selected").val();
 					_clean();
 					if (_value && options.choices[_value]) resolve(options.choices[_value]);
@@ -549,7 +545,7 @@ Display = function() {
 				});
 
 				/* <!-- Set Event Handlers --> */
-				dialog.find("button.btn-primary").click(() => {
+				dialog.find(".modal-footer button.btn-primary").click(() => {
 					var _return = [];
 					dialog.find("div.input-group").each(function() {
 						var e = $(this);
@@ -592,7 +588,7 @@ Display = function() {
 				_target(options).append(dialog);
 
 				/* <!-- Set Event Handlers --> */
-				dialog.find("button.btn-primary").click(() => {
+				dialog.find(".modal-footer button.btn-primary").click(() => {
 					var _name = dialog.find("textarea[name='name'], input[type='text'][name='name']").val();
 					var _value = dialog.find("textarea[name='value'], input[type='text'][name='value']").val();
 					_clean();
@@ -644,7 +640,7 @@ Display = function() {
 				});
 				
 				/* <!-- Set Event Handlers --> */
-				dialog.find("button.btn-primary").click(() => {
+				dialog.find(".modal-footer button.btn-primary").click(() => {
 					_clean();
 					if (files && files.length > 0) resolve(options.single ? files[0] : files);
 				});

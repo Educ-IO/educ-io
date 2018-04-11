@@ -61,3 +61,5 @@ globals:
   Help: true
   Router: true
   Items: true
+  Data: true
+  Headers: true

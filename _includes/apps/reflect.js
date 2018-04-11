@@ -9,11 +9,11 @@ App = function() {
 	}
 
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _last, _forms, _template, _form, _folder, _file;
+	var ಠ_ಠ, _forms, _template, _form, _folder, _file;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Constants --> */
-	const _email = /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi;
+	const EMAIL = /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi;
 
 	const TYPE_SCALE = "application/x.educ-io.reflect-scale",
 		TYPE_FORM = "application/x.educ-io.reflect-form",
@@ -155,7 +155,7 @@ App = function() {
 			}).catch(e => e ? ಠ_ಠ.Flags.error("Displaying URL Prompt", e) : ಠ_ಠ.Flags.log("URL Prompt Cancelled"));
 		},
 
-		paper: (e) => {
+		paper: e => {
 			var _list = _evidence.default(e);
 			_evidence.add({
 				details: "Offline / Paper",
@@ -166,231 +166,6 @@ App = function() {
 
 	};
 	/* <!-- Internal Handlers --> */
-
-	/* <!-- Data Functions --> */
-	var _data = {
-
-		dehydrate_NEW: form => {
-
-			var value = el => {
-
-				var simple = _el => {
-					var _type = _el.data("output-type"),
-						_val = (_el[0].type == "checkbox" || _el[0].type == "radio") ?
-						_el.prop("checked") :
-						(_el[0].nodeName == "P" || _el[0].nodeName == "DIV" || _el[0].nodeName == "SPAN") ?
-						_el.text().trim() : (_el[0].nodeName == "A") ? {
-							Id: _el.prop("id"),
-							Url: _el.prop("href"),
-							Text: _el.text()
-						} : (_el[0].nodeName == "IMG") ? {
-							Url: _el.prop("src")
-						} : (_el[0].nodeName == "BUTTON") ?
-						(_el.data("default") && _el.data("default") == _el.text()) ? null : _el.text() :
-						_el.val();
-					/* <!-- TODO: Handle Parsing of types here --> */
-					return _val;
-				};
-
-				var complex = (descendants) => {
-					var _val = {};
-					descendants.each(function() {
-						var _el = $(this);
-						if (_el.parents("*[data-output-name]")[0] === el[0]) { /* <!-- Only Process Direct Descendents --> */
-							var __val = value(_el);
-							if (!_.isEmpty(__val)) _val[_el.data("output-name")] = __val;
-						}
-					});
-					return _val;
-				};
-
-				var descendants = el.find("*[data-output-name]");
-				return (descendants.length === 0) ? simple(el) : complex(descendants);
-			};
-
-			/* <!-- TODO: Evidence Only Outputs One List Item ** BUG ** --> */
-
-			var _return = {};
-			form.find("*[data-output-field]").each(function() { /* <!-- Iterate through all the fields in the form --> */
-				var _$ = $(this),
-					_field = {};
-				_$.find("*[data-output-name]").each(function() {
-					var _$ = $(this);
-					if (_$.parents("*[data-output-name]").length === 0) { /* <!-- Only Process Top-Level Values --> */
-						var _val = value(_$);
-						if (!_.isEmpty(_val)) {
-							if (_field[_$.data("output-name")] !== undefined) {
-								if (_.isArray(_field[_$.data("output-name")])) {
-									_field[_$.data("output-name")] = _field[_$.data("output-name")].concat(_val);
-								} else {
-									_field[_$.data("output-name")] = [_field[_$.data("output-name")], _val];
-								}
-							} else {
-								_field[_$.data("output-name")] = _val;
-							}
-						}
-					}
-				});
-
-				if (!_.isEmpty(_field)) {
-					var _object = {
-						Values: _field
-					};
-					if (_$.data("output-order")) _object.Order = _$.data("output-order");
-					_return[_$.data("output-field")] = _object;
-				}
-
-			});
-
-			ಠ_ಠ.Flags.log("Dehydrated Form Data:", _return);
-			return _return;
-
-		},
-
-		dehydrate: form => {
-
-			var value = el => {
-
-				var simple = _el => {
-					var _type = _el.data("output-type"),
-						_val = (_el[0].type == "checkbox" || _el[0].type == "radio") ?
-						_el.prop("checked") :
-						(_el[0].nodeName == "P" || _el[0].nodeName == "DIV" || _el[0].nodeName == "SPAN") ?
-						_el.text().trim() : (_el[0].nodeName == "A") ? {
-							Id: _el.prop("id"),
-							Url: _el.prop("href"),
-							Text: _el.text()
-						} : (_el[0].nodeName == "IMG") ? {
-							Url: _el.prop("src")
-						} : (_el[0].nodeName == "BUTTON") ?
-						(_el.data("default") && _el.data("default") == _el.text()) ? null : _el.text() :
-						_el.val();
-					/* <!-- TODO: Handle Parsing of types here --> */
-					return _val;
-				};
-
-				var complex = (descendants) => {
-					var _val = {};
-					descendants.each(function() {
-						var _el = $(this);
-						if (_el.parents("*[data-output-name]")[0] === el[0]) { /* <!-- Only Process Direct Descendents --> */
-							var __val = value(_el);
-							if (!_.isEmpty(__val)) _val[_el.data("output-name")] = __val;
-						}
-					});
-					return _val;
-				};
-
-				var descendants = el.find("*[data-output-name]");
-				return (descendants.length === 0) ? simple(el) : complex(descendants);
-			};
-
-			/* <!-- TODO: Evidence Only Outputs One List Item ** BUG ** --> */
-
-			var _return = {};
-			form.find("*[data-output-field]").each(function() { /* <!-- Iterate through all the fields in the form --> */
-				var _$ = $(this),
-					_field = {};
-				_$.find("*[data-output-name]").each(function() {
-					var _$ = $(this);
-					if (_$.parents("*[data-output-name]").length === 0) { /* <!-- Only Process Top-Level Values --> */
-						var _val = value(_$);
-						if (!_.isEmpty(_val)) {
-							if (_field[_$.data("output-name")] !== undefined) {
-								if (_.isArray(_field[_$.data("output-name")])) {
-									_field[_$.data("output-name")] = _field[_$.data("output-name")].concat(_val);
-								} else {
-									_field[_$.data("output-name")] = [_field[_$.data("output-name")], _val];
-								}
-							} else {
-								_field[_$.data("output-name")] = _val;
-							}
-						}
-					}
-				});
-
-				if (!_.isEmpty(_field)) {
-					var _object = {
-						Values: _field
-					};
-					if (_$.data("output-order")) _object.Order = _$.data("output-order");
-					_return[_$.data("output-field")] = _object;
-				}
-
-			});
-
-			ಠ_ಠ.Flags.log("Dehydrated Form Data:", _return);
-			return _return;
-		},
-
-		rehydrate: (form, data) => {
-
-			ಠ_ಠ.Flags.log("Rehydrating Form Data:", data);
-
-			var value = (el, val) => {
-
-				var simple = _el => {
-					console.log(`Calling SIMPLE Set with on ${_el[0].nodeName} (Type=${_el[0].type}) with ${JSON.stringify(val)}`);
-					var _type = _el.data("output-type");
-					if (_el[0].type == "checkbox" || _el[0].type == "radio") {
-						if (val) _el.prop("checked", !!(val)).triggerHandler("change");
-					} else if (_el[0].nodeName == "BUTTON") { /* <!-- Handle Button Selectors --> */
-						var _option = _el.closest("*[data-output-field]").find(`*[data-value='${val}']`);
-						_option.length == 1 ? _option.click() : _el.text(val); /* <!-- Defer to click handler if available --> */
-					} else {
-						_el.val(val) && (_el.is("textarea.resizable")) ?
-							autosize.update(_el[0]) : true; /* <!-- Fire autosize if required --> */
-					}
-					if (val.Items) _.each(_.isArray(val.Items) ? val.Items : [val.Items], item => {
-
-					});
-				};
-
-				var complex = (descendants) => {
-					console.log(`Calling COMPLEX Set with on ${el[0].nodeName} (Type=${el[0].type}) with ${JSON.stringify(val)}`);
-					descendants.each(function() {
-						var _el = $(this);
-						if (_el.parents("*[data-output-name]")[0] === el[0] && val[_el.data("output-name")]) value(_el, val[_el.data("output-name")]); /* <!-- Only Process Direct Descendents --> */
-					});
-				};
-
-				var descendants = el.find("*[data-output-name]");
-				return (descendants.length === 0) ? simple(el) : complex(descendants);
-
-			};
-
-			form.find("*[data-output-field]").each(function() { /* <!-- Iterate through all the fields in the form --> */
-				var _$ = $(this),
-					_name = _$.data("output-field");
-				if (_name && data[_name]) {
-
-					var _values = data[_name].Values,
-						_targets = _$.find("*[data-output-name]"),
-						_text = _$.find("textarea, input[type='text']"),
-						_button = _$.find("button.btn-primary");
-
-					_targets.each(function() { /* <!-- Iterate through all the field parts --> */
-						var __$ = $(this),
-							__name = __$.data("output-name");
-						if (__name && _values[__name]) {
-							_$.find(`*[data-value='${_values[__name]}']`).closest(".btn").addClass("active").find(".md-inactive").removeClass("md-inactive"); /* <!-- Highlight Active Button --> */
-							value(__$, _values[__name]);
-						}
-					});
-
-					if (_values.Items && _text.length == 1 && _button.length == 1) _.each(_.isArray(_values.Items) ? _values.Items : [_values.Items], item => {
-						if (item.Value) _text.val(item.Value) && _button.click(); /* <!-- Iterate through all the Items --> */
-					});
-
-				}
-
-			});
-
-			return form;
-		}
-
-	};
-	/* <!-- Data Functions --> */
 
 	/* <!-- Action Functions --> */
 	var _actions = {
@@ -446,10 +221,10 @@ App = function() {
 			if (_template) _template.__name = name;
 			_return.target = ಠ_ಠ.container.empty();
 			ಠ_ಠ.Display.state().enter(state).protect("a.jump").on("JUMP");
-			return ಠ_ಠ.Fields().on(ಠ_ಠ.Display.template.show(_return));
+			return ಠ_ಠ.Fields(ಠ_ಠ.me ? ಠ_ಠ.me.full_name : false).on(ಠ_ಠ.Display.template.show(_return));
 		},
 
-		parent: (id) => new Promise((resolve) => ಠ_ಠ.Google.files.get(id, true).then(f => {
+		parent: id => new Promise(resolve => ಠ_ಠ.Google.files.get(id, true).then(f => {
 			ಠ_ಠ.Google.folders.is(true)(f) ? resolve(f) : ಠ_ಠ.Flags.error(`Supplied ID is not a folder: ${id}`) && resolve();
 		}).catch(e => {
 			ಠ_ಠ.Flags.error(`Opening Google Drive Folder: ${id}`, e) && resolve();
@@ -488,7 +263,7 @@ App = function() {
 			form.find("button[data-action='load-g-doc'], a[data-action='load-g-doc']").off("click.doc").on("click.doc", e => {
 				new Promise((resolve, reject) => {
 					ಠ_ಠ.Google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
-						"Select a Reflect File to Open", false, true,
+						"Select a Document to Load Text From", false, true,
 						() => new google.picker.DocsView(google.picker.ViewId.DOCUMENTS).setIncludeFolders(true).setParent("root"),
 						file => file ? ಠ_ಠ.Flags.log("Google Drive Document Picked", file) && ಠ_ಠ.Google.files.export(file.id, "text/plain")
 						.then(download => new ಠ_ಠ.Google.reader().promiseAsText(download).then(text => resolve(text))) : reject()
@@ -503,7 +278,7 @@ App = function() {
 
 		},
 
-		load: (form) => _create.report(form.__name, form)
+		load: form => _create.report(form.__name, form)
 
 	};
 	/* <!-- Create Functions --> */
@@ -518,7 +293,7 @@ App = function() {
 			name: `${_title} [${_date}].reflect`,
 			data: {
 				form: _template,
-				report: _data.dehydrate(_form)
+				report: ಠ_ಠ.Data().dehydrate(_form)
 			}
 		};
 
@@ -528,13 +303,13 @@ App = function() {
 		return ಠ_ಠ.Google.reader().promiseAsText(loaded).then(report => {
 			ಠ_ಠ.Flags.log(`Loaded Report File: ${report}`);
 			report = JSON.parse(report);
-			_form = _data.rehydrate(_create.load(report.form), report.report);
+			_form = ಠ_ಠ.Data().rehydrate(_create.load(report.form), report.report);
 		});
 	};
 
 	/* <!-- TODO: Need to check type / format in process if route is from IMPORT - maybe need a further facading function? Maybe inference by properties? --> */
 
-	var _load = function(file) {
+	var _load = file => {
 		if (ಠ_ಠ.Google.files.is(TYPE_REPORT)(file)) {
 			_file = file;
 			return ಠ_ಠ.Google.download(file.id).then(_process);
@@ -732,6 +507,10 @@ App = function() {
 
 						ಠ_ಠ.Router.clean(true);
 
+					} else if ((/TEST/i).test(command)) {
+							
+						(EMAIL).test(command[1]);
+							
 					}
 
 				}

@@ -1,0 +1,6 @@
+{% assign helpers = false %}{% if page.helpers %}{% assign helpers = page.helpers %}{% elsif layout.helpers %}{% assign helpers = layout.helpers %}{% elsif page.app and page.app != "" and site.data.apps[page.app].helpers %}{% assign helpers = site.data.apps[page.app].helpers %}{% endif %}
+{% if helpers and helpers.size > 0 %}{% for helper in helpers %}
+  <script type="text/javascript" charset="utf-8" data-type="helper" data-src="{{ helper }}">
+    {{ site.app.namespace }}.{% include helpers/{{ helper }}.js %}
+  </script>
+{% endfor %}{% endif %}

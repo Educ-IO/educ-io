@@ -149,6 +149,11 @@ ul.nav-tabs li.nav-item.dropdown {
 	.dropdown-menu {width: 100%;}
 }
 
+.material-icons.toggler {
+	margin-right: -1.05em;
+	color: rgba($colour-highlight, 0.5) !important;
+}
+
 div.tab-pane, .scroller {
 	overflow-x: auto;
 	overflow-y: auto;

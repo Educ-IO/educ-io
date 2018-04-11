@@ -1,4 +1,4 @@
-Table = function(table, outside, ಠ_ಠ) {
+Table = (table, outside, css) => {
 	"use strict";
 	
 	/* <!-- Internal Constants --> */
@@ -9,7 +9,7 @@ Table = function(table, outside, ಠ_ಠ) {
 	var $$ = (element) => (element instanceof jQuery === true) ? element : $(element);
 	
 	/* <!-- Internal Variables --> */
-	var _table = $$(table), _outside = $$(outside), _css = ಠ_ಠ.Css(_outside.id, _outside.id);
+	var _table = $$(table), _outside = $$(outside), _css = css(_outside.id, _outside.id);
 	
 	/* <!-- Internal Scroll Variables --> */
 	var  _rows, _cache, _content, _rows_in_block,	_blocks_in_cluster, _rows_in_cluster, _row_height, _block_height, _cluster_height, _last_cluster = false, _scroll_top, mac = navigator.platform.toLowerCase().indexOf("mac") + 1;
@@ -19,19 +19,19 @@ Table = function(table, outside, ಠ_ಠ) {
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
-  var getStyle = function(prop, elem) {
+  var getStyle = (prop, elem) => {
     return window.getComputedStyle ? window.getComputedStyle(elem)[prop] : elem.currentStyle[prop];
   };
 	
-  var checkChanges = function(type, value, cache) {
+  var checkChanges = (type, value, cache) => {
 		var changed = value != cache[type];
 		cache[type] = value;
 		return changed;
 	};
 
-	var html = (data) => {_content.html(data);};
+	var html = data => {_content.html(data);};
 	
-	var getRowsHeight = function(rows) {
+	var getRowsHeight = rows => {
 		var prev_row_height = _row_height;
 		_cluster_height = 0;
 		if( ! rows.length) return;
@@ -47,14 +47,14 @@ Table = function(table, outside, ಠ_ಠ) {
 		return prev_row_height != _row_height;
 	};
 
-  var getClusterNum = function () {
+  var getClusterNum = () => {
 		_scroll_top = _outside[0].scrollTop;
 		var _cluster_Num = _scroll_top / (_cluster_height - _block_height);
 		_cluster_Num = (Math.ceil(_cluster_Num) - _cluster_Num <= 0.01) ? Math.round(_cluster_Num) : Math.floor(_cluster_Num);
 		return _cluster_Num || 0;
 	};
 	
-	var generateEmptyRow = function() {
+	var generateEmptyRow = () => {
 		var empty_row = document.createElement(TAG),
 			no_data_content = document.createTextNode(EMPTY_TEXT), td;
 		empty_row.className = EMPTY_CLASS;
@@ -65,7 +65,7 @@ Table = function(table, outside, ಠ_ಠ) {
 		return [empty_row.outerHTML];
 	};
 	
-	var generate = function (rows, cluster_num) {
+	var generate = (rows, cluster_num) => {
 		var rows_len = rows.length;
 		if (rows_len < _rows_in_block) {
 			return {
@@ -95,14 +95,14 @@ Table = function(table, outside, ಠ_ಠ) {
 		};
 	};
 			
-	var renderExtraTag = function(class_name, height) {
+	var renderExtraTag = (class_name, height) => {
 		var tag = document.createElement(TAG);
 		tag.className = ["extra-row", class_name].join(" ");
 		height && (tag.style.height = height + "px");
 		return tag.outerHTML;
 	};
 	
-	var insertToDOM = function(rows, cache) {
+	var insertToDOM = (rows, cache) => {
 		
 		if(!_cluster_height && rows.length) getRowsHeight(rows);
 		
@@ -184,7 +184,8 @@ Table = function(table, outside, ಠ_ಠ) {
 						var _cluster_Num = getClusterNum();
 						if (_last_cluster != (_last_cluster = _cluster_Num)) insertToDOM(_rows, _cache);
 					});
-					$(window).on("resize.scroller", () => _.debounce(this.refresh, 100));
+					var _refresh = this.refresh;
+					$(window).on("resize.scroller", () => _.debounce(_refresh, 100));
 					
 				}
 				
@@ -193,7 +194,7 @@ Table = function(table, outside, ಠ_ಠ) {
 				
 			},
 			
-			refresh : (force) => (getRowsHeight(_rows) || force) ? this.update(_rows) : this,
+			refresh : force => (getRowsHeight(_rows) || force) ? this.update(_rows) : this,
 			
 			update : function(new_rows) {
 				
@@ -229,6 +230,8 @@ Table = function(table, outside, ಠ_ಠ) {
 				return this;
 				
 			},
+			
+			toggled : () => !!_css.hasStyleSheet("table-freeze"),
 			
 			toggle : function(toggle) {
 				

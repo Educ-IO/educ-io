@@ -1,9 +1,5 @@
-Google_API = function(ಠ_ಠ, timeout) {
-
-	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
-
-	/* <!-- Returns an instance of this if required --> */
-	if (this && this._isF && this._isF(this.Google_API_NEW)) return new this.Google_API_NEW();
+Google_API = (network, timeout) => {
+	"use strict";
 
 	/* === Internal Visibility === */
 
@@ -96,7 +92,7 @@ Google_API = function(ಠ_ಠ, timeout) {
 
 	/* <!-- Network Variables --> */
 	const NETWORKS = _.reduce(URLS, (networks, url) => {
-		networks[url.name] = ಠ_ಠ.Network(url.url, timeout ? timeout : url.timeout ? url.timeout : 60000, url.rate ? url.rate : 0, url.concurrent ? url.concurrent : 0, r =>
+		networks[url.name] = network(url.url, timeout ? timeout : url.timeout ? url.timeout : 60000, url.rate ? url.rate : 0, url.concurrent ? url.concurrent : 0, r =>
 			new Promise(resolve => r.status == 403 || r.status == 429 ?
 				r.json().then(result => result.error.message && result.error.message.indexOf("Rate Limit Exceeded") >= 0 ? resolve(true) : resolve(false)) : resolve(false)));
 		return networks;

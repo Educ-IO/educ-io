@@ -71,7 +71,7 @@ Help = function() {
 				
 				var _target = modal.find(".modal-content"), 
 						_results =_target.find(".result").hide(200),
-						_busy = ಠ_ಠ.Display.busy({target: _target, fn: true}),
+						_busy = ಠ_ಠ.Display.busy({target: _target, fn: true, status: "Checking Status"}),
 						_complete = (selector, submit) => {
 							_busy();
 							_target.find(`.not-${selector}`).hide(600);
@@ -92,8 +92,8 @@ Help = function() {
 								_complete(value.valid === true ? "success" : value.valid === false ? "failure" : "unknown", value.valid === true))
 					.catch(e => ಠ_ಠ.Flags.error("Error checking support status", e) && _complete(".unknown"));
         
-      }).then(data => data && data[0].value && data[1].value ?
-					fetchJsonp(`${ಠ_ಠ.SETUP.CHECK.url}?check=${_checks.join(";")}&type=${data[0].value}&details=${data[1].value}&to=${ಠ_ಠ.me.email}`) : Promise.resolve(false))
+      }).then(data => data && data.Type && data.Details ?
+					fetchJsonp(`${ಠ_ಠ.SETUP.CHECK.url}?check=${_checks.join(";")}&type=${data.Type.Values.Value}&details=${data.Details.Values.Value}&to=${ಠ_ಠ.me.email}`) : Promise.resolve(false))
 				.then(value => ಠ_ಠ.Flags.log(`Support Request Result: ${JSON.stringify(value)}`))
 				.catch(e => ಠ_ಠ.Flags.error("Error with Help Modal", e));
       

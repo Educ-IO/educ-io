@@ -1,4 +1,4 @@
-Network = function(base, timeout, per_sec, concurrent, retry, type) {
+Network = (base, timeout, per_sec, concurrent, retry, type) => {
 	"use strict";
 
 	/* <!-- Backoff Constants --> */

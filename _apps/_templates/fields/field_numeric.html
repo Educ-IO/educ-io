@@ -1,11 +1,12 @@
 {% raw %}
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}>
+<div class="form-group{{#if large}} form-group-lg{{/if}} row"{{#if field}} data-output-field="{{field}}"{{/if}}{{#if order}} data-output-order="{{order}}"{{/if}}>
 	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
 	<div class="col-md-9">
 		<div class="input-group{{#if large}} input-group-lg{{/if}}" data-for="{{id}}">
 			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
-			<input id="{{id}}" name="{{id}}" type="text" data-output-name="Value" class="pl-2 form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly" aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"{{#if suffix}} data-suffix="{{suffix}}"{{/if}} data-min="{{#if min}}{{min}}{{else}}0{{/if}}" data-max="{{#if max}}{{max}}{{else}}10{{/if}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}} />
+			<input id="{{id}}_NUMERIC" name="{{id}}" type="number" class="d-none" data-output-name="Number"{{#if state}} value="{{ state }}"{{/if}} />
+			<input id="{{id}}" name="{{id}}" type="text" data-output-name="Value" class="pl-2 form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly" aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"{{#if suffix}} data-suffix="{{suffix}}" data-target="{{id}}_NUMERIC"{{/if}} data-min="{{#if min}}{{min}}{{else}}0{{/if}}" data-max="{{#if max}}{{max}}{{else}}10{{/if}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}} {{#if state}}value="{{ state }}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}}/>
 			<span class="input-group-append">
 				{{> control_button b_class="btn-secondary eraser" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
 				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-primary alter-numerical d-flex h-100" data-target="{{id}}" data-value="-{{#if this.increment}}{{this.increment}}{{else}}1{{/if}}"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">remove</i></button>

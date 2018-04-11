@@ -71,7 +71,7 @@ Service = function() {
 					_notify(sw, _urgency, _details);
 				}
 
-			}).catch((e) => _notify(sw));
+			}).catch(() => _notify(sw));
 
 		} else {
 
@@ -138,15 +138,9 @@ Service = function() {
 
           }
 
-          console.log("Service Worker Registered");
-
           return;
 
-        }).catch(function(e) {
-
-          console.log("Service Worker NOT Registered:", e);
-
-        });
+        }).catch(e => console.error("Service Worker NOT Registered:", e));
 
         document.onkeydown = function(e) {
 

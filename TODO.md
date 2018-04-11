@@ -13,7 +13,7 @@ General
 
 * More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');" [https://support.google.com/analytics/answer/1033068] and [https://developers.google.com/analytics/devguides/collection/analyticsjs/events]
 
-* Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide URL after successfull set? | Also JWT Token for Folders?
+* Supply oauth keys are part of the URL.... STARTED but not complete <= Should hid ge URL after successfull set? | Also JWT Token for Folders?
 
 Datatable
 ---------
@@ -23,12 +23,13 @@ Auth
 
 Picker
 ------
-* Filter for correctly returned doc type on picker (recent shows all types?)
+* Filter for correctly returned doc type on picker (recent shows al,hl types?)
 * Picker can be difficult if third party cookies or referral headers are blocked .....
 
 Router
 ------
 * Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings.
+
 
 Apps
 ----
@@ -65,9 +66,9 @@ Grades
 
 View
 ----
-* ** BUG ** Why does the border thicken on freeze? .... (Something to do with Flex)
+* ** IMPORTANT ** 'Bottom' header overlay
 
-* ** BUG ** Sparse Date Columns not recognised as such .... 
+* ** BUG ** Why does the border thicken on freeze? .... (Something to do with Flex)
 
 * ** BUG ** Column names can sometimes still get out of sync! Arghhh :)
 
@@ -91,16 +92,25 @@ View
 
 Merge
 -----
+* Release version of App, issue with meta_rows.html file -> Line 5
 * Table -> Height locked with scroll.
 * ** BUG ** Cancel on Pickers...
 
+
 Folders
 -------
+* Use new format MODAL form returns (once Data is stable)
+  + Update validate method on App callers to accept object, rather than value array
+  + Update _return methods on App callers to accept object, rather than value array
 * Check Spreadsheet API Permission for logging! Is this covered by drive permission?
 
 
 Reflect
 -------
+
+* ** BUG ** Line 205 of Fields Helper relies on Template Engine which is not there....consider moving back to a MODULE or passing through template function (context issues)
+* ** BUG ** Line 247 of Fields Helper shouldn't be an interation, as it's implied?
+
 * ** IMPORTANT ** >1 Evidence Items not outputted in JSON (De-Hydrate)
 * ** IMPORTANT ** Evidence Check Boxes not being toggled (Re-Hydrate)
 * ** IMPORTANT ** Feedback on successful save?
@@ -118,6 +128,11 @@ Reflect
 
 Complete
 --------
+* ** BUG ** Title of Google Drive picker for Load Text Box isn't correct. <== DONE
+* ** BUG ** Sparse Date Columns not recognised as such .... <== DONE
+* ** IMPORTANT ** Create Data object to handle form serialisation etc <== DONE
+* ** IMPORTANT ** Change loader to load tab on shown, initially, rather than preload. <== DONE
+* ** IMPORTANT ** State handling for toggling menu items <== DONE
 * Time between Load and Display (still busy?) <== DONE
 * Increase / Decrease Column Headers <== DONE
 * Clock Icon for Date Columns <-- DONE

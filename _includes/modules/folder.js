@@ -10,8 +10,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 	const TYPE_CONVERT = "application/x.educ-io.folders-convert",
 		TYPE_SEARCH = "application/x.educ-io.folders-search",
 		TYPE_TAG = "application/x.educ-io.folders-tag",
-		TYPE_CLONE = "application/x.educ-io.folders-clone",
-		_types = [TYPE_CONVERT, TYPE_SEARCH, TYPE_TAG, TYPE_CLONE];
+		TYPE_CLONE = "application/x.educ-io.folders-clone";
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -975,7 +974,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 
 		var _name = "Search @ " + new Date().toLocaleTimeString();
 
-		var _decode = (values) => {
+		var _decode = values => {
 
 			var _regex = (regex, fallback) => f => {
 				if (regex.indexOf("||") > 0) {
@@ -1056,7 +1055,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 		var _root = folder.name == "root" || !folder.parents || folder.parents.length === 0,
 			_id = "start_search",
 			_search = ಠ_ಠ.Display.modal("search", {
-				id: "start_search",
+				id: _id,
 				target: ಠ_ಠ.container,
 				title: "Search Google Drive",
 				instructions: ಠ_ಠ.Display.doc.get("SEARCH_INSTRUCTIONS"),

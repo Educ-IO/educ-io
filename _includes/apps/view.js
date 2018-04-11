@@ -27,12 +27,7 @@ App = function() {
 		var result;
 
 		return new Promise((resolve, reject) => {
-			(full ?
-				ಠ_ಠ.Google.sheets.get(id, true) :
-				ಠ_ಠ.Google.sheets.get(id)
-					.then(sheet => _busy({message: "Loading Data"}) ? ಠ_ಠ.Google.sheets.get(id, true, "A:ZZ")
-					.then(data => (sheet.sheets[0] = data.sheets[0]) ? sheet : sheet) : sheet)
-			)
+			(full ? ಠ_ಠ.Google.sheets.get(id, true) : ಠ_ಠ.Google.sheets.get(id))
 			.then(sheet => {
 					ಠ_ಠ.Flags.log("Google Drive Sheet Opened", sheet);
 					result = sheet;
@@ -267,13 +262,13 @@ App = function() {
 						});
 
 						ಠ_ಠ.container.find("#link_shorten").one("click.shorten", () => {
-							ಠ_ಠ.Google.url.insert(_link).then((url) => {
+							ಠ_ಠ.Google.url.insert(_link).then(url => {
 								_link = url.id;
 								var _qr = "https://chart.googleapis.com/chart?cht=qr&chs=540x540&choe=UTF-8&chl=" + encodeURIComponent(_link);
 								ಠ_ಠ.container.find("#link_text").text(_link);
 								ಠ_ಠ.container.find("#qr_copy").attr("data-clipboard-text", _qr);
 								ಠ_ಠ.container.find("#qr_code").attr("src", _qr);
-							}).catch((e) => ಠ_ಠ.Flags.error("Link Shorten Failure", e ? e : "No Inner Error"));
+							}).catch(e => ಠ_ಠ.Flags.error("Link Shorten Failure", e ? e : "No Inner Error"));
 
 						});
 

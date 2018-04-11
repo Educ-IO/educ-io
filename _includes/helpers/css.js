@@ -1,38 +1,22 @@
-Css = function(suffix, prefix) {
+Css = (suffix, prefix) => {
 	"use strict";
-	
-	/* <!-- Returns an instance of this if required --> */
-	if (this && this._isF && this._isF(this.Css)) return new this.Css().initialise(this, suffix, prefix);
 	
 	/* <!-- Internal Constants --> */
 	/* <!-- Internal Constants --> */
 	
 	/* <!-- Internal Variables --> */
-  var _prefix, _suffix, _ids = [];
+  var _ids = [];
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
-  var _id = (id) => id + "_" + _suffix;
+  var _id = id => `${id}_${suffix}`;
 	/* <!-- Internal Functions --> */
 	
 	/* <!-- External Visibility --> */
   return {
 
     /* <!-- External Functions --> */
-    initialise : function(container, suffix, prefix) {
-			
-			/* <!-- Set identifying prefix --> */
-			_prefix = prefix;
-			
-      /* <!-- Set identifying suffix --> */
-      _suffix = suffix;
-      
-			/* <!-- Return for Chaining --> */
-			return this;
-			
-    },
-    
-    sheet : function(id) {
+    sheet : id => {
       var _styleSheet = document.getElementById(_id(id));
       if (!_styleSheet) {
         _styleSheet = document.createElement("style");
@@ -51,12 +35,12 @@ Css = function(suffix, prefix) {
     },
     
     deleteAll : function() {
-      $.each(_ids, function(i, id) {$("#" + _id(id)).remove();});
+      $.each(_ids, function(i, id) {$(`#${_id(id)}`).remove();});
 			return this;
     },
 			
     addRule : function(sheet, selector, rules, index) {
-			selector = _prefix ? "#" + _prefix + " " + selector : selector;
+			selector = prefix ? `#${prefix} ${selector}` : selector;
       if ("insertRule" in sheet) {
         sheet.insertRule(selector + "{" + rules + "}", index);
       } else if ("addRule" in sheet) {
@@ -66,14 +50,14 @@ Css = function(suffix, prefix) {
     },
 			
     removeRule : function(sheet, selector) {
-			selector = _prefix ? "#" + _prefix + " " + selector : selector;
+			selector = prefix ? `#${prefix} ${selector}` : selector;
       $.each(sheet.cssRules, function(i, rule) {if (rule.selectorText === selector) {sheet.deleteRule(i); return false;}});
       return this;
     },
 		
 		hasStyles : () => _ids.length > 0,
     
-		hasStyleSheet : (id) => !!document.getElementById(_id(id))
+		hasStyleSheet : id => !!document.getElementById(_id(id))
 		
   };
   /* <!-- External Visibility --> */

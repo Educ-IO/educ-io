@@ -1,9 +1,4 @@
-Github_API = function() {
-
-	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
-
-	/* <!-- Returns an instance of this if required --> */
-	if (this && this._isF && this._isF(this.Github_API)) return new this.Github_API();
+Github_API = () => {
 
 	/* <!-- Internal Variables --> */
 	var _api, _before, _paging, _after;

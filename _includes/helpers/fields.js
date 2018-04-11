@@ -1,8 +1,5 @@
-Fields = function() {
+Fields = me => {
 	"use strict";
-
-	/* <!-- Returns an instance of this if required --> */
-	if (this && this._isF && this._isF(this.Fields)) return new this.Fields().initialise(this);
 
 	/* <!-- Internal Constants --> */
 	const DATE_FORMAT = "yyyy-mm-dd", DATE_FORMAT_M = DATE_FORMAT.toUpperCase();
@@ -14,26 +11,25 @@ Fields = function() {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var _listen = function(form) {
+	var _listen = form => {
 
 		/* <!-- Wire up event / visibility listeners --> */
-		form.find("[data-listen]").each(function() {
-			var _this = $(this);
-			$(_this.data("listen")).off(_this.data("event")).on(_this.data("event"), function() {
+		_.each(form.find("[data-listen]"), input => {
+			var _this = $(input);
+			$(_this.data("listen")).off(_this.data("event")).on(_this.data("event"), () => {
 				_this.show().siblings("[data-listen]").hide();
 			});
 		});
 
 	};
 	
-	var _spans = function(form) {
+	var _spans = form => {
 		
-		var _handler = function(control) {
+		var _handler = control => {
 			
 			if (control.data("target") && control.data("value")) {
 				
-				var _target = $("#" + control.data("target")),
-						_value = control.data("value");
+				var _target = $("#" + control.data("target"));
 				
 				if (_target.data("target")) {
 					
@@ -53,9 +49,9 @@ Fields = function() {
 							_start.val(_start_Date.format(DATE_FORMAT_M));
 							_end.val(_end_Date.format(DATE_FORMAT_M));
 
-							(function(start, span, end) {
-								start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, function(e) {
-									var _value = $(this).val();
+							((start, span, end) => {
+								start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, e => {
+									var _value = $(e.currentTarget).val();
 									if (_value) {
 										_value = moment(_value, DATE_FORMAT_M);
 										if (_value.isValid()) end.val(_value.add(1, span).format(DATE_FORMAT_M));
@@ -69,9 +65,9 @@ Fields = function() {
 						
 					} else {
 						
-						(function(start, end) {
-								start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, function(e) {
-									var _value_S = $(this).val();
+						((start, end) => {
+								start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, e => {
+									var _value_S = $(e.currentTarget).val();
 									if (_value_S) {
 										_value_S = moment(_value_S, DATE_FORMAT_M);
 										if (_value_S.isValid()) {
@@ -93,27 +89,27 @@ Fields = function() {
 
 		};
 		
-		form.find("button.alter-span, a.alter-span").click((e) => _handler($(e.currentTarget)));
+		form.find("button.alter-span, a.alter-span").click(e => _handler($(e.currentTarget)));
 		
 		form.find("button.alter-span:first-child, a.alter-span:first-child").each((i, el) => _handler($(el)));
 		
 	};
 
-	var _numerical = function(form) {
+	var _numerical = form => {
 
 		/* <!-- Wire up numerical fields --> */
-		form.find(".alter-numerical").click(function(e) {
-			var _this = $(this);
+		form.find(".alter-numerical").click(e => {
+			var _this = $(e.currentTarget);
 			if (_this.data("target") && _this.data("value")) {
 				
-				var _target = $("#" + _this.data("target")), 
+				var _target = $(`#${_this.data("target")}`), 
 						_value = Number(_this.data("value"));
 				var _min = _target.data("min") ? Number(_target.data("min")) : 0,
 						_max = _target.data("max") ? Number(_target.data("max")) : Number.MAX_VALUE;
 				
 				if (_target.hasClass("input-daterange") && _this.data("modifier")) {
 					
-					var _modifier = $("#" + _this.data("modifier"));
+					var _modifier = $(`#${_this.data("modifier")}`);
 					var _span = _modifier.data("span") ? _modifier.data("span") : "d";
 					
 					var _start = _target.find("input[name='start']"), _start_Date = _start.val() ? moment(_start.val(), DATE_FORMAT_M) : moment();
@@ -127,10 +123,11 @@ Fields = function() {
 					if (_current <= _min) {
 						_target.val("");
 					} else if (_suffix) {
-						_target.val(_current + " " + _suffix);
+						_target.val(`${_current} ${_suffix}`);
 					} else {
 						_target.val(_current);
 					}
+					if (_target.data("target")) $("#" + _target.data("target")).val(_current <= _min ? 0 : _current);
 					
 				}
 				
@@ -139,36 +136,36 @@ Fields = function() {
 
 	};
 
-	var _erase = function(form) {
+	var _erase = form => {
 
 		/* <!-- Wire up eraser actions --> */
-		form.find(".eraser").click(function(e) {
-			var _this = $(this);
-			if (_this.data("target")) {
-				$("#" + _this.data("target") + ", #" + _this.data("target") + "> input").val("").removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
+		form.find(".eraser").click(e => {
+			var _this = $(e.currentTarget), _target = _this.data("target");
+			if (_target) {
+				$(`#${_target}, #${_target} > input`).val("").removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
 			} 
 			if (_this.data("reset")) {
-				var _reset = $("#" + _this.data("reset"));
+				var _reset = $(`#${_this.data("reset")}`);
 				if (_reset.data("default")) _reset.text(_reset.data("default"));
 			}
 		});
 
 	};
 
-	var _radio = function(form) {
+	var _radio = form => {
 
 		/* <!-- Wire up radio fields --> */
-		form.find("input[type='radio'], input[type='checkbox']").change(function() {
-			var _this = $(this);
+		form.find("input[type='radio'], input[type='checkbox']").change(e => {
+			var _this = $(e.currentTarget);
 			if (_this.data("target")) {
 
 				_this.parents("div").find(".to-dim").addClass("md-inactive");
 				_this.siblings(".to-dim").removeClass("md-inactive");
 
 				if (_this.data("value") && _this.prop("checked")) {
-					autosize.update($("#" + _this.data("target")).val(_this.data("value")));
+					autosize.update($(`#${_this.data("target")}`).val(_this.data("value")));
 				} else {
-					autosize.update($("#" + _this.data("target")).val(""));
+					autosize.update($(`#${_this.data("target")}`).val(""));
 				}
 
 			}
@@ -176,47 +173,46 @@ Fields = function() {
 
 	};
 
-	var _menus = function(form) {
+	var _menus = form => {
 
-		form.find("button.dropdown-item, a.dropdown-item").click(function(e) {
-			var _this = $(this);
+		form.find("button.dropdown-item, a.dropdown-item").click(e => {
+			var _this = $(e.currentTarget);
 			if (_this.data("target") && _this.data("value")) {
 				e.preventDefault();
-				form.find("#" + _this.data("target")).text(_this.data("value"));
+				form.find(`#${_this.data("target")}`).text(_this.data("value"));
 			}
 		});
 
 	};
 
-	var _complex = function(form) {
+	var _complex = form => {
 
-		form.find("button.complex-list-add, a.complex-list-add").click(function(e) {
-			var _this = $(this);
-			var _holder = form.find("#" + _this.data("details")),
+		form.find("button.complex-list-add, a.complex-list-add").click(e => {
+			var _this = $(e.currentTarget);
+			var _holder = form.find(`#${_this.data("details")}`),
 				_details = _holder.val();
 			if (_details) {
 
 				/* <!-- Get Type and Defaults --> */
-				var _selector = form.find("#" + _this.data("type")),
+				var _selector = form.find(`#${_this.data("type")}`),
 					_type = _selector.text().trim(),
 					_default = _selector.data("default");
 				if (_type == _default) _type = "";
 
 				/* <!-- Add new Item to List --> */
-				var _list = form.find("#" + _this.data("target"));
+				var _list = form.find(`#${_this.data("target")}`);
 				if (_list.children(".list-item").length === 0) _this.closest(".input-group").children("input[type='checkbox']").prop("checked", true);
 				$(ಠ_ಠ.Display.template.get({
 					template: "list_item",
-					details: _details + (_type ? " [" + _default + ": " + _type + "]" : ""),
+					details: `${_details}${_type ? ` [${_default}: ${_type}]` : ""}`,
 					type: _this.data("item"),
 					delete: "Remove"
-				})).appendTo(_list).find("a.delete").click(
-					function(e) {
+				})).appendTo(_list).find("a.delete").click(e => {
 						e.preventDefault();
-						if ($(this).parent().siblings(".list-item").length === 0) {
+						if ($(e.currentTarget).parent().siblings(".list-item").length === 0) {
 							_this.closest(".input-group").children("input[type='checkbox']").prop("checked", false);
 						}
-						$(this).parent().remove();
+						$(e.currentTarget).parent().remove();
 					}
 				);
 
@@ -227,8 +223,8 @@ Fields = function() {
 			} else {
 
 				_holder.addClass("invalid");
-				_holder.on("change.validity.test", function() {
-					var _this = $(this);
+				_holder.on("change.validity.test", e => {
+					var _this = $(e.currentTarget);
 					if (_this.val()) _this.removeClass("invalid");
 					_this.off("change.validity.test");
 				});
@@ -239,27 +235,27 @@ Fields = function() {
 
 	};
 
-	var _autosize = function(form) {
+	var _autosize = form => {
 		
 		form.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
 		
 	};
 
-	var _reveal = function(form) {
+	var _reveal = form => {
 
 		/* <!-- Wire up event / visibility listeners --> */
-		form.find("[data-reveal]").each(function() {
-			$(this).off("change.reveal").on("change.reveal", function() {
-				$($(this).data("reveal")).slideToggle();
+		form.find("[data-reveal]").each(e => {
+			$(e.currentTarget).off("change.reveal").on("change.reveal", e => {
+				$($(e.currentTarget).data("reveal")).slideToggle();
 			});
 		});
 
 	};
 
-	var _dim = function(form) {
+	var _dim = form => {
 
 		/* <!-- Wire up event / visibility listeners --> */
-		form.find(".dim").off("click.dim").on("click.dim", function(e) {
+		form.find(".dim").off("click.dim").on("click.dim", e => {
 			var _this = $(e.currentTarget);
 			if (_this.hasClass("dim")) {
 				_this.siblings().addClass("dim").find("button, a[type='button']").prop("disabled", true);
@@ -269,15 +265,15 @@ Fields = function() {
 
 	};
 
-	var _me = function(form) {
+	var _me = form => {
 
-		form.find(".textual-input-button[data-action='me']").off("click.me").on("click.me", function() {
-			if (ಠ_ಠ.me) $("#" + $(this).data("target")).val(ಠ_ಠ.me.full_name());
+		form.find(".textual-input-button[data-action='me']").off("click.me").on("click.me", e => {
+			if (me) $(`#${$(e.currentTarget).data("target")}`).val(me());
 		});
 
 	};
 
-	var _datetime = function(form) {
+	var _datetime = form => {
 
 		if ($.fn.datepicker) form.find("div.dt-picker, input.dt-picker").datepicker({
 			format: DATE_FORMAT,
@@ -287,29 +283,21 @@ Fields = function() {
 		});
 
 	};
+	
+	
+	_steps = [
+		_listen, _numerical, _erase, _radio, _menus,
+		_complex, _reveal, _dim, _autosize, _me, _datetime,
+		_spans
+	];
 	/* <!-- Internal Functions --> */
 
 	/* <!-- External Visibility --> */
 	return {
 
 		/* <!-- External Functions --> */
-		initialise: function(container) {
-
-			/* <!-- Get a reference to the Container --> */
-			ಠ_ಠ = container;
-
-			_steps = [
-				_listen, _numerical, _erase, _radio, _menus,
-				_complex, _reveal, _dim, _autosize, _me, _datetime,
-				_spans
-			];
-			/* <!-- Return for Chaining --> */
-			return this;
-
-		},
-
-		on: (form) => {
-			_.each(_steps, (step) => step(form));
+		on: form => {
+			_.each(_steps, step => step(form));
 			return form;
 		},
 

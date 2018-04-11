@@ -26,7 +26,7 @@ Controller = function() {
 		if (o == "style") m = s.getElementsByTagName(o)[0]; else if (o == "script") a.setAttribute("aria-hidden", "true");
 		var t = g.text;
 		if (g.map === true) {
-			var map_regex = /[\/\*|\/\/]#[\s]*sourceMappingURL=(\S+)[\s]*[\*\/]?/gi, map_urls;
+			var map_regex = /[/*|//]#[\s]*sourceMappingURL=(\S+)[\s]*[*/]?/gi, map_urls;
 			while ((map_urls = map_regex.exec(t)) !== null) {
 				if (map_urls && map_urls[1]) {
 					var map_url = new URL(map_urls[1], g.url);
