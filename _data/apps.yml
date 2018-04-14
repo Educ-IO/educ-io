@@ -50,6 +50,8 @@ view:
     - table
     - css
     - fields
+    - strings
+    - saver
   modules:
     - flags
     - controller
@@ -61,9 +63,10 @@ view:
     - recent
     - router
     - datatable
-    - sheet
-    - sheets
+    - grid
     - headers
+    - view/readwrite
+    - view/readonly
   scripts: 
     - extends/regex
     - extends/array
@@ -647,7 +650,7 @@ folders:
     - recent
     - router
     - datatable
-    - folder
+    - folders/folder
   scripts: 
     - extends/regex
     - extends/array
@@ -1183,7 +1186,7 @@ merge:
       load: last
     - name: autosize
       load: last
-    - name: moment
+    - name: moment_all
       load: last
     - name: google
       load: lazy
@@ -1192,6 +1195,9 @@ merge:
     - google
     - table
     - css
+    - query
+    - fields
+    - data
   modules:
     - flags
     - controller
@@ -1203,8 +1209,10 @@ merge:
     - recent
     - router
     - datatable
-    - sheet
+    - grid
     - headers
+    - merge/master
+    - merge/records
   scripts: 
     - extends/regex
     - extends/array
@@ -1219,6 +1227,7 @@ merge:
     - shared/filters
     - shared/control_icon
     - shared/control_button
+    - shared/populate_buttons
     - shared/tab-links
     - shared/tab-list
     - shared/tab-tabs
@@ -1227,6 +1236,7 @@ merge:
     - shared/rows
     - shared/datatable
     - shared/headers
+    - fields/field_numeric
     - merge/split
     - merge/meta_rows
   docs:

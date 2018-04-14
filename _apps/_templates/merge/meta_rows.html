@@ -1,9 +1,7 @@
 {% raw %}
 {{#each rows}}<tr>
   <td>{{name}}</td>
-  <td class="text-center">{{#if field}}{{field}}{{else}}
-\{{ {{name}} }}
-  {{/if}}</td>
+  <td class="text-center">{{#if field}}{{field}}{{else}}{{{ concat (replace "{_{" "_" "") name (replace "}_}" "_" "") }}}{{/if}}</td>
   <td>
     {{#if mapped}}<span class="badge badge-dark ml-lg-1 mr-1">
       <span>Mapped</span>

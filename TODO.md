@@ -15,6 +15,8 @@ General
 
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hid ge URL after successfull set? | Also JWT Token for Folders?
 
+* Increase timeout on scope increase login?
+
 Datatable
 ---------
 
@@ -66,11 +68,17 @@ Grades
 
 View
 ----
+* ** IMPORTANT ** Has value / has no value column filter
+
+* Pass Date column information to readonly view
+
 * ** IMPORTANT ** 'Bottom' header overlay
+
+* Refresh should just refresh data, not overwrite filters, column visibilities and headers
 
 * ** BUG ** Why does the border thicken on freeze? .... (Something to do with Flex)
 
-* ** BUG ** Column names can sometimes still get out of sync! Arghhh :)
+* ** BUG ** Column names can sometimes still get out of sync?! Arghhh :)
 
 * Linking...
 
@@ -89,28 +97,20 @@ View
 
 * Numerical Filter implies re-sort?
 
-
 Merge
 -----
-* Release version of App, issue with meta_rows.html file -> Line 5
-* Table -> Height locked with scroll.
-* ** BUG ** Cancel on Pickers...
 
 
 Folders
 -------
-* Use new format MODAL form returns (once Data is stable)
+* Use new format MODAL form returns (once Data is stable ... activate by including Data helper in App Build)
   + Update validate method on App callers to accept object, rather than value array
   + Update _return methods on App callers to accept object, rather than value array
 * Check Spreadsheet API Permission for logging! Is this covered by drive permission?
 
-
 Reflect
 -------
-
-* ** BUG ** Line 205 of Fields Helper relies on Template Engine which is not there....consider moving back to a MODULE or passing through template function (context issues)
-* ** BUG ** Line 247 of Fields Helper shouldn't be an interation, as it's implied?
-
+* Lesson Observation Form
 * ** IMPORTANT ** >1 Evidence Items not outputted in JSON (De-Hydrate)
 * ** IMPORTANT ** Evidence Check Boxes not being toggled (Re-Hydrate)
 * ** IMPORTANT ** Feedback on successful save?
@@ -128,6 +128,15 @@ Reflect
 
 Complete
 --------
+* Resizer gets lost after updating headers <== DONE
+* Resizer isn't correct, as the nav tabs are not visible at the point it fires <== DONE
+* Include Headers Functionality ... awaiting cleaning up of View Code. <== DONE
+* When changing headers, respect current tab selection (data or columns) <== DONE
+* Table -> Height locked with scroll <== DONE
+* ** BUG ** Cancel on Pickers... <== DONE
+* ** BUG ** Line 205 of Fields Helper relies on Template Engine which is not there....consider moving back to a MODULE or passing through template function (context issues) <== DONE
+* ** BUG ** Line 247 of Fields Helper shouldn't be an interation, as it's implied? <== DONE
+* Release version of App, issue with meta_rows.html file -> Line 5 <== DONE
 * ** BUG ** Title of Google Drive picker for Load Text Box isn't correct. <== DONE
 * ** BUG ** Sparse Date Columns not recognised as such .... <== DONE
 * ** IMPORTANT ** Create Data object to handle form serialisation etc <== DONE

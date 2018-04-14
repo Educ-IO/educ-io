@@ -1,5 +1,9 @@
 Css = (suffix, prefix) => {
 	"use strict";
+
+	/* <!-- MODULE: Provides dynamic CSS rules for document insertion --> */
+  /* <!-- PARAMETERS: suffix and prefix for rules --> */
+	/* <!-- REQUIRES: Global Scope: JQuery --> */
 	
 	/* <!-- Internal Constants --> */
 	/* <!-- Internal Constants --> */
@@ -30,19 +34,19 @@ Css = (suffix, prefix) => {
     },
 			
     delete : function(id) {
-      $("#" + _id(id)).remove();
+      $(`#${_id(id)}`).remove();
       return this;
     },
     
     deleteAll : function() {
-      $.each(_ids, function(i, id) {$(`#${_id(id)}`).remove();});
+      $.each(_ids, (i, id) => {$(`#${_id(id)}`).remove();});
 			return this;
     },
 			
     addRule : function(sheet, selector, rules, index) {
 			selector = prefix ? `#${prefix} ${selector}` : selector;
       if ("insertRule" in sheet) {
-        sheet.insertRule(selector + "{" + rules + "}", index);
+        sheet.insertRule(`${selector} {${rules}}`, index);
       } else if ("addRule" in sheet) {
         sheet.addRule(selector, rules, index);
       }
@@ -51,7 +55,7 @@ Css = (suffix, prefix) => {
 			
     removeRule : function(sheet, selector) {
 			selector = prefix ? `#${prefix} ${selector}` : selector;
-      $.each(sheet.cssRules, function(i, rule) {if (rule.selectorText === selector) {sheet.deleteRule(i); return false;}});
+      $.each(sheet.cssRules, (i, rule) => {if (rule.selectorText === selector) {sheet.deleteRule(i); return false;}});
       return this;
     },
 		

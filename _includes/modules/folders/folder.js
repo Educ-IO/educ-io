@@ -1,4 +1,4 @@
-Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
+Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
 	/* <!-- Internal Constants --> */
 	const BATCH_SIZE = 50,
@@ -11,11 +11,11 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 		TYPE_SEARCH = "application/x.educ-io.folders-search",
 		TYPE_TAG = "application/x.educ-io.folders-tag",
 		TYPE_CLONE = "application/x.educ-io.folders-clone";
+	const DB = new loki("folders.db");
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var _db = new loki("folders.db"),
-		_tables = {},
+	var _tables = {},
 		_search,
 		_last,
 		_tallyCache = tally ? tally : {},
@@ -752,17 +752,15 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 
 		var headers = _.map(["Type", "Shared", "ID", "Name", "Actions", "Star"], v => ({
 			name: v,
-			hide: initial => !!(initial && this.hide_initially),
-			set_hide: function(now, always, initially) {
-				this.hide_initially = initially;
-			},
+			hide: function(initial) {return !!(initial && this.hide_initially);},
+			set_hide: function(now, always, initially) {this.hide_initially = initially;},
 			hide_always: false,
 			hide_now: false,
 			hide_initially: v === "ID" ? true : false,
 			field: v.toLowerCase(),
 		}));
 
-		var _data = _db.addCollection(id, {
+		var _data = DB.addCollection(id, {
 			unique: ["id"],
 			indices: ["type", "starred", "name", "shared"]
 		});
@@ -1143,7 +1141,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 		if (_search && !search) return _closeSearch(_search);
 
 		if (search) {
-			_db.removeCollection(search);
+			DB.removeCollection(search);
 			$("#nav_" + search).remove();
 			$("#tab_" + search).remove();
 			$("#folder_tabs a.nav-link:last").tab("show");
@@ -1157,7 +1155,7 @@ Folder = function(ಠ_ಠ, folder, target, team, state, tally, complete) {
 
 		process: (fn, file, filter, parameters) => {
 			var _id = _search ? _search : folder.id,
-				_collection = _db.getCollection(_id);
+				_collection = DB.getCollection(_id);
 			if (_collection) {
 				var _table = _tables[_id],
 					_filter = filter ? filter : items => items,

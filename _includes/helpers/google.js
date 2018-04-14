@@ -1,6 +1,10 @@
 Google_API = (network, timeout) => {
 	"use strict";
 
+	/* <!-- MODULE: Provides an interface onto various Google APIs --> */
+  /* <!-- PARAMETERS: Receives a network creation/factory method and a custom timeout for each network/API domain base --> */
+	/* <!-- REQUIRES: Global Scope: Underscore --> */
+	
 	/* === Internal Visibility === */
 
 	/* <!-- Internal Constants --> */
@@ -8,10 +12,10 @@ Google_API = (network, timeout) => {
 		BATCH_SIZE = 50,
 		PATH_LIMIT = 150;
 
-	const READER = function() {
+	const READER = () => { /* <!-- FileReader Wrapper which appends 'promiseAs' methods --> */
 
 		var reader = new FileReader(),
-			promisify = (fn) =>
+			promisify = fn =>
 			function() {
 				var _arguments = arguments;
 				return new Promise((resolve, reject) => {
@@ -103,30 +107,26 @@ Google_API = (network, timeout) => {
 	var _init = (token, type, expires, update) => {
 
 		/* <!-- Check Function to ensure token validity --> */
-		_check = ((e, u) => {
+		_check = ((e, u) => force => {
 
-			return force => {
+			return new Promise((resolve, reject) => {
 
-				return new Promise((resolve, reject) => {
+				if (force || e <= new Date()) { /* Token Expired */
 
-					if (force || e <= new Date()) { /* Token Expired */
+					u(force).then(r => { /* Update token */
 
-						u(force).then(r => { /* Update token */
+						if (r) _init(r.token, r.type, r.expires, u); /* Non-Null Response, so changes required */
+						resolve(true);
 
-							if (r) _init(r.token, r.type, r.expires, u); /* Non-Null Response, so changes required */
-							resolve(true);
+					}).catch(err => reject(err));
 
-						}).catch(err => reject(err));
+				} else { /* Token Fine */
 
-					} else { /* Token Fine */
+					resolve(false);
 
-						resolve(false);
+				}
 
-					}
-
-				});
-
-			};
+			});
 
 		})(new Date((expires - 1) * 1000), update); /* 1 second shift in case of network delays! */
 
@@ -166,19 +166,12 @@ Google_API = (network, timeout) => {
 					};
 				}
 
-				NETWORKS.general.get(url, data).then((value) => {
+				NETWORKS.general.get(url, data).then(value => {
 
 					list = list.concat(value[property]);
 
-					if (value.nextPageToken) {
-
-						_list(url, property, list, data, value.nextPageToken).then(function(list) {
-							resolve(list);
-						});
-
-					} else {
-						resolve(list);
-					}
+					value.nextPageToken ?
+						_list(url, property, list, data, value.nextPageToken).then(list => resolve(list)) : resolve(list);
 
 				}).catch(e => reject(e));
 
@@ -223,14 +216,16 @@ Google_API = (network, timeout) => {
 				.setAppId(CLIENT_ID)
 				.setDeveloperKey(KEY)
 				.setOAuthToken(_token())
-				.setCallback((function(callback, context) {
-					return function(data) {
+				.setCallback(((callback, context) => {
+					return data => {
 						if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
 							if (!multiple) {
 								callback(data[google.picker.Response.DOCUMENTS][0], context);
 							} else {
 								callback(data[google.picker.Response.DOCUMENTS], context);
 							}
+						} else if (data[google.picker.Response.ACTION] == google.picker.Action.CANCEL) {
+							callback(false, context);	 
 						}
 					};
 				})(callback, context));
@@ -490,7 +485,7 @@ Google_API = (network, timeout) => {
 
 		},
 
-		export: (id) => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {
+		export: id => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {
 			mimeType: "application/vnd.google-apps.script+json"
 		}),
 
@@ -523,9 +518,9 @@ Google_API = (network, timeout) => {
 
 			is: type => item => item.mimeType === type,
 
-			in: (type) => (item) => item.mimeType && item.mimeType.startsWith(type),
+			in: type => item => item.mimeType && item.mimeType.startsWith(type),
 
-			native: (type) => type && NATIVES.indexOf(type.toLowerCase()) >= 0,
+			native: type => type && NATIVES.indexOf(type.toLowerCase()) >= 0,
 
 			delete: (id, team, trash) => {
 				var _url = team ? "drive/v3/files/" + id + "?teamDriveId=" + team + "&supportsTeamDrives=true" : "drive/v3/files/" + id;
@@ -552,7 +547,7 @@ Google_API = (network, timeout) => {
 
 		teamDrives: {
 
-			get: (id) => _call(NETWORKS.general.get, "drive/v3/teamdrives/" + id, {
+			get: id => _call(NETWORKS.general.get, "drive/v3/teamdrives/" + id, {
 				fields: "kind,id,name,colorRgb,capabilities",
 			}),
 
@@ -649,7 +644,7 @@ Google_API = (network, timeout) => {
 
 		url: {
 
-			insert: (url) => _call(NETWORKS.general.post, "urlshortener/v1/url?key=" + KEY, {
+			insert: url => _call(NETWORKS.general.post, "urlshortener/v1/url?key=" + KEY, {
 				longUrl: url
 			}, "application/json"),
 

@@ -221,7 +221,8 @@ App = function() {
 			if (_template) _template.__name = name;
 			_return.target = ಠ_ಠ.container.empty();
 			ಠ_ಠ.Display.state().enter(state).protect("a.jump").on("JUMP");
-			return ಠ_ಠ.Fields(ಠ_ಠ.me ? ಠ_ಠ.me.full_name : false).on(ಠ_ಠ.Display.template.show(_return));
+			return ಠ_ಠ.Fields({me: ಠ_ಠ.me ? ಠ_ಠ.me.full_name : undefined, templater: ಠ_ಠ.Display.template.get})
+				.on(ಠ_ಠ.Display.template.show(_return));
 		},
 
 		parent: id => new Promise(resolve => ಠ_ಠ.Google.files.get(id, true).then(f => {

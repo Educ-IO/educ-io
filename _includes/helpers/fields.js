@@ -1,13 +1,23 @@
-Fields = me => {
+Fields = options => {
 	"use strict";
 
+	/* <!-- MODULE: Wires up form field behaviours (clear, increments, spans etc) --> */
+  /* <!-- PARAMETERS: Options, see below  --> */
+	/* <!-- @options.me: Function to get value of me for name/email address fields [Optional]  --> */
+	/* <!-- @options.templater: Function to get template for rendering (e.g. Display.template.get) [Optional for all but complex add fields]  --> */
+	/* <!-- REQUIRES: Global Scope: JQuery, Underscore, Moment --> */
+	
 	/* <!-- Internal Constants --> */
 	const DATE_FORMAT = "yyyy-mm-dd", DATE_FORMAT_M = DATE_FORMAT.toUpperCase();
 	const EVENT_CHANGE_DT = "change.datetime";
+	const defaults = {
+		me: () => ""
+	};
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _steps;
+	options = _.defaults(options, defaults);
+	var _steps;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -202,7 +212,7 @@ Fields = me => {
 				/* <!-- Add new Item to List --> */
 				var _list = form.find(`#${_this.data("target")}`);
 				if (_list.children(".list-item").length === 0) _this.closest(".input-group").children("input[type='checkbox']").prop("checked", true);
-				$(ಠ_ಠ.Display.template.get({
+				if (options.templater) $(options.templater({
 					template: "list_item",
 					details: `${_details}${_type ? ` [${_default}: ${_type}]` : ""}`,
 					type: _this.data("item"),
@@ -244,10 +254,8 @@ Fields = me => {
 	var _reveal = form => {
 
 		/* <!-- Wire up event / visibility listeners --> */
-		form.find("[data-reveal]").each(e => {
-			$(e.currentTarget).off("change.reveal").on("change.reveal", e => {
-				$($(e.currentTarget).data("reveal")).slideToggle();
-			});
+		form.find("[data-reveal]").off("change.reveal").on("change.reveal", e => {
+			$($(e.currentTarget).data("reveal")).slideToggle();
 		});
 
 	};
@@ -267,9 +275,8 @@ Fields = me => {
 
 	var _me = form => {
 
-		form.find(".textual-input-button[data-action='me']").off("click.me").on("click.me", e => {
-			if (me) $(`#${$(e.currentTarget).data("target")}`).val(me());
-		});
+		form.find(".textual-input-button[data-action='me']").off("click.me")
+			.on("click.me", e => $(`#${$(e.currentTarget).data("target")}`).val(options.me()));
 
 	};
 
@@ -284,14 +291,17 @@ Fields = me => {
 
 	};
 	
-	
-	_steps = [
-		_listen, _numerical, _erase, _radio, _menus,
-		_complex, _reveal, _dim, _autosize, _me, _datetime,
-		_spans
-	];
+	var _start = () => {
+		_steps = [
+			_listen, _numerical, _erase, _radio, _menus,
+			_complex, _reveal, _dim, _autosize, _me, _datetime,
+			_spans
+		];
+	};
 	/* <!-- Internal Functions --> */
 
+	_start();
+	
 	/* <!-- External Visibility --> */
 	return {
 

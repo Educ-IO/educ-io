@@ -1,22 +1,19 @@
 App = function() {
 	"use strict";
-
-	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
-
+	
 	/* <!-- Returns an instance of this if required --> */
 	if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
 	/* <!-- Internal Constants --> */
-	const STATE_OPENED = "opened",
-		STATES = [STATE_OPENED];
+	const STATE_OPENED = "opened", STATES = [STATE_OPENED];
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _sheets;
+	var ಠ_ಠ, _view;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-	var _load = (id, full, complete, log) => {
+	var _load = (id, full, complete, log, parameters) => {
 
 		/* <!-- Start the Loader --> */
 		var _busy = ಠ_ಠ.Display.busy({
@@ -24,25 +21,26 @@ App = function() {
 			status: "Loading Sheet",
 			fn: true
 		});
-		var result;
 
 		return new Promise((resolve, reject) => {
 			(full ? ಠ_ಠ.Google.sheets.get(id, true) : ಠ_ಠ.Google.sheets.get(id))
-			.then(sheet => {
+				.then(sheet => {
 					ಠ_ಠ.Flags.log("Google Drive Sheet Opened", sheet);
-					result = sheet;
-				}).catch(e => ಠ_ಠ.Flags.error("Requesting Selected Google Drive Sheet", e ? e : "No Inner Error"))
-				.then(() => result && log ? ಠ_ಠ.Recent.add(result.spreadsheetId, result.properties.title, "#google,load." + result.spreadsheetId + (full ? ".full" : ".lazy")) : true)
-				.then(() => result = result && _busy({message: "Parsing Data"}) ? complete(result, ಠ_ಠ) : false)
-				.then(result => !result ? _busy() : false)
-				.then(() => result ? resolve(result) : reject());
+					return sheet;
+				})
+				.catch(e => ಠ_ಠ.Flags.error("Requesting Selected Google Drive Sheet", e ? e : "No Inner Error"))
+				.then(sheet => {
+					if (sheet && log) 
+						ಠ_ಠ.Recent.add(sheet.spreadsheetId, sheet.properties.title, "#google,load." + sheet.spreadsheetId + (full ? ".full" : ".lazy"));
+					return sheet;
+				})
+				.then(sheet => sheet && _busy({message: "Parsing Data"}) ? complete(ಠ_ಠ, sheet, parameters) : false)
+				.then(result => result ? resolve(result) : _busy() && reject());
 		});
 
 	};
 
-	var _pick = () => {
-
-		return new Promise((resolve, reject) => {
+	var _pick = () => new Promise((resolve, reject) => {
 
 			/* <!-- Open Sheet from Google Drive Picker --> */
 			ಠ_ಠ.Google.pick(
@@ -52,109 +50,12 @@ App = function() {
 			);
 
 		});
-
-	};
-
-	var _view = p => {
-
-		return sheet => {
-
-			/* <!-- Internal Variables --> */
-			var _sheet;
-			/* <!-- Internal Variables --> */
-
-			/* <!-- Internal Functions --> */
-			var _initSheet = function(data, target) {
-
-				var headers = data.shift();
-				var rows = p.r ? p.r - 1 : 0;
-				while (rows > 0) {
-					headers = data.shift().map((v, i) => v ? (headers[i] ? headers[i] + " / " + v : v) : headers[i]);
-					rows--;
-				}
-
-				headers = headers.map(v => {
-					var h = _.find(p.h, h => h.n == v);
-					if (h === undefined) h = false;
-					return {
-						name: v,
-						hide: function() {
-							return !!(this.hide_default || this.hide_now);
-						},
-						hide_default: h && h.h,
-						hide_now: h && h.h,
-						hide_initially: h && h.i,
-					};
-				});
-
-				var length = 0,
-					values = data.map(v => {
-						length = Math.max(length, v.length);
-						return Object.assign({}, v);
-					});
-
-				var fields = Array.apply(null, {
-					length: length
-				}).map(Number.call, Number);
-				var table = new loki("temp.db").addCollection(p.n, {
-					indices: fields
-				});
-				table.insert(values);
-
-				_sheet = ಠ_ಠ.Datatable(ಠ_ಠ, {
-						id: "view",
-						name: name,
-						headers: headers,
-						data: table
-					}, {
-						readonly: true,
-						filters: p.f,
-						inverted_Filters: p.e,
-						sorts: p.s,
-						collapsed: true
-					},
-					target);
-
-			};
-
-			var _loadValues = function(target) {
-
-				var _finish = ಠ_ಠ.Display.busy({
-					target: target,
-					status: "Loading Data",
-					fn: true
-				});
-
-				/* <!-- Need to load the values --> */
-				ಠ_ಠ.Google.sheets.values(sheet.spreadsheetId, p.n + "!A:ZZ")
-					.then(data => {
-						_initSheet(data.values, target);
-					}).catch(err => {
-						ಠ_ಠ.Flags.error("Adding Content Table", err);
-					}).then(() => _finish());
-
-			};
-
-			_loadValues($("<div />", {
-				class: "container-fluid tab-pane"
-			}).appendTo(ಠ_ಠ.container.empty()));
-
-			/* <!-- External Visibility --> */
-			return {
-				id: () => p.i,
-				sheet: () => _sheet,
-			};
-			/* <!-- External Visibility --> */
-
-		};
-
-	};
-
-	/* <!-- See: https://developer.mozilla.org/en/docs/Web/API/WindowBase64/Base64_encoding_and_decoding --> */
-	var _encode = value => btoa(encodeURIComponent(value).replace(/%([0-9A-F]{2})/g, (m, p) => String.fromCharCode("0x" + p)));
-	var _decode = value => decodeURIComponent(_.map(atob(value).split(""), (c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join(""));
 	/* <!-- Internal Functions --> */
-
+	
+	/* <!-- Internal Modules --> */
+	
+	/* <!-- Internal Modules --> */
+	
 	/* <!-- External Visibility --> */
 	return {
 
@@ -172,10 +73,10 @@ App = function() {
 			this.route = ಠ_ಠ.Router.create({
 				name: "View",
 				states: STATES,
-				test: () => !!(_sheets),
+				test: () => !!(_view),
 				clear: () => {
-					_sheets.table().defaults();
-					_sheets = null;
+					_view.table().defaults();
+					_view = null;
 				},
 				route: (handled, command) => {
 
@@ -187,68 +88,63 @@ App = function() {
 						_pick()
 							.then(f => {
 								ಠ_ಠ.Router.clean(false); /* <!-- Clear the existing state --> */
-								return _load(f, (/FULL/i).test(command[1]), ಠ_ಠ.Sheets, true);
+								return _load(f, (/FULL/i).test(command[1]), ಠ_ಠ.ReadWrite, true);
 							})
-							.then(s => {
-								_sheets = s;
+							.then(view => {
+								_view = view;
 								ಠ_ಠ.Display.size.resizer.height("#site_nav, #sheet_tabs", "div.tab-pane");
 							})
-							.catch(() => _sheets = null);
+							.catch(() => _view = null);
 
 					} else if ((/LOAD/i).test(command)) {
 
 						ಠ_ಠ.Router.clean(false); /* <!-- Clear the existing state --> */
 
 						/* <!-- Load the Supplied File Id --> */
-						_load(command[1], (/FULL/i).test(command[2]), ಠ_ಠ.Sheets, true)
-							.then(s => {
-								_sheets = s;
+						_load(command[1], (/FULL/i).test(command[2]), ಠ_ಠ.ReadWrite, true)
+							.then(view => {
+								_view = view;
 								ಠ_ಠ.Display.size.resizer.height("#site_nav, #sheet_tabs", "div.tab-pane");
 							})
-							.catch(() => _sheets = null);
+							.catch(() => _view = null);
 
 					} else if ((/SAVE/i).test(command)) {
 
 						/* <!-- Save As JSON to Google Drive --> */
+						
 
 					} else if ((/HEADERS/i).test(command)) {
 						
-						if (_sheets) {
-							if ((/INCREMENT/i).test(command[1])) {
-								_sheets.headers.increment();
-							} else if ((/DECREMENT/i).test(command[1])) {
-								_sheets.headers.decrement();
-							} else if ((/MANAGE/i).test(command[1])) {
-								_sheets.headers.manage();
-							} else if ((/RESTORE/i).test(command[1])) {
-								_sheets.headers.restore();
-							}
-						}
+						if (_view) _view.headers[
+							(/INCREMENT/i).test(command[1]) ? "increment" :
+							(/DECREMENT/i).test(command[1]) ? "decrement" :
+							(/MANAGE/i).test(command[1]) ? "manage" : "restore"
+						]();
 						
 					} else if ((/VISIBILITY/i).test(command)) {
 
-						if ((/COLUMNS/i).test(command[1]) && _sheets) _sheets.table().columns.visibility();
+						if ((/COLUMNS/i).test(command[1]) && _view) _view.table().columns.visibility();
 
 					} else if ((/EXPORT/i).test(command)) {
 
-						if (_sheets) _sheets.export((/FULL/i).test(command));
+						if (_view) _view.export((/FULL/i).test(command));
 
 					} else if ((/FREEZE/i).test(command)) {
 
-						if (_sheets) _sheets.table().freeze((/ROWS/i).test(command[1]));
+						if (_view) _view.table().freeze((/ROWS/i).test(command[1]));
 
 					} else if ((/LINK/i).test(command)) {
 
-						var _data = _sheets.table().dehydrate();
-						_data.i = _sheets.id();
+						var _data = _view.table().dehydrate();
+						_data.i = _view.id();
 
-						var _link = ಠ_ಠ.Flags.full("view/#google,view." + _encode(JSON.stringify(_data))),
+						var _link = ಠ_ಠ.Flags.full("view/#google,view." + ಠ_ಠ.Strings().base64.encode(JSON.stringify(_data))),
 							_clipboard;
 
 						ಠ_ಠ.Display.modal("link", {
 							id: "generate_link",
 							target: ಠ_ಠ.container,
-							title: "Your View Link",
+						title: "Your View Link",
 							instructions: ಠ_ಠ.Display.doc.get("LINK_INSTRUCTIONS"),
 							link: _link,
 							qr_link: () => "https://chart.googleapis.com/chart?cht=qr&chs=540x540&choe=UTF-8&chl=" + encodeURIComponent(_link),
@@ -277,11 +173,11 @@ App = function() {
 
 					} else if ((/DEFAULTS/i).test(command)) {
 
-						if (_sheets) _sheets.table().defaults();
+						if (_view) _view.table().defaults();
 
 					} else if ((/REFRESH/i).test(command)) {
 
-						if (_sheets) _sheets.refresh();
+						if (_view) _view.refresh();
 
 					} else if ((/CLOSE/i).test(command)) {
 
@@ -296,16 +192,12 @@ App = function() {
 						/* <!-- Show the View --> */
 						var params;
 						try {
-							params = JSON.parse(_decode(command[1]));
+							params = JSON.parse(ಠ_ಠ.Strings().base64.decode(command[1]));
+							if (params.i) _load(params.i, false, ಠ_ಠ.ReadOnly, false, params)
+								.then(view => (_view = view) && ಠ_ಠ.Display.size.resizer.height("#site_nav, #sheet_tabs", "div.tab-pane"))
+								.catch(() => _view = null);
 						} catch (e) {
 							ಠ_ಠ.Flags.error("Failed to Parse View Params", e ? e : "No Inner Error");
-						}
-
-						if (params && params.i) {
-							_load(params.i, false, _view(params), false).then((s) => {
-								_sheets = s;
-								ಠ_ಠ.Display.size.resizer.height("#site_nav, #sheet_tabs", "div.tab-pane");
-							}).catch(() => _sheets = null);
 						}
 
 					}

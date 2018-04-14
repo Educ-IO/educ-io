@@ -1,7 +1,11 @@
-Datatable = function(ಠ_ಠ, table, options, target, after_update) {
-
-	/* <!-- table = {id, name, data, headers} --> */
-	/* <!-- options = {filters, inverted_Filters, sorts, widths, frozen, readonly, advanced, collapsed, template, removable} --> */
+Datatable = (ಠ_ಠ, table, options, target, after_update) => {
+	"use strict";
+	
+	/* <!-- MODULE: Provides a filterable representation of tablular-style data --> */
+  /* <!-- PARAMETERS: Receives the global app context, the source table data, options, target element and callback function for post-updates --> */
+	/* <!-- REQUIRES: Global Scope: JQuery, Underscore | App Scope: Flags, CSS --> */
+	/* <!-- @table = {id, name, data, headers} --> */
+	/* <!-- @options = {filters, inverted_Filters, sorts, widths, frozen, readonly, advanced, collapsed, template, removable} --> */
 
 	/* <!-- Internal Consts --> */
 	const LARGE_ROWS = 200, FILTER_DELAY = 200, defaults = {
@@ -631,11 +635,14 @@ Datatable = function(ಠ_ಠ, table, options, target, after_update) {
 			f: _filters.normal(),
 			e: _filters.inverted(),
 			s: _sorts,
-			r: options.frozen && options.frozen.rows ? options.frozen.rows : 1,
+			c: table.headers.length,
+			r: _.isNumber(options.header_rows()) ? options.header_rows() : 1,
+			z: _.isNumber(options.hide_rows()) ? options.hide_rows() : 0,
 			h: _.chain(table.headers).filter(h => h.hide(true)).map(h => ({
 				n: h.name,
 				h: h.hide_always,
-				i: h.hide_initially
+				i: h.hide_initially,
+				p: h.index
 			})).value()
 		}),
 		

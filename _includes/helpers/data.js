@@ -1,6 +1,9 @@
 Data = () => {
 	"use strict";
 	
+	/* <!-- MODULE: Form data to/from JSON Object --> */
+	/* <!-- REQUIRES: Global Scope: JQuery, Underscore --> */
+	
 	/* <!-- Internal Constants --> */
 	const INPUTS = "*[data-output-field], :input[name]:enabled";
   /* <!-- Internal Constants --> */
@@ -14,7 +17,7 @@ Data = () => {
 			var value = el => {
 
 				var simple = el => {
-					var _type = el.data("output-type"),
+					var _type = el.data("output-type") || el.prop("type") || "string",
 						_val = (el[0].type == "checkbox" || el[0].type == "radio") ?
 							el.is("input:indeterminate") ? "all" : el.prop("checked") :
 						(el[0].nodeName == "P" || el[0].nodeName == "DIV" || el[0].nodeName == "SPAN") ?
@@ -29,7 +32,10 @@ Data = () => {
 						el.val();
 					
 					/* <!-- TODO: Handle Parsing of types here --> */
-					return _type == "datetime" ? _val : _val;
+					return _val !== "" ? 
+						_type == "datetime" ? _val : 
+						_type == "number" ? Number(_val) : 
+						_val : _val;
 				};
 
 				var complex = descendants => {
@@ -58,7 +64,7 @@ Data = () => {
 							var _$ = $(input);
 							if (_$.parents("*[data-output-name]").length === 0) { /* <!-- Only Process Top-Level Values --> */
 								var _val = value(_$), _name = _$.data("output-name") ? _$.data("output-name") : "Value";
-								if (_val === true || _val === false || !_.isEmpty(_val)) field[_name] = (field[_name] !== undefined ? 
+								if (_val === true || _val === false || _.isNumber(_val) || _.isEmpty(_val)) field[_name] = (field[_name] !== undefined ? 
 											(_.isArray(field[_name]) ? field[_name].concat(_val) : [field[_name], _val]) : _val);
 							}
 							return field;

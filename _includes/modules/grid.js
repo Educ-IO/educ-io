@@ -1,17 +1,25 @@
-Sheet = function(ಠ_ಠ, data, options) {
+Grid = (ಠ_ಠ, data, options) => {
 	"use strict";
-
+	
+	/* <!-- MODULE: Provides a interpreted grid object which essentially wraps Google Sheet/Tab Data --> */
+  /* <!-- PARAMETERS: Receives the global app context, the Google sheet data, and options --> */
+	/* <!-- REQUIRES: Global Scope: Moment, Underscore | App Scope: Flags --> */
+	/* <!-- @options = see defaults below --> */
+	/* <!-- NOTES: Data will be modified by this module, so pass in a shallow cloned array if required --> */
+	
 	/* <!-- Internal Constants --> */
 	const defaults = {
 		frozen: {
-			cols: options.sheet ? options.sheet.properties.gridProperties.frozenColumnCount : false,
-			rows: options.sheet ? options.sheet.properties.gridProperties.frozenRowCount : false,
+			cols: options.sheet && options.sheet.properties ? options.sheet.properties.gridProperties.frozenColumnCount : false,
+			rows: options.sheet && options.sheet.properties ? options.sheet.properties.gridProperties.frozenRowCount : false,
 		},
 		size: {
-			cols: options.sheet ? options.sheet.properties.gridProperties.columnCount : false,
-			rows: options.sheet ? options.sheet.properties.gridProperties.rowCount : false,
+			/* <!-- NOTE: should fall back to measuring the data first row length if possible? --> */
+			cols: options.sheet && options.sheet.properties ? options.sheet.properties.gridProperties.columnCount : false,
+			rows: options.sheet && options.sheet.properties ? options.sheet.properties.gridProperties.rowCount : false,
 		},
-		locale: options.sheets ? options.sheets.properties.locale ? options.sheets.properties.locale.replace("_", "-") : false : false,
+		locale: options.sheets && options.sheet.properties ? 
+			options.sheets.properties.locale ? options.sheets.properties.locale.replace("_", "-") : false : false,
 		process: {
 			hides: true,
 			blanks: true,
@@ -28,8 +36,9 @@ Sheet = function(ಠ_ಠ, data, options) {
 		fields = [],
 		values = [],
 		dates = [],
+		blanks = [],
 		rows = options.header_rows !== undefined ? options.header_rows : options.frozen.rows ? options.frozen.rows : 1,
-		cols, hide = options.hide_rows !== undefined ? options.hide_rows : 0;
+		hide = options.hide_rows !== undefined ? options.hide_rows : 0;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -41,25 +50,19 @@ Sheet = function(ಠ_ಠ, data, options) {
 
 		/* <!-- Check for fully 'blank' columns --> */
 		ಠ_ಠ.Flags.time("Checking Blank Columns");
-		var _hasValues = Array.apply(null, {
+		blanks = Array.apply(null, {
 			length: options.size.cols
 		}).map(Number.call, Number);
-		_.find(data.slice(rows), row => {
+		/* <!-- NOTE: a fully 'blank' column is excluding the header and any hidden initial rows --> */
+		_.find(data.slice(hide + rows), row => {
 			_.each(row, (cell, index) => {
-				if (cell) _hasValues = _.filter(_hasValues, (number) => number !== index);
+				if (cell) blanks = _.filter(blanks, number => number !== index);
 			});
-			return (_hasValues.length === 0);
+			return (blanks.length === 0);
 		});
-		if (_hasValues && _hasValues.length > 0) {
-			ಠ_ಠ.Flags.log("Blank Columns in Sheet:", JSON.stringify(_hasValues));
-			_hasValues.reverse();
-			data = _.map(data, row => {
-				_.each(_hasValues, index => row.length > (index + 1) ? row.splice(index, 1) : false);
-				return row;
-			});
-		}
 		ಠ_ಠ.Flags.time("Checking Blank Columns", true);
-		return options.size.cols - _hasValues.length;
+		ಠ_ಠ.Flags.log("Blank Columns in Sheet:", JSON.stringify(blanks));
+		
 	};
 
 	var _headers = count => {
@@ -67,8 +70,8 @@ Sheet = function(ಠ_ಠ, data, options) {
 		/* <!-- Handle Headers --> */
 		ಠ_ಠ.Flags.time("Generating Headers");
 		while (count-- > 0) headers = data.shift().map((v, i) => v ? (headers[i] ? `${headers[i]} / ${v}` : v) : headers[i]);
-		if (cols && headers.length === 0) headers = Array.apply(null, {
-			length: cols
+		if (options.size.cols && headers.length === 0) headers = Array.apply(null, {
+			length: options.size.cols
 		});
 		ಠ_ಠ.Flags.time("Generating Headers", true);
 
@@ -106,7 +109,7 @@ Sheet = function(ಠ_ಠ, data, options) {
 			not: [],
 			current: 0
 		};
-		while (data.length > _check.current && (_check.is.length + _check.not.length) < cols) {
+		while (data.length > _check.current && (_check.is.length + _check.not.length) < options.size.cols) {
 			_check = _.reduce(data[_check.current++], (dates, value, index) => {
 				if (value && dates.is.indexOf(index) < 0 && dates.not.indexOf(index) < 0)
 					_.isString(value) && moment(value, _formats, true).isValid() ? dates.is.push(index) : dates.not.push(index);
@@ -146,11 +149,13 @@ Sheet = function(ಠ_ಠ, data, options) {
 
 	/* <!-- Internal Initialisation --> */
 	if (data && data.length > 0) {
+		
 		options.process.hides ? _hide(hide) : false;
-		cols = options.process.blanks ? _blanks() : options.size.cols;
+		options.process.blanks ? _blanks() : false;
 		options.process.headers ? _headers(rows) : false;
 		options.process.dates && moment ? _dates() : false;
 		options.process.values ? _values() : false;
+		
 	}
 	/* <!-- Internal Initialisation --> */
 
@@ -173,7 +178,9 @@ Sheet = function(ಠ_ಠ, data, options) {
 
 		header_rows: () => rows,
 
-		hide_rows: () => hide
+		hide_rows: () => hide,
+		
+		blanks: () => blanks
 	};
 	/* <!-- External Visibility --> */
 

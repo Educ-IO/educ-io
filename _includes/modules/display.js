@@ -188,6 +188,8 @@ Display = function() {
 				
 				Handlebars.registerHelper("concat", (...args) => _.reduce(args, (m, a) => _.isObject(a) ? m : (m + a), ""));
 
+				Handlebars.registerHelper("replace", (value, replace, replacement) => value ? value.replace(new RegExp(replace, "g"), replacement) : "");
+					
 				Handlebars.registerHelper("inc", (number, options) => {
 					if(typeof(number) === "undefined" || number === null) return null;
 					return number + (options && options.hash.inc || 1);
@@ -289,8 +291,8 @@ Display = function() {
 						/* <!-- Handle Screen / Window Resize Events --> */
 						var _source = source ? source : window, _resizer = () => {
 							var _height = 0;
-							$(measure).each(function() {
-								_height += $(this).outerHeight(true);
+							_.each($(measure), el => {
+								_height += $(el).outerHeight(true);
 							});
 							$(target).css(property ? property : "max-height", $(_source).height() - _height - 
 														((bottom !== null && bottom !== undefined) ? bottom : 20));
@@ -402,6 +404,7 @@ Display = function() {
 								form.classList.add("was-validated");
 							});
 							
+							/* <!-- NOTES: Reliance on serializeArray can be removed once all Apps are ready for dyhydrated objects (e.g. Folders) --> */
 							var _form = dialog.find("form"), _values = ಠ_ಠ.Data ? ಠ_ಠ.Data().dehydrate(_form) : _form.serializeArray();
 							if (!ಠ_ಠ.Data) _.each(_form.find("input:indeterminate"), el => _values.push({name : el.name, value : "all"}));
 							

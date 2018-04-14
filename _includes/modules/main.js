@@ -212,7 +212,7 @@ Main = function() {
 			ಠ_ಠ.Google.me().then(user => {
 
 				user.display_name = (u => () => u.name.length == 3 ? u.name.split(" ").join("") : u.name)(user);
-														 
+
 				user.full_name = (u => () => `${u.display_name()} (${u.email})`)(user);
 					
 				ಠ_ಠ.me = user;

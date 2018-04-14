@@ -1,5 +1,15 @@
 Network = (base, timeout, per_sec, concurrent, retry, type) => {
 	"use strict";
+	
+	/* <!-- MODULE: Provides HTTP methods to call APIs, with concurrency and rate limiting functionality --> */
+  /* <!-- PARAMETERS: Receives the global app context, the Google sheet data, and options --> */
+	/* <!-- REQUIRES: Global Scope: Underscore --> */
+	/* <!-- @base = base url for requests to be made against (e.g. https://api.example.com) --> */
+	/* <!-- @timeout = wait period (in ms) before request times out (after calling, not submission) --> */
+	/* <!-- @per_sec = number of requests that should be made per second (max) --> */
+	/* <!-- @concurrent = number of simultaneous non-resolved requests that should be made --> */
+	/* <!-- @retry = method that takes a response and returns a promise, which will resolve to a truthy value if the request is to be re-tried. Used to detect custom rate limit responses etc. [optional] --> */
+	/* <!-- @type = default fetch mode (e.g. cors, by default) --> */
 
 	/* <!-- Backoff Constants --> */
 	const RETRY_MAX = 10;
@@ -10,13 +20,8 @@ Network = (base, timeout, per_sec, concurrent, retry, type) => {
 	/* <!-- Internal Constants --> */
 	const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
 	const RANDOM = (lower, higher) => Math.random() * (higher - lower) + lower;
-	const QUERY = (value, append) => _.reduce(_.keys(value), (str, key, i) => {
-		var delimiter, val;
-		delimiter = (i === 0 && !append) ? "?" : "&";
-		key = encodeURIComponent(key);
-		val = encodeURIComponent(value[key]);
-		return [str, delimiter, key, "=", val].join("");
-	}, "");
+	const QUERY = (value, append) => _.reduce(_.keys(value),
+					(str, key, i) => `${str}${(i === 0 && !append) ? "?" : "&"}${encodeURIComponent(key)}=${encodeURIComponent(value[key])}`, "");
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Limiter = Rate Limited Requests --> */
@@ -47,24 +52,20 @@ Network = (base, timeout, per_sec, concurrent, retry, type) => {
 			}
 		};
 
-		var _add = (promise, details, id) => {
-			return new Promise((resolve, reject) => {
-				queue.push({
-					id: id,
-					resolve: resolve,
-					reject: reject,
-					promise: promise,
-					details: details
-				});
-				_dequeue();
+		var _add = (promise, details, id) => new Promise((resolve, reject) => {
+			queue.push({
+				id: id,
+				resolve: resolve,
+				reject: reject,
+				promise: promise,
+				details: details
 			});
-		};
+			_dequeue();
+		});
 
 		return {
 			
-			add: function(promises, details) {
-				return _add(promises, details, total += 1);
-			},
+			add: (promises, details) => _add(promises, details, total += 1),
 			
 			status : () => ({
 				queue: queue.length,
@@ -210,9 +211,9 @@ Network = (base, timeout, per_sec, concurrent, retry, type) => {
 			limiter: LIMITER.status()
 		}),
 		
-		before: (fn) => _before = fn,
+		before: fn => _before = fn,
 
-		check: (fn) => _check = fn,
+		check: fn => _check = fn,
 
 		delete: (url, data) => _request("delete", url, data),
 

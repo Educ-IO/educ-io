@@ -49,8 +49,6 @@ globals:
   Main: true
   Service: true
   Recent: true
-  Sheet: true
-  Sheets: true
   Table: true
   Datatable: true
   Folder: true
@@ -63,3 +61,7 @@ globals:
   Items: true
   Data: true
   Headers: true
+  Query: true
+  Saver: true
+  Strings: true
+  Grid: true

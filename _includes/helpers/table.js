@@ -1,18 +1,23 @@
 Table = (table, outside, css) => {
 	"use strict";
 	
+	/* <!-- MODULE: Provides customised table behaviour (e.g. cached rendering) --> */
+  /* <!-- PARAMETERS: Receives the table element, the containing (outside) element and a css helper factory function --> */
+	/* <!-- REQUIRES: Global Scope: JQuery, Underscore --> */
+	
 	/* <!-- Internal Constants --> */
 	const TAG = "tr", EMPTY_CLASS = "empty-rows", EMPTY_TEXT = "No rows";
 	/* <!-- Internal Constants --> */
 	
 	/* <!-- Convert to JQuery --> */
-	var $$ = (element) => (element instanceof jQuery === true) ? element : $(element);
+	var $$ = element => (element instanceof jQuery === true) ? element : $(element);
 	
 	/* <!-- Internal Variables --> */
 	var _table = $$(table), _outside = $$(outside), _css = css(_outside.id, _outside.id);
 	
 	/* <!-- Internal Scroll Variables --> */
-	var  _rows, _cache, _content, _rows_in_block,	_blocks_in_cluster, _rows_in_cluster, _row_height, _block_height, _cluster_height, _last_cluster = false, _scroll_top, mac = navigator.platform.toLowerCase().indexOf("mac") + 1;
+	var  _rows, _cache, _content, _rows_in_block,	_blocks_in_cluster, _rows_in_cluster, _row_height, _block_height, _cluster_height,
+			_last_cluster = false, _scroll_top, mac = navigator.platform.toLowerCase().indexOf("mac") + 1;
 	
 	/* <!-- Internal Freeze Variables --> */
 	var _frozen_Cols;
@@ -29,7 +34,7 @@ Table = (table, outside, css) => {
 		return changed;
 	};
 
-	var html = data => {_content.html(data);};
+	var html = data => _content.html(data);
 	
 	var getRowsHeight = rows => {
 		var prev_row_height = _row_height;
@@ -194,7 +199,9 @@ Table = (table, outside, css) => {
 				
 			},
 			
-			refresh : force => (getRowsHeight(_rows) || force) ? this.update(_rows) : this,
+			refresh : function(force) {
+				return (getRowsHeight(_rows) || force) ? this.update(_rows) : this;
+			},
 			
 			update : function(new_rows) {
 				
@@ -213,7 +220,9 @@ Table = (table, outside, css) => {
 				
 			},
 			
-			clear : () => this.update([]),
+			clear : function() {
+				return this.update([]);
+			},
 			/* <!-- External Functions --> */
 			
 		},

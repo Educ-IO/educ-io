@@ -17,7 +17,9 @@ App = function() {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _data, _result, _template, _nodes, _template_Resize, _template_File, _db;
+	var ಠ_ಠ, _records, _master, _output;
+	
+	var _result, _template, _nodes, _template_Resize, _template_File;
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -110,183 +112,6 @@ App = function() {
 
 	});
 
-	var _loadDataSheet = (id, name, tab) => ಠ_ಠ.Google.sheets.get(id, false).then(sheet => {
-
-		ಠ_ಠ.Flags.log("Google Drive Sheet Opened", sheet);
-
-		var _loadSheet = (name, names) => ಠ_ಠ.Google.sheets.values(sheet.spreadsheetId, `${name}!A:ZZ`)
-			.then(data => {
-
-				var _headings = {
-						tabs: [{
-							id: "cols",
-							name: "Columns",
-							actions: names ? _.reduce(names, (m, n, i) => {
-								m[i] = {
-									url: `#google,load.data.${sheet.spreadsheetId}.${n}`,
-									name: n,
-									desc: "Open different data tab",
-									class: n == name ? "text-uppercase font-weight-bold" : ""
-								};
-								return m;
-							}, {}) : null
-						}, {
-							id: "rows",
-							name: "Data",
-							actions_current_only: true,
-							actions: {
-								headers: {
-									url: "#headers.manage",
-									name: "Headers",
-									desc: "Manage the headers"
-								},
-								increment: {
-									url: "#headers.increment",
-									icon: "vertical_align_bottom",
-									name: "Increase",
-									desc: "Increase Headers by one Row"
-								},
-								decrement: {
-									url: "#headers.decrement",
-									icon: "vertical_align_top",
-									name: "Decrease",
-									desc: "Decrease Headers by one Row",
-								},
-								restore: {
-									url: "#headers.restore",
-									icon: "undo",
-									name: "Restore",
-									desc: "Restore Original Headers",
-									divider: true
-								}
-							}
-						}]
-					},
-					_tabs = ಠ_ಠ.Display.template.show({
-						template: "tab-list",
-						class: "pt-2 px-0",
-						id: sheet.spreadsheetId,
-						name: sheet.properties.title,
-						nav: "data_tabs",
-						links: ಠ_ಠ.Display.template.get("tab-links")(_headings),
-						tabs: ಠ_ಠ.Display.template.get("tab-tabs")(_headings),
-						target: $("#merge_split_data"),
-						clear: true
-					});
-
-				var _map = field => v => ({
-					name: v,
-					hide: function(initial) {
-						return !!(initial && this.hide_initially);
-					},
-					set_hide: function(now, always, initially) {
-						this.hide_initially = initially;
-					},
-					hide_always: false,
-					hide_now: false,
-					hide_initially: false,
-					field: field ? field(v) : null,
-				});
-				var _sheet = ಠ_ಠ.Sheet(ಠ_ಠ, data.values, {
-					sheet: _.find(sheet.sheets, sheet => sheet.properties.title == name)
-				});
-
-				/* <!-- Create Cols Table --> */
-				var _cols = {
-					id: `${sheet.spreadsheetId}_${name}_${_headings.tabs[0].id}`,
-					headers: () => _.map(["Name", "Mapping", "Actions"], _map(v => v.toLowerCase())),
-					data: function() {
-						var _data = (_db ? _db : _db = new loki("folders.db")).addCollection(this.id, {
-							unique: [],
-							indices: ["name", "mapping"]
-						});
-						_data.insert(_.map(_sheet.headers(), v => ({
-							name: v,
-							mapped: false
-						})));
-						return _data;
-					}
-				};
-				ಠ_ಠ.Datatable(ಠ_ಠ, {
-					id: _cols.id,
-					name: _headings.tabs[0].name,
-					data: _cols.data(),
-					headers: _cols.headers(),
-					classes: ["table-responsive"]
-				}, {
-					template: "meta_rows",
-					advanced: false,
-					collapsed: true,
-					removable: true
-				}, $(`#tab_${_headings.tabs[0].id}`));
-				/* <!-- Create Cols Table --> */
-
-
-				/* <!-- Create Data Table --> */
-				var _rows = {
-					id: `${sheet.spreadsheetId}_${name}_${_headings.tabs[1].id}`,
-					headers: () => _.map(_sheet.headers(), _map()),
-					data: function() {
-						var _data = _db.addCollection(this.id, {
-							unique: [],
-							indices: _sheet.fields(),
-							serializableIndices: false
-						});
-						_data.insert(_sheet.values());
-						return _data;
-					}
-				};
-
-				ಠ_ಠ.Datatable(ಠ_ಠ, {
-					id: _rows.id,
-					name: _headings.tabs[1].name,
-					data: _rows.data(),
-					headers: _rows.headers(),
-					classes: ["table-responsive"],
-				}, {
-					advanced: false,
-					collapsed: true,
-					removable: true
-				}, $(`#tab_${_headings.tabs[1].id}`));
-				/* <!-- Create Data Table --> */
-
-				_tabs.find("a.nav-link").first().tab("show");
-
-				ಠ_ಠ.Display.state().enter(STATE_LOADED_DATA);
-
-				return data.values;
-			});
-
-		var _names = _.map(sheet.sheets, sheet => sheet.properties.title);
-		return (tab || _names.length == 1 ?
-			_loadSheet(tab ? tab : sheet.sheets[0].properties.title, tab && _names.length > 1 ? _names : null) :
-			ಠ_ಠ.Display.choose({
-				id: "merge_choose_sheet",
-				title: "Merge data from tab ...",
-				instructions: ಠ_ಠ.Display.doc.get({
-					name: "IMPORT_CHOOSE_SHEET",
-					content: name
-				}),
-				action: "Open",
-				choices: _.map(sheet.sheets, tab => tab.properties.title)
-			}).then(tab => _loadSheet(tab, _names)));
-
-	});
-
-	var _loadData = (file, tab) => {
-
-		if (file.mimeType.toLowerCase() == ಠ_ಠ.Google.files.natives()[1].toLowerCase()) {
-
-			return _loadDataSheet(file.id, file.name, tab);
-
-		} else {
-
-			return Promise.reject(`Can't load ${file.name}, as we can't process type: ${file.mimeType}`);
-
-		}
-
-	};
-
 	var _loadTemplate = file => {
 
 		if (file.mimeType.toLowerCase() == ಠ_ಠ.Google.files.natives()[0].toLowerCase()) {
@@ -362,6 +187,8 @@ App = function() {
 	--> */
 
 	};
+	
+	var _resize = () => ಠ_ಠ.Display.size.resizer.height("#site_nav, #data_tabs", "div.tab-pane");
 	/* <!-- Internal Functions --> */
 
 	/* <!-- External Visibility --> */
@@ -382,8 +209,8 @@ App = function() {
 				states: STATES,
 				test: () => ಠ_ಠ.Display.state().in(STATE_OPENED),
 				clear: () => {
-					_data = null;
-					_template = null;
+					_records = null;
+					_master = null;
 					if (_template_Resize) _template_Resize() && (_template_Resize = null);
 				},
 				route: (handled, command) => {
@@ -426,6 +253,14 @@ App = function() {
 						.catch(e => ಠ_ಠ.Flags.error("Uploading Failure: ", e ? e : "No Inner Error"))
 							.then(_busy);
 
+					} else if ((/HEADERS/i).test(command)) {
+			
+						if (_records) _records.headers[
+							(/INCREMENT/i).test(command[1]) ? "increment" :
+							(/DECREMENT/i).test(command[1]) ? "decrement" :
+							(/MANAGE/i).test(command[1]) ? "manage" : "restore"
+						]().then(_resize);
+						
 					} else if ((/MERGE/i).test(command)) {
 
 						_busy = ಠ_ಠ.Display.busy({
@@ -487,14 +322,18 @@ App = function() {
 							_pick.form() :
 							ಠ_ಠ.Google.files.get(command[2]))
 						.then(file => ((/DATA/i).test(command[1]) ?
-									_loadData(file, command[3]) :
+							ಠ_ಠ.Records(ಠ_ಠ, file, $("#merge_split_data"), command[3])
+								.then(records => {
+									_records = records;
+									ಠ_ಠ.Display.state().enter(STATE_LOADED_DATA);
+									_resize();
+								}) :
 									(/TEMPLATE/i).test(command[1]) ?
 									_loadTemplate(file) :
 									Promise.reject("Missing Process"))
 								.then(result => {
 									ಠ_ಠ.Flags.log("PROCESSED LOAD:", result);
-									_data = result;
-
+							
 									/* <!-- Store in Relevant Recent Items --> */
 									var _type = command[1].toLowerCase(),
 										_recent = RECENT[_type].db;
@@ -513,7 +352,9 @@ App = function() {
 
 					} else if ((/TEST/i).test(command)) {
 
-						ಠ_ಠ.Flags.log("Data:", _data);
+						ಠ_ಠ.Flags.log("Records:", _records);
+						ಠ_ಠ.Flags.log("Master:", _master);
+						ಠ_ಠ.Flags.log("Output:", _output);
 						ಠ_ಠ.Flags.log("Template:", _template);
 						ಠ_ಠ.Flags.log("Nodes:", _nodes);
 						
@@ -521,7 +362,7 @@ App = function() {
 
 				}
 			});
-
+			
 			/* <!-- Return for Chaining --> */
 			return this;
 
