@@ -1,5 +1,5 @@
 {% assign _recent_articles = site.articles | sort: 'date' | reverse | limit:10 %}{% assign _recent_news = site.news | sort: 'date' | reverse | limit:10 %}{% assign _recent_extensions = site.extensions | where_exp:"e", "e.headline != nil" | sort: 'date' | reverse | limit:10 %}{% assign _recent_apps = site.apps | where_exp:"a", "a.headline != nil" | sort: 'date' | reverse | limit:10 %}{% assign _recent = "" | split: "" %}{% for _article in _recent_articles %}{% assign _recent = _recent | push: _article %}{% endfor %}{% for _news in _recent_news %}{% assign _recent = _recent | push: _news %}{% endfor %}{% for _extension in _recent_extensions %}{% assign _recent = _recent | push: _extension %}{% endfor %}{% for _app in _recent_apps %}{% assign _recent = _recent | push: _app %}{% endfor %}{% assign _recent = _recent | sort: 'date' | reverse | limit:5 %}
-{% if _recent.size > 0 %}<div id="headlines" class="carousel slide mt-1 mb-4" data-ride="carousel" data-interval="6000">
+{% if _recent.size > 0 %}<div id="headlines" class="carousel slide mt-1 mb-2" data-ride="carousel" data-interval="6000">
   
   <ol class="carousel-indicators mb-1">
     {% for post in _recent %}

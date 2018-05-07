@@ -1,4 +1,8 @@
 site :
+  0.0.9d :
+    name : Site Improvements
+    desc : Code and Design Updates
+    type : minor
   0.0.9c :
     name : Site Improvements
     desc : Code and Design Updates

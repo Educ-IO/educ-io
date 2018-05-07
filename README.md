@@ -3,3 +3,5 @@ The __[educ.io](https://educ.io)__ site is a hosted collection of web tools that
 Each of the __[educ.io](https://educ.io)__ apps work independently and provide a particular set of features. Perhaps their most valuable asset is that they act as a transparent layer over the existing Google Services. All your data remains on your device, and the Google platform, __[nothing](/about/#privacy)__ is ever sent to, or stored by, us. Nothing is __specific__ or __accessible__ only through these tools; they help you, they don't lock you in.
 
 While principally designed for educators and the education sector, many of the tools are useful in all walks of life. It works on all your devices, requiring nothing more than a [modern browser](/requirements/), so __jump in__ and __try them out__.
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ef919ba284eb46869754d168e2ed63e6 "Codacity Code Quality")](https://www.codacy.com/app/thiscouldbejd/educ-io.github.io)

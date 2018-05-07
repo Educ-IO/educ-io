@@ -107,7 +107,6 @@ Merge
 
 Folders
 -------
-* ** BUG ** Thumbnail problems are back! <-- Or maybe not?
 * Use new format MODAL form returns (once Data is stable ... activate by including Data helper in App Build)
   + Update validate method on App callers to accept object, rather than value array
   + Update _return methods on App callers to accept object, rather than value array
@@ -133,6 +132,7 @@ Reflect
 
 Complete
 --------
+* ** BUG ** Thumbnail problems are back! <-- Or maybe not? <-- NOT AN ISSUE
 * Fixed Section Scrolling on home page with Scrollify (https://projects.lukehaas.me/scrollify)? <-- DONE
 * ** IMPORTANT ** Has value / has no value column filter <-- DONE
 * ** BUG ** Inverted Filter doesn't work - fix before push release. <-- DONE
