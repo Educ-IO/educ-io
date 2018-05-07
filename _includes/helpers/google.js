@@ -1,14 +1,20 @@
-Google_API = (network, timeout) => {
+Google_API = (options, factory) => {
 	"use strict";
 
-	/* <!-- MODULE: Provides an interface onto various Google APIs --> */
-  /* <!-- PARAMETERS: Receives a network creation/factory method and a custom timeout for each network/API domain base --> */
+	/* <!-- HELPER: Provides an interface onto various Google APIs --> */
+	/* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
+	/* <!-- @options.timeout: Custom timeout for each network/API domain base --> */
+	/* <!-- @factory.Network: Function to create a network helper object --> */
 	/* <!-- REQUIRES: Global Scope: Underscore --> */
+	/* <!-- REQUIRES: Factory Scope: Network helper --> */
 	
 	/* === Internal Visibility === */
 
 	/* <!-- Internal Constants --> */
-	const PAGE_SIZE = 500,
+	const DEFAULTS = {};
+	
+	const LAST_RESORT_TIMEOUT =60000,
+		PAGE_SIZE = 500,
 		BATCH_SIZE = 50,
 		PATH_LIMIT = 150;
 
@@ -91,14 +97,15 @@ Google_API = (network, timeout) => {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
+	options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
 	var KEY, CLIENT_ID, _check, _before, _token, _nameCache = {};
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Network Variables --> */
 	const NETWORKS = _.reduce(URLS, (networks, url) => {
-		networks[url.name] = network(url.url, timeout ? timeout : url.timeout ? url.timeout : 60000, url.rate ? url.rate : 0, url.concurrent ? url.concurrent : 0, r =>
+		networks[url.name] = factory.Network({base : url.url, timeout: options.timeout ? options.timeout : url.timeout ? url.timeout : LAST_RESORT_TIMEOUT, per_sec : url.rate ? url.rate : 0, concurrent : url.concurrent ? url.concurrent : 0, retry :  r =>
 			new Promise(resolve => r.status == 403 || r.status == 429 ?
-				r.json().then(result => result.error.message && result.error.message.indexOf("Rate Limit Exceeded") >= 0 ? resolve(true) : resolve(false)) : resolve(false)));
+				r.json().then(result => result.error.message && result.error.message.indexOf("Rate Limit Exceeded") >= 0 ? resolve(true) : resolve(false)) : resolve(false))}, factory);
 		return networks;
 	}, {});
 	/* <!-- Network Variables --> */

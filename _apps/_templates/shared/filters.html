@@ -22,7 +22,7 @@
     </div>
     <div class="input-group col-md-12 col-lg-8 col-xl-6 p-0 no-gutters d-none d-md-flex">
       <span class="input-group-prepend">
-        <a tabindex="0" class="btn btn-action" role="button" data-toggle="popover" data-offset="0 -50%" title="Instructions" data-html=true data-content="{{../instructions}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
+        <a tabindex="0" class="btn btn-action" role="button" data-toggle="popover" data-offset="0 -50%" data-placement="right" data-boundary="viewport" title="Instructions" data-html=true data-content="{{../instructions}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
       </span>
       <span class="input-group-prepend"><button type="button" class="btn btn-secondary" data-command="clear" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" title="Clear this filter">&times;</button></span>
       <input data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-action="filter" type="text" class="form-control table-search" placeholder="Filter {{#if name}}{{name}}{{else}}{{this}}{{/if}} ...">

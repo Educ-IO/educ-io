@@ -29,9 +29,7 @@ Items = (ಠ_ಠ, app) => {
 			key: _key(app, key)
 		}),
 		
-		last : number => 
-			
-			new Promise((resolve, reject) => {
+		last : number => new Promise((resolve, reject) => {
 
 				if (app) {
 					DB.keys().then(keys => Promise.all(_.chain(keys)
@@ -49,11 +47,14 @@ Items = (ಠ_ಠ, app) => {
 			}),
     
 		remove : key => new Promise((resolve, reject) => {
+      
 			key = TEST.test(key) ? key : _key(app, key);
 			DB.removeItem(key).then(() => resolve(key)).catch(e => ಠ_ಠ.Flags.error("Delete Recent Item Failure", e ? e : "No Inner Error") && reject(e));
+      
 		}),
 		
 		clean : () => {
+      
 			if (app) {
 				DB.keys().then(keys => {
 					_.chain(keys).filter(key => _is(app, key)).each(key => DB.removeItem(key).then(ಠ_ಠ.Flags.log("Cleared Recent Item: " + key)));
@@ -61,6 +62,7 @@ Items = (ಠ_ಠ, app) => {
 			} else {
 				DB.clear().then(() => ಠ_ಠ.Flags.log("Globally Cleared Recent Items")).catch(e => ಠ_ಠ.Flags.error("Global Clear Recent Items Failure", e ? e : "No Inner Error"));	
 			}
+      
 		}
 		/* <!-- External Functions --> */
 		

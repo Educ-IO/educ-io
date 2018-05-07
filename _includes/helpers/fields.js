@@ -1,23 +1,24 @@
-Fields = options => {
+Fields = (options, factory) => {
 	"use strict";
 
-	/* <!-- MODULE: Wires up form field behaviours (clear, increments, spans etc) --> */
-  /* <!-- PARAMETERS: Options, see below  --> */
+	/* <!-- HELPER: Wires up form field behaviours (clear, increments, spans etc) --> */
+	/* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
 	/* <!-- @options.me: Function to get value of me for name/email address fields [Optional]  --> */
 	/* <!-- @options.templater: Function to get template for rendering (e.g. Display.template.get) [Optional for all but complex add fields]  --> */
 	/* <!-- REQUIRES: Global Scope: JQuery, Underscore, Moment --> */
-	
+
 	/* <!-- Internal Constants --> */
-	const DATE_FORMAT = "yyyy-mm-dd", DATE_FORMAT_M = DATE_FORMAT.toUpperCase();
+	const DATE_FORMAT = "yyyy-mm-dd",
+		DATE_FORMAT_M = DATE_FORMAT.toUpperCase();
 	const EVENT_CHANGE_DT = "change.datetime";
-	const defaults = {
+	const DEFAULTS = {
 		me: () => ""
 	};
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	options = _.defaults(options, defaults);
 	var _steps;
+	options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -32,29 +33,31 @@ Fields = options => {
 		});
 
 	};
-	
+
 	var _spans = form => {
-		
+
 		var _handler = control => {
-			
+
 			if (control.data("target") && control.data("value")) {
-				
+
 				var _target = $("#" + control.data("target"));
-				
+
 				if (_target.data("target")) {
-					
+
 					var _span = control.data("span") ? control.data("span") : "";
 					_target.data("span", _span);
-					
+
 					_target = $("#" + _target.data("target"));
-					
-					var _start = _target.find("input[name='start']"), _end = _target.find("input[name='end']");
-					var _start_Date = _start.val() ? moment(_start.val(), DATE_FORMAT_M) : moment(), _end_Date;
-					
+
+					var _start = _target.find("input[name='start']"),
+						_end = _target.find("input[name='end']");
+					var _start_Date = _start.val() ? moment(_start.val(), DATE_FORMAT_M) : moment(),
+						_end_Date;
+
 					if (_span) {
-						
+
 						if (_start_Date.isValid()) {
-							
+
 							_end_Date = _start_Date.clone().add(1, _span);
 							_start.val(_start_Date.format(DATE_FORMAT_M));
 							_end.val(_end_Date.format(DATE_FORMAT_M));
@@ -70,39 +73,39 @@ Fields = options => {
 									}
 								});
 							})(_start, _span, _end);
-							
+
 						}
-						
+
 					} else {
-						
+
 						((start, end) => {
-								start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, e => {
-									var _value_S = $(e.currentTarget).val();
-									if (_value_S) {
-										_value_S = moment(_value_S, DATE_FORMAT_M);
-										if (_value_S.isValid()) {
-											var _value_E = moment(end.val(), DATE_FORMAT_M);
-											if (!end.val() || (_value_E.isValid() && _value_E.isSameOrBefore(_value_S))) 
-												end.val(moment(_value_S, DATE_FORMAT_M).add(1, "d").format(DATE_FORMAT_M));
-										}
-									} else {
-										end.val("");
+							start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, e => {
+								var _value_S = $(e.currentTarget).val();
+								if (_value_S) {
+									_value_S = moment(_value_S, DATE_FORMAT_M);
+									if (_value_S.isValid()) {
+										var _value_E = moment(end.val(), DATE_FORMAT_M);
+										if (!end.val() || (_value_E.isValid() && _value_E.isSameOrBefore(_value_S)))
+											end.val(moment(_value_S, DATE_FORMAT_M).add(1, "d").format(DATE_FORMAT_M));
 									}
-								});
-							})(_start, _end);
-						
+								} else {
+									end.val("");
+								}
+							});
+						})(_start, _end);
+
 					}
-					
+
 				}
-				
+
 			}
 
 		};
-		
+
 		form.find("button.alter-span, a.alter-span").click(e => _handler($(e.currentTarget)));
-		
+
 		form.find("button.alter-span:first-child, a.alter-span:first-child").each((i, el) => _handler($(el)));
-		
+
 	};
 
 	var _numerical = form => {
@@ -111,24 +114,26 @@ Fields = options => {
 		form.find(".alter-numerical").click(e => {
 			var _this = $(e.currentTarget);
 			if (_this.data("target") && _this.data("value")) {
-				
-				var _target = $(`#${_this.data("target")}`), 
-						_value = Number(_this.data("value"));
+
+				var _target = $(`#${_this.data("target")}`),
+					_value = Number(_this.data("value"));
 				var _min = _target.data("min") ? Number(_target.data("min")) : 0,
-						_max = _target.data("max") ? Number(_target.data("max")) : Number.MAX_VALUE;
-				
+					_max = _target.data("max") ? Number(_target.data("max")) : Number.MAX_VALUE;
+
 				if (_target.hasClass("input-daterange") && _this.data("modifier")) {
-					
+
 					var _modifier = $(`#${_this.data("modifier")}`);
 					var _span = _modifier.data("span") ? _modifier.data("span") : "d";
-					
-					var _start = _target.find("input[name='start']"), _start_Date = _start.val() ? moment(_start.val(), DATE_FORMAT_M) : moment();
+
+					var _start = _target.find("input[name='start']"),
+						_start_Date = _start.val() ? moment(_start.val(), DATE_FORMAT_M) : moment();
 					_start.val(_start_Date.add(_value, _span).format(DATE_FORMAT_M)).trigger(EVENT_CHANGE_DT);
-					
-					
+
+
 				} else {
-					
-					var _suffix = _target.data("suffix"), _current = Number(_target.val() ? (_suffix ? _target.val().split(" ")[0] : _target.val()) : 0);
+
+					var _suffix = _target.data("suffix"),
+						_current = Number(_target.val() ? (_suffix ? _target.val().split(" ")[0] : _target.val()) : 0);
 					if (_current + _value <= _max) _current += _value;
 					if (_current <= _min) {
 						_target.val("");
@@ -138,9 +143,9 @@ Fields = options => {
 						_target.val(_current);
 					}
 					if (_target.data("target")) $("#" + _target.data("target")).val(_current <= _min ? 0 : _current);
-					
+
 				}
-				
+
 			}
 		});
 
@@ -150,10 +155,11 @@ Fields = options => {
 
 		/* <!-- Wire up eraser actions --> */
 		form.find(".eraser").click(e => {
-			var _this = $(e.currentTarget), _target = _this.data("target");
+			var _this = $(e.currentTarget),
+				_target = _this.data("target");
 			if (_target) {
 				$(`#${_target}, #${_target} > input`).val("").removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
-			} 
+			}
 			if (_this.data("reset")) {
 				var _reset = $(`#${_this.data("reset")}`);
 				if (_reset.data("default")) _reset.text(_reset.data("default"));
@@ -218,13 +224,12 @@ Fields = options => {
 					type: _this.data("item"),
 					delete: "Remove"
 				})).appendTo(_list).find("a.delete").click(e => {
-						e.preventDefault();
-						if ($(e.currentTarget).parent().siblings(".list-item").length === 0) {
-							_this.closest(".input-group").children("input[type='checkbox']").prop("checked", false);
-						}
-						$(e.currentTarget).parent().remove();
+					e.preventDefault();
+					if ($(e.currentTarget).parent().siblings(".list-item").length === 0) {
+						_this.closest(".input-group").children("input[type='checkbox']").prop("checked", false);
 					}
-				);
+					$(e.currentTarget).parent().remove();
+				});
 
 				/* <!-- Clear Up ready for next list item --> */
 				_holder.off("change.validity.test").val("").removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
@@ -246,9 +251,9 @@ Fields = options => {
 	};
 
 	var _autosize = form => {
-		
+
 		form.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
-		
+
 	};
 
 	var _reveal = form => {
@@ -267,7 +272,7 @@ Fields = options => {
 			var _this = $(e.currentTarget);
 			if (_this.hasClass("dim")) {
 				_this.siblings().addClass("dim").find("button, a[type='button']").prop("disabled", true);
-				_this.removeClass("dim").find("button, a[type='button']").prop("disabled", false);	
+				_this.removeClass("dim").find("button, a[type='button']").prop("disabled", false);
 			}
 		});
 
@@ -290,7 +295,7 @@ Fields = options => {
 		});
 
 	};
-	
+
 	var _start = () => {
 		_steps = [
 			_listen, _numerical, _erase, _radio, _menus,
@@ -301,7 +306,7 @@ Fields = options => {
 	/* <!-- Internal Functions --> */
 
 	_start();
-	
+
 	/* <!-- External Visibility --> */
 	return {
 

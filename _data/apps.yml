@@ -27,7 +27,7 @@ view:
       load: last
     - name: urlparser
       load: last
-    - name: bootstrap-js
+    - name: bootstrap-md-js
       load: last
     - name: loki
       load: last
@@ -52,6 +52,7 @@ view:
     - fields
     - strings
     - saver
+    - filters
   modules:
     - flags
     - controller
@@ -220,6 +221,13 @@ view:
               hash: refresh
               disabled_until:
                 - opened
+            - name: Virtual Scroll
+              desc: Uses Virtual Scrolling for current table view
+              hash: virtual-scroll
+              disabled_until:
+                - opened
+              toggle:
+                - virtual-scroll
             - name: Fit
               desc: Fits the data into the width of your screen
               hash: fit
@@ -639,6 +647,7 @@ folders:
     - table
     - css
     - fields
+    - filters
   modules:
     - flags
     - controller
@@ -1198,6 +1207,7 @@ merge:
     - query
     - fields
     - data
+    - filters
   modules:
     - flags
     - controller
@@ -1590,6 +1600,142 @@ tiles:
   published: false
   
   
+
+#  d8888b.  .d88b.  db      db     
+#  88  `8D .8P  Y8. 88      88     
+#  88oodD' 88    88 88      88     
+#  88~~~   88    88 88      88     
+#  88      `8b  d8' 88booo. 88booo.
+#  88       `Y88P'  Y88888P Y88888P
+###################################
+
+poll:
+  name: Poll
+  desc: Create and mail __simple poll questions__, collating responses in your own Google Sheet
+  link: /poll/
+  colour: 117b6a
+  logo: images/poll_logo.svg
+  learn: /guides/poll
+  imports:
+    - name: underscore
+      load: first
+    - name: jquery
+      load: first
+    - name: popper
+      load: first
+    - name: handlebars
+      load: last
+    - name: hello
+      load: last
+    - name: urlparser
+      load: last
+    - name: bootstrap-js
+      load: last
+    - name: loki
+      load: last
+    - name: localforage
+      load: last
+    - name: autosize
+      load: last
+    - name: moment
+      load: last
+    - name: google
+      load: lazy
+  helpers:
+    - network
+    - google
+    - css
+  modules:
+    - flags
+    - controller
+    - display
+    - help
+    - service
+    - main
+    - items
+    - recent
+    - router
+  scripts: 
+    - extends/regex
+    - extends/array
+  templates:
+    - options
+    - choose
+    - confirm
+    - alert
+    - loader
+    - recent
+    - help
+  docs:
+    - shared/FILTERS
+    - shared/JUMP
+    - shared/HELP
+    - shared/HELP_AVAILABLE
+    - shared/HELP_INDETERMINATE
+    - shared/HELP_UNAVAILABLE
+    - poll/PUBLIC
+    - poll/FEATURES
+    - poll/README
+    - poll/INSTRUCTIONS
+    - poll/TUTORIALS
+  scopes:
+    google:
+      - scope: email
+        name: View your email address
+        reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+        request: login
+      - scope: profile
+        name: View your basic profile info
+        reason: In order to display your name on the navigation menu, once you have signed in.
+        request: login
+  keys:
+    google:
+        general: AIzaSyDCfNUuj_RTi-UhCvzcMCw0bfVmSNDu8RY
+        oauth: 1065915556520-65sqjdskoddvc360dsf5j566u7em11u3.apps.googleusercontent.com
+  menus:
+    - name: Settings
+    - name: About
+      short_name: Help
+      groups:
+        all:
+          commands:
+            - name: Instructions
+              hash: instructions
+              desc: More details about how to use this app
+            - name: Tutorials
+              hash: tutorials
+              desc: Ways in which you can use this app
+            - name: Guide
+              url: /guides/poll
+              desc: A guide to using this app
+              divider: true
+            - name: Install
+              desc: Install this app into your Google Drive
+              hash: install
+              auth: google
+              scope: https://www.googleapis.com/auth/drive.install
+            - name: Permissions
+              url: /scopes/?highlight=poll
+              desc: Find out about the permissions and scopes that this app uses
+            - name: Changes
+              url: /changes?highlight=poll
+              desc: Find out about the most recent changes and features of this app
+              divider: true
+            - name: About
+              url: /about
+              desc: Find out about our platform, technology and approach
+              divider: true
+            - name: Get Help
+              hash: help
+              desc: Get help or request a feature
+              class: font-weight-bold
+              imports:
+                - jshashes
+                - fetchjsonp
+              auth: google
+  published: false
+  
+  
   
 #  .d8888.  .o88b. d8888b. d888888b d8888b. d888888b d8888b.
 #  88'  YP d8P  Y8 88  `8D   `88'   88  `8D `~~88~~' 88  `8D
@@ -1640,7 +1786,7 @@ shiny:
   desc: __Simple__ and __secure__ text editing for Chrome
   link: /extensions/shiny
   published: true
-  ext: true
+  info: true
   colour: 000080
   action: Find out more
   versions:
@@ -1677,7 +1823,7 @@ gabriel:
   desc: The __Markdown Angel__ - publish Google Docs to a static Jekyll site
   link: /extensions/gabriel
   published: true
-  ext: true
+  info: true
   colour: 333333
   action: Find out more
 
@@ -1696,7 +1842,7 @@ isams:
   desc: Avoid __downloading__ lists in iSAMS, open __directly__ in a _new tab_
   link: /extensions/isams
   published: true
-  ext: true
+  info: true
   colour: 38761d
   action: Find out more
 
@@ -1715,10 +1861,14 @@ cloudysky:
   desc: Produce __better spreadsheet__ reports from the _BlueSky_ platform, directly in your browser
   link: /extensions/cloudy-sky
   published: true
-  ext: true
+  info: true
   colour: 4a86e8
   action: Find out more
   versions:
+    1.0.9 :
+      name : Updated Page Match
+      desc : Match new Observations Report Page
+      type : minor
     1.0.8 :
       name : New Feature
       desc : Check Evidence Button on Review Page
@@ -1754,25 +1904,6 @@ cloudysky:
       changes :
         - details: Initial Code Commit
           url : https://github.com/thiscouldbejd/cloudysky-extension
-
-
-
-# d8888b. d8888b. d888888b db    db d88888b     .88b  d88. d888888b  d888b  d8888b.  .d8b.  d888888b d888888b  .d88b.  d8b   db
-# 88  `8D 88  `8D   `88'   88    88 88'         88'YbdP`88   `88'   88' Y8b 88  `8D d8' `8b `~~88~~'   `88'   .8P  Y8. 888o  88
-# 88   88 88oobY'    88    Y8    8P 88ooooo     88  88  88    88    88      88oobY' 88ooo88    88       88    88    88 88V8o 88
-# 88   88 88`8b      88    `8b  d8' 88~~~~~     88  88  88    88    88  ooo 88`8b   88~~~88    88       88    88    88 88 V8o88
-# 88  .8D 88 `88.   .88.    `8bd8'  88.         88  88  88   .88.   88. ~8~ 88 `88. 88   88    88      .88.   `8b  d8' 88  V888
-# Y8888D' 88   YD Y888888P    YP    Y88888P     YP  YP  YP Y888888P  Y888P  88   YD YP   YP    YP    Y888888P  `Y88P'  VP   V8P
-###############################################################################################################################
-
-drive-migration:
-  name: Drive Migration
-  desc: Easily migrate __files__ and __folders__ to Google Drive, directly to __individual user accounts__ if required
-  link: /tools/drive-migration
-  published: false
-  ext: true
-  colour: 0f5c60
-  action: Find out more
   
 
 
@@ -1789,7 +1920,7 @@ tagadoc:
   desc: View tags in Google Docs
   link: /extensions/tag-a-doc
   published: true
-  ext: true
+  info: true
   colour: cc0
   action: Find out more
   versions:

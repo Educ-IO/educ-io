@@ -1,14 +1,17 @@
-Data = () => {
+Data = (options, factory) => {
 	"use strict";
 	
-	/* <!-- MODULE: Form data to/from JSON Object --> */
+	/* <!-- HELPER: Form data to/from JSON Object --> */
+	/* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
 	/* <!-- REQUIRES: Global Scope: JQuery, Underscore --> */
 	
 	/* <!-- Internal Constants --> */
 	const INPUTS = "*[data-output-field], :input[name]:enabled";
+	const DEFAULTS = {};
   /* <!-- Internal Constants --> */
 	
 	/* <!-- Internal Variables --> */
+	options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */

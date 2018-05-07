@@ -1,19 +1,24 @@
-Css = (suffix, prefix) => {
+Css = (options, factory) => {
 	"use strict";
 
-	/* <!-- MODULE: Provides dynamic CSS rules for document insertion --> */
-  /* <!-- PARAMETERS: suffix and prefix for rules --> */
-	/* <!-- REQUIRES: Global Scope: JQuery --> */
+	/* <!-- HELPER: Provides dynamic CSS rules for document insertion --> */
+  /* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
+	/* <!-- @options.suffix:  [Optional]  --> */
+	/* <!-- @options.prefix:  [Optional]  --> */
+	/* <!-- REQUIRES: Global Scope: JQuery, Underscore --> */
 	
 	/* <!-- Internal Constants --> */
+	const DEFAULTS = {suffix: "", prefix : ""};
 	/* <!-- Internal Constants --> */
 	
 	/* <!-- Internal Variables --> */
   var _ids = [];
+	options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
-  var _id = id => `${id}_${suffix}`;
+  var _id = id => `${id}_${options.suffix}`;
+	var _selector = selector => `${options.prefix ? `${options.prefix} ` : ""}${selector}`;
 	/* <!-- Internal Functions --> */
 	
 	/* <!-- External Visibility --> */
@@ -44,9 +49,8 @@ Css = (suffix, prefix) => {
     },
 			
     addRule : function(sheet, selector, rules, index) {
-			selector = prefix ? `#${prefix} ${selector}` : selector;
       if ("insertRule" in sheet) {
-        sheet.insertRule(`${selector} {${rules}}`, index);
+        sheet.insertRule(`${_selector(selector)} {${rules}}`, index);
       } else if ("addRule" in sheet) {
         sheet.addRule(selector, rules, index);
       }
@@ -54,8 +58,7 @@ Css = (suffix, prefix) => {
     },
 			
     removeRule : function(sheet, selector) {
-			selector = prefix ? `#${prefix} ${selector}` : selector;
-      $.each(sheet.cssRules, (i, rule) => {if (rule.selectorText === selector) {sheet.deleteRule(i); return false;}});
+      $.each(sheet.cssRules, (i, rule) => {if (rule.selectorText === _selector(selector)) {sheet.deleteRule(i); return false;}});
       return this;
     },
 		

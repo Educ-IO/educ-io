@@ -49,6 +49,9 @@ Main = function() {
 					$(".highlight_all").addClass(_none).removeClass(_highlight)
 						.filter(".highlight_" + ಠ_ಠ.Flags.highlight().toLowerCase()).removeClass(_none).addClass(_highlight);
 				}
+        
+        /* <!-- Smooth Scroll Andhors --> */	
+        if (ಠ_ಠ.Scroll) ಠ_ಠ.Scroll().start();
 				
 			});
 		},

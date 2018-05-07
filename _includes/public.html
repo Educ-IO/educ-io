@@ -12,8 +12,8 @@
 				<a href="{{ include.start }}" class="btn btn-lg btn-action mb-3 mb-md-0 mr-md-3">Get started</a>
 				<a href="/support/" class="btn btn-lg btn-outline-success">Support</a>
 			</div>
-			<p class="text-muted mb-0">
-				Current app version is <a href="{{site.baseurl}}changes/?highlight={{ app.name | downcase }}">{% assign _app = app.name | downcase %}{{ site.data.versions[_app].first[0] }}</a>. To find out more about the <strong>permissions</strong> this app requires, and how they are used, have a look at its <a href="{{site.baseurl}}scopes/?highlight={{ app.name | downcase }}">scopes</a>.
+			<p class="text-muted mb-0">{% assign _app = app.name | downcase %}
+				{% if site.data.versions[_app] %}Current app version is <a href="{{site.baseurl}}changes/?highlight={{ app.name | downcase }}">{% assign _app = app.name | downcase %}{{ site.data.versions[_app].first[0] }}</a>. {% endif %}To find out more about the <strong>permissions</strong> this app requires, and how they are used, have a look at its <a href="{{site.baseurl}}scopes/?highlight={{ app.name | downcase }}">scopes</a>.
 			</p>
 		</div>
 	</div>

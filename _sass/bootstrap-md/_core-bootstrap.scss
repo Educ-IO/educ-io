@@ -1,0 +1,66 @@
+// FIXME: only necessary because there isn't an underscored file - see https://github.com/twbs/bootstrap/issues/18350
+//@import "../bower_components/bootstrap/scss/
+//@import "../../bootstrap/scss/
+
+// Core variables and mixins
+@import "../bootstrap/functions";
+@import "../bootstrap/variables";
+@import "../bootstrap/mixins";
+
+// #853 start - https://github.com/twbs/bootstrap/pull/18976/files
+// hack
+@mixin pull-left {
+  float: left !important;
+  @if $enable-flex {
+    margin-right: auto;
+  }
+}
+@mixin pull-right {
+  float: right !important;
+  @if $enable-flex {
+    margin-left: auto;
+  }
+}
+// #853 end - https://github.com/twbs/bootstrap/pull/18976/files
+
+// Reset and dependencies
+@import "../bootstrap/reboot";
+@import "../bootstrap/print";
+
+// Core CSS
+@import "../bootstrap/reboot";
+@import "../bootstrap/type";
+@import "../bootstrap/images";
+@import "../bootstrap/code";
+@import "../bootstrap/grid";
+@import "../bootstrap/tables";
+@import "../bootstrap/forms";
+@import "../bootstrap/buttons";
+@import "../bootstrap/transitions";
+
+// Components
+@import "../bootstrap/dropdown";
+@import "../bootstrap/button-group";
+@import "../bootstrap/input-group";
+@import "../bootstrap/custom-forms";
+@import "../bootstrap/nav";
+@import "../bootstrap/navbar";
+@import "../bootstrap/card";
+@import "../bootstrap/breadcrumb";
+@import "../bootstrap/pagination";
+@import "../bootstrap/jumbotron";
+@import "../bootstrap/alert";
+@import "../bootstrap/progress";
+@import "../bootstrap/media";
+@import "../bootstrap/list-group";
+@import "../bootstrap/close";
+@import "../bootstrap/badge";
+
+// Components w/ JavaScript
+@import "../bootstrap/modal";
+@import "../bootstrap/tooltip";
+@import "../bootstrap/popover";
+@import "../bootstrap/carousel";
+
+// Utility classes
+@import "../bootstrap/utilities";

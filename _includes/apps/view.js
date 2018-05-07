@@ -133,6 +133,10 @@ App = function() {
 
 						if (_view) _view.table().freeze((/ROWS/i).test(command[1]));
 
+					} else if ((/VIRTUAL-SCROLL/i).test(command)) {
+
+						if (_view) _view.table().virtual_scroll();
+						
 					} else if ((/LINK/i).test(command)) {
 
 						var _data = _view.table().dehydrate();

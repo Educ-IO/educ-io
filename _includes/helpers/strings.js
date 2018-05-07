@@ -1,13 +1,16 @@
-Strings = () => {
+Strings = (options, factory) => {
 	"use strict";
 
-	/* <!-- MODULE: Provides a extra string helper methods --> */
+	/* <!-- HELPER: Provides a extra string helper methods --> */
+	/* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
 	/* <!-- REQUIRES: Global Scope: Underscore --> */
 
 	/* <!-- Internal Constants --> */
+	const DEFAULTS = {};
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
+	options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */

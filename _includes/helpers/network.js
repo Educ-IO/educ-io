@@ -1,16 +1,25 @@
-Network = (base, timeout, per_sec, concurrent, retry, type) => {
+Network = (options, factory) => {
 	"use strict";
 	
-	/* <!-- MODULE: Provides HTTP methods to call APIs, with concurrency and rate limiting functionality --> */
-  /* <!-- PARAMETERS: Receives the global app context, the Google sheet data, and options --> */
+	/* <!-- HELPER: Provides HTTP methods to call APIs, with concurrency and rate limiting functionality --> */
+  /* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
+	/* <!-- @options.base = base url for requests to be made against (e.g. https://api.example.com) --> */
+	/* <!-- @options.timeout = wait period (in ms) before request times out (after calling, not submission) --> */
+	/* <!-- @options.per_sec = number of requests that should be made per second (max) --> */
+	/* <!-- @options.concurrent = number of simultaneous non-resolved requests that should be made --> */
+	/* <!-- @options.retry = method that takes a response and returns a promise, which will resolve to a truthy value if the request is to be re-tried. Used to detect custom rate limit responses etc. [optional] --> */
+	/* <!-- @options.type = default fetch mode (e.g. cors, by default) --> */
 	/* <!-- REQUIRES: Global Scope: Underscore --> */
-	/* <!-- @base = base url for requests to be made against (e.g. https://api.example.com) --> */
-	/* <!-- @timeout = wait period (in ms) before request times out (after calling, not submission) --> */
-	/* <!-- @per_sec = number of requests that should be made per second (max) --> */
-	/* <!-- @concurrent = number of simultaneous non-resolved requests that should be made --> */
-	/* <!-- @retry = method that takes a response and returns a promise, which will resolve to a truthy value if the request is to be re-tried. Used to detect custom rate limit responses etc. [optional] --> */
-	/* <!-- @type = default fetch mode (e.g. cors, by default) --> */
-
+	
+	/* <!-- Default Constants --> */
+	const DEFAULTS = {
+		timeout : 60000,
+		concurrent : 0,
+		retry : 0,
+		type: "cors"
+	};
+	/* <!-- Default Constants --> */
+	
 	/* <!-- Backoff Constants --> */
 	const RETRY_MAX = 10;
 	const RETRY_WAIT_LOWER = 500;
@@ -78,10 +87,11 @@ Network = (base, timeout, per_sec, concurrent, retry, type) => {
 			
 		};
 
-	})(per_sec ? 1000 / per_sec : 0, concurrent ? concurrent : 0);
+	})(options.per_sec ? 1000 / options.per_sec : 0, options.concurrent ? options.concurrent : 0);
 	/* <!-- Limiter = Rate Limited Requests --> */
 
 	/* <!-- Internal Variables --> */
+	options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
 	var _before, _check;
 	/* <!-- Internal Variables --> */
 
@@ -89,8 +99,8 @@ Network = (base, timeout, per_sec, concurrent, retry, type) => {
 	var _request = function(verb, url, data, contentType, responseType) {
 
 		verb = verb.toUpperCase();
-			var _url = new URL(url, base), _request = {
-				mode: type ? type : "cors",
+			var _url = new URL(url, options.base), _request = {
+				mode: options.type,
 				method: verb,
 				headers: {
 					"Content-Type": contentType ? contentType : "application/json"
@@ -166,10 +176,10 @@ Network = (base, timeout, per_sec, concurrent, retry, type) => {
 								.then(value => resolve(value))
 								.catch(() => reject({name: "Unhandled Response Error", url: response.url, status: response.status, statusText: response.statusText}));
 
-						} else if (retry && a--) {
+						} else if (options.retry && a--) {
 
 							/* <!-- If we can retry ... give it a whirl --> */
-							retry(response).then(value => {
+							options.retry(response).then(value => {
 								value ? DELAY(RANDOM(RETRY_WAIT_LOWER, RETRY_WAIT_UPPER) * (RETRY_MAX - a)).then(() => {
 									if (_before) _before(_request);
 									fetch(_target, _request).then(_success).catch(_failure);
@@ -189,11 +199,11 @@ Network = (base, timeout, per_sec, concurrent, retry, type) => {
 			});
 			
 			var _timeout;
-			return timeout ? 
+			return options.timeout ? 
 				Promise.race([_fetch.then(r => {
 					clearTimeout(_timeout);
 					return r;
-				}), new Promise((_, r) => _timeout = setTimeout(() => r(new Error("Request Timed Out (after " + timeout + "ms) to : " + url)), timeout))]) : 
+				}), new Promise((resolve, reject) => _timeout = setTimeout(() => reject(new Error("Request Timed Out (after " + options.timeout + "ms) to : " + url)), options.timeout))]) : 
 				_fetch;
 			
 		};
@@ -207,7 +217,7 @@ Network = (base, timeout, per_sec, concurrent, retry, type) => {
 	return {
 
 		details: () => ({
-			name: base,
+			name: options.base,
 			limiter: LIMITER.status()
 		}),
 		

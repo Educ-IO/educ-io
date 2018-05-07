@@ -65,3 +65,5 @@ globals:
   Saver: true
   Strings: true
   Grid: true
+  Scroll: true
+  Filters: true

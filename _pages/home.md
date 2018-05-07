@@ -9,11 +9,15 @@ css:
     - bootstrap/functions
     - bootstrap/variables
     - bootstrap/mixins
+    - bootstrap-md/functions
+    - bootstrap-md/variables
+    - bootstrap-md/mixins
     - bootstrap/root
     - bootstrap/reboot
     - bootstrap/type
     - bootstrap/images
     - bootstrap/grid
+    - bootstrap-md/buttons
     - bootstrap/buttons
     - bootstrap/utilities
     - bootstrap/carousel
@@ -30,6 +34,8 @@ css:
     - bootstrap/alert
     - bootstrap/close
     - bootstrap/print
+helpers:
+  - scroll
 modules:
   - controller
   - service

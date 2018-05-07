@@ -8,7 +8,6 @@ Main = function() {
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
-	
 	/* <!-- Internal Functions --> */
 	
 	/* <!-- External Visibility --> */
@@ -28,7 +27,15 @@ Main = function() {
 			
     },
 		
-		start : () => $(".carousel").carousel()
+		start : () => {
+      
+      /* <!-- Activate Carousel --> */	
+      $(".carousel").carousel();
+      
+      /* <!-- Smooth Scroll Andhors --> */	
+      if (ಠ_ಠ.Scroll) ಠ_ಠ.Scroll().start();
+      
+    }
    /* <!-- External Functions --> */
     
 	};

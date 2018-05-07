@@ -3,12 +3,12 @@
 <div class="card mt-2">
   {% if include.mode == "expanded"%}<h5 class="card-header text-center">{{ tutorial.title }}</h5>{% else %}<div class="card-header">
     <h5 class="text-left float-left pt-1">{{ tutorial.title }}</h5>
-    <a href="{{ tutorial.url }}" class="btn btn-primary float-right"{% if include.blank %} target="_blank" rel="noopener"{% endif %}>View Tutorial</a>
+    <a href="{{ tutorial.url }}" class="btn btn-info float-right"{% if include.blank %} target="_blank" rel="noopener"{% endif %}>View Tutorial</a>
   </div>{% endif %}
   <div class="card-body{% if include.mode != "expanded"%} pt-3 pb-1{% endif %}">
     <div>{{ details | replace: "`", "__" | markdownify }}</div>
     {% if include.mode == "expanded"%}
-    <a href="{{ tutorial.url }}" class="btn btn-primary"{% if include.blank %} target="_blank" rel="noopener"{% endif %}>View Tutorial</a>
+    <a href="{{ tutorial.url }}" class="btn btn-info"{% if include.blank %} target="_blank" rel="noopener"{% endif %}>View Tutorial</a>
     {% endif %}
   </div>
 </div>{% endif %}{% endfor %}{% if include.mode == "expanded"%}</div>{% endif %}

@@ -92,7 +92,7 @@ Records = (ಠ_ಠ, file, target, tab) => {
 		var _cols = {
 			id: `${value.sheets.spreadsheetId}_${value.sheet.name}_${_headings.tabs[0].id}`,
 			headers: () => _.map(["Name", "Mapping", "Actions"], _map(v => v.toLowerCase())),
-			data: function() {return ಠ_ಠ.Query(DB).table(this.id, {indices: ["name", "mapping"], 
+			data: function() {return ಠ_ಠ.Query({db: DB}).table(this.id, {indices: ["name", "mapping"], 
 																														 data: _.map(_grid.headers(), (v, i) => ({name: v ? v : `-${i}-`, mapped: false}))});}
 		};
 
@@ -115,7 +115,7 @@ Records = (ಠ_ಠ, file, target, tab) => {
 		var _rows = {
 			id: `${value.sheets.spreadsheetId}_${value.sheet.name}_${_headings.tabs[1].id}`,
 			headers: () => _.map(_grid.headers(), _map()),
-			data: function() {return ಠ_ಠ.Query(DB).table(this.id, {indices: _grid.fields(), data: _grid.values()});}
+			data: function() {return ಠ_ಠ.Query({db: DB}).table(this.id, {indices: _grid.fields(), data: _grid.values()});}
 		};
 
 		_tables.rows = ಠ_ಠ.Datatable(ಠ_ಠ, {

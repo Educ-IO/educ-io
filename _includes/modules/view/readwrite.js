@@ -314,7 +314,7 @@ ReadWrite = (ಠ_ಠ, sheet) => {
 
 					}
 
-					ಠ_ಠ.Saver(ಠ_ಠ.Strings()).save(_md_output, _title + " - " + _md_name + option.ext, "text/markdown").catch(_error).then(_busy);
+					ಠ_ಠ.Saver({}, ಠ_ಠ).save(_md_output, _title + " - " + _md_name + option.ext, "text/markdown").catch(_error).then(_busy);
 
 				} else {
 
@@ -336,7 +336,7 @@ ReadWrite = (ಠ_ಠ, sheet) => {
 
 					var save = title => {
 						ಠ_ಠ.Flags.log("Outputting Spreadsheet Book", _exportBook);
-						return ಠ_ಠ.Saver(ಠ_ಠ.Strings()).save(XLSX.write(_exportBook, {
+						return ಠ_ಠ.Saver({}, ಠ_ಠ).save(XLSX.write(_exportBook, {
 							bookType: option.type,
 							bookSST: true,
 							type: "binary"

@@ -8,7 +8,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 	/* <!-- @options = {filters, inverted_Filters, sorts, widths, frozen, readonly, advanced, collapsed, template, removable} --> */
 
 	/* <!-- Internal Consts --> */
-	const LARGE_ROWS = 200, FILTER_DELAY = 200, defaults = {
+	const LARGE_ROWS = 1000, FILTER_DELAY = 200, FADE_DELAY = 200, defaults = {
     template : "rows",
 		filters : {},
 		inverted_Filters : {},
@@ -30,180 +30,6 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
   };
 	options = _.defaults(options, defaults);
 	/* <!-- Internal Consts --> */
-	
-	/* <!-- Filters --> */
-	var Filters = options => {
-
-		/* <!-- Internal Variables --> */
-		var _normal = options.filters, _inverted = options.inverted_Filters;
-		/* <!-- Internal Variables --> */
-
-		/* <!-- Internal Methods --> */
-		var _createQuery = (filters, join) => {
-			var _query, _join = join ? join : "$and";
-			_.map(Object.keys(filters), field => {
-				var _condition = {};
-				_condition[field] = filters[field];
-				if (!_query) {
-					_query = _condition;
-				} else {
-					if (_query[_join]) {
-						_query[_join].push(_condition);
-					} else {
-						_query = {
-							[_join]: [_query, _condition]
-						};
-					}
-				}
-			});
-			return _query;
-		};
-
-		var _addFilter = (field, value, normal, inverted) => {
-			var _invert, _filter;
-			if (value.startsWith("!!")) {
-				_invert = true;
-				value = value.substr(2).trim();
-			}
-			if (value.startsWith("$")) {
-				value = value.substr(1).trim();
-				if (value) _filter = {
-					"$contains": [value]
-				};
-			} else if (value.startsWith("##")) {
-				value = value.substr(2).trim();
-				if (value) _filter = {
-					"$regex": [RegExp.escape(value), "i"]
-				};
-			} else if (value.startsWith("<=") || value.startsWith("=<")) {
-				value = value.substr(2).trim();
-				if (value) _filter = {
-					"$lte": value.toLowerCase() == "now" ? new Date() : value
-				};
-			} else if (value.startsWith(">=") || value.startsWith("=>")) {
-				value = value.substr(2).trim();
-				if (value) _filter = {
-					"$gte": value.toLowerCase() == "now" ? new Date() : value
-				};
-			} else if (value.startsWith("<>")) {
-				value = value.substr(2).trim();
-				if (value) _filter = {
-					"$ne": value.substr(2).trim()
-				};
-			} else if (value.startsWith("!$") || value.startsWith("$!")) {
-				value = value.substr(2).trim();
-				if (value) _filter = {
-					"$containsNone": [value]
-				};
-			} else if (value.startsWith("=")) {
-				value = value.substr(1).trim();
-				if (value) _filter = {
-					"$aeq": value
-				};
-			} else if (value.startsWith(">")) {
-				value = value.substr(1).trim();
-				if (value) _filter = {
-					"$gt": value.toLowerCase() == "now" ? new Date() : value
-				};
-			} else if (value.startsWith("<")) {
-				value = value.substr(1).trim();
-				if (value) _filter = {
-					"$lt": value.toLowerCase() == "now" ? new Date() : value
-				};
-			} else if (value.indexOf("->") > 0) {
-				var _value = value.split("->");
-				if (_value.length == 2) {
-					var val_1 = _value[0].trim(),
-						val_2 = _value[1].trim();
-					if (val_1 && val_2) _filter = {
-						"$between": [val_1, val_2]
-					};
-				} else if (value) {
-					_filter = {
-						"$regex": [RegExp.escape(value), "i"]
-					};
-				}
-			} else if (value) {
-				if (value.toLowerCase() === "past") {
-					_filter = {
-						"$lt": new Date()
-					};
-				} else if (value.toLowerCase() === "future") {
-					_filter = {
-						"$gt": new Date()
-					};
-				} else if (value.toLowerCase() === "today") {
-					_filter = {
-						"$between": [moment().startOf("day"), moment().endOf("day")]
-					};
-				} else {
-					_filter = {
-						"$regex": [RegExp.escape(value), "i"]
-					};
-				}
-			}
-			if (_filter) {
-				if (_invert) {
-					inverted[field] = _filter;
-					delete normal[field];
-				} else {
-					normal[field] = _filter;
-					delete inverted[field];
-				}
-			} else {
-				delete normal[field];
-				delete inverted[field];
-			}
-		};
-
-		var _removeFilter = (field, normal, inverted) => {
-			if (normal[field]) {
-				delete normal[field];
-				return true;
-			} else if (inverted[field]) {
-				delete inverted[field];
-				return true;
-			}
-		};
-		/* <!-- Internal Methods --> */
-
-		/* <!-- External Visibility --> */
-		return {
-
-			add: (field, value) => _addFilter(field, value, _normal, _inverted),
-
-			get: field => _inverted[field] ? {
-				filter: _inverted[field],
-				inverted: true
-			} : _normal[field] ? {
-				filter: _normal[field]
-			} : null,
-
-			remove: field => _removeFilter(field, _normal, _inverted),
-
-			filter: rows => {
-				if (!$.isEmptyObject(_inverted)) {
-					ಠ_ಠ.Flags.log("Applying Inverted Filters", _inverted);
-					var _inversion = _createQuery(_inverted, "$or");
-					var _exclude = new Set(table.data.chain().find(_inversion).data().map(v => v.$loki));
-					rows = rows.where(v => !_exclude.has(v.$loki));
-				}
-				if (!$.isEmptyObject(_normal)) {
-					ಠ_ಠ.Flags.log("Applying Filters", _normal);
-					rows = rows.find(_createQuery(_normal));
-				}
-				return rows;
-			},
-
-			normal: () => _normal,
-
-			inverted: () => _inverted,
-
-		};
-		/* <!-- External Visibility --> */
-
-	};
-	/* <!-- Filters --> */
 
 	/* <!-- Internal Variables --> */
 	var _filters, _sorts, _advanced, _name, _css;
@@ -213,11 +39,11 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 	var _initialise = () => {
 
 		/* <!-- Get 'Default' Filters and Searches if applicable --> */
-		_filters = Filters(options);
+		_filters = ಠ_ಠ.Filters({normal: options.filters, inverted: options.inverted_Filters});
 		_sorts = options.sorts;
 
 		/* <!-- Get 'Default' Filters and Searches if applicable --> */
-		_name = ("table_" + table.id).replace(/[^a-z0-9\-_:.]|^[^a-z]+/gi, "");
+		_name = (`table_${table.id}`).replace(/[^a-z0-9\-_:.]|^[^a-z]+/gi, "");
 
 		/* <!-- Remove / Create Custom CSS Sheet --> */
 		_css = _css ? _css.deleteAll() : ಠ_ಠ.Css(_name);
@@ -255,15 +81,9 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 	
 	var _getRows = () => {
 
-		var _rows = _getData();
-
-		ಠ_ಠ.Flags.log("Applying Column Hides", table.headers);
-		return _rows.map(v => {
-			table.headers.forEach((f, i) => {
-				if (f.hide()) delete v[f.field ? f.field : i];
-			});
-			return v;
-		});
+		var _hides = _.filter(table.headers, f => f.hide());
+		ಠ_ಠ.Flags.log("Applying Column Hides", _hides);
+		return _getData().map(v => _.noop(_.each(_hides, f => delete v[f.field ? f.field : f.index])) || v);
 
 	};
 
@@ -278,7 +98,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 			var _nth = ":nth-child(" + table.headers.slice(0, el.data("index")).reduce((t, h) => h.hide() ? t : t + 1, 1) + ")";
 			var _selector = "table#" + _name + " tr th.table-header" + _nth + ", table#" + _name + " tbody tr td" + _nth;
 			el.is(":hidden") ? _css.removeRule(_style, _selector) : _css.addRule(_style, _selector, "display: none !important;");
-			if (f) return _toggleColumn(f(el), f);
+			return f ? _toggleColumn(f(el), f) : null;
 		} else {
 			return el;
 		}
@@ -332,7 +152,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		/* <!-- Collapse by default --> */
 		if (options.collapsed) {
 			query = ".table-header[data-index].to-hide";
-			(container ? container.find(query) : target.find(query)).each((i, el) => {
+			_.each(container ? container.find(query) : target.find(query), el => {
 				if (!el.nextElementSibling || !$(el.nextElementSibling).hasClass("to-hide")) {
 					var _target = $(el),
 					_last = (_target.hasClass("to-hide") && !_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0),
@@ -350,10 +170,10 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 			rows: _getRows(),
 			removable: options.removable
 		}));
-		if (_advanced && _advanced.scroll.initialised()) { /* <!-- Complex Scrolling may have been requested but not initialised --> */
-			_advanced.scroll.update(_rows.toArray().map(e => e.outerHTML));
+		if (_advanced && _advanced.scroll.toggled()) { /* <!-- Complex Scrolling may have been requested but not initialised --> */
+			_advanced.scroll.update(_.map(_rows, e => e.outerHTML));
 		} else {
-			target.find("#" + _name + " tbody").empty().append(_rows);
+			target.find(`#${_name} tbody`).empty().append(_rows);
 			target.find("[data-toggle='popover']").popover({
 				trigger: "focus"
 			});
@@ -371,7 +191,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		var _target = $(t);
 		_target.parents("div.input-group").find("input[type='text']").val("");
 		_filters.remove(_target.data("field"));
-		_target.parents("div.form").fadeOut();
+		_target.parents("div.form").fadeOut(FADE_DELAY);
 		_update(true, true, target);
 	};
 
@@ -415,6 +235,12 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		filters: options.readonly ? "" : filters ? filters : _createDisplayFilters(),
 		table: table ? table : _createDisplayTable()
 	}));
+	
+	var _virtualScroll = () => {
+		_advanced = _advanced ? _advanced : ಠ_ಠ.Table({table: target.find("table"), outside: target}, ಠ_ಠ);
+		if (!_advanced.scroll.initialised()) _advanced.scroll.init(target.find("tbody"), options.blocks_to_show, options.rows_to_show);
+		_advanced.scroll.toggle().toggled() ? ಠ_ಠ.Display.state().enter("virtual-scroll") : ಠ_ಠ.Display.state().exit("virtual-scroll");
+	};
 
 	var _showValues = () => {
 
@@ -432,7 +258,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 			} else if (keycode === 13) { /* <!-- Enter Key Pressed --> */
 				e.preventDefault();
 				_target = $(e.target);
-				_target.parents("div.form").fadeOut();
+				_target.parents("div.form").fadeOut(FADE_DELAY);
 			}
 		}).off("input").on("input", e => {
 			clearTimeout(_filter_Timeout);
@@ -487,7 +313,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 			var _target = $(e.target);
 			var _action = _target.data("action");
 			var _field = _target.parent().data("index");
-			var _heading = $("#" + _target.parent().data("heading")).parent();
+			var _heading = $(`#${_target.parent().data("heading")}`).parent();
 			var _complete;
 			if (_action == "now") {
 				table.headers[_field].hide_now = !table.headers[_field].hide_now;
@@ -513,24 +339,23 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 					};
 				}
 			}
-			_target.tooltip("hide").parents("div.form").fadeOut();
+			_target.tooltip("hide").parents("div.form").fadeOut(FADE_DELAY);
 			_update(true, true, target);
 			if (_complete) _complete();
 		});
 
 		target.find(".table-header a").on("click", e => {
 			e.preventDefault();
-			var target = $($(e.target).data("target"));
-			target.fadeToggle().promise().done(() => target.find("input[type='text']:visible").first().focus());
+			$($(e.target).data("target")).fadeToggle(FADE_DELAY).promise().done(el => $(el).find("input[type='text']:visible").first().focus());
 		});
 
 		/* <!-- Set up Table --> */
 		if (options.advanced) {
 			
-			_advanced = _advanced ? _advanced : ಠ_ಠ.Table(target.find("table"), target, ಠ_ಠ.Css);
+			_advanced = _advanced ? _advanced : ಠ_ಠ.Table({table: target.find("table"), outside: target}, ಠ_ಠ);
 			
 			/* <!-- Init Scroll Cache for Larger Tables --> */
-			if (table.data.count() > LARGE_ROWS) _advanced.scroll.init(target.find("tbody"), options.blocks_to_show, options.rows_to_show).toggle();
+			if (table.data.count() > LARGE_ROWS) _virtualScroll();
 			
 		}
 		
@@ -618,6 +443,8 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 					ಠ_ಠ.Display.state().exit(rows_only ? "frozen-rows" : "frozen");
 			}
 		},
+		
+		virtual_scroll: () => _virtualScroll(),
 
 		name: () => table.name,
 

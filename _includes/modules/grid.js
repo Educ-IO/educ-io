@@ -56,6 +56,7 @@ Grid = (ಠ_ಠ, data, options) => {
 		/* <!-- NOTE: a fully 'blank' column is excluding the header and any hidden initial rows --> */
 		_.find(data.slice(hide + rows), row => {
 			_.each(row, (cell, index) => {
+        if (!(/\S/.test(cell))) row[index] = null;
 				if (cell) blanks = _.filter(blanks, number => number !== index);
 			});
 			return (blanks.length === 0);

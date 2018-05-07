@@ -1,6 +1,20 @@
-Github_API = () => {
-
+Github_API = (options, factory) => {
+	"use strict";
+	
+	/* <!-- HELPER: Provides an interface onto various Github APIs --> */
+	/* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
+	/* <!-- @options.timeout: Custom timeout for each network/API domain base --> */
+	/* <!-- @factory.Network: Function to create a network helper object --> */
+	/* <!-- REQUIRES: Global Scope: Underscore --> */
+	
+	/* <!-- Internal Constants --> */
+	const DEFAULTS = {
+		timout: 60000
+	};
+	/* <!-- Internal Constants --> */
+	
 	/* <!-- Internal Variables --> */
+	options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
 	var _api, _before, _paging, _after;
 	/* <!-- Internal Variables --> */
 

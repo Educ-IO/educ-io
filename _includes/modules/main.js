@@ -93,7 +93,7 @@ Main = function() {
 	};
 
 	var google_Initialise = auth => {
-		return ಠ_ಠ.Google_API(ಠ_ಠ.Network).initialise(auth.access_token, auth.token_type, auth.expires,
+		return ಠ_ಠ.Google_API({}, {Network: ಠ_ಠ.Network}).initialise(auth.access_token, auth.token_type, auth.expires,
 			(refresher => {
 				return force => new Promise((resolve, reject) => {
 					refresher(_default, force).then(r => r.authResponse ? resolve({

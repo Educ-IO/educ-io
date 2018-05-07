@@ -1,9 +1,14 @@
-Table = (table, outside, css) => {
+Table = (options, factory) => {
 	"use strict";
 	
-	/* <!-- MODULE: Provides customised table behaviour (e.g. cached rendering) --> */
+	/* <!-- HELPER: Provides customised table behaviour (e.g. cached rendering) --> */
+	/* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
   /* <!-- PARAMETERS: Receives the table element, the containing (outside) element and a css helper factory function --> */
+	/* <!-- @options.table: The table element --> */
+	/* <!-- @options.outside: The containing (outside) element --> */
+	/* <!-- @factory.Css: Function to create a css helper object --> */
 	/* <!-- REQUIRES: Global Scope: JQuery, Underscore --> */
+	/* <!-- REQUIRES: Factory Scope: Css helper --> */
 	
 	/* <!-- Internal Constants --> */
 	const TAG = "tr", EMPTY_CLASS = "empty-rows", EMPTY_TEXT = "No rows";
@@ -13,11 +18,11 @@ Table = (table, outside, css) => {
 	var $$ = element => (element instanceof jQuery === true) ? element : $(element);
 	
 	/* <!-- Internal Variables --> */
-	var _table = $$(table), _outside = $$(outside), _css = css(_outside.id, _outside.id);
+	var _table = $$(options.table), _outside = $$(options.outside), _css = factory.Css(_outside.id, _outside.id);
 	
 	/* <!-- Internal Scroll Variables --> */
 	var  _rows, _cache, _content, _rows_in_block,	_blocks_in_cluster, _rows_in_cluster, _row_height, _block_height, _cluster_height,
-			_last_cluster = false, _scroll_top, mac = navigator.platform.toLowerCase().indexOf("mac") + 1;
+			_last_cluster = false, _last_time = false, _bounce_Count = 0, _scroll_top, mac = navigator.platform.toLowerCase().indexOf("mac") + 1;
 	
 	/* <!-- Internal Freeze Variables --> */
 	var _frozen_Cols;
@@ -142,7 +147,7 @@ Table = (table, outside, css) => {
 			init : function(content, clusterBlocks, blockRows) {
 
 				/* <!-- Set up Variable --> */
-				_content = content ? $$(content) : $$("tbody");
+				_content = content ? $$(content) : _table.find("tbody");
 				_blocks_in_cluster = _.isNull(clusterBlocks) || _.isUndefined(clusterBlocks) ? 2 : clusterBlocks;
 				_rows_in_block = _.isNull(blockRows) || _.isUndefined(blockRows) ? 20 : blockRows;
 				
@@ -153,16 +158,19 @@ Table = (table, outside, css) => {
 			
 			initialised : () => _content ? true : false,
 			
+			toggled : ()  => _content && _rows ? true : false,
+				
 			toggle : function(toggle) {
 				
 				if (toggle === false || _rows) {
 
-					_cache = null;
-					_rows = null;
-					
 					_outside.off("scroll.scroller");
 					$(window).off("resize.scroller");
-					html(generateEmptyRow());
+					
+					html(_rows.join("\r\n"));
+					
+					_cache = null;
+					_rows = null;
 					
 				} else {
 
@@ -170,14 +178,18 @@ Table = (table, outside, css) => {
 					_rows = [];
 					
 					if(_content.attr("tabindex") === undefined) _content.attr("tabindex", 0);
-					_content.children("tr").each((i, el) => _rows.push(el.outerHTML));
+					_.each(_content.children("tr"), el => _rows.push(el.outerHTML));
 					
 					var _initial_scroll_top = _outside[0].scrollTop;
 					insertToDOM(_rows, _cache);
 					_outside[0].scrollTop = _initial_scroll_top;
 
 					var pointer_events_set = false;
-					_outside.on("scroll.scroller", () => {
+					_outside.on("scroll.scroller", e => {
+						
+						/* <!-- TODO: Can get into a loop here in certain circumstances, so check the time shift is above 40ms --> */
+						if ((e.timeStamp - _last_time) < 50 && (++_bounce_Count >= 2)) return (_bounce_Count = 0);
+						
 						if (mac) {
 								if( ! pointer_events_set) _content[0].style.pointerEvents = "none";
 								pointer_events_set = true;
@@ -186,8 +198,7 @@ Table = (table, outside, css) => {
 										pointer_events_set = false;
 								}, 50);
 						}
-						var _cluster_Num = getClusterNum();
-						if (_last_cluster != (_last_cluster = _cluster_Num)) insertToDOM(_rows, _cache);
+						if (_last_cluster != (_last_cluster = getClusterNum())) (_last_time = e.timeStamp) && insertToDOM(_rows, _cache);
 					});
 					var _refresh = this.refresh;
 					$(window).on("resize.scroller", () => _.debounce(_refresh, 100));

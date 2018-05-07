@@ -2,6 +2,8 @@ TODO LIST
 =========
 General
 -------
+* Need a custom MAP override
+
 * ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
 
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
@@ -15,7 +17,7 @@ General
 
 * Supply oauth keys are part of the URL.... STARTED but not complete <= Should hid ge URL after successfull set? | Also JWT Token for Folders?
 
-* Increase timeout on scope increase login?
+* Increase timeout on scope increase login? Or check promise completion....as a delay can mean modals are not fired???
 
 Datatable
 ---------
@@ -32,7 +34,6 @@ Router
 ------
 * Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings.
 
-
 Apps
 ----
 * ** IMPORTANT ** Router and subsequent anchor routes -> how do we handle duplicates?
@@ -45,6 +46,7 @@ Apps
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 * Success / Failure response in Busy Loader? E.g. Animate to cross if it fails?
 
+* ** IMPORTANT ** Write test to check for low device storage....and flash up warning!
 
 Mobile
 ------
@@ -68,8 +70,10 @@ Grades
 
 View
 ----
-* ** IMPORTANT ** Has value / has no value column filter
+* ** BUG ** Hidden columns become visible again once another tab is loaded, but not switched to.
 
+* Turn off advanced table display for fewer filtered rows?
+	+ Important to help deal with flickers
 * Pass Date column information to readonly view
 
 * ** IMPORTANT ** 'Bottom' header overlay
@@ -103,6 +107,7 @@ Merge
 
 Folders
 -------
+* ** BUG ** Thumbnail problems are back! <-- Or maybe not?
 * Use new format MODAL form returns (once Data is stable ... activate by including Data helper in App Build)
   + Update validate method on App callers to accept object, rather than value array
   + Update _return methods on App callers to accept object, rather than value array
@@ -128,6 +133,9 @@ Reflect
 
 Complete
 --------
+* Fixed Section Scrolling on home page with Scrollify (https://projects.lukehaas.me/scrollify)? <-- DONE
+* ** IMPORTANT ** Has value / has no value column filter <-- DONE
+* ** BUG ** Inverted Filter doesn't work - fix before push release. <-- DONE
 * Resizer gets lost after updating headers <== DONE
 * Resizer isn't correct, as the nav tabs are not visible at the point it fires <== DONE
 * Include Headers Functionality ... awaiting cleaning up of View Code. <== DONE
