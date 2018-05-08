@@ -1,4 +1,6 @@
 ---
 permalink: /_redirects
+sitemap:
+  exclude: true
 ---
 {% include config/redirects %}

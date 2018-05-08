@@ -26,6 +26,8 @@ templates:
     - support/subscribe
 docs:
     - support/SUBSCRIBE
+sitemap:
+  priority: 0.9
 lead: Great tools take __a lot__ of building. Using our tools is `free for everyone`, but we would encourage anyone who finds them __really useful__, or who wants __amazing support__ or a voice in their __future development__ to subscribe below.
 ---
 

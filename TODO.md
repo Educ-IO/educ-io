@@ -2,8 +2,6 @@ TODO LIST
 =========
 General
 -------
-* Need a custom MAP override
-
 * ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
 
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
@@ -132,6 +130,8 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT ** Make sitemap for Search Engine Submission <-- DONE
+* ** Visual Bug ** - Learn More button is larger on mobile. <-- DONE
 * ** BUG ** Thumbnail problems are back! <-- Or maybe not? <-- NOT AN ISSUE
 * Fixed Section Scrolling on home page with Scrollify (https://projects.lukehaas.me/scrollify)? <-- DONE
 * ** IMPORTANT ** Has value / has no value column filter <-- DONE

@@ -1,4 +1,8 @@
 site :
+  0.0.9e :
+    name : Site Improvements
+    desc : Sitemap and Visual Bug Fixes
+    type : minor
   0.0.9d :
     name : Site Improvements
     desc : Code and Design Updates

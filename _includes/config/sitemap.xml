@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{% for page in site.pages %}{% unless page.sitemap.exclude == true %}{% unless jekyll.environment != site.debug and page.app and site.data.apps[page.app].published == false %}
+  <url>
+      <loc>{{ site.url }}{{ page.url | remove: "index.html" }}</loc>
+      <lastmod>{% if page.sitemap.lastmod %}{{ page.sitemap.lastmod | date: "%Y-%m-%d" }}{% elsif page.date %}{{ page.date | date_to_xmlschema }}{% else %}{{ site.time | date_to_xmlschema }}{% endif %}</lastmod>
+      <changefreq>{% if page.sitemap.changefreq %}{{ page.sitemap.changefreq }}{% elsif page.layout == 'app' %}weekly{% else %}monthly{% endif %}</changefreq>
+      <priority>{% if page.sitemap.priority %}{{ page.sitemap.priority }}{% elsif page.layout == 'app' %}0.6{% else %}0.3{% endif %}</priority>
+  </url>{% endunless %}{% endunless %}{% endfor %}
+</urlset>

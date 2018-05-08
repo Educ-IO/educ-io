@@ -33,7 +33,7 @@
           {{ app.desc | markdownify }}
         </div>
         <div class="d-flex flex-wrap justify-content-between">
-          <a id="open_{{ i }}" class="btn {{ t }}{% if app.learn %} mb-1 mb-lg-2{% endif %} mb-2" href="{{ app.link }}"{% if app.ext %} target="_new"{% endif %}>{% if app.action %}{{ app.action }}{% else %}<strong>Open</strong> {{ app.name }}{% endif %}</a>
+          <a id="open_{{ i }}" class="btn {{ t }}{% if app.learn %} mb-1 mb-lg-2{% endif %}" href="{{ app.link }}"{% if app.ext %} target="_new"{% endif %}>{% if app.action %}{{ app.action }}{% else %}<strong>Open</strong> {{ app.name }}{% endif %}</a>
 				{% if app.learn %}<a id="learn_{{ i }}" class="btn btn-raised mb-1 mb-lg-2" href="{{ app.learn }}"{% if app.ext %} target="_new"{% endif %}>Learn more</a>{% endif %}
         </div>
   		</div>
