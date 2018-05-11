@@ -9,12 +9,13 @@
       <div class="col-md-6 order-md-1 text-center text-md-left pr-md-5">
         <h1 class="display-4 mb-3 font-sensitive">{{ site.title | upcase }}</h1>
         {% if text %}{{ text | markdownify }}{% endif %}
-        <div class="d-flex flex-column flex-md-row lead mb-3">
-          <a href="#apps" class="btn btn-lg btn-primary btn-raised mr-md-3 mt-2" title="Straight to our tools!">Our Apps</a>
-          <a href="/support/" class="btn btn-lg btn-success btn-raised mr-md-3 mt-2" title="{{ site.support }}">Support</a>
-          <a href="/about/" class="btn btn-lg btn-raised mt-2" title="About this site and our approach">More About Us</a>
-        </div>
       </div>
+    </div>
+    
+    <div class="d-flex flex-column flex-md-row lead mb-3">
+    	<a href="#apps" class="btn btn-lg btn-primary mr-md-3 mt-2 text-uppercase smooth-scroll" title="Straight to our tools!">Our Apps</a>
+      <a href="/support/" class="btn btn-lg btn-success mr-md-3 mt-2 text-uppercase" title="{{ site.support }}">Support</a>
+      <a href="/about/" class="btn btn-lg btn-normal mt-2 text-uppercase" title="About this site and our approach">More About Us</a>
     </div>
     
     <div class="mt-lg-4 pt-lg-4">{% include headlines.html %}</div>
@@ -24,7 +25,7 @@
 	{% if apps and apps.size > 0 %}
 	<hr />
 	<div id="apps" class="d-flex flex-row flex-wrap mx-1 my-2 pt-2 border border-white">
-		{% for app in apps %}{% capture c %}{% cycle 'odd', 'even' %}{% endcapture %}{% capture t %}btn-{% if app.info %}info{% elsif c == 'odd' %}primary btn-raised{% else %}secondary btn-raised{% endif %}{% endcapture %}{% capture i %}{{ app.name | replace: '_', '' | replace: '`', '' | replace: '?', '' | replace: '!', '' | replace: ' ', '' | downcase }}{% endcapture %}
+		{% for app in apps %}{% capture c %}{% cycle 'odd', 'even' %}{% endcapture %}{% capture t %}btn-{% if app.info %}info{% elsif c == 'odd' %}primary{% else %}secondary{% endif %}{% endcapture %}{% capture i %}{{ app.name | replace: '_', '' | replace: '`', '' | replace: '?', '' | replace: '!', '' | replace: ' ', '' | downcase }}{% endcapture %}
 			<div class="d-flex flex-column col-12 col-md-4 py-2 px-3 p-md-4{% if c == 'odd' %} bg-light border-0{% endif %} border border-white rounded">
         <div>
           {% if app.learn %}<a id="title_{{ i }}" class="no-underline" href="{{ app.learn }}"{% if app.ext %} target="_new"{% endif %}>{% endif %}<h3{% if app.colour %} style="color: #{{ app.colour }} !important;"{% endif %}>{{ app.name }}</h3>{% if app.learn %}</a>{% endif %}
@@ -33,8 +34,8 @@
           {{ app.desc | markdownify }}
         </div>
         <div class="d-flex flex-wrap justify-content-between">
-          <a id="open_{{ i }}" class="btn {{ t }}{% if app.learn %} mb-1 mb-lg-2{% endif %}" href="{{ app.link }}"{% if app.ext %} target="_new"{% endif %}>{% if app.action %}{{ app.action }}{% else %}<strong>Open</strong> {{ app.name }}{% endif %}</a>
-				{% if app.learn %}<a id="learn_{{ i }}" class="btn btn-raised mb-1 mb-lg-2" href="{{ app.learn }}"{% if app.ext %} target="_new"{% endif %}>Learn more</a>{% endif %}
+          <a id="open_{{ i }}" class="btn {{ t }}{% if app.learn %} mb-1 mb-lg-2{% endif %} text-uppercase" href="{{ app.link }}"{% if app.ext %} target="_new"{% endif %}>{% if app.action %}{{ app.action }}{% else %}<strong>Open</strong> {{ app.name }}{% endif %}</a>
+				{% if app.learn %}<a id="learn_{{ i }}" class="btn mb-1 mb-lg-2 text-uppercase" href="{{ app.learn }}"{% if app.ext %} target="_new"{% endif %}>Learn more</a>{% endif %}
         </div>
   		</div>
 		{% endfor %}

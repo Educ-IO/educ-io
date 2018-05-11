@@ -1,0 +1,31 @@
+@mixin transform($details) {
+  -webkit-transform: $details;
+     -moz-transform: $details;
+			-ms-transform: $details;
+			 -o-transform: $details;
+					transform: $details;
+}
+
+@mixin rotate ($deg) {
+  @include transform(rotate(#{$deg}deg));
+}
+ 
+@mixin scale($scale) {
+	 @include transform(scale($scale));
+} 
+
+@mixin translate($x, $y) {
+   @include transform(translate($x, $y));
+}
+
+@mixin skew($x, $y) {
+   @include transform(skew(#{$x}deg, #{$y}deg));
+}
+
+@mixin transform-origin ($origin) {
+  -webkit-transform-origin: $origin;
+     -moz-transform-origin: $origin;
+      -ms-transform-origin: $origin;
+	     -o-transform-origin: $origin;
+          transform-origin: $origin;
+}

@@ -35,6 +35,10 @@ view:
       load: last
     - name: moment_all
       load: last
+    - name: waves-css
+      load: last
+    - name: waves-js
+      load: last
     - name: google
       load: lazy
     - name: xlsx
@@ -324,6 +328,8 @@ reflect:
       load: first
     - name: transducers
       load: first
+    - name: moment
+      load: first
     - name: handlebars
       load: last
     - name: hello
@@ -340,13 +346,15 @@ reflect:
       load: last
     - name: showdown
       load: last
-    - name: moment
+    - name: bootstrap-material-datepicker-css
       load: last
-    - name: bootstrap-datepicker-css
-      load: last
-    - name: bootstrap-datepicker-js
+    - name: bootstrap-material-datepicker-js
       load: last
     - name: google
+      load: last
+    - name: waves-css
+      load: last
+    - name: waves-js
       load: last
     - name: xlsx
       load: lazy
@@ -639,6 +647,10 @@ folders:
       load: last
     - name: filesaver
       load: last
+    - name: waves-css
+      load: last
+    - name: waves-js
+      load: last
     - name: google
       load: lazy
   helpers:
@@ -925,6 +937,10 @@ grades:
       load: last
     - name: moment
       load: last
+    - name: waves-css
+      load: last
+    - name: waves-js
+      load: last
     - name: google
       load: lazy
   helpers:
@@ -1061,6 +1077,10 @@ cover:
       load: last
     - name: moment
       load: last
+    - name: waves-css
+      load: last
+    - name: waves-js
+      load: last
     - name: google
       load: lazy
   helpers:
@@ -1196,6 +1216,10 @@ merge:
     - name: autosize
       load: last
     - name: moment_all
+      load: last
+    - name: waves-css
+      load: last
+    - name: waves-js
       load: last
     - name: google
       load: lazy
@@ -1479,6 +1503,10 @@ tiles:
       load: last
     - name: moment
       load: last
+    - name: waves-css
+      load: last
+    - name: waves-js
+      load: last
     - name: google
       load: lazy
   helpers:
@@ -1638,6 +1666,10 @@ poll:
     - name: autosize
       load: last
     - name: moment
+      load: last
+    - name: waves-css
+      load: last
+    - name: waves-js
       load: last
     - name: google
       load: lazy

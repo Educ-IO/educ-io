@@ -69,6 +69,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 						properties: []
 					},
 					audio: {
+            class: "btn-outline-info",
 						name: "Audio",
 						include: [],
 						exclude: [],
@@ -116,7 +117,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 						properties: []
 					},
 					pdf: {
-						class: "info",
+						class: "btn-outline-info",
 						name: "PDF",
 						include: [],
 						exclude: [],
@@ -124,7 +125,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 						properties: []
 					},
 					temp: {
-						class: "info",
+						class: "btn-outline-info",
 						name: "Temps",
 						exclude: [],
 						include: ["^(\\s*\\~\\$).*(\\.docx)$", "^(\\s*\\~\\$).*(\\.doc)$",
@@ -226,7 +227,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 				},
 				"Others": {
 					pdf: {
-						class: "btn-outline-dark",
+						class: "btn-outline-info",
 						name: "Google Formats -> PDF",
 						source: "",
 						prefix: "",

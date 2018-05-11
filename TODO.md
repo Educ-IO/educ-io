@@ -2,8 +2,9 @@ TODO LIST
 =========
 General
 -------
-* ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
 
+* ** IMPORTANT ** Move Buttons on Public / Landing Templates to below columns (as per home.html)
+* ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
 
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
@@ -13,7 +14,7 @@ General
 
 * More Sophisticated Analytics use....link on actions? onclick="ga('send', 'event', 'Jumbotron actions', 'Download', 'Download 4.0.0-beta');" [https://support.google.com/analytics/answer/1033068] and [https://developers.google.com/analytics/devguides/collection/analyticsjs/events]
 
-* Supply oauth keys are part of the URL.... STARTED but not complete <= Should hid ge URL after successfull set? | Also JWT Token for Folders?
+* Supply oauth keys are part of the URL.... STARTED but not complete <= Should hide the URL after successfull set? | Also JWT Token for Folders?
 
 * Increase timeout on scope increase login? Or check promise completion....as a delay can mean modals are not fired???
 
@@ -43,8 +44,6 @@ Apps
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 * Success / Failure response in Busy Loader? E.g. Animate to cross if it fails?
-
-* ** IMPORTANT ** Write test to check for low device storage....and flash up warning!
 
 Mobile
 ------
@@ -112,6 +111,8 @@ Folders
 
 Reflect
 -------
+* ** IMPORTANT ** Should have anchor links using smooth scroll to different parts of the forms, to make navigation of the form easier!
+* Integrate new date picker -- need to sort buttons! <-- Almost Done
 * Lesson Observation Form
 * ** IMPORTANT ** >1 Evidence Items not outputted in JSON (De-Hydrate)
 * ** IMPORTANT ** Evidence Check Boxes not being toggled (Re-Hydrate)
@@ -130,6 +131,7 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT ** Write test to check for low device storage....and flash up warning! <-- DONE
 * ** IMPORTANT ** Make sitemap for Search Engine Submission <-- DONE
 * ** Visual Bug ** - Learn More button is larger on mobile. <-- DONE
 * ** BUG ** Thumbnail problems are back! <-- Or maybe not? <-- NOT AN ISSUE

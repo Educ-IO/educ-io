@@ -287,13 +287,22 @@ Fields = (options, factory) => {
 
 	var _datetime = form => {
 
-		if ($.fn.datepicker) form.find("div.dt-picker, input.dt-picker").datepicker({
-			format: DATE_FORMAT,
-			todayBtn: "linked",
-			todayHighlight: true,
-			autoclose: true
-		});
-
+		if ($.fn.datepicker) {
+      form.find("div.dt-picker, input.dt-picker").datepicker({
+        format: DATE_FORMAT,
+        todayBtn: "linked",
+        todayHighlight: true,
+        autoclose: true
+      });
+    } else if ($.fn.bootstrapMaterialDatePicker) {
+      form.find("div.dt-picker > input, input.dt-picker").bootstrapMaterialDatePicker({
+        format: DATE_FORMAT_M,
+        clearButton: true,
+        nowButton: true,
+        time: false
+      });
+    }
+    
 	};
 
 	var _start = () => {

@@ -13,6 +13,7 @@ sass:
   load_paths:
                       - _sass
                       - _sass/bootstrap
+                      - _sass/material
                       - _sass/custom
   style:							compressed
 

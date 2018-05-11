@@ -1,0 +1,192 @@
+@import "variables/general";
+@import "variables/elevation";
+@import "variables/buttons";
+
+@import "mixins/movement";
+@import "mixins/hover";
+
+.btn {
+  border: 0;
+	will-change: box-shadow, transform;
+  @include transition-standard(box-shadow);
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.2), 0 1px 5px 0 rgba(0,0,0,0.12);
+  // box-shadow: map-get($btn-elevation-shadow, shadow);
+  max-width: 100%;
+  // min-width: $btn-min-width;
+
+  @include focus-hover {
+    border: 0;
+    background-image: linear-gradient(to bottom, $btn-overlay, $btn-overlay);
+    box-shadow: map-get($btn-elevation-shadow-focus, shadow);
+  }
+
+  &.active, &:active {
+    box-shadow: map-get($btn-elevation-shadow-active, shadow);
+  }
+
+  &.disabled, &:disabled {
+    box-shadow: none;
+  }
+
+  &:focus {
+    outline: 0;
+    border: 0;
+  }
+
+  &:not(:disabled):not(.disabled) {
+    cursor: pointer;
+  }
+
+  .show > &.dropdown-toggle {
+    background-image: linear-gradient(to bottom, $btn-overlay, $btn-overlay);
+  }
+}
+
+.btn-normal {
+  color: $black-primary;
+  @include focus-hover {
+    color: $black-primary;
+  }
+}
+
+.btn-link {
+  border-radius: 0;
+  box-shadow: none;
+
+  @include focus-hover {
+    background-image: none;
+  }
+
+  &.active, &:active {
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  &.disabled, &:disabled {
+    background-color: transparent;
+    color: $btn-color-disabled;
+    text-decoration: none;
+  }
+}
+
+.btn-fluid {
+  min-width: 0;
+}
+
+[class*='btn-flat'] {
+  background-color: transparent;
+  box-shadow: none;
+
+  color: $black-primary;
+  @include focus-hover {
+    color: $white-primary;
+  }
+  
+  &.active, &:active {
+    box-shadow: none;
+  }
+
+  &.disabled, &:disabled {
+    background-color: transparent;
+  }
+}
+
+@each $color, $values in $theme-colors {
+  .btn-flat-#{$color} {
+    @include plain-active-focus-hover {
+      color: theme-color($color);
+    }
+
+    &.disabled,
+    &:disabled {
+      color: $btn-color-disabled;
+    }
+  }
+}
+
+.btn-flat-light,
+.btn-outline-light {
+  @include focus-hover {
+    background-image: linear-gradient(to bottom, $btn-overlay-inverse, $btn-overlay-inverse);
+  }
+
+  &.active,
+  &:active {
+    background-color: $btn-bg-active-inverse;
+  }
+}
+
+.btn-float {
+  border-radius: 50%;
+  box-shadow: map-get($btn-float-elevation-shadow, shadow);
+  height: $btn-float-size;
+  line-height: $btn-float-size;
+  min-width: 0;
+  padding: 0;
+  width: $btn-float-size;
+
+  &.active,
+  &:active {
+    box-shadow: map-get($btn-float-elevation-shadow-active, shadow);
+  }
+
+  &.disabled,
+  &:disabled {
+    box-shadow: none;
+  }
+
+  &.btn-sm {
+    height: $btn-float-size-sm;
+    line-height: $btn-float-size-sm;
+    width: $btn-float-size-sm;
+  }
+}
+
+.btn-float-dropdown {
+  .dropdown-menu {
+    border-radius: 0;
+    margin-top: $btn-float-dropdown-inner-spacer-y;
+    min-width: $btn-float-size;
+    padding-top: 0;
+    padding-bottom: 0;
+    text-align: center;
+
+    &::before {
+      display: none;
+    }
+
+    .btn-float {
+      display: block;
+      margin-right: auto;
+      margin-bottom: $btn-float-dropdown-inner-spacer-y;
+      margin-left: auto;
+    }
+  }
+}
+
+// Removing this gives banded shadows between buttons, need better way to handle it!
+// And also need some work on input groups with > btn
+/*
+.btn-group, .btn-group-vertical {
+  
+  // Gives weird shadow for whole row
+  // box-shadow: map-get($btn-elevation-shadow, shadow);
+
+  > .btn {
+    @include transition-standard(border-color, opacity);
+
+    box-shadow: none;
+    &.active,
+    &:active {
+      box-shadow: none;
+    }
+
+  }
+
+  > .btn-group,
+  > .btn-group-vertical {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+*/

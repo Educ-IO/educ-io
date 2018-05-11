@@ -9,18 +9,16 @@ css:
     - bootstrap/functions
     - bootstrap/variables
     - bootstrap/mixins
-    - bootstrap-md/functions
-    - bootstrap-md/variables
-    - bootstrap-md/mixins
+    - bootstrap/utilities
     - bootstrap/root
     - bootstrap/reboot
     - bootstrap/type
     - bootstrap/images
     - bootstrap/grid
-    - bootstrap-md/buttons
     - bootstrap/buttons
-    - bootstrap/utilities
+    - material/buttons
     - bootstrap/carousel
+    - material/carousel
     - custom/functions
     - custom/variables
     - custom/common

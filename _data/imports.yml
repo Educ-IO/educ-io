@@ -808,6 +808,46 @@ bootstrap-datepicker-js:
       crossorigin: anonymous
       id: __bootstrap-datepicker-js
 
+bootstrap-material-datepicker-css:
+  name: Material DatePicker for Bootstrap (JS)
+  desc: This is a UI Component to provide cross-browser date picking (on top of Bootstrap)
+  url: https://cdnjs.com/libraries/bootstrap-material-datetimepicker
+  project: https://github.com/T00rk/bootstrap-material-datetimepicker
+  version: 2.7.1
+  license: MIT
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/css/bootstrap-material-datetimepicker.min.css
+      integrity: sha256-h472ZYEQbdqAvtB9tQqzpmBApho+fZfF8MmPwTHaqas=
+      crossorigin: anonymous
+      map: true
+      id: __bootstrap-material-datepicker-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/css/bootstrap-material-datetimepicker.css
+      integrity: sha256-G5PTdPgo4SQMURj4T5iUmc8SZE0yEaxMhmAVt/AWxnU=
+      crossorigin: anonymous
+      id: __bootstrap-material-datepicker-css
+
+bootstrap-material-datepicker-js:
+  name: Material DatePicker for Bootstrap (JS)
+  desc: This is a UI Component to provide cross-browser date picking (on top of Bootstrap)
+  url: https://cdnjs.com/libraries/bootstrap-material-datetimepicker
+  project: https://github.com/T00rk/bootstrap-material-datetimepicker
+  version: 2.7.1
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/js/bootstrap-material-datetimepicker.min.js
+      integrity: sha256-Wj9bkvbfcB8UgPBenFOyjr0MBkdHsL2NACVTQ8+Q0JE=
+      crossorigin: anonymous
+      map: true
+      id: __bootstrap-material-datepicker-js
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/js/bootstrap-material-datetimepicker.js
+      integrity: sha256-aLGdbuknsTq6HcCE628X8fozrJqc7yuC2PY7i+J4OKE=
+      crossorigin: anonymous
+      id: __bootstrap-material-datepicker-js
+      
 transducers:
   name: Transducers.js
   desc: Transduction library for generic data transformations
@@ -1021,3 +1061,42 @@ three:
       integrity: sha256-y5HlqchBMmPWG2NQKacysKEFzL0Tzi9B9HPWCSOHFog=
       crossorigin: anonymous
       id: __three
+
+waves-js:
+  name: Waves
+  desc: Material Design Waves Click
+  url: https://cdnjs.com/libraries/node-waves
+  project: https://github.com/fians/Waves
+  version: 0.7.6
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/node-waves/0.7.6/waves.min.js
+      integrity: sha256-R//ABCk0LbG1/TvQQ4+sbwjzmPxJn9SF5f7FJ2AwJ4o=
+      crossorigin: anonymous
+      map: true
+      id: __waves-js
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/node-waves/0.7.6/waves.js
+      integrity: sha256-SxHnxDPgkYE5U1uGFnTOxg9P3umN5+7QocfOCvpaYPo=
+      crossorigin: anonymous
+      id: __waves-js
+      
+waves-css:
+  name: Waves
+  desc: Material Design Waves Click
+  url: https://cdnjs.com/libraries/node-waves
+  project: https://github.com/fians/Waves
+  version: 0.7.6
+  license: MIT
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/node-waves/0.7.6/waves.min.css
+      integrity: sha256-8+G8C5iYz5jhB7td5F7cZCUpwiSowuTsdsZEusTBgl4=
+      crossorigin: anonymous
+      id: __waves-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/node-waves/0.7.6/waves.css
+      integrity: sha256-sSUMG0VYSSCzajhp6SoZ87Hv66ChbFlHjdlMJIPt4BA=
+      crossorigin: anonymous
+      id: __waves-css

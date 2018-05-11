@@ -3,9 +3,10 @@ Scroll = (options, factory) => {
 
 	/* <!-- HELPER: Provides smooth scrolling for same-page anchor links --> */
   /* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
+  /* <!-- @options.class = the class to check for on links that trigger smooth scroll --> */
 	
 	/* <!-- Internal Constants --> */
-	/* <!-- Internal Constants --> */
+  /* <!-- Internal Constants --> */
 	
 	/* <!-- Internal Variables --> */
   /* <!-- Internal Variables --> */
@@ -29,7 +30,9 @@ Scroll = (options, factory) => {
       if (Element.prototype.scrollIntoView) {
     
         var hrefs = (element ? element : document).getElementsByTagName("a"), fn = function(e) {
-          if (e.target.hash && e.target.hash.length > 1) {
+          
+          if (e.target.hash && e.target.hash.length > 1 && 
+              (!options || !options.class || e.target.classList.contains(options.class))) {
             var el = document.getElementById(e.target.hash.slice(1));
             if (el && el.scrollIntoView) {
               e.preventDefault();

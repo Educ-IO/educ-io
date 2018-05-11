@@ -4,6 +4,12 @@ html, body {
   height: 100vh;
 }
 
+// -- General Buttons -- //
+.btn {
+  text-transform: none;
+}
+// -- General Buttons -- //
+
 // -- Google Button -- //
 .google-logo-wrapper {
 	padding: 10px 12px 10px 10px;
@@ -40,6 +46,7 @@ html, body {
   color: $colour-highlight;
   border-color: $colour-highlight;
 	&:hover {
+    color: $colour-background;
 		border-color: $colour-highlight;
 		background-color: $colour-highlight !important;
 	}

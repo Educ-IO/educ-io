@@ -1,7 +1,7 @@
 // -- Viewpoint Heights / Widths Breakpoints  -- //
 @each $breakpoint in map-keys($grid-breakpoints) {
   @include media-breakpoint-up($breakpoint) {
-    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    $infix: breakpoint-infix($breakpoint);
     @each $prop, $abbrev, $prefix in ((width, vw), (height, vh), (max-width, vw, m), (max-height, vh, m), (min-width, vw, n), (min-height, vh, n)) {
   		@each $size, $length in $sizes {
         @if $size != auto {

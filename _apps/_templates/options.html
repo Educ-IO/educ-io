@@ -15,7 +15,7 @@
           <div class="input-group col-md-12 col-lg-8 col-xl-6 p-1 no-gutters">
             <input data-field="{{@index}}" type="text" class="form-control disabled" value="{{#if name}}{{name}}{{else}}{{this}}{{/if}}" disabled>
             <div class="input-group-append">
-              <button id="{{../id}}_{{@index}}_btn" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{#if current}}{{current}}{{else}}Select{{/if}}</button>
+              <button id="{{../id}}_{{@index}}_btn" type="button" class="btn btn-secondary dropdown-toggle mb-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{#if current}}{{current}}{{else}}Select{{/if}}</button>
               <div class="dropdown-menu dropdown-menu-right" aria-label="{{../choices_label}}">
                 {{#each ../choices}}
                 {{#if this}}<a class="dropdown-item" href="#" data-field="{{@index}}"{{# if desc}} data-toggle="tooltip" data-placement="left" title="{{desc}}"{{/if}}>{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>{{/if}}
@@ -28,7 +28,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">{{action}}</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary btn-flat" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>

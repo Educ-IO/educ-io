@@ -32,8 +32,14 @@ Main = function() {
       /* <!-- Activate Carousel --> */	
       $(".carousel").carousel();
       
-      /* <!-- Smooth Scroll Andhors --> */	
-      if (ಠ_ಠ.Scroll) ಠ_ಠ.Scroll().start();
+      /* <!-- Smooth Scroll Anchors --> */	
+      if (ಠ_ಠ.Scroll) ಠ_ಠ.Scroll({class: "smooth-scroll"}).start();
+      
+      /* <!-- Material Button Waves --> */	
+      if (window.Waves) {
+        Waves.attach(".btn");
+        Waves.init();
+      }
       
     }
    /* <!-- External Functions --> */

@@ -8,9 +8,9 @@
 			<h1 class="display-4 mb-3 font-sensitive">{{ page.title | upcase }}</h1>
 			{% if lead %}{{ lead | markdownify }}{% endif %}
 			<div class="d-flex flex-column flex-md-row lead mb-3">
-				{% if include.action and include.url %}<a href="{{ include.url }}" class="btn btn-lg btn-primary btn-raised mr-md-3 mt-2">{{ include.action }}</a>{% endif %}
-				<a href="/support/" class="btn btn-lg btn-success btn-raised mr-md-3 mt-2">Support</a>
-        <a href="/#apps" class="btn btn-lg btn-raised mt-2">Other Apps</a>
+				{% if include.action and include.url %}<a href="{{ include.url }}" class="btn btn-lg btn-primary mr-md-3 mt-2">{{ include.action }}</a>{% endif %}
+				<a href="/support/" class="btn btn-lg btn-success mr-md-3 mt-2">Support</a>
+        <a href="/#apps" class="btn btn-lg mt-2">Other Apps</a>
 			</div>
 		</div>
 	</div>

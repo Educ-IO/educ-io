@@ -34,6 +34,7 @@ globals:
   html2canvas: false
   jsPDF: false
   _: false
+  Waves: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false

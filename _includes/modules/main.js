@@ -297,6 +297,12 @@ Main = function() {
 
 		start: () => {
 
+      /* <!-- Material Button Waves --> */	
+      if (window.Waves) {
+        Waves.attach(".btn");
+        Waves.init();
+      }
+      
 			/* <!-- Initialise Hello Auth --> */
 			_setup(hello);
 
