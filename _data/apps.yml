@@ -346,8 +346,6 @@ reflect:
       load: last
     - name: showdown
       load: last
-    - name: bootstrap-material-datepicker-css
-      load: last
     - name: bootstrap-material-datepicker-js
       load: last
     - name: google

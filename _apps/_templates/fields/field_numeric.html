@@ -8,7 +8,7 @@
 			<input id="{{id}}_NUMERIC" name="{{id}}" type="number" class="d-none" data-output-name="Number"{{#if state}} value="{{ state }}"{{/if}} />
 			<input id="{{id}}" name="{{id}}" type="text" data-output-name="Value" class="pl-2 form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly" aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"{{#if suffix}} data-suffix="{{suffix}}" data-target="{{id}}_NUMERIC"{{/if}} data-min="{{#if min}}{{min}}{{else}}0{{/if}}" data-max="{{#if max}}{{max}}{{else}}10{{/if}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}} {{#if state}}value="{{ state }}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}}/>
 			<span class="input-group-append">
-				{{> control_button b_class="btn-secondary eraser" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
+				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
 				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-primary alter-numerical d-flex h-100" data-target="{{id}}" data-value="-{{#if this.increment}}{{this.increment}}{{else}}1{{/if}}"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">remove</i></button>
 				<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-info alter-numerical d-flex h-100" data-target="{{id}}" data-value="{{#if this.increment}}{{this.increment}}{{else}}1{{/if}}"><i class="material-icons {{#if large}}md-24{{else}}md-18{{/if}}">add</i></button>
 			</span>

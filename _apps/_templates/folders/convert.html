@@ -47,7 +47,7 @@
 								<input type="text" id="mirrorOutputTo" name="mirror" class="form-control"{{#if state}}{{#if state.mirror}} value="{{state.mirror}}"{{/if}}{{/if}} readonly />
 								<div class="input-group-append">
 									{{> control_button b_class="btn-outline-primary" b_title="Select Folder from Google Drive" b_target="mirrorOutputTo" b_action="load-g-folder" b_text="Browse" }}
-									{{> control_button b_class="btn-secondary eraser" b_title="Clear / Reset" b_target="mirrorOutputTo" b_icon="refresh" }}
+									{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target="mirrorOutputTo" b_icon="refresh" }}
 								</div>
 							</div>
 							<small class="form-text text-muted">After conversion add any created files to this folder too.</small>

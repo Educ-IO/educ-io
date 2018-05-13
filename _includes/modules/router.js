@@ -126,8 +126,14 @@ Router = function() {
 					
 					/* <!-- Fall-Through --> */
 					if (!_shown) show("INSTRUCTIONS", `How to use ${options.name ? options.name : "App"} ...`);
-							
-        } else if ((/HELP/i).test(command)) { 
+				
+        } else if ((/SPIN/i).test(command)) {
+          
+          ಠ_ಠ.Display.busy({
+						target: ಠ_ಠ.container
+          });
+          
+        } else if ((/HELP/i).test(command)) {
 
           /* <!-- Request Help --> */
           ಠ_ಠ.Help.provide(ಠ_ಠ.Flags.dir());

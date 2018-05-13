@@ -37,7 +37,7 @@
 							<input type="text" id="outputTo" name="output" class="form-control"{{#if state}}{{#if state.output}} value="{{state.output}}"{{/if}}{{/if}} readonly />
 							<div class="input-group-append">
 								{{> control_button b_class="btn-outline-primary" b_title="Select Folder from Google Drive" b_target="outputTo" b_action="load-g-folder" b_text="Browse" }}
-								{{> control_button b_class="btn-secondary eraser" b_title="Clear / Reset" b_target="outputTo" b_icon="refresh" }}
+								{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target="outputTo" b_icon="refresh" }}
 							</div>
 						</div>
 						<small class="form-text text-muted">Clone files and folders to this folder.</small>
@@ -72,7 +72,7 @@
 								<input type="text" id="relativeTo" name="relative" class="form-control"{{#if advanced}}{{#if relative}} title="{{relative.name}}" value="{{relative.id}}"{{/if}}{{/if}} readonly />
 								<div class="input-group-append">
 									{{> control_button b_class="btn-outline-primary" b_title="Select Folder from Google Drive" b_target="relativeTo" b_action="load-g-folder" b_text="Browse" }}
-									{{> control_button b_class="btn-secondary eraser" b_title="Clear / Reset" b_target="relativeTo" b_icon="refresh" }}
+									{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target="relativeTo" b_icon="refresh" }}
 								</div>
 							</div>
 							<small class="form-text text-muted">Will only create Cloned Folders relative to this folder.</small>

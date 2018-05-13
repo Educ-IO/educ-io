@@ -68,7 +68,7 @@ css:
 		{% include nav.html type="sticky-top" %}
 		<div class="container pb-4 px-0">
 			<div class="jumbotron pt-4 pb-2">
-  			{% if page.app and site.data.apps[page.app].link and site.data.apps[page.app].ext != "true" %}<a class="btn btn-primary btn-lg float-lg-right d-none d-md-inline-block" href="{{ site.data.apps[page.app].link }}" role="button">Open {{ site.data.apps[page.app].name }}</a>{% endif %}{% if page.layout == 'tutorial' %}<a class="btn btn-info btn-lg float-lg-right d-none d-lg-inline-block mr-2" href="/guides/{{ page.app}}">Guide</a>{% endif %}
+  			{% if page.app and site.data.apps[page.app].link and site.data.apps[page.app].ext != "true" %}<a class="btn btn-primary btn-lg float-md-right d-none d-md-inline-block" href="{{ site.data.apps[page.app].link }}" role="button">Open {{ site.data.apps[page.app].name }}</a>{% endif %}{% if page.layout == 'tutorial' %}<a class="btn btn-info btn-lg float-lg-right d-none d-lg-inline-block mr-2" href="/guides/{{ page.app}}">Guide</a>{% endif %}
 				<h1 class="font-sensitive{% if page.layout != 'tutorial' %} display-4{% endif %}">{% if page.layout == 'guide' or page.layout == 'tutorial' %}{% if site.data.apps[page.app].logo %}{% assign app = site.data.apps[page.app] %}{% include {{ app.logo }} %}{% endif %}{% endif %}{% if page.short_title %}{{ page.short_title }}{% else %}{{ page.title }}{% endif %}</h1>
   			{% if page.lead %}<p class="lead">{{ page.lead | markdownify | remove: "<p>" | remove: "</p>" }}</p>{% endif %}
 				{% if page.support %}

@@ -3,7 +3,6 @@ TODO LIST
 General
 -------
 
-* ** IMPORTANT ** Move Buttons on Public / Landing Templates to below columns (as per home.html)
 * ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
 
