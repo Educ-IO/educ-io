@@ -398,6 +398,17 @@ Main = function() {
 		},
 
 		refresh: force => google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")))(_default, force === true ? true : false),
+    
+    pick: (prompt, views, log, mimeType) => new Promise((resolve, reject) => {
+
+			/* <!-- Open from Google Drive Picker --> */
+			if (ಠ_ಠ.Google) ಠ_ಠ.Google.pick(
+				prompt, false, true, views,
+				file => file ? file.mimeType.toLowerCase() == mimeType.toLowerCase() ?
+				ಠ_ಠ.Flags.log(log, file) && resolve(file) : reject("Wrong Type of File Picked") : reject("No File Picked")
+			);
+
+		}),
 		/* <!-- External Functions --> */
 
 	};

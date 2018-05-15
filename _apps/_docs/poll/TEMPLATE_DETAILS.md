@@ -1,0 +1,1 @@
+Your __email template__ can come from a [google doc](https://www.google.com/docs/about/){:target="_blank" rel="noopener"} or one of our __simple__ and __elegant__ email designs.

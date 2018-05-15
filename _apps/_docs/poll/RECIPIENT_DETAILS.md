@@ -1,0 +1,1 @@
+Your __recipient list__ can come from a [google sheet](https://www.google.com/sheets/about/){:target="_blank" rel="noopener"} or you can enter / paste it in. Once loaded, you can review the list, and make any ammendments, before sending out your poll email.

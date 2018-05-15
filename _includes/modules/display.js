@@ -252,9 +252,9 @@ Display = function() {
 
 				/* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
 				var _element = options.clear === true ? _target(options).empty() : _target(options);
-				
-				return options.prepend === true ?
-					$(this.get(options)).prependTo(_element) : $(this.get(options)).appendTo(_element);
+				var _return = $(this.get(options));
+        
+				return options.prepend === true ? _return.prependTo(_element) : _return.appendTo(_element);
 
 			},
 
@@ -272,9 +272,12 @@ Display = function() {
 
 				/* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
 				var _element = options.clear === true ? _target(options).empty() : _target(options);
-
-				return options.prepend === true ?
-					$(this.get(options)).prependTo(_element) : $(this.get(options)).appendTo(_element);
+        var _return = $(this.get(options));
+        
+        _popovers(_return.find("[data-toggle='popover']"));
+        _tooltips(_return.find("[data-toggle='tooltip']"));
+        
+				return options.prepend === true ? _return.prependTo(_element) : _return.appendTo(_element);
 
 			},
 

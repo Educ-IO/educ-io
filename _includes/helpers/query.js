@@ -16,9 +16,9 @@ Query = (options, factory) => {
 	
   return {
     
-    table : (name, details, options) => {
+    table : (name, details) => {
       var table = options.db.getCollection(name);
-      table ? options && options.preserve ? true : table.clear() : table = options.db.addCollection(name, {
+      table ? details && details.preserve ? true : table.clear() : table = options.db.addCollection(name, {
         unique: details && details.unique || [],
         indices: details && details.indices || [],
         serializableIndices: false

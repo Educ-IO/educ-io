@@ -18,7 +18,7 @@ h1, h2, h3, .navbar-brand, a.navbar-brand  {
 }
 
 h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading {
-	color: lighten($colour-highlight, 25%) !important;
+	color: darken($colour-highlight, 15%) !important;
 }
 
 a.navbar-brand  {

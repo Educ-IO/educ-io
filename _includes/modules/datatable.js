@@ -46,7 +46,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		_name = (`table_${table.id}`).replace(/[^a-z0-9\-_:.]|^[^a-z]+/gi, "");
 
 		/* <!-- Remove / Create Custom CSS Sheet --> */
-		_css = _css ? _css.deleteAll() : ಠ_ಠ.Css(_name);
+		_css = _css ? _css.deleteAll() : ಠ_ಠ.Css({suffix: _name});
 
 	};
 	_initialise(); /* <!-- Run initial variable initialisation --> */

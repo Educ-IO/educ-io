@@ -42,7 +42,9 @@ Apps
 
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
-* Success / Failure response in Busy Loader? E.g. Animate to cross if it fails?
+* Success / Failure response in Busy Loader? E.g. Animate to cross if it fails?i
+
+* Email - Consider moving to MJML - https://github.com/mjmlio/mjml ... although might strip out templating tags?
 
 Mobile
 ------
@@ -66,8 +68,6 @@ Grades
 
 View
 ----
-* ** BUG ** Hidden columns become visible again once another tab is loaded, but not switched to.
-
 * Turn off advanced table display for fewer filtered rows?
 	+ Important to help deal with flickers
 * Pass Date column information to readonly view
@@ -110,8 +110,10 @@ Folders
 
 Reflect
 -------
+* ** IMPORTANT ** Including Save buttons at the end of Reflect Forms by cloning menu items from NAV (with imports etc)
+
 * ** IMPORTANT ** Should have anchor links using smooth scroll to different parts of the forms, to make navigation of the form easier!
-* Integrate new date picker -- need to sort buttons! <-- Almost Done
+
 * Lesson Observation Form
 * ** IMPORTANT ** >1 Evidence Items not outputted in JSON (De-Hydrate)
 * ** IMPORTANT ** Evidence Check Boxes not being toggled (Re-Hydrate)
@@ -130,6 +132,10 @@ Reflect
 
 Complete
 --------
+* ** BUG ** Hidden columns become visible again once another tab is loaded, but not switched to. <-- DONE
+* ** IMPORTANT ** Make Split Template generic, and have imported menus as opposed to recreate? <--DONE
+* ** IMPORTANT ** Buttons for Public / Readme Apps should be explicit in their loading imports, not rely on click throughs (pop up blocking etc)? <-- DONE
+* Integrate new date picker -- need to sort buttons! <-- DONE
 * ** IMPORTANT ** Write test to check for low device storage....and flash up warning! <-- DONE
 * ** IMPORTANT ** Make sitemap for Search Engine Submission <-- DONE
 * ** Visual Bug ** - Learn More button is larger on mobile. <-- DONE

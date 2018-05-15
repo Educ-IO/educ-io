@@ -157,7 +157,6 @@ view:
               imports:
                 - google
               auth: google
-              id: _cmd_Start
             - name: Open & Load Fully
               desc: Open a Sheet from your Drive (load all tabs up front)
               hash: open.full
@@ -296,10 +295,12 @@ view:
                 - fetchjsonp
               auth: google
   buttons:
-    - name: Primary
-      menu: _cmd_Start
-      desc: Open a Sheet
-      url: "#google,open.lazy"
+    - name: Open a Sheet
+      desc: Open a Sheet from your Drive (lazily, one tab at a time)
+      hash: open.lazy
+      imports:
+        - google
+      auth: google
   published: true
 
 
@@ -594,13 +595,20 @@ reflect:
                 - fetchjsonp
               auth: google
   buttons:
-  - name: Primary
-    desc: Reflective Report
-    url: "#google,create.report.report"
-  - name: Secondary
-    menu: _cmd_Start_Team
-    desc: Create a Form
-    url: "#google,create.form.form"
+  - name: Reflective Report
+    desc: Create a new Reflective Report
+    hash: create.report
+    auth: google
+  - name: Open Report
+    desc: Open a saved Report from your Drive
+    hash: open.report
+    imports:
+      - google
+    auth: google
+  - name: Create Form
+    desc: Create a new Form for Reports
+    hash: create.form
+    auth: google
   published: false
 
 
@@ -749,21 +757,16 @@ folders:
               desc: Open 
               hash: open.root
               auth: google
-              id: _cmd_Start
             - name: Open a Folder
               desc: Open a Google Drive Folder
               hash: open
               imports:
                 - google
               auth: google
-              id: _cmd_Start_Folder
             - name: Open a Team Drive
               desc: Open a Google Team Drive
               hash: open.team
-              imports:
-                - google
               auth: google
-              id: _cmd_Start_Team
             - name: Refresh
               desc: Refresh the Folder View
               hash: refresh
@@ -881,18 +884,20 @@ folders:
                 - fetchjsonp
               auth: google
   buttons:
-    - name: Primary
-      menu: _cmd_Start
+    - name: Open Drive
       desc: Open your Drive
-      url: "#google,open.root"
-    - name: Secondary
-      menu: _cmd_Start_Folder
-      desc: Open a Folder
-      url: "#google,open"
-    - name: Tertiary
-      menu: _cmd_Start_Team
-      desc: Open a Team Drive
-      url: "#google,open.team"
+      hash: open.root
+      auth: google
+    - name: Open a Folder
+      desc: Open a Google Drive Folder
+      hash: open
+      imports:
+        - google
+      auth: google
+    - name: Open a Team Drive
+      desc: Open a Google Team Drive
+      hash: open.team
+      auth: google
   published: true
 
 
@@ -1269,7 +1274,7 @@ merge:
     - shared/datatable
     - shared/headers
     - fields/field_numeric
-    - merge/split
+    - shared/split
     - merge/meta_rows
   docs:
     - shared/FILTERS
@@ -1322,12 +1327,10 @@ merge:
               desc: Create a new Merge
               hash: create
               auth: google
-              id: _cmd_Create
             - name: Open
               desc: Open an existing Merge
               hash: open
               auth: google
-              id: _cmd_Open
               imports:
                 - google
             - name: Save
@@ -1380,14 +1383,12 @@ merge:
                 desc: Load data (to merge) from a Google Sheet
                 hash: load.data.sheet
                 auth: google
-                id: _cmd_Data_Sheet
                 imports:
                 - google
               - name: Open Form
                 desc: Load data (to merge) from a Google Form
                 hash: load.data.form
                 auth: google
-                id: _cmd_Data_Form
                 imports:
                 - google
     - name: Template
@@ -1398,14 +1399,12 @@ merge:
                 desc: Load a template (to merge into) from a Google Doc
                 hash: load.template.doc
                 auth: google
-                id: _cmd_Template_Doc
                 imports:
                 - google
               - name: Load Sheet
                 desc: Load a template (to merge into) from a Google Sheet
                 hash: load.template.sheet
                 auth: google
-                id: _cmd_Template_Sheet
                 imports:
                 - google         
     - name: Settings
@@ -1449,14 +1448,16 @@ merge:
                 - fetchjsonp
               auth: google
   buttons:
-  - name: Primary
-    menu: _cmd_Create
-    desc: Create a Merge
-    url: "#google,create"
-  - name: Secondary
-    menu: _cmd_Open
-    desc: Open Existing
-    url: "#google,open"
+  - name: Create a Merge
+    desc: Create a new Merge
+    hash: create
+    auth: google
+  - name: Open Existing
+    desc: Open an existing Merge
+    hash: open
+    auth: google
+    imports:
+      - google
   published: false
   config:
     api: "MN_prIAeoOzt-NF-8uwlGE9Wlbr8Kyl43"
@@ -1696,6 +1697,8 @@ poll:
     - loader
     - recent
     - help
+    - emails/email_standard
+    - shared/split
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -1708,6 +1711,8 @@ poll:
     - poll/README
     - poll/INSTRUCTIONS
     - poll/TUTORIALS
+    - poll/RECIPIENT_DETAILS
+    - poll/TEMPLATE_DETAILS
   scopes:
     google:
       - scope: email
@@ -1718,11 +1723,89 @@ poll:
         name: View your basic profile info
         reason: In order to display your name on the navigation menu, once you have signed in.
         request: login
+      - scope: https://www.googleapis.com/auth/drive.file
+        name: View and manage Google Drive files and folders that you have opened or created with this app
+        reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.
+        request: login
+      - scope: https://www.googleapis.com/auth/spreadsheets.readonly
+        name: View your Google Spreadsheets
+        reason: This app needs to load data from spreadsheets in order to analyse the Poll responses, but not to write to them.
+        request: lazy
+      - scope: https://www.googleapis.com/auth/gmail.send
+        name: Send Gmail messages only
+        reason: In order to send poll email messages, once you have created a new poll.
+        request: lazy
+      - scope: https://www.googleapis.com/auth/drive.install
+        name: Special scope used to let users approve installation of an app.
+        reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
+        request: lazy
   keys:
     google:
         general: AIzaSyDCfNUuj_RTi-UhCvzcMCw0bfVmSNDu8RY
         oauth: 1065915556520-65sqjdskoddvc360dsf5j566u7em11u3.apps.googleusercontent.com
   menus:
+    - name: Poll
+      groups:
+        all:
+          commands:
+            - name: Create
+              desc: Create a new Poll
+              hash: create
+              auth: google
+            - name: Open
+              desc: Open an existing Poll
+              hash: open
+              auth: google
+              imports:
+                - google
+            - name: Send
+              desc: Send Email Poll from your Gmail Account
+              hash: send
+              auth: google
+              disabled_until:
+                - loaded-template
+                - created-recipients
+              scope: https://www.googleapis.com/auth/gmail.send
+            - name: Close
+              desc: Close the current Poll
+              hash: close
+              disabled_until:
+                - opened
+    - name: Recipients
+      groups:
+          all:
+            commands:
+              - name: Load from Sheet
+                desc: Load recipients from a Google Sheet
+                hash: load.recipients.sheet
+                auth: google
+                imports:
+                - google
+              - name: Enter Manually
+                desc: Enter Recipient List manually
+                hash: enter.recipients
+    - name: Template
+      groups:
+          all:
+            commands:
+              - name: Load Doc
+                desc: Load recipients from a Google Sheet
+                hash: load.template.doc
+                auth: google
+                imports:
+                - google
+              - name: Enter Manually
+                desc: Enter Recipient List manually
+                hash: enter.recipients
+    - name: Analyse
+      groups:
+        all:
+          commands:
+            - name: Load
+              desc: Load Poll Data to Analyse
+              hash: load.sheet
+              auth: google
+              scope: https://www.googleapis.com/auth/spreadsheets.readonly
     - name: Settings
     - name: About
       short_name: Help
@@ -1763,10 +1846,21 @@ poll:
                 - jshashes
                 - fetchjsonp
               auth: google
+  buttons:
+      - name: Create a Poll
+        desc: Create a new Poll
+        hash: create
+        auth: google
+      - name: Open Existing
+        desc: Open an Existing Poll
+        hash: open
+        auth: google
+        imports:
+          - google
   published: false
-  
-  
-  
+
+
+
 #  .d8888.  .o88b. d8888b. d888888b d8888b. d888888b d8888b.
 #  88'  YP d8P  Y8 88  `8D   `88'   88  `8D `~~88~~' 88  `8D
 #  `8bo.   8P      88oobY'    88    88oodD'    88    88oobY'
