@@ -1,4 +1,4 @@
-Filters = (options, factory) => {
+Filters = options => {
 	"use strict";
   
   /* <!-- MODULE: Parse string Filters and Builds a Filter Query for Loki --> */

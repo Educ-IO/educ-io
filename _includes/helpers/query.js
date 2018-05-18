@@ -1,4 +1,4 @@
-Query = (options, factory) => {
+Query = options => {
 	"use strict";
   
 	/* <!-- HELPER: Provides helper functions for querying Loki Databases --> */

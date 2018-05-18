@@ -1,4 +1,4 @@
-Network = (options, factory) => {
+Network = options => {
 	"use strict";
 	
 	/* <!-- HELPER: Provides HTTP methods to call APIs, with concurrency and rate limiting functionality --> */

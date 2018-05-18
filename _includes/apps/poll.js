@@ -102,9 +102,7 @@ App = function() {
         route: (handled, command) => {
 
           if (handled) return;
-
-          var _busy;
-
+          
           if ((/OPEN/i).test(command)) {
 
             if ((/OPEN/i).test(command[1]) && command[1]) {
@@ -126,14 +124,9 @@ App = function() {
 
             _createPoll();
 
-          } else if ((/SEND/i).test(command)) {
-
-
           } else if ((/CLOSE/i).test(command)) {
 
             ಠ_ಠ.Router.clean(true);
-
-          } else if ((/TEST/i).test(command)) {
 
           }
 

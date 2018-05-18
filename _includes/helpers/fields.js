@@ -1,4 +1,4 @@
-Fields = (options, factory) => {
+Fields = options => {
 	"use strict";
 
 	/* <!-- HELPER: Wires up form field behaviours (clear, increments, spans etc) --> */

@@ -1,4 +1,4 @@
-Data = (options, factory) => {
+Data = () => {
 	"use strict";
 	
 	/* <!-- HELPER: Form data to/from JSON Object --> */
@@ -7,11 +7,9 @@ Data = (options, factory) => {
 	
 	/* <!-- Internal Constants --> */
 	const INPUTS = "*[data-output-field], :input[name]:enabled";
-	const DEFAULTS = {};
   /* <!-- Internal Constants --> */
 	
 	/* <!-- Internal Variables --> */
-	options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */

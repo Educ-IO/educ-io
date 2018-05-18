@@ -2,7 +2,6 @@ TODO LIST
 =========
 General
 -------
-
 * ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
 
@@ -71,30 +70,20 @@ View
 * Turn off advanced table display for fewer filtered rows?
 	+ Important to help deal with flickers
 * Pass Date column information to readonly view
-
 * ** IMPORTANT ** 'Bottom' header overlay
-
 * Refresh should just refresh data, not overwrite filters, column visibilities and headers
-
 * ** BUG ** Why does the border thicken on freeze? .... (Something to do with Flex)
-
 * ** BUG ** Column names can sometimes still get out of sync?! Arghhh :)
-
 * Linking...
-
 * ** IMPORTANT ** Column Filters (Type)
-
 * ** IMPORTANT ** Do we need to save view definitions? e.g. .view files / mime-type = application/x.educ-io.view <++ YES
   + Implement Save Route Handler
-
 * Write Flexbox-based Fit Algorithm
   + Categorised data to 'pills' for display?
-  
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 * Vertical Only Freeze should work better (e.g. not screw with table row cell heights?);
 * Handle Merged Cells and merged ranges.
 * Table Module -> Line 40 Can sometimes evaluate to NULL, on short tables particularly --> var node = nodes[Math.floor(nodes.length / 2)]; <++ IMPORTANT // Happens with very 'tall' cells.
-
 * Numerical Filter implies re-sort?
 
 Merge
@@ -132,6 +121,7 @@ Reflect
 
 Complete
 --------
+* Switch off display versions for non published apps on Change <-- DONE
 * ** BUG ** Hidden columns become visible again once another tab is loaded, but not switched to. <-- DONE
 * ** IMPORTANT ** Make Split Template generic, and have imported menus as opposed to recreate? <--DONE
 * ** IMPORTANT ** Buttons for Public / Readme Apps should be explicit in their loading imports, not rely on click throughs (pop up blocking etc)? <-- DONE

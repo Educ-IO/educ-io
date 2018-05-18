@@ -1,4 +1,4 @@
-Css = (options, factory) => {
+Css = options => {
 	"use strict";
 
 	/* <!-- HELPER: Provides dynamic CSS rules for document insertion --> */

@@ -1,4 +1,4 @@
-Scroll = (options, factory) => {
+Scroll = options => {
 	"use strict";
 
 	/* <!-- HELPER: Provides smooth scrolling for same-page anchor links --> */
