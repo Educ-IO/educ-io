@@ -1,0 +1,26 @@
+// -- Folder Cells -- //
+td.folder {background-color: beige;}
+tr.bg-active, tr.bg-active td {background-color: $colour-active !important;}
+td a.action {
+	&.action-on {
+		color: lighten($colour-general, 30%) !important;
+		i {color: lighten($colour-general, 30%) !important;}
+		&:hover {
+			color: $colour-general !important;
+			i {color: $colour-general !important;}
+		}
+	}
+	&.action-off {
+		color: $colour-emphasis !important;
+		i {color: $colour-emphasis !important;}
+		&:hover {
+			color: darken($colour-emphasis, 20%) !important;
+			i {color: darken($colour-emphasis, 20%) !important;}
+		}
+	}
+	&:hover {
+		text-decoration: none;
+		i {text-decoration: none;}
+	}
+}
+// -- Folder Cells -- //

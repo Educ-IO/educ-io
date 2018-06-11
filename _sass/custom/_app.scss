@@ -23,6 +23,34 @@ html, body {
 }
 // -- Google Button -- //
 
+// -- Ellipsis Waiting -- //
+.waiting {
+  margin-right: 1em;
+  &:after {
+    margin-right: -2.5em;
+    margin-left: 0.25em;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: bottom;
+    @include animation(ellipsis steps(6,end) 1.5s infinite 400ms);
+    content: "\2026";
+    width: 0px;
+  }
+}
+
+@keyframes ellipsis {
+  to {
+    width: 1.25em;    
+  }
+}
+
+@-webkit-keyframes ellipsis {
+  to {
+    width: 1.25em;    
+  }
+}
+// -- Ellipsis Waiting -- //
+
 // -- Action Button -- //
 #sign_in .btn, #sign_out .btn {
 	border-radius: 2px;
@@ -125,20 +153,20 @@ div.alert:first-child {
 		&:first-child {margin-top: 0.5rem;}
 	}
 }
+// -- Content Spacer -- //
 
+// -- Gradient Background -- //
+.bg-highlight-gradient {
+  &.left-to-right {@include complex_LinearGradient(100grad,rgba($colour-highlight, 0.1) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
+  &.right-to-left {@include complex_LinearGradient(300grad,rgba($colour-highlight, 0.1) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
+  &.top-to-bottom {@include complex_LinearGradient(200grad,rgba($colour-highlight, 0.1) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
+  &.bottom-to-top {@include complex_LinearGradient(0grad,rgba($colour-highlight, 0.1) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
+}
+// -- Gradient Background -- //
 
+// -- Site Navigation Bar -- //
 #site_nav {
 	z-index: 10;
-}
-
-#sheet_tabs {
-	padding-top: 0.5rem;
-}
-
-#paths, #sheet_tabs, #folder_tabs {
-	z-index: 1;
-	position: relative;
-	background-color: $colour-background;
 }
 
 ul.nav-tabs li.nav-item.dropdown {
@@ -161,38 +189,6 @@ ul.nav-tabs li.nav-item.dropdown {
 	color: rgba($colour-highlight, 0.5) !important;
 }
 
-div.tab-pane, .scroller {
-	overflow-x: auto;
-	overflow-y: auto;
-	width: 100%;
-	height: 100%;
-	-webkit-overflow-scrolling: touch; // Smooth Scrolling on Mobile / IOS
-	scroll-behavior: smooth;
-	
-	// -- Scroll Bar -- //
-	&::-webkit-scrollbar {
-		-webkit-appearance: none;
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background-color: rgba($colour-highlight, 0.4);
-		border: 3px solid transparent;
-		border-radius: 9px;
-		background-clip: content-box;
-	}
-
-	&::-webkit-scrollbar-track {
-		background-color: rgba($colour-foreground, 0.4);
-		width: 15px;
-	}
-	
-	&::-webkit-scrollbar-corner {
-		background-color: rgba($colour-foreground, 0.4);	
-	}
-	// -- Scroll Bar -- //
-	
-}
-
 a.link[data-type='out'] {
 	&:after {
 		content: "\21D7";
@@ -213,7 +209,9 @@ a.nav-link[data-type='search'] {
 		padding-left: 5px;
 	}
 }
+// -- Site Navigation Bar -- //
 
+// -- General -- //
 div.modal {
 	-webkit-overflow-scrolling: touch; // Smooth Scrolling on Mobile / IOS
 	scroll-behavior: smooth;
@@ -239,6 +237,7 @@ a.disabled, input.disabled, .btn-disabled {
 		content: " \274c";
 	}
 }
+// -- General -- //
 
 // -- Results -- //
 .results {
@@ -322,58 +321,3 @@ a.disabled, input.disabled, .btn-disabled {
     background-color: $colour-bright-background;
 }
 // -- Badges -- //
-
-// -- Folder Cells -- //
-td.folder {background-color: beige;}
-tr.bg-active, tr.bg-active td {background-color: $colour-active !important;}
-td a.action {
-	&.action-on {
-		color: lighten($colour-general, 30%) !important;
-		i {color: lighten($colour-general, 30%) !important;}
-		&:hover {
-			color: $colour-general !important;
-			i {color: $colour-general !important;}
-		}
-	}
-	&.action-off {
-		color: $colour-emphasis !important;
-		i {color: $colour-emphasis !important;}
-		&:hover {
-			color: darken($colour-emphasis, 20%) !important;
-			i {color: darken($colour-emphasis, 20%) !important;}
-		}
-	}
-	&:hover {
-		text-decoration: none;
-		i {text-decoration: none;}
-	}
-}
-// -- Folder Cells -- //
-
-// -- Ellipsis Waiting -- //
-.waiting {
-  margin-right: 1em;
-  &:after {
-    margin-right: -2.5em;
-    margin-left: 0.25em;
-    overflow: hidden;
-    display: inline-block;
-    vertical-align: bottom;
-    @include animation(ellipsis steps(6,end) 1.5s infinite 400ms);
-    content: "\2026";
-    width: 0px;
-  }
-}
-
-@keyframes ellipsis {
-  to {
-    width: 1.25em;    
-  }
-}
-
-@-webkit-keyframes ellipsis {
-  to {
-    width: 1.25em;    
-  }
-}
-// -- Ellipsis Waiting -- //

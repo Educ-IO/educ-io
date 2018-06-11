@@ -164,7 +164,7 @@ Display = function() {
 					if (options === undefined) {
 							options = v2;
 							v2 = operator;
-							operator = "===";
+							operator = v2 && (v2.toLowerCase() == "odd" || v2.toLowerCase() == "even") ? "is" : "===";
 					}
 
 					var operators = {
@@ -179,6 +179,7 @@ Display = function() {
 						"typeof" : (a, b) => typeof a == b,
 						"and" : (a, b) => a && b,
 						"or" : (a, b) => a || b,
+            "is" : (a, b) => (a % 2 === 0 ? b.toLowerCase() == "even" : b.toLowerCase() == "odd")
 					};
 
 					if (!operators[operator]) throw new Error(`IS doesn't understand the operator ${operator}`);
@@ -327,6 +328,7 @@ Display = function() {
 		--> */
 		busy: function(options) {
 
+      options = options ? options : {};
 			var _element = _target(options), _status;
 			var _clear = (options && options.clear === true) || _element.find(".loader").length > 0, _loader = _clear ?
 				options.clear = true && _element.find(".loader").remove() : _element.prepend(_template("loader")(options ? options : {})), _handler;
@@ -349,7 +351,7 @@ Display = function() {
 				if (_handler) opts.__statusHandler = _handler;
 				opts.__return = this;
 				return value => value && value.message ? _status.text(value.message) : fn(opts);
-			})(this.busy, options === true ? {} : options) : options.__return ? options.__return : this;
+			})(this.busy, options === true ? {} : options) : options && options.__return ? options.__return : this;
 			
 		},
 
@@ -379,6 +381,31 @@ Display = function() {
 
 		},
 
+    /*
+			Options are : {
+
+			}
+		*/
+		inform: options => {
+
+			return new Promise((resolve, reject) => {
+
+				if (!options) return reject();
+
+				/* <!-- Great Modal Choice Dialog --> */
+				var dialog = $(_template("inform")(options));
+				_target(options).append(dialog);
+
+        /* <!-- Set Basic Event Handlers --> */
+				dialog.on("hidden.bs.modal", () => dialog.remove() && resolve());
+
+				/* <!-- Show the Modal Dialog --> */
+				dialog.modal("show");
+
+			});
+
+		},
+    
 		/*
 			Options are : {
 

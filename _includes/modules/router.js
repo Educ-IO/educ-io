@@ -8,7 +8,7 @@ Router = function() {
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
-	var _start, _end, _enter = (recent, fn) => {
+	var _start, _end, _enter = (recent, fn, simple) => {
 
     /* <!-- Load the Initial Instructions --> */
     var _show = recent => ಠ_ಠ.Display.doc.show({
@@ -22,8 +22,8 @@ Router = function() {
       }), _complete = fn ? fn : () => {};
     
       recent > 0 ?      
-        ಠ_ಠ.Recent.last(recent).then(_show).then(_complete).catch((e) => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error")) :
-        _show() && _complete();
+        ಠ_ಠ.Recent.last(recent).then(_show).then(_complete).catch(e => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error")) :
+        simple && fn ? _complete() : _show() && _complete();
 
     };
   
@@ -58,17 +58,18 @@ Router = function() {
     /*
       Options are : {
         name : App Name (for Titles)
-        default : Function to execute once entered (after login)
+        start : Function to execute once entered (after login)
+        simple : Bypass authenticated readme (if false passed to recent)
         states : Potential States that should be cleared on exit (e.g. opened),
         test : Tests whether app has been used (for clearning purposes)
         clear : Function to execute once exited / cleared (after logout)
         route : App-Specific Router Command
-				instructions : 
+				instructions : App-Specific Instructions
       }
     */
 		create : options => {
 			
-			_start = () => _enter(options.recent === undefined ? 5 : options.recent, options.default);
+			_start = deadend => _enter(options.recent === undefined ? 5 : options.recent, deadend ? null : options.start, options.simple);
 			_end = () => _exit(options.test, options.states ? options.states : [], options.clear);
 			
       return command => {
@@ -155,6 +156,8 @@ Router = function() {
 		},
     
     clean: restart => _end() && (!restart || _start()),
+    
+    start: () => _start(true),
    /* <!-- External Functions --> */
     
 	};

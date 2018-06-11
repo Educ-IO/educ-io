@@ -35,6 +35,7 @@ globals:
   jsPDF: false
   _: false
   Waves: false
+  Mousetrap: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -68,3 +69,12 @@ globals:
   Grid: true
   Scroll: true
   Filters: true
+  ReadOnly: true
+  ReadWrite: true
+  Master: true
+  Records: true
+  Tasks: true
+  Google_Sheets_Grid: true
+  Google_Sheets_Metadata: true
+  Google_Sheets_Notation: true
+  

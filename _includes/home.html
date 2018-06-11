@@ -24,7 +24,7 @@
 
 	{% if apps and apps.size > 0 %}
 	<hr />
-	<div id="apps" class="d-flex flex-row flex-wrap mx-1 my-2 pt-2 border border-white">
+	<div id="apps" class="border-exagerate d-flex flex-row flex-wrap mx-1 my-2 pt-2 border border-white">
 		{% for app in apps %}{% capture c %}{% cycle 'odd', 'even' %}{% endcapture %}{% capture t %}btn-{% if app.info %}info{% elsif c == 'odd' %}primary{% else %}secondary{% endif %}{% endcapture %}{% capture i %}{{ app.name | replace: '_', '' | replace: '`', '' | replace: '?', '' | replace: '!', '' | replace: ' ', '' | downcase }}{% endcapture %}
 			<div class="d-flex flex-column col-12 col-md-4 py-2 px-3 p-md-4{% if c == 'odd' %} bg-light border-0{% endif %} border border-white rounded">
         <div>

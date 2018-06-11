@@ -1102,3 +1102,23 @@ waves-css:
       integrity: sha256-sSUMG0VYSSCzajhp6SoZ87Hv66ChbFlHjdlMJIPt4BA=
       crossorigin: anonymous
       id: __waves-css
+
+mousetrap:
+  name: Waves
+  desc: Simple library for handling keyboard shortcuts
+  url: https://cdnjs.com/libraries/mousetrap
+  project: https://github.com/ccampbell/mousetrap
+  version: 1.6.2
+  license: Apache-2.0
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.2/mousetrap.min.js
+      integrity: sha256-fHzjsajIgwWDvn3rf3b1IxdXX4PoIml763//KcQaA44=
+      crossorigin: anonymous
+      map: true
+      id: __mousetrap
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.2/mousetrap.js
+      integrity: sha256-XEyThwEhFAauGsuX0hC+bkxvFmY+LhSzE1N1OfOZZZs=
+      crossorigin: anonymous
+      id: __mousetrap

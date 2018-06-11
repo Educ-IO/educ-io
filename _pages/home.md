@@ -19,7 +19,6 @@ css:
     - material/buttons
     - bootstrap/carousel
     - material/carousel
-    - custom/functions
     - custom/variables
     - custom/common
     - custom/fonts

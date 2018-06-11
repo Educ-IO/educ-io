@@ -1,0 +1,50 @@
+@import "mixins/transitions";
+
+// -- Diary -- //
+#diary {
+  a.day {
+    color: inherit;
+    &:hover {text-decoration: none;}
+   }
+  
+  div.present h4, a.present h4, h4.present {
+    margin-left: -5px;
+    padding-left: 20px;
+  }
+  a.present h4, h4.present {
+    background-color: $colour-highlight;
+    color: $colour-background;
+    will-change: box-shadow, transform;
+  	@include transition(box-shadow);
+  	box-shadow: map-get($shadows, 4);
+  }
+  
+  div.present {
+    box-shadow: map-get($shadows, 1);
+    border-color: rgba($colour-highlight, 0.3) !important;
+    a {
+      &.day {
+        padding: 0;
+        &.present {
+          will-change: box-shadow, transform;
+          @include transition(box-shadow);
+          &:hover {
+            box-shadow: map-get($shadows, 8);
+          }
+        }
+      }
+    }
+  }
+  
+  div.item {
+    .text-faded {
+      opacity: 0.5;
+    }
+    p {
+      margin: 0.1rem 0 0.2rem 0;
+      padding: 0;
+    }
+  }
+  
+}
+// -- Diary -- //

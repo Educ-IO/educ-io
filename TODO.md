@@ -16,6 +16,8 @@ General
 
 * Increase timeout on scope increase login? Or check promise completion....as a delay can mean modals are not fired???
 
+* Material Design menu display animations
+
 Datatable
 ---------
 
@@ -33,6 +35,8 @@ Router
 
 Apps
 ----
+* ** IMPORTANT ** Move Individual App-specific CSS to separate scss files (as per-Docket)
+
 * ** IMPORTANT ** Router and subsequent anchor routes -> how do we handle duplicates?
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?)
@@ -55,6 +59,14 @@ Mobile
 * Top nav menu wastes space on mobile. Can it be shifted to sticky on mobile devices only with bootstrap? Maybe a media query if nothing else works.
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
+
+Docket
+------
+* Overlay events from Google Calendar
+* Markdown formatting
+* Handle Deleted Data File after loading config
+* Create new Task button/s
+* Edit existing items
 
 Tiles
 -----
@@ -121,6 +133,8 @@ Reflect
 
 Complete
 --------
+* Bind forward / backward keyboard shortcuts! <-- DONE
+* Status on Load Spinner <-- DONE
 * Switch off display versions for non published apps on Change <-- DONE
 * ** BUG ** Hidden columns become visible again once another tab is loaded, but not switched to. <-- DONE
 * ** IMPORTANT ** Make Split Template generic, and have imported menus as opposed to recreate? <--DONE

@@ -1,0 +1,23 @@
+{% raw %}
+<div class="item{{#if _complete}} complete{{/if}}"{{#exists $loki}} data-id="{{ $loki }}"{{/exists}}>
+  <div class="display">
+    <div class="d-flex">
+  		{{#if _timed}}<span class="d-flex-inline text-muted text-small pr-1"><i class="material-icons h-100 d-inline-flex md-24 align-items-center">schedule</i></span>{{/if}}
+      {{#if _complete}}<del class="text-muted text-faded">{{/if}}{{#if DISPLAY}}{{{ DISPLAY }}}{{else}}{{ this }}{{/if}}{{#if _complete}}</del>{{/if}}
+    </div>
+  </div>
+  <div class="d-none editing form-group row mb-1">
+    <div class="col-12">
+			<div class="input-group">  
+        <textarea class="form-control resizable" rows="1">{{#if DETAILS}}{{{ DETAILS }}}{{else}}{{ this }}{{/if}}</textarea>
+        <span class="input-group-append">
+          {{> control_button b_class="btn-light" b_title="Cancel" b_icon="cancel" b_action="cancel" }}
+          {{> control_button b_class="btn-danger" b_title="Delete this Item" b_icon="delete_forever" b_action="delete" }}
+          {{> control_button b_class="btn-secondary" b_title="Save Changes" b_icon="edit" b_action="update" }}
+          {{> control_button b_class="btn-success" b_title="Mark as Complete" b_icon="done" b_action="complete" }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endraw %}

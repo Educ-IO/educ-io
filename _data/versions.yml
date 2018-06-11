@@ -629,3 +629,10 @@ poll :
   0.0.1-alpha :
     name : Early testing version
     type : minor
+docket :
+  0.0.2-alpha :
+    name : Early alpha version
+    type : minor
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor

@@ -525,6 +525,7 @@ App = function() {
 
 		start: () => {
 			if (!_forms) _forms = ಠ_ಠ.Forms();
+      moment().format();
 		},
 
 		/* <!-- Clear the existing state --> */
