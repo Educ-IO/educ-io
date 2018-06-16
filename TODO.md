@@ -18,6 +18,10 @@ General
 
 * Material Design menu display animations
 
+* Visual BUG - Support Icon too wide when logged on / readme screen buttons are vertically stacked
+
+* ** BUG ** -> Possible to POST a form to query string with enter key? Should be handled to primary action (option?)
+
 Datatable
 ---------
 
@@ -63,10 +67,10 @@ Mobile
 Docket
 ------
 * Overlay events from Google Calendar
-* Markdown formatting
 * Handle Deleted Data File after loading config
-* Create new Task button/s
+* Popover Text on New Task Button Links
 * Edit existing items
+* Keyboard shortcuts in Popovers
 
 Tiles
 -----
@@ -133,7 +137,11 @@ Reflect
 
 Complete
 --------
-* Bind forward / backward keyboard shortcuts! <-- DONE
+* Datetime picker to respect highlight colour <--DONE
+* Date Picker on New Task Dialog <-- DONE
+* Create new Task button/s <-- DONE
+* Markdown formatting <-- DONE
+* Bind forward / backward / today keyboard shortcuts! <-- DONE
 * Status on Load Spinner <-- DONE
 * Switch off display versions for non published apps on Change <-- DONE
 * ** BUG ** Hidden columns become visible again once another tab is loaded, but not switched to. <-- DONE

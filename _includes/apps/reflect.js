@@ -294,7 +294,7 @@ App = function() {
 			name: `${_title} [${_date}].reflect`,
 			data: {
 				form: _template,
-				report: ಠ_ಠ.Data().dehydrate(_form)
+				report: ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form)
 			}
 		};
 
@@ -304,7 +304,7 @@ App = function() {
 		return ಠ_ಠ.Google.reader().promiseAsText(loaded).then(report => {
 			ಠ_ಠ.Flags.log(`Loaded Report File: ${report}`);
 			report = JSON.parse(report);
-			_form = ಠ_ಠ.Data().rehydrate(_create.load(report.form), report.report);
+			_form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(_create.load(report.form), report.report);
 		});
 	};
 

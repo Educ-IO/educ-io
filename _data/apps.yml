@@ -674,6 +674,7 @@ folders:
     - css
     - fields
     - filters
+    - dialog
   modules:
     - flags
     - controller
@@ -1912,6 +1913,8 @@ docket:
       load: first
     - name: popper
       load: first
+    - name: moment
+      load: first
     - name: handlebars
       load: last
     - name: hello
@@ -1926,11 +1929,11 @@ docket:
       load: last
     - name: autosize
       load: last
-    - name: moment
-      load: last
     - name: showdown
       load: last
     - name: mousetrap
+      load: last
+    - name: bootstrap-material-datepicker-js
       load: last
     - name: waves-css
       load: last
@@ -1944,7 +1947,10 @@ docket:
     - google/sheets/metadata
     - google/sheets/grid
     - google
+    - data
     - css
+    - fields
+    - dialog
   modules:
     - flags
     - controller
@@ -1972,6 +1978,7 @@ docket:
     - shared/control_button
     - docket/item
     - docket/weekly
+    - docket/new
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -1984,6 +1991,7 @@ docket:
     - docket/INSTRUCTIONS
     - docket/TUTORIALS
     - docket/README
+    - docket/NEW_INSTRUCTIONS
   scopes:
     google:
       - scope: email
@@ -2091,8 +2099,6 @@ docket:
             - name: Clear Config
               desc: Clear App Config
               hash: config.clear
-              disabled_until:
-                - opened
               auth: google
     - name: About
       short_name: Help
@@ -2201,16 +2207,22 @@ shiny:
   colour: 000080
   action: Find out more
   versions:
+    0.5.3:
+      name : Minor Updates
+      desc : Added checks/removal for un-intended numerical lists
+      type : beta
+      changes :
+        - details: When starting a line with a number, followed by a period (.) and then a space, this is parsed as a numerical list. This version removes them unless you press CTRL-ALT-P to print.
     0.5 :
       name : Minor Updates
       desc : Added Per-Printed Page Headers
-      type : beta
+      type : live
       changes :
         - details: Using the _CTRL-T_{:.kb-shortcut} shortcut, a header is inserted which will be printed on each page.
     0.4 :
       name : Minor Updates
       desc : Updated Library Dependencies and Print Styling
-      type : beta
+      type : live
       changes :
         - details: Default printed output is now rendered in **12pt** with **double-line** spacing
           url:

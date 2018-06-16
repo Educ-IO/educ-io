@@ -1,4 +1,4 @@
-# Last Updated: 2018-05-01
+# Last Updated: 2018-06-15
 
 localstorage:
   name: localStorage
@@ -263,18 +263,18 @@ loki:
   desc: A fast data querying and manipulation library.
   url: https://cdnjs.com/libraries/lokijs
   project: http://lokijs.org
-  version: 1.5.3
-  last: 1.5.1
+  version: 1.5.5
+  last: 1.5.3
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/lokijs/1.5.3/lokijs.min.js
-      integrity: sha256-UHDjNFZt9Q7uCCVf3RVVkJIdmDmOJZxDvSsCR5QKYLs=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/lokijs/1.5.5/lokijs.min.js
+      integrity: sha256-os5dNdSHfX1PBGf6rV+0J8OPf40j52TF7B33dLqNPD4=
       crossorigin: anonymous
       id: __loki
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/lokijs/1.5.3/lokijs.min.js
-      integrity: sha256-UHDjNFZt9Q7uCCVf3RVVkJIdmDmOJZxDvSsCR5QKYLs=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/lokijs/1.5.5/lokijs.min.js
+      integrity: sha256-os5dNdSHfX1PBGf6rV+0J8OPf40j52TF7B33dLqNPD4=
       crossorigin: anonymous
       id: __loki
 
@@ -302,18 +302,18 @@ yaml:
   desc: Used to parse YAML data structures.
   url: https://cdnjs.com/libraries/js-yaml
   project: https://github.com/nodeca/js-yaml
-  version: 3.11.0
-  last: 3.10.0
+  version: 3.12.0
+  last: 3.11.0
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.11.0/js-yaml.js
-      integrity: sha256-tXpwsPxJo9kMzr6AxcfMzlbqY6YahrPZO9GVquGU0YA=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.12.0/js-yaml.min.js
+      integrity: sha256-VDV4IpYWirG9Caah5vULCWIJ1IGOyuZMI1AHewjwbb8=
       crossorigin: anonymous
       id: __yaml
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.11.0/js-yaml.min.js
-      integrity: sha256-1VaAuViljYj7VHtpSp3TfUAT/34vZP53bUHBahDC9Y4=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.12.0/js-yaml.js
+      integrity: sha256-3JCRPsErdtwb3+BatquOs995rP2MY87+0AcElS04Fk8=
       crossorigin: anonymous
       id: __yaml
 
@@ -406,27 +406,27 @@ xlsx:
   desc: Import / Output to Legacy Spreadsheet Formats.
   url: https://cdnjs.com/libraries/xlsx
   project: https://github.com/SheetJS/js-xlsx
-  version: 0.12.11
-  last: 0.12.9
+  version: 0.13.0
+  last: 0.12.11
   license: Apache-2.0
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.12.11/xlsx.full.min.js
-      integrity: sha256-fh5IqjFDc5ivkj5CIFwYqpT046t32Nybb+YwX1gBIVk=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.0/xlsx.min.js
+      integrity: sha256-z1CYDyy0wf39Z4yEDM5hV4Bx05D1Ubk+SjJUHZk0TqE=
       crossorigin: anonymous
       map: true
       overrides:
-        - replace: var fr=function(e){var r=[],t=10240;for(var a=0;a<e[0].length;++a)if(e[0][a])for(var n=0,i=e[0][a].length;n<i;n+=t)r.push.apply(r,e[0][a].slice(n,n+t));return r};
-          with: var fr=function(e){return [].concat.apply([], e[0])};
+        - replace: var sr=function(e){var r=[],t=10240;for(var a=0;a<e[0].length;++a)if(e[0][a])for(var n=0,i=e[0][a].length;n<i;n+=t)r.push.apply(r,e[0][a].slice(n,n+t));return r};
+          with: var sr=function(e){return [].concat.apply([], e[0])};
       id: __xlsx
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.12.11/xlsx.full.min.js
-      integrity: sha256-fh5IqjFDc5ivkj5CIFwYqpT046t32Nybb+YwX1gBIVk=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.0/xlsx.min.js
+      integrity: sha256-z1CYDyy0wf39Z4yEDM5hV4Bx05D1Ubk+SjJUHZk0TqE=
       crossorigin: anonymous
       map: true
       overrides:
-        - replace: var fr=function(e){var r=[],t=10240;for(var a=0;a<e[0].length;++a)if(e[0][a])for(var n=0,i=e[0][a].length;n<i;n+=t)r.push.apply(r,e[0][a].slice(n,n+t));return r};
-          with: var fr=function(e){return [].concat.apply([], e[0])};
+        - replace: var sr=function(e){var r=[],t=10240;for(var a=0;a<e[0].length;++a)if(e[0][a])for(var n=0,i=e[0][a].length;n<i;n+=t)r.push.apply(r,e[0][a].slice(n,n+t));return r};
+          with: var sr=function(e){return [].concat.apply([], e[0])};
       id: __xlsx
 
 download:
@@ -434,17 +434,18 @@ download:
   desc: Directly download files from the browser (used for generated files etc.).
   url: https://cdnjs.com/libraries/downloadjs
   project: https://github.com/rndme/download
-  version: 1.4.7
+  version: 1.4.8
+  last: 1.4.7
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.7/download.min.js
-      integrity: sha256-jO7zIwKMJTUQkptQfQMhu+uL4erqSzAd0wUfueDCuNI=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.8/download.min.js
+      integrity: sha256-k77iqKeo6Og1Lf5mawux2rTxjaV9zUtyOWKVX3VttKE=
       crossorigin: anonymous
       id: __download
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.7/download.js
-      integrity: sha256-ABOnKwsYVd1DoQ6h2x/+RNc7ddqtqBBPJDR76/Q6+Zo=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.8/download.js
+      integrity: sha256-YZWhYBzoS9ytg//A93wj7gohVoN5rw78SPmTR2F/H7Q=
       crossorigin: anonymous
       id: __download
 
@@ -568,19 +569,19 @@ underscore:
   desc: A functional utility library.
   url: https://cdnjs.com/libraries/underscore.js
   project: https://github.com/jashkenas/underscore
-  version: 1.9.0
-  last: 1.8.3
+  version: 1.9.1
+  last: 1.9.0
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.0/underscore-min.js
-      integrity: sha256-tr4FvXVZp8nkW7TvW4OYA5KWOs7fc2m5B6LN+AOn1VI=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js
+      integrity: sha256-G7A4JrJjJlFqP0yamznwPjAApIKPkadeHfyIwiaa9e0=
       crossorigin: anonymous
       map: true
       id: __underscore
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.0/underscore.js
-      integrity: sha256-Uap2tTK6UhgsRjhuW9LfFVED06vNSTAMfstr3H2Tols=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore.js
+      integrity: sha256-O4179En8zabOlPYBNvGp8cF0uh0vnSZpW4Q6Ul1h+8c=
       crossorigin: anonymous
       id: __underscore
 
@@ -691,18 +692,18 @@ moment:
   desc: Flexible Parsing and Display of dates
   url: https://cdnjs.com/libraries/moment.js
   project: https://github.com/moment/moment/
-  version: 2.22.1
-  last: 2.22.0
+  version: 2.22.2
+  last: 2.22.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js
-      integrity: sha256-L3S3EDEk31HcLA5C6T2ovHvOcD80+fgqaCDt2BAi92o=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js
+      integrity: sha256-CutOzxCRucUsn6C6TcEYsauvvYilEniTXldPa6/wu0k=
       crossorigin: anonymous
       id: __moment
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.js
-      integrity: sha256-Z1d5nX6+IwGjjkkYg+fWe/jzvJae4NYejTz7PcIumxE=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js
+      integrity: sha256-59IZ5dbLyByZgSsRE3Z0TjDuX7e1AiqW5bZ8Bg50dsU=
       crossorigin: anonymous
       id: __moment
       
@@ -711,18 +712,18 @@ moment_all:
   desc: Flexible Parsing and Display of dates (including locales)
   url: https://cdnjs.com/libraries/moment.js
   project: https://github.com/moment/moment/
-  version: 2.22.1
-  last: 2.22.0
+  version: 2.22.2
+  last: 2.22.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment-with-locales.min.js
-      integrity: sha256-ZykW30UBCXWkPGsVyVPdJlUrce9/PawgYCEzinA4pnU=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js
+      integrity: sha256-VrmtNHAdGzjNsUNtWYG55xxE9xDTz4gF63x/prKXKH0=
       crossorigin: anonymous
       id: __moment
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment-with-locales.js
-      integrity: sha256-qlEu7ZZ1nayicqV+RCV3dhAecmAMSPLVXCMFPn+sV58=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.js
+      integrity: sha256-uAmtcHxcK7o0T9gFmupKERz4zIJwFBUkWZFtzqUZ5ag=
       crossorigin: anonymous
       id: __moment
 
@@ -811,43 +812,56 @@ bootstrap-datepicker-js:
 bootstrap-material-datepicker-css:
   name: Material DatePicker for Bootstrap (JS)
   desc: This is a UI Component to provide cross-browser date picking (on top of Bootstrap)
-  url: https://cdnjs.com/libraries/bootstrap-material-datetimepicker
-  project: https://github.com/T00rk/bootstrap-material-datetimepicker
-  version: 2.7.1
+  url: https://www.jsdelivr.com/package/gh/miamarti/Material-DateTimePicker
+  project: https://github.com/miamarti/Material-DateTimePicker
+  version: 3.11.9
   license: MIT
   type: css
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/css/bootstrap-material-datetimepicker.min.css
-      integrity: sha256-h472ZYEQbdqAvtB9tQqzpmBApho+fZfF8MmPwTHaqas=
+    - url: https://cdn.jsdelivr.net/gh/miamarti/Material-DateTimePicker@3.11.9/dist/css/materialDateTimePicker.css
+      integrity: sha256-M+r5UEznyvOPu0PeRXpdWuYRhZENe2RWwbk8XlvVMbc=
       crossorigin: anonymous
       map: true
       id: __bootstrap-material-datepicker-css
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/css/bootstrap-material-datetimepicker.css
-      integrity: sha256-G5PTdPgo4SQMURj4T5iUmc8SZE0yEaxMhmAVt/AWxnU=
+    - url: https://cdn.jsdelivr.net/gh/miamarti/Material-DateTimePicker@3.11.9/dist/css/materialDateTimePicker.css
+      integrity: sha256-M+r5UEznyvOPu0PeRXpdWuYRhZENe2RWwbk8XlvVMbc=
       crossorigin: anonymous
       id: __bootstrap-material-datepicker-css
 
 bootstrap-material-datepicker-js:
   name: Material DatePicker for Bootstrap (JS)
   desc: This is a UI Component to provide cross-browser date picking (on top of Bootstrap)
-  url: https://cdnjs.com/libraries/bootstrap-material-datetimepicker
-  project: https://github.com/T00rk/bootstrap-material-datetimepicker
-  version: 2.7.1
+  url: https://www.jsdelivr.com/package/gh/miamarti/Material-DateTimePicker
+  project: https://github.com/miamarti/Material-DateTimePicker
+  version: 3.11.9
   license: MIT
   type: js
   css: 
     - _datetime-picker
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/js/bootstrap-material-datetimepicker.min.js
-      integrity: sha256-Wj9bkvbfcB8UgPBenFOyjr0MBkdHsL2NACVTQ8+Q0JE=
+    - url: https://cdn.jsdelivr.net/gh/miamarti/Material-DateTimePicker@3.11.9/dist/js/materialDateTimePicker.js
+      integrity: sha256-e5QXtdlKg1PsEhkoqMkEPInu1EN1OH+0nLqYoog52Ls=
       crossorigin: anonymous
-      map: true
+      overrides:
+        - replace: angular&&
+          with: window.angular&&
+        - replace: class="dtp-btn-calendar-ico"
+          with: class="dtp-btn-calendar-ico d-none"
+        - replace: class="dtp-btn-clock-ico"
+          with: class="dtp-btn-clock-ico d-none"
       id: __bootstrap-material-datepicker-js
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/js/bootstrap-material-datetimepicker.js
-      integrity: sha256-aLGdbuknsTq6HcCE628X8fozrJqc7yuC2PY7i+J4OKE=
+    - url: https://cdn.jsdelivr.net/gh/miamarti/Material-DateTimePicker@3.11.9/dist/js/materialDateTimePicker.js
+      integrity: sha256-e5QXtdlKg1PsEhkoqMkEPInu1EN1OH+0nLqYoog52Ls=
       crossorigin: anonymous
+      overrides:
+        - replace: angular&&
+          with: window.angular&&
+        - replace: class="dtp-btn-calendar-ico"
+          with: class="dtp-btn-calendar-ico disabled d-none"
+        - replace: class="dtp-btn-clock-ico"
+          with: class="dtp-btn-clock-ico disabled d-none"
       id: __bootstrap-material-datepicker-js
       
 transducers:
@@ -873,8 +887,7 @@ transducers:
 html2canvas:
   name: html2canvas
   desc: Screenshots with JavaScript
-  url: https://cdnjs.com/libraries/html2canvas
-  url_2: https://www.jsdelivr.com/package/npm/html2canvas?path=dist
+  url: https://www.jsdelivr.com/package/npm/html2canvas?path=dist
   project: http://html2canvas.hertzen.com/
   version: 1.0.0-alpha12
   license: MIT
@@ -915,17 +928,18 @@ jspdf:
   desc: Generate PDFs with Javascript
   url: https://cdnjs.com/libraries/jspdf
   project: https://github.com/MrRio/jsPDF
-  version: 1.3.5
+  version: 1.4.1
+  last: 1.3.5
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js
-      integrity: sha256-YHd/E8OX5o5GcqyHHas3xH3i7aP8z8KmMrL3WLMJfIY=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js
+      integrity: sha256-tzkPfJgrAehd0mUYdxwWvn+TQrk2VjRJL/xP9iW5fhk=
       crossorigin: anonymous
       id: __jspdf
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js
-      integrity: sha256-0rGgF2KzFbsZlR4BOOYwTVOG9PYeBktEJGYKaQSA5Fw=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js
+      integrity: sha256-vvNL15qzI3rwnPrldX3MeOQDN0AJ/B4XItdVftTxjUA=
       crossorigin: anonymous
       id: __jspdf
 
@@ -1050,17 +1064,18 @@ three:
   desc: JavaScript 3D library
   url: https://cdnjs.com/libraries/three.js
   project: https://github.com/mrdoob/three.js
-  version: 92
+  version: 93
+  last: 92
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/92/three.min.js
-      integrity: sha256-wdpU7RX1XIEGCf6v5hatJyV4/DNtLbidb4LmzN8w+Jo=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/93/three.min.js
+      integrity: sha256-F/DPe+eDTcgfe/n2sWVU57X1V/JozaDAu7KR9zXSb3Y=
       crossorigin: anonymous
       id: __three
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/92/three.js
-      integrity: sha256-y5HlqchBMmPWG2NQKacysKEFzL0Tzi9B9HPWCSOHFog=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/93/three.js
+      integrity: sha256-WQG9ZOTWzL8BHqeD8yqv8NaFMqbnKCE/YqwL/GvdHgc=
       crossorigin: anonymous
       id: __three
 
@@ -1122,3 +1137,23 @@ mousetrap:
       integrity: sha256-XEyThwEhFAauGsuX0hC+bkxvFmY+LhSzE1N1OfOZZZs=
       crossorigin: anonymous
       id: __mousetrap
+
+maths:
+  name: Maths.js
+  desc: An extensive math library for JavaScript and Node.js. It features a flexible expression parser and offers an integrated solution to work with numbers, big numbers, complex numbers, units, and matrices.
+  url: https://cdnjs.com/libraries/mathjs
+  project: http://mathjs.org/
+  version: 4.4.2
+  license: Apache-2.0
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/4.4.2/math.min.js
+      integrity: sha256-EQV4YufMtvIwabqDMp7fTc4CKjbfB9NPYzYbabeNClI=
+      crossorigin: anonymous
+      map: true
+      id: __maths
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/4.4.2/math.js
+      integrity: sha256-yzl+4bHqju17IGYs9aEEAfEZnPGZRm/VX8DSUksF0+8=
+      crossorigin: anonymous
+      id: __maths

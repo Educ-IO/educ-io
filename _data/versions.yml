@@ -630,6 +630,15 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.2c-alpha :
+    name : Create Item Dialog
+    type : minor
+  0.0.2b-alpha :
+    name : Time Extraction Regex
+    type : minor
+  0.0.2a-alpha :
+    name : Create Buttons and Dialog
+    type : minor
   0.0.2-alpha :
     name : Early alpha version
     type : minor

@@ -395,76 +395,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 			url: "/reflect/#google,load." + v.id + ".lazy"
 		} : null
 	});
-
-	var _makeIds = value => _.map(value.split(","), id => `#${id}`).join(", ");
-
-	var _extractDataValueOrText = element => element.data("value") ? element.data("value") : element.text();
-
-	var _populateShortcuts = (target, dialog, options, pairs) => {
-		var _populate = target.data("populate"),
-			_shortcuts = _.reduce(options.shortcuts, (all, shortcut) => _.extendOwn(all, shortcut), {}),
-			_shortcut = _shortcuts[_populate];
-		if (_shortcut) _.each(pairs, pair => {
-			if (_shortcut[pair[0]] !== undefined) {
-				var _target = dialog.find(pair[1]);
-				if (_target.length == 1 && !_target.hasClass("locked")) {
-					if (_target.data("click")) {
-						$(_.find(dialog.find(_target.data("click") + `[data-target='${_target[0].id}']`).toArray(),
-							element => _extractDataValueOrText($(element)) == _shortcut[pair[0]])).click();
-					} else {
-						if (_shortcut[pair[0]]) {
-							dialog.find(pair[1]).val(_.isArray(_shortcut[pair[0]]) ? _shortcut[pair[0]].join("\n") : _shortcut[pair[0]]).prop("disabled", false);
-						} else {
-							dialog.find(pair[1]).val("").prop("disabled", (_shortcut[pair[0]] === ""));
-						}
-					}
-				}
-			}
-		});
-		return _shortcut;
-	};
-
-	var _dialogFormHandlers = {
-
-		picker: dialog => {
-
-			/* <!-- Wire Up Fields and Handle Populate URL Fields from Google Drive --> */
-			ಠ_ಠ.Fields().on(dialog).find("button[data-action='load-g-folder'], a[data-action='load-g-folder']").off("click.folder").on("click.folder", e => {
-				new Promise((resolve, reject) => {
-					ಠ_ಠ.Google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
-						"Select a Folder", false, true,
-						() => new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"),
-						folder => folder && ಠ_ಠ.Google.folders.is(folder.mimeType) ? ಠ_ಠ.Flags.log("Google Drive Folder Picked", folder) && resolve(folder) : reject()
-					);
-				}).then(folder => $("#" + $(e.target).data("target")).val(folder.id).attr("title", folder.name)).catch();
-			});
-
-		},
-
-		lock: (target, dialog) => {
-
-			var _el = dialog.find(_makeIds(target.data("lock"))).toggleClass("locked");
-			target.find("i.material-icons").text(_el.hasClass("locked") ? "lock" : "lock_open");
-
-		},
-
-		clear: (target, dialog) => dialog.find(_makeIds(target.data("clear"))).val("").filter("textarea.resizable").map((i, el) => autosize.update(el)),
-
-		options: (target, dialog) => {
-			var value = _extractDataValueOrText(target),
-				destination = dialog.find(_makeIds(target.data("target"))),
-				current = destination.val();
-			if (value != current) {
-				var _siblings = target.siblings("[data-action='options']").toArray(),
-					_selected = _.find(_siblings, sibling => _extractDataValueOrText($(sibling)) == current),
-					_classes = _selected.className;
-				_selected.className = target[0].className;
-				target[0].className = _classes;
-				destination.val(value);
-			}
-		},
-	};
-
+  
 	var _dialogSaveHandler = (id, prefix, field, mime, decode, encode) => values => {
 
 		if (!decode) decode = values => values;
@@ -1053,6 +984,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
 		var _root = folder.name == "root" || !folder.parents || folder.parents.length === 0,
 			_id = "start_search",
+      _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
 			_search = ಠ_ಠ.Display.modal("search", {
 				id: _id,
 				target: ಠ_ಠ.container,
@@ -1062,12 +994,12 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 				shortcuts: _dialog_Shortcuts.search,
 				entire: _root,
 				handlers: {
-					lock: _dialogFormHandlers.lock,
-					clear: _dialogFormHandlers.clear,
-					options: _dialogFormHandlers.options,
+					lock: _dialog.handlers.lock,
+					clear: _dialog.handlers.clear,
+					options: _dialog.handlers.options,
 					populate: (target, dialog, options) => {
 
-						var _shortcut = _populateShortcuts(target, dialog, options, [
+						var _shortcut = ಠ_ಠ.Dialog({}, ಠ_ಠ).populate.shortcuts(target, dialog, options, [
 							["mime", "#mimeTypes"],
 							["include", "#includeRegexes"],
 							["exclude", "#excludeRegexes"],
@@ -1264,6 +1196,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 			};
 
 			var _id = "clone_results",
+        _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
 				_clone = ಠ_ಠ.Display.modal("clone", {
 					id: _id,
 					target: ಠ_ಠ.container,
@@ -1276,7 +1209,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 					},
 					advanced: !!_search,
 					handlers: {
-						clear: _dialogFormHandlers.clear,
+						clear: _dialog.handlers.clear,
 						populate: (target, dialog) => dialog.find("textarea.resizable").each((i, el) => autosize.update(el))
 					},
 					actions: [{
@@ -1285,7 +1218,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 					}]
 				}, dialog => {
 					autosize(dialog.find("textarea.resizable"));
-					_dialogFormHandlers.picker(dialog);
+					_dialog.handlers.picker(dialog);
 
 					dialog.find("#folders").on("change", e => {
 						if (!e.currentTarget.checked) $("#merge").prop("checked", false);
@@ -1409,6 +1342,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 		convert: (id, collection, table, results) => {
 
 			var _id = "convert_results",
+        _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
 				_decode = values => {
 					var _return = {
 						source: _.find(values, v => v.name == "source") ? _.find(values, v => v.name == "source").value : null,
@@ -1488,10 +1422,10 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 				} : state && state.convert ? state.convert : null,
 				shortcuts: _dialog_Shortcuts.convert,
 				handlers: {
-					lock: _dialogFormHandlers.lock,
-					clear: _dialogFormHandlers.clear,
+					lock: _dialog.handlers.lock,
+					clear: _dialog.handlers.clear,
 					populate: (target, dialog, options) => {
-						_populateShortcuts(target, dialog, options, [
+						ಠ_ಠ.Dialog({}, ಠ_ಠ).populate.shortcuts(target, dialog, options, [
 							["source", "#sourceMimeType"],
 							["target", "#targetMimeType"],
 							["prefix", "#prefixAfterConversion"]
@@ -1507,7 +1441,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 			}, dialog => {
 
 				autosize(dialog.find("textarea.resizable"));
-				_dialogFormHandlers.picker(dialog);
+				_dialog.handlers.picker(dialog);
 
 				/* <!-- Update whether we can do an inplace conversion, depending on the Target MIME Type --> */
 				dialog.find("#targetMimeType").on("change", e => {
@@ -1668,6 +1602,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 			});
 
 			var _id = "tag_results",
+        _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
 				_tag = ಠ_ಠ.Display.modal("tag", {
 					id: _id,
 					target: ಠ_ಠ.container,
@@ -1687,6 +1622,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 						handler: _dialogSaveHandler(_id, "Tag", "tag", TYPE_TAG, _decode)
 					}],
 					handlers: {
+            clear: _dialog.handlers.clear,
 						populate: (target, dialog) => {
 							var _populate = target.data("populate");
 							if (_populate) {

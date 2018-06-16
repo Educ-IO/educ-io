@@ -331,7 +331,7 @@ Tasks = ಠ_ಠ => {
           });
           /* <!-- Map Date / Markdown Fields / Columns --> */
 
-          _.each(value.values, row => {
+          _.each(value.values, (row, index) => {
             var _row = {};
             _.each(_data.columns.meta, column => {
               var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
@@ -339,6 +339,7 @@ Tasks = ಠ_ಠ => {
               if (_val && column.isTime) _row._timed = true;
             });
             if (_row[META.column_status.value] == "COMPLETE") _row._complete = true;
+            _row.__ROW = index;
             _data.data.push(_row);
           });
           ಠ_ಠ.Flags.log("Data Values:", _data.data);
@@ -347,7 +348,7 @@ Tasks = ಠ_ಠ => {
       })
       .then(data => {
         _db = DB.addCollection(NAMES.db, {
-          indices: _.map(_.filter(_data.columns, column => column._meta && column._meta.index), column => column.value)
+          indices: ["__ROW"].concat(_.map(_.filter(_data.columns, column => column._meta && column._meta.index), column => column.value))
         });
         if (data && data.length > 0) _db.insert(data);
         return _db;
@@ -469,6 +470,18 @@ Tasks = ಠ_ಠ => {
     ಠ_ಠ.Flags.log(`Result Values for :${date}`, _results);
     return _results;
   };
+  
+  var _new = (item, db) => {
+		return DELAY(1, db); /* <!-- Async non-blocking save --> */
+  };
+  
+  var _update = (item, db) => {
+		return DELAY(1000, db);
+  };
+  
+  var _delete = (item, db) => {
+		return DELAY(1000, db);
+  };
   /* <!-- Internal Functions --> */
 
   /* <!-- Initial Calls --> */
@@ -484,17 +497,11 @@ Tasks = ಠ_ಠ => {
 
     items: {
 
-      create: (item, db) => {
-        return DELAY(1500, db);
-      },
+      create: _new,
 
-      update: (item, db) => {
-        return DELAY(1000, db);
-      },
+      update: _update,
 
-      delete: (item, db) => {
-        return DELAY(1500, db);
-      }
+      delete: _delete,
 
     }
 

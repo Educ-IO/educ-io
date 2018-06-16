@@ -37,6 +37,7 @@
   }
   
   div.item {
+    cursor: pointer;
     .text-faded {
       opacity: 0.5;
     }
@@ -46,5 +47,11 @@
     }
   }
   
+}
+
+#diary_add {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
 }
 // -- Diary -- //

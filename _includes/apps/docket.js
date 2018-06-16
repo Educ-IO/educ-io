@@ -20,6 +20,17 @@ App = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var _pick = () => new Promise((resolve, reject) => {
+
+    /* <!-- Open Sheet from Google Drive Picker --> */
+    ಠ_ಠ.Google.pick(
+      "Select a Docket Sheet to Open", false, true,
+      () => [new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS).setIncludeFolders(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED],
+      file => file ? ಠ_ಠ.Flags.log("Google Drive File Picked from Open", file) && resolve(file.id) : reject()
+    );
+
+  });
+
   var _getTasks = () => (_tasks ? _tasks : _tasks = ಠ_ಠ.Tasks(ಠ_ಠ));
 
   var _config = {
@@ -32,8 +43,8 @@ App = function() {
 
     config: false,
 
-    clear: () => _config.find()
-      .then(result => result && result.id ? ಠ_ಠ.Google.files.delete(result.id) : result)
+    clear: () => ಠ_ಠ.Google.appData.search(_config.name, _config.mime)
+      .then(results => Promise.all(_.map(results, result => ಠ_ಠ.Google.files.delete(result.id))))
       .then(result => result ? _config.config = false || ಠ_ಠ.Flags.log("Docket Config Deleted") : result),
 
     create: data => ಠ_ಠ.Google.appData.upload({
@@ -157,24 +168,21 @@ App = function() {
       });
 
       /* <!-- Action Methods --> */
-      var _get = target => _show.db.get(target.data("id")),
-        _busy = (target, item) => {
-          var _clearBusy = ಠ_ಠ.Display.busy({
-            target: target,
-            class: "loader-small",
-            fn: true
-          });
-          return () => {
-            if (_clearBusy) _clearBusy();
-            if (target && item) {
-              var _new = $(ಠ_ಠ.Display.template.get(_.extend({
-                template: "item",
-              }, item)));
-              target.replaceWith(_new);
-              _hookup(_new);
-            }
-          };
-        },
+      var _get = target => (target.data("id") !== null && target.data("id") !== undefined) ? _show.db.get(target.data("id")) : false,
+        _busy = (target, item) => (clear => () => {
+          if (clear && _.isFunction(clear)) clear();
+          if (target && item) {
+            var _new = $(ಠ_ಠ.Display.template.get(_.extend({
+              template: "item",
+            }, item)));
+            target.replaceWith(_new);
+            _hookup(_new);
+          }
+        })(ಠ_ಠ.Display.busy({
+          target: target,
+          class: "loader-small",
+          fn: true
+        })),
         _complete = target => {
           var _item = _get(target),
             _finish = _busy(target, _item);
@@ -193,6 +201,7 @@ App = function() {
           _item.DETAILS = target.find("div.editing textarea").val();
           _item.DISPLAY = _showdown.makeHtml(_item.DETAILS);
           target.find("div.display div").html(_item.DISPLAY);
+          _show.db.update(_item);
           return _getTasks().items.update(_item, _show.db).then(_finish);
         },
         _delete = target => {
@@ -208,13 +217,17 @@ App = function() {
         },
         _clear = () => {
           var s = window.getSelection ? window.getSelection() : document.selection;
-          return s ? s.removeAllRanges ? s.removeAllRanges() : s.empty ? s.empty() : false : false;
+          s ? s.removeAllRanges ? s.removeAllRanges() : s.empty ? s.empty() : false : false;
         };
 
       var _diary = ಠ_ಠ.Display.template.show({
         template: "weekly",
         id: ID,
         days: _days,
+        action: {
+          action: "new.task",
+          icon: "create"
+        },
         target: ಠ_ಠ.container,
         clear: true,
       });
@@ -272,7 +285,7 @@ App = function() {
             _clicked = $(e.target);
           _target.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
           !_clicked.is("input, textarea, a") ?
-            e.shiftKey ? e.preventDefault() || (_complete(_target) && _clear()) : _target.find("div.editing, div.display").toggleClass("d-none") : false;
+            e.shiftKey ? e.preventDefault() || _clear() || _complete(_target) : _target.find("div.editing, div.display").toggleClass("d-none") : false;
           if (_target.find("div.editing").is(":visible")) _target.find("div.editing textarea").focus();
         });
 
@@ -284,6 +297,57 @@ App = function() {
       resolve(ಠ_ಠ.Display.state().enter(STATE_OPENED));
 
     })
+
+  };
+
+  var _new = {
+
+    item: type => {
+
+      var _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
+        _template = "new",
+        _id = "new";
+      return ಠ_ಠ.Display.modal(_template, {
+          target: ಠ_ಠ.container,
+          id: _id,
+          title: `Create New ${type}`,
+          instructions: ಠ_ಠ.Display.doc.get("NEW_INSTRUCTIONS"),
+          validate: values => values ? ಠ_ಠ.Flags.log("Values for Validation", values) && true : false,
+          /* <!-- Do we need to validate? --> */
+          date: moment(_show.show ? _show.show : _show.today).format("YYYY-MM-DD"),
+          handlers: {
+            clear: ಠ_ಠ.Dialog({}, ಠ_ಠ).handlers.clear,
+          },
+          updates: {
+            extract: _dialog.handlers.extract(/\b((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))\b/i)
+          }
+        }, dialog => {
+          ಠ_ಠ.Fields().on(dialog);
+          dialog.find(`#${_id}_details`).focus();
+
+          /* <!-- Ctrl-Enter Pressed --> */
+          dialog.keypress(e => ((e.keyCode ? e.keyCode : e.which) == 10 && e.ctrlKey) ? e.preventDefault() || dialog.find("button.btn-primary").click() : null);
+
+        }).then(values => {
+          if (!values) return false;
+          ಠ_ಠ.Flags.log("Values for Creation", values);
+
+          var _item = {
+            FROM: values.From ? values.From.Value : null,
+            TAGS: values.Tags ? values.Tags.Value : null,
+            TIME: values.Time ? values.Time.Value : null,
+            DETAILS: values.Details ? values.Details.Value : null,
+          };
+          if (values.Time) _item._timed = true;
+
+          return _getTasks().items.create(_show.db.insert(_item), _show.db);
+
+        })
+        .then(r => r === false ? r : _show.weekly(moment(_show.show ? _show.show : _show.today)))
+        .catch(e => e ? ಠ_ಠ.Flags.error("Create New Error", e) : ಠ_ಠ.Flags.log("Create New Cancelled"));
+    },
+
+    task: () => _new.item("Task"),
 
   };
 
@@ -354,29 +418,31 @@ App = function() {
 
             _finish = ಠ_ಠ.Display.busy({
               target: ಠ_ಠ.container,
+              status: "Creating Config",
               fn: true
             });
 
             _getTasks().create()
               .then(id => _config.create(id))
-              .then(() => _start(_config.config))
+              .then(() => _start(_config.config, _finish))
               .then(_finish);
 
           } else if ((/OPEN/i).test(command)) {
 
             /* <!-- Pick, then Load the Selected File --> */
             var _picked;
-            _getTasks().pick()
+            _pick()
               .then(id => _picked = id)
               .then(() => _finish = ಠ_ಠ.Display.busy({
                 target: ಠ_ಠ.container,
+                status: "Loading Config",
                 fn: true
               }))
               .then(() => _config.find())
               .then(config => config ? _config.update(config.id, {
                 data: _picked
               }) : _config.create(_picked))
-              .then(() => _start(_config.config))
+              .then(() => _start(_config.config, _finish))
               .catch(e => ಠ_ಠ.Flags.error("Picking Error", e ? e : "No Inner Error"));
 
           } else if ((/CONFIG/i).test(command)) {
@@ -410,6 +476,10 @@ App = function() {
                 }) : config);
 
             }
+
+          } else if ((/NEW/i).test(command) && command.length > 1 && (/TASK/i).test(command[1])) {
+
+            _new.task();
 
           } else if ((/CALENDAR/i).test(command)) {
 
@@ -472,6 +542,7 @@ App = function() {
       Mousetrap.bind("t", () => _show.weekly(moment(_show.today)));
       Mousetrap.bind("<", () => _show.weekly(moment(_show.show ? _show.show : _show.today).subtract(1, "weeks")));
       Mousetrap.bind(">", () => _show.weekly(moment(_show.show ? _show.show : _show.today).add(1, "weeks")));
+      Mousetrap.bind("n", () => _new.task());
 
     },
 

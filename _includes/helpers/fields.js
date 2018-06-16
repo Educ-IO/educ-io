@@ -299,7 +299,8 @@ Fields = options => {
         format: DATE_FORMAT_M,
         clearButton: true,
         nowButton: true,
-        time: false
+        time: false,
+        switchOnClick: true,
       });
     }
     
