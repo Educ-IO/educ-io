@@ -35,9 +35,12 @@
       }
     }
   }
-  
-  div.item {
+}
+
+#diary, #diary_list {
+	div.item {
     cursor: pointer;
+    padding-top: 0.1rem;
     .text-faded {
       opacity: 0.5;
     }
@@ -46,12 +49,10 @@
       padding: 0;
     }
   }
-  
 }
 
 #diary_add {
-  position: fixed;
-  bottom: 50px;
-  right: 50px;
+  bottom: 0;
+  right: 0;
 }
 // -- Diary -- //

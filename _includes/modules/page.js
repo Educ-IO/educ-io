@@ -50,7 +50,7 @@ Main = function() {
 						.filter(".highlight_" + ಠ_ಠ.Flags.highlight().toLowerCase()).removeClass(_none).addClass(_highlight);
 				}
         
-        /* <!-- Smooth Scroll Andhors --> */	
+        /* <!-- Smooth Scroll Anchors --> */	
         if (ಠ_ಠ.Scroll) ಠ_ಠ.Scroll().start();
         
         /* <!-- Material Button Waves --> */	

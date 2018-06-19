@@ -630,6 +630,9 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.3-alpha :
+    name : Improved UI, swipe navigation, tags and searching
+    type : minor
   0.0.2c-alpha :
     name : Create Item Dialog
     type : minor

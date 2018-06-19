@@ -8,7 +8,7 @@ lead: This website and apps rely on code from the wider open-source community. B
 
 - - -
 
-{% assign imports = "" | split: "" %}{% for app in site.data.apps %}{% if app[1].published and app[1].imports and app[1].imports.size > 0 %}{% assign names = app[1].imports | map: "name" %}{% assign imports = names | concat: imports %}{% endif %}{% endfor %}{% assign imports = imports | uniq | sort %}
+{% assign imports = site.array %}{% for app in site.data.apps %}{% if app[1].published and app[1].imports and app[1].imports.size > 0 %}{% assign names = app[1].imports | map: "name" %}{% assign imports = names | concat: imports %}{% endif %}{% endfor %}{% assign imports = imports | uniq | sort %}
 {% for import in imports %}{% assign __import = site.data.imports[import] %}
 ##### {{ __import.name }}
 {% if __import.version %}+ Version: _{{ __import.version }}_{:.text-muted}{% endif %}

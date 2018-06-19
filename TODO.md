@@ -20,8 +20,6 @@ General
 
 * Visual BUG - Support Icon too wide when logged on / readme screen buttons are vertically stacked
 
-* ** BUG ** -> Possible to POST a form to query string with enter key? Should be handled to primary action (option?)
-
 Datatable
 ---------
 
@@ -39,6 +37,7 @@ Router
 
 Apps
 ----
+* ** IMPORTANT ** Log in check should also disable / loader the main get start button (for mobile usage to indicate something is happening!)
 * ** IMPORTANT ** Move Individual App-specific CSS to separate scss files (as per-Docket)
 
 * ** IMPORTANT ** Router and subsequent anchor routes -> how do we handle duplicates?
@@ -56,7 +55,6 @@ Apps
 Mobile
 ------
 * ** IMPORTANT ** Full Page Lazy Scope Load may break app flow (need state object to pass back to app?) - also should test for scope before initiating flow?
-
 * ** IMPORTANT ** Incognito Mode on IOS fails on sign-in (issue with LocalForage again?) -> Issue on IOS 10.3 but not on 11? 11 seems to fix the Local Storage problem. Cookie problems on IOS?
 
 * Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
@@ -66,11 +64,10 @@ Mobile
 
 Docket
 ------
+* List view should include date
+* Archive Dialog and Process
 * Overlay events from Google Calendar
 * Handle Deleted Data File after loading config
-* Popover Text on New Task Button Links
-* Edit existing items
-* Keyboard shortcuts in Popovers
 
 Tiles
 -----
@@ -132,11 +129,22 @@ Reflect
 * Email group from above.
 * Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS
 
-
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 
 Complete
 --------
+* ** IMPORTANT ** Search Process and results display <-- DONE
+* List view of items filtered by tags <-- DONE
+* Confirm deletion of items
+* ** IMPORTANT ** Remove TIME column from data and creation, check everything still works! <-- DONE
+* Version DB Schema <-- DONE
+* Differential Tag colours <--DONE
+* ** BUG ** Artifacting top layer tooltips on items - and annoying on mobile! <-- DONE
+* Tags -> Badges on Display <== DONE
+* Edit Task Item text -> trigger extraction of time <-- DONE
+* Keyboard shortcuts in Popovers {:.kb-shortcut} <-- DONE
+* ** IMPORTANT ** Debug Only / Pre-Release Flag for hiding menu items in production <-- DONE
+* Edit existing items <-- DONE
 * Datetime picker to respect highlight colour <--DONE
 * Date Picker on New Task Dialog <-- DONE
 * Create new Task button/s <-- DONE

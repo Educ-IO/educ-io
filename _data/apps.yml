@@ -1895,7 +1895,7 @@ docket:
   name: Docket
   desc: Organise your days, a __simple__ diary style task list that stores your data in Google Sheets
   link: /docket/
-  colour: A30093
+  colour: 582c54
   logo: images/docket_logo.svg
   learn: /guides/docket
   css:
@@ -1939,6 +1939,8 @@ docket:
       load: last
     - name: waves-js
       load: last
+    - name: hammer
+      load: last
     - name: google
       load: lazy
   helpers:
@@ -1974,11 +1976,14 @@ docket:
     - recent
     - help
     - inform
+    - text
     - shared/control_icon
     - shared/control_button
     - docket/item
     - docket/weekly
     - docket/new
+    - docket/archive
+    - docket/list
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -1992,6 +1997,7 @@ docket:
     - docket/TUTORIALS
     - docket/README
     - docket/NEW_INSTRUCTIONS
+    - docket/SEARCH_INSTRUCTIONS
   scopes:
     google:
       - scope: email
@@ -2032,21 +2038,37 @@ docket:
         all:
           commands:
             - name: Today
-              desc: Go to today (Keyboard Shortcut = t)
+              desc: Jump to today
+              shortcut: "t"
               hash: today
               disabled_until:
                 - opened
             - name: Forward
-              desc: Go forward a week (Keyboard Shortcut = >)
+              desc: Go forward a week
+              shortcut: "&gt;"
               hash: forward
               disabled_until:
                 - opened
             - name: Backward
-              desc: Go backward a week (Keyboard Shortcut = <)
+              desc: Go backward a week
+              shortcut: "&lt;"
               hash: backward
               disabled_until:
                 - opened
+            - name: Task
+              desc: Create a new task / event
+              shortcut: "n" 
+              hash: new.task
+              disabled_until:
+                - opened
+            - name: Search
+              desc: Search for tasks / events
+              shortcut: "s" 
+              hash: search
+              disabled_until:
+                - opened
     - name: Show
+      visibility: debug
       groups:
         all:
           commands:
@@ -2090,6 +2112,12 @@ docket:
               ext: true
               data:
                 link: sheet
+            - name: Archive Data
+              visibility: debug
+              desc: Archive Older Data
+              hash: archive
+              disabled_until:
+                - opened
             - name: Show Config
               desc: Show App Config
               hash: config.show
@@ -2145,6 +2173,7 @@ docket:
         hash: create
         auth: google
       - name: Open Existing
+        visibility: debug
         desc: Open an Existing Docket
         hash: open
         auth: google

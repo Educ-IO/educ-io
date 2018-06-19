@@ -151,3 +151,21 @@ a.no-underline {
 }
 
 .border-exagerate .border.rounded {border-radius: 1rem !important;}
+
+// -- Keyboard Shortcuts -- //
+em.kb-shortcut {
+	white-space: nowrap !important;
+	font-size: 90%;
+	font-style: normal;
+	text-transform: uppercase;
+	border-radius: 0.2rem;
+	padding: 0 0.2rem;
+	margin: 0 0.1rem;
+	background-color: $colour-general;
+	color: $colour-background;
+}
+.tooltip em.kb-shortcut {
+  background-color: $colour-background !important;
+	color: $colour-general  !important;
+}
+// -- Keyboard Shortcuts -- //

@@ -22,7 +22,7 @@
         </div>
       </li>
 
-      {% assign menus = false %}{% if page.menu %}{% assign menus = page.menus %}{% elsif layout.menu %}{% assign menus = layout.menus %}{% elsif page.app and page.app != "" and site.data.apps[page.app].menus and page.layout == "app" %}{% assign menus = site.data.apps[page.app].menus %}{% endif %}
+      {% assign _menus = false %}{% assign menus = site.array %}{% if page.menu %}{% assign _menus = page.menus %}{% elsif layout.menu %}{% assign _menus = layout.menus %}{% elsif page.app and page.app != "" and site.data.apps[page.app].menus and page.layout == "app" %}{% assign _menus = site.data.apps[page.app].menus %}{% endif %}{% for menu in _menus %}{% if menu.visibility %}{% if jekyll.environment == menu.visibility or menu.visibility == true %}{% assign menus = menus | push: menu %}{% endif %}{% else %}{% assign menus = menus | push: menu %}{% endif %}{% endfor %}
 
       {% if menus and menus.size > 0 %}{% for menu in menus %}
       {% if menu.groups and menu.groups.size > 0 %}
@@ -32,8 +32,8 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="navMenu_{{ menu.name }}" data-menu="{{ menu.name }}">
 
-            {% for group in menu.groups %}{% assign group_commands = group[1].commands %}
-
+            {% for group in menu.groups %}{% assign _group_commands = group[1].commands %}{% assign group_commands = site.array %}{% for command in _group_commands %}{% if command.visibility %}{% if jekyll.environment == command.visibility or command.visibility == true %}{% assign group_commands = group_commands | push: command %}{% endif %}{% else %}{% assign group_commands = group_commands | push: command %}{% endif %}{% endfor %}
+            
             {% if group[1].name %}<h5 class="dropdown-heading">{{ group[1].name }}</h5>{% endif %}
 
             {% for command in group_commands %}

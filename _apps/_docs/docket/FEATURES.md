@@ -1,5 +1,6 @@
-Features will go here:
+Stay organised, with ease:
 
-+ Feature 1
-+ Feature 2
-+ Feature 3
++ Create tasks which automatically roll over to the next day until complete
++ Add future work, and events
++ Tag items for easy and fast catagorisation
++ Use [Markdown](https://www.markdownguide.org/){:target="_blank" rel="noopener"} format in your tasks/events to include text decoration and links to emails, documents, other systems

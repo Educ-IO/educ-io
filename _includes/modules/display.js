@@ -195,6 +195,7 @@ Display = function() {
             ">": (a, b) => a > b,
             "<=": (a, b) => a <= b,
             ">=": (a, b) => a = b,
+            "~=": (a, b) => a == b || a && b && a.toUpperCase() == b.toUpperCase(),
             "typeof": (a, b) => typeof a == b,
             "and": (a, b) => a && b,
             "or": (a, b) => a || b,
@@ -677,6 +678,7 @@ Display = function() {
         dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
 
         /* <!-- Show the Modal Dialog --> */
+        dialog.on("shown.bs.modal", () => dialog.find("textarea[name='value'], input[type='text'][name='value']").focus());
         dialog.modal("show");
 
       });

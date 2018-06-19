@@ -9,7 +9,8 @@
 			</p>
 			{{ text | markdownify }}
 			<div class="d-flex flex-column flex-lg-row flex-wrap lead mb-3 mt-4">
-				{% for button in include.buttons %}{% include command.html quiet="true" class="btn btn-lg btn-action mr-md-3 mt-2" command=button %}{% endfor %}
+        {% assign buttons = site.array %}{% for button in include.buttons %}{% if button.visibility %}{% if jekyll.environment == button.visiblity or button.visiblity == true %}{% assign buttons = buttons | push: button %}{% endif %}{% else %}{% assign buttons = buttons | push: button %}{% endif %}{% endfor %}
+				{% for button in buttons %}{% include command.html quiet="true" class="btn btn-lg btn-action mr-md-3 mt-2" command=button %}{% endfor %}
 				<a href="/support/" class="btn btn-lg btn-outline-success mt-2">Support<span class="sr-only">{{ site.support }}</span></a>
 			</div>
 			<div class="d-flex flex-column flex-md-row mb-3 mt-2">

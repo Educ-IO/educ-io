@@ -654,12 +654,12 @@ Google_API = (options, factory) => {
             }
           }]
         };
-        if (meta) _data.sheets[0].developerMetadata = [{
+        if (meta) _data.sheets[0].developerMetadata = _.map((_.isArray(meta) ? meta : [meta]), meta => ({
           "metadataId": meta.id,
           "metadataKey": meta.key,
           "metadataValue": meta.value,
           "visibility": meta.visibility ? meta.visibility : "DOCUMENT"
-        }];
+        }));
         return _call(NETWORKS.sheets.post, "v4/spreadsheets", _data, "application/json");
       },
 

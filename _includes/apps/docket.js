@@ -20,6 +20,7 @@ App = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+
   var _pick = () => new Promise((resolve, reject) => {
 
     /* <!-- Open Sheet from Google Drive Picker --> */
@@ -30,8 +31,6 @@ App = function() {
     );
 
   });
-
-  var _getTasks = () => (_tasks ? _tasks : _tasks = ಠ_ಠ.Tasks(ಠ_ಠ));
 
   var _config = {
 
@@ -117,6 +116,197 @@ App = function() {
 
     show: false,
 
+    /* <!-- Action Methods --> */
+    get: target => (target.data("id") !== null && target.data("id") !== undefined) ? _show.db.get(target.data("id")) : false,
+
+    hookup: container => {
+
+      /* <!-- Ensure Links open new tabs --> */
+      container.find("a:not([href^='#'])").attr("target", "_blank");
+
+      /* <!-- Enable Button Links --> */
+      container.find(".input-group button").on("click.action", e => {
+        var target = $(e.currentTarget);
+        if (target.data("action")) {
+          var parent = target.parents("div.item");
+          target.data("action") == "cancel" ?
+            _show.cancel(parent) : target.data("action") == "delete" ?
+            _show.delete(parent) : target.data("action") == "update" ?
+            _show.update(parent) : target.data("action") == "complete" ?
+            _show.complete(parent) : false;
+        }
+      });
+
+      /* <!-- Enable Keyboard Shortcuts --> */
+      container.find("div.editing textarea")
+        .keydown(e => {
+          var code = e.keyCode ? e.keyCode : e.which;
+          if (code == 13 || code == 27) e.preventDefault(); /* <!-- Enter or Escape Pressed --> */
+        })
+        .keyup(e => {
+          var code = e.keyCode ? e.keyCode : e.which;
+          var _handle = target => {
+            var parent = $(target).parents("div.item");
+            parent.find("div.editing, div.display").toggleClass("d-none");
+            return parent;
+          };
+          if (code == 13) {
+            /* <!-- Enter Pressed --> */
+            e.preventDefault();
+            if (e.shiftKey) {
+              _show.complete(_handle(e.currentTarget));
+            } else {
+              _show.update(_handle(e.currentTarget));
+            }
+          } else if (code == 27) {
+            /* <!-- Escape Pressed / Cancel Update --> */
+            e.preventDefault();
+            _show.cancel(_handle(e.currentTarget));
+          }
+        });
+
+      /* <!-- Enable Item Editing --> */
+      (container.is("div.item") ? container : container.find("div.item"))
+      .off("click.item").on("click.item", e => {
+        var _target = $(e.currentTarget),
+          _clicked = $(e.target);
+        _target.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
+        !_clicked.is("input, textarea, a, span") ?
+          e.shiftKey ? e.preventDefault() || _show.clear() || _show.complete(_target) : _target.find("div.editing, div.display").toggleClass("d-none") : false;
+        if (_target.find("div.editing").is(":visible")) _target.find("div.editing textarea").focus();
+      });
+
+      /* <!-- Enable Tooltips --> */
+      ಠ_ಠ.Display.tooltips(container.find("[data-toggle='tooltip']"), {
+        container: "body"
+      });
+
+    },
+
+    busy: (target, item) => (clear => () => {
+      if (clear && _.isFunction(clear)) clear();
+      if (target && item) {
+        var _new = $(ಠ_ಠ.Display.template.get(_.extend({
+          template: "item",
+        }, item)));
+        target.replaceWith(_new);
+        _show.hookup(_new);
+      }
+    })(ಠ_ಠ.Display.busy({
+      target: target,
+      class: "loader-small float-right",
+      fn: true
+    })),
+
+    complete: target => {
+      var _item = _show.get(target),
+        _finish = _show.busy(target, _item);
+
+      /* <!-- Update Item --> */
+      _item._complete = !(_item._complete);
+      _item.STATUS = _item._complete ? "COMPLETE" : "";
+      _item.DONE = _item._complete ? moment() : "";
+
+      /* <!-- Process Item, Reconcile UI then Update Database --> */
+      return _tasks.items.process(_item).then(item => {
+        _show.db.update(item);
+        var _content = target.find("div.display p");
+        item._complete ? _content.wrap($("<del />", {
+          class: "text-muted"
+        })) : _content.unwrap("del");
+        return _tasks.items.update(item, _show.db);
+      }).then(_finish);
+    },
+
+    update: target => {
+      var _item = _show.get(target),
+        _finish = _show.busy(target, _item);
+
+      /* <!-- Update Item --> */
+      _item.DETAILS = target.find("div.editing textarea").val();
+      _item.DISPLAY = _showdown.makeHtml(_item.DETAILS);
+
+      /* <!-- Process Item, Reconcile UI then Update Database --> */
+      return _tasks.items.process(_item).then(item => {
+        _show.db.update(item);
+        target.find("div.display p").html(item.DISPLAY);
+        return _tasks.items.update(item, _show.db);
+      }).then(_finish);
+    },
+
+    delete: target => {
+
+      var _item = _show.get(target);
+
+      return ಠ_ಠ.Display.confirm({
+          id: "delete_Item",
+          target: ಠ_ಠ.container,
+          message: `Please confirm that you wish to delete this item: ${_item.DISPLAY}`,
+          action: "Delete"
+        })
+        .then(confirm => {
+          if (!confirm) return Promise.resolve(false); /* <!-- No confirmation, so don't proceed --> */
+
+          /* <!-- Reconcile UI --> */
+          target.remove();
+          _show.db.remove(_item);
+
+          /* <!-- Update Database --> */
+          return _tasks.items.delete(_item, _show.db);
+        }).catch(e => e);
+    },
+
+    cancel: target => {
+
+      /* <!-- Reconcile UI --> */
+      target.find("div.editing textarea").val(_show.get(target).DETAILS);
+      return Promise.resolve();
+    },
+
+    clear: () => {
+
+      var s = window.getSelection ? window.getSelection() : document.selection;
+      s ? s.removeAllRanges ? s.removeAllRanges() : s.empty ? s.empty() : false : false;
+
+    },
+
+    detag: (target, tag) => {
+
+      return ಠ_ಠ.Display.confirm({
+          id: "remove_Tag",
+          target: ಠ_ಠ.container,
+          message: `Please confirm that you wish to remove the <strong>${tag}</strong> tag from this item`,
+          action: "Remove"
+        })
+        .then(confirm => {
+          if (!confirm) return Promise.resolve(false); /* <!-- No confirmation, so don't proceed --> */
+          var _item = _show.get(target),
+            _finish = _show.busy(target, _item);
+
+          /* <!-- Update Item --> */
+          _item.TAGS = (_item.BADGES = _.filter(_item.BADGES, badge => badge != tag)).join(";");
+
+          /* <!-- Process Item, Reconcile UI then Update Database --> */
+          return _tasks.items.process(_item).then(item => {
+            _show.db.update(item);
+            target.find(`span.badge a:contains('${tag}')`).filter(function() {
+              return $(this).text() == tag;
+            }).parents("span.badge").remove();
+            return _tasks.items.update(item, _show.db);
+          }).then(_finish);
+        }).catch(e => e);
+    },
+    /* <!-- Action Methods --> */
+
+    /* <!-- Diary Methods --> */
+    list: list => ಠ_ಠ.Display.modal("list", {
+        target: ಠ_ಠ.container,
+        id: `${ID}_list`,
+        title: `${list.length} Docket Item${list.length > 1 ? "s" : ""}`,
+        items: _.each(list, item => (!item.DISPLAY && item.DETAILS) ? item.DISPLAY = _showdown.makeHtml(item.DETAILS) : false),
+      }, dialog => _show.hookup(dialog))
+      .then(() => list),
+
     weekly: focus => new Promise(resolve => {
 
       focus = focus.isoWeekday() == 7 ? focus.subtract(1, "days") : focus;
@@ -149,15 +339,18 @@ App = function() {
       focus.add(focus.isoWeekday() == 1 ? -3 : -2, "days");
       _.times(7, () => {
         focus.add(1, "days");
-        var _all = _show.db ? _getTasks().query(focus, _show.db, focus.isSame(_show.today)) : [];
-        _.each(_all, item => (item.DISPLAY = _showdown.makeHtml(item.DETAILS)));
-        var _tasks = _.filter(_all, item => !item._timed),
-          _events = _.filter(_all, item => item._timed);
+        var _all = _show.db ? _tasks.query(focus, _show.db, focus.isSame(_show.today)) : [];
+        _.each(_all, item => (!item.DISPLAY && item.DETAILS) ? item.DISPLAY = _showdown.makeHtml(item.DETAILS) : false);
+        var _diary = {
+          tasks: _.filter(_all, item => !item._timed),
+          events: _.filter(_all, item => item._timed),
+        };
+
         _add(focus, {
           block: focus.isSame(_show.today) || (focus.isoWeekday() == 6 && focus.clone().add(1, "days").isSame(_show.today)) ?
             "present bg-highlight-gradient top-to-bottom" : focus.isBefore(_show.today) ? "past text-muted" : "future",
           title: focus.isSame(_show.today) ? "present" : ""
-        }, focus.format("YYYY-MM-DD"), _tasks, _events);
+        }, focus.format("YYYY-MM-DD"), _diary.tasks, _diary.events);
       });
       _days.push({
         sizes: {
@@ -167,136 +360,52 @@ App = function() {
         class: "mt-2 bg-light text-muted"
       });
 
-      /* <!-- Action Methods --> */
-      var _get = target => (target.data("id") !== null && target.data("id") !== undefined) ? _show.db.get(target.data("id")) : false,
-        _busy = (target, item) => (clear => () => {
-          if (clear && _.isFunction(clear)) clear();
-          if (target && item) {
-            var _new = $(ಠ_ಠ.Display.template.get(_.extend({
-              template: "item",
-            }, item)));
-            target.replaceWith(_new);
-            _hookup(_new);
-          }
-        })(ಠ_ಠ.Display.busy({
-          target: target,
-          class: "loader-small",
-          fn: true
-        })),
-        _complete = target => {
-          var _item = _get(target),
-            _finish = _busy(target, _item);
-          _item._complete = !(_item._complete);
-          _item.STATUS = _item._complete ? "COMPLETE" : "";
-          _item.DONE = _item._complete ? moment() : "";
-          var _content = target.find("div.display div p");
-          _item._complete ? _content.wrap($("<del />", {
-            class: "text-muted"
-          })) : _content.unwrap("del");
-          return _getTasks().items.update(_item, _show.db).then(_finish);
-        },
-        _update = target => {
-          var _item = _get(target),
-            _finish = _busy(target, _item);
-          _item.DETAILS = target.find("div.editing textarea").val();
-          _item.DISPLAY = _showdown.makeHtml(_item.DETAILS);
-          target.find("div.display div").html(_item.DISPLAY);
-          _show.db.update(_item);
-          return _getTasks().items.update(_item, _show.db).then(_finish);
-        },
-        _delete = target => {
-          var _item = _get(target),
-            _finish = _busy(target, _item);
-          target.remove();
-          _show.db.remove(_item);
-          return _getTasks().items.delete(_item, _show.db).then(_finish);
-        },
-        _cancel = target => {
-          target.find("div.editing textarea").val(_get(target).DETAILS);
-          return Promise.resolve();
-        },
-        _clear = () => {
-          var s = window.getSelection ? window.getSelection() : document.selection;
-          s ? s.removeAllRanges ? s.removeAllRanges() : s.empty ? s.empty() : false : false;
-        };
-
       var _diary = ಠ_ಠ.Display.template.show({
         template: "weekly",
         id: ID,
         days: _days,
         action: {
           action: "new.task",
-          icon: "create"
+          icon: "add"
         },
         target: ಠ_ಠ.container,
         clear: true,
       });
 
-      function _hookup(container) {
-
-        /* <!-- Ensure Links open new tabs --> */
-        container.find("a:not([href^='#'])").attr("target", "_blank");
-
-        /* <!-- Enable Button Links --> */
-        container.find("button").on("click.action", e => {
-          var target = $(e.currentTarget);
-          if (target.data("action")) {
-            var parent = target.parents("div.item");
-            target.data("action") == "cancel" ?
-              _cancel(parent) : target.data("action") == "delete" ?
-              _delete(parent) : target.data("action") == "update" ?
-              _update(parent) : target.data("action") == "complete" ?
-              _complete(parent) : false;
-          }
-        });
-
-        /* <!-- Enable Keyboard Shortcuts --> */
-        container.find("div.editing textarea")
-          .keydown(e => {
-            var code = e.keyCode ? e.keyCode : e.which;
-            if (code == 13 || code == 27) e.preventDefault(); /* <!-- Enter or Escape Pressed --> */
-          })
-          .keyup(e => {
-            var code = e.keyCode ? e.keyCode : e.which;
-            var _handle = target => {
-              var parent = $(target).parents("div.item");
-              parent.find("div.editing, div.display").toggleClass("d-none");
-              return parent;
-            };
-            if (code == 13) {
-              /* <!-- Enter Pressed --> */
-              e.preventDefault();
-              if (e.shiftKey) {
-                _complete(_handle(e.currentTarget));
-              } else {
-                _update(_handle(e.currentTarget));
-              }
-            } else if (code == 27) {
-              /* <!-- Escape Pressed / Cancel Update --> */
-              e.preventDefault();
-              _cancel(_handle(e.currentTarget));
-            }
-          });
-
-        /* <!-- Enable Item Editing --> */
-        (container.is("div.item") ? container : container.find("div.item"))
-        .off("click.item").on("click.item", e => {
-          var _target = $(e.currentTarget),
-            _clicked = $(e.target);
-          _target.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
-          !_clicked.is("input, textarea, a") ?
-            e.shiftKey ? e.preventDefault() || _clear() || _complete(_target) : _target.find("div.editing, div.display").toggleClass("d-none") : false;
-          if (_target.find("div.editing").is(":visible")) _target.find("div.editing textarea").focus();
-        });
-
-      }
-
       /* <!-- Hookup all relevant events --> */
-      _hookup(_diary);
+      _show.hookup(_diary);
+
+      /* <!-- Swipe and Touch Controls --> */
+      var swipe_control = new Hammer(_diary[0]);
+      swipe_control.get("swipe").set({
+        direction: Hammer.DIRECTION_HORIZONTAL
+      });
+      swipe_control.on("swipe", e => {
+        if (e.pointerType == "touch") {
+          if (e.type == "swipeleft" || (e.type == "swipe" && e.direction == 2)) {
+            _show.weekly(moment(_show.show ? _show.show : _show.today).add(1, "weeks"));
+          } else if (e.type == "swiperight" || (e.type == "swipe" && e.direction == 4)) {
+            _show.weekly(moment(_show.show ? _show.show : _show.today).subtract(1, "weeks"));
+          }
+        }
+      });
+
+      /* <!-- Scroll to today if visible --> */
+      if (Element.prototype.scrollIntoView) {
+        var _now = _diary.find("div.present");
+        if (_now.length === 1 && _now[0].scrollIntoView) _now[0].scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest"
+        });
+      }
 
       resolve(ಠ_ಠ.Display.state().enter(STATE_OPENED));
 
-    })
+    }),
+
+    tagged: tag => _show.list(_tasks.tagged(tag, _show.db)),
+    /* <!-- Diary Methods --> */
 
   };
 
@@ -319,7 +428,7 @@ App = function() {
             clear: ಠ_ಠ.Dialog({}, ಠ_ಠ).handlers.clear,
           },
           updates: {
-            extract: _dialog.handlers.extract(/\b((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))\b/i)
+            extract: _dialog.handlers.extract(_tasks.regexes.EXTRACT_TIME)
           }
         }, dialog => {
           ಠ_ಠ.Fields().on(dialog);
@@ -335,12 +444,10 @@ App = function() {
           var _item = {
             FROM: values.From ? values.From.Value : null,
             TAGS: values.Tags ? values.Tags.Value : null,
-            TIME: values.Time ? values.Time.Value : null,
             DETAILS: values.Details ? values.Details.Value : null,
           };
-          if (values.Time) _item._timed = true;
 
-          return _getTasks().items.create(_show.db.insert(_item), _show.db);
+          return _tasks.items.process(_item).then(item => _tasks.items.create(_show.db.insert(item), _show.db));
 
         })
         .then(r => r === false ? r : _show.weekly(moment(_show.show ? _show.show : _show.today)))
@@ -348,6 +455,25 @@ App = function() {
     },
 
     task: () => _new.item("Task"),
+
+  };
+
+  var _find = {
+
+    search: () => ಠ_ಠ.Display.text({
+        message: ಠ_ಠ.Display.doc.get("SEARCH_INSTRUCTIONS")
+      }).then(query => query ? _show.list(_tasks.search(query, _show.db, true)) : false)
+      .catch(e => e ? ಠ_ಠ.Flags.error("Search Error", e) : ಠ_ಠ.Flags.log("Search Cancelled"))
+
+  };
+
+  var _archive = {
+
+    show: () => {
+
+      return Promise.resolve(true);
+
+    }
 
   };
 
@@ -361,7 +487,7 @@ App = function() {
       message: "Loading Data"
     });
 
-    return _getTasks().open(config.data)
+    return _tasks.open(config.data)
       .then(db => {
         _show.db = db;
         if (busy) busy({
@@ -422,7 +548,7 @@ App = function() {
               fn: true
             });
 
-            _getTasks().create()
+            _tasks.create()
               .then(id => _config.create(id))
               .then(() => _start(_config.config, _finish))
               .then(_finish);
@@ -477,6 +603,10 @@ App = function() {
 
             }
 
+          } else if ((/ARCHIVE/i).test(command)) {
+
+            _archive.show();
+
           } else if ((/NEW/i).test(command) && command.length > 1 && (/TASK/i).test(command[1])) {
 
             _new.task();
@@ -511,6 +641,17 @@ App = function() {
 
             _show.weekly(moment(_show.show ? _show.show : _show.today).subtract(1, "weeks"));
 
+          } else if ((/REMOVE/i).test(command) && command.length == 4 && (/TAG/i).test(command[1])) {
+
+            _show.detag($(`#item_${command[2]}`), command[3]);
+
+          } else if ((/SEARCH/i).test(command)) {
+
+            command.length > 1 && (/TAGS/i).test(command[1]) ?
+              _show.tagged(command[2])
+              .then(results => ಠ_ಠ.Flags.log(`Found Docket ${results.length} Item${results.length > 1 ? "s" : ""}`, results)) :
+              _find.search();
+
           } else {
 
             var _parsed = moment(command);
@@ -540,9 +681,16 @@ App = function() {
 
       /* <!-- Bind Keyboard shortcuts --> */
       Mousetrap.bind("t", () => _show.weekly(moment(_show.today)));
+      Mousetrap.bind("T", () => _show.weekly(moment(_show.today)));
       Mousetrap.bind("<", () => _show.weekly(moment(_show.show ? _show.show : _show.today).subtract(1, "weeks")));
       Mousetrap.bind(">", () => _show.weekly(moment(_show.show ? _show.show : _show.today).add(1, "weeks")));
       Mousetrap.bind("n", () => _new.task());
+      Mousetrap.bind("N", () => _new.task());
+      Mousetrap.bind("s", () => _find.search());
+      Mousetrap.bind("S", () => _find.search());
+
+      /* <!-- Create Tasks Reference --> */
+      _tasks = ಠ_ಠ.Tasks(ಠ_ಠ);
 
     },
 

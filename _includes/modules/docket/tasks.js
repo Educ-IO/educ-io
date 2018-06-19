@@ -7,6 +7,8 @@ Tasks = ಠ_ಠ => {
 
   /* <!-- Internal Constants --> */
   const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const EXTRACT_TIME = /\b((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))\b/i;
+  const SPLIT_TAGS = /[^a-zA-Z0-9]/;
   const DB = new loki("docket.db"),
     NAMES = {
       spreadsheet: "Educ.IO | Docket Data",
@@ -14,6 +16,10 @@ Tasks = ಠ_ಠ => {
       db: "Tasks"
     },
     META = {
+      schema_version: {
+        key: "SCHEMA_VERSION",
+        value: "1.1",
+      },
       sheet_tasks: {
         key: "SHEET_NAME",
         value: "TASKS",
@@ -37,15 +43,6 @@ Tasks = ಠ_ಠ => {
           title: "From",
           type: "date",
           index: true,
-        }
-      },
-      column_time: {
-        key: "COLUMN_NAME",
-        value: "TIME",
-        _meta: {
-          title: "Time",
-          width: 80,
-          type: "time",
         }
       },
       column_order: {
@@ -97,6 +94,18 @@ Tasks = ಠ_ಠ => {
       row_headers: {
         key: "ROW_HEADERS",
         visibility: "DOCUMENT"
+      },
+      header_time: {
+        value: "TIME",
+        _meta: {
+          type: "time"
+        }
+      },
+      header_badges: {
+        value: "BADGES",
+        _meta: {
+          type: "array"
+        }
       }
     },
     STATUS = {
@@ -109,6 +118,14 @@ Tasks = ಠ_ಠ => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var _process = item => {
+    var _time = item[META.column_details.value].match(EXTRACT_TIME);
+    (item[META.header_time.value] = _time && _time.length >= 1 ? _time[0] : "") ? (item._timed = true) : delete item._timed;
+    if (item[META.column_tags.value]) item[META.header_badges.value] = item[META.column_tags.value].split(SPLIT_TAGS);
+    if (item[META.column_status.value] == "COMPLETE") item._complete = true;
+    return item;
+  };
+
   var _create = () => {
 
     var _id, _grid, _meta,
@@ -118,7 +135,7 @@ Tasks = ಠ_ಠ => {
         red: 0.545,
         green: 0.153,
         blue: 0.153
-      }, META.sheet_tasks).then(sheet => {
+      }, [META.sheet_tasks, META.schema_version]).then(sheet => {
         ಠ_ಠ.Flags.log(`Created Data File: ${sheet.properties.title} - [${sheet.spreadsheetId}]`);
         _id = sheet.spreadsheetId;
         _grid = ಠ_ಠ.Google_Sheets_Grid({
@@ -336,9 +353,12 @@ Tasks = ಠ_ಠ => {
             _.each(_data.columns.meta, column => {
               var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
               _row[column.developerMetadata.metadataValue] = _val && column.isDate ? moment(_val) : _val;
-              if (_val && column.isTime) _row._timed = true;
             });
-            if (_row[META.column_status.value] == "COMPLETE") _row._complete = true;
+
+            /* <!-- Set on-the-fly Item Properties (TIME and BADGES, so we can query them) --> */
+            _process(_row);
+            /* <!-- Set on-the-fly Item Properties (TIME and BADGES) --> */
+
             _row.__ROW = index;
             _data.data.push(_row);
           });
@@ -362,7 +382,7 @@ Tasks = ಠ_ಠ => {
         _queryCurrent = {},
         _queryDate = {},
         _queryStatus = {};
-      _queryTime[META.column_time.value] = {
+      _queryTime[META.header_time.value] = {
         "$eq": ""
       };
       _queryCurrent[META.column_from.value] = {
@@ -398,10 +418,10 @@ Tasks = ಠ_ಠ => {
       _queryStatus[META.column_status.value] = {
         "$eq": STATUS.complete
       };
-      _queryNotTimed[META.column_time.value] = {
+      _queryNotTimed[META.header_time.value] = {
         "$eq": ""
       };
-      _queryTimed[META.column_time.value] = {
+      _queryTimed[META.header_time.value] = {
         "$ne": ""
       };
       _queryDateFrom[META.column_from.value] = {
@@ -427,7 +447,7 @@ Tasks = ಠ_ಠ => {
         _queryDateFrom = {},
         _queryDateTo = {},
         _queryStatus = {};
-      _queryTime[META.column_time.value] = {
+      _queryTime[META.header_time.value] = {
         "$ne": ""
       };
       _queryFuture[META.column_from.value] = {
@@ -451,6 +471,50 @@ Tasks = ಠ_ಠ => {
       };
     },
 
+    tagged: tag => {
+      var _queryTag = {},
+        _queryStatus = {};
+      _queryTag[META.header_badges.value] = {
+        "$contains": tag
+      };
+      _queryStatus[META.column_status.value] = {
+        "$ne": STATUS.complete
+      };
+      return {
+        "$and": [_queryTag, _queryStatus]
+      };
+    },
+
+    text: (value, current) => {
+      var _queryDetails = {};
+      _queryDetails[META.column_details.value] = {
+        "$contains": value
+      };
+      if (!current) {
+        return _queryDetails;
+      } else {
+        var _queryStatus = {},
+          _queryTime = {},
+          _queryFuture = {};
+        _queryStatus[META.column_status.value] = {
+          "$ne": STATUS.complete
+        };
+        _queryTime[META.header_time.value] = {
+          "$ne": ""
+        };
+        _queryFuture[META.column_from.value] = {
+          "$gte": moment().startOf("day").toDate()
+        };
+        return {
+          "$and": [_queryDetails, {
+            "$or": [_queryStatus, {
+              "$and": [_queryTime, _queryFuture]
+            }]
+          }]
+        };
+      }
+    },
+
   };
 
   var _current = (date, db) => {
@@ -470,17 +534,17 @@ Tasks = ಠ_ಠ => {
     ಠ_ಠ.Flags.log(`Result Values for :${date}`, _results);
     return _results;
   };
-  
+
   var _new = (item, db) => {
-		return DELAY(1, db); /* <!-- Async non-blocking save --> */
+    return DELAY(1, db); /* <!-- Async non-blocking save --> */
   };
-  
+
   var _update = (item, db) => {
-		return DELAY(1000, db);
+    return DELAY(1000, db);
   };
-  
+
   var _delete = (item, db) => {
-		return DELAY(1000, db);
+    return DELAY(1000, db);
   };
   /* <!-- Internal Functions --> */
 
@@ -489,11 +553,35 @@ Tasks = ಠ_ಠ => {
   /* <!-- External Visibility --> */
   return {
 
+    regexes: {
+
+      EXTRACT_TIME: EXTRACT_TIME,
+
+      SPLIT_TAGS: SPLIT_TAGS,
+
+    },
+
     create: _create,
 
     open: _open,
 
+    search: (query, db, current) => {
+      var _query = _queries.text(query, current);
+      ಠ_ಠ.Flags.log(`Query ${current ? "[Current] " : ""}for :${query}`, _query);
+      var _results = (db ? db : _db).find(_query);
+      ಠ_ಠ.Flags.log(`Result Values for : ${query}`, _results);
+      return _results;
+    },
+
     query: (date, db, current) => current ? _current(date, db) : _date(date, db),
+
+    tagged: (tag, db) => {
+      var _query = _queries.tagged(tag);
+      ಠ_ಠ.Flags.log(`Query [Current] for :${tag}`, _query);
+      var _results = (db ? db : _db).find(_query);
+      ಠ_ಠ.Flags.log(`Result Values for : ${tag}`, _results);
+      return _results;
+    },
 
     items: {
 
@@ -502,6 +590,11 @@ Tasks = ಠ_ಠ => {
       update: _update,
 
       delete: _delete,
+
+      process: items => {
+        _.each(_.isArray(items) ? items : [items], _process);
+        return Promise.resolve(items);
+      },
 
     }
 

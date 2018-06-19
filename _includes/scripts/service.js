@@ -110,7 +110,7 @@ var CURRENT_CACHES = {
 };
 
 /*jshint ignore:start*/
-{% assign imports = "" | split: "" %}
+{% assign imports = site.array %}
 {% for app in site.data.apps %}
   {% if app[1].imports and app[1].imports.size > 0 %}
     {% assign names = app[1].imports | map: "name" %}

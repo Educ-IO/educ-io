@@ -36,6 +36,7 @@ globals:
   _: false
   Waves: false
   Mousetrap: false
+  Hammer: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
