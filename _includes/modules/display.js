@@ -152,7 +152,9 @@ Display = function() {
         });
 
         Handlebars.registerHelper("localeDate", variable => {
-          if (variable && variable instanceof Date) return (variable.getHours() === 0 && variable.getMinutes() === 0 && variable.getSeconds() === 0 && variable.getMilliseconds() === 0) ? variable.toLocaleDateString() : variable.toLocaleString();
+          if (!variable) return;
+          if (!(variable = (variable._isAMomentObject ? variable.toDate() : variable instanceof Date ? variable : false))) return;
+          return (variable.getHours() === 0 && variable.getMinutes() === 0 && variable.getSeconds() === 0 && variable.getMilliseconds() === 0) ? variable.toLocaleDateString() : variable.toLocaleString();
         });
 
         Handlebars.registerHelper("formatBytes", variable => {
@@ -507,12 +509,17 @@ Display = function() {
               });
             });
           }
-
         }
+
+        /* <!-- Modal Dismissing Clicks --> */
+        dialog.find("btn[data-click='dismiss-modal'], a[data-click='dismiss-modal']").on("click.dismiss", () => {
+          _clean();
+          dialog.modal("hide");
+       });
 
         /* <!-- Set Shown Event Handler (if present) --> */
         if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
-
+        
         /* <!-- Set Basic Event Handlers --> */
         dialog.on("hidden.bs.modal", () => dialog.remove() && resolve());
 
@@ -665,7 +672,7 @@ Display = function() {
         _target(options).append(dialog);
 
         /* <!-- Set Event Handlers --> */
-        dialog.find(".modal-footer button.btn-primary").click(() => {
+        var _submitted = false, _submit = () => {
           var _name = dialog.find("textarea[name='name'], input[type='text'][name='name']").val();
           var _value = dialog.find("textarea[name='value'], input[type='text'][name='value']").val();
           _clean();
@@ -674,9 +681,23 @@ Display = function() {
               name: _name,
               value: _value
             } : _value);
+        };
+        
+        /* <!-- Handle Enter Key (if simple) --> */
+        if (options.simple) dialog.keypress(e => {
+          if (e.which == 13) {
+            event.preventDefault();
+            _submitted = true;
+            dialog.modal("hide");
+          }
         });
-        dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
-
+        
+        /* <!-- Handle Clicked Submit --> */
+        dialog.find(".modal-footer button.btn-primary").click(() => {
+          _submitted = true;
+        });
+        dialog.on("hidden.bs.modal", () => dialog.remove() && (_submitted ? _submit() : reject()));
+        
         /* <!-- Show the Modal Dialog --> */
         dialog.on("shown.bs.modal", () => dialog.find("textarea[name='value'], input[type='text'][name='value']").focus());
         dialog.modal("show");

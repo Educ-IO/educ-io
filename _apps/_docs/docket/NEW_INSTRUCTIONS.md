@@ -1,2 +1,2 @@
-Use the __shortcut__ buttons below, or the text entry boxes to [customise]({% link _tutorials/folders/tagging_data.md %}){:target="_blank" rel="noopener"} your [tagging](https://developers.google.com/drive/v3/web/properties){:target="_blank" rel="noopener"}. The _combined_ length of the name and the value cannot exceed __124 characters__.
+Tags, when supplied, can be delineated by __any form__ of punctuation (e.g. spaces, commas, semi-colons etc.).
 {:.small .mb-2}

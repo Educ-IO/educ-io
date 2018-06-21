@@ -1,4 +1,8 @@
 site :
+  0.0.9j :
+    name : Site Improvements
+    desc : Minor Visual Bug Fixes
+    type : minor
   0.0.9i :
     name : Site Improvements
     desc : Minor Bug Fixes
@@ -630,6 +634,9 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.3a-alpha :
+    name : Further UI Improvements and better searching
+    type : minor
   0.0.3-alpha :
     name : Improved UI, swipe navigation, tags and searching
     type : minor

@@ -1,5 +1,5 @@
 {% raw %}
-<div {{#if id}}id="{{id}}" {{/if}}class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_text_title">
+<div {{#if id}}id="{{id}}" {{/if}}class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_text_title">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -18,16 +18,20 @@
           </div>
           <div class="form-group d-flex flex-wrap">
             <label class="col-12 col-lg-3 col-form-label"{{#if id}} for="{{id}}_VALUE" {{/if}}>{{#if value}}{{value}}{{else}}Value{{/if}}</label>
-            <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="col-12 col-lg-9 form-control-lg" rows="{{#if rows}}{{rows}}{{else}}2{{/if}}"></textarea>
+            <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="col-12 col-lg-9 form-control form-control-lg" rows="{{#if rows}}{{rows}}{{else}}2{{/if}}"></textarea>
           </div>
           {{else}}
-          <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="form-control-lg w-100" rows="{{#if rows}}{{rows}}{{else}}2{{/if}}"></textarea>
+          {{#if simple}}
+          <input {{#if id}}id="{{id}}_VALUE" {{/if}} type="text" name="value" class="form-control form-control-lg w-100" />
+          {{else}}
+          <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="form-control form-control-lg w-100" rows="{{#if rows}}{{rows}}{{else}}2{{/if}}"></textarea>
+          {{/if}}
           {{/present}}
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">{{#if action}}{{action}}{{else}}Confirm{{/if}}</button>
         <button type="button" class="btn btn-secondary btn-flat" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">{{#if action}}{{action}}{{else}}Confirm{{/if}}</button>
       </div>
     </div>
   </div>

@@ -122,7 +122,7 @@ Tasks = ಠ_ಠ => {
     var _time = item[META.column_details.value].match(EXTRACT_TIME);
     (item[META.header_time.value] = _time && _time.length >= 1 ? _time[0] : "") ? (item._timed = true) : delete item._timed;
     if (item[META.column_tags.value]) item[META.header_badges.value] = item[META.column_tags.value].split(SPLIT_TAGS);
-    if (item[META.column_status.value] == "COMPLETE") item._complete = true;
+    if (item[META.column_status.value] && item[META.column_status.value].toUpperCase() == "COMPLETE") item._complete = true;
     return item;
   };
 
@@ -485,29 +485,42 @@ Tasks = ಠ_ಠ => {
       };
     },
 
-    text: (value, current) => {
-      var _queryDetails = {};
+    text: (value, from) => {
+      var _queryText, _queryDetails = {},
+        _queryTags = {};
       _queryDetails[META.column_details.value] = {
-        "$contains": value
+        "$regex": [value, "i"]
       };
-      if (!current) {
-        return _queryDetails;
+      _queryTags[META.column_tags.value] = {
+        "$regex": [value, "i"]
+      };
+      _queryText = {
+        "$or": [_queryDetails, _queryTags]
+      };
+      if (!from) {
+        return _queryText;
       } else {
         var _queryStatus = {},
+          _queryNotTime = {},
           _queryTime = {},
           _queryFuture = {};
         _queryStatus[META.column_status.value] = {
           "$ne": STATUS.complete
         };
+        _queryNotTime[META.header_time.value] = {
+          "$eq": ""
+        };
         _queryTime[META.header_time.value] = {
           "$ne": ""
         };
         _queryFuture[META.column_from.value] = {
-          "$gte": moment().startOf("day").toDate()
+          "$gte": (from._isAMomentObject ? from.clone() : moment(from)).startOf("day").toDate()
         };
         return {
-          "$and": [_queryDetails, {
-            "$or": [_queryStatus, {
+          "$and": [_queryText, {
+            "$or": [{
+              "$and": [_queryStatus, _queryNotTime]
+            }, {
               "$and": [_queryTime, _queryFuture]
             }]
           }]
@@ -565,9 +578,9 @@ Tasks = ಠ_ಠ => {
 
     open: _open,
 
-    search: (query, db, current) => {
-      var _query = _queries.text(query, current);
-      ಠ_ಠ.Flags.log(`Query ${current ? "[Current] " : ""}for :${query}`, _query);
+    search: (query, db, from) => {
+      var _query = _queries.text(query, from);
+      ಠ_ಠ.Flags.log(`Query for :${query}`, _query);
       var _results = (db ? db : _db).find(_query);
       ಠ_ಠ.Flags.log(`Result Values for : ${query}`, _results);
       return _results;

@@ -1,3 +1,1 @@
-Instructions
-------------
-Will go here!
+Once you have __signed in__ to the docket app, your data (if present) will automatically be loaded. If this is the first time you have used the app, you can create a __new data sheet__ instead before you start.

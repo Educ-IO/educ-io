@@ -10,11 +10,11 @@
         <hr class="mt-2 mb-1" />
         {{#if events}}{{#each events}}
 					{{!-- Call Partial Template --}}
-					{{> item}}
+					{{> item editable=true}}
         {{/each}}{{/if}}
         {{#if tasks}}{{#each tasks}}
         	{{!-- Call Partial Template --}}
-					{{> item}}
+					{{> item editable=true}}
         {{/each}}{{/if}}
       </div>
     </div>{{#is instruction "row-end"}}</div>{{/is}}{{/each}}

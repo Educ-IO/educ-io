@@ -188,6 +188,7 @@ App = function() {
       if (target && item) {
         var _new = $(ಠ_ಠ.Display.template.get(_.extend({
           template: "item",
+          editable: true
         }, item)));
         target.replaceWith(_new);
         _show.hookup(_new);
@@ -300,12 +301,16 @@ App = function() {
 
     /* <!-- Diary Methods --> */
     list: list => ಠ_ಠ.Display.modal("list", {
-        target: ಠ_ಠ.container,
-        id: `${ID}_list`,
-        title: `${list.length} Docket Item${list.length > 1 ? "s" : ""}`,
-        items: _.each(list, item => (!item.DISPLAY && item.DETAILS) ? item.DISPLAY = _showdown.makeHtml(item.DETAILS) : false),
-      }, dialog => _show.hookup(dialog))
-      .then(() => list),
+      target: ಠ_ಠ.container,
+      id: `${ID}_list`,
+      title: `${list.length} Docket Item${list.length > 1 ? "s" : ""}`,
+      items: _.sortBy(_.each(list, item => {
+        !item.DISPLAY && item.DETAILS ? item.DISPLAY = _showdown.makeHtml(item.DETAILS) : false;
+        item._action = ((item._complete && item.DONE) ? 
+                        item.DONE : (item._timed || item.FROM.isAfter(_show.today)) ? 
+                        	item.FROM : moment(_show.today)).format("YYYY-MM-DD");
+      }), "FROM"),
+    }).then(() => list),
 
     weekly: focus => new Promise(resolve => {
 
@@ -348,7 +353,7 @@ App = function() {
 
         _add(focus, {
           block: focus.isSame(_show.today) || (focus.isoWeekday() == 6 && focus.clone().add(1, "days").isSame(_show.today)) ?
-            "present bg-highlight-gradient top-to-bottom" : focus.isBefore(_show.today) ? "past text-muted" : "future",
+            "present bg-highlight-gradient top-to-bottom" : focus.isSame(_show.show) ? "focussed" : focus.isBefore(_show.today) ? "past text-muted" : "future",
           title: focus.isSame(_show.today) ? "present" : ""
         }, focus.format("YYYY-MM-DD"), _diary.tasks, _diary.events);
       });
@@ -365,8 +370,17 @@ App = function() {
         id: ID,
         days: _days,
         action: {
-          action: "new.task",
-          icon: "add"
+          list: [{
+            action: "new.task",
+            icon: "add"
+          }, {
+            action: "search",
+            icon: "search"
+          }, {
+            action: "today",
+            icon: "today"
+          }],
+          icon: "edit"
         },
         target: ಠ_ಠ.container,
         clear: true,
@@ -383,9 +397,9 @@ App = function() {
       swipe_control.on("swipe", e => {
         if (e.pointerType == "touch") {
           if (e.type == "swipeleft" || (e.type == "swipe" && e.direction == 2)) {
-            _show.weekly(moment(_show.show ? _show.show : _show.today).add(1, "weeks"));
+            _show.weekly(moment(_show.show ? _show.show : _show.today).clone().add(1, "weeks"));
           } else if (e.type == "swiperight" || (e.type == "swipe" && e.direction == 4)) {
-            _show.weekly(moment(_show.show ? _show.show : _show.today).subtract(1, "weeks"));
+            _show.weekly(moment(_show.show ? _show.show : _show.today).clone().subtract(1, "weeks"));
           }
         }
       });
@@ -461,8 +475,9 @@ App = function() {
   var _find = {
 
     search: () => ಠ_ಠ.Display.text({
-        message: ಠ_ಠ.Display.doc.get("SEARCH_INSTRUCTIONS")
-      }).then(query => query ? _show.list(_tasks.search(query, _show.db, true)) : false)
+        message: ಠ_ಠ.Display.doc.get("SEARCH_INSTRUCTIONS"),
+        simple: true,
+      }).then(query => query ? _show.list(_tasks.search(query, _show.db, !_show.show ? _show.today : _show.show >= _show.today ? _show.show : false)) : false)
       .catch(e => e ? ಠ_ಠ.Flags.error("Search Error", e) : ಠ_ಠ.Flags.log("Search Cancelled"))
 
   };
@@ -635,11 +650,11 @@ App = function() {
 
           } else if ((/FORWARD/i).test(command)) {
 
-            _show.weekly(moment(_show.show ? _show.show : _show.today).add(1, "weeks"));
+            _show.weekly(moment(_show.show ? _show.show : _show.today).clone().add(1, "weeks"));
 
           } else if ((/BACKWARD/i).test(command)) {
 
-            _show.weekly(moment(_show.show ? _show.show : _show.today).subtract(1, "weeks"));
+            _show.weekly(moment(_show.show ? _show.show : _show.today).clone().subtract(1, "weeks"));
 
           } else if ((/REMOVE/i).test(command) && command.length == 4 && (/TAG/i).test(command[1])) {
 
@@ -680,14 +695,25 @@ App = function() {
       });
 
       /* <!-- Bind Keyboard shortcuts --> */
+      var _from = () => moment(_show.show ? _show.show : _show.today).clone();
       Mousetrap.bind("t", () => _show.weekly(moment(_show.today)));
       Mousetrap.bind("T", () => _show.weekly(moment(_show.today)));
-      Mousetrap.bind("<", () => _show.weekly(moment(_show.show ? _show.show : _show.today).subtract(1, "weeks")));
-      Mousetrap.bind(">", () => _show.weekly(moment(_show.show ? _show.show : _show.today).add(1, "weeks")));
+      Mousetrap.bind("<", () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().subtract(1, "weeks")));
+      Mousetrap.bind(">", () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().add(1, "weeks")));
+      Mousetrap.bind(",", () => {
+        var _start = _from();
+        _show.weekly(_start.subtract(_start.isoWeekday() == 7 ? 2 : 1, "days"));
+      });
+      Mousetrap.bind(".", () => {
+        var _start = _from();
+        _show.weekly(_start.add(_start.isoWeekday() == 6 ? 2 : 1, "days"));
+      });
       Mousetrap.bind("n", () => _new.task());
       Mousetrap.bind("N", () => _new.task());
       Mousetrap.bind("s", () => _find.search());
       Mousetrap.bind("S", () => _find.search());
+      Mousetrap.bind("f", () => _find.search());
+      Mousetrap.bind("F", () => _find.search());
 
       /* <!-- Create Tasks Reference --> */
       _tasks = ಠ_ಠ.Tasks(ಠ_ಠ);

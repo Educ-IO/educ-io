@@ -18,8 +18,6 @@ General
 
 * Material Design menu display animations
 
-* Visual BUG - Support Icon too wide when logged on / readme screen buttons are vertically stacked
-
 Datatable
 ---------
 
@@ -64,7 +62,6 @@ Mobile
 
 Docket
 ------
-* List view should include date
 * Archive Dialog and Process
 * Overlay events from Google Calendar
 * Handle Deleted Data File after loading config
@@ -133,6 +130,10 @@ Reflect
 
 Complete
 --------
+* Search from focus date if available <-- DONE
+* List view should include date <-- DONE
+* Visual BUG - Support Icon too wide when logged on / readme screen buttons are vertically stacked <-- DONE
+* Re-order home screen on phone sizes, to put Apps button above the fold <-- DONE
 * ** IMPORTANT ** Search Process and results display <-- DONE
 * List view of items filtered by tags <-- DONE
 * Confirm deletion of items
