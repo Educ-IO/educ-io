@@ -65,8 +65,9 @@ Docket
 * Archive Dialog and Process
 * Overlay events from Google Calendar
 * Handle Deleted Data File after loading config
-* Safe Updates to underlying Sheet (check positional and hash)
-
+* Handle clash on updates / delete
+* Write Instructions
+* Check Blank Lines bug?
 
 Tiles
 -----
@@ -132,6 +133,8 @@ Reflect
 
 Complete
 --------
+* Safe Updates to underlying Sheet (check positional and hash) <== DONE
+* Experiment with dash border lines below items <== DONE
 * Update FROM Date <-- DONE
 * Add / Update / Delete actions for Sheet DB <-- DONE
 * Search from focus date if available <-- DONE

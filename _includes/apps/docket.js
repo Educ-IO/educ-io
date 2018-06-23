@@ -116,6 +116,16 @@ App = function() {
 
     show: false,
 
+    /* <!-- Interal Methods --> */
+    prepare: list => _.each(list, item => {
+      !item.DISPLAY && item.DETAILS ? item.DISPLAY = _showdown.makeHtml(item.DETAILS) : false;
+      item._action = ((item._complete && item.DONE) ?
+        item.DONE : (item._timed || item.FROM.isAfter(_show.today)) ?
+        item.FROM : moment(_show.today)).format("YYYY-MM-DD");
+      item.__hash = _tasks.hash(item);
+    }),
+    /* <!-- Interal Methods --> */
+
     /* <!-- Action Methods --> */
     get: target => (target.data("id") !== null && target.data("id") !== undefined) ? _show.db.get(target.data("id")) : false,
 
@@ -260,16 +270,20 @@ App = function() {
       _item.DISPLAY = _showdown.makeHtml(_item.DETAILS);
 
       /* <!-- Process Item, Reconcile UI then Update Database --> */
-      return _tasks.items.process(_item).then(item => {
-        _show.db.update(item);
-        target.find("div.display p").html(item.DISPLAY);
-        return _tasks.items.update(item);
-      }).then(_finish);
+      return _tasks.items.process(_item)
+        .then(item => {
+          _show.db.update(item);
+          target.find("div.display p").html(item.DISPLAY);
+          return _tasks.items.update(item);
+        })
+        .catch(e => ಠ_ಠ.Flags.error("Update Error", e))
+        .then(_finish);
     },
 
     delete: target => {
 
-      var _item = _show.get(target);
+      var _item = _show.get(target),
+        _finish;
 
       return ಠ_ಠ.Display.confirm({
           id: "delete_Item",
@@ -280,13 +294,18 @@ App = function() {
         .then(confirm => {
           if (!confirm) return Promise.resolve(false); /* <!-- No confirmation, so don't proceed --> */
 
-          /* <!-- Reconcile UI --> */
-          target.remove();
-          _show.db.remove(_item);
+          _finish = _show.busy(target, _item);
 
           /* <!-- Update Database --> */
-          return _tasks.items.delete(_item);
-        }).catch(e => e);
+          return _tasks.items.delete(_item).then(() => {
+            /* <!-- Reconcile UI --> */
+            target.remove();
+            _show.db.remove(_item);
+            return true;
+          });
+        })
+        .catch(e => e ? ಠ_ಠ.Flags.error("Delete Error", e) : ಠ_ಠ.Flags.log("Delete Cancelled"))
+        .then(() => _finish ? _finish() : false);
     },
 
     cancel: target => {
@@ -336,12 +355,7 @@ App = function() {
       target: ಠ_ಠ.container,
       id: `${ID}_list`,
       title: `${list.length} Docket Item${list.length > 1 ? "s" : ""}`,
-      items: _.sortBy(_.each(list, item => {
-        !item.DISPLAY && item.DETAILS ? item.DISPLAY = _showdown.makeHtml(item.DETAILS) : false;
-        item._action = ((item._complete && item.DONE) ?
-          item.DONE : (item._timed || item.FROM.isAfter(_show.today)) ?
-          item.FROM : moment(_show.today)).format("YYYY-MM-DD");
-      }), "FROM"),
+      items: _.sortBy(_show.prepare(list), "FROM"),
     }).then(() => list),
 
     weekly: focus => new Promise(resolve => {
@@ -376,13 +390,7 @@ App = function() {
       focus.add(focus.isoWeekday() == 1 ? -3 : -2, "days");
       _.times(7, () => {
         focus.add(1, "days");
-        var _all = _show.db ? _tasks.query(focus, _show.db, focus.isSame(_show.today)) : [];
-        _.each(_all, item => {
-          (!item.DISPLAY && item.DETAILS) ? item.DISPLAY = _showdown.makeHtml(item.DETAILS): false;
-          item._action = ((item._complete && item.DONE) ?
-            item.DONE : (item._timed || item.FROM.isAfter(_show.today)) ?
-            item.FROM : moment(_show.todayf)).format("YYYY-MM-DD");
-        });
+        var _all = _show.prepare(_show.db ? _tasks.query(focus, _show.db, focus.isSame(_show.today)) : []);
         var _diary = {
           tasks: _.filter(_all, item => !item._timed),
           events: _.filter(_all, item => item._timed),
@@ -517,6 +525,7 @@ App = function() {
 
     search: () => ಠ_ಠ.Display.text({
         message: ಠ_ಠ.Display.doc.get("SEARCH_INSTRUCTIONS"),
+        action: "Search",
         simple: true,
       }).then(query => query ? _show.list(_tasks.search(query, _show.db, !_show.show ? _show.today : _show.show >= _show.today ? _show.show : false)) : false)
       .catch(e => e ? ಠ_ಠ.Flags.error("Search Error", e) : ಠ_ಠ.Flags.log("Search Cancelled"))

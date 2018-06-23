@@ -1941,6 +1941,8 @@ docket:
       load: last
     - name: hammer
       load: last
+    - name: objectHash
+      load: last
     - name: google
       load: lazy
   helpers:

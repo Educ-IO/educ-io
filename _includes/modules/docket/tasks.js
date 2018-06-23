@@ -108,6 +108,11 @@ Tasks = ಠ_ಠ => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var _hash = item => objectHash.sha1(_.reduce([META.column_type, META.column_order, META.column_status, META.column_tags, META.column_details], (value, col) => {
+    if (item[col.value]) value[col.value] = item[col.value];
+    return value;
+  }, {}));
+
   var _process = item => {
     var _time = item[META.column_details.value].match(EXTRACT_TIME);
     (item[META.header_time.value] = _time && _time.length >= 1 ? _time[0] : "") ? (item._timed = true) : delete item._timed;
@@ -115,6 +120,24 @@ Tasks = ಠ_ಠ => {
     if (item[META.column_status.value] && item[META.column_status.value].toUpperCase() == "COMPLETE") item._complete = true;
     return item;
   };
+
+  var _populate = rows => _.reduce(rows, (list, row, index) => {
+
+    var _row = {};
+    _.each(_data.columns.meta, column => {
+      var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
+      _row[column.developerMetadata.metadataValue] = _val && column.isDate ? moment(_val) : _val;
+    });
+
+    /* <!-- Set ROW / Index Reference --> */
+    _data.last = Math.max(_data.last !== undefined ? _data.last : 0, (_row.__ROW = index));
+
+    /* <!-- Set on-the-fly Item Properties (TIME and BADGES, so we can query them) --> */
+    if (_row[META.column_details.value]) list.push(_process(_row));
+
+    return list;
+
+  }, []);
 
   var _create = () => {
 
@@ -335,41 +358,28 @@ Tasks = ಠ_ಠ => {
       })
       .then(value => {
         if (!value) return;
-        if (value.values) {
-          _data.data = [];
 
-          /* <!-- Map Date / Markdown Fields / Columns --> */
-          var _columnTypes = {
-            date: _.map(_.filter(META, column => column._meta && column._meta.type == "date"), column => column.value),
-            markdown: _.map(_.filter(META, column => column._meta && column._meta.type == "markdown"), column => column.value),
-            integer: _.map(_.filter(META, column => column._meta && column._meta.type == "int"), column => column.value),
-            time: _.map(_.filter(META, column => column._meta && column._meta.type == "time"), column => column.value)
-          };
-          _.each(_data.columns.meta, column => {
-            column.isDate = (_columnTypes.date.indexOf(column.developerMetadata.metadataValue) >= 0);
-            column.isMarkdown = (_columnTypes.markdown.indexOf(column.developerMetadata.metadataValue) >= 0);
-            column.isInteger = (_columnTypes.integer.indexOf(column.developerMetadata.metadataValue) >= 0);
-            column.isTime = (_columnTypes.time.indexOf(column.developerMetadata.metadataValue) >= 0);
-          });
-          /* <!-- Map Date / Markdown Fields / Columns --> */
+        /* <!-- Map Date / Markdown Fields / Columns --> */
+        var _columnTypes = {
+          date: _.map(_.filter(META, column => column._meta && column._meta.type == "date"), column => column.value),
+          markdown: _.map(_.filter(META, column => column._meta && column._meta.type == "markdown"), column => column.value),
+          integer: _.map(_.filter(META, column => column._meta && column._meta.type == "int"), column => column.value),
+          time: _.map(_.filter(META, column => column._meta && column._meta.type == "time"), column => column.value)
+        };
+        _.each(_data.columns.meta, column => {
+          column.isDate = (_columnTypes.date.indexOf(column.developerMetadata.metadataValue) >= 0);
+          column.isMarkdown = (_columnTypes.markdown.indexOf(column.developerMetadata.metadataValue) >= 0);
+          column.isInteger = (_columnTypes.integer.indexOf(column.developerMetadata.metadataValue) >= 0);
+          column.isTime = (_columnTypes.time.indexOf(column.developerMetadata.metadataValue) >= 0);
+        });
+        /* <!-- Map Date / Markdown Fields / Columns --> */
 
-          _.each(value.values, (row, index) => {
-            var _row = {};
-            _.each(_data.columns.meta, column => {
-              var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
-              _row[column.developerMetadata.metadataValue] = _val && column.isDate ? moment(_val) : _val;
-            });
+        /* <!-- Populate and Return --> */
+        _data.data = value.values ? _populate(value.values) : [];
+        ಠ_ಠ.Flags.log("Data Values:", _data.data);
+        return _data.data;
+        /* <!-- Populate and Return --> */
 
-            /* <!-- Set ROW / Index Reference --> */
-            _data.last = Math.max(_data.last !== undefined ? _data.last : 0, (_row.__ROW = index));
-
-            /* <!-- Set on-the-fly Item Properties (TIME and BADGES, so we can query them) --> */
-            if (_row[META.column_details.value]) _data.data.push(_process(_row));
-
-          });
-          ಠ_ಠ.Flags.log("Data Values:", _data.data);
-          return _data.data;
-        }
       })
       .then(data => {
         _db = DB.addCollection(NAMES.db, {
@@ -572,6 +582,7 @@ Tasks = ಠ_ಠ => {
     return ಠ_ಠ.Google.sheets.append(_data.spreadsheet, `${_data.title}!${_range}`, [_value]).then(result => {
       if (result && result.updates) {
         item.__ROW = (_data.last += 1);
+        item.__hash = _hash(item);
         return item;
       } else {
         return false;
@@ -583,12 +594,23 @@ Tasks = ಠ_ಠ => {
   var _update = item => {
 
     var _notation = ಠ_ಠ.Google_Sheets_Notation(),
-      _range = `${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`,
+      _range = `${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.start}`)}:${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.end}`, true)}`,
       _value = _convertToArray(item);
 
-    ಠ_ಠ.Flags.log(`Writing Values [UPDATED] for Range: ${_range}`, _value);
+    return ಠ_ಠ.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_range}`).then(value => {
+      var _existing = _populate(value.values)[0];
+      _existing.__hash = _hash(_existing);
+      if (_existing.__hash == item.__hash) {
+        ಠ_ಠ.Flags.log(`Writing Values [UPDATED] for Range: ${_range}`, _value);
+        return ಠ_ಠ.Google.sheets.update(_data.spreadsheet, `${_data.title}!${_range}`, [_value]).then(() => {
+          item.__hash = _hash(item);
+          return item;
+        });
+      } else {
+        return Promise.reject(`Hash Mismath for Range: ${_range} [Hash_ITEM: ${item.__hash}, Hash_EXISTING: ${_existing.__hash}]`);
+      }
+    });
 
-    return ಠ_ಠ.Google.sheets.update(_data.spreadsheet, `${_data.title}!${_range}`, [_value]);
   };
 
   var _delete = item => {
@@ -599,14 +621,27 @@ Tasks = ಠ_ಠ => {
         sheet: _data.sheet
       }),
       _row = _data.rows.end + 1 + item.__ROW,
-      _dimension = _grid.dimension("ROWS", _row - 1, _row);
+      _dimension = _grid.dimension("ROWS", _row - 1, _row),
+      _notation = ಠ_ಠ.Google_Sheets_Notation(),
+      _range = `${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.start}`)}:${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.end}`, true)}`;
 
-    ಠ_ಠ.Flags.log(`Deleting Row : ${_row} / Dimension : ${JSON.stringify(_dimension)} for item:`, item);
-
-    return ಠ_ಠ.Google.sheets.batch(_data.spreadsheet, {
-      "deleteDimension": {
-        "range": _dimension
+    return ಠ_ಠ.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_range}`).then(value => {
+      var _existing = _populate(value.values)[0];
+      _existing.__hash = _hash(_existing);
+      if (_existing.__hash == item.__hash) {
+        ಠ_ಠ.Flags.log(`Deleting Row : ${_row} / Dimension : ${JSON.stringify(_dimension)} for item:`, item);
+        return ಠ_ಠ.Google.sheets.batch(_data.spreadsheet, {
+          "deleteDimension": {
+            "range": _dimension
+          }
+        }).then(() => {
+          item.__hash = _hash(item);
+          return item;
+        });
+      } else {
+        return Promise.reject(`Hash Mismath for Range: ${_range} [Hash_ITEM: ${item.__hash}, Hash_EXISTING: ${_existing.__hash}]`);
       }
+
     });
 
   };
@@ -660,7 +695,9 @@ Tasks = ಠ_ಠ => {
         return Promise.resolve(items);
       },
 
-    }
+    },
+
+    hash: _hash
 
   };
   /* <!-- External Visibility --> */

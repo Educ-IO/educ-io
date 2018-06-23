@@ -8,6 +8,7 @@ $font-spacing-heading:				0.1rem;
 $colour-background: 					#ffffff;
 $colour-general:              #000000;
 $colour-general-light:        lighten($colour-general, 10%);
+$colour-general-lighter:      lighten($colour-general, 40%);
 $colour-emphasis: 						#cccccc;
 $colour-foreground: 					darken($colour-emphasis, 10%);
 $colour-debug: 								#888888;
