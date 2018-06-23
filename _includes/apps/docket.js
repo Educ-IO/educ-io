@@ -132,7 +132,8 @@ App = function() {
           target.data("action") == "cancel" ?
             _show.cancel(parent) : target.data("action") == "delete" ?
             _show.delete(parent) : target.data("action") == "update" ?
-            _show.update(parent) : target.data("action") == "complete" ?
+            _show.update(parent) : target.data("action") == "move" ?
+            _show.move(parent) : target.data("action") == "complete" ?
             _show.complete(parent) : false;
         }
       });
@@ -199,6 +200,37 @@ App = function() {
       fn: true
     })),
 
+    move: target => {
+      var _item = _show.get(target),
+        _input = target.find("input.dt-picker");
+      _input.on("change", e => {
+        var _finish = _show.busy(target, _item);
+
+        /* <!-- Update Date --> */
+        _item.FROM = new moment($(e.target).val());
+
+        /* <!-- Process Item, Reconcile UI then Update Database --> */
+        _tasks.items.process(_item).then(item => {
+            _show.db.update(item);
+            return _tasks.items.update(item);
+          })
+          .then(_finish)
+          .then(() => _show.weekly(moment(_show.show ? _show.show : _show.today)));
+      });
+      _input.bootstrapMaterialDatePicker({
+        format: "YYYY-MM-DD",
+        cancelText: "Cancel",
+        clearButton: false,
+        nowButton: true,
+        time: false,
+        switchOnClick: true,
+        triggerEvent: "dblclick"
+      });
+
+      _input.dblclick();
+
+    },
+
     complete: target => {
       var _item = _show.get(target),
         _finish = _show.busy(target, _item);
@@ -215,7 +247,7 @@ App = function() {
         item._complete ? _content.wrap($("<del />", {
           class: "text-muted"
         })) : _content.unwrap("del");
-        return _tasks.items.update(item, _show.db);
+        return _tasks.items.update(item);
       }).then(_finish);
     },
 
@@ -231,7 +263,7 @@ App = function() {
       return _tasks.items.process(_item).then(item => {
         _show.db.update(item);
         target.find("div.display p").html(item.DISPLAY);
-        return _tasks.items.update(item, _show.db);
+        return _tasks.items.update(item);
       }).then(_finish);
     },
 
@@ -253,7 +285,7 @@ App = function() {
           _show.db.remove(_item);
 
           /* <!-- Update Database --> */
-          return _tasks.items.delete(_item, _show.db);
+          return _tasks.items.delete(_item);
         }).catch(e => e);
     },
 
@@ -293,7 +325,7 @@ App = function() {
             target.find(`span.badge a:contains('${tag}')`).filter(function() {
               return $(this).text() == tag;
             }).parents("span.badge").remove();
-            return _tasks.items.update(item, _show.db);
+            return _tasks.items.update(item);
           }).then(_finish);
         }).catch(e => e);
     },
@@ -306,9 +338,9 @@ App = function() {
       title: `${list.length} Docket Item${list.length > 1 ? "s" : ""}`,
       items: _.sortBy(_.each(list, item => {
         !item.DISPLAY && item.DETAILS ? item.DISPLAY = _showdown.makeHtml(item.DETAILS) : false;
-        item._action = ((item._complete && item.DONE) ? 
-                        item.DONE : (item._timed || item.FROM.isAfter(_show.today)) ? 
-                        	item.FROM : moment(_show.today)).format("YYYY-MM-DD");
+        item._action = ((item._complete && item.DONE) ?
+          item.DONE : (item._timed || item.FROM.isAfter(_show.today)) ?
+          item.FROM : moment(_show.today)).format("YYYY-MM-DD");
       }), "FROM"),
     }).then(() => list),
 
@@ -345,7 +377,12 @@ App = function() {
       _.times(7, () => {
         focus.add(1, "days");
         var _all = _show.db ? _tasks.query(focus, _show.db, focus.isSame(_show.today)) : [];
-        _.each(_all, item => (!item.DISPLAY && item.DETAILS) ? item.DISPLAY = _showdown.makeHtml(item.DETAILS) : false);
+        _.each(_all, item => {
+          (!item.DISPLAY && item.DETAILS) ? item.DISPLAY = _showdown.makeHtml(item.DETAILS): false;
+          item._action = ((item._complete && item.DONE) ?
+            item.DONE : (item._timed || item.FROM.isAfter(_show.today)) ?
+            item.FROM : moment(_show.todayf)).format("YYYY-MM-DD");
+        });
         var _diary = {
           tasks: _.filter(_all, item => !item._timed),
           events: _.filter(_all, item => item._timed),
@@ -461,10 +498,14 @@ App = function() {
             DETAILS: values.Details ? values.Details.Value : null,
           };
 
-          return _tasks.items.process(_item).then(item => _tasks.items.create(_show.db.insert(item), _show.db));
+          return _tasks.items.process(_item).then(item => _tasks.items.create(_show.db.insert(item)));
 
         })
-        .then(r => r === false ? r : _show.weekly(moment(_show.show ? _show.show : _show.today)))
+        .then(r => {
+          if (r === false) return r;
+          _show.db.update(r);
+          return _show.weekly(moment(_show.show ? _show.show : _show.today));
+        })
         .catch(e => e ? ಠ_ಠ.Flags.error("Create New Error", e) : ಠ_ಠ.Flags.log("Create New Cancelled"));
     },
 

@@ -6,7 +6,6 @@ Tasks = ಠ_ಠ => {
   /* <!-- REQUIRES: Global Scope: Loki, JQuery, Underscore | App Scope: Google --> */
 
   /* <!-- Internal Constants --> */
-  const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
   const EXTRACT_TIME = /\b((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))\b/i;
   const SPLIT_TAGS = /[^a-zA-Z0-9]/;
   const DB = new loki("docket.db"),
@@ -23,9 +22,6 @@ Tasks = ಠ_ಠ => {
       sheet_tasks: {
         key: "SHEET_NAME",
         value: "TASKS",
-        _meta: {
-          header: ""
-        }
       },
       column_type: {
         key: "COLUMN_NAME",
@@ -97,15 +93,9 @@ Tasks = ಠ_ಠ => {
       },
       header_time: {
         value: "TIME",
-        _meta: {
-          type: "time"
-        }
       },
       header_badges: {
         value: "BADGES",
-        _meta: {
-          type: "array"
-        }
       }
     },
     STATUS = {
@@ -247,6 +237,20 @@ Tasks = ಠ_ಠ => {
             "fields": "userEnteredFormat(wrapStrategy)"
           }
         }, {
+          "repeatCell": {
+            "range": {
+              "sheetId": 0,
+              "startColumnIndex": 0,
+              "endColumnIndex": _metadata.length - 2
+            },
+            "cell": {
+              "userEnteredFormat": {
+                "horizontalAlignment": "CENTER",
+              }
+            },
+            "fields": "userEnteredFormat(horizontalAlignment)"
+          }
+        }, {
           "updateSheetProperties": {
             "properties": {
               "sheetId": 0,
@@ -309,12 +313,13 @@ Tasks = ಠ_ಠ => {
         };
         _data.columns = {
           meta: _.filter(value.matchedDeveloperMetadata, metadata => metadata.developerMetadata.metadataKey == META.column_type.key),
-          start: 0,
+          start: 1,
           end: 0
         };
         _.each([_data.rows, _data.columns], dimension => {
           _.each(dimension.meta, metadata => {
-            dimension.start = Math.min(dimension.start, metadata.developerMetadata.location.dimensionRange.startIndex);
+            dimension.start = Math.min(dimension.start, metadata.developerMetadata.location.dimensionRange.startIndex >= dimension.start ?
+              metadata.developerMetadata.location.dimensionRange.startIndex : dimension.start);
             dimension.end = Math.max(dimension.end, metadata.developerMetadata.location.dimensionRange.endIndex);
           });
         });
@@ -322,7 +327,7 @@ Tasks = ಠ_ಠ => {
         ಠ_ಠ.Flags.log("METADATA (Rows):", _data.rows);
         ಠ_ಠ.Flags.log("METADATA (Columns):", _data.columns);
 
-        _data.range = `${_notation.convertR1C1(`R${_data.rows.end + 1}C${_data.columns.start + 1}`)}:${_notation.convertR1C1(`C${_data.columns.end + 1}`, true)}`;
+        _data.range = `${_notation.convertR1C1(`R${_data.rows.end + 1}C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`;
         ಠ_ಠ.Flags.log("Fetching Values for Range:", _data.range);
 
         return ಠ_ಠ.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_data.range}`);
@@ -355,12 +360,12 @@ Tasks = ಠ_ಠ => {
               _row[column.developerMetadata.metadataValue] = _val && column.isDate ? moment(_val) : _val;
             });
 
-            /* <!-- Set on-the-fly Item Properties (TIME and BADGES, so we can query them) --> */
-            _process(_row);
-            /* <!-- Set on-the-fly Item Properties (TIME and BADGES) --> */
+            /* <!-- Set ROW / Index Reference --> */
+            _data.last = Math.max(_data.last !== undefined ? _data.last : 0, (_row.__ROW = index));
 
-            _row.__ROW = index;
-            _data.data.push(_row);
+            /* <!-- Set on-the-fly Item Properties (TIME and BADGES, so we can query them) --> */
+            if (_row[META.column_details.value]) _data.data.push(_process(_row));
+
           });
           ಠ_ಠ.Flags.log("Data Values:", _data.data);
           return _data.data;
@@ -548,16 +553,62 @@ Tasks = ಠ_ಠ => {
     return _results;
   };
 
-  var _new = (item, db) => {
-    return DELAY(1, db); /* <!-- Async non-blocking save --> */
+  var _convertToArray = item => _.reduce(_data.columns.meta, (value, column) => {
+    value[column.developerMetadata.location.dimensionRange.startIndex] =
+      column.isDate && item[column.developerMetadata.metadataValue] && item[column.developerMetadata.metadataValue]._isAMomentObject ?
+      item[column.developerMetadata.metadataValue].format("YYYY-MM-DD") :
+      item[column.developerMetadata.metadataValue] ? item[column.developerMetadata.metadataValue] : "";
+    return value;
+  }, []);
+
+  var _new = item => {
+
+    var _notation = ಠ_ಠ.Google_Sheets_Notation(),
+      _range = `${_notation.convertR1C1(`R${_data.rows.end + 2 + _data.last}C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`,
+      _value = _convertToArray(item);
+
+    ಠ_ಠ.Flags.log(`Writing Values [NEW] for Range: ${_range}`, _value);
+
+    return ಠ_ಠ.Google.sheets.append(_data.spreadsheet, `${_data.title}!${_range}`, [_value]).then(result => {
+      if (result && result.updates) {
+        item.__ROW = (_data.last += 1);
+        return item;
+      } else {
+        return false;
+      }
+    });
+
   };
 
-  var _update = (item, db) => {
-    return DELAY(1000, db);
+  var _update = item => {
+
+    var _notation = ಠ_ಠ.Google_Sheets_Notation(),
+      _range = `${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`,
+      _value = _convertToArray(item);
+
+    ಠ_ಠ.Flags.log(`Writing Values [UPDATED] for Range: ${_range}`, _value);
+
+    return ಠ_ಠ.Google.sheets.update(_data.spreadsheet, `${_data.title}!${_range}`, [_value]);
   };
 
-  var _delete = (item, db) => {
-    return DELAY(1000, db);
+  var _delete = item => {
+
+    if (item.__ROW === undefined || item.__ROW === null) return Promise.reject();
+
+    var _grid = ಠ_ಠ.Google_Sheets_Grid({
+        sheet: _data.sheet
+      }),
+      _row = _data.rows.end + 1 + item.__ROW,
+      _dimension = _grid.dimension("ROWS", _row - 1, _row);
+
+    ಠ_ಠ.Flags.log(`Deleting Row : ${_row} / Dimension : ${JSON.stringify(_dimension)} for item:`, item);
+
+    return ಠ_ಠ.Google.sheets.batch(_data.spreadsheet, {
+      "deleteDimension": {
+        "range": _dimension
+      }
+    });
+
   };
   /* <!-- Internal Functions --> */
 

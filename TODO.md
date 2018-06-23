@@ -65,6 +65,8 @@ Docket
 * Archive Dialog and Process
 * Overlay events from Google Calendar
 * Handle Deleted Data File after loading config
+* Safe Updates to underlying Sheet (check positional and hash)
+
 
 Tiles
 -----
@@ -130,6 +132,8 @@ Reflect
 
 Complete
 --------
+* Update FROM Date <-- DONE
+* Add / Update / Delete actions for Sheet DB <-- DONE
 * Search from focus date if available <-- DONE
 * List view should include date <-- DONE
 * Visual BUG - Support Icon too wide when logged on / readme screen buttons are vertically stacked <-- DONE

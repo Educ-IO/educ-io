@@ -1,10 +1,11 @@
 {% raw %}
 <div class="item{{#if editable}} editable{{/if}}{{#if _complete}} complete{{/if}}"{{#exists $loki}}id="item_{{ $loki }}" data-id="{{ $loki }}"{{/exists}}>
   <div class="display">
-    {{#if _timed}}<span class="float-right text-muted text-small pr-1"><i class="material-icons md-1">schedule</i></span>{{/if}}
-    {{#if _complete}}<del class="text-muted text-faded">{{/if}}{{#if dates}}{{#if _action}}<a class="date" href="#{{_action}}" data-click="dismiss-modal">{{/if}}<span class="float-left font-weight-light text-muted mr-2">{{#if _date}}{{localeDate _date}}{{else}}{{localeDate FROM}}{{/if}}</span>{{#if _action}}</a>{{/if}}{{else}}{{#if BADGES}}{{#each BADGES}}<span class="float-left badge badge-pill badge-secondary{{#is this "~=" "High"}} badge-danger{{/is}}{{#is this "~=" "Medium"}} badge-warning{{/is}}{{#is this "~=" "Low"}} badge-success{{/is}}{{#is this "~=" "Info"}} badge-light{{/is}}{{#is this "~=" "Review"}} badge-info{{/is}}{{#is this "~=" "Highlight"}} badge-bright{{/is}}{{#is this "~=" "Work"}} badge-dark{{/is}} mr-{{#if @last }}2{{else}}1{{/if}}" title=""><a role="button" aria-label="Search" href="#search.tags.{{ this }}" aria-label="Find all items with the same Tag">{{ this }}</a><a role="button" class="close pl-1" aria-label="Remove Tag" href="#remove.tag{{#exists ../$loki}}.{{ ../$loki }}{{/exists}}.{{ this }}"><span aria-hidden="true">×</span></a></span>{{/each}}{{/if}}{{/if}}{{#if DISPLAY}}{{{ DISPLAY }}}{{else}}{{ this }}{{/if}}{{#if _complete}}</del>{{/if}}
+    {{#if _timed}}<span class="float-right text-muted text-small pr-1" title="{{TIME}}"><i class="material-icons md-1">schedule</i></span>{{/if}}
+    {{#if _complete}}<del class="text-muted text-faded">{{/if}}{{#if dates}}{{#if _action}}<a class="date" href="#{{_action}}" data-click="dismiss-modal">{{/if}}<span class="float-left font-weight-light text-muted mr-2">{{#if _date}}{{localeDate _date}}{{else}}{{localeDate FROM}}{{/if}}</span>{{#if _action}}</a>{{/if}}{{else}}{{#if BADGES}}{{#each BADGES}}<span class="float-left badge badge-pill badge-{{#is this "~=" "Info"}}secondary{{else}}primary{{/is}}{{#is this "~=" "High"}} badge-danger{{/is}}{{#is this "~=" "Medium"}} badge-warning{{/is}}{{#is this "~=" "Low"}} badge-success{{/is}}{{#is this "~=" "Review"}} badge-info{{/is}}{{#is this "~=" "Highlight"}} badge-bright{{/is}}{{#is this "~=" "Work"}} badge-dark{{/is}} mr-{{#if @last }}2{{else}}1{{/if}}" title=""><a role="button" aria-label="Search" href="#search.tags.{{ this }}" aria-label="Find all items with the same Tag">{{ this }}</a><a role="button" class="close pl-1" aria-label="Remove Tag" href="#remove.tag{{#exists ../$loki}}.{{ ../$loki }}{{/exists}}.{{ this }}"><span aria-hidden="true">×</span></a></span>{{/each}}{{/if}}{{/if}}{{#if DISPLAY}}{{{ DISPLAY }}}{{else}}{{ this }}{{/if}}{{#if _complete}}</del>{{/if}}
   </div>
   {{#if editable}}<div class="d-none editing form-group row mb-1">
+  	<input type="hidden" class="d-none dt-picker" value="{{#if _action}}{{_action}}{{/if}}"/>
     <div class="col-12">
 			<div class="input-group">
         <span class="input-group-prepend">
@@ -14,6 +15,7 @@
         <textarea class="form-control resizable" rows="1">{{#if DETAILS}}{{{ DETAILS }}}{{else}}{{ this }}{{/if}}</textarea>
       	<span class="input-group-append">
           {{> control_button b_class="btn-secondary" b_icon_type="light" b_aria_title="Save Changes" b_icon="save" b_action="update" }}
+          {{> control_button b_class="btn-dark" b_icon_type="light" b_aria_title="Change Date" b_icon="update" b_action="move" }}
           {{#if _complete}}{{> control_button b_class="btn-warning" b_aria_title="Mark as In Progress" b_icon="edit" b_action="complete" }}{{else}}{{> control_button b_class="btn-success" b_icon_type="light" b_aria_title="Mark as Complete" b_icon="done" b_action="complete" }}{{/if}}
         </span>
       </div>

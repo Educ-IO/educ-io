@@ -1,4 +1,8 @@
 site :
+  0.0.9k :
+    name : Site Improvements
+    desc : Minor Visual Bug Fixes
+    type : minor
   0.0.9j :
     name : Site Improvements
     desc : Minor Visual Bug Fixes
@@ -634,6 +638,9 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.3b-alpha :
+    name : DB Writing enabled
+    type : minor
   0.0.3a-alpha :
     name : Further UI Improvements and better searching
     type : minor
