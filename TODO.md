@@ -66,9 +66,6 @@ Docket
 * Overlay events from Google Calendar
 * Handle Deleted Data File after loading config
 * Handle clash on updates / delete
-* Write Instructions & Guide
-* Check Blank Lines bug?
-* Jump to date option
 
 Tiles
 -----
@@ -134,6 +131,10 @@ Reflect
 
 Complete
 --------
+* Check Blank Lines bug? <-- Decrease row counter when deleting an item.... need to update row counts after item deleted. <== DONE
+* Write Instructions & Guide <== DONE
+* Jump to date option <== DONE
+* Need to check heights on the scroll back hack (e.g. tablet size...) <== DONE
 * Touch events should apply to whole screen <== DONE
 * Scroll to should only apply on smaller screens (annoying on tablet landscape) <== DONE
 * Safe Updates to underlying Sheet (check positional and hash) <== DONE

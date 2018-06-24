@@ -1,4 +1,8 @@
 site :
+  0.0.9m :
+    name : Docket 0.0.4a-beta
+    desc : First BETA release for Docket
+    type : minor
   0.0.9l :
     name : Site Improvements
     desc : Minor Visual Bug Fixes
@@ -642,6 +646,10 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.4a-beta :
+    name : Bug Fixes
+    desc : Bug Fixes and Documentation Updates
+    type : minor
   0.0.4-beta :
     name : Bug Fixes
     desc : Bug Fixes and Documentation Updates

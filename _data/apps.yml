@@ -1893,7 +1893,7 @@ poll:
 
 docket:
   name: Docket
-  desc: Organise your days, a __simple__ diary style task list that stores your data in Google Sheets
+  desc: Organise your days with this __simple__, diary style, task list that stores your data in Google Sheets
   link: /docket/
   colour: 582c54
   logo: images/docket_logo.svg
@@ -2057,6 +2057,12 @@ docket:
               hash: backward
               disabled_until:
                 - opened
+            - name: Jump
+              desc: Jump to arbitrary date
+              shortcut: "j"
+              hash: jump
+              disabled_until:
+                - opened
             - name: Add
               desc: Create a new task / event
               shortcut: "n" 
@@ -2181,7 +2187,7 @@ docket:
         auth: google
         imports:
           - google
-  published: false
+  published: true
 
 
 

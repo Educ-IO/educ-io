@@ -11,6 +11,9 @@ Add a __new__ task, or event, by opening a new item dialog. The date for the tas
 <i class="material-icons md-18 ml-2">search</i>
 {% include_relative _docs/docket/SEARCH_INSTRUCTIONS.md %}
 
+<i class="material-icons md-18 ml-2">fast_forward</i>
+__Jump__ the focus to __arbitrary date__.
+
 <i class="material-icons md-18 ml-2">today</i>
 Returns the focus to __today__.
 
@@ -35,4 +38,4 @@ Toggles the status between complete / incomplete.
 
 ##### Keyboard Shortcuts
 
-You can navigate forwards *&gt;*{:.kb-shortcut} and backwards *&gt;*{:.kb-shortcut} a week (or by swiping left / right on a touch enabled device). *.*{:.kb-shortcut} or *,*{:.kb-shortcut} will jump forward / backwards a day, and to return to today, press *t*{:.kb-shortcut}. *n*{:.kb-shortcut} is used to create a new task / event and searching is available by pressing *s*{:.kb-shortcut}.
+You can navigate forwards *&gt;*{:.kb-shortcut} and backwards *&gt;*{:.kb-shortcut} a week (or by swiping left / right on a touch enabled device). *.*{:.kb-shortcut} or *,*{:.kb-shortcut} will jump forward / backwards a day, *j*{:.kb-shortcut} to an arbitrary date, and to return to today, press *t*{:.kb-shortcut}. *n*{:.kb-shortcut} is used to create a new task / event and searching is available by pressing *s*{:.kb-shortcut}.

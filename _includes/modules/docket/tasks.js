@@ -573,6 +573,9 @@ Tasks = ಠ_ಠ => {
 
   var _new = item => {
 
+    /* <!-- For new data sheets --> */
+    _data.last = _data.last ? _data.last : -1;
+    
     var _notation = ಠ_ಠ.Google_Sheets_Notation(),
       _range = `${_notation.convertR1C1(`R${_data.rows.end + 2 + _data.last}C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`,
       _value = _convertToArray(item);
@@ -613,7 +616,7 @@ Tasks = ಠ_ಠ => {
 
   };
 
-  var _delete = item => {
+  var _delete = (item, db) => {
 
     if (item.__ROW === undefined || item.__ROW === null) return Promise.reject();
 
@@ -635,8 +638,10 @@ Tasks = ಠ_ಠ => {
             "range": _dimension
           }
         }).then(() => {
-          item.__hash = _hash(item);
-          return item;
+          /* <!-- Reduce the relevant and last row to account for the removed row --> */
+          (db ? db : _db).updateWhere(row => row.__ROW > item.__ROW, row => row.__ROW -= 1);
+          _data.last -= 1;
+          return true;
         });
       } else {
         return Promise.reject(`Hash Mismath for Range: ${_range} [Hash_ITEM: ${item.__hash}, Hash_EXISTING: ${_existing.__hash}]`);

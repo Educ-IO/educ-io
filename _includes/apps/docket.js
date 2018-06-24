@@ -362,8 +362,8 @@ App = function() {
 
     weekly: focus => new Promise(resolve => {
 
-      focus = focus.isoWeekday() == 7 ? focus.subtract(1, "days") : focus;
       _show.show = focus.startOf("day").toDate();
+      focus = focus.isoWeekday() == 7 ? focus.subtract(1, "days") : focus;
 
       var _days = [],
         _add = (date, css, action, tasks, events) => {
@@ -424,6 +424,9 @@ App = function() {
             action: "search",
             icon: "search"
           }, {
+            action: "jump",
+            icon: "fast_forward"
+          }, {
             action: "today",
             icon: "today"
           }],
@@ -459,7 +462,8 @@ App = function() {
             block: "start",
             inline: "nearest"
           });
-          if (window.scrollBy && (ಠ_ಠ.Display.size.is.xs() || ಠ_ಠ.Display.size.is.sm() || ಠ_ಠ.Display.size.is.md())) window.scrollBy(0, -10);
+          if (window.scrollBy && _diary.outerHeight(true) > $(window).height()) window.scrollBy(0, -10);
+          
         }
       }
 
@@ -546,6 +550,34 @@ App = function() {
 
   };
 
+  var _jump = () => {
+    var _id = "ctrl_Jump";
+    ಠ_ಠ.container.find(`#${_id}`).remove();
+    var _input = $("<input />", {
+      id: _id,
+      type: "hidden",
+      class: "d-none dt-picker", 
+      value: moment(_show.show ? _show.show : _show.today).format("YYYY-MM-DD")
+    }).appendTo(ಠ_ಠ.container);
+
+    _input.on("change", e => {
+      var _date = new moment($(e.target).val());
+      if (_date.isValid()) _show.weekly(_date);
+    });
+
+    _input.bootstrapMaterialDatePicker({
+      format: "YYYY-MM-DD",
+      cancelText: "Cancel",
+      clearButton: false,
+      nowButton: true,
+      time: false,
+      switchOnClick: true,
+      triggerEvent: "dblclick"
+    });
+
+    _input.dblclick();
+  };
+  
   var _start = (config, busy) => {
 
     _options.calendar(config.calendar);
@@ -698,6 +730,10 @@ App = function() {
               classes: result
             }));
 
+          } else if ((/JUMP/i).test(command)) {
+
+            _jump();
+              
           } else if ((/TODAY/i).test(command)) {
 
             _show.weekly(moment(_show.today));
@@ -768,6 +804,10 @@ App = function() {
       Mousetrap.bind("S", () => _find.search());
       Mousetrap.bind("f", () => _find.search());
       Mousetrap.bind("F", () => _find.search());
+      Mousetrap.bind("g", () => _jump());
+      Mousetrap.bind("G", () => _jump());
+      Mousetrap.bind("j", () => _jump());
+      Mousetrap.bind("J", () => _jump());
 
       /* <!-- Create Tasks Reference --> */
       _tasks = ಠ_ಠ.Tasks(ಠ_ಠ);
