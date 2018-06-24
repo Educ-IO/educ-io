@@ -2057,7 +2057,7 @@ docket:
               hash: backward
               disabled_until:
                 - opened
-            - name: Task
+            - name: Add
               desc: Create a new task / event
               shortcut: "n" 
               hash: new.task

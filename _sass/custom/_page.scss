@@ -36,6 +36,22 @@ nav.navbar.bg-faded {
 // -- Sub-Version Details -- //
 ul.version-details ul li p {margin: 0;}
 
+// -- Code Classes -- //
+.code, .formula {
+	border: none;
+	border-radius: 0.3em;
+}
+
+.code {
+	background-color: #fafafa;
+}
+
+.formula {
+	color: #93a1a1;
+  background-color: #002b36;
+	code:before {content: "= "; color: $colour-background;}
+}
+
 // -- Support / Pricing Page -- //
 .tiers {
 	.card {

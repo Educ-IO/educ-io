@@ -66,8 +66,9 @@ Docket
 * Overlay events from Google Calendar
 * Handle Deleted Data File after loading config
 * Handle clash on updates / delete
-* Write Instructions
+* Write Instructions & Guide
 * Check Blank Lines bug?
+* Jump to date option
 
 Tiles
 -----
@@ -133,6 +134,8 @@ Reflect
 
 Complete
 --------
+* Touch events should apply to whole screen <== DONE
+* Scroll to should only apply on smaller screens (annoying on tablet landscape) <== DONE
 * Safe Updates to underlying Sheet (check positional and hash) <== DONE
 * Experiment with dash border lines below items <== DONE
 * Update FROM Date <-- DONE

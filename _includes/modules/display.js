@@ -114,6 +114,7 @@ Display = function() {
     return true;
   };
 
+  var _breakpoint = size => $(`div.bs-breakpoints span.${size}`).css("display") == "block";
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -309,6 +310,20 @@ Display = function() {
     },
 
     size: {
+
+      is: {
+
+        xs: () => _breakpoint("xs"),
+
+        sm: () => _breakpoint("sm"),
+
+        md: () => _breakpoint("md"),
+
+        lg: () => _breakpoint("lg"),
+
+        xl: () => _breakpoint("xl"),
+
+      },
 
       resizer: {
 
@@ -515,11 +530,11 @@ Display = function() {
         dialog.find("btn[data-click='dismiss-modal'], a[data-click='dismiss-modal']").on("click.dismiss", () => {
           _clean();
           dialog.modal("hide");
-       });
+        });
 
         /* <!-- Set Shown Event Handler (if present) --> */
         if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
-        
+
         /* <!-- Set Basic Event Handlers --> */
         dialog.on("hidden.bs.modal", () => dialog.remove() && resolve());
 
@@ -672,17 +687,18 @@ Display = function() {
         _target(options).append(dialog);
 
         /* <!-- Set Event Handlers --> */
-        var _submitted = false, _submit = () => {
-          var _name = dialog.find("textarea[name='name'], input[type='text'][name='name']").val();
-          var _value = dialog.find("textarea[name='value'], input[type='text'][name='value']").val();
-          _clean();
-          if (_value && (!options.validate || options.validate.test(_value)))
-            resolve(_name ? {
-              name: _name,
-              value: _value
-            } : _value);
-        };
-        
+        var _submitted = false,
+          _submit = () => {
+            var _name = dialog.find("textarea[name='name'], input[type='text'][name='name']").val();
+            var _value = dialog.find("textarea[name='value'], input[type='text'][name='value']").val();
+            _clean();
+            if (_value && (!options.validate || options.validate.test(_value)))
+              resolve(_name ? {
+                name: _name,
+                value: _value
+              } : _value);
+          };
+
         /* <!-- Handle Enter Key (if simple) --> */
         if (options.simple) dialog.keypress(e => {
           if (e.which == 13) {
@@ -691,13 +707,13 @@ Display = function() {
             dialog.modal("hide");
           }
         });
-        
+
         /* <!-- Handle Clicked Submit --> */
         dialog.find(".modal-footer button.btn-primary").click(() => {
           _submitted = true;
         });
         dialog.on("hidden.bs.modal", () => dialog.remove() && (_submitted ? _submit() : reject()));
-        
+
         /* <!-- Show the Modal Dialog --> */
         dialog.on("shown.bs.modal", () => dialog.find("textarea[name='value'], input[type='text'][name='value']").focus());
         dialog.modal("show");

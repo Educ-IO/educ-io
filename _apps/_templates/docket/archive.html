@@ -10,40 +10,11 @@
       </div>
       <div class="modal-body">
         {{#if instructions}}{{{instructions}}}{{/if}}
-				<form class="needs-validation mt-3" novalidate>
-					<div class="row">
-						<div class="form-group col-lg-8">
-							<label for="{{#if id}}{{id}}_{{/if}}details">Details</label>
-						  <button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}details" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-							<textarea id="{{#if id}}{{id}}_{{/if}}details" data-output-field="Details" class="form-control resizable" tabindex="1" rows="1" data-action="extract" data-target="{{#if id}}{{id}}_{{/if}}time" required></textarea>
-							<div class="invalid-feedback">Details, name or a description is required for this item</div>
-						</div>
-						<div class="form-group col-lg-4">
-              <label for="{{#if id}}{{id}}_{{/if}}time">Time</label>
-              <button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}time" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-              <input type="text" id="{{#if id}}{{id}}_{{/if}}time" data-output-field="Time" class="form-control" tabindex="-1" readonly/>
-              <small class="form-text text-muted">Automatically extracted from details when found</small>
-						</div>
-					</div>
-					<div class="row">
-						<div class="form-group col-lg-8">
-							<label for="{{#if id}}{{id}}_{{/if}}tags">Tags</label>
-							<button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}tags" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
-							<textarea id="{{#if id}}{{id}}_{{/if}}tags" data-output-field="Tags" class="form-control resizable" tabindex="2" rows="1"></textarea>
-							<small class="form-text text-muted">Tag/s related to this item.</small>
-						</div>
-            <div class="form-group col-lg-4">
-              <label for="{{#if id}}{{id}}_{{/if}}date">Date</label>
-              <input id="{{#if id}}{{id}}_{{/if}}date" data-output-field="From" type="text" data-output-type="date" class="dt-picker form-control" tabindex="5"{{#if date}} value="{{date}}"{{/if}}/>
-              <small class="form-text text-muted">When this item starts</small>
-						</div>
-					</div>
-				</form>
       </div>
       <div class="modal-footer">
         {{# if actions}}{{#each actions}}{{> control_button b_class="btn-outline-info" b_id=id b_action=(concat "actions_" @index) b_title=desc b_text=text }}{{/each}}{{/if}}
 				<button type="button" class="btn btn-secondary btn-flat" data-dismiss="modal" tabindex="4">Close</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" tabindex="3">Create</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" tabindex="3">Archive</button>
       </div>
     </div>
   </div>

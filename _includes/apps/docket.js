@@ -42,6 +42,8 @@ App = function() {
 
     config: false,
 
+    future: false,
+
     clear: () => ಠ_ಠ.Google.appData.search(_config.name, _config.mime)
       .then(results => Promise.all(_.map(results, result => ಠ_ಠ.Google.files.delete(result.id))))
       .then(result => result ? _config.config = false || ಠ_ಠ.Flags.log("Docket Config Deleted") : result),
@@ -132,7 +134,7 @@ App = function() {
     hookup: container => {
 
       /* <!-- Ensure Links open new tabs --> */
-      container.find("a:not([href^='#'])").attr("target", "_blank");
+      container.find("a:not([href^='#'])").attr("target", "_blank").attr("rel", "noopener");
 
       /* <!-- Enable Button Links --> */
       container.find(".input-group button").on("click.action", e => {
@@ -402,7 +404,7 @@ App = function() {
           title: focus.isSame(_show.today) ? "present" : ""
         }, focus.format("YYYY-MM-DD"), _diary.tasks, _diary.events);
       });
-      _days.push({
+      if (_config.future) _days.push({
         sizes: {
           xs: 12
         },
@@ -452,11 +454,13 @@ App = function() {
       /* <!-- Scroll to today if visible --> */
       if (Element.prototype.scrollIntoView) {
         var _now = _diary.find("div.present");
-        if (_now.length === 1 && _now[0].scrollIntoView) _now[0].scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-          inline: "nearest"
-        });
+        if (_now.length === 1 && _now[0].scrollIntoView) {
+          _now[0].scrollIntoView({
+            block: "start",
+            inline: "nearest"
+          });
+          if (window.scrollBy && (ಠ_ಠ.Display.size.is.xs() || ಠ_ಠ.Display.size.is.sm() || ಠ_ಠ.Display.size.is.md())) window.scrollBy(0, -10);
+        }
       }
 
       resolve(ಠ_ಠ.Display.state().enter(STATE_OPENED));

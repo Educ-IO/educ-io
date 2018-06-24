@@ -642,6 +642,10 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.4-beta :
+    name : Bug Fixes
+    desc : Bug Fixes and Documentation Updates
+    type : minor
   0.0.3c-alpha :
     name : Bottom borders and safer updates
     type : minor

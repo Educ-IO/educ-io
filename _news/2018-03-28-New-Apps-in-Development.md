@@ -6,6 +6,21 @@ support: true
 lead: New __tool releases__ in the pipeline
 ---
 
+{% include {{ site.data.apps.docket.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
+
+#### Docket
+
+_Manage_ your __workload__ in a simple and powerful way with this fusion of __diary__ and __tasklist__
+{:.alert .alert-secondary}
+
+A different way to organise your time, focussed on what needs to __get done__.
+
++ Fully web-based and, like all our apps, with mobile, tablet, laptop and desktop support
++ Create tasks which __automatically roll over__ to the next day until complete
++ Add future work, and events
++ __Tag items__ for easy and fast catagorisation
++ Use [Markdown](https://www.markdownguide.org/){:target="_blank" rel="noopener"} format in your tasks/events to include text decoration and links to emails, documents, other systems
+
 {% include {{ site.data.apps.reflect.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
 
 #### Reflect
