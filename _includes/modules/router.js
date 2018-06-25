@@ -8,7 +8,7 @@ Router = function() {
   /* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
-	var _start, _end, _enter = (recent, fn, simple) => {
+	var _start, _end, _enter = (recent, fn, simple, state) => {
 
     /* <!-- Load the Initial Instructions --> */
     var _show = recent => ಠ_ಠ.Display.doc.show({
@@ -19,12 +19,12 @@ Router = function() {
         }) : "",
         target: ಠ_ಠ.container,
         clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
-      }), _complete = fn ? fn : () => {};
+      }), _fn = fn ? fn : () => {}, _complete = state ? () => ಠ_ಠ.Display.state().enter(state) && _fn() : _fn;
     
       recent > 0 ?      
         ಠ_ಠ.Recent.last(recent).then(_show).then(_complete).catch(e => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error")) :
         simple && fn ? _complete() : _show() && _complete();
-
+    
     };
   
   var _exit = (test, states, fn) => {
@@ -69,7 +69,7 @@ Router = function() {
     */
 		create : options => {
 			
-			_start = deadend => _enter(options.recent === undefined ? 5 : options.recent, deadend ? null : options.start, options.simple);
+			_start = (deadend, state) => _enter(options.recent === undefined ? 5 : options.recent, deadend ? null : options.start, options.simple, state);
 			_end = () => _exit(options.test, options.states ? options.states : [], options.clear);
 			
       return command => {
@@ -157,7 +157,7 @@ Router = function() {
     
     clean: restart => _end() && (!restart || _start()),
     
-    start: () => _start(true),
+    start: state => _start(true, state),
    /* <!-- External Functions --> */
     
 	};

@@ -7,11 +7,13 @@ App = function() {
   if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
   /* <!-- Internal Constants --> */
-  const STATE_OPENED = "opened",
+  const STATE_READY = "ready",
+    STATE_CONFIG = "config",
+    STATE_OPENED = "opened",
     STATE_CALENDAR = "calendar",
     STATE_ISSUES = "issues",
     STATE_CLASSES = "classes",
-    STATES = [STATE_OPENED, STATE_CALENDAR, STATE_ISSUES, STATE_CLASSES];
+    STATES = [STATE_READY, STATE_CONFIG, STATE_OPENED, STATE_CALENDAR, STATE_ISSUES, STATE_CLASSES];
   const ID = "diary";
   /* <!-- Internal Constants --> */
 
@@ -59,6 +61,7 @@ App = function() {
       .then(uploaded => {
         ಠ_ಠ.Flags.log(`Docket Config (${_config.name}) Saved`, uploaded);
         _config.id = uploaded.id;
+        ಠ_ಠ.Display.state().enter(STATE_CONFIG);
         return uploaded;
       })
       .catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error")),
@@ -463,7 +466,7 @@ App = function() {
             inline: "nearest"
           });
           if (window.scrollBy && _diary.outerHeight(true) > $(window).height()) window.scrollBy(0, -10);
-          
+
         }
       }
 
@@ -556,7 +559,7 @@ App = function() {
     var _input = $("<input />", {
       id: _id,
       type: "hidden",
-      class: "d-none dt-picker", 
+      class: "d-none dt-picker",
       value: moment(_show.show ? _show.show : _show.today).format("YYYY-MM-DD")
     }).appendTo(ಠ_ಠ.container);
 
@@ -577,7 +580,7 @@ App = function() {
 
     _input.dblclick();
   };
-  
+
   var _start = (config, busy) => {
 
     _options.calendar(config.calendar);
@@ -594,9 +597,12 @@ App = function() {
         if (busy) busy({
           message: "Loaded Data"
         });
-        _show.weekly(moment());
+        return _show.weekly(moment());
       })
-      .catch(e => ಠ_ಠ.Flags.error("Data Error", e ? e : "No Inner Error"));
+      .catch(e => {
+        ಠ_ಠ.Flags.error("Data Error", e ? e : "No Inner Error");
+        return false;
+      });
 
   };
   /* <!-- Internal Functions --> */
@@ -628,14 +634,16 @@ App = function() {
           });
 
           _config.get()
-            .then(config => !config ? ಠ_ಠ.Router.start() : _busy({
-              message: "Loaded Config"
-            }) && _start(config, _busy))
-            .then(_busy);
+            .then(config => !config ? ಠ_ಠ.Router.start(STATE_READY) :
+              _busy({
+                message: "Loaded Config"
+              }) && _start(config, _busy).then(result => result ? _busy() : ಠ_ಠ.Router.start(STATE_CONFIG)));
 
         },
         test: () => ಠ_ಠ.Display.state().in(STATE_OPENED),
-        clear: () => {},
+        clear: () => {
+          if (_tasks) _tasks.close();
+        },
         route: (handled, command) => {
 
           if (handled) return;
@@ -683,7 +691,8 @@ App = function() {
                   action: "Clear"
                 })
                 .then(confirm => confirm ? ಠ_ಠ.Display.busy() && _config.clear() : false)
-                .then(cleared => cleared ? ಠ_ಠ.Router.start() : false);
+                .then(cleared => cleared ? ಠ_ಠ.Display.state().exit(STATE_CONFIG) && ಠ_ಠ.Router.start(STATE_READY) : false)
+                .catch(e => e ? ಠ_ಠ.Flags.error("Clear Config Error", e) : ಠ_ಠ.Flags.log("Clear Config Cancelled"));
 
             } else if (command.length > 1 && (/SHOW/i).test(command[1])) {
 
@@ -733,7 +742,7 @@ App = function() {
           } else if ((/JUMP/i).test(command)) {
 
             _jump();
-              
+
           } else if ((/TODAY/i).test(command)) {
 
             _show.weekly(moment(_show.today));

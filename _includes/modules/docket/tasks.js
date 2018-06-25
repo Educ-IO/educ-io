@@ -389,6 +389,11 @@ Tasks = ಠ_ಠ => {
         return _db;
       });
   };
+  
+  var _close = () => {
+    DB.removeCollection(NAMES.db);
+    _db = null;
+  };
 
   var _queries = {
 
@@ -668,6 +673,8 @@ Tasks = ಠ_ಠ => {
     create: _create,
 
     open: _open,
+    
+    close: _close,
 
     search: (query, db, from) => {
       var _query = _queries.text(query, from);

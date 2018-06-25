@@ -2180,13 +2180,19 @@ docket:
         desc: Create a new Docket
         hash: create
         auth: google
+        class: show-ready hide-config
       - name: Open Existing
-        visibility: debug
         desc: Open an Existing Docket
         hash: open
         auth: google
+        class: show-config hide-ready
         imports:
           - google
+      - name: Clear Config
+        desc: Clear current config to restart!
+        hash: config.clear
+        auth: google
+        class: show-config hide-ready
   published: true
 
 

@@ -64,7 +64,6 @@ Docket
 ------
 * Archive Dialog and Process
 * Overlay events from Google Calendar
-* Handle Deleted Data File after loading config
 * Handle clash on updates / delete
 
 Tiles
@@ -131,6 +130,8 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT ** Handle Deleted Data File after loading config (button visiblity states) <-- DONE
+* ** BUG ** Log out should clear loki DB <-- DONE
 * Check Blank Lines bug? <-- Decrease row counter when deleting an item.... need to update row counts after item deleted. <== DONE
 * Write Instructions & Guide <== DONE
 * Jump to date option <== DONE

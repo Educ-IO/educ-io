@@ -170,6 +170,10 @@ Network = options => {
 								}) : reject({name: "Failed Auth Check", url: response.url, status: response.status, statusText: response.statusText});
 							});
 
+            } else if (response.status == 404) {
+              
+              reject({name: "Not Found", url: response.url, status: response.status, statusText: response.statusText});
+              
 						} else if (response.status === 0 && response.type == "opaque") {
 
 							response.text()
