@@ -547,7 +547,16 @@ App = function() {
 
     show: () => {
 
-      return Promise.resolve(true);
+      var _template = "archive",
+        _id = "archive";
+      return ಠ_ಠ.Display.modal(_template, {
+          target: ಠ_ಠ.container,
+          id: _id,
+          title: "Archive Docket Items",
+          instructions: ಠ_ಠ.Display.doc.get("ARCHIVE_INSTRUCTIONS"),
+          years: _tasks.years(_show.db),
+        }).then(values => values ? true : false)
+        .catch(e => e ? ಠ_ಠ.Flags.error("Archive Error", e) : ಠ_ಠ.Flags.log("Archive Cancelled"));
 
     }
 

@@ -389,7 +389,7 @@ Tasks = ಠ_ಠ => {
         return _db;
       });
   };
-  
+
   var _close = () => {
     DB.removeCollection(NAMES.db);
     _db = null;
@@ -580,7 +580,7 @@ Tasks = ಠ_ಠ => {
 
     /* <!-- For new data sheets --> */
     _data.last = _data.last ? _data.last : -1;
-    
+
     var _notation = ಠ_ಠ.Google_Sheets_Notation(),
       _range = `${_notation.convertR1C1(`R${_data.rows.end + 2 + _data.last}C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`,
       _value = _convertToArray(item);
@@ -673,7 +673,7 @@ Tasks = ಠ_ಠ => {
     create: _create,
 
     open: _open,
-    
+
     close: _close,
 
     search: (query, db, from) => {
@@ -691,6 +691,24 @@ Tasks = ಠ_ಠ => {
       ಠ_ಠ.Flags.log(`Query [Current] for :${tag}`, _query);
       var _results = (db ? db : _db).find(_query);
       ಠ_ಠ.Flags.log(`Result Values for : ${tag}`, _results);
+      return _results;
+    },
+
+    years: db => {
+
+      var _all = (db ? db : _db).chain().data();
+      var _results = _.reduce(_all, (tally, item) => {
+        var _year;
+        if (item[META.column_from.value]) _year = item[META.column_from.value].year();
+        _year = _year ? _year : "N/A";
+        if (!tally[_year]) tally[_year] = {
+          incomplete: 0,
+          complete: 0
+        };
+        tally[_year][item._complete || (item._timed && !item[META.column_from.value].isAfter()) ? "complete" : "incomplete"] += 1;
+        return tally;
+      }, {});
+      ಠ_ಠ.Flags.log("Result Values for years", _results);
       return _results;
     },
 

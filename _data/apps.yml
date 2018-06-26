@@ -2000,6 +2000,7 @@ docket:
     - docket/README
     - docket/NEW_INSTRUCTIONS
     - docket/SEARCH_INSTRUCTIONS
+    - docket/ARCHIVE_INSTRUCTIONS
   scopes:
     google:
       - scope: email
@@ -2151,11 +2152,6 @@ docket:
               url: /guides/docket
               desc: A guide to using this app
               divider: true
-            - name: Install
-              desc: Install this app into your Google Drive
-              hash: install
-              auth: google
-              scope: https://www.googleapis.com/auth/drive.install
             - name: Permissions
               url: /scopes/?highlight=docket
               desc: Find out about the permissions and scopes that this app uses

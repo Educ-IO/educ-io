@@ -143,10 +143,10 @@ div.alert:first-child {
 
 // -- Gradient Background -- //
 .bg-highlight-gradient {
-  &.left-to-right {@include complex_LinearGradient(100grad,rgba($colour-highlight, 0.1) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
-  &.right-to-left {@include complex_LinearGradient(300grad,rgba($colour-highlight, 0.1) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
-  &.top-to-bottom {@include complex_LinearGradient(200grad,rgba($colour-highlight, 0.1) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
-  &.bottom-to-top {@include complex_LinearGradient(0grad,rgba($colour-highlight, 0.1) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
+  &.left-to-right {@include complex_LinearGradient(100grad,rgba($colour-highlight, 0.07) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
+  &.right-to-left {@include complex_LinearGradient(300grad,rgba($colour-highlight, 0.07) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
+  &.top-to-bottom {@include complex_LinearGradient(200grad,rgba($colour-highlight, 0.07) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
+  &.bottom-to-top {@include complex_LinearGradient(0grad,rgba($colour-highlight, 0.07) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
 }
 // -- Gradient Background -- //
 
