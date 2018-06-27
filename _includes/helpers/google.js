@@ -637,6 +637,7 @@ Google_API = (options, factory) => {
 
     sheets: {
 
+      /* <!-- // Create a new Spreadsheet // --> */
       create: (name, tab, colour, meta) => {
         var _data = {
           "properties": {
@@ -666,6 +667,11 @@ Google_API = (options, factory) => {
       get: (id, all, range) => _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}${all ? 
 																`?includeGridData=true${range ? `&ranges=${encodeURIComponent(range)}` : ""}` : ""}`),
 
+      filtered: (id, filters, all) => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}:getByDataFilter`, {
+        "dataFilters": _.isArray(filters) ? filters : [filters],
+        "includeGridData": all ? true : false
+      }),
+
       values: (id, range) => _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}/values/${encodeURIComponent(range)}`),
 
       append: (id, range, values, input) => _call(NETWORKS.sheets.post, "v4/spreadsheets/" + id + "/values/" + encodeURIComponent(range) + ":append?valueInputOption=" + (input ? input : "RAW"), {
@@ -685,33 +691,31 @@ Google_API = (options, factory) => {
         "includeSpreadsheetInResponse": returnSheet ? true : false,
         "responseIncludeGridData": returnData ? true : false,
       }, "application/json"),
-      
+
       metadata: {
 
         all: id => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}/developerMetadata:search`, {
-          "dataFilters": [
-            {
-              developerMetadataLookup: {
-                visibility: "DOCUMENT"
-              }
+          "dataFilters": [{
+            developerMetadataLookup: {
+              visibility: "DOCUMENT"
             }
-          ]
+          }]
         }),
-        
+
         find: (id, filters) => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}/developerMetadata:search`, {
           "dataFilters": _.isArray(filters) ? filters : [filters]
         }),
-        
+
         get: (id, meta) => _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}/developerMetadata/${meta}`),
-        
+
         sheet: (id, sheet) => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}/developerMetadata:search`, {
-          "dataFilters": [
-            {
-              developerMetadataLookup: {
-                metadataLocation: {"sheetId": sheet}
+          "dataFilters": [{
+            developerMetadataLookup: {
+              metadataLocation: {
+                "sheetId": sheet
               }
             }
-          ]
+          }]
         })
 
       }

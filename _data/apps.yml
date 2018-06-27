@@ -2122,8 +2122,7 @@ docket:
               data:
                 link: sheet
             - name: Archive Data
-              visibility: debug
-              desc: Archive Older Data
+              desc: Archive Older Data By Year
               hash: archive
               disabled_until:
                 - opened
@@ -2176,19 +2175,19 @@ docket:
         desc: Create a new Docket
         hash: create
         auth: google
-        class: show-ready hide-config
+        class: state-ready
       - name: Open Existing
         desc: Open an Existing Docket
         hash: open
         auth: google
-        class: show-config hide-ready
+        class: state-config disabled
         imports:
           - google
       - name: Clear Config
         desc: Clear current config to restart!
         hash: config.clear
         auth: google
-        class: show-config hide-ready
+        class: state-config disabled
   published: true
 
 

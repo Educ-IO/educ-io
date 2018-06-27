@@ -8,81 +8,76 @@
 
   <div class="collapse navbar-collapse" id="main_Nav">
 
-    {% if page.app and page.layout == "app" %}<a class="navbar-brand font-sensitive jump d-sm-none d-md-inline-block" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% else %}Page{% endif %}">{{ page.title }}<span class="d-none d-lg-inline"> | {{ site.title }}</span><span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}</span></a>{% endif %}
+    {% if page.app and page.layout == "app" %}<a class="navbar-brand font-sensitive jump d-sm-none d-md-inline-block" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% assign _app = page.app | downcase %}{% if site.data.versions[_app] %} - {{site.data.apps[_app].name}} v{{ site.data.versions[_app].first[0] }}{% endif %}{% else %}Page{% endif %}">{{ page.title }}<span class="d-none d-lg-inline"> | {{ site.title }}</span><span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}</span></a>{%
+    endif %}
 
     <ul class="navbar-nav mr-auto">
 
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navAppsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Apps</a>
         <div class="dropdown-menu" aria-labelledby="navAppsMenu">
-          {% for group in site.data.menu %}{% assign group_title = group[1].name %}{% assign group_apps = group[1].apps %}{% assign apps = site.array %}{% for app_key in group_apps %}{% if jekyll.environment == site.debug or site.data.apps[app_key].published == true %}{% assign apps = apps | push: site.data.apps[app_key] %}{% endif %}{% endfor %}
-            {% if apps.size > 0 %}<h5 class="dropdown-heading">{{ group_title }}</h5>
-              {% for app in apps %}<a class="dropdown-item jump" href="{{ app.link }}" {% if app.ext %}target="_blank" rel="noopener" {% endif %}{% if app.desc %}data-toggle="tooltip" title="{{ app.desc | replace: '_', '' }}"{% endif %}>{% if app.logo %}{% include {{ app.logo }} %}{% endif %}{{ app.name }}</a>{% endfor %}
-            {% endif %}{% endfor %}
+          {% for group in site.data.menu %}{% assign group_title = group[1].name %}{% assign group_apps = group[1].apps %}{% assign apps = site.array %}{% for app_key in group_apps %}{% if jekyll.environment == site.debug or site.data.apps[app_key].published ==
+          true %}{% assign apps = apps | push: site.data.apps[app_key] %}{% endif %}{% endfor %} {% if apps.size > 0 %}
+          <h5 class="dropdown-heading">{{ group_title }}</h5>
+          {% for app in apps %}<a class="dropdown-item jump" href="{{ app.link }}" {% if app.ext %}target="_blank" rel="noopener" {% endif %}{% if app.desc %}data-toggle="tooltip" title="{{ app.desc | replace: '_', '' }}" {% endif %}>{% if app.logo %}{% include {{ app.logo }} %}{% endif %}{{ app.name }}</a>{%
+          endfor %} {% endif %}{% endfor %}
         </div>
       </li>
 
-      {% assign _menus = false %}{% assign menus = site.array %}{% if page.menu %}{% assign _menus = page.menus %}{% elsif layout.menu %}{% assign _menus = layout.menus %}{% elsif page.app and page.app != "" and site.data.apps[page.app].menus and page.layout == "app" %}{% assign _menus = site.data.apps[page.app].menus %}{% endif %}{% for menu in _menus %}{% if menu.visibility %}{% if jekyll.environment == menu.visibility or menu.visibility == true %}{% assign menus = menus | push: menu %}{% endif %}{% else %}{% assign menus = menus | push: menu %}{% endif %}{% endfor %}
-
-      {% if menus and menus.size > 0 %}{% for menu in menus %}
-      {% if menu.groups and menu.groups.size > 0 %}
-        <li class="nav-item dropdown"{%if menu.desc %} title="{{ menu.desc | replace: '_', '' }}"{% endif %}>
-          <a class="nav-link dropdown-toggle" href="#" id="navMenu_{{ menu.name }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      {% assign _menus = false %}{% assign menus = site.array %}{% if page.menu %}{% assign _menus = page.menus %}{% elsif layout.menu %}{% assign _menus = layout.menus %}{% elsif page.app and page.app != "" and site.data.apps[page.app].menus and page.layout
+      == "app" %}{% assign _menus = site.data.apps[page.app].menus %}{% endif %}{% for menu in _menus %}{% if menu.visibility %}{% if jekyll.environment == menu.visibility or menu.visibility == true %}{% assign menus = menus | push: menu %}{% endif %}{%
+      else %}{% assign menus = menus | push: menu %}{% endif %}{% endfor %} {% if menus and menus.size > 0 %}{% for menu in menus %} {% if menu.groups and menu.groups.size > 0 %}
+      <li class="nav-item dropdown" {%if menu.desc %} title="{{ menu.desc | replace: '_', '' }}" {% endif %}>
+        <a class="nav-link dropdown-toggle" href="#" id="navMenu_{{ menu.name }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {% if menu.short_name %}<span class="d-inline d-lg-none">{{ menu.short_name }}</span><span class="d-none d-lg-inline">{{ menu.name }}</span>{% else %}{{ menu.name }}{% endif %}
           </a>
-          <div class="dropdown-menu" aria-labelledby="navMenu_{{ menu.name }}" data-menu="{{ menu.name }}">
+        <div class="dropdown-menu" aria-labelledby="navMenu_{{ menu.name }}" data-menu="{{ menu.name }}">
 
-            {% for group in menu.groups %}{% assign _group_commands = group[1].commands %}{% assign group_commands = site.array %}{% for command in _group_commands %}{% if command.visibility %}{% if jekyll.environment == command.visibility or command.visibility == true %}{% assign group_commands = group_commands | push: command %}{% endif %}{% else %}{% assign group_commands = group_commands | push: command %}{% endif %}{% endfor %}
-            
-            {% if group[1].name %}<h5 class="dropdown-heading">{{ group[1].name }}</h5>{% endif %}
+          {% for group in menu.groups %}{% assign _group_commands = group[1].commands %}{% assign group_commands = site.array %}{% for command in _group_commands %}{% if command.visibility %}{% if jekyll.environment == command.visibility or command.visibility ==
+          true %}{% assign group_commands = group_commands | push: command %}{% endif %}{% else %}{% assign group_commands = group_commands | push: command %}{% endif %}{% endfor %} {% if group[1].name %}
+          <h5 class="dropdown-heading">{{ group[1].name }}</h5>{% endif %} {% for command in group_commands %} {% if command.desc and command.disabled_until and command.disabled_until.size > 0%}
+          <div class="d-block holder" tabindex="0" data-toggle="tooltip" title="{{ command.desc }}">{% endif %}{% include command.html class="dropdown-item" command=command %}{% if command.desc and command.disabled_until and command.disabled_until.size > 0%}</div>{% endif %} {% if command.divider %}
+          <div class="dropdown-divider"></div>{% endif %} {% endfor %} {% endfor %}
 
-            {% for command in group_commands %}
-            {% if command.desc and command.disabled_until and command.disabled_until.size > 0%}<div class="d-block holder" tabindex="0" data-toggle="tooltip" title="{{ command.desc }}">{% endif %}{% include command.html class="dropdown-item" command=command %}{% if command.desc and command.disabled_until and command.disabled_until.size > 0%}</div>{% endif %}
-            {% if command.divider %}<div class="dropdown-divider"></div>{% endif %}
-            {% endfor %}
-
-            {% endfor %}
-
-          </div>
-        </li>
+        </div>
+      </li>
       {% elsif menu.hash %}
-        <li class="nav-item">
-          <a class="nav-link" href="#{{ menu.hash }}"{% if menu.desc %}data-toggle="tooltip" title="{{ menu.desc }}"{% endif %}>
+      <li class="nav-item">
+        <a class="nav-link" href="#{{ menu.hash }}" {% if menu.desc %}data-toggle="tooltip" title="{{ menu.desc }}" {% endif %}>
             {% if menu.short_name %}<span class="d-inline d-lg-none">{{ menu.short_name }}</span><span class="d-none d-lg-inline">{{ menu.name }}</span>{% else %}{{ menu.name }}{% endif %}
           </a>
-        </li>
-      {% endif %}
-      {% endfor %}{% else %}
-        <li class="nav-item">
-          <a class="nav-link jump" href="/changes/" data-toggle="tooltip" title="What is new across this site, and with individual apps">Changes<span class="sr-only">What is new across this site, and with individual apps</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link jump" href="/support/" data-toggle="tooltip" title="Get access to high-quality support, and help us to deliver high quality tools">Support<span class="sr-only">Get access to high-quality support, and help us to deliver high quality tools</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link jump" href="/about/" data-toggle="tooltip" data-placement="auto" title="Find out more about this site, our privacy safeguards and our technology">About<span class="sr-only">Click to find out more about this site, our privacy safeguards and our technology</span></a>
-        </li>{% endif %}
+      </li>
+      {% endif %} {% endfor %}{% else %}
+      <li class="nav-item">
+        <a class="nav-link jump" href="/changes/" data-toggle="tooltip" title="What is new across this site, and with individual apps">Changes<span class="sr-only">What is new across this site, and with individual apps</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link jump" href="/support/" data-toggle="tooltip" title="Get access to high-quality support, and help us to deliver high quality tools">Support<span class="sr-only">Get access to high-quality support, and help us to deliver high quality tools</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link jump" href="/about/" data-toggle="tooltip" data-placement="auto" title="Find out more about this site, our privacy safeguards and our technology">About<span class="sr-only">Click to find out more about this site, our privacy safeguards and our technology</span></a>
+      </li>{% endif %}
 
     </ul>
 
     {% if page.app or page.login %}
-    
-      <div id="auth_processing" class="form-inline mt-2 mt-md-0 text-muted font-weight-light waiting" style="display: none;">Checking</div>
-    
-      <form id="sign_out" class="form-inline mt-2 mt-md-0" style="display: none;">
-        <span class="navbar-text mr-2">Signed in as <a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions" rel="noopener" data-toggle="tooltip" ></a></span>
-        <a class="btn my-2 my-sm-0 btn-outline-action" href="#"><span>Sign Out</span></a>
-      </form>
 
-      <form id="sign_in" class="form-inline mt-2 mt-md-0" style="display: none;">
-        <a class="btn my-2 my-sm-0 btn-outline-action" href="#">
-          
-          <div class="google-logo-wrapper">
-            <div class="google-logo">{% include images/google.svg %}</div>
-          </div>
-          <span class="d-none d-lg-inline">Sign in with Google</span><span class="d-inline d-lg-none">Sign In</span></a>
+    <div id="auth_processing" class="form-inline mt-2 mt-md-0 text-muted font-weight-light waiting" style="display: none;">Checking</div>
 
-      </form>
+    <form id="sign_out" class="form-inline mt-2 mt-md-0" style="display: none;">
+      <span class="navbar-text mr-2">Signed in as <a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions" rel="noopener" data-toggle="tooltip" ></a></span>
+      <a class="btn my-2 my-sm-0 btn-outline-action" href="#"><span>Sign Out</span></a>
+    </form>
+
+    <form id="sign_in" class="form-inline mt-2 mt-md-0" style="display: none;">
+      <a class="btn my-2 my-sm-0 btn-outline-action" href="#">
+
+        <div class="google-logo-wrapper">
+          <div class="google-logo">{% include images/google.svg %}</div>
+        </div>
+        <span class="d-none d-lg-inline">Sign in with Google</span><span class="d-inline d-lg-none">Sign In</span></a>
+
+    </form>
     {% endif %}
 
   </div>

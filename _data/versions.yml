@@ -1,4 +1,8 @@
 site :
+  0.0.9p :
+    name : Docket 0.0.4d-beta
+    desc : Archive Support and Bug Fixes
+    type : minor
   0.0.9o :
     name : Docket 0.0.4c-beta
     desc : First BETA release for Docket
@@ -654,9 +658,14 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.4d-beta :
+    name : Archiving Functionality
+    desc : Archive Support and Bug Fixes
+    type : minor
   0.0.4c-beta :
     name : Bug Fixes
     desc : Bug Fix
+    type : minor
   0.0.4b-beta :
     name : Bug Fixes
     desc : Bug Fixes and Documentation Updates

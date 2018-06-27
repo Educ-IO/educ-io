@@ -398,9 +398,8 @@ App = function() {
         var _all = _show.prepare(_show.db ? _tasks.query(focus, _show.db, focus.isSame(_show.today)) : []);
         var _diary = {
           tasks: _.filter(_all, item => !item._timed),
-          events: _.filter(_all, item => item._timed),
+          events: _.sortBy(_.filter(_all, item => item._timed), item => moment(item.TIME, ["h:m a", "H:m", "h:hh A"]).toDate()),
         };
-
         _add(focus, {
           block: focus.isSame(_show.today) || (focus.isoWeekday() == 6 && focus.clone().add(1, "days").isSame(_show.today)) ?
             "present bg-highlight-gradient top-to-bottom" : focus.isSame(_show.show) ? "focussed" : focus.isBefore(_show.today) ? "past text-muted" : "future",
@@ -555,7 +554,43 @@ App = function() {
           title: "Archive Docket Items",
           instructions: ಠ_ಠ.Display.doc.get("ARCHIVE_INSTRUCTIONS"),
           years: _tasks.years(_show.db),
-        }).then(values => values ? true : false)
+        })
+        .then(values => {
+          if (_.isEmpty(values)) return false;
+          var _years = _.reduce(values.Archive.Values, (list, value, year) => (value === true) ? list.concat([year]) : list, []);
+          var _busy = ಠ_ಠ.Display.busy({
+              target: ಠ_ಠ.container,
+              status: "Archiving Data",
+              fn: true
+            }),
+            _update = message => _busy({
+              message: message
+            });
+          return Promise.all(_.map(_years, year => _tasks.archive(year, _show.db)))
+            .then(items => {
+              var _items = _.sortBy(_.compact(_.flatten(items, true)), "__ROW").reverse();
+              var _batches = _.reduce(_items, (groups, item, index, all) => {
+                  (index === 0 || all[index - 1].__ROW == (item.__ROW + 1)) ?
+                  groups[groups.length - 1].push(item):
+                    groups.push([item]);
+                  return groups;
+                }, [
+                  []
+                ]),
+                _results = [];
+
+              var _complete = () => _.reduce(_batches, (promise, items) => {
+                return promise
+                  .then(() => _tasks.items.remove(items).then(result => _results.push(result)));
+              }, Promise.resolve());
+
+              return _complete().then(() => _results);
+            })
+            .then(() => _update("Re-Loading Data") && _tasks.close())
+            .then(() => _tasks.open(_config.config.data))
+            .then(db => _update("Loaded Data") && (_show.db = db))
+            .then(() => _show.weekly(moment(_show.show ? _show.show : _show.today)));
+        })
         .catch(e => e ? ಠ_ಠ.Flags.error("Archive Error", e) : ಠ_ಠ.Flags.log("Archive Cancelled"));
 
     }
@@ -666,7 +701,8 @@ App = function() {
               fn: true
             });
 
-            _tasks.create()
+            _config.clear()
+              .then(() => _tasks.create())
               .then(id => _config.create(id))
               .then(() => _start(_config.config, _finish))
               .then(_finish);
@@ -700,7 +736,7 @@ App = function() {
                   action: "Clear"
                 })
                 .then(confirm => confirm ? ಠ_ಠ.Display.busy() && _config.clear() : false)
-                .then(cleared => cleared ? ಠ_ಠ.Display.state().exit(STATE_CONFIG) && ಠ_ಠ.Router.start(STATE_READY) : false)
+                .then(cleared => cleared ? ಠ_ಠ.Display.state().exit([STATE_CONFIG, STATE_OPENED]) && ಠ_ಠ.Router.start(STATE_READY) : false)
                 .catch(e => e ? ಠ_ಠ.Flags.error("Clear Config Error", e) : ಠ_ಠ.Flags.log("Clear Config Cancelled"));
 
             } else if (command.length > 1 && (/SHOW/i).test(command[1])) {

@@ -19,6 +19,9 @@ Tasks = ಠ_ಠ => {
         key: "SCHEMA_VERSION",
         value: "1.1",
       },
+      sheet_archive: {
+        key: "SHEET_ARCHIVE",
+      },
       sheet_tasks: {
         key: "SHEET_NAME",
         value: "TASKS",
@@ -139,158 +142,164 @@ Tasks = ಠ_ಠ => {
 
   }, []);
 
-  var _create = () => {
-
-    var _id, _grid, _meta,
-      _columns = _.map(_.filter(META, column => column._meta && column.key == "COLUMN_NAME"), column => column);
-
-    return ಠ_ಠ.Google.sheets.create(NAMES.spreadsheet, NAMES.sheet, {
-        red: 0.545,
-        green: 0.153,
-        blue: 0.153
-      }, [META.sheet_tasks, META.schema_version]).then(sheet => {
-        ಠ_ಠ.Flags.log(`Created Data File: ${sheet.properties.title} - [${sheet.spreadsheetId}]`);
-        _id = sheet.spreadsheetId;
-        _grid = ಠ_ಠ.Google_Sheets_Grid({
-          sheet: sheet.sheets[0].properties.sheetId
-        });
-        _meta = ಠ_ಠ.Google_Sheets_Metadata({
-          sheet: sheet.sheets[0].properties.sheetId
-        }, ಠ_ಠ);
-        return sheet;
-      }).then(sheet => {
-        var _groups = _.map(_columns, column => column._meta && column._meta.group ? column._meta.group : ""),
-          _titles = _.map(_columns, column => column._meta && column._meta.title ? column._meta.title : "");
-        return ಠ_ಠ.Google.sheets.update(sheet.spreadsheetId, `A1:${ಠ_ಠ.Google_Sheets_Notation().convertR1C1(`R2C${_titles.length}`)}`, [_groups, _titles]);
-      }).then(sheet => {
-        var _dimensions = _.map(_columns, (column, index) => ({
-            "updateDimensionProperties": _grid.columns(index, index + 1)
-              .dimension(column._meta && column._meta.width ? column._meta.width : 100)
-          })),
-          _metadata = _.map(_columns, (column, index) => ({
-            "createDeveloperMetadata": _meta.columns(index, index + 1).tag(column)
-          })),
-          _merges = _.reduce(_columns, (memo, column, index, columns) => {
-            if ((column._meta.group && column._meta.group != memo.name) || index == (columns.length - 1)) {
-              if (memo.name || index == (columns.length - 1)) memo.batches.push({
-                "mergeCells": {
-                  "range": _grid.range(0, 1, memo.start, index == (columns.length - 1) ? index + 1 : index),
-                  "mergeType": "MERGE_ALL",
-                }
-              });
-              memo.name = column._meta.group;
-              memo.start = index;
+  var _formatDataSheet = (spreadsheetId, sheetId, columns, grid, meta, headerColour) => {
+    var _dimensions = _.map(columns, (column, index) => ({
+        "updateDimensionProperties": grid.columns(index, index + 1)
+          .dimension(column._meta && column._meta.width ? column._meta.width : 100)
+      })),
+      _metadata = _.map(columns, (column, index) => ({
+        "createDeveloperMetadata": meta.columns(index, index + 1).tag(column)
+      })),
+      _merges = _.reduce(columns, (memo, column, index, columns) => {
+        if ((column._meta.group && column._meta.group != memo.name) || index == (columns.length - 1)) {
+          if (memo.name || index == (columns.length - 1)) memo.batches.push({
+            "mergeCells": {
+              "range": grid.range(0, 1, memo.start, index == (columns.length - 1) ? index + 1 : index),
+              "mergeType": "MERGE_ALL",
             }
-            return memo;
-          }, {
-            name: false,
-            start: false,
-            batches: []
-          }).batches;
+          });
+          memo.name = column._meta.group;
+          memo.start = index;
+        }
+        return memo;
+      }, {
+        name: false,
+        start: false,
+        batches: []
+      }).batches;
 
-        return ಠ_ಠ.Google.sheets.batch(sheet.spreadsheetId, _dimensions.concat(_metadata).concat(_merges).concat([{
-          "createDeveloperMetadata": _meta.rows(0, 1).tag(META.row_headers)
-        }, {
-          "createDeveloperMetadata": _meta.rows(1, 2).tag(META.row_headers)
-        }, {
-          "repeatCell": {
-            "range": {
-              "sheetId": 0,
-              "startRowIndex": 0,
-              "endRowIndex": 2
-            },
-            "cell": {
-              "userEnteredFormat": {
-                "backgroundColor": {
-                  "red": 0.0,
-                  "green": 0.0,
+    return ಠ_ಠ.Google.sheets.batch(spreadsheetId, _dimensions.concat(_metadata).concat(_merges).concat([{
+        "createDeveloperMetadata": meta.rows(0, 1).tag(META.row_headers)
+      }, {
+        "createDeveloperMetadata": meta.rows(1, 2).tag(META.row_headers)
+      }, {
+        "repeatCell": {
+          "range": {
+            "sheetId": sheetId,
+            "startRowIndex": 0,
+            "endRowIndex": 2
+          },
+          "cell": {
+            "userEnteredFormat": {
+              "backgroundColor": headerColour ? headerColour : {
+                "red": 0.0,
+                "green": 0.0,
+                "blue": 0.0
+              },
+              "horizontalAlignment": "CENTER",
+              "verticalAlignment": "MIDDLE",
+              "textFormat": {
+                "foregroundColor": {
+                  "red": 1.0,
+                  "green": 1.0,
+                  "blue": 1.0
+                },
+                "fontSize": 12,
+                "bold": true
+              }
+            }
+          },
+          "fields": "userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)"
+        }
+      }, {
+        "repeatCell": {
+          "range": {
+            "sheetId": sheetId,
+            "startRowIndex": 0,
+            "endRowIndex": 2,
+            "startColumnIndex": _metadata.length - 1,
+            "endColumnIndex": _metadata.length
+          },
+          "cell": {
+            "userEnteredFormat": {
+              "textFormat": {
+                "foregroundColor": {
+                  "red": 1.0,
+                  "green": 1.0,
                   "blue": 0.0
                 },
-                "horizontalAlignment": "CENTER",
-                "verticalAlignment": "MIDDLE",
-                "textFormat": {
-                  "foregroundColor": {
-                    "red": 1.0,
-                    "green": 1.0,
-                    "blue": 1.0
-                  },
-                  "fontSize": 12,
-                  "bold": true
-                }
+                "fontSize": 14,
+                "bold": true
               }
-            },
-            "fields": "userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)"
-          }
-        }, {
-          "repeatCell": {
-            "range": {
-              "sheetId": 0,
-              "startRowIndex": 0,
-              "endRowIndex": 2,
-              "startColumnIndex": _metadata.length - 1,
-              "endColumnIndex": _metadata.length
-            },
-            "cell": {
-              "userEnteredFormat": {
-                "textFormat": {
-                  "foregroundColor": {
-                    "red": 1.0,
-                    "green": 1.0,
-                    "blue": 0.0
-                  },
-                  "fontSize": 14,
-                  "bold": true
-                }
-              }
-            },
-            "fields": "userEnteredFormat(textFormat)"
-          }
-        }, {
-          "repeatCell": {
-            "range": {
-              "sheetId": 0,
-              "startColumnIndex": _metadata.length - 2,
-              "endColumnIndex": _metadata.length
-            },
-            "cell": {
-              "userEnteredFormat": {
-                "wrapStrategy": "WRAP"
-              }
-            },
-            "fields": "userEnteredFormat(wrapStrategy)"
-          }
-        }, {
-          "repeatCell": {
-            "range": {
-              "sheetId": 0,
-              "startColumnIndex": 0,
-              "endColumnIndex": _metadata.length - 2
-            },
-            "cell": {
-              "userEnteredFormat": {
-                "horizontalAlignment": "CENTER",
-              }
-            },
-            "fields": "userEnteredFormat(horizontalAlignment)"
-          }
-        }, {
-          "updateSheetProperties": {
-            "properties": {
-              "sheetId": 0,
-              "gridProperties": {
-                "frozenRowCount": 2
-              },
-            },
-            "fields": "gridProperties.frozenRowCount"
-          }
-        }]));
-      }).then(sheet => ಠ_ಠ.Google.update(sheet.spreadsheetId, {
-        properties: {
-          DOCKET: "DATA"
+            }
+          },
+          "fields": "userEnteredFormat(textFormat)"
         }
-      }))
-      .then(() => _id);
+      }, {
+        "repeatCell": {
+          "range": {
+            "sheetId": sheetId,
+            "startColumnIndex": _metadata.length - 2,
+            "endColumnIndex": _metadata.length
+          },
+          "cell": {
+            "userEnteredFormat": {
+              "wrapStrategy": "WRAP"
+            }
+          },
+          "fields": "userEnteredFormat(wrapStrategy)"
+        }
+      }, {
+        "repeatCell": {
+          "range": {
+            "sheetId": sheetId,
+            "startColumnIndex": 0,
+            "endColumnIndex": _metadata.length - 2
+          },
+          "cell": {
+            "userEnteredFormat": {
+              "horizontalAlignment": "CENTER",
+            }
+          },
+          "fields": "userEnteredFormat(horizontalAlignment)"
+        }
+      }, {
+        "updateSheetProperties": {
+          "properties": {
+            "sheetId": sheetId,
+            "gridProperties": {
+              "frozenRowCount": 2
+            },
+          },
+          "fields": "gridProperties.frozenRowCount"
+        }
+      }]), true)
+      .then(response => response && response.updatedSpreadsheet ? response.updatedSpreadsheet : false);
   };
+
+  var _populateDataSheetHeaders = (spreadsheetId, sheetTitle, columns) => {
+    var _groups = _.map(columns, column => column._meta && column._meta.group ? column._meta.group : ""),
+      _titles = _.map(columns, column => column._meta && column._meta.title ? column._meta.title : "");
+    return ಠ_ಠ.Google.sheets.update(spreadsheetId, `'${sheetTitle}'!A1:${ಠ_ಠ.Google_Sheets_Notation().convertR1C1(`R2C${_titles.length}`)}`, [_groups, _titles]);
+  };
+
+  var _populateDataSheet = (spreadsheetId, sheetId, sheetTitle, headerColour) => {
+    var _grid = ಠ_ಠ.Google_Sheets_Grid({
+        sheet: sheetId
+      }),
+      _meta = ಠ_ಠ.Google_Sheets_Metadata({
+        sheet: sheetId
+      }, ಠ_ಠ),
+      _columns = _.map(_.filter(META, column => column._meta && column.key == "COLUMN_NAME"), column => column);
+    return _populateDataSheetHeaders(spreadsheetId, sheetTitle, _columns)
+      .then(() => _formatDataSheet(spreadsheetId, sheetId, _columns, _grid, _meta, headerColour));
+  };
+
+  var _create = () => ಠ_ಠ.Google.sheets.create(NAMES.spreadsheet, NAMES.sheet, {
+      red: 0.545,
+      green: 0.153,
+      blue: 0.153
+    }, [META.sheet_tasks, META.schema_version]).then(sheet => {
+      ಠ_ಠ.Flags.log(`Created Data File: ${sheet.properties.title} - [${sheet.spreadsheetId}]`);
+      return sheet;
+    })
+    .then(sheet => _populateDataSheet(sheet.spreadsheetId, sheet.sheets[0].properties.sheetId, sheet.sheets[0].properties.title))
+    .then(sheet => ಠ_ಠ.Google.update(sheet.spreadsheetId, {
+      properties: {
+        DOCKET: "DATA"
+      }
+    }))
+    .then(response => response.id);
 
   var _open = id => {
 
@@ -302,7 +311,7 @@ Tasks = ಠ_ಠ => {
 
     return ಠ_ಠ.Google.sheets.metadata.find(id, _meta.filter().parse(META.sheet_tasks).make())
       .then(value => {
-        if (value && value.matchedDeveloperMetadata.length == 1) {
+        if (value && value.matchedDeveloperMetadata && value.matchedDeveloperMetadata.length == 1) {
           _data = {
             spreadsheet: id,
             sheet: value.matchedDeveloperMetadata[0].developerMetadata.location.sheetId
@@ -621,6 +630,65 @@ Tasks = ಠ_ಠ => {
 
   };
 
+  var _archive = (year, db) => ಠ_ಠ.Google.sheets.filtered(_data.spreadsheet, ಠ_ಠ.Google_Sheets_Metadata({}, ಠ_ಠ).filter().parse(META.sheet_archive).value(year).make())
+    .then(value => value && value.sheets && value.sheets.length == 1 && _.find(value.sheets[0].developerMetadata, m => m.metadataKey == META.sheet_archive.key && m.metadataValue == year) ?
+      value.sheets[0].properties :
+      ಠ_ಠ.Google.sheets.batch(_data.spreadsheet, [{
+        "addSheet": {
+          "properties": {
+            "sheetId": year,
+            "title": year,
+            "tabColor": {
+              "red": 0.0,
+              "green": 1.0,
+              "blue": 0.0
+            }
+          }
+        }
+      }, {
+        "createDeveloperMetadata": ಠ_ಠ.Google_Sheets_Metadata({}, ಠ_ಠ).sheet(year).tag({
+          key: META.sheet_archive.key,
+          value: year
+        })
+      }]).then(response => response && response.replies && response.replies.length == 2 ? response.replies[0].addSheet.properties : false))
+    .then(value => value ? _populateDataSheet(_data.spreadsheet, value.sheetId, value.title, {
+      "red": 0.4,
+      "green": 0.4,
+      "blue": 0.4
+    }) : value)
+    .then(value => {
+      if (!value) return value;
+      var _sheet = _.find(value.sheets, sheet => _.find(sheet.developerMetadata, m => m.metadataKey == META.sheet_archive.key && m.metadataValue == year)),
+        _items = (db ? db : _db).where(item => item[META.column_from.value].year() == year),
+        _values = _.map(_items, item => _convertToArray(item));
+
+      var _notation = ಠ_ಠ.Google_Sheets_Notation(),
+        _range = `${_notation.convertR1C1(`R1C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`;
+
+      ಠ_ಠ.Flags.log(`Appending Values [NEW] for Range: ${_range}`, _values);
+
+      return ಠ_ಠ.Google.sheets.append(_data.spreadsheet, `'${_sheet.properties.title}'!${_range}`, _values).then(result => result && result.updates ? _items : false);
+    });
+
+  var _remove = items => {
+
+    var _grid = ಠ_ಠ.Google_Sheets_Grid({
+        sheet: _data.sheet
+      }),
+      _start = _data.rows.end + 1 + _.min(items, item => item.__ROW).__ROW,
+      _end = _data.rows.end + 1 + _.max(items, item => item.__ROW).__ROW,
+      _dimension = _grid.dimension("ROWS", _start - 1, _end);
+
+    ಠ_ಠ.Flags.log(`Removing Rows : ${_start}-${_end} / Dimension : ${JSON.stringify(_dimension)} for items:`, items);
+
+    return ಠ_ಠ.Google.sheets.batch(_data.spreadsheet, {
+      "deleteDimension": {
+        "range": _dimension
+      }
+    });
+
+  };
+
   var _delete = (item, db) => {
 
     if (item.__ROW === undefined || item.__ROW === null) return Promise.reject();
@@ -712,6 +780,8 @@ Tasks = ಠ_ಠ => {
       return _results;
     },
 
+    archive: _archive,
+
     items: {
 
       create: _new,
@@ -724,6 +794,8 @@ Tasks = ಠ_ಠ => {
         _.each(_.isArray(items) ? items : [items], _process);
         return Promise.resolve(items);
       },
+
+      remove: _remove,
 
     },
 

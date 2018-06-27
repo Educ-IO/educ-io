@@ -62,9 +62,9 @@ Mobile
 
 Docket
 ------
-* Archive Dialog and Process
 * Overlay events from Google Calendar
 * Handle clash on updates / delete
+* After a clear config - wrong buttons displayed (state) ... 
 
 Tiles
 -----
@@ -130,6 +130,9 @@ Reflect
 
 Complete
 --------
+* Archive Dialog and Process <-- DONE
+* Time sorting of events on a single day (time early -> late) <-- DONE
+* Version number on Nav bar title (App Name) <-- DONE
 * ** IMPORTANT ** Handle Deleted Data File after loading config (button visiblity states) <-- DONE
 * ** BUG ** Log out should clear loki DB <-- DONE
 * Check Blank Lines bug? <-- Decrease row counter when deleting an item.... need to update row counts after item deleted. <== DONE

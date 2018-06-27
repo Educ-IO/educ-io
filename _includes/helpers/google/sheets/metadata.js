@@ -33,6 +33,14 @@ Google_Sheets_Metadata = (options, factory) => {
   var _location = (dimension, start, end) => ({
     "dimensionRange": _dimension(dimension, start, end)
   });
+  
+  var _sheet = id => ({
+    sheetId: id,
+  });
+  
+  var _spreadsheet = () => ({
+    spreadsheet: true,
+  });
 
   var _create = (dimension, start, end, meta) => ({
     developerMetadata: _.extend(_meta(meta), {
@@ -144,19 +152,25 @@ Google_Sheets_Metadata = (options, factory) => {
 
       rows: (start, end) => _location("ROWS", start, end),
 
-      spreadsheet: () => ({
-        spreadsheet: true,
-      }),
+      spreadsheet: _spreadsheet,
 
-      sheet: id => ({
-        sheetId: id,
-      }),
+      sheet: _sheet,
 
     },
 
     rows: (start, end) => ({
 
       tag: meta => _create("ROWS", start, end, meta),
+
+    }),
+    
+    sheet: id => ({
+
+      tag: meta => ({
+        developerMetadata: _.extend(_meta(meta), {
+          location: _sheet(id)
+        })
+      }),
 
     }),
 

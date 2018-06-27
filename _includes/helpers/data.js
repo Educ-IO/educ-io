@@ -10,8 +10,9 @@ Data = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
-    inputs: "*[data-output-field], :input[name]:enabled",
-  };
+    inputs: "*[data-output-field], :input[data-output-name]:enabled, :input[name]:enabled",
+  }, DEBUG = factory.Flags && factory.Flags.debug(),
+     LOG = DEBUG ? factory.Flags.log : () => false;
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -39,7 +40,7 @@ Data = (options, factory) => {
           el.val();
 
         /* <!-- DEBUG: Log Return Value --> */
-        if (factory.Flags && factory.Flags.debug()) factory.Flags.log(`Returning Simple Value: ${JSON.stringify(_val)} of type ${_type} from element`, el);
+        if (DEBUG) LOG(`Returning Simple Value: ${JSON.stringify(_val)} of type ${_type} from element`, el);
 
         /* <!-- TODO: Handle Parsing of types here --> */
         return _val !== "" ?
@@ -64,9 +65,10 @@ Data = (options, factory) => {
       var descendants = el.find("*[data-output-name]");
 
       /* <!-- DEBUG: Log Requesting Value --> */
-      if (factory.Flags && factory.Flags.debug()) factory.Flags.log(`Requesting Value (${descendants.length} descendants) from:`, el);
+      if (DEBUG) LOG(`Requesting Value (${descendants.length} descendants) from:`, el);
 
-      return (descendants.length === 0) ? simple(el) : complex(descendants);
+      return el && el.length > 0 ? (descendants.length === 0) ? simple(el) : complex(descendants) : null;
+      
     };
 
     /* <!-- TODO: Evidence Only Outputs One List Item ** BUG ** --> */
@@ -74,8 +76,10 @@ Data = (options, factory) => {
     var _all = form.find(options.inputs);
 
     /* <!-- DEBUG: Log Dehydrating Start --> */
-    if (factory.Flags && factory.Flags.debug()) factory.Flags.log(`Dehydrating Form with ${_all.length} field/s:`, form);
+    if (DEBUG) LOG(`Dehydrating Form with ${_all.length} field/s:`, form);
 
+    var _valid = value => value === true || value === false || _.isNumber(value) || !_.isEmpty(value);
+    
     return _.reduce(_all, (values, input) => {
 
       var _$ = $(input),
@@ -86,23 +90,22 @@ Data = (options, factory) => {
           if (_$.parents("*[data-output-name]").length === 0) { /* <!-- Only Process Top-Level Values --> */
             var _val = value(_$),
               _name = _$.data("output-name") ? _$.data("output-name") : "Value";
-            if (_val === true || _val === false || _.isNumber(_val) || !_.isEmpty(_val))
-              _multiple ? field[_name] = (field[_name] !== undefined ?
+            if (_valid(_val)) _multiple ? field[_name] = (field[_name] !== undefined ?
                 (_.isArray(field[_name]) ? field[_name].concat(_val) : [field[_name], _val]) : _val) : field = _val;
           }
           return field;
         }, {});
 
       /* <!-- DEBUG: Log Dehydrating Field --> */
-      if (factory.Flags && factory.Flags.debug()) factory.Flags.log(`Dehydrating Field Element with ${_inputs.length} child input/s, creating Field = ${JSON.stringify(_field)} :`, input);
+      if (DEBUG) LOG(`Dehydrating Field Element with ${_inputs.length} child input/s, creating Field Value = ${JSON.stringify(_field)} :`, input);
 
       var _name = _$.data("output-field") !== undefined ? _$.data("output-field") : _$.attr("name"),
         _order = _$.data("output-order") ? _$.data("output-order") : false;
 
       /* <!-- DEBUG: Log Dehydrating Start --> */
-      if (factory.Flags && factory.Flags.debug()) factory.Flags.log(`Field has name = ${_name} and order = ${_order}:`);
+      if (DEBUG) LOG(`Field has name = ${_name} and order = ${_order}:`);
 
-      if (!_.isEmpty(_field)) values[_name] = (_.has(values, _name) ? {
+      if (_name && _valid(_field)) values[_name] = (_.has(values, _name) ? {
         Values: _.extend(_field, values[_name].Values),
         Order: values[_name].Order === false ? _order : values[_name].Order
       } : (_.isObject(_field) && !_field._isAMomentObject) ? {
@@ -114,7 +117,7 @@ Data = (options, factory) => {
       });
 
       /* <!-- DEBUG: Log Dehydrating Start --> */
-      if (factory.Flags && factory.Flags.debug()) factory.Flags.log(`Returning Values Object = ${JSON.stringify(values)}`);
+      if (DEBUG) LOG(`Returning Values Object = ${JSON.stringify(values)}`);
 
       return values;
 
