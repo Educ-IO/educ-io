@@ -569,6 +569,7 @@ App = function() {
           return Promise.all(_.map(_years, year => _tasks.archive(year, _show.db)))
             .then(items => {
               var _items = _.sortBy(_.compact(_.flatten(items, true)), "__ROW").reverse();
+              if (!_items || _items.length === 0) return false;
               var _batches = _.reduce(_items, (groups, item, index, all) => {
                   (index === 0 || all[index - 1].__ROW == (item.__ROW + 1)) ?
                   groups[groups.length - 1].push(item):
@@ -585,6 +586,7 @@ App = function() {
               }, Promise.resolve());
 
               return _complete().then(() => _results);
+
             })
             .then(() => _update("Re-Loading Data") && _tasks.close())
             .then(() => _tasks.open(_config.config.data))
@@ -616,6 +618,7 @@ App = function() {
       format: "YYYY-MM-DD",
       cancelText: "Cancel",
       clearButton: false,
+      cancelButton: true,
       nowButton: true,
       time: false,
       switchOnClick: true,
@@ -623,6 +626,22 @@ App = function() {
     });
 
     _input.dblclick();
+  };
+
+  var _refresh = () => {
+
+    var _busy = ಠ_ಠ.Display.busy({
+      target: ಠ_ಠ.container,
+      status: "Re-Loading Data",
+      fn: true
+    });
+
+    _tasks.close();
+    _tasks.open(_config.config.data)
+      .then(db => _show.db = db)
+      .then(() => _busy())
+      .then(() => _show.weekly(moment(_show.show ? _show.show : _show.today)));
+
   };
 
   var _start = (config, busy) => {
@@ -811,6 +830,10 @@ App = function() {
               .then(results => ಠ_ಠ.Flags.log(`Found Docket ${results.length} Item${results.length > 1 ? "s" : ""}`, results)) :
               _find.search();
 
+          } else if ((/REFRESH/i).test(command)) {
+
+            _refresh();
+
           } else {
 
             var _parsed = moment(command);
@@ -854,14 +877,21 @@ App = function() {
       });
       Mousetrap.bind("n", () => _new.task());
       Mousetrap.bind("N", () => _new.task());
+
       Mousetrap.bind("s", () => _find.search());
       Mousetrap.bind("S", () => _find.search());
+
       Mousetrap.bind("f", () => _find.search());
       Mousetrap.bind("F", () => _find.search());
+
       Mousetrap.bind("g", () => _jump());
       Mousetrap.bind("G", () => _jump());
+
       Mousetrap.bind("j", () => _jump());
       Mousetrap.bind("J", () => _jump());
+
+      Mousetrap.bind("r", () => _refresh());
+      Mousetrap.bind("R", () => _refresh());
 
       /* <!-- Create Tasks Reference --> */
       _tasks = ಠ_ಠ.Tasks(ಠ_ಠ);

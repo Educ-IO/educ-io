@@ -1,0 +1,1 @@
+Select the years you wish to archive below. Items from those years will then be moved into a new tab in your Docket Data sheet. Archiving will move __both__ complete and incomplete items, so make sure you remember that before selecting a year!

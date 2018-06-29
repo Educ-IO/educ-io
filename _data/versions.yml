@@ -1,4 +1,8 @@
 site :
+  0.0.9q :
+    name : Docket 0.0.4e-beta
+    desc : Bug Fixes and Menu changes
+    type : minor
   0.0.9p :
     name : Docket 0.0.4d-beta
     desc : Archive Support and Bug Fixes
@@ -658,6 +662,10 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.4e-beta :
+    name : Bug Fixes
+    desc : Menu Changes and Bug Fixes
+    type : minor
   0.0.4d-beta :
     name : Archiving Functionality
     desc : Archive Support and Bug Fixes

@@ -2040,12 +2040,28 @@ docket:
       groups:
         all:
           commands:
-            - name: Today
-              desc: Jump to today
-              shortcut: "t"
-              hash: today
+            - name: Add
+              desc: Create a new task / event
+              shortcut: "n" 
+              hash: new.task
               disabled_until:
                 - opened
+            - name: Refresh
+              desc: Reload current data
+              shortcut: "r"
+              hash: refresh
+              disabled_until:
+                - opened
+            - name: Search
+              desc: Search for tasks / events
+              shortcut: "s" 
+              hash: search
+              disabled_until:
+                - opened
+    - name: Go
+      groups:
+        all:
+          commands:
             - name: Forward
               desc: Go forward a week
               shortcut: "&gt;"
@@ -2058,22 +2074,16 @@ docket:
               hash: backward
               disabled_until:
                 - opened
-            - name: Jump
+            - name: To Today
+              desc: Jump to today
+              shortcut: "t"
+              hash: today
+              disabled_until:
+                - opened
+            - name: Jump To
               desc: Jump to arbitrary date
               shortcut: "j"
               hash: jump
-              disabled_until:
-                - opened
-            - name: Add
-              desc: Create a new task / event
-              shortcut: "n" 
-              hash: new.task
-              disabled_until:
-                - opened
-            - name: Search
-              desc: Search for tasks / events
-              shortcut: "s" 
-              hash: search
               disabled_until:
                 - opened
     - name: Show
