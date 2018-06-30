@@ -64,7 +64,8 @@ Docket
 ------
 * Overlay events from Google Calendar
 * Handle clash on updates / delete
-* After a clear config - wrong buttons displayed (state) ... 
+	-> User notification of issues <-- DONE
+  -> Need to roll-back UI updates
 
 Tiles
 -----
@@ -130,6 +131,8 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT / BUG ** Visual Position / cover of busy spinner when scroll is offset looks weird and needs sorting. <-- DONE
+* After a clear config - wrong buttons displayed (state) ... <-- DONE
 * Archive Dialog and Process <-- DONE
 * Time sorting of events on a single day (time early -> late) <-- DONE
 * Version number on Nav bar title (App Name) <-- DONE

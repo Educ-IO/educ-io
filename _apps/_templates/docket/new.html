@@ -30,12 +30,12 @@
 							<label for="{{#if id}}{{id}}_{{/if}}tags">Tags</label>
 							<button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}tags" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
 							<textarea id="{{#if id}}{{id}}_{{/if}}tags" data-output-field="Tags" class="form-control resizable" tabindex="2" rows="1"></textarea>
-							<small class="form-text text-muted">Tag/s related to this item.</small>
+							<small class="form-text text-muted">Tag/s related to this item. Lists can be delineated by <strong>any</strong> punctuation.</small>
 						</div>
             <div class="form-group col-lg-4">
               <label for="{{#if id}}{{id}}_{{/if}}date">Date</label>
               <input id="{{#if id}}{{id}}_{{/if}}date" data-output-field="From" type="text" data-output-type="date" class="dt-picker form-control" tabindex="5"{{#if date}} value="{{date}}"{{/if}}/>
-              <small class="form-text text-muted">When this item starts</small>
+              <small class="form-text text-muted"></small>
 						</div>
 					</div>
 				</form>

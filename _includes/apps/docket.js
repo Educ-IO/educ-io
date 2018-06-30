@@ -122,6 +122,15 @@ App = function() {
     show: false,
 
     /* <!-- Interal Methods --> */
+    errors: {
+      update: e => ಠ_ಠ.Flags.error("Update Error", e) && ಠ_ಠ.Display.alert({
+        type: "danger",
+        headline: "Update Failed",
+        details: ಠ_ಠ.Display.doc.get("FAILED_UPDATE"),
+        scroll: true
+      }),
+    },
+
     prepare: list => _.each(list, item => {
       !item.DISPLAY && item.DETAILS ? item.DISPLAY = _showdown.makeHtml(item.DETAILS) : false;
       item._action = ((item._complete && item.DONE) ?
@@ -227,10 +236,12 @@ App = function() {
         /* <!-- Process Item, Reconcile UI then Update Database --> */
         _tasks.items.process(_item).then(item => {
             _show.db.update(item);
-            return _tasks.items.update(item);
+            return item;
           })
+          .then(item => _tasks.items.update(item))
           .then(_finish)
-          .then(() => _show.weekly(moment(_show.show ? _show.show : _show.today)));
+          .then(() => _show.weekly(moment(_show.show ? _show.show : _show.today)))
+          .catch(_show.errors.update);
       });
       _input.bootstrapMaterialDatePicker({
         format: "YYYY-MM-DD",
@@ -257,13 +268,17 @@ App = function() {
 
       /* <!-- Process Item, Reconcile UI then Update Database --> */
       return _tasks.items.process(_item).then(item => {
-        _show.db.update(item);
-        var _content = target.find("div.display p");
-        item._complete ? _content.wrap($("<del />", {
-          class: "text-muted"
-        })) : _content.unwrap("del");
-        return _tasks.items.update(item);
-      }).then(_finish);
+          _show.db.update(item);
+          var _content = target.find("div.display p");
+          item._complete ? _content.wrap($("<del />", {
+            class: "text-muted"
+          })) : _content.unwrap("del");
+          return item;
+        })
+        .then(item => _tasks.items.update(item))
+        .catch(_show.errors.update)
+        .then(_finish);
+
     },
 
     update: target => {
@@ -279,10 +294,11 @@ App = function() {
         .then(item => {
           _show.db.update(item);
           target.find("div.display p").html(item.DISPLAY);
-          return _tasks.items.update(item);
+          return item;
         })
-        .catch(e => ಠ_ಠ.Flags.error("Update Error", e))
-        .then(_finish);
+        .then(item => _tasks.items.update(item))
+        .then(_finish)
+        .catch(_show.errors.update);
     },
 
     delete: target => {
@@ -345,12 +361,15 @@ App = function() {
 
           /* <!-- Process Item, Reconcile UI then Update Database --> */
           return _tasks.items.process(_item).then(item => {
-            _show.db.update(item);
-            target.find(`span.badge a:contains('${tag}')`).filter(function() {
-              return $(this).text() == tag;
-            }).parents("span.badge").remove();
-            return _tasks.items.update(item);
-          }).then(_finish);
+              _show.db.update(item);
+              target.find(`span.badge a:contains('${tag}')`).filter(function() {
+                return $(this).text() == tag;
+              }).parents("span.badge").remove();
+              return item;
+            })
+            .then(item => _tasks.items.update(item))
+            .catch(_show.errors.update)
+            .then(_finish);
         }).catch(e => e);
     },
     /* <!-- Action Methods --> */
@@ -465,7 +484,6 @@ App = function() {
             inline: "nearest"
           });
           if (window.scrollBy && _diary.outerHeight(true) > $(window).height()) window.scrollBy(0, -10);
-
         }
       }
 
@@ -481,6 +499,23 @@ App = function() {
   var _new = {
 
     item: type => {
+
+      var _item, _error, _save, _retried = false;
+      _error = () => ಠ_ಠ.Display.alert({
+        type: "danger",
+        headline: "Save Failed",
+        details: _retried ? false : ಠ_ಠ.Display.doc.get("FAILED_SAVE"),
+        action: _retried ? false : "Retry",
+        scroll: true
+      }).then(result => result === true ? (_retried = true) && _save(_item) : Promise.resolve(true));
+
+      _save = item => _tasks.items.create(item).then(r => {
+          if (r === false) return r;
+          _show.db.update(r);
+          return _show.weekly(moment(_show.show ? _show.show : _show.today));
+        })
+        .catch(e => ಠ_ಠ.Flags.error("Create New Error", e) && !_retried && _error())
+        .then(r => r === false ? _error() : Promise.resolve(true));
 
       var _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
         _template = "new",
@@ -510,19 +545,12 @@ App = function() {
           if (!values) return false;
           ಠ_ಠ.Flags.log("Values for Creation", values);
 
-          var _item = {
+          _item = {
             FROM: values.From ? values.From.Value : null,
             TAGS: values.Tags ? values.Tags.Value : null,
             DETAILS: values.Details ? values.Details.Value : null,
           };
-
-          return _tasks.items.process(_item).then(item => _tasks.items.create(_show.db.insert(item)));
-
-        })
-        .then(r => {
-          if (r === false) return r;
-          _show.db.update(r);
-          return _show.weekly(moment(_show.show ? _show.show : _show.today));
+          return _tasks.items.process(_item).then(item => _save(_show.db.insert(item)));
         })
         .catch(e => e ? ಠ_ಠ.Flags.error("Create New Error", e) : ಠ_ಠ.Flags.log("Create New Cancelled"));
     },
@@ -588,7 +616,7 @@ App = function() {
               return _complete().then(() => _results);
 
             })
-            .then(() => _update("Re-Loading Data") && _tasks.close())
+            .then(() => _update("Loading Data") && _tasks.close())
             .then(() => _tasks.open(_config.config.data))
             .then(db => _update("Loaded Data") && (_show.db = db))
             .then(() => _show.weekly(moment(_show.show ? _show.show : _show.today)));
@@ -632,7 +660,7 @@ App = function() {
 
     var _busy = ಠ_ಠ.Display.busy({
       target: ಠ_ಠ.container,
-      status: "Re-Loading Data",
+      status: "Loading Data",
       fn: true
     });
 
@@ -892,6 +920,7 @@ App = function() {
 
       Mousetrap.bind("r", () => _refresh());
       Mousetrap.bind("R", () => _refresh());
+
 
       /* <!-- Create Tasks Reference --> */
       _tasks = ಠ_ಠ.Tasks(ಠ_ಠ);

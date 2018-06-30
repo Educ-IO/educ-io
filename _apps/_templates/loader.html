@@ -1,5 +1,5 @@
 {% raw %}
-<div class="loader{{#exists class}} {{class}}{{else}} loader-large{{/exists}}">
+<div class="loader{{#exists class}} {{class}}{{else}}{{#exists size}} {{#is size "large"}}loader-large h-100 w-100{{/is}}{{#is size "medium"}}loader-medium h-100 w-100{{/is}}{{#is size "small"}}loader-small w-100{{/is}}{{else}} loader-large h-100 w-100{{/exists}}{{/exists}}">
   <div class="loading">
     <div class="spinner"></div>
     <div class="status text-center font-weight-light text-muted pt-2"></div>

@@ -563,16 +563,32 @@ Display = function() {
         var dialog = $(_template("alert")(options));
         _target(options).prepend(dialog);
 
-        /* <!-- Set Event Handler (if required) --> */
-        if (options.action) dialog.find("button.action").click(() => {
-          resolve(true);
-          dialog.alert("close");
-        });
+        /* <!-- Get / Set the Existing Scroll (if required) --> */
+        var _result = false,
+          _complete = options.scroll ?
+          (top => result => $("html, body").animate({
+            scrollTop: top
+          }, 100, "swing", () => resolve(result)))($("html, body").scrollTop()) :
+          result => resolve(result);
 
-        dialog.on("closed.bs.alert", () => resolve(false));
+        /* <!-- Set Event Handlers (if required) --> */
+        if (options.action) dialog.find("button.action").click(() => (_result = true) && dialog.alert("close"));
+        dialog.on("closed.bs.alert", () => _complete(_result));
 
         /* <!-- Show the Alert --> */
         dialog.alert();
+
+        /* <!-- Scroll to the alert (if required) --> */
+        if (options.scroll) {
+          Element.prototype.scrollIntoView ?
+            dialog[0].scrollIntoView({
+              block: "start",
+              inline: "nearest"
+            }) :
+            $("html, body").animate({
+              scrollTop: dialog.offset().top
+            }, 100);
+        }
 
       });
 

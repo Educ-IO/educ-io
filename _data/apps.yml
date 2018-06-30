@@ -2001,6 +2001,8 @@ docket:
     - docket/NEW_INSTRUCTIONS
     - docket/SEARCH_INSTRUCTIONS
     - docket/ARCHIVE_INSTRUCTIONS
+    - docket/FAILED_SAVE
+    - docket/FAILED_UPDATE
   scopes:
     google:
       - scope: email

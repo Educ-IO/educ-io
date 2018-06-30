@@ -330,7 +330,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 		busy = (cell, row, css_class, track) => on => {
 			on ? ಠ_ಠ.Display.busy({
 					target: cell,
-					class: "loader-small"
+					class: "loader-small w-100"
 				}) && (track ? locate(row) : true) && row.addClass(css_class ? css_class : "bg-active") :
 				ಠ_ಠ.Display.busy({
 					target: cell,

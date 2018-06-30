@@ -102,7 +102,7 @@ App = function() {
 					_current = 0;
 				var finish = ಠ_ಠ.Display.busy({
 					target: _list.closest("li"),
-					class: "loader-small",
+					class: "loader-small w-100",
 					fn: true
 				});
 				var _complete = function() {

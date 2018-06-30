@@ -1,2 +1,2 @@
-Tags, when supplied, can be delineated by __any form__ of punctuation (e.g. spaces, commas, semi-colons etc.).
+The keyboard shortcut for __create__ (once you have filled in the details) is *CTRL-Enter*{:.kb-shortcut}.
 {:.small .mb-2}

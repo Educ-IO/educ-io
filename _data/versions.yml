@@ -1,4 +1,8 @@
 site :
+  0.0.9r :
+    name : Docket 0.0.4f-beta
+    desc : Visual Bug Fixes
+    type : minor
   0.0.9q :
     name : Docket 0.0.4e-beta
     desc : Bug Fixes and Menu changes
@@ -662,6 +666,10 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.4f-beta :
+    name : Visual Bug Fixes
+    desc : Alerts for Failed Updates and Creations
+    type : minor
   0.0.4e-beta :
     name : Bug Fixes
     desc : Menu Changes and Bug Fixes
