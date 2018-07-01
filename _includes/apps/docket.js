@@ -672,6 +672,43 @@ App = function() {
 
   };
 
+  var _shortcuts = result => {
+    
+    /* <!-- Bind Keyboard shortcuts --> */
+    var _from = () => moment(_show.show ? _show.show : _show.today).clone();
+    Mousetrap.bind("t", () => _show.weekly(moment(_show.today)));
+    Mousetrap.bind("T", () => _show.weekly(moment(_show.today)));
+    Mousetrap.bind("<", () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().subtract(1, "weeks")));
+    Mousetrap.bind(">", () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().add(1, "weeks")));
+    Mousetrap.bind(",", () => {
+      var _start = _from();
+      _show.weekly(_start.subtract(_start.isoWeekday() == 7 ? 2 : 1, "days"));
+    });
+    Mousetrap.bind(".", () => {
+      var _start = _from();
+      _show.weekly(_start.add(_start.isoWeekday() == 6 ? 2 : 1, "days"));
+    });
+    Mousetrap.bind("n", () => _new.task());
+    Mousetrap.bind("N", () => _new.task());
+
+    Mousetrap.bind("s", () => _find.search());
+    Mousetrap.bind("S", () => _find.search());
+
+    Mousetrap.bind("f", () => _find.search());
+    Mousetrap.bind("F", () => _find.search());
+
+    Mousetrap.bind("g", () => _jump());
+    Mousetrap.bind("G", () => _jump());
+
+    Mousetrap.bind("j", () => _jump());
+    Mousetrap.bind("J", () => _jump());
+
+    Mousetrap.bind("r", () => _refresh());
+    Mousetrap.bind("R", () => _refresh());
+    
+    return result;
+  };
+  
   var _start = (config, busy) => {
 
     _options.calendar(config.calendar);
@@ -688,7 +725,7 @@ App = function() {
         if (busy) busy({
           message: "Loaded Data"
         });
-        return _show.weekly(moment());
+        return _show.weekly(moment()).then(result => _shortcuts(result));
       })
       .catch(e => {
         ಠ_ಠ.Flags.error("Data Error", e ? e : "No Inner Error");
@@ -717,7 +754,6 @@ App = function() {
         recent: false,
         simple: true,
         start: () => {
-
           var _busy = ಠ_ಠ.Display.busy({
             target: ಠ_ಠ.container,
             status: "Loading Config",
@@ -729,7 +765,6 @@ App = function() {
               _busy({
                 message: "Loaded Config"
               }) && _start(config, _busy).then(result => result ? _busy() : ಠ_ಠ.Router.start(STATE_CONFIG)));
-
         },
         test: () => ಠ_ಠ.Display.state().in(STATE_OPENED),
         clear: () => {
@@ -888,39 +923,6 @@ App = function() {
       _showdown = new showdown.Converter({
         strikethrough: true
       });
-
-      /* <!-- Bind Keyboard shortcuts --> */
-      var _from = () => moment(_show.show ? _show.show : _show.today).clone();
-      Mousetrap.bind("t", () => _show.weekly(moment(_show.today)));
-      Mousetrap.bind("T", () => _show.weekly(moment(_show.today)));
-      Mousetrap.bind("<", () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().subtract(1, "weeks")));
-      Mousetrap.bind(">", () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().add(1, "weeks")));
-      Mousetrap.bind(",", () => {
-        var _start = _from();
-        _show.weekly(_start.subtract(_start.isoWeekday() == 7 ? 2 : 1, "days"));
-      });
-      Mousetrap.bind(".", () => {
-        var _start = _from();
-        _show.weekly(_start.add(_start.isoWeekday() == 6 ? 2 : 1, "days"));
-      });
-      Mousetrap.bind("n", () => _new.task());
-      Mousetrap.bind("N", () => _new.task());
-
-      Mousetrap.bind("s", () => _find.search());
-      Mousetrap.bind("S", () => _find.search());
-
-      Mousetrap.bind("f", () => _find.search());
-      Mousetrap.bind("F", () => _find.search());
-
-      Mousetrap.bind("g", () => _jump());
-      Mousetrap.bind("G", () => _jump());
-
-      Mousetrap.bind("j", () => _jump());
-      Mousetrap.bind("J", () => _jump());
-
-      Mousetrap.bind("r", () => _refresh());
-      Mousetrap.bind("R", () => _refresh());
-
 
       /* <!-- Create Tasks Reference --> */
       _tasks = ಠ_ಠ.Tasks(ಠ_ಠ);

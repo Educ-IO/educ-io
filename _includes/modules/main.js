@@ -219,6 +219,7 @@ Main = function() {
 
 				/* <!-- Clean and Hide the Auth Processing --> */
 				$("#auth_processing").hide();
+        $("#get_Started").removeClass("loader");
 
 				/* <!-- Disable and Hide the Sign in --> */
 				$("#sign_in").hide().children(".btn").attr("title", "").off("click.login");
@@ -251,6 +252,7 @@ Main = function() {
 
 		/* <!-- Clean and Hide the Auth Processing --> */
 		$("#auth_processing").hide();
+    $("#get_Started").removeClass("loader");
 
 		/* Disable and Hide the Sign Out */
 		$("#sign_out").hide().children(".btn").off("click.logout");
@@ -350,6 +352,7 @@ Main = function() {
 
 					/* <!-- Visually Indicate that Auth-Flow is starting --> */
 					$("#auth_processing").show();
+          $("#get_Started").addClass("loader");
 
 					/* <!-- Set Up Hello.js Auth-Flow --> */
 					var _init = {};

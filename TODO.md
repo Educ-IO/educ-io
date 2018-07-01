@@ -35,9 +35,6 @@ Router
 
 Apps
 ----
-* ** IMPORTANT ** Log in check should also disable / loader the main get start button (for mobile usage to indicate something is happening!)
-* ** IMPORTANT ** Move Individual App-specific CSS to separate scss files (as per-Docket)
-
 * ** IMPORTANT ** Router and subsequent anchor routes -> how do we handle duplicates?
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?)
@@ -45,6 +42,7 @@ Apps
   -> Re-submit form apparently!
 
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
+
 * LONG RUNNING / RECURSIVE Tasks -> Need to be cancellable? If a route out command is issued ... maybe a web worker in the background
 * Success / Failure response in Busy Loader? E.g. Animate to cross if it fails?i
 
@@ -63,6 +61,7 @@ Mobile
 Docket
 ------
 * Overlay events from Google Calendar
+* Add tasks from Github Issues
 * Handle clash on updates / delete
 	-> User notification of issues <-- DONE
   -> Need to roll-back UI updates
@@ -131,6 +130,9 @@ Reflect
 
 Complete
 --------
+* ** IMPORTANT ** Log in check should also disable / loader the main get start button (for mobile usage to indicate something is happening!) <-- DONE
+* Keyboard shortcuts and swipes need to deactivate when not logged in / logged out <-- DONE
+* ** IMPORTANT ** Move Individual App-specific CSS to separate scss files (as per-Docket) <-- DONE
 * ** IMPORTANT / BUG ** Visual Position / cover of busy spinner when scroll is offset looks weird and needs sorting. <-- DONE
 * After a clear config - wrong buttons displayed (state) ... <-- DONE
 * Archive Dialog and Process <-- DONE

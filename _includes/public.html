@@ -9,7 +9,7 @@
 			</p>
 			{% raw %}{{content}}{% endraw %}
 			<div class="d-flex flex-column flex-md-row lead mb-3 mt-2">
-				<a href="{{ include.start }}" class="btn btn-lg btn-action mr-md-3 mt-2">Get started</a>
+				<a id="get_Started" href="{{ include.start }}" class="btn btn-lg btn-action mr-md-3 mt-2"><div class="loading float-left"><div class="spinner"></div></div>Get started</a>
 				<a href="/support/" class="btn btn-lg btn-outline-success mt-2">Support</a>
 			</div>
 			<p class="text-muted mb-0">{% assign _app = app.name | downcase %}

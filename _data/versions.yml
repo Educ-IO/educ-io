@@ -1,4 +1,8 @@
 site :
+  0.0.9s :
+    name : Logon Loader Improved
+    desc : Visual Bug Fixes and Improvements
+    type : minor
   0.0.9r :
     name : Docket 0.0.4f-beta
     desc : Visual Bug Fixes

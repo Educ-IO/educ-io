@@ -1,34 +1,42 @@
 // -- Loading Container -- //
 $spinner-size-large: 100px;
 $spinner-size-medium: 60px;
+$spinner-size-button: 1.5em;
 $spinner-size-small: 22px;
 $spinner-duration: 0.8s;
 
-// -- Loading Background -- //
+// -- Loading Container -- //
 .loader {
-	
   z-index: 5; // -- Above Content, but below navigation -- //
-	// -- Loading Container -- //
-	.loading {
-		will-change: transform;
-		top: 50%;
-		left: 50%;
-		transform-origin: 50%;
-		z-index: 101;
-		// -- Actual Spinner -- //
-		.spinner {
-			width: 100%;
-			height: 100%;
-			border-top-color: $colour-highlight !important;
-			-webkit-border-radius: 50%;
-			-moz-border-radius: 50%;
-			border-radius: 50%;
-			-webkit-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
-			-moz-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
-			-o-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
-			animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
-		}
-	}	
+  .loading {
+    will-change: transform;
+    z-index: 101;
+    // -- Actual Spinner -- //
+    .spinner {
+      width: 100%;
+      height: 100%;
+      border-top-color: $colour-highlight !important;
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      border-radius: 50%;
+      -webkit-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
+      -moz-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
+      -o-animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
+      animation: spin $spinner-duration infinite cubic-bezier(0.5, 0.65, 0.6, 0.5), opacity ($spinner-duration*3) ease-in-out infinite;
+    }
+  }
+}
+
+// -- Loading Background Div -- //
+div.loader {
+  .loading {
+    top: 50%;
+    left: 50%;
+    transform-origin: 50%;
+  	.spinner {
+      border-top-color: $colour-highlight !important;
+    }
+  }
 	// -- Size Options -- //
 	&.loader-large, &.loader-medium {
 		background-color: rgba($colour-background, 0.9);
@@ -69,6 +77,31 @@ $spinner-duration: 0.8s;
 			}
 		}
 	}
+}
+
+// -- Loading Button -- //
+.btn.loader {
+	&.loader {
+    .loading {
+      margin-left: 0.5rem;
+      margin-right: -0.5rem;
+			position: relative;
+			width: $spinner-size-button;
+			height: $spinner-size-button;
+			transform: translate(-50%, 0%);
+			.spinner {border: solid $spinner-size-button/8 rgba(0,0,0,0);}
+    }
+  }
+  &:hover {
+    .spinner {border-top-color: $colour-background !important;}
+  }
+}
+
+.btn.loader:not([class^="btn-outline-"]):not([class*=" btn-outline-"]):not([class^="btn-light"]):not([class*=" btn-light"]) {
+  .spinner {border-top-color: $colour-background-menu !important;}
+  &:hover {
+		.spinner {border-top-color: $colour-background !important;}
+  }
 }
 
 .pause-animation {
