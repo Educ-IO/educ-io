@@ -7,6 +7,7 @@ Tasks = ಠ_ಠ => {
 
   /* <!-- Internal Constants --> */
   const EXTRACT_TIME = /\b((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))\b/i;
+  const EXTRACT_DATE = /\b((0?[1-9]|[12]\d|30|31)[^\w\d\r\n:](0?[1-9]|1[0-2])[^\w\d\r\n:](\d{4}|\d{2}))\b/i;
   const SPLIT_TAGS = /[^a-zA-Z0-9]/;
   const DB = new loki("docket.db"),
     NAMES = {
@@ -97,6 +98,9 @@ Tasks = ಠ_ಠ => {
       header_time: {
         value: "TIME",
       },
+      header_due: {
+        value: "DUE",
+      },
       header_badges: {
         value: "BADGES",
       }
@@ -117,10 +121,22 @@ Tasks = ಠ_ಠ => {
   }, {}));
 
   var _process = item => {
+    
+    /* <!-- Extract Time from Details if found --> */
     var _time = item[META.column_details.value].match(EXTRACT_TIME);
     (item[META.header_time.value] = _time && _time.length >= 1 ? _time[0] : "") ? (item._timed = true) : delete item._timed;
+    
+    /* <!-- Extract Date from Details if found --> */
+    var _due = item[META.column_details.value].match(EXTRACT_DATE);
+    (item[META.header_due.value] = _due && _due.length >= 1 ? moment(_due[0], ["DD/MM/YYYY", "D/M/YY"]) : "") ? 
+      (item._countdown = item[META.header_due.value].diff(moment(), "days")) : delete item._countdown;
+    
+    /* <!-- Split Tabs into Badges --> */
     if (item[META.column_tags.value]) item[META.header_badges.value] = item[META.column_tags.value].split(SPLIT_TAGS);
+    
+    /* <!-- Set Appropriate Status --> */
     if (item[META.column_status.value] && item[META.column_status.value].toUpperCase() == "COMPLETE") item._complete = true;
+    
     return item;
   };
 
@@ -733,6 +749,8 @@ Tasks = ಠ_ಠ => {
     regexes: {
 
       EXTRACT_TIME: EXTRACT_TIME,
+      
+      EXTRACT_DATE: EXTRACT_DATE,
 
       SPLIT_TAGS: SPLIT_TAGS,
 

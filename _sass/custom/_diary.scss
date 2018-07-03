@@ -42,6 +42,8 @@
 
 #diary, #diary_list {
 	div.item {
+    &.due-soon {@include complex_LinearGradient(100grad,rgba($colour-warning, 0.2) rgba($colour-warning, 0.05) rgba($colour-warning, 0),0% 40% 100%);};
+    &.overdue {@include complex_LinearGradient(100grad,rgba($colour-error, 0.2) rgba($colour-error, 0.05) rgba($colour-error, 0),0% 40% 100%);};
     &.editable {cursor: pointer};
     padding-top: 0.1rem;
     &:not(:last-child) {border-bottom: 1px dashed $colour-emphasis};
@@ -64,7 +66,7 @@
       a[href].close:hover {color: $colour-background;}
       margin-top: 0.15rem;
     }
-    
+    span > i {margin-top: 0.2rem !important;}
   }
 }
 

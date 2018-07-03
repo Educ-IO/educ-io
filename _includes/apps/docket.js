@@ -488,7 +488,7 @@ App = function() {
       }
 
       resolve(ಠ_ಠ.Display.state().enter(STATE_OPENED));
-
+      
     }),
 
     tagged: tag => _show.list(_tasks.tagged(tag, _show.db)),
@@ -532,7 +532,10 @@ App = function() {
             clear: ಠ_ಠ.Dialog({}, ಠ_ಠ).handlers.clear,
           },
           updates: {
-            extract: _dialog.handlers.extract(_tasks.regexes.EXTRACT_TIME)
+            extract: _dialog.handlers.extract({
+              time: _tasks.regexes.EXTRACT_TIME, 
+              date: _tasks.regexes.EXTRACT_DATE, 
+            })
           }
         }, dialog => {
           ಠ_ಠ.Fields().on(dialog);

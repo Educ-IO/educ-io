@@ -1,4 +1,8 @@
 site :
+  0.0.9u :
+    name : Docket 0.0.4g-beta
+    desc : Due By Dates Supported
+    type : minor
   0.0.9t :
     name : Folders 0.0.7a-beta
     desc : Searching Files Bug Fixed
@@ -678,6 +682,10 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.4g-beta :
+    name : Due By Dates
+    desc : Due By Dates, parsed from details, now supported
+    type : minor
   0.0.4f-beta :
     name : Visual Bug Fixes
     desc : Alerts for Failed Updates and Creations
