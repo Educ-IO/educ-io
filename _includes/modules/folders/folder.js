@@ -703,6 +703,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 		_data.clear({
 			removeIndices: false
 		}); /* <!-- Clear in case this is a refresh --> */
+    
 		_data.insert(values);
 
 		var _update = target => {
@@ -848,12 +849,14 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 				}]
 			};
 
-		var _items = _.each(_.map(items, mapItems), (v) => v.safe = (_id + "_" + v.id)),
+		var _items = _.each(_.map(items, mapItems), v => v.safe = (_id + "_" + v.id)),
 			_folder_Count = _.reduce(items, (count, item) => ಠ_ಠ.Google.folders.is(item.mimeType) ? count + 1 : count, 0),
 			_file_Count = _.reduce(items, (count, item) => !ಠ_ಠ.Google.folders.is(item.mimeType) ? count + 1 : count, 0),
 			_file_Size = _.reduce(items, (total, item) => total + (item.size ? parseInt(item.size) : 0), 0);
-		_last = _items;
-
+    
+    /* <!-- Need to remove duplicates (same file in more than one folder!) --> */
+		_last = _.uniq(_items, false, v => v.id);
+    
 		$(ಠ_ಠ.Display.template.get("tab-tabs")(_data)).appendTo(".tab-content");
 		_activateTab($(ಠ_ಠ.Display.template.get("tab-links")(_data)).appendTo("#folder_tabs").parent());
 

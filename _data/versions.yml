@@ -1,4 +1,8 @@
 site :
+  0.0.9t :
+    name : Folders 0.0.7a-beta
+    desc : Searching Files Bug Fixed
+    type : minor
   0.0.9s :
     name : Logon Loader Improved
     desc : Visual Bug Fixes and Improvements
@@ -505,6 +509,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.7a-beta :
+    name : Bug Fix
+    desc : Bug for searching files in multiple simultaneous folders fixed
+    type : minor
   0.0.7-beta :
     name : Bug Fixes
     desc : Bug Fixes and Documentation Updates

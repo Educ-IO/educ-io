@@ -14,7 +14,7 @@ Google_API = (options, factory) => {
   const DEFAULTS = {};
 
   const LAST_RESORT_TIMEOUT = 60000,
-    PAGE_SIZE = 500,
+    PAGE_SIZE = 200,
     BATCH_SIZE = 50,
     PATH_LIMIT = 150;
 
@@ -60,7 +60,7 @@ Google_API = (options, factory) => {
     rate: 4,
     /* <!-- 500 per 100 seconds --> */
     concurrent: 8,
-    timeout: 30000,
+    timeout: 60000,
   };
   const SHEETS_URL = {
     name: "sheets",
@@ -399,8 +399,8 @@ Google_API = (options, factory) => {
         }));
 
         /* <!-- Filter the results using the Exclude then Include methods --> */
-        if (excludes) c = _.reject(c, item => _.some(excludes, (e) => e(item)));
-        if (includes) c = _.filter(c, item => _.some(includes, (i) => i(item)));
+        if (excludes) c = _.reject(c, item => _.some(excludes, e => e(item)));
+        if (includes) c = _.filter(c, item => _.some(includes, i => i(item)));
 
         /* <!-- Get the ids of all the folders included in the raw set --> */
         var _cache = item => cache[item.id] = {
