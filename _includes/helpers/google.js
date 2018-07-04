@@ -225,11 +225,13 @@ Google_API = (options, factory) => {
 
     if (google.picker) {
 
-      var picker = new google.picker.PickerBuilder()
+      /* <!-- This seems to cause a high number of failures: .setDeveloperKey(KEY) --> */
+      var origin = `${window.location.protocol}//${window.location.host}`,
+        picker = new google.picker.PickerBuilder()
         .setTitle(title)
         .setAppId(CLIENT_ID)
-        .setDeveloperKey(KEY)
         .setOAuthToken(_token())
+        .setOrigin(origin)
         .setCallback(((callback, context) => {
           return data => {
             if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
@@ -270,11 +272,7 @@ Google_API = (options, factory) => {
     } else {
 
       google.load("picker", "1", {
-        "callback": (function(title, multiple, team, views, callback, context) {
-          return function() {
-            _pick(title, multiple, team, views, callback, context);
-          };
-        })(title, multiple, team, views, callback, context)
+        "callback": ((title, multiple, team, views, callback, context) => () => _pick(title, multiple, team, views, callback, context))(title, multiple, team, views, callback, context)
       });
 
     }

@@ -1,4 +1,8 @@
 site :
+  0.0.9v :
+    name : Bug Fix
+    desc : Attempted fix of Google Drive Picker bug
+    type : minor
   0.0.9u :
     name : Docket 0.0.4g-beta
     desc : Due By Dates Supported
