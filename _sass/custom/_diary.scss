@@ -64,6 +64,9 @@
     .badge {
       a[href]:hover {color: $colour-emphasis;}
       a[href].close:hover {color: $colour-background;}
+      &.badge-rainbow {
+        a[href]:hover {color: $colour-general-light !important;}
+      }
       margin-top: 0.15rem;
     }
     span > i {margin-top: 0.2rem !important;}

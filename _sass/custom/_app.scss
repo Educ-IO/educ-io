@@ -160,7 +160,20 @@ div.alert:first-child {
   &.top-to-bottom {@include complex_LinearGradient(200grad,rgba($colour-highlight, 0.07) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
   &.bottom-to-top {@include complex_LinearGradient(0grad,rgba($colour-highlight, 0.07) rgba($colour-highlight, 0.05) rgba($colour-highlight, 0),0% 20% 100%);}
 }
+
+.bg-bright-gradient {
+  &.left-to-right {@include complex_LinearGradient(100grad,rgba($colour-bright-background, 0.15) rgba($colour-bright-background, 0.05) rgba($colour-bright-background, 0),0% 20% 100%);}
+  &.right-to-left {@include complex_LinearGradient(300grad,rgba($colour-bright-background, 0.15) rgba($colour-bright-background, 0.05) rgba($colour-bright-background, 0),0% 20% 100%);}
+  &.top-to-bottom {@include complex_LinearGradient(200grad,rgba($colour-bright-background, 0.15) rgba($colour-bright-background, 0.05) rgba($colour-bright-background, 0),0% 20% 100%);}
+  &.bottom-to-top {@include complex_LinearGradient(0grad,rgba($colour-bright-background, 0.15) rgba($colour-bright-background, 0.05) rgba($colour-bright-background, 0),0% 20% 100%);}
+}
 // -- Gradient Background -- //
+
+// -- Bright Background -- //
+.bg-bright {
+	background-color: $colour-bright-background;
+}
+// -- Bright Background -- //
 
 // -- Site Navigation Bar -- //
 #site_nav {
@@ -278,10 +291,5 @@ a.disabled, input.disabled, .btn-disabled {
 		color: inherit;
 		&:hover {text-decoration: none; font-weight: bold;}
 	}
-}
-
-.badge-bright {
-    color: $colour-bright-foreground;
-    background-color: $colour-bright-background;
 }
 // -- Badges -- //

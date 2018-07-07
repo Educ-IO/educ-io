@@ -388,17 +388,17 @@ App = function() {
       focus = focus.isoWeekday() == 7 ? focus.subtract(1, "days") : focus;
 
       var _days = [],
-        _add = (date, css, action, tasks, events) => {
+        _add = (date, css, action, tasks, events, type) => {
           _days.push({
             sizes: date.isoWeekday() >= 6 ? {
               xs: 12
             } : {
-              lg: 6,
-              xl: 4
+              lg: type.large ? 8 : type.small.before ? 4 : 6,
+              xl: type.large ? 6 : type.small.before || type.small.after ? 3 : 4
             },
             row_sizes: date.isoWeekday() == 6 ? {
-              lg: 6,
-              xl: 4
+              lg: type.large ? 8 : type.small.before ? 4 : 6,
+              xl: type.large ? 6 : type.small.before || type.small.after ? 3 : 4
             } : false,
             title: date.format("ddd"),
             date: date.toDate(),
@@ -414,16 +414,31 @@ App = function() {
       focus.add(focus.isoWeekday() == 1 ? -3 : -2, "days");
       _.times(7, () => {
         focus.add(1, "days");
-        var _all = _show.prepare(_show.db ? _tasks.query(focus, _show.db, focus.isSame(_show.today)) : []);
-        var _diary = {
-          tasks: _.filter(_all, item => !item._timed),
-          events: _.sortBy(_.filter(_all, item => item._timed), item => moment(item.TIME, ["h:m a", "H:m", "h:hh A"]).toDate()),
-        };
+        var _day = focus.isoWeekday(),
+          _diff = focus.diff(_show.show, "days"),
+          _lg = _diff === 0 || (_day == 6 && _diff == -1) || (_day == 7 && _diff == 1),
+          _sm_Before = !_lg && (_diff == -1 || (_day == 5 && _diff == -2) || (_day == 6 && _diff == -2)),
+          _sm_After = !_lg && (_diff == 1 || (_day == 1 && _diff == 2)),
+          _sizes = {
+            large: _lg,
+            small: {
+              before: _sm_Before,
+              after: _sm_After,
+            }
+          },
+          _display = focus.format("YYYY-MM-DD"),
+          _all = _show.prepare(_show.db ? _tasks.query(focus, _show.db, focus.isSame(_show.today)) : []),
+          _diary = {
+            tasks: _.filter(_all, item => !item._timed),
+            events: _.sortBy(_.filter(_all, item => item._timed),
+              item => moment(item.TIME, ["h:m a", "H:m", "h:hh A"]).toDate()),
+          };
         _add(focus, {
-          block: focus.isSame(_show.today) || (focus.isoWeekday() == 6 && focus.clone().add(1, "days").isSame(_show.today)) ?
-            "present bg-highlight-gradient top-to-bottom" : focus.isSame(_show.show) ? "focussed" : focus.isBefore(_show.today) ? "past text-muted" : "future",
-          title: focus.isSame(_show.today) ? "present" : ""
-        }, focus.format("YYYY-MM-DD"), _diary.tasks, _diary.events);
+            block: focus.isSame(_show.today) || (focus.isoWeekday() == 6 && focus.clone().add(1, "days").isSame(_show.today)) ?
+              "present bg-highlight-gradient top-to-bottom" : _diff === 0 ? "focussed bg-light" : focus.isBefore(_show.today) ? "past text-muted" : "future",
+            title: focus.isSame(_show.today) ? "present" : _diff === 0 ? "bg-bright-gradient left-to-right" : ""
+          },
+          _display, _diary.tasks, _diary.events, _sizes);
       });
       if (_config.future) _days.push({
         sizes: {
@@ -477,7 +492,7 @@ App = function() {
 
       /* <!-- Scroll to today if visible --> */
       if (Element.prototype.scrollIntoView) {
-        var _now = _diary.find("div.present");
+        var _now = _diary.find("div.focussed");
         if (_now.length === 1 && _now[0].scrollIntoView) {
           _now[0].scrollIntoView({
             block: "start",
@@ -488,7 +503,7 @@ App = function() {
       }
 
       resolve(ಠ_ಠ.Display.state().enter(STATE_OPENED));
-      
+
     }),
 
     tagged: tag => _show.list(_tasks.tagged(tag, _show.db)),
@@ -533,8 +548,8 @@ App = function() {
           },
           updates: {
             extract: _dialog.handlers.extract({
-              time: _tasks.regexes.EXTRACT_TIME, 
-              date: _tasks.regexes.EXTRACT_DATE, 
+              time: _tasks.regexes.EXTRACT_TIME,
+              date: _tasks.regexes.EXTRACT_DATE,
             })
           }
         }, dialog => {
@@ -676,7 +691,7 @@ App = function() {
   };
 
   var _shortcuts = result => {
-    
+
     /* <!-- Bind Keyboard shortcuts --> */
     var _from = () => moment(_show.show ? _show.show : _show.today).clone();
     Mousetrap.bind("t", () => _show.weekly(moment(_show.today)));
@@ -708,10 +723,10 @@ App = function() {
 
     Mousetrap.bind("r", () => _refresh());
     Mousetrap.bind("R", () => _refresh());
-    
+
     return result;
   };
-  
+
   var _start = (config, busy) => {
 
     _options.calendar(config.calendar);

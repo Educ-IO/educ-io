@@ -20,7 +20,7 @@ css:
     - bootstrap/carousel
     - material/carousel
     - custom/variables
-    - custom/common
+    - custom/basic
     - custom/fonts
     - custom/logo
     - custom/home

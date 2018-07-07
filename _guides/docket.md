@@ -40,6 +40,7 @@ __TAGS__{: .badge .badge-pill .badge-primary} appear as pill-style badges at the
 + __Low__ = Will appear in __GREEN__{: .badge .badge-pill .badge-success}
 + __Work__ = Will appear in __BLACK__{: .badge .badge-pill .badge-dark}
 + __Review__ = Will appear in __TEAL__{: .badge .badge-pill .badge-info}
++ __Social__ = Will appear in __RAINBOW__{: .badge .badge-pill .badge-rainbow}
 
 #### Data and Interoperability
 

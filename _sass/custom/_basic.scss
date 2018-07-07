@@ -1,0 +1,66 @@
+// -- Viewpoint Heights / Widths Breakpoints  -- //
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @include media-breakpoint-up($breakpoint) {
+    $infix: breakpoint-infix($breakpoint);
+    @each $prop, $abbrev, $prefix in ((width, vw), (height, vh), (max-width, vw, m), (max-height, vh, m), (min-width, vw, n), (min-height, vh, n)) {
+  		@each $size, $length in $sizes {
+        @if $size != auto {
+          .#{$prefix}#{$abbrev}#{$infix}-#{$size} { #{$prop}: #{$size}#{$abbrev} !important; }
+        }
+  		}
+		}
+  }
+}
+
+// -- Ensure Sufficient Contrast for Text, Links & Buttons -- //
+.jumbotron .text-secondary {color: $colour-contrasting-secondary !important;}
+.text-success, strong.text-success {color: $colour-contrasting-success !important;}
+a {color: $colour-contrasting-link;}
+.bg-light .btn-outline-primary {
+	color: $colour-contrasting-primary;
+	border-color: $colour-contrasting-primary;
+	&:hover {
+		color: $colour-background;
+		background-color: $colour-contrasting-primary;
+		border-color: $colour-contrasting-primary;
+	}
+}
+.btn-success, .btn-outline-success {font-weight: 500;}
+.btn-success, .btn-outline-success {
+	border-color: $colour-contrasting-success;
+} 
+.btn-success {
+	background-color: $colour-contrasting-success;
+	&:hover {
+		background-color: darken($colour-contrasting-success, 5%);
+		border-color: darken($colour-contrasting-success, 10%);
+	}
+}
+.btn-outline-success {
+	color: $colour-contrasting-success;
+	&:hover {
+		color: $colour-background;
+		background-color: $colour-contrasting-success;
+		border-color: $colour-contrasting-success;
+	}
+}
+
+.lead {
+	code {
+		font: inherit;
+		color: $colour-support;
+		font-weight: bold;
+		padding: 0;
+		background-color: inherit;
+	}
+}
+
+.wrap-break {
+  overflow-wrap: break-word;
+}
+
+a.no-underline {
+	&:hover {text-decoration: none;}
+}
+
+.border-exagerate .border.rounded {border-radius: 1rem !important;}

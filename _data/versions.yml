@@ -1,4 +1,8 @@
 site :
+  0.0.9w :
+    name : Docket 0.0.4h-beta
+    desc : Improved Visual Layout
+    type : minor
   0.0.9v :
     name : Bug Fix
     desc : Attempted fix of Google Drive Picker bug
@@ -686,6 +690,10 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.4h-beta :
+    name : Improved Visual Layout
+    desc : Widened Focussed Date and Colourful Social Tag
+    type : minor
   0.0.4g-beta :
     name : Due By Dates
     desc : Due By Dates, parsed from details, now supported
