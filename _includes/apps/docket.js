@@ -492,7 +492,7 @@ App = function() {
 
       /* <!-- Scroll to today if visible --> */
       if (Element.prototype.scrollIntoView) {
-        var _now = _diary.find("div.focussed");
+        var _now = _diary.find("div.focussed").length == 1 ? _diary.find("div.focussed") : _diary.find("div.present");
         if (_now.length === 1 && _now[0].scrollIntoView) {
           _now[0].scrollIntoView({
             block: "start",

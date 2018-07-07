@@ -1,4 +1,8 @@
 site :
+  0.0.9x :
+    name : Docket 0.0.4i-beta
+    desc : Bug Fix
+    type : minor
   0.0.9w :
     name : Docket 0.0.4h-beta
     desc : Improved Visual Layout
@@ -690,6 +694,10 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.4i-beta :
+    name : Bug Fix
+    desc : Regression Bug Fix
+    type : minor
   0.0.4h-beta :
     name : Improved Visual Layout
     desc : Widened Focussed Date and Colourful Social Tag
