@@ -1,5 +1,5 @@
 {% raw %}
-<div {{#exists _countdown}}data-countdown="{{_countdown}}" {{/exists}}class="item px-1{{#if editable}} editable{{/if}}{{#if _complete}} complete{{/if}}{{#unless _complete}}{{#is _countdown "lt" 0}} overdue{{else}}{{#is _countdown "lte" 2}} due-soon{{/is}}{{/is}}{{/unless}}"{{#exists $loki}}id="item_{{ $loki }}" data-id="{{ $loki }}"{{/exists}}>
+<div {{#exists _countdown}}data-countdown="{{_countdown}}" {{/exists}}class="item px-1{{#if editable}} editable{{/if}}{{#if _complete}} complete{{/if}}{{#unless _complete}}{{#is _countdown "lt" 0}} overdue{{else}}{{#is _countdown "lte" 2}} due-soon{{/is}}{{/is}}{{/unless}}"{{#exists $loki}}id="item_{{ $loki }}" data-id="{{ $loki }}"{{/exists}}{{#unless _timed}} data-order="{{#if ORDER}}{{ ORDER }}{{else}}{{inc @index}}{{/if}}" draggable="true"{{/unless}}>
   <div class="display">
     {{#if _timed}}<span class="float-right text-muted text-small pr-1" title="{{TIME}}"><i class="material-icons md-1">schedule</i></span>{{/if}}
     {{#unless _complete}}{{#is _countdown "==" 0}}<span class="float-right text-muted text-small pr-1" title="Due TODAY"><i class="material-icons md-1">priority_high</i></span>{{/is}}{{/unless}}
@@ -10,12 +10,23 @@
   	<input type="hidden" class="d-none dt-picker" value="{{#if _action}}{{_action}}{{/if}}"/>
     <div class="col-12">
 			<div class="input-group">
-        <span class="input-group-prepend">
+        <span class="input-group-prepend d-none d-md-flex">
           {{> control_button b_class="btn-light" b_title="Cancel" b_icon="cancel" b_action="cancel" }}
           {{> control_button b_class="btn-danger" b_icon_type="light" b_aria_title="Delete this Item" b_icon="delete_forever" b_action="delete" }}
         </span>
         <textarea class="form-control resizable" rows="1">{{#if DETAILS}}{{{ DETAILS }}}{{else}}{{ this }}{{/if}}</textarea>
-      	<span class="input-group-append">
+      	<span class="input-group-append d-none d-md-flex">
+          {{> control_button b_class="btn-secondary" b_icon_type="light" b_aria_title="Save Changes" b_icon="save" b_action="update" }}
+          {{> control_button b_class="btn-dark" b_icon_type="light" b_aria_title="Change Date" b_icon="update" b_action="move" }}
+          {{#if _complete}}{{> control_button b_class="btn-warning" b_aria_title="Mark as In Progress" b_icon="edit" b_action="complete" }}{{else}}{{> control_button b_class="btn-success" b_icon_type="light" b_aria_title="Mark as Complete" b_icon="done" b_action="complete" }}{{/if}}
+        </span>
+      </div>
+      <div class="input-group d-flex d-md-none">
+         <span class="input-group-prepend">
+          {{> control_button b_class="btn-light" b_title="Cancel" b_icon="cancel" b_action="cancel" }}
+          {{> control_button b_class="btn-danger" b_icon_type="light" b_aria_title="Delete this Item" b_icon="delete_forever" b_action="delete" }}
+        </span>
+        <span class="input-group-append">
           {{> control_button b_class="btn-secondary" b_icon_type="light" b_aria_title="Save Changes" b_icon="save" b_action="update" }}
           {{> control_button b_class="btn-dark" b_icon_type="light" b_aria_title="Change Date" b_icon="update" b_action="move" }}
           {{#if _complete}}{{> control_button b_class="btn-warning" b_aria_title="Mark as In Progress" b_icon="edit" b_action="complete" }}{{else}}{{> control_button b_class="btn-success" b_icon_type="light" b_aria_title="Mark as Complete" b_icon="done" b_action="complete" }}{{/if}}

@@ -42,6 +42,9 @@
 
 #diary, #diary_list {
 	div.item {
+    will-change: padding-top, background-color;
+    @include transition(padding-top 0.25s ease, background-color 0.8s linear);
+    &.drop-target {padding-top: 1em !important;}
     &.due-soon {@include complex_LinearGradient(100grad,rgba($colour-warning, 0.2) rgba($colour-warning, 0.05) rgba($colour-warning, 0),0% 40% 100%);};
     &.overdue {@include complex_LinearGradient(100grad,rgba($colour-error, 0.2) rgba($colour-error, 0.05) rgba($colour-error, 0),0% 40% 100%);};
     &.editable {cursor: pointer};

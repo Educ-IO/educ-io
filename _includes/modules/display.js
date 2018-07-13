@@ -49,11 +49,20 @@ Display = function() {
       _t > (_height - _b) ? "top" : "bottom" :
       _l > (_width - _r) ? "left" : "right";
   };
+  
+  var _top = () => (document.scrollingElement || document.documentElement).scrollTop;
+  
+  var _drag = () => {      
+    var div = document.createElement("div");
+    return ("draggable" in div) || ("ondragstart" in div && "ondrop" in div);
+  };
+  
   var _placement = (show, trigger) => $(trigger).data("placement") ? $(trigger).data("placement") : _calculate($(trigger));
 
   var _popovers = (targets, options) => targets.popover(_.defaults(options ? options : {}, {
     trigger: "focus"
   }));
+  
   var _tooltips = (targets, options) => targets.tooltip(_.defaults(options ? options : {}, {
     trigger: "hover",
     placement: _placement
@@ -313,6 +322,10 @@ Display = function() {
 
     },
 
+    drag: _drag,
+    
+    top: _top,
+    
     size: {
 
       is: {
@@ -572,7 +585,7 @@ Display = function() {
           _complete = options.scroll ?
           (top => result => $("html, body").animate({
             scrollTop: top
-          }, 100, "swing", () => resolve(result)))($("html, body").scrollTop()) :
+          }, 100, "swing", () => resolve(result)))(_top()) :
           result => resolve(result);
 
         /* <!-- Set Event Handlers (if required) --> */

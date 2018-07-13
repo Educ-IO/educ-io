@@ -145,6 +145,8 @@ App = function() {
 
     hookup: container => {
 
+      var _return = promise => promise;
+
       /* <!-- Ensure Links open new tabs --> */
       container.find("a:not([href^='#'])").attr("target", "_blank").attr("rel", "noopener");
 
@@ -153,12 +155,12 @@ App = function() {
         var target = $(e.currentTarget);
         if (target.data("action")) {
           var parent = target.parents("div.item");
-          target.data("action") == "cancel" ?
+          _return(target.data("action") == "cancel" ?
             _show.cancel(parent) : target.data("action") == "delete" ?
             _show.delete(parent) : target.data("action") == "update" ?
             _show.update(parent) : target.data("action") == "move" ?
             _show.move(parent) : target.data("action") == "complete" ?
-            _show.complete(parent) : false;
+            _show.complete(parent) : Promise.reject());
         }
       });
 
@@ -178,15 +180,11 @@ App = function() {
           if (code == 13) {
             /* <!-- Enter Pressed --> */
             e.preventDefault();
-            if (e.shiftKey) {
-              _show.complete(_handle(e.currentTarget));
-            } else {
-              _show.update(_handle(e.currentTarget));
-            }
+            _return(e.shiftKey ? _show.complete(_handle(e.currentTarget)) : _show.update(_handle(e.currentTarget)));
           } else if (code == 27) {
             /* <!-- Escape Pressed / Cancel Update --> */
             e.preventDefault();
-            _show.cancel(_handle(e.currentTarget));
+            _return(_show.cancel(_handle(e.currentTarget)));
           }
         });
 
@@ -198,7 +196,57 @@ App = function() {
         _target.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
         !_clicked.is("input, textarea, a, span") ?
           e.shiftKey ? e.preventDefault() || _show.clear() || _show.complete(_target) : _target.find("div.editing, div.display").toggleClass("d-none") : false;
-        if (_target.find("div.editing").is(":visible")) _target.find("div.editing textarea").focus();
+        if (_target.find("div.editing").is(":visible")) {
+
+          /* <!-- Focus Cursor on Text Area --> */
+          _target.find("div.editing textarea").focus();
+
+          /* <!-- Scroll to target if possible --> */
+          if (Element.prototype.scrollIntoView && _target[0].scrollIntoView) {
+            _return = (top => promise => promise.then($("html, body").animate({
+              scrollTop: top
+            }, 400)))(ಠ_ಠ.Display.top());
+
+            _target[0].scrollIntoView({
+              block: "start",
+              inline: "nearest"
+            });
+          }
+
+          if (_target.attr("draggable")) {
+
+            var _movable = new Hammer(_target.find("div.editing")[0]);
+            _movable.get("pan").set({
+              direction: Hammer.DIRECTION_VERTICAL,
+              threshold: _target.height() / 2
+            });
+            _movable.on("pan", e => {
+              if (e.pointerType == "touch") {
+                var _destination = $(document.elementFromPoint(e.center.x, e.center.y));
+                _destination = _destination.is("div.item[draggable=true]") ? _destination : _destination.parents("div.item[draggable=true]");
+                if (_destination && _destination.length == 1) {
+                  var _source = $(e.target);
+                  _source = _source.is("div.item") ? _source : _source.parents("div.item");
+                  if (_source.parents(".group")[0] == _destination.parents(".group")[0]) _source.insertBefore(_destination);
+                }
+              }
+            });
+            _movable.on("panend", e => {
+              var _source = $(e.target);
+              _source = _source.is("div.item") ? _source : _source.parents("div.item");
+              var _list = [];
+              _source.parent().children("div.item[draggable=true]").each((i, el) => {
+                var _el = $(el),
+                  _item = _show.db.get(_el.data("id")),
+                  _order = i + 1;
+                _el.data("order", _order);
+                if (_item && _item.ORDER != _order)(_item.ORDER = _order) && _list.push(_item);
+              });
+              /* <!-- Save List --> */
+              if (_list.length > 0) ಠ_ಠ.Flags.log("LIST TO SAVE:", _list);
+            });
+          }
+        }
       });
 
       /* <!-- Enable Tooltips --> */
@@ -429,9 +477,8 @@ App = function() {
           _display = focus.format("YYYY-MM-DD"),
           _all = _show.prepare(_show.db ? _tasks.query(focus, _show.db, focus.isSame(_show.today)) : []),
           _diary = {
-            tasks: _.filter(_all, item => !item._timed),
-            events: _.sortBy(_.filter(_all, item => item._timed),
-              item => moment(item.TIME, ["h:m a", "H:m", "h:hh A"]).toDate()),
+            tasks: _.chain(_all).filter(item => !item._timed).sortBy("DETAILS").sortBy("ORDER").sortBy("_countdown").value(),
+            events: _.chain(_all).filter(item => item._timed).sortBy(item => moment(item.TIME, ["h:m a", "H:m", "h:hh A"]).toDate()).value(),
           };
         _add(focus, {
             block: focus.isSame(_show.today) || (focus.isoWeekday() == 6 && focus.clone().add(1, "days").isSame(_show.today)) ?
@@ -474,6 +521,47 @@ App = function() {
 
       /* <!-- Hookup all relevant events --> */
       _show.hookup(_diary);
+
+      /* <!-- Drag / Drop --> */
+      var _get = data => !data || data.indexOf("item_") !== 0 ? false : $(`#${data}`),
+        _items = _diary.find("div.item[draggable=true]");
+      _items.on("dragstart.item", e => {
+          e.originalEvent.dataTransfer.setData("text/plain", e.target.id);
+        })
+        .on("dragleave.item", e => {
+          e.preventDefault();
+          var _destination = $(e.target);
+          _destination.removeClass("drop-target");
+        })
+        .on("dragover.item", e => {
+          e.preventDefault();
+          var _destination = $(e.target);
+          _destination = _destination.is("div.item[draggable=true]") ? _destination : _destination.parents("div.item[draggable=true]");
+          if (!_destination.hasClass("drop-target")) _destination.addClass("drop-target");
+        })
+        .on("drop.item", e => {
+          e.preventDefault();
+          var _source = _get(e.originalEvent.dataTransfer.getData("text/plain"));
+          if (!_source) return;
+          var _destination = $(e.target);
+          _destination = _destination.is("div.item[draggable=true]") ? _destination : _destination.parents("div.item[draggable=true]");
+          _destination.removeClass("drop-target");
+          if (_source.parents(".group")[0] == _destination.parents(".group")[0]) {
+            _source.insertBefore(_destination);
+            _source.addClass("bg-bright");
+            setTimeout(() => _source.removeClass("bg-bright"), 1000);
+            var _list = [];
+            _source.parent().children("div.item[draggable=true]").each((i, el) => {
+              var _el = $(el),
+                _item = _show.db.get(_el.data("id")),
+                _order = i + 1;
+              _el.data("order", _order);
+              if (_item && _item.ORDER != _order)(_item.ORDER = _order) && _list.push(_item);
+            });
+            /* <!-- Save List --> */
+            if (_list.length > 0) ಠ_ಠ.Flags.log("LIST TO SAVE:", _list);
+          }
+        });
 
       /* <!-- Swipe and Touch Controls --> */
       var swipe_control = new Hammer(_diary[0]);

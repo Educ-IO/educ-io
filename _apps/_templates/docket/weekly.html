@@ -1,7 +1,7 @@
 {% raw %}
 <div {{#if id}}id="{{id}}" {{/if}}class="border-exagerate container-fluid pt-xl-2 nvh-100">
   <div class="row m-0 pt-2">
-  {{#each days}}{{#is instruction 'row-start'}}<div class="{{#if class}}{{class}} {{/if}}m-0 mb-1 row{{#if row_sizes}}{{#each row_sizes}} col-{{#is @key '!=' 'xs'}}{{@key}}-{{/is}}{{this}}{{/each}}{{/if}} border border-white rounded">{{/is}}<div class="{{#unless instruction}}{{#if class}}{{class}} {{/if}}{{/unless}}{{#if sizes}}{{#each sizes}}{{#is @index "!=" 0}} {{/is}}col-{{#is @key '!=' 'xs'}}{{@key}}-{{/is}}{{this}}{{/each}}{{/if}}{{#unless instruction}} border border-white rounded mb-1{{/unless}}">
+  {{#each days}}{{#is instruction 'row-start'}}<div class="{{#if class}}{{class}} {{/if}}m-0 mb-1 row{{#if row_sizes}}{{#each row_sizes}} col-{{#is @key '!=' 'xs'}}{{@key}}-{{/is}}{{this}}{{/each}}{{/if}} border border-white rounded">{{/is}}<div class="group {{#unless instruction}}{{#if class}}{{class}} {{/if}}{{/unless}}{{#if sizes}}{{#each sizes}}{{#is @index "!=" 0}} {{/is}}col-{{#is @key '!=' 'xs'}}{{@key}}-{{/is}}{{this}}{{/each}}{{/if}}{{#unless instruction}} border border-white rounded mb-1{{/unless}}">
       <div class="py-2">
         <div class="row">
           {{#if action}}<a class="{{#if title_class}}{{title_class}} {{/if}}day col-12 col-md-9 col-lg-6" href="#{{action}}">{{/if}}<h4 class="{{#unless action}}{{#if title_class}}{{title_class}} {{/if}}col-12 col-md-9 col-lg-6 {{/unless}}mb-lg-0">{{ title }}</h4>{{#if action}}</a>{{/if}}

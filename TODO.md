@@ -60,12 +60,15 @@ Mobile
 
 Docket
 ------
-* Overlay events from Google Calendar
-* Add tasks from Github Issues
+* Overlay events from Google Calendar - Need to do the OAuth Google Acceptance Form
+* Add tasks from Github Issues (maybe? - or is an extension a better route, with push adding to the Docket sheet?)
 * Handle clash on updates / delete
 	-> User notification of issues <-- DONE
   -> Need to roll-back UI updates
-* Due By Dates parsing <-- DONE
+* Drag / Drop re-ordering
+	-> Dragging & Dropping <-- DONE
+  -> Button Re-Ordering (maybe just for small screens?) <-- DONE
+  -> Persist Changes back to Spreadsheet - efficient multi-cell updates with hash/update checking?
 
 Tiles
 -----
@@ -131,6 +134,12 @@ Reflect
 
 Complete
 --------
+* Scroll it item edit <-- DONE
+* Magic All Day timed value <-- DONE
+* Small Screen View - Move editing item buttons to below <-- DONE
+* ** BUG ** 2018 (e.g.) at the end of a due date is parsed as a time! Need to alter time regex to exclude <-- DONE
+* Sort Due ? Overdue items first <-- DONE
+* Due By Dates parsing <-- DONE
 * ** IMPORTANT ** Log in check should also disable / loader the main get start button (for mobile usage to indicate something is happening!) <-- DONE
 * Keyboard shortcuts and swipes need to deactivate when not logged in / logged out <-- DONE
 * ** IMPORTANT ** Move Individual App-specific CSS to separate scss files (as per-Docket) <-- DONE

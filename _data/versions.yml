@@ -1,4 +1,8 @@
 site :
+  0.0.9y :
+    name : Docket 0.0.4j-beta
+    desc : Ordering Improvements
+    type : minor
   0.0.9x :
     name : Docket 0.0.4i-beta
     desc : Bug Fix
@@ -694,6 +698,10 @@ poll :
     name : Early testing version
     type : minor
 docket :
+  0.0.4j-beta :
+    name : Ordering Improvements
+    desc : Improvements in Ordering and All Day Events
+    type : minor
   0.0.4i-beta :
     name : Bug Fix
     desc : Regression Bug Fix

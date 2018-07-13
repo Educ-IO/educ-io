@@ -6,7 +6,8 @@ Tasks = ಠ_ಠ => {
   /* <!-- REQUIRES: Global Scope: Loki, JQuery, Underscore | App Scope: Google --> */
 
   /* <!-- Internal Constants --> */
-  const EXTRACT_TIME = /\b((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))\b/i;
+  const EXTRACT_ALLDAY = /(^|\s|\(|\{|\[)(all day)\b/i;
+  const EXTRACT_TIME = /(^|\s)((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))\b/i;
   const EXTRACT_DATE = /\b((0?[1-9]|[12]\d|30|31)[^\w\d\r\n:](0?[1-9]|1[0-2])[^\w\d\r\n:](\d{4}|\d{2}))\b/i;
   const SPLIT_TAGS = /[^a-zA-Z0-9]/;
   const DB = new loki("docket.db"),
@@ -123,8 +124,9 @@ Tasks = ಠ_ಠ => {
   var _process = item => {
     
     /* <!-- Extract Time from Details if found --> */
-    var _time = item[META.column_details.value].match(EXTRACT_TIME);
-    (item[META.header_time.value] = _time && _time.length >= 1 ? _time[0] : "") ? (item._timed = true) : delete item._timed;
+    var _all = item[META.column_details.value].match(EXTRACT_ALLDAY), _time = item[META.column_details.value].match(EXTRACT_TIME);
+    (item[META.header_time.value] = _all && _all.length >= 1 ? _all[_all.length >= 2 ? 2 : 1] : _time && _time.length >= 1 ? _time[_time.length >= 2 ? 2 : 1] : "") ? 
+      (item._timed = true) : delete item._timed;
     
     /* <!-- Extract Date from Details if found --> */
     var _due = item[META.column_details.value].match(EXTRACT_DATE);
@@ -575,22 +577,24 @@ Tasks = ಠ_ಠ => {
 
   };
 
+  var _results = (query, db) => (db ? db : _db).find(query);
+  
   var _current = (date, db) => {
     var _query = {
       "$or": [_queries.current(date), _queries.complete(date)]
     };
     ಠ_ಠ.Flags.log(`Query [Current] for :${date}`, _query);
-    var _results = (db ? db : _db).find(_query);
-    ಠ_ಠ.Flags.log(`Result Values [Current] for :${date}`, _results);
-    return _results;
+    var _data = _results(_query, db);
+    ಠ_ಠ.Flags.log(`Result Values [Current] for :${date}`, _data);
+    return _data;
   };
 
   var _date = (date, db) => {
     var _query = _queries.dated(date);
     ಠ_ಠ.Flags.log(`Query for :${date}`, _query);
-    var _results = (db ? db : _db).find(_query);
-    ಠ_ಠ.Flags.log(`Result Values for :${date}`, _results);
-    return _results;
+    var _data = _results(_query, db);
+    ಠ_ಠ.Flags.log(`Result Values for :${date}`, _data);
+    return _data;
   };
 
   var _convertToArray = item => _.reduce(_data.columns.meta, (value, column) => {
@@ -748,6 +752,8 @@ Tasks = ಠ_ಠ => {
 
     regexes: {
 
+      EXTRACT_ALLDAY: EXTRACT_ALLDAY,
+      
       EXTRACT_TIME: EXTRACT_TIME,
       
       EXTRACT_DATE: EXTRACT_DATE,
