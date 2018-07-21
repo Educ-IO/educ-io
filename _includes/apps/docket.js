@@ -160,7 +160,8 @@ App = function() {
             _show.delete(parent) : target.data("action") == "update" ?
             _show.update(parent) : target.data("action") == "move" ?
             _show.move(parent) : target.data("action") == "complete" ?
-            _show.complete(parent) : Promise.reject());
+            _show.complete(parent) : target.data("action") == "edit" ?
+            _edit.tags(parent) : Promise.reject());
         }
       });
 
@@ -194,7 +195,7 @@ App = function() {
         var _target = $(e.currentTarget),
           _clicked = $(e.target);
         _target.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
-        !_clicked.is("input, textarea, a, span") ?
+        !_clicked.is("input, textarea, a, span, a > i") ?
           e.shiftKey ? e.preventDefault() || _show.clear() || _show.complete(_target) : _target.find("div.editing, div.display").toggleClass("d-none") : false;
         if (_target.find("div.editing").is(":visible")) {
 
@@ -632,7 +633,7 @@ App = function() {
           /* <!-- Do we need to validate? --> */
           date: moment(_show.show ? _show.show : _show.today).format("YYYY-MM-DD"),
           handlers: {
-            clear: ಠ_ಠ.Dialog({}, ಠ_ಠ).handlers.clear,
+            clear: _dialog.handlers.clear,
           },
           updates: {
             extract: _dialog.handlers.extract({
@@ -642,11 +643,8 @@ App = function() {
           }
         }, dialog => {
           ಠ_ಠ.Fields().on(dialog);
+          _dialog.handlers.keyboard.enter(dialog);
           dialog.find(`#${_id}_details`).focus();
-
-          /* <!-- Ctrl-Enter Pressed --> */
-          dialog.keypress(e => ((e.keyCode ? e.keyCode : e.which) == 10 && e.ctrlKey) ? e.preventDefault() || dialog.find("button.btn-primary").click() : null);
-
         }).then(values => {
           if (!values) return false;
           ಠ_ಠ.Flags.log("Values for Creation", values);
@@ -662,6 +660,102 @@ App = function() {
     },
 
     task: () => _new.item("Task"),
+
+  };
+
+  var _edit = {
+
+    tags: target => {
+
+      if (!target) return;
+      var _item = _show.get(target),
+        _tags = _item.TAGS,
+        _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
+        _template = "tag",
+        _id = "tag";
+
+      var _reconcile = target => {
+        var _new = $(ಠ_ಠ.Display.template.get({
+          template: "tags",
+          tags: _item.TAGS,
+          badges: _item.BADGES
+        }));
+        target.empty().append(_new);
+        return target;
+      };
+
+      var _handleRemove = target => target.find("span.badge a").on("click.remove", e => {
+        e.preventDefault();
+        var _target = $(e.currentTarget),
+          _tag = _target.parents("span.badge").text().replace("×", "");
+        if (_tag) {
+          _item.TAGS = (_item.BADGES = _.filter(_item.BADGES, badge => badge != _tag)).join(";");
+          _handleRemove(_reconcile(_target.parents("form")));
+        }
+      });
+
+      return ಠ_ಠ.Display.modal(_template, {
+          target: ಠ_ಠ.container,
+          id: _id,
+          title: "Edit Tags",
+          instructions: ಠ_ಠ.Display.doc.get("TAG_INSTRUCTIONS"),
+          validate: values => values ? ಠ_ಠ.Flags.log("Values for Validation", values) && true : false,
+          /* <!-- Do we need to validate? --> */
+          handlers: {
+            clear: _dialog.handlers.clear,
+          },
+          tags: _item.TAGS,
+          badges: _item.BADGES,
+          all: _tasks.badges(_show.db)
+        }, dialog => {
+
+          /* <!-- General Handlers --> */
+          ಠ_ಠ.Fields().on(dialog);
+
+          /* <!-- Handle CTRL Enter to Save --> */
+          _dialog.handlers.keyboard.enter(dialog);
+
+          /* <!-- Handle Click to Remove --> */
+          _handleRemove(dialog);
+
+          /* <!-- Handle Click to Add --> */
+          dialog.find("li button").on("click.add", e => {
+            e.preventDefault();
+            var _input = $(e.currentTarget).parents("li").find("span[data-type='tag'], input[data-type='tag']");
+            var _val = _input.val() || _input.text();
+            if (_input.is("input")) _input.val("") && _input.focus();
+            if (_val && (_item.BADGES ? _item.BADGES : _item.BADGES = []).indexOf(_val) < 0) {
+              _item.BADGES.push(_val);
+              _item.TAGS = _item.BADGES.join(";");
+              _handleRemove(_reconcile(dialog.find("form")));
+            }
+          });
+
+          /* <!-- Handle Enter on textbox to Add --> */
+          dialog.find("li input[data-type='tag']")
+            .keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? e.preventDefault() || $(e.currentTarget).siblings("button[data-action='add']").click() : null).focus();
+
+        }).then(values => {
+          if (values) {
+            /* <!-- Apply the Update --> */
+            var _finish = _show.busy(target, _item);
+            /* <!-- Process Item, Reconcile UI then Update Database --> */
+            return _tasks.items.process(_item).then(item => {
+                _show.db.update(item);
+                return item;
+              })
+              .then(item => _tasks.items.update(item))
+              .catch(_show.errors.update)
+              .then(_finish);
+          } else {
+            /* <!-- Cancel the Update --> */
+            _item.TAGS = _tags;
+            return _tasks.items.process(_item);
+          }
+        })
+        .catch(e => e ? ಠ_ಠ.Flags.error("Edit Tags Error", e) : ಠ_ಠ.Flags.log("Edit Tags Cancelled"));
+
+    },
 
   };
 
@@ -769,6 +863,9 @@ App = function() {
       status: "Loading Data",
       fn: true
     });
+
+    /* <!-- Reset to Today --> */
+    _show.today = moment().startOf("day").toDate();
 
     _tasks.close();
     _tasks.open(_config.config.data)
@@ -953,6 +1050,10 @@ App = function() {
           } else if ((/NEW/i).test(command) && command.length > 1 && (/TASK/i).test(command[1])) {
 
             _new.task();
+
+          } else if ((/EDIT/i).test(command) && command.length > 2 && (/TAGS/i).test(command[1])) {
+
+            _edit.tags($(`#item_${command[2]}`));
 
           } else if ((/CALENDAR/i).test(command)) {
 

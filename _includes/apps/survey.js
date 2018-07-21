@@ -7,12 +7,12 @@ App = function() {
   if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
   /* <!-- Internal Constants --> */
-  const TYPE = "application/x.educ-io.poll",
+  const TYPE = "application/x.educ-io.survey",
     STATE_OPENED = "opened",
     STATE_CREATED_RECIPIENTS = "created-recipients",
     STATE_LOADED_TEMPLATE = "loaded-template",
     STATES = [STATE_OPENED, STATE_CREATED_RECIPIENTS, STATE_LOADED_TEMPLATE];
-  const ID = "poll_split";
+  const ID = "survey_split";
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -22,7 +22,7 @@ App = function() {
   /* <!-- Internal Functions --> */
   var _pick = {
 
-    poll: () => ಠ_ಠ.Main.pick("Select a Poll to Open",
+    survey: () => ಠ_ಠ.Main.pick("Select a Survey to Open",
       () => [new google.picker.DocsView().setMimeTypes(TYPE).setIncludeFolders(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED],
       "Google Drive Merge Picked", TYPE),
 
@@ -32,13 +32,13 @@ App = function() {
 
   };
 
-  var _loadPoll = id => ಠ_ಠ.Google.download(id)
+  var _loadSurvey = id => ಠ_ಠ.Google.download(id)
     .then(loaded => {
       ಠ_ಠ.Display.log("Loaded:", loaded);
       ಠ_ಠ.Display.state().enter(STATE_OPENED);
     });
 
-  var _createPoll = () => new Promise(resolve => {
+  var _createSurvey = () => new Promise(resolve => {
 
     ಠ_ಠ.Display.template.show({
       template: "split",
@@ -95,7 +95,7 @@ App = function() {
 
       /* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
-        name: "Poll",
+        name: "Survey",
         states: STATES,
         test: () => ಠ_ಠ.Display.state().in(STATE_OPENED),
         clear: () => {},
@@ -107,22 +107,22 @@ App = function() {
 
             if ((/OPEN/i).test(command[1]) && command[1]) {
 
-              /* <!-- Load Existing Poll File --> */
-              _loadPoll(command[1]);
+              /* <!-- Load Existing Survey File --> */
+              _loadSurvey(command[1]);
 
             } else {
 
-              /* <!-- Pick Existing Poll File --> */
-              _pick.poll().then(poll => {
-                ಠ_ಠ.Flags.log("POLL:", poll);
-                _loadPoll(poll.id);
+              /* <!-- Pick Existing Survey File --> */
+              _pick.survey().then(survey => {
+                ಠ_ಠ.Flags.log("SURVEY:", survey);
+                _loadSurvey(survey.id);
               }).catch(e => ಠ_ಠ.Flags.error("Picker Failure: ", e ? e : "No Inner Error"));
 
             }
 
           } else if ((/CREATE/i).test(command)) {
 
-            _createPoll();
+            _createSurvey();
 
           } else if ((/CLOSE/i).test(command)) {
 

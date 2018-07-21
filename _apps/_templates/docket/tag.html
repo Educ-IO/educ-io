@@ -1,0 +1,38 @@
+{% raw %}
+<div{{#if id}} id="{{id}}"{{/if}} class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal_options_title">{{{title}}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{#if instructions}}{{{instructions}}}{{/if}}
+				<form>
+          {{> tags }}
+				</form>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+						<input class="form-control mr-3" type="text" data-type="tag" />
+            <button data-action="add" type="button" class="btn btn-primary">Add</button>
+          </li>
+  				{{#each all}}<li class="list-group-item d-flex justify-content-between align-items-center">
+            <span data-type="tag">{{ this.[0] }}</span>
+          	<div class="float-right">
+              <span class="badge badge-{{#is this.[1] "lt" 10}}secondary{{else}}dark{{/is}} badge-pill mr-3">{{ this.[1] }}</span>
+          	  <button data-action="add" type="button" class="btn btn-outline-primary">Add</button>
+            </div>
+          </li>{{/each}}
+				</ul>
+      </div>
+      <div class="modal-footer">
+        {{# if actions}}{{#each actions}}{{> control_button b_class="btn-outline-info" b_id=id b_action=(concat "actions_" @index) b_title=desc b_text=text }}{{/each}}{{/if}}
+				<button type="button" class="btn btn-secondary btn-flat" data-dismiss="modal" tabindex="4">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" tabindex="3">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endraw %}

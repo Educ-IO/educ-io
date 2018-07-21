@@ -1648,21 +1648,21 @@ tiles:
   
   
 
-#  d8888b.  .d88b.  db      db     
-#  88  `8D .8P  Y8. 88      88     
-#  88oodD' 88    88 88      88     
-#  88~~~   88    88 88      88     
-#  88      `8b  d8' 88booo. 88booo.
-#  88       `Y88P'  Y88888P Y88888P
-###################################
+# .d8888. db    db d8888b. db    db d88888b db    db
+# 88'  YP 88    88 88  `8D 88    88 88'     `8b  d8'
+# `8bo.   88    88 88oobY' Y8    8P 88ooooo  `8bd8' 
+#   `Y8b. 88    88 88`8b   `8b  d8' 88~~~~~    88   
+# db   8D 88b  d88 88 `88.  `8bd8'  88.        88   
+# `8888Y' ~Y8888P' 88   YD    YP    Y88888P    YP   
+####################################################
 
-poll:
-  name: Poll
-  desc: Create and mail __simple poll questions__, collating responses in your own Google Sheet
-  link: /poll/
-  colour: 117b6a
-  logo: images/poll_logo.svg
-  learn: /guides/poll
+survey:
+  name: Survey
+  desc: Create and mail __simple survey questions__, collating responses in your own Google Sheet
+  link: /survey/
+  colour: a85805
+  logo: images/survey_logo.svg
+  learn: /guides/survey
   imports:
     - name: underscore
       load: first
@@ -1728,13 +1728,13 @@ poll:
     - shared/HELP_AVAILABLE
     - shared/HELP_INDETERMINATE
     - shared/HELP_UNAVAILABLE
-    - poll/PUBLIC
-    - poll/FEATURES
-    - poll/README
-    - poll/INSTRUCTIONS
-    - poll/TUTORIALS
-    - poll/RECIPIENT_DETAILS
-    - poll/TEMPLATE_DETAILS
+    - survey/PUBLIC
+    - survey/FEATURES
+    - survey/README
+    - survey/INSTRUCTIONS
+    - survey/TUTORIALS
+    - survey/RECIPIENT_DETAILS
+    - survey/TEMPLATE_DETAILS
   scopes:
     google:
       - scope: email
@@ -1751,11 +1751,11 @@ poll:
         request: login
       - scope: https://www.googleapis.com/auth/spreadsheets.readonly
         name: View your Google Spreadsheets
-        reason: This app needs to load data from spreadsheets in order to analyse the Poll responses, but not to write to them.
+        reason: This app needs to load data from spreadsheets in order to analyse the survey responses, but not to write to them.
         request: lazy
       - scope: https://www.googleapis.com/auth/gmail.send
         name: Send Gmail messages only
-        reason: In order to send poll email messages, once you have created a new poll.
+        reason: In order to send survey email messages, once you have created a new survey.
         request: lazy
       - scope: https://www.googleapis.com/auth/drive.install
         name: Special scope used to let users approve installation of an app.
@@ -1763,25 +1763,25 @@ poll:
         request: lazy
   keys:
     google:
-        general: AIzaSyDCfNUuj_RTi-UhCvzcMCw0bfVmSNDu8RY
-        oauth: 1065915556520-65sqjdskoddvc360dsf5j566u7em11u3.apps.googleusercontent.com
+        general: AIzaSyAOjFi_-u-GUL1AgfLiDJxcupL1rE4Vdk0
+        oauth: 704582607588-dsej4vspkij0a17g4ceh7i9v1tqq0q76.apps.googleusercontent.com
   menus:
-    - name: Poll
+    - name: Survey
       groups:
         all:
           commands:
             - name: Create
-              desc: Create a new Poll
+              desc: Create a new Survey
               hash: create
               auth: google
             - name: Open
-              desc: Open an existing Poll
+              desc: Open an existing Survey
               hash: open
               auth: google
               imports:
                 - google
             - name: Send
-              desc: Send Email Poll from your Gmail Account
+              desc: Send Email Survey from your Gmail Account
               hash: send
               auth: google
               disabled_until:
@@ -1789,7 +1789,7 @@ poll:
                 - created-recipients
               scope: https://www.googleapis.com/auth/gmail.send
             - name: Close
-              desc: Close the current Poll
+              desc: Close the current Survey
               hash: close
               disabled_until:
                 - opened
@@ -1824,7 +1824,7 @@ poll:
         all:
           commands:
             - name: Load
-              desc: Load Poll Data to Analyse
+              desc: Load Survey Data to Analyse
               hash: load.sheet
               auth: google
               scope: https://www.googleapis.com/auth/spreadsheets.readonly
@@ -1841,7 +1841,7 @@ poll:
               hash: tutorials
               desc: Ways in which you can use this app
             - name: Guide
-              url: /guides/poll
+              url: /guides/survey
               desc: A guide to using this app
               divider: true
             - name: Install
@@ -1850,10 +1850,10 @@ poll:
               auth: google
               scope: https://www.googleapis.com/auth/drive.install
             - name: Permissions
-              url: /scopes/?highlight=poll
+              url: /scopes/?highlight=survey
               desc: Find out about the permissions and scopes that this app uses
             - name: Changes
-              url: /changes?highlight=poll
+              url: /changes?highlight=survey
               desc: Find out about the most recent changes and features of this app
               divider: true
             - name: About
@@ -1869,12 +1869,245 @@ poll:
                 - fetchjsonp
               auth: google
   buttons:
-      - name: Create a Poll
-        desc: Create a new Poll
+      - name: Create a Survey
+        desc: Create a new Survey
         hash: create
         auth: google
       - name: Open Existing
-        desc: Open an Existing Poll
+        desc: Open an Existing Survey
+        hash: open
+        auth: google
+        imports:
+          - google
+  published: false
+
+
+
+# d8888b. db    db d8888b. db      d888888b .d8888. db   db
+# 88  `8D 88    88 88  `8D 88        `88'   88'  YP 88   88
+# 88oodD' 88    88 88oooY' 88         88    `8bo.   88ooo88
+# 88~~~   88    88 88~~~b. 88         88      `Y8b. 88~~~88
+# 88      88b  d88 88   8D 88booo.   .88.   db   8D 88   88
+# 88      ~Y8888P' Y8888P' Y88888P Y888888P `8888Y' YP   YP
+###########################################################
+
+publish:
+  name: Publish
+  desc: Create and mail __simple survey questions__, collating responses in your own Google Sheet
+  link: /publish/
+  colour: 117b6a
+  logo: images/publish_logo.svg
+  learn: /guides/publish
+  imports:
+    - name: underscore
+      load: first
+    - name: jquery
+      load: first
+    - name: popper
+      load: first
+    - name: handlebars
+      load: last
+    - name: hello
+      load: last
+    - name: urlparser
+      load: last
+    - name: bootstrap-js
+      load: last
+    - name: loki
+      load: last
+    - name: localforage
+      load: last
+    - name: autosize
+      load: last
+    - name: moment
+      load: last
+    - name: waves-css
+      load: last
+    - name: waves-js
+      load: last
+    - name: google
+      load: lazy
+  helpers:
+    - network
+    - google
+    - css
+  modules:
+    - flags
+    - controller
+    - display
+    - help
+    - service
+    - main
+    - items
+    - recent
+    - router
+  scripts: 
+    - extends/regex
+    - extends/array
+  templates:
+    - options
+    - choose
+    - confirm
+    - alert
+    - loader
+    - recent
+    - help
+    - shared/control_icon
+    - shared/control_button
+    - emails/email_standard
+    - shared/split
+  docs:
+    - shared/FILTERS
+    - shared/JUMP
+    - shared/HELP
+    - shared/HELP_AVAILABLE
+    - shared/HELP_INDETERMINATE
+    - shared/HELP_UNAVAILABLE
+    - publish/PUBLIC
+    - publish/FEATURES
+    - publish/README
+    - publish/INSTRUCTIONS
+    - publish/TUTORIALS
+  scopes:
+    google:
+      - scope: email
+        name: View your email address
+        reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+        request: login
+      - scope: profile
+        name: View your basic profile info
+        reason: In order to display your name on the navigation menu, once you have signed in.
+        request: login
+      - scope: https://www.googleapis.com/auth/drive.file
+        name: View and manage Google Drive files and folders that you have opened or created with this app
+        reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.
+        request: login
+      - scope: https://www.googleapis.com/auth/spreadsheets.readonly
+        name: View your Google Spreadsheets
+        reason: This app needs to load data from spreadsheets in order to analyse the Poll responses, but not to write to them.
+        request: lazy
+      - scope: https://www.googleapis.com/auth/gmail.send
+        name: Send Gmail messages only
+        reason: In order to send poll email messages, once you have created a new poll.
+        request: lazy
+      - scope: https://www.googleapis.com/auth/drive.install
+        name: Special scope used to let users approve installation of an app.
+        reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
+        request: lazy
+  keys:
+    google:
+        general: AIzaSyAgVBaTI_-73Jw6jvFuPQJpXmz1rvb_JAs
+        oauth: 68211839161-18e036rj3aubkblkjudk3bbtsjkslvv1.apps.googleusercontent.com
+  menus:
+    - name: Publish
+      groups:
+        all:
+          commands:
+            - name: Create
+              desc: Create a new Survey
+              hash: create
+              auth: google
+            - name: Open
+              desc: Open an existing Survey
+              hash: open
+              auth: google
+              imports:
+                - google
+            - name: Send
+              desc: Send Email Survey from your Gmail Account
+              hash: send
+              auth: google
+              disabled_until:
+                - loaded-template
+                - created-recipients
+              scope: https://www.googleapis.com/auth/gmail.send
+            - name: Close
+              desc: Close the current Survey
+              hash: close
+              disabled_until:
+                - opened
+    - name: Recipients
+      groups:
+          all:
+            commands:
+              - name: Load from Sheet
+                desc: Load recipients from a Google Sheet
+                hash: load.recipients.sheet
+                auth: google
+                imports:
+                - google
+              - name: Enter Manually
+                desc: Enter Recipient List manually
+                hash: enter.recipients
+    - name: Template
+      groups:
+          all:
+            commands:
+              - name: Load Doc
+                desc: Load recipients from a Google Sheet
+                hash: load.template.doc
+                auth: google
+                imports:
+                - google
+              - name: Enter Manually
+                desc: Enter Recipient List manually
+                hash: enter.recipients
+    - name: Analyse
+      groups:
+        all:
+          commands:
+            - name: Load
+              desc: Load Survey Data to Analyse
+              hash: load.sheet
+              auth: google
+              scope: https://www.googleapis.com/auth/spreadsheets.readonly
+    - name: Settings
+    - name: About
+      short_name: Help
+      groups:
+        all:
+          commands:
+            - name: Instructions
+              hash: instructions
+              desc: More details about how to use this app
+            - name: Tutorials
+              hash: tutorials
+              desc: Ways in which you can use this app
+            - name: Guide
+              url: /guides/publish
+              desc: A guide to using this app
+              divider: true
+            - name: Install
+              desc: Install this app into your Google Drive
+              hash: install
+              auth: google
+              scope: https://www.googleapis.com/auth/drive.install
+            - name: Permissions
+              url: /scopes/?highlight=publish
+              desc: Find out about the permissions and scopes that this app uses
+            - name: Changes
+              url: /changes?highlight=publish
+              desc: Find out about the most recent changes and features of this app
+              divider: true
+            - name: About
+              url: /about
+              desc: Find out about our platform, technology and approach
+              divider: true
+            - name: Get Help
+              hash: help
+              desc: Get help or request a feature
+              class: font-weight-bold
+              imports:
+                - jshashes
+                - fetchjsonp
+              auth: google
+  buttons:
+      - name: Create a Survey
+        desc: Create a new Survey
+        hash: create
+        auth: google
+      - name: Open Existing
+        desc: Open an Existing Survey
         hash: open
         auth: google
         imports:
@@ -1889,11 +2122,11 @@ poll:
 # 88   88 88    88 8b      88`8b   88~~~~~    88    
 # 88  .8D `8b  d8' Y8b  d8 88 `88. 88.        88    
 # Y8888D'  `Y88P'   `Y88P' YP   YD Y88888P    YP    
-####################################################
+###################################################
 
 docket:
   name: Docket
-  desc: Organise your days with this __simple__, diary style, task list that stores your data in Google Sheets
+  desc: Organise your days with this __simple__, diary style, __task list__ that stores your data in __your own__ Google Sheet
   link: /docket/
   colour: 582c54
   logo: images/docket_logo.svg
@@ -1987,6 +2220,8 @@ docket:
     - docket/new
     - docket/archive
     - docket/list
+    - docket/tags
+    - docket/tag
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -2002,6 +2237,7 @@ docket:
     - docket/NEW_INSTRUCTIONS
     - docket/SEARCH_INSTRUCTIONS
     - docket/ARCHIVE_INSTRUCTIONS
+    - docket/TAG_INSTRUCTIONS
     - docket/FAILED_SAVE
     - docket/FAILED_UPDATE
   scopes:

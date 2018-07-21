@@ -12,31 +12,31 @@
         {{#if instructions}}{{{instructions}}}{{/if}}
 				<form class="needs-validation mt-3" novalidate>
 					<div class="row">
-						<div class="form-group col-lg-8">
+						<div class="form-group col-lg-8 px-4 px-md-3">
 							<label for="{{#if id}}{{id}}_{{/if}}details">Details</label>
 						  <button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}details" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
 							<textarea id="{{#if id}}{{id}}_{{/if}}details" data-output-field="Details" class="form-control resizable" tabindex="1" rows="1" data-action="extract" required></textarea>
 							<div class="invalid-feedback">Details, name or a description is required for this item</div>
 						</div>
-            <div class="form-group col-lg-4">
+            <div class="form-group col-lg-4 px-4 px-md-3">
               <label for="{{#if id}}{{id}}_{{/if}}date">Date</label>
               <input id="{{#if id}}{{id}}_{{/if}}date" data-output-field="From" type="text" data-output-type="date" class="dt-picker form-control" tabindex="5"{{#if date}} value="{{date}}"{{/if}}/>
               <small class="form-text text-muted"></small>
 						</div>
 					</div>
 					<div class="row">
-						<div class="form-group col-lg-4">
+						<div class="form-group col-lg-4 px-4 px-md-3">
 							<label for="{{#if id}}{{id}}_{{/if}}tags">Tags</label>
 							<button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}tags" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
 							<textarea id="{{#if id}}{{id}}_{{/if}}tags" data-output-field="Tags" class="form-control resizable" tabindex="2" rows="1"></textarea>
 							<small class="form-text text-muted">Tag/s related to this item. Lists can be delineated by <strong>any</strong> punctuation.</small>
 						</div>
-            <div class="form-group col-lg-4">
+            <div class="form-group col-lg-4 px-4 px-md-3">
               <label for="{{#if id}}{{id}}_{{/if}}time">Time</label>
               <input type="text" id="{{#if id}}{{id}}_{{/if}}time" data-source="{{#if id}}{{id}}_{{/if}}details" data-extract="time" class="form-control" tabindex="-1" readonly/>
               <small class="form-text text-muted">Automatically extracted from details</small>
 						</div>
-            <div class="form-group col-lg-4">
+            <div class="form-group col-lg-4 px-4 px-md-3">
               <label for="{{#if id}}{{id}}_{{/if}}due">Due</label>
               <input type="text" id="{{#if id}}{{id}}_{{/if}}due" data-source="{{#if id}}{{id}}_{{/if}}details" data-extract="date" class="form-control" tabindex="-1" readonly/>
               <small class="form-text text-muted">Automatically extracted from details</small>

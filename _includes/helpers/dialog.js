@@ -105,6 +105,17 @@ Dialog = (options, factory) => {
       });
 
     },
+    
+    keyboard: {
+      
+      enter: dialog => {
+        
+        /* <!-- Ctrl-Enter Pressed --> */
+        dialog.keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13 && e.shiftKey) ? e.preventDefault() || dialog.find(".modal-footer button.btn-primary").click() : null);
+        
+      },
+      
+    }
 
   };
   /* <!-- Internal Functions --> */

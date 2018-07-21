@@ -69,6 +69,8 @@ Docket
 	-> Dragging & Dropping <-- DONE
   -> Button Re-Ordering (maybe just for small screens?) <-- DONE
   -> Persist Changes back to Spreadsheet - efficient multi-cell updates with hash/update checking?
+* Faster Add on Mobile Dialogs - perhaps pinch action to confirm?
+* Date Bug on MacOS - Localised formats?
 
 Tiles
 -----
@@ -110,6 +112,7 @@ Folders
   + Update validate method on App callers to accept object, rather than value array
   + Update _return methods on App callers to accept object, rather than value array
 * Check Spreadsheet API Permission for logging! Is this covered by drive permission?
+* Colour Code Files/Folders?
 
 Reflect
 -------
@@ -130,10 +133,22 @@ Reflect
 * Email group from above.
 * Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS
 
+Publish
+-------
+
+Survey
+------
+
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 
 Complete
 --------
+* Add Tags to events
+	-> Added UI element <-- DONE
+  -> Check Button is there for SMALL UI <-- DONE
+  -> Action Handler and Dialog <-- DONE
+* Reload (r) doesn't reset the date to today (e.g. reloads to a previous point in the past!) <-- DONE
+* Regex Match for times has whitespace matched at the beginning. <-- DONE
 * Scroll it item edit <-- DONE
 * Magic All Day timed value <-- DONE
 * Small Screen View - Move editing item buttons to below <-- DONE

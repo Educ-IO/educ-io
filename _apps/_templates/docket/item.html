@@ -4,7 +4,7 @@
     {{#if _timed}}<span class="float-right text-muted text-small pr-1" title="{{TIME}}"><i class="material-icons md-1">schedule</i></span>{{/if}}
     {{#unless _complete}}{{#is _countdown "==" 0}}<span class="float-right text-muted text-small pr-1" title="Due TODAY"><i class="material-icons md-1">priority_high</i></span>{{/is}}{{/unless}}
     {{#unless _complete}}{{#is _countdown "lt" 0}}<span class="float-right text-muted text-small pr-1" title="Was Due By {{localeDate DUE}}"><i class="material-icons md-1">error</i></span>{{/is}}{{/unless}}
-    {{#if _complete}}<del class="text-muted text-faded">{{/if}}{{#if dates}}{{#if _action}}<a class="date" href="#{{_action}}" data-click="dismiss-modal">{{/if}}<span class="float-left font-weight-light text-muted mr-2">{{#if _date}}{{localeDate _date}}{{else}}{{localeDate FROM}}{{/if}}</span>{{#if _action}}</a>{{/if}}{{else}}{{#if BADGES}}{{#each BADGES}}<span class="float-left badge badge-pill badge-{{#is this "~=" "Info"}}secondary{{else}}primary{{/is}}{{#is this "~=" "High"}} badge-danger{{/is}}{{#is this "~=" "Medium"}} badge-warning{{/is}}{{#is this "~=" "Low"}} badge-success{{/is}}{{#is this "~=" "Review"}} badge-info{{/is}}{{#is this "~=" "Highlight"}} badge-bright{{/is}}{{#is this "~=" "Work"}} badge-dark{{/is}}{{#is this "~=" "Social"}} badge-rainbow{{/is}} mr-{{#if @last }}2{{else}}1{{/if}}" title=""><a role="button" aria-label="Search" href="#search.tags.{{ this }}" aria-label="Find all items with the same Tag">{{ this }}</a><a role="button" class="close pl-1" aria-label="Remove Tag" href="#remove.tag{{#exists ../$loki}}.{{ ../$loki }}{{/exists}}.{{ this }}"><span aria-hidden="true">×</span></a></span>{{/each}}{{/if}}{{/if}}{{#if DISPLAY}}{{{ DISPLAY }}}{{else}}{{ this }}{{/if}}{{#if _complete}}</del>{{/if}}
+    {{#if _complete}}<del class="text-muted text-faded">{{/if}}{{#if dates}}{{#if _action}}<a class="date" href="#{{_action}}" data-click="dismiss-modal">{{/if}}<span class="float-left font-weight-light text-muted mr-2">{{#if _date}}{{localeDate _date}}{{else}}{{localeDate FROM}}{{/if}}</span>{{#if _action}}</a>{{/if}}{{else}}{{#unless _complete}}<a class="d-none d-md-block float-left text-very-faded pr-1" role="button" aria-label="Edit Tags" href="#edit.tags{{#exists $loki}}.{{ $loki }}{{/exists}}"><i class="material-icons md-1">add_box</i></a>{{/unless}}{{#if BADGES}}{{#each BADGES}}<span class="float-left badge badge-pill badge-{{#is this "~=" "Info"}}secondary{{else}}primary{{/is}}{{#is this "~=" "High"}} badge-danger{{/is}}{{#is this "~=" "Medium"}} badge-warning{{/is}}{{#is this "~=" "Low"}} badge-success{{/is}}{{#is this "~=" "Review"}} badge-info{{/is}}{{#is this "~=" "Highlight"}} badge-bright{{/is}}{{#is this "~=" "Work"}} badge-dark{{/is}}{{#is this "~=" "Social"}} badge-rainbow{{/is}} mr-{{#if @last }}2{{else}}1{{/if}}" title=""><a role="button" href="#search.tags.{{ this }}" aria-label="Find all items with the same Tag">{{ this }}</a><a role="button" class="close pl-1" aria-label="Remove Tag" href="#remove.tag{{#exists ../$loki}}.{{ ../$loki }}{{/exists}}.{{ this }}"><span aria-hidden="true">×</span></a></span>{{/each}}{{/if}}{{/if}}{{#if DISPLAY}}{{{ DISPLAY }}}{{else}}{{ this }}{{/if}}{{#if _complete}}</del>{{/if}}
   </div>
   {{#if editable}}<div class="d-none editing form-group row mb-1">
   	<input type="hidden" class="d-none dt-picker" value="{{#if _action}}{{_action}}{{/if}}"/>
@@ -23,13 +23,14 @@
       </div>
       <div class="input-group d-flex d-md-none">
          <span class="input-group-prepend">
-          {{> control_button b_class="btn-light" b_title="Cancel" b_icon="cancel" b_action="cancel" }}
-          {{> control_button b_class="btn-danger" b_icon_type="light" b_aria_title="Delete this Item" b_icon="delete_forever" b_action="delete" }}
+          {{> control_button b_class="btn-light px-3" b_title="Cancel" b_icon="cancel" b_action="cancel" }}
+          {{> control_button b_class="btn-danger px-3" b_icon_type="light" b_aria_title="Delete this Item" b_icon="delete_forever" b_action="delete" }}
+          {{> control_button b_class="btn-info px-3" b_icon_type="light" b_aria_title="Edit Tags" b_icon="add_box" b_action="edit" }}
         </span>
         <span class="input-group-append">
-          {{> control_button b_class="btn-secondary" b_icon_type="light" b_aria_title="Save Changes" b_icon="save" b_action="update" }}
-          {{> control_button b_class="btn-dark" b_icon_type="light" b_aria_title="Change Date" b_icon="update" b_action="move" }}
-          {{#if _complete}}{{> control_button b_class="btn-warning" b_aria_title="Mark as In Progress" b_icon="edit" b_action="complete" }}{{else}}{{> control_button b_class="btn-success" b_icon_type="light" b_aria_title="Mark as Complete" b_icon="done" b_action="complete" }}{{/if}}
+          {{> control_button b_class="btn-secondary px-3" b_icon_type="light" b_aria_title="Save Changes" b_icon="save" b_action="update" }}
+          {{> control_button b_class="btn-dark px-3" b_icon_type="light" b_aria_title="Change Date" b_icon="update" b_action="move" }}
+          {{#if _complete}}{{> control_button b_class="btn-warning px-3" b_aria_title="Mark as In Progress" b_icon="edit" b_action="complete" }}{{else}}{{> control_button b_class="btn-success px-3" b_icon_type="light" b_aria_title="Mark as Complete" b_icon="done" b_action="complete" }}{{/if}}
         </span>
       </div>
     </div>

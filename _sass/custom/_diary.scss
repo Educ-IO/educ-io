@@ -50,9 +50,8 @@
     &.editable {cursor: pointer};
     padding-top: 0.1rem;
     &:not(:last-child) {border-bottom: 1px dashed $colour-emphasis};
-    .text-faded {
-      opacity: 0.5;
-    }
+    .text-faded {opacity: 0.5;}
+    .text-very-faded {opacity: 0.25;}
     .loader {margin: 0.1rem 0.2rem 0.2rem 0;}
     p {
       margin: 0.1rem 0 0.2rem 0;
@@ -72,7 +71,7 @@
       }
       margin-top: 0.15rem;
     }
-    span > i {margin-top: 0.2rem !important;}
+    span > i, a > i {margin-top: 0.2rem !important;}
   }
 }
 

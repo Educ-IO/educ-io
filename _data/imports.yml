@@ -82,18 +82,18 @@ localforage:
   desc: This makes handling offline storage in the browser easier.
   url: https://cdnjs.com/libraries/localforage
   project: https://github.com/mozilla/localForage
-  version: 1.7.1
-  last: 1.6.0
+  version: 1.7.2
+  last: 1.7.1
   license: Apache-2.0
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.1/localforage.min.js
-      integrity: sha256-eDmtS07BgLF67ARG+XTiimRis9PsnvusL0grvtopb+s=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.2/localforage.min.js
+      integrity: sha256-vxBB/kklMCqUCIdrghNX+n8Y5rQtVIWSqaiVBSUBI64=
       crossorigin: anonymous
       id: __localforage
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.1/localforage.js
-      integrity: sha256-Cdpe7WDkAZ/JyYMlMSanUnaFxRxvr8WXGA6U1GgPbTI=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.2/localforage.js
+      integrity: sha256-n7ke0RrcIQ12EfzhKxrkXocvvdzN5orGDQXdk0TM48E=
       crossorigin: anonymous
       id: __localforage
 

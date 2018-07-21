@@ -6,7 +6,8 @@ personal:
     - grades
     - reflect
     - tiles
-    - poll
+    - survey
+    - publish
     - docket
 drive:
   name: For Drive

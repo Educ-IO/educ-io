@@ -1,10 +1,10 @@
 ---
 layout: guide
-title: A Guide to Poll
-permalink: /guides/poll/
+title: A Guide to Publish
+permalink: /guides/publish/
 short_title: A Guide
 support: true
-app: poll
+app: publish
 ---
 
 #### Introduction

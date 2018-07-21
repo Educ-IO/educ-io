@@ -1,4 +1,8 @@
 site :
+  0.0.9z :
+    name : Docket 0.0.4k-beta
+    desc : Adding Tags to Items
+    type : minor
   0.0.9y :
     name : Docket 0.0.4j-beta
     desc : Ordering Improvements
@@ -693,11 +697,19 @@ merge :
   0.0.1-alpha :
     name : Early testing version
     type : minor
-poll :
+survey :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+publish :
   0.0.1-alpha :
     name : Early testing version
     type : minor
 docket :
+  0.0.4k-beta :
+    name : Adding Tags
+    desc : Ability to add Tags to existing items
+    type : minor
   0.0.4j-beta :
     name : Ordering Improvements
     desc : Improvements in Ordering and All Day Events

@@ -1,0 +1,6 @@
+{% raw %}
+<input type="hidden" data-output-field="Tags" value="{{#if tags}}{{tags}}{{/if}}" />
+<div class="row px-4 pb-3">
+  {{#each badges}}<span class="badge badge-pill badge-{{#is this "~=" "Info"}}secondary{{else}}primary{{/is}}{{#is this "~=" "High"}} badge-danger{{/is}}{{#is this "~=" "Medium"}} badge-warning{{/is}}{{#is this "~=" "Low"}} badge-success{{/is}}{{#is this "~=" "Review"}} badge-info{{/is}}{{#is this "~=" "Highlight"}} badge-bright{{/is}}{{#is this "~=" "Work"}} badge-dark{{/is}}{{#is this "~=" "Social"}} badge-rainbow{{/is}} mr-2">{{ this }}<a role="button" class="close pl-1" aria-label="Remove Tag" href="#"><span aria-hidden="true">×</span></a></span>{{/each}}	
+</div>
+{% endraw %}
