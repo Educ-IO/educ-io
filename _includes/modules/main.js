@@ -8,7 +8,7 @@ Main = function() {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _default;
+	var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "App"];
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -117,9 +117,7 @@ Main = function() {
 	var google_SignOut = () => {
 		hello.logout(ಠ_ಠ.SETUP.GOOGLE_AUTH).then(function(a) {
 			/* <!-- Module Cleans --> */
-			[ಠ_ಠ.Recent, ಠ_ಠ.App].forEach((m) => {
-				if (m.clean) m.clean();
-			});
+      _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m].clean) ? ಠ_ಠ[m].clean.call(ಠ_ಠ) : false);
 			google_Success("Signed out of Google")(a);
 		}, google_Failure("Signed out of Google"));
 	};
@@ -284,10 +282,7 @@ Main = function() {
 			ಠ_ಠ = container;
 
 			/* <!-- Initialise Objects --> */
-			if (ಠ_ಠ.Help) ಠ_ಠ.Help();
-			ಠ_ಠ.Recent();
-			if (ಠ_ಠ.Router) ಠ_ಠ.Router();
-			ಠ_ಠ.App();
+      _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m]) ? ಠ_ಠ[m].call(ಠ_ಠ) : false);
 
 			/* <!-- Set Container Reference to this --> */
 			ಠ_ಠ.Main = this;
@@ -341,9 +336,7 @@ Main = function() {
 				_default = (ಠ_ಠ.SETUP.SINGLE_PAGE || ಠ_ಠ.Flags.page()) ? "page" : "popup";
 
 				/* <!-- Module Starts --> */
-				[ಠ_ಠ.Display, ಠ_ಠ.Recent, ಠ_ಠ.App].forEach(m => {
-					if (m.start) m.start();
-				});
+        _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m].start) ? ಠ_ಠ[m].start.call(ಠ_ಠ) : false);
 
 				/* <!-- Append Content Holder --> */
 				if (!ಠ_ಠ.container) ಠ_ಠ.container = $("#content");

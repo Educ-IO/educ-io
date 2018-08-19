@@ -80,3 +80,8 @@ globals:
   Google_Sheets_Metadata: true
   Google_Sheets_Notation: true
   Dialog: true
+  Example: true
+  Saad: true
+  SaaD: true
+  Credentials: true
+  Events: true

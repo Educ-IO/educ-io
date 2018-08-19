@@ -95,7 +95,7 @@ localforage:
     - url: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.2/localforage.js
       integrity: sha256-n7ke0RrcIQ12EfzhKxrkXocvvdzN5orGDQXdk0TM48E=
       crossorigin: anonymous
-      id: __localforage
+      id: __localforage 
 
 hammer:
   name: Hammer
@@ -141,18 +141,18 @@ hello:
   desc: This is used to manage login / tokens for OAuth2 Services.
   url: https://cdnjs.com/libraries/hellojs
   project: https://github.com/MrSwitch/hello.js
-  version: 1.16.1
-  last: 1.15.1
+  version: 1.17.1
+  last: 1.16.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.16.1/hello.min.js
-      integrity: sha256-eHEIQ59V8JGwNQ6tFLY5l8PJ7pgWWUXEgcbYJrsJwug=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.17.1/hello.min.js
+      integrity: sha256-pKFV5C2DP6gWmmr+zWBVeI206oYqwRDGA3teFiDqh4c=
       crossorigin: anonymous
       id: __hello
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.16.1/hello.js
-      integrity: sha256-mIUh1E36CeyWJlPvqZt0/jkm8ZScpnXqZs496CMZZBw=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.17.1/hello.js
+      integrity: sha256-BfCGnvqIG9y8fX/lMr23kQs7VrnnCRZVmzagIi/yT1c=
       crossorigin: anonymous
       id: __hello
 
@@ -222,19 +222,19 @@ bootstrap-js:
   desc: This is a toolkit / framework for site design, layout and presentation.
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
-  version: 4.1.1
-  last: 4.1.0
+  version: 4.1.3
+  last: 4.1.2
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js
-      integrity: sha256-xaF9RpdtRxzwYMWg4ldJoyPWqyDPCRD0Cv7YEEe6Ie8=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js
+      integrity: sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=
       crossorigin: anonymous
       map: true
       id: __bootstrap-js
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.js
-      integrity: sha256-pIMaS2f8G+v5lrvwhxHoQEvBVaflgapC50mRtM/sWZM=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.js
+      integrity: sha256-82SVOjZ1qLdrq8VUmAisFapCSq1bpgavtXQaDGLPAAg=
       crossorigin: anonymous
       map: true
       id: __bootstrap-js
@@ -407,27 +407,27 @@ xlsx:
   desc: Import / Output to Legacy Spreadsheet Formats.
   url: https://cdnjs.com/libraries/xlsx
   project: https://github.com/SheetJS/js-xlsx
-  version: 0.13.0
-  last: 0.12.11
+  version: 0.13.2
+  last: 0.13.0
   license: Apache-2.0
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.0/xlsx.min.js
-      integrity: sha256-z1CYDyy0wf39Z4yEDM5hV4Bx05D1Ubk+SjJUHZk0TqE=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.2/xlsx.full.min.js
+      integrity: sha256-G6VnbTXZybs2R7oKHQjXOp157bPQIGJ9VUvBsx6mKw8=
       crossorigin: anonymous
       map: true
       overrides:
-        - replace: var sr=function(e){var r=[],t=10240;for(var a=0;a<e[0].length;++a)if(e[0][a])for(var n=0,i=e[0][a].length;n<i;n+=t)r.push.apply(r,e[0][a].slice(n,n+t));return r};
-          with: var sr=function(e){return [].concat.apply([], e[0])};
+        - replace: var or=function(e){var r=[],t=10240;for(var a=0;a<e[0].length;++a)if(e[0][a])for(var n=0,i=e[0][a].length;n<i;n+=t)r.push.apply(r,e[0][a].slice(n,n+t));return r};
+          with: var or=function(e){return [].concat.apply([], e[0])};
       id: __xlsx
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.0/xlsx.min.js
-      integrity: sha256-z1CYDyy0wf39Z4yEDM5hV4Bx05D1Ubk+SjJUHZk0TqE=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.2/xlsx.full.min.js
+      integrity: sha256-G6VnbTXZybs2R7oKHQjXOp157bPQIGJ9VUvBsx6mKw8=
       crossorigin: anonymous
       map: true
       overrides:
-        - replace: var sr=function(e){var r=[],t=10240;for(var a=0;a<e[0].length;++a)if(e[0][a])for(var n=0,i=e[0][a].length;n<i;n+=t)r.push.apply(r,e[0][a].slice(n,n+t));return r};
-          with: var sr=function(e){return [].concat.apply([], e[0])};
+        - replace: var or=function(e){var r=[],t=10240;for(var a=0;a<e[0].length;++a)if(e[0][a])for(var n=0,i=e[0][a].length;n<i;n+=t)r.push.apply(r,e[0][a].slice(n,n+t));return r};
+          with: var or=function(e){return [].concat.apply([], e[0])};
       id: __xlsx
 
 download:
@@ -1027,17 +1027,18 @@ dropzone:
   desc: An open source library that provides drag’n’drop file uploads with image previews
   url: https://cdnjs.com/libraries/dropzone
   project: http://www.dropzonejs.com
-  version: 5.4.0
+  version: 5.5.1
+  last: 5.4.0
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/min/dropzone.min.js
-      integrity: sha256-Rnxk6lia2GZLfke2EKwKWPjy0q2wCW66SN1gKCXquK4=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js
+      integrity: sha256-cs4thShDfjkqFGk5s2Lxj35sgSRr4MRcyccmi0WKqCM=
       crossorigin: anonymous
       id: __dropzone
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/dropzone.js
-      integrity: sha256-w75OOJSGJDHFCH5MXAIpXig0n6hhZoGUU/3Em3BuAT8=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/dropzone.js
+      integrity: sha256-awEOL+kdrMJU/HUksRrTVHc6GA25FvDEIJ4KaEsFfG4=
       crossorigin: anonymous
       id: __dropzone
       
@@ -1065,18 +1066,18 @@ three:
   desc: JavaScript 3D library
   url: https://cdnjs.com/libraries/three.js
   project: https://github.com/mrdoob/three.js
-  version: 93
-  last: 92
+  version: 94
+  last: 93
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/93/three.min.js
-      integrity: sha256-F/DPe+eDTcgfe/n2sWVU57X1V/JozaDAu7KR9zXSb3Y=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/94/three.min.js
+      integrity: sha256-NGC9JEuTWN4GhTj091wctgjzftr+8WNDmw0H8J5YPYE=
       crossorigin: anonymous
       id: __three
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/93/three.js
-      integrity: sha256-WQG9ZOTWzL8BHqeD8yqv8NaFMqbnKCE/YqwL/GvdHgc=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/94/three.js
+      integrity: sha256-o42RodyMQAEI+7T0sfQDLpf16fddRNPRfqDtlo7M1Eg=
       crossorigin: anonymous
       id: __three
 
@@ -1144,18 +1145,19 @@ maths:
   desc: An extensive math library for JavaScript and Node.js. It features a flexible expression parser and offers an integrated solution to work with numbers, big numbers, complex numbers, units, and matrices.
   url: https://cdnjs.com/libraries/mathjs
   project: http://mathjs.org/
-  version: 4.4.2
+  version: 5.0.3
+  last: 4.4.2
   license: Apache-2.0
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/4.4.2/math.min.js
-      integrity: sha256-EQV4YufMtvIwabqDMp7fTc4CKjbfB9NPYzYbabeNClI=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.0.3/math.min.js
+      integrity: sha256-sy2HI1EbY2kiSZpYnA7HAMXPzAZz8lRc7J/xh+4Nv0Q=
       crossorigin: anonymous
       map: true
       id: __maths
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/4.4.2/math.js
-      integrity: sha256-yzl+4bHqju17IGYs9aEEAfEZnPGZRm/VX8DSUksF0+8=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.0.3/math.js
+      integrity: sha256-VtZNwBMFyqKFVDx/3lYB4Y3y1k3S558dhoQOvp2Ee/M=
       crossorigin: anonymous
       id: __maths
       

@@ -4,9 +4,7 @@
 			<a class="app-logo" href="#instructions">{% include {{ include.logo }} %}</a>
 		</div>
 		<div class="col-md-6 order-md-1 text-center text-md-left pr-md-5 mt-md-2 mt-xl-4">
-			<p class="lead">
-				{{ app.desc | replace: '_', '' }}
-			</p>
+			<p class="lead">{{ app.desc | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</p>
 			{{ text | markdownify }}
 			<div class="d-flex flex-column flex-lg-row flex-wrap lead mb-3 mt-4">
         {% assign buttons = site.array %}{% for button in include.buttons %}{% if button.visibility %}{% if jekyll.environment == button.visiblity or button.visiblity == true %}{% assign buttons = buttons | push: button %}{% endif %}{% else %}{% assign buttons = buttons | push: button %}{% endif %}{% endfor %}

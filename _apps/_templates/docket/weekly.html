@@ -7,7 +7,7 @@
           {{#if action}}<a class="{{#if title_class}}{{title_class}} {{/if}}day col-12 col-md-9 col-lg-6" href="#{{action}}">{{/if}}<h4 class="{{#unless action}}{{#if title_class}}{{title_class}} {{/if}}col-12 col-md-9 col-lg-6 {{/unless}}mb-lg-0">{{ title }}</h4>{{#if action}}</a>{{/if}}
       		{{#if date}}<span class="font-weight-light text-muted col-12 col-lg-6 text-lg-right">{{localeDate date}}</span>{{/if}}
         </div>
-        <hr class="mt-2 mb-1" />
+        <hr class="mt-2 mt-xl-3 mb-0" />
         {{#if events}}{{#each events}}
 					{{!-- Call Partial Template --}}
 					{{> item editable=true}}

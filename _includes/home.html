@@ -1,4 +1,4 @@
-{% assign apps = site.array %}{% for app in site.data.apps %}{% if jekyll.environment == site.debug or app[1].published == true %}{% assign apps = apps | push: app[1] %}{% endif %}{% endfor %}<div class="container pt-1 pt-md-2 pt-xl-3">
+{% assign apps = site.array %}{% for app in site.data.apps %}{% unless app[1].hidden == true %}{% if jekyll.environment == site.debug or app[1].published == true %}{% assign apps = apps | push: app[1] %}{% endif %}{% endunless %}{% endfor %}<div class="container pt-1 pt-md-2 pt-xl-3">
 	
   <div id="page-1" class="d-flex flex-column container-fluid p-0 page nvh-100">
     

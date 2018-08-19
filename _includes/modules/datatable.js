@@ -242,6 +242,11 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		_advanced.scroll.toggle().toggled() ? ಠ_ಠ.Display.state().enter("virtual-scroll") : ಠ_ಠ.Display.state().exit("virtual-scroll");
 	};
 
+  var _updateFilter = (field, value, target) => {
+    value ? _filters.add(field, value) : _filters.remove(field);
+		_update(true, true, target);
+  };
+
 	var _showValues = () => {
 
 		/* <!-- Get Table to Display (Updating the Headers at the same time) --> */
@@ -268,10 +273,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 					var _action = _target.data("action");
 					var _field = _target.data("field");
 					var _value = _target.val();
-					if (_action == "filter") {
-						_value ? _filters.add(_field, _value) : _filters.remove(_field);
-						_update(true, true, target);
-					}
+					if (_action == "filter") _updateFilter(_field, _value, target);
 				}
 			}, FILTER_DELAY);
 		});
@@ -435,6 +437,8 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 			_update(true, true, target, true);
 		},
 
+    filter: (field, value) => _updateFilter(field, value),
+    
 		freeze: rows_only => {
 			if (_advanced) {
 				_advanced.freeze.init((options.frozen && !rows_only) ? options.frozen.cols : 0).toggle();

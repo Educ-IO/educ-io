@@ -28,6 +28,57 @@ Page = function() {
       return false;
     }
   };
+  var _existsCrypto = function() {
+    return window.crypto &&
+      window.crypto.getRandomValues &&
+      window.crypto.subtle &&
+      window.crypto.subtle.generateKey &&
+      window.crypto.subtle.importKey &&
+      window.crypto.subtle.exportKey &&
+      window.crypto.subtle.encrypt &&
+      window.crypto.subtle.decrypt;
+  };
+
+  var _testCrypto = function(algorithm, key_size) {
+    if (!_existsCrypto()) {
+      return false;
+    } else {
+      var USES = ["encrypt", "decrypt", "wrapKey", "unwrapKey"],
+        FORMAT = "jwk",
+        IV = window.crypto.getRandomValues(new Uint8Array(12)),
+        TEXT = "Educ.IO Cryptography Test";
+      return new Promise((resolve, reject) => {
+        window.crypto.subtle.generateKey({
+            name: algorithm,
+            length: key_size,
+          }, true, USES)
+          .then(key => {
+            key ? window.crypto.subtle.exportKey(FORMAT, key)
+              .then(data => {
+                data ? window.crypto.subtle.importKey(FORMAT, data, {
+                  name: algorithm
+                }, false, USES).then(key => {
+                  key ? window.crypto.subtle.encrypt({
+                      name: algorithm,
+                      iv: IV
+                    }, key, new TextEncoder().encode(TEXT))
+                    .then(encrypted => {
+                      encrypted ? window.crypto.subtle.decrypt({
+                        name: algorithm,
+                        iv: IV
+                      }, key, encrypted).then(decrypted => {
+                        resolve(new TextDecoder().decode(decrypted) == TEXT);
+                      }) : resolve(false);
+                    }) : resolve(false);
+                }) : resolve(false);
+              }) : resolve(false);
+          })
+          .catch(e => {
+            reject(e);
+          });
+      });
+    }
+  };
   /* <!-- Internal Functions --> */
 
   /* <!-- Internal Variables --> */
@@ -38,7 +89,7 @@ Page = function() {
       url: "https://caniuse.com/#feat=customevent",
       required: false,
       test: function() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           var name = "test-event",
             now = new Date(),
             event = new CustomEvent(name, {
@@ -227,6 +278,29 @@ Page = function() {
       },
     },
     {
+      name: "Encoder / Decoder",
+      desc: "Javascript String conversion to and from Byte Arrays",
+      url: "https://caniuse.com/#feat=textencoder",
+      required: true,
+      test: function() {
+        return (typeof TextEncoder !== "undefined" && typeof TextDecoder !== "undefined");
+      },
+      success: {
+        icon: "check",
+        class: "text-success",
+        message: ""
+      },
+      failure: {
+        icon: "priority_high",
+        class: "text-warning",
+        message: "Unfortunately, your browser doesn't currently support native Text Encoding / Decoding. This is only used for some cryptographically secure features, so most apps (apart from the Accounts App) will still work."
+      },
+      type: {
+        name: "feature",
+        class: "badge-dark"
+      },
+    },
+    {
       name: "Promises",
       desc: "Javascript Promises",
       url: "https://caniuse.com/#feat=promises",
@@ -368,7 +442,80 @@ Page = function() {
       },
       type: {
         name: "operation",
-        class: "badge-info"
+        class: "badge-primary"
+      },
+    },
+    {
+      name: "WebCrypto API Encryption - AES-GCM Algorithm",
+      desc: "Checks Browser-based Cryptography Encryption Algorithm",
+      required: false,
+      test: function() {
+        return _testCrypto("AES-GCM", 256);
+      },
+      success: {
+        icon: "check",
+        class: "text-success",
+        message: ""
+      },
+      failure: {
+        icon: "priority_high",
+        class: "text-warning",
+        message: "Unfortunately, your browser doesn't currently support native Browser Cryptography. This is only used for some secure features, so most apps (apart from the Accounts App) will still work."
+      },
+      type: {
+        name: "crypto",
+        class: "badge-success"
+      },
+    },
+    {
+      name: "WebCrypto API Encryption - PBKDF2 Key Derivation",
+      desc: "Checks Browser-based Cryptography Key Generation",
+      required: false,
+      test: function() {
+        if (!_existsCrypto()) {
+          return false;
+        } else {
+          return new Promise((resolve, reject) => {
+            var ALGORITHM = "PBKDF2",
+              HASH = "SHA-1",
+              MODE = "AES-CTR",
+              KEY_USAGE = ["deriveBits", "deriveKey"],
+              DERIVED_USAGE = ["encrypt", "decrypt"],
+              SALT = window.crypto.getRandomValues(new Uint8Array(16)),
+              PASSPHRASE = "Educ.IO Test Passphrase";
+            return window.crypto.subtle.importKey("raw", new TextEncoder().encode(PASSPHRASE), {
+                name: ALGORITHM
+              }, false, KEY_USAGE)
+              .then(key => key ? window.crypto.subtle.deriveKey({
+                name: ALGORITHM,
+                salt: SALT,
+                iterations: 1000,
+                hash: {
+                  name: HASH
+                },
+              }, key, {
+                name: MODE,
+                length: 256
+              }, true, DERIVED_USAGE) : resolve(false))
+              .then(key => key ? crypto.subtle.exportKey("raw", key) : resolve(false))
+              .then(data => data ? resolve(new TextDecoder().decode(data)) : resolve(false))
+              .catch(e => reject(e));
+          });
+        }
+      },
+      success: {
+        icon: "check",
+        class: "text-success",
+        message: ""
+      },
+      failure: {
+        icon: "priority_high",
+        class: "text-warning",
+        message: "Unfortunately, your browser doesn't currently support native Browser Cryptography. This is only used for some secure features, so most apps (apart from the Accounts App) will still work."
+      },
+      type: {
+        name: "crypto",
+        class: "badge-success"
       },
     },
   ];

@@ -1,4 +1,8 @@
 site :
+  0.0.10a :
+    name : Debug Tests
+    desc : Added Debug Testing Functionality
+    type : minor
   0.0.9z :
     name : Docket 0.0.4k-beta
     desc : Adding Tags to Items
@@ -689,6 +693,10 @@ cover :
   0.0.1-alpha :
     name : Early testing version
     type : minor
+events :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
 grades :
   0.0.1-alpha :
     name : Early testing version
@@ -702,6 +710,10 @@ survey :
     name : Early testing version
     type : minor
 publish :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+accounts :
   0.0.1-alpha :
     name : Early testing version
     type : minor

@@ -161,7 +161,7 @@ App = function() {
             _show.update(parent) : target.data("action") == "move" ?
             _show.move(parent) : target.data("action") == "complete" ?
             _show.complete(parent) : target.data("action") == "edit" ?
-            _edit.tags(parent) : Promise.reject());
+            _show.edit(parent) : Promise.reject());
         }
       });
 
@@ -421,6 +421,98 @@ App = function() {
             .then(_finish);
         }).catch(e => e);
     },
+    
+    edit: target => {
+
+      if (!target) return;
+      var _item = _show.get(target),
+        _tags = _item.TAGS,
+        _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
+        _template = "tag",
+        _id = "tag";
+
+      var _reconcile = target => {
+        var _new = $(ಠ_ಠ.Display.template.get({
+          template: "tags",
+          tags: _item.TAGS,
+          badges: _item.BADGES
+        }));
+        target.empty().append(_new);
+        return target;
+      };
+
+      var _handleRemove = target => target.find("span.badge a").on("click.remove", e => {
+        e.preventDefault();
+        var _target = $(e.currentTarget),
+          _tag = _target.parents("span.badge").text().replace("×", "");
+        if (_tag) {
+          _item.TAGS = (_item.BADGES = _.filter(_item.BADGES, badge => badge != _tag)).join(";");
+          _handleRemove(_reconcile(_target.parents("form")));
+        }
+      });
+
+      return ಠ_ಠ.Display.modal(_template, {
+          target: ಠ_ಠ.container,
+          id: _id,
+          title: "Edit Tags",
+          instructions: ಠ_ಠ.Display.doc.get("TAG_INSTRUCTIONS"),
+          validate: values => values ? ಠ_ಠ.Flags.log("Values for Validation", values) && true : false,
+          /* <!-- Do we need to validate? --> */
+          handlers: {
+            clear: _dialog.handlers.clear,
+          },
+          tags: _item.TAGS,
+          badges: _item.BADGES,
+          all: _tasks.badges(_show.db)
+        }, dialog => {
+
+          /* <!-- General Handlers --> */
+          ಠ_ಠ.Fields().on(dialog);
+
+          /* <!-- Handle CTRL Enter to Save --> */
+          _dialog.handlers.keyboard.enter(dialog);
+
+          /* <!-- Handle Click to Remove --> */
+          _handleRemove(dialog);
+
+          /* <!-- Handle Click to Add --> */
+          dialog.find("li button").on("click.add", e => {
+            e.preventDefault();
+            var _input = $(e.currentTarget).parents("li").find("span[data-type='tag'], input[data-type='tag']");
+            var _val = _input.val() || _input.text();
+            if (_input.is("input")) _input.val("") && _input.focus();
+            if (_val && (_item.BADGES ? _item.BADGES : _item.BADGES = []).indexOf(_val) < 0) {
+              _item.BADGES.push(_val);
+              _item.TAGS = _item.BADGES.join(";");
+              _handleRemove(_reconcile(dialog.find("form")));
+            }
+          });
+
+          /* <!-- Handle Enter on textbox to Add --> */
+          dialog.find("li input[data-type='tag']")
+            .keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? e.preventDefault() || $(e.currentTarget).siblings("button[data-action='add']").click() : null).focus();
+
+        }).then(values => {
+          if (values) {
+            /* <!-- Apply the Update --> */
+            var _finish = _show.busy(target, _item);
+            /* <!-- Process Item, Reconcile UI then Update Database --> */
+            return _tasks.items.process(_item).then(item => {
+                _show.db.update(item);
+                return item;
+              })
+              .then(item => _tasks.items.update(item))
+              .catch(_show.errors.update)
+              .then(_finish);
+          } else {
+            /* <!-- Cancel the Update --> */
+            _item.TAGS = _tags;
+            return _tasks.items.process(_item);
+          }
+        })
+        .catch(e => e ? ಠ_ಠ.Flags.error("Edit Tags Error", e) : ಠ_ಠ.Flags.log("Edit Tags Cancelled"));
+
+    },
     /* <!-- Action Methods --> */
 
     /* <!-- Diary Methods --> */
@@ -663,102 +755,6 @@ App = function() {
 
   };
 
-  var _edit = {
-
-    tags: target => {
-
-      if (!target) return;
-      var _item = _show.get(target),
-        _tags = _item.TAGS,
-        _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
-        _template = "tag",
-        _id = "tag";
-
-      var _reconcile = target => {
-        var _new = $(ಠ_ಠ.Display.template.get({
-          template: "tags",
-          tags: _item.TAGS,
-          badges: _item.BADGES
-        }));
-        target.empty().append(_new);
-        return target;
-      };
-
-      var _handleRemove = target => target.find("span.badge a").on("click.remove", e => {
-        e.preventDefault();
-        var _target = $(e.currentTarget),
-          _tag = _target.parents("span.badge").text().replace("×", "");
-        if (_tag) {
-          _item.TAGS = (_item.BADGES = _.filter(_item.BADGES, badge => badge != _tag)).join(";");
-          _handleRemove(_reconcile(_target.parents("form")));
-        }
-      });
-
-      return ಠ_ಠ.Display.modal(_template, {
-          target: ಠ_ಠ.container,
-          id: _id,
-          title: "Edit Tags",
-          instructions: ಠ_ಠ.Display.doc.get("TAG_INSTRUCTIONS"),
-          validate: values => values ? ಠ_ಠ.Flags.log("Values for Validation", values) && true : false,
-          /* <!-- Do we need to validate? --> */
-          handlers: {
-            clear: _dialog.handlers.clear,
-          },
-          tags: _item.TAGS,
-          badges: _item.BADGES,
-          all: _tasks.badges(_show.db)
-        }, dialog => {
-
-          /* <!-- General Handlers --> */
-          ಠ_ಠ.Fields().on(dialog);
-
-          /* <!-- Handle CTRL Enter to Save --> */
-          _dialog.handlers.keyboard.enter(dialog);
-
-          /* <!-- Handle Click to Remove --> */
-          _handleRemove(dialog);
-
-          /* <!-- Handle Click to Add --> */
-          dialog.find("li button").on("click.add", e => {
-            e.preventDefault();
-            var _input = $(e.currentTarget).parents("li").find("span[data-type='tag'], input[data-type='tag']");
-            var _val = _input.val() || _input.text();
-            if (_input.is("input")) _input.val("") && _input.focus();
-            if (_val && (_item.BADGES ? _item.BADGES : _item.BADGES = []).indexOf(_val) < 0) {
-              _item.BADGES.push(_val);
-              _item.TAGS = _item.BADGES.join(";");
-              _handleRemove(_reconcile(dialog.find("form")));
-            }
-          });
-
-          /* <!-- Handle Enter on textbox to Add --> */
-          dialog.find("li input[data-type='tag']")
-            .keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? e.preventDefault() || $(e.currentTarget).siblings("button[data-action='add']").click() : null).focus();
-
-        }).then(values => {
-          if (values) {
-            /* <!-- Apply the Update --> */
-            var _finish = _show.busy(target, _item);
-            /* <!-- Process Item, Reconcile UI then Update Database --> */
-            return _tasks.items.process(_item).then(item => {
-                _show.db.update(item);
-                return item;
-              })
-              .then(item => _tasks.items.update(item))
-              .catch(_show.errors.update)
-              .then(_finish);
-          } else {
-            /* <!-- Cancel the Update --> */
-            _item.TAGS = _tags;
-            return _tasks.items.process(_item);
-          }
-        })
-        .catch(e => e ? ಠ_ಠ.Flags.error("Edit Tags Error", e) : ಠ_ಠ.Flags.log("Edit Tags Cancelled"));
-
-    },
-
-  };
-
   var _find = {
 
     search: () => ಠ_ಠ.Display.text({
@@ -957,6 +953,7 @@ App = function() {
         recent: false,
         simple: true,
         start: () => {
+          
           var _busy = ಠ_ಠ.Display.busy({
             target: ಠ_ಠ.container,
             status: "Loading Config",
@@ -968,11 +965,10 @@ App = function() {
               _busy({
                 message: "Loaded Config"
               }) && _start(config, _busy).then(result => result ? _busy() : ಠ_ಠ.Router.start(STATE_CONFIG)));
+          
         },
         test: () => ಠ_ಠ.Display.state().in(STATE_OPENED),
-        clear: () => {
-          if (_tasks) _tasks.close();
-        },
+        clear: () => _tasks ? _tasks.close() : false,
         route: (handled, command) => {
 
           if (handled) return;
@@ -1053,7 +1049,7 @@ App = function() {
 
           } else if ((/EDIT/i).test(command) && command.length > 2 && (/TAGS/i).test(command[1])) {
 
-            _edit.tags($(`#item_${command[2]}`));
+            _show.edit($(`#item_${command[2]}`));
 
           } else if ((/CALENDAR/i).test(command)) {
 
@@ -1124,6 +1120,8 @@ App = function() {
 
       /* <!-- Setup Moment --> */
       moment().format();
+      var locale = window.navigator.userLanguage || window.navigator.language;
+      if (locale) moment.locale(locale);
       _show.today = moment().startOf("day").toDate();
 
       /* <!-- Setup Showdown --> */

@@ -69,8 +69,9 @@ Docket
 	-> Dragging & Dropping <-- DONE
   -> Button Re-Ordering (maybe just for small screens?) <-- DONE
   -> Persist Changes back to Spreadsheet - efficient multi-cell updates with hash/update checking?
-* Faster Add on Mobile Dialogs - perhaps pinch action to confirm?
-* Date Bug on MacOS - Localised formats?
+* Faster Add on Mobile Dialogs - perhaps pinch action to confirm, or buttons at the top too?
+* Date Bug on MacOS - Localised formats? (Could be related to https://bugs.chromium.org/p/chromium/issues/detail?id=171813) ... Need to verify on SauceLabs / Mac
+* Ghost / Zombie Tasks
 
 Tiles
 -----

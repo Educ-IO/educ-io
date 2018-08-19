@@ -54,7 +54,18 @@ collections:
     output: true
   extensions:
     output: true
-    
+  tests:
+    output: false
+
+# Collection Defaults
+defaults:
+  - scope:
+      path: ""
+      type: tests
+    values:
+      sitemap:
+        exclude: true
+  
 # Custom Variables
 launched:							"2015"
 debug:                "debug"
@@ -71,6 +82,7 @@ analytics:
 app:
   content:            content
   namespace:          educ
+  tests:              _tests
   unsubscribe:        https://www.paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=TVU44HN7F5YE8
   check:
     url:              https://script.google.com/macros/s/AKfycbxSo9ufMpvyNVI9nkNDCOVI8E3xSbU7OHlfMhNIx8lJZ6zSY0Jo/exec

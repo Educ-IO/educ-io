@@ -1,18 +1,23 @@
 personal:
   name: For You
   apps:
+    - docket
+    - accounts
     - view
     - merge
     - grades
-    - reflect
-    - tiles
-    - survey
     - publish
-    - docket
+    - events
 drive:
   name: For Drive
   apps:
     - folders
+team:
+  name: Your Team
+  apps:
+    - reflect
+    - tiles
+    - survey
 school:
   name: Whole School
   apps:

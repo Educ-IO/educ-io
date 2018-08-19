@@ -64,107 +64,103 @@ App = function() {
 		});
 	};
 
-	var _openFolder = (folder, log, teamDrive, state, complete) => {
+	var _openFolder = (folder, log, teamDrive, state, resolve, reject) => {
+      
+    folder.url = "#google,load." + (folder.team ? "team." : "") + folder.id + (teamDrive ? "." + teamDrive : "");
 
+    if (!_folder || !_path) {
 
-		folder.url = "#google,load." + (folder.team ? "team." : "") + folder.id + (teamDrive ? "." + teamDrive : "");
+      /* <!-- Root Folder --> */
+      _path = [folder];
 
-		if (!_folder || !_path) {
+    } else if (folder.parents && folder.parents.indexOf(_folder.id()) >= 0) {
 
-			/* <!-- Root Folder --> */
-			_path = [folder];
+      /* <!-- Child of the current Folder --> */
+      _path.push(folder);
 
-		} else if (folder.parents && folder.parents.indexOf(_folder.id()) >= 0) {
+    } else {
 
-			/* <!-- Child of the current Folder --> */
-			_path.push(folder);
+      /* <!-- Check if it's in the paths already --> */
+      var _existing = _.findIndex(_path, p => p.id === folder.id) + 1;
+      if (_existing > 0) {
 
-		} else {
+        /* <!-- Existing in Current Path, so splice back to it --> */
+        _path.splice(_existing, _path.length - _existing);
 
-			/* <!-- Check if it's in the paths already --> */
-			var _existing = _.findIndex(_path, p => p.id === folder.id) + 1;
-			if (_existing > 0) {
+      } else {
 
-				/* <!-- Existing in Current Path, so splice back to it --> */
-				_path.splice(_existing, _path.length - _existing);
+        /* <!-- Start a new Path --> */
+        _path = [folder];
 
-			} else {
+      }
 
-				/* <!-- Start a new Path --> */
-				_path = [folder];
+    }
 
-			}
+    _showPath(_path, ಠ_ಠ.container);
+    _folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state, _folder ? _folder.tally.get() : null, resolve, reject);
+    if (log) ಠ_ಠ.Recent.add(folder.id, folder.name, folder.url).then(() => _resize());
+    ಠ_ಠ.Display.state().enter(STATE_OPENED);
 
-		}
+  };
 
-		_showPath(_path, ಠ_ಠ.container);
-		_folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state, _folder ? _folder.tally.get() : null, complete);
-		if (log) ಠ_ಠ.Recent.add(folder.id, folder.name, folder.url).then(() => _resize());
-		ಠ_ಠ.Display.state().enter(STATE_OPENED);
-		
-	};
+	var _load = (loader, rootTeamDrive, log, teamDrive, state, tags) => new Promise((resolve, reject) => {
+      
+    var _finish = ಠ_ಠ.Display.busy({
+      target: ಠ_ಠ.container,
+      fn: true
+    });
 
-	var _load = (loader, rootTeamDrive, log, teamDrive, state, tags) => {
+    loader.then(file => {
 
-		var _finish = ಠ_ಠ.Display.busy({
-			target: ಠ_ಠ.container,
-			fn: true
-		});
+      _finish();
 
-		loader.then(file => {
+      ಠ_ಠ.Flags.log(`Loaded: ${JSON.stringify(file)}`);
 
-			_finish();
+      if (ಠ_ಠ.Google.files.in(TYPE)(file)) {
 
-			ಠ_ಠ.Flags.log(`Loaded: ${JSON.stringify(file)}`);
+        /* <!-- This is a folders file to load and read/action --> */
+        ಠ_ಠ.Google.download(file.id).then(loaded => {
+          ಠ_ಠ.Google.reader().promiseAsText(loaded).then(parsed => {
+            ಠ_ಠ.Flags.log(`Loaded Folders File [${file.mimeType}]: ${parsed}`);
+            parsed = JSON.parse(parsed);
+            if (parsed && parsed.folder) {
+              _load(Promise.resolve(parsed.folder), !!parsed.folder.team, false, parsed.folder.team, parsed.state)
+                .then(result => resolve(result))
+                .catch(e => reject(e));
+            } else {
+              reject();
+            }
 
-			if (ಠ_ಠ.Google.files.in(TYPE)(file)) {
+          }).catch(e => reject(e));
+        }).catch(e => reject(e));
 
-				/* <!-- This is a folders file to load and read/action --> */
-				ಠ_ಠ.Google.download(file.id).then(loaded => {
-					return ಠ_ಠ.Google.reader().promiseAsText(loaded).then(parsed => {
-						ಠ_ಠ.Flags.log(`Loaded Folders File [${file.mimeType}]: ${parsed}`);
-						parsed = JSON.parse(parsed);
-						if (parsed && parsed.folder)
-							_load(Promise.resolve(parsed.folder), !!parsed.folder.team, false, parsed.folder.team, parsed.state);
-					});
-				});
+      } else if (file.kind == "drive#teamDrive" || ಠ_ಠ.Google.folders.check(true)(file)) {
 
-			} else if (file.kind == "drive#teamDrive" || ಠ_ಠ.Google.folders.check(true)(file)) {
+        /* <!-- This is a folder to display --> */
+        file.team = rootTeamDrive;
+        _openFolder(file, log, teamDrive, state, resolve, reject);
 
-				/* <!-- This is a folder to display --> */
-				file.team = rootTeamDrive;
-				_openFolder(file, log, teamDrive, state);
+      } else {
 
-			} else {
+        /* <!-- This is a file, so open the parent and process any extra instructions via a complete method --> */
+        if (file.parents && file.parents.length > 0) return ಠ_ಠ.Google.files.get(file.parents[0], teamDrive).then(folder => {
+          _openFolder(folder, log, teamDrive, state, response => {
+            if (tags && _.isArray(tags)) _folder.tag(file.id, tags[0], tags.length > 1 ? tags[1] : "");
+            resolve(response);
+          }, reject);
+        });
 
-				/* <!-- This is a file, so open the parent and process any extra instructions via a complete method --> */
-				if (file.parents && file.parents.length > 0) ಠ_ಠ.Google.files.get(file.parents[0], teamDrive).then(folder => {
-					_openFolder(folder, log, teamDrive, state, () => {
-						if (tags && _.isArray(tags)) _folder.tag(file.id, tags[0], tags.length > 1 ? tags[1] : "");
-						return true;
-					});
-				});
+      }
 
-			}
+    }).catch(e => {
+      _finish();
+      ಠ_ಠ.Flags.error("File / Folder Load Failure", e ? e : "No Inner Error");
+    });
+  });
 
-		}).catch(e => {
-			_finish();
-			ಠ_ಠ.Flags.error("File / Folder Load Failure", e ? e : "No Inner Error");
-		});
+	var _loadFolder = (id, log, teamDrive, tags) => id ? _load(ಠ_ಠ.Google.files.get(id, teamDrive), false, log, teamDrive, null, tags) : Promise.reject();
 
-	};
-
-	var _loadFolder = (id, log, teamDrive, tags) => {
-
-		if (id) _load(ಠ_ಠ.Google.files.get(id, teamDrive), false, log, teamDrive, null, tags);
-
-	};
-
-	var _loadTeamDrive = (id, log) => {
-
-		if (id) _load(ಠ_ಠ.Google.teamDrives.get(id), true, log);
-
-	};
+	var _loadTeamDrive = (id, log) => id ? _load(ಠ_ಠ.Google.teamDrives.get(id), true, log) : Promise.reject();
 
 	var _openTeamDrive = () => {
 
@@ -239,12 +235,18 @@ App = function() {
 						}
 
 					} else if ((/LOAD/i).test(command)) {
-
-						(/TEAM/i).test(command[1]) ?
+            
+            var _load = (/TEAM/i).test(command[1]) ?
 							_loadTeamDrive(command[2], true) :
 							_loadFolder(command[1], true,
-								(/TAG/i).test(command[2]) ? null : command[2],
+								(/TAG/i).test(command[2]) ? null : (/FILTER/i).test(command[2]) ? null : command[2],
 								(/TAG/i).test(command[2]) ? command.slice(3) : (/TAG/i).test(command[3]) ? command.slice(4) : null);
+            
+            _load.then(() => {
+              var _filter = (/FILTER/i).test(command[2]) ? command[3] : (/FILTER/i).test(command[3]) ? command[4] : false;
+              ಠ_ಠ.Flags.log(`Folder Fully Loaded${_filter ? ` - Now Filtering for ${_filter}` : ""}`);
+              if (_filter) _folder.filter(_filter);
+            });
 
 					} else if ((/CLOSE/i).test(command)) {
 

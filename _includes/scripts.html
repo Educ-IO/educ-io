@@ -5,7 +5,7 @@
   </script>
 {% endfor %}{% endif %}
 {% if page.app and page.app != "" %}
-  <script type="text/javascript" charset="utf-8" data-type="app" data-src="{{ page.app }}">
+  <script type="text/javascript" charset="utf-8" data-type="app" data-src="{{ page.app }}"> 
     {{ site.app.namespace }}.{% include apps/{{ page.app }}.js %}
   </script>
 {% endif %}

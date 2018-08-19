@@ -35,6 +35,7 @@ Tasks = ಠ_ಠ => {
           group: "Meta",
           title: "Type",
           index: true,
+          hash: true,
         }
       },
       column_from: {
@@ -53,6 +54,7 @@ Tasks = ಠ_ಠ => {
           title: "Order",
           width: 80,
           index: true,
+          hash: true,
         }
       },
       column_status: {
@@ -62,6 +64,7 @@ Tasks = ಠ_ಠ => {
           title: "Status",
           width: 80,
           index: true,
+          hash: true,
         }
       },
       column_done: {
@@ -81,6 +84,7 @@ Tasks = ಠ_ಠ => {
           title: "Tags",
           width: 200,
           type: "markdown",
+          hash: true,
         }
       },
       column_details: {
@@ -90,6 +94,7 @@ Tasks = ಠ_ಠ => {
           title: "Details",
           width: 500,
           type: "markdown",
+          hash: true,
         }
       },
       row_headers: {

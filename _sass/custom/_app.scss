@@ -118,7 +118,7 @@ html, body {
 	background-color: $colour-bright-background;
 	&:hover {
 		border-color: darken($colour-bright-background, 10%);
-		background-color: darken($colour-bright-background, 10%) !important;;
+		background-color: darken($colour-bright-background, 10%) !important;
 	}
 	&:focus {
 		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-bright-foreground, 20%), 0.5);

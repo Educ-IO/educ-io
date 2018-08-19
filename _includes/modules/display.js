@@ -215,7 +215,12 @@ Display = function() {
             "typeof": (a, b) => typeof a == b,
             "and": (a, b) => a && b,
             "or": (a, b) => a || b,
-            "is": (a, b) => (a % 2 === 0 ? b.toLowerCase() == "even" : b.toLowerCase() == "odd")
+            "is": (a, b) => (a % 2 === 0 ? b.toLowerCase() == "even" : b.toLowerCase() == "odd"),
+            "in": (a, b) => {
+              var _b, _a = String(a);
+              try {_b = JSON.parse(b);} catch (e) {b = {};}
+              return _b[_a];
+            },
           };
 
           if (!operators[operator]) throw new Error(`IS doesn't understand the operator ${operator}`);
@@ -223,6 +228,12 @@ Display = function() {
 
         });
 
+        Handlebars.registerHelper("choose", (a, b, _default) => {
+          var _b, _a = String(a);
+          try {_b = JSON.parse(b);} catch (e) {_b = {};}
+          return _b[_a] ? _b[_a] : _default ? _default : "";
+        });
+        
         Handlebars.registerHelper("concat", (...args) => _.reduce(args, (m, a) => _.isObject(a) ? m : (m + a), ""));
 
         Handlebars.registerHelper("replace", (value, replace, replacement) => value ? value.replace(new RegExp(replace, "g"), replacement) : "");

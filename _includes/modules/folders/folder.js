@@ -1084,6 +1084,8 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 		}
 
 	};
+  
+  var _getTable = () => _search ? _tables[_search] : _tables[folder.id];
 	/* <!-- Internal Functions --> */
 
 	/* <!-- Item Processing --> */
@@ -1914,6 +1916,8 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
 		delete: id => _items.process(_items.delete, id),
 
+    filter: id => _getTable().filter("id", id),
+    
 		tally: {
 
 			get: () => _tallyCache,
@@ -1928,7 +1932,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 			tag: tag
 		}),
 
-		table: () => _search ? _tables[_search] : _tables[folder.id],
+		table: () => _getTable(),
 
 		star: id => _items.process(_items.star, id),
 

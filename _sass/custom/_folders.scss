@@ -1,6 +1,11 @@
+// -- General -- //
+a[role='button'] > i, a[role='button'] > span {padding-top: 0.15rem !important;}
+// -- General -- //
+
 // -- Folder Cells -- //
 td.folder {background-color: beige;}
 tr.bg-active, tr.bg-active td {background-color: $colour-active !important;}
+td > a.close {padding-top: 0.1em;}
 td a.action {
 	&.action-on {
 		color: lighten($colour-general, 30%) !important;

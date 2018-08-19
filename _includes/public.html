@@ -1,20 +1,18 @@
 <div class="container">
 	<div class="row row align-items-start align-items-lg-center">
 		<div class="d-none d-md-block col-12 mx-auto col-md-6 order-md-2 px-2 py-2">
-			<a class="app-logo" href="#instructions">{% include {{ include.logo }} %}</a>
+      {% unless include.simple %}<a class="app-logo" href="#instructions">{% else %}<div class="app-logo">{% endunless %}{% include {{ include.logo }} %}{% unless include.simple %}</a>{% else %}</div>{% endunless %}
 		</div>
 		<div class="col-md-6 order-md-1 text-center text-md-left pr-md-5 mt-md-2 mt-xl-4">
-			<p class="lead">
-				{{ app.desc | replace: '_', '' }}
-			</p>
+			<p class="lead">{{ app.desc | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</p>
 			{% raw %}{{content}}{% endraw %}
 			<div class="d-flex flex-column flex-md-row lead mb-3 mt-2">
 				<a id="get_Started" href="{{ include.start }}" class="btn btn-lg btn-action mr-md-3 mt-2"><div class="loading float-left"><div class="spinner"></div></div>Get started</a>
 				<a href="/support/" class="btn btn-lg btn-outline-success mt-2">Support</a>
 			</div>
-			<p class="text-muted mb-0">{% assign _app = app.name | downcase %}
+			{% unless include.simple %}<p class="text-muted mb-0">{% assign _app = app.name | downcase %}
 				{% if site.data.versions[_app] %}Current app version is <a href="{{site.baseurl}}changes/?highlight={{ app.name | downcase }}">{% assign _app = app.name | downcase %}{{ site.data.versions[_app].first[0] }}</a>. {% endif %}To find out more about the <strong>permissions</strong> this app requires, and how they are used, have a look at its <a href="{{site.baseurl}}scopes/?highlight={{ app.name | downcase }}">scopes</a>.
-			</p>
+			</p>{% endunless %}
 		</div>
 	</div>
 </div>

@@ -1,0 +1,3 @@
+This isn't really an app, so if you have found your way here by accident, __don't worry__! All our apps are accessible from the __menu above__.
+
+This page is here to allow complex _development tests_, to ensure our code does __exactly__ what we want it to. They are run before any new app versions are deployed, ensuring we can check everything is functioning properly before release. In occasional circumstances, we might ask you to visit this page and run a few tests to help troubleshoot a particular or vexing issue, but that should be __pretty rare__!

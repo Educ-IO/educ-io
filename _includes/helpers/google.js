@@ -580,9 +580,37 @@ Google_API = (options, factory) => {
 
     },
 
+    calendar: {
+      
+      get: id => _call(NETWORKS.general.get, `calendar/v3/calendars/${id}`, {
+        fields: "id,summary,description,timeZone",
+      }),
+      
+      list: id => _list(
+        `calendar/v3/calendars/${id}/events`, "items", [], {
+          orderBy: "start.dateTime, end.dateTime",
+          fields: "kind,nextPageToken,items(id,summary,description,start,end,extendedProperties)",
+        }),
+      
+      event: (id, event) => _call(NETWORKS.general.get, `calendar/v3/calendars/${id}/events/${event}`, {
+        fields: "id,summary,description,start,end,extendedProperties",
+      }),
+      
+    },
+    
+    calendars: {
+      
+      list: () => _list(
+        "calendar/v3/users/me/calendarList", "items", [], {
+          orderBy: "summary",
+          fields: "kind,nextPageToken,items(id,summary,summaryOverride,description,accessRole)",
+        }),
+      
+    },
+    
     teamDrives: {
 
-      get: id => _call(NETWORKS.general.get, "drive/v3/teamdrives/" + id, {
+      get: id => _call(NETWORKS.general.get, `drive/v3/teamdrives/${id}`, {
         fields: "kind,id,name,colorRgb,capabilities",
       }),
 

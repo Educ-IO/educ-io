@@ -1,0 +1,1 @@
+Unfortunately, you have __no__ [calendars](https://support.google.com/calendar/?hl=en#topic=3417969){:target="_blank" rel="noopener"} available to open!

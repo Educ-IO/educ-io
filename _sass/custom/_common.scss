@@ -43,18 +43,23 @@ a.navbar-brand.logo, .navbar-brand a.logo {
 
 // -- Outline App Logo -- //
 .dropdown-item svg, .app-logo svg, .jumbotron h1 svg, svg.logo {
-	path {
-		&.o {
-			stroke-width: 2;
-		}
-		&.p {
-			stroke-width: 3;
-		}
+	path, use {
+    &.c, &.f {stroke-width: 1;}
+    &.c {fill-opacity: 0;}
+    &.f {fill-opacity: 0.3;}
+    &.d {
+      fill-opacity: 0.05;
+      stroke-dasharray: 8;
+    }
+    &.f, &.d {fill: lighten($colour-highlight, 10%);}
+		&.o, &.d {stroke-width: 2;}
+		&.p {stroke-width: 3;}
 		&.o, &.p {
-			stroke: darken($colour-highlight, 10%);
 			stroke-linejoin: round;
 			stroke-linecap: round;
 		}
+    &.o, &.p, &.d {stroke: darken($colour-highlight, 10%);}
+   	&.c {stroke: lighten($colour-highlight, 40%);} 
 	}
 }
 
@@ -71,17 +76,18 @@ svg.logo {
 	max-width: 2em;
 }
 
-.app-logo {
-	svg {
-		max-width: 100%;
-		height: auto;
-		pointer-events: visible;
-		&:hover {
-			path {
-				&.o, &.p {stroke: darken($colour-highlight, 20%);}
-			}
-		}
-	}
+.app-logo svg {
+  max-width: 100%;
+  height: auto;
+}
+
+a.app-logo svg {
+  pointer-events: visible;
+  &:hover {
+    path {
+      &.o, &.p {stroke: darken($colour-highlight, 20%);}
+    }
+  }
 }
 // -- Outline Letter Logo -- //
 
