@@ -1,4 +1,8 @@
 site :
+  0.0.10b :
+    name : Events 0.0.1a-alpha
+    desc : Event Loading Functionality
+    type : minor
   0.0.10a :
     name : Debug Tests
     desc : Added Debug Testing Functionality
