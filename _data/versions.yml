@@ -694,6 +694,9 @@ cover :
     name : Early testing version
     type : minor
 events :
+  0.0.1a-alpha :
+    name : Event Loading
+    type : minor
   0.0.1-alpha :
     name : Early testing version
     type : minor

@@ -95,6 +95,8 @@ Google_API = (options, factory) => {
       PROGRESS: "google-search-progress",
     },
   };
+  
+  const STRIP_NULLS = data => _.omit(data, _.isNull);
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -586,11 +588,14 @@ Google_API = (options, factory) => {
         fields: "id,summary,description,timeZone",
       }),
       
-      list: id => _list(
-        `calendar/v3/calendars/${id}/events`, "items", [], {
-          orderBy: "start.dateTime, end.dateTime",
-          fields: "kind,nextPageToken,items(id,summary,description,start,end,extendedProperties)",
-        }),
+      list: (id, start, end) => _list(
+        `calendar/v3/calendars/${id}/events`, "items", [], STRIP_NULLS({
+          orderBy: "startTime",
+          singleEvents: true,
+          timeMin: start ? start.toISOString() : null,
+          timeMax : end ? end.toISOString() : null, 
+          fields: "kind,nextPageToken,items(id,summary,description,start,end,extendedProperties,organizer,attendees,attachments)",
+        })),
       
       event: (id, event) => _call(NETWORKS.general.get, `calendar/v3/calendars/${id}/events/${event}`, {
         fields: "id,summary,description,start,end,extendedProperties",

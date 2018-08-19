@@ -17,16 +17,21 @@ App = function() {
   /* <!-- Internal Functions --> */
   var _loadEvent = (id, event) => ಠ_ಠ.Google.calendar.event(id, event);
 
+  var _loadEvents = id => ಠ_ಠ.Google.calendar.list(id);
+
   var _loadCalendar = id => ಠ_ಠ.Google.calendar.get(id);
 
-  var _openCalendars = () => {
+  var _displayEvents = events => {
+    ಠ_ಠ.Flags.log("Events:", events);
+  };
 
+  var _openCalendars = () => new Promise((resolve, reject) => {
     var _busy = ಠ_ಠ.Display.busy({
       target: ಠ_ಠ.container,
       fn: true
     });
 
-    return ಠ_ಠ.Google.calendars.list().then(calendars => {
+    ಠ_ಠ.Google.calendars.list().then(calendars => {
 
       _busy();
 
@@ -41,13 +46,13 @@ App = function() {
         instructions: !calendars || calendars.length === 0 ? ಠ_ಠ.Display.doc.get("NO_CALENDARS") : ""
       }).then(option => {
 
-        return option ? _loadCalendar(option.id) : Promise.resolve(false);
+        return option ? _loadCalendar(option.id).then(resolve) : Promise.resolve(false);
 
-      }).catch(e => e ? ಠ_ಠ.Flags.error("Calendar Select:", e) : ಠ_ಠ.Flags.log("Team Drive Select Cancelled"));
+      }).catch(e => e ? ಠ_ಠ.Flags.error("Calendar Select:", e) : ಠ_ಠ.Flags.log("Team Drive Select Cancelled") && reject(e));
 
-    }).catch(e => ಠ_ಠ.Flags.error("Calendars Load Failure", e ? e : "No Inner Error"));
+    }).catch(e => ಠ_ಠ.Flags.error("Calendars Load Failure", e ? e : "No Inner Error") && reject(e));
 
-  };
+  });
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -74,7 +79,20 @@ App = function() {
           if ((/OPEN/i).test(command)) {
 
             ((/CALENDAR/i).test(command[1])) ?
-            _openCalendars().then(calendar => ಠ_ಠ.Flags.log("Calendar:", calendar)): false;
+            _openCalendars()
+              .then(calendar => {
+                _finish = ಠ_ಠ.Display.busy({
+                  target: ಠ_ಠ.container,
+                  status: "Loading Calendar",
+                  fn: true
+                });
+                ಠ_ಠ.Flags.log("Loaded Calendar:", calendar);
+                return calendar.id;
+              })
+              .then(_loadEvents)
+              .then(_displayEvents)
+              .catch(e => ಠ_ಠ.Flags.error("Calendar Loading Error:", e))
+              .then(() => _finish()): false;
 
           } else if ((/CALENDAR/i).test(command)) {
 
@@ -91,7 +109,8 @@ App = function() {
 
               _loadEvent(_calendar, _event)
                 .then(event => ಠ_ಠ.Flags.log("Event:", event))
-                .then(_finish);
+                .catch(e => ಠ_ಠ.Flags.error("Event Loading Error:", e))
+                .then(() => _finish());
 
             } else if ((/CALENDAR/i).test(command[1]) && _calendar) {
 
@@ -102,12 +121,16 @@ App = function() {
               });
 
               _loadCalendar(_calendar)
-                .then(calendar => ಠ_ಠ.Flags.log("Calendar:", calendar))
-                .then(_finish);
+                .then(calendar => {
+                  ಠ_ಠ.Flags.log("Loaded Calendar:", calendar);
+                  return calendar.id;
+                })
+                .then(_loadEvents)
+                .then(_displayEvents)
+                .catch(e => ಠ_ಠ.Flags.error("Calendar Loading Error:", e))
+                .then(() => _finish());
 
             }
-
-
 
           }
         },
