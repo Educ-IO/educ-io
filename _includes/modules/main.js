@@ -209,7 +209,7 @@ Main = function() {
 			/* <!-- Get User Info for Display --> */
 			ಠ_ಠ.Google.me().then(user => {
 
-				user.display_name = (u => () => u.name.length == 3 ? u.name.split(" ").join("") : u.name)(user);
+				user.display_name = (u => () => ಠ_ಠ.Display.username(u.name))(user);
 
 				user.full_name = (u => () => `${u.display_name()} (${u.email})`)(user);
 					

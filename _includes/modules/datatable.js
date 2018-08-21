@@ -14,6 +14,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		inverted_Filters : {},
 		sorts : {},
 		classes : [],
+    wrapper_Classes : [],
 		visibilities : {
 			visible: {
 				name: "Visible",
@@ -222,19 +223,21 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		instructions: ಠ_ಠ.Display.doc.get("FILTERS")
 	});
 
-	var _createDisplayTable = () => ಠ_ಠ.Display.template.get("table")({
+	var _createDisplayTable = () => ಠ_ಠ.Display.template.get("table")(_.defaults(
+    options.table ? options.table : {}, {
 		id: _name,
 		links: !options.readonly,
 		classes: options.classes.concat(options.widths && options.widths.lengths > 0 ? ["table-fixed-width"] : []),
 		headers: table.headers,
 		widths: options.widths,
 		rows: _createRows(_getRows()),
-	});
+	}));
 
-	var _createDisplayDataset = (filters, table) => $(ಠ_ಠ.Display.template.get("datatable")({
+	var _createDisplayDataset = (filters, table) => $(ಠ_ಠ.Display.template.get("datatable")(_.defaults(
+    options.wrapper ? options.wrapper : {}, {
 		filters: options.readonly ? "" : filters ? filters : _createDisplayFilters(),
 		table: table ? table : _createDisplayTable()
-	}));
+	})));
 	
 	var _virtualScroll = () => {
 		_advanced = _advanced ? _advanced : ಠ_ಠ.Table({table: target.find("table"), outside: target}, ಠ_ಠ);

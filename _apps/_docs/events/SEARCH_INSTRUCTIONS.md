@@ -1,0 +1,1 @@
+Search for calendar events, using a __free text query__. All fields (__except tags__) will be checked.

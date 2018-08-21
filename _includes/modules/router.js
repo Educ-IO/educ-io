@@ -157,7 +157,7 @@ Router = function() {
     
     clean: restart => _end() && (!restart || _start()),
     
-    start: state => _start(true, state),
+    run: state => _start(true, state),
    /* <!-- External Functions --> */
     
 	};

@@ -124,6 +124,8 @@ Display = function() {
   };
 
   var _breakpoint = size => $(`div.bs-breakpoints span.${size}`).css("display") == "block";
+  
+  var _username = name => name && name.length == 3 ? name.split(" ").join("") : name;
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -153,6 +155,8 @@ Display = function() {
 
       if (window.Handlebars) {
 
+        Handlebars.registerHelper("username", variable => _username(variable));
+        
         Handlebars.registerHelper("isDate", function(variable, options) {
           if (variable && variable instanceof Date) {
             return options.fn(this);
@@ -262,6 +266,8 @@ Display = function() {
 
     },
 
+    username: _username,
+    
     popovers: (targets, options) => _popovers(targets, options),
 
     tooltips: (targets, options) => _tooltips(targets, options),
@@ -921,6 +927,14 @@ Display = function() {
         return false;
       };
 
+      var _enter = names => {
+        names = _arrayize(names, _.isString);
+        _.each(names, name => {
+          if (_add(name)) _toggle(name, true);
+        });
+        return _parent;
+      };
+      
       var _remove = name => {
         if (_state[name]) {
           delete _state[name];
@@ -936,24 +950,26 @@ Display = function() {
         }
         return _ret;
       };
+      
+      var _exit = names => {
+        names = _arrayize(names, _.isString);
+        _.each(names, name => {
+          if (_remove(name)) _toggle(name, false) && _all().forEach(v => $(".state-" + v).removeClass("disabled"));
+        });
+        return _parent;
+      };
 
       return {
 
-        all: () => _all(),
+        all: _all,
 
-        enter: names => {
-          names = _arrayize(names, _.isString);
-          _.each(names, name => {
-            if (_add(name)) _toggle(name, true);
-          });
-          return _parent;
-        },
+        enter: _enter,
 
-        exit: names => {
-          names = _arrayize(names, _.isString);
-          _.each(names, name => {
-            if (_remove(name)) _toggle(name, false) && _all().forEach(v => $(".state-" + v).removeClass("disabled"));
-          });
+        exit: _exit,
+        
+        swap: (exit, enter) => {
+          if (exit) _exit(exit);
+          if (enter) _enter(enter);
           return _parent;
         },
 

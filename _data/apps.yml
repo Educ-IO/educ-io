@@ -635,6 +635,7 @@ folders:
     secondary:
       - custom/variables
       - custom/tabs
+      - custom/tags
       - custom/folders
   imports:
     - name: underscore
@@ -1210,12 +1211,23 @@ events:
   colour: 1D6CE2
   logo: images/events_logo.svg
   learn: /guides/events
+  css:
+    primary:
+    secondary:
+      - material/menu
+      - material/general
+      - custom/mixins/transitions
+      - custom/variables
+      - custom/tags
+      - custom/events
   imports:
     - name: underscore
       load: first
     - name: jquery
       load: first
     - name: popper
+      load: first
+    - name: moment
       load: first
     - name: handlebars
       load: last
@@ -1231,18 +1243,26 @@ events:
       load: last
     - name: autosize
       load: last
-    - name: moment
+    - name: mousetrap
+      load: last
+    - name: hammer
       load: last
     - name: waves-css
       load: last
     - name: waves-js
+      load: last
+    - name: bootstrap-material-datepicker-js
       load: last
     - name: google
       load: lazy
   helpers:
     - network
     - google
+    - table
     - css
+    - fields
+    - filters
+    - dialog
   modules:
     - flags
     - controller
@@ -1253,6 +1273,7 @@ events:
     - items
     - recent
     - router
+    - datatable
   scripts: 
     - extends/regex
     - extends/array
@@ -1264,8 +1285,19 @@ events:
     - loader
     - recent
     - help
+    - text
     - shared/control_icon
     - shared/control_button
+    - shared/filters
+    - shared/datatable
+    - shared/table
+    - shared/control_icon
+    - shared/control_button
+    - shared/populate_buttons
+    - events/header
+    - events/rows
+    - events/tag
+    - events/custom_properties
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -1278,6 +1310,8 @@ events:
     - events/README
     - events/INSTRUCTIONS
     - events/TUTORIALS
+    - events/TAG_INSTRUCTIONS
+    - events/SEARCH_INSTRUCTIONS
   scopes:
     google:
       - scope: email
@@ -1297,14 +1331,48 @@ events:
         general: AIzaSyCjAdVf9euxOuyO89tzAY7NDtD_mjmHOEI
         oauth: 875988173253-44ge8q6egcddepnpkgjd560ksg2k9lct.apps.googleusercontent.com
   menus:
-    - name: Open
+    - name: Calendars
       groups:
         all:
           commands:
-            - name: Open Calendar
+            - name: Open
               desc: Open an Existing Calendar
               hash: open.calendar
               auth: google
+            - name: Close
+              desc: Close currently opened Calendar
+              hash: close.calendar
+              disabled_until:
+                - opened
+              auth: google
+    - name: Go
+      groups:
+        all:
+          commands:
+            - name: Forward
+              desc: Go forward a month
+              shortcut: "&gt;"
+              hash: forward
+              disabled_until:
+                - opened
+            - name: Backward
+              desc: Go backward a month
+              shortcut: "&lt;"
+              hash: backward
+              disabled_until:
+                - opened
+            - name: This Month
+              desc: Jump to this month
+              shortcut: "t"
+              hash: today
+              disabled_until:
+                - opened
+            - name: Jump To
+              desc: Jump to arbitrary date
+              shortcut: "j"
+              hash: jump
+              disabled_until:
+                - opened
     - name: Settings
     - name: About
       short_name: Help

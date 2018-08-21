@@ -47,10 +47,10 @@ App = function() {
           });
 
           _config.get()
-            .then(config => !config ? ಠ_ಠ.Router.start(STATE_READY) :
+            .then(config => !config ? ಠ_ಠ.Router.run(STATE_READY) :
               _busy({
                 message: "Loaded Config"
-              }) && _start(config, _busy).then(result => result ? _busy() : ಠ_ಠ.Router.start("")));
+              }) && _start(config, _busy).then(result => result ? _busy() : ಠ_ಠ.Router.run("")));
         },
         test: () => ಠ_ಠ.Display.state().in(STATE_OPENED),
         clear: () => {

@@ -731,7 +731,6 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
         name: name,
         data: _data,
         headers: headers,
-        classes: ["table-responsive"]
       }, {
         advanced: false,
         collapsed: true

@@ -961,10 +961,10 @@ App = function() {
           });
 
           _config.get()
-            .then(config => !config ? ಠ_ಠ.Router.start(STATE_READY) :
+            .then(config => !config ? ಠ_ಠ.Router.run(STATE_READY) :
               _busy({
                 message: "Loaded Config"
-              }) && _start(config, _busy).then(result => result ? _busy() : ಠ_ಠ.Router.start(STATE_CONFIG)));
+              }) && _start(config, _busy).then(result => result ? _busy() : ಠ_ಠ.Router.run(STATE_CONFIG)));
           
         },
         test: () => ಠ_ಠ.Display.state().in(STATE_OPENED),
@@ -1017,7 +1017,7 @@ App = function() {
                   action: "Clear"
                 })
                 .then(confirm => confirm ? ಠ_ಠ.Display.busy() && _config.clear() : false)
-                .then(cleared => cleared ? ಠ_ಠ.Display.state().exit([STATE_CONFIG, STATE_OPENED]) && ಠ_ಠ.Router.start(STATE_READY) : false)
+                .then(cleared => cleared ? ಠ_ಠ.Display.state().exit([STATE_CONFIG, STATE_OPENED]) && ಠ_ಠ.Router.run(STATE_READY) : false)
                 .catch(e => e ? ಠ_ಠ.Flags.error("Clear Config Error", e) : ಠ_ಠ.Flags.log("Clear Config Cancelled"));
 
             } else if (command.length > 1 && (/SHOW/i).test(command[1])) {

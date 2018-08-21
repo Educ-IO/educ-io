@@ -95,8 +95,8 @@ Google_API = (options, factory) => {
       PROGRESS: "google-search-progress",
     },
   };
-  
-  const STRIP_NULLS = data => _.omit(data, _.isNull);
+
+  const STRIP_NULLS = data => _.chain(data).omit(_.isUndefined).omit(_.isNull).value();
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -583,36 +583,51 @@ Google_API = (options, factory) => {
     },
 
     calendar: {
-      
+
       get: id => _call(NETWORKS.general.get, `calendar/v3/calendars/${id}`, {
         fields: "id,summary,description,timeZone",
       }),
-      
+
       list: (id, start, end) => _list(
         `calendar/v3/calendars/${id}/events`, "items", [], STRIP_NULLS({
           orderBy: "startTime",
           singleEvents: true,
           timeMin: start ? start.toISOString() : null,
-          timeMax : end ? end.toISOString() : null, 
-          fields: "kind,nextPageToken,items(id,summary,description,start,end,extendedProperties,organizer,attendees,attachments)",
+          timeMax: end ? end.toISOString() : null,
+          fields: "kind,nextPageToken,items(id,summary,description,start,end,extendedProperties,organizer,attendees,attachments,recurringEventId,source,status,htmlLink,location)",
         })),
-      
-      event: (id, event) => _call(NETWORKS.general.get, `calendar/v3/calendars/${id}/events/${event}`, {
-        fields: "id,summary,description,start,end,extendedProperties",
-      }),
-      
+
+      search: (id, property, query) => _list(
+        `calendar/v3/calendars/${id}/events`, "items", [], STRIP_NULLS({
+          orderBy: "startTime",
+          singleEvents: true,
+          sharedExtendedProperty: property,
+          q: query,
+          fields: "kind,nextPageToken,items(id,summary,description,start,end,extendedProperties,organizer,attendees,attachments,recurringEventId,source,status,htmlLink,location)",
+        })),
+
+      events: {
+
+        get: (id, event) => _call(NETWORKS.general.get, `calendar/v3/calendars/${id}/events/${event}`, {
+          fields: "id,summary,description,start,end,extendedProperties,organizer,attendees,attachments,recurringEventId,source,status,htmlLink,location",
+        }),
+
+        update: (id, event, data) => _call(NETWORKS.general.patch, `calendar/v3/calendars/${id}/events/${event}`, data, "application/json"),
+
+      },
+
     },
-    
+
     calendars: {
-      
+
       list: () => _list(
         "calendar/v3/users/me/calendarList", "items", [], {
           orderBy: "summary",
           fields: "kind,nextPageToken,items(id,summary,summaryOverride,description,accessRole)",
         }),
-      
+
     },
-    
+
     teamDrives: {
 
       get: id => _call(NETWORKS.general.get, `drive/v3/teamdrives/${id}`, {
