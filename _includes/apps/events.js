@@ -99,7 +99,7 @@ App = function() {
       url: v.htmlLink
     });
 
-  var _loadEvent = (id, event) => ಠ_ಠ.Google.calendar.event(id, event);
+  var _loadEvent = (id, event) => ಠ_ಠ.Google.calendar.events.get(id, event);
 
   var _tagEvent = (id, event) => new Promise((resolve, reject) => {
 

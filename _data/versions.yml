@@ -1,4 +1,8 @@
 site :
+  0.0.10d :
+    name : Events 0.0.2a-alpha
+    desc : Basic Events App for Tag Editing
+    type : minor
   0.0.10c :
     name : Events 0.0.2-alpha
     desc : Basic Events App for Tag Editing
@@ -702,6 +706,9 @@ cover :
     name : Early testing version
     type : minor
 events :
+  0.0.2a-alpha :
+    name : Basic Functionality
+    type : minor
   0.0.2-alpha :
     name : Basic Functionality
     type : minor

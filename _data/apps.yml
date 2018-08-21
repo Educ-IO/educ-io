@@ -1206,7 +1206,7 @@ cover:
 
 events:
   name: Events
-  desc: 
+  desc: __Tag__ and __filter__ your Google Calendar Events
   link: /events/
   colour: 1D6CE2
   logo: images/events_logo.svg
