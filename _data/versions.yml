@@ -1,5 +1,5 @@
 site :
-  0.0.10e :
+  0.0.10f :
     name : Events 0.0.2a-alpha
     desc : Public App Visibility
     type : minor

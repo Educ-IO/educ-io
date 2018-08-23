@@ -1,13 +1,13 @@
 personal:
   name: For You
   apps:
-    - docket
     - accounts
+    - docket
+    - events
     - view
     - merge
-    - grades
     - publish
-    - events
+    - grades
 drive:
   name: For Drive
   apps:
