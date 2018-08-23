@@ -2,6 +2,7 @@ TODO LIST
 =========
 General
 -------
+* ** IMPORTANT ** Loading Spinner for 'Get Help' - can be slow sometimes!
 * ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
 
@@ -17,6 +18,8 @@ General
 * Increase timeout on scope increase login? Or check promise completion....as a delay can mean modals are not fired???
 
 * Material Design menu display animations
+
+
 
 Datatable
 ---------

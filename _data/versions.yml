@@ -1,4 +1,8 @@
 site :
+  0.0.10e :
+    name : Events 0.0.2a-alpha
+    desc : Public App Visibility
+    type : minor
   0.0.10d :
     name : Events 0.0.2a-alpha
     desc : Basic Events App for Tag Editing

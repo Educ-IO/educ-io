@@ -28,4 +28,4 @@ You can navigate forwards *&gt;*{:.kb-shortcut} and backwards *&gt;*{:.kb-shortc
 
 ##### Editing Tags
 
-Tags can be removed by clicking the remove cross on the right of each tag, and new tags can be added by clicking on the __Tag__ button.
+Tags can be removed by clicking the remove cross on the right of each tag, and new tags can be added by clicking on the __Tag__ button. Tags can be displayed directly in Google Calendar if you install our [Tag-a-Doc](/extensions/tag-a-doc/){:target="_blank"} extension for Chrome.

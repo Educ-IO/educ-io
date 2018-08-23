@@ -1389,11 +1389,6 @@ events:
               url: /guides/events
               desc: A guide to using this app
               divider: true
-            - name: Install
-              desc: Install this app into your Google Drive
-              hash: install
-              auth: google
-              scope: https://www.googleapis.com/auth/drive.install
             - name: Permissions
               url: /scopes/?highlight=events
               desc: Find out about the permissions and scopes that this app uses
@@ -1418,7 +1413,7 @@ events:
     desc: Open an Existing Calendar
     hash: open.calendar
     auth: google
-  published: false
+  published: true
 
 
 
@@ -3271,6 +3266,10 @@ tagadoc:
   colour: cc0
   action: Find out more
   versions:
+    1.0.9 :
+      name : Updated Route URLs for Events
+      desc : Route URLs match new version of Events App
+      type : minor
     1.0.8 :
       name : Added Edit Link
       desc : Edit link visible on Documents and Calendar Events
