@@ -2,9 +2,13 @@ TODO LIST
 =========
 General
 -------
+* ** IMPORTANT ** Failed 'Recent' App load (e.g. newly deleted folder) --> Remove from Recent List
+
 * ** IMPORTANT ** Loading Spinner for 'Get Help' - can be slow sometimes!
 * ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
+
+* Is Waves working properly???
 
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo -- Via Javascript?
@@ -147,6 +151,7 @@ Survey
 
 Complete
 --------
+* ** IMPORTANT ** Google Logo on Login button - looks like it has inherited some CSS for top padding... <-- DONE
 * Add Tags to events
 	-> Added UI element <-- DONE
   -> Check Button is there for SMALL UI <-- DONE

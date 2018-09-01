@@ -4,6 +4,7 @@ title: Shiny! Shiny!
 permalink: /extensions/shiny
 colour: 000080
 lead: Distraction-free, full-screen text editing for Chromebooks. Ideal for controlled assessments and exams.
+excerpt_separator: ~~~~~~~~~~~
 ---
 {% capture lead %}
 

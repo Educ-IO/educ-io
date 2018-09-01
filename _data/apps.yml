@@ -718,6 +718,7 @@ folders:
     - folders/custom_properties
     - folders/permissions
     - folders/audit
+    - folders/rename
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -733,6 +734,7 @@ folders:
     - folders/CONVERT_INSTRUCTIONS
     - folders/TAG_INSTRUCTIONS
     - folders/CLONE_INSTRUCTIONS
+    - folders/RENAME_INSTRUCTIONS
     - folders/AUDIT_EXPLANATION
     - folders/NO_TEAM_DRIVES
     - folders/TUTORIALS
@@ -840,6 +842,13 @@ folders:
               hash: delete
               disabled_until:
                 - searched
+            - name: Rename
+              desc: Rename folders and files in the current folder or search results
+              hash: rename
+              disabled_until:
+                - opened
+              imports:
+                - google
             - name: Close
               desc: Close the current search results
               hash: close.results

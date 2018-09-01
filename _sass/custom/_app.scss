@@ -15,12 +15,14 @@ html, body {
 	padding: 10px 12px 10px 10px;
 	background: $colour-background;
 	float: left;
+  .google-logo {
+		width: 18px;
+		height: 18px;
+    svg {vertical-align: initial;}
+	}
 }
 
-.google-logo {
-	width: 18px;
-	height: 18px;
-}
+
 // -- Google Button -- //
 
 // -- Checking -- //

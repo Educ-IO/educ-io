@@ -1,4 +1,8 @@
 site :
+  0.0.10g :
+    name : Folders 0.0.7b-beta
+    desc : Bulk Renaming Feature
+    type : minor
   0.0.10f :
     name : Events 0.0.2a-alpha
     desc : Public App Visibility
@@ -553,6 +557,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.7b-beta :
+    name : Bulk Renaming
+    desc : Renaming Files/Folders in Bulk
+    type : minor
   0.0.7a-beta :
     name : Bug Fix
     desc : Bug for searching files in multiple simultaneous folders fixed

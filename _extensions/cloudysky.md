@@ -4,6 +4,7 @@ title: Cloudy Sky
 permalink: /extensions/cloudy-sky
 colour: 4a86e8
 lead: A simple and powerful Chrome Extension, extending your BlueSky report options simply and easily.
+excerpt_separator: ~~~~~~~~~~~
 ---
 {% capture lead %}
 

@@ -1864,6 +1864,64 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
     },
 
+    rename: (id, collection, table, items) => {
+
+      var _decode = values => ({
+        names: _.find(values, v => v.name == "names") ? _.find(values, v => v.name == "names").value.split(/\r?\n/) : null,
+      });
+
+      var _id = "rename_results",
+        _names = _.map(items, item => item.name).join("\r\n").trim(),
+        _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
+        _valid = values => values && values.names && values.names.length == items.length,
+        _rename = ಠ_ಠ.Display.modal("rename", {
+          id: _id,
+          target: ಠ_ಠ.container,
+          title: `Rename <strong class="text-secondary">${ಠ_ಠ.Display.commarise(items.length)}</strong> Item${items.length > 1 ? "s" : ""}`,
+          instructions: ಠ_ಠ.Display.doc.get("RENAME_INSTRUCTIONS"),
+          validate: values => _valid(_decode(values)),
+          state: {
+            names: _names
+          },
+          actions: [],
+          handlers: {
+            clear: _dialog.handlers.clear,
+          }
+        }, dialog => {
+          autosize(dialog.find("textarea.resizable"));
+        });
+
+      _rename.then(values => {
+
+        values = _decode(values);
+
+        if (_valid(values)) {
+
+          var _name = "__NEW_NAME",
+              _candidates = [];
+          _.each(values.names, (name, index) => {
+            if (items[index].name != name) {
+              collection.by("id", items[index].id)[_name] = name;
+              _candidates.push(items[index]);
+            }
+          });
+
+          _processItems("Renaming", item => new Promise(resolve => {
+            
+            ಠ_ಠ.Google.update(item.id, {name: item[_name]}, _team).then(updated => {
+              item.name = updated.name;
+              delete item[_name];
+              resolve(item);
+            });
+
+          }), true, _candidates, collection, table, id);
+
+        }
+
+      }).catch(e => e ? ಠ_ಠ.Flags.error("Renaming Error", e) : ಠ_ಠ.Flags.log("Renaming Cancelled"));
+
+    },
+
     test: (id, collection, table, items, parameters) => {
 
       var _count = 0;
@@ -1919,6 +1977,8 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
     close: id => _closeSearch(id),
 
     delete: id => _items.process(_items.delete, id),
+
+    rename: id => _items.process(_items.rename, id),
 
     filter: id => _getTable().filter("id", id),
 

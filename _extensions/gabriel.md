@@ -3,6 +3,7 @@ layout: extension
 title: Gabriel
 permalink: /extensions/gabriel
 colour: 333333
+excerpt_separator: ~~~~~~~~~~~
 ---
 {% capture lead %}
 

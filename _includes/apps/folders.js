@@ -311,6 +311,10 @@ App = function() {
 
 						if (_folder) _folder.audit(((/AUDIT/i).test(command[0])) ? command[1] : null);
 
+          } else if ((/RENAME/i).test(command)) {
+
+						if (_folder) _folder.rename(((/RENAME/i).test(command[0])) ? command[1] : null);
+            
 					} else if ((/DELETE/i).test(command)) {
 
 						if (_folder) _folder.delete(((/DELETE/i).test(command[0])) ? command[1] : null);
