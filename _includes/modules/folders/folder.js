@@ -1886,9 +1886,12 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
           actions: [],
           handlers: {
             clear: _dialog.handlers.clear,
+            replace: _dialog.handlers.replace,
           }
         }, dialog => {
-          autosize(dialog.find("textarea.resizable"));
+          autosize(
+            dialog.find("textarea.resizable")
+          );
         });
 
       _rename.then(values => {

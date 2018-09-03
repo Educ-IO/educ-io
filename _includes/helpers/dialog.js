@@ -105,17 +105,33 @@ Dialog = (options, factory) => {
       });
 
     },
-    
+
     keyboard: {
-      
+
       enter: dialog => {
-        
+
         /* <!-- Ctrl-Enter Pressed --> */
         dialog.keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13 && e.shiftKey) ? e.preventDefault() || dialog.find(".modal-footer button.btn-primary").click() : null);
-        
+
       },
-      
-    }
+
+    },
+
+    replace: (target, dialog) => {
+      var _regex = target.data("regex"),
+        _replace = target.data("replace"),
+        _target = target.data("target");
+      if (_regex && _replace && _target) {
+        _regex = dialog.find(`#${_regex}`).val();
+        _replace = dialog.find(`#${_replace}`).val();
+        if (_regex) {
+          _regex = new RegExp(_regex, "gim");
+          _target = dialog.find(`#${_target}`);
+          var _value = _target.val();
+          _target.val(_value.replace(_regex, _replace));
+        }
+      }
+    },
 
   };
   /* <!-- Internal Functions --> */

@@ -3275,6 +3275,10 @@ tagadoc:
   colour: cc0
   action: Find out more
   versions:
+    1.1.0 :
+      name : Removed Edit Icon for read-only Documents
+      desc : Edit icon is only displayed for Documents where tags can be edited
+      type : minor
     1.0.9 :
       name : Updated Route URLs for Events
       desc : Route URLs match new version of Events App

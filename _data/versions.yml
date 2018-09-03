@@ -1,4 +1,8 @@
 site :
+  0.0.10h :
+    name : Folders 0.0.7c-beta
+    desc : Renaming with regex search/replace
+    type : minor
   0.0.10g :
     name : Folders 0.0.7b-beta
     desc : Bulk Renaming Feature
@@ -557,6 +561,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.7c-beta :
+    name : Bulk Renaming
+    desc : Updated renaming to include regex search/replace
+    type : minor
   0.0.7b-beta :
     name : Bulk Renaming
     desc : Renaming Files/Folders in Bulk

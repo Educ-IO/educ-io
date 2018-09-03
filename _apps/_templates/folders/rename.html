@@ -12,10 +12,27 @@
         {{#if instructions}}{{{instructions}}}{{/if}}
 				{{#if shortcuts}}{{> populate_buttons shortcuts}}{{/if}}
 				<form class="needs-validation mt-3" novalidate>
+          <div class="row mb-2">
+						<div class="col-lg-5">
+							<label for="searchRegex">Search</label>
+              <button type="button" class="close" data-action="clear" data-clear="searchRegex" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+						  <input type="text" id="searchRegex" class="form-control" />
+						  <small class="form-text text-muted">The regex to search for.</small>
+						</div>
+            <div class="col-lg-5">
+							<label for="replaceValue">Replace</label>
+              <button type="button" class="close" data-action="clear" data-clear="replaceValue" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+						  <input type="text" id="replaceValue" class="form-control" />
+						  <small class="form-text text-muted">The value to replace with.</small>
+						</div>
+						<div class="col-lg-2 d-flex align-items-center">
+							<button type="button" data-action="replace" data-regex="searchRegex" data-replace="replaceValue" data-target="renameNames" class="btn btn-dark mt-2">Replace</button>
+						</div>
+					</div>
 					<div class="row">
 						<div class="form-group col-lg-12">
 							<label for="renameNames">Names</label>
-              <textarea id="renameNames" name="names" class="form-control resizable" rows="6">{{#if state}}{{state.names}}{{/if}}</textarea>
+              <textarea id="renameNames" name="names" style="max-height: 50vh;" class="form-control resizable" rows="6">{{#if state}}{{state.names}}{{/if}}</textarea>
 						  <small class="form-text text-muted">The names of the files/folders.</small>
 						</div>
 					</div>
