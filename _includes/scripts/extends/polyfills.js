@@ -1,33 +1,33 @@
 /* <!-- String EndsWith Polyfill --> */
 if (!String.prototype.endsWith) {
   String.prototype.endsWith = function(searchString, position) {
-      var subjectString = this.toString();
-      if (typeof position !== "number" || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
-        position = subjectString.length;
-      }
-      position -= searchString.length;
-      var lastIndex = subjectString.lastIndexOf(searchString, position);
-      return lastIndex !== -1 && lastIndex === position;
+    var subjectString = this.toString();
+    if (typeof position !== "number" || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
+      position = subjectString.length;
+    }
+    position -= searchString.length;
+    var lastIndex = subjectString.lastIndexOf(searchString, position);
+    return lastIndex !== -1 && lastIndex === position;
   };
 }
 /* <!-- String EndsWith Polyfill --> */
 
 /* <!-- Local Object Storage for LocalForage | Polyfill --> */
-(function () {
+(function() {
 
   var localStorageAvailable = __storageAvailable(window.localStorage),
     sessionStorageAvailable = __storageAvailable(window.sessionStorage);
 
   if (!localStorageAvailable || !sessionStorageAvailable) {
 
-    var Storage = function (id, cookie) {
-			
+    var Storage = function(id, cookie) {
+
       function createCookie(name, value, days) {
         var date, expires;
 
         if (days) {
           date = new Date();
-          date.setTime(date.getTime() + (days*24*60*60*1000));
+          date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
           expires = "; expires=" + date.toGMTString();
         } else {
           expires = "";
@@ -36,16 +36,18 @@ if (!String.prototype.endsWith) {
       }
 
       function readCookie(name) {
-        var nameEQ = name + "=", ca = document.cookie.split(";"), c;
+        var nameEQ = name + "=",
+          ca = document.cookie.split(";"),
+          c;
 
         for (var i = 0; i < ca.length; i++) {
           c = ca[i];
           while (c.charAt(0) == " ") {
-            c = c.substring(1,c.length);
+            c = c.substring(1, c.length);
           }
 
           if (c.indexOf(nameEQ) === 0) {
-            return c.substring(nameEQ.length,c.length);
+            return c.substring(nameEQ.length, c.length);
           }
         }
         return null;
@@ -54,15 +56,15 @@ if (!String.prototype.endsWith) {
       function setData(data) {
         data = JSON.stringify(data);
         if (cookie) {
-				 createCookie(id, data, 365);
+          createCookie(id, data, 365);
         } else {
-         window[id] = data;
+          window[id] = data;
         }
       }
 
       function clearData() {
         if (cookie) {
-					createCookie(id, "", 365);
+          createCookie(id, "", 365);
         } else {
           delete window[id];
         }
@@ -78,15 +80,15 @@ if (!String.prototype.endsWith) {
 
       return {
         length: 0,
-        clear: function () {
+        clear: function() {
           data = {};
           this.length = 0;
           clearData();
         },
-        getItem: function (key) {
+        getItem: function(key) {
           return data[key] === undefined ? null : data[key];
         },
-        key: function (i) {
+        key: function(i) {
           var ctr = 0;
           for (var k in data) {
             if (ctr == i) return k;
@@ -94,28 +96,28 @@ if (!String.prototype.endsWith) {
           }
           return null;
         },
-        removeItem: function (key) {
+        removeItem: function(key) {
           if (data[key] === undefined) this.length--;
           delete data[key];
           setData(data);
         },
-        setItem: function (key, value) {
+        setItem: function(key, value) {
           if (data[key] === undefined) this.length++;
-          data[key] = value+"";
+          data[key] = value + "";
           setData(data);
         }
       };
-			
+
     };
 
     if (!localStorageAvailable) {
-			window.localStorage.__proto__ = new Storage("__local");
-			window.localStorage_POLYFILLED = true;
-		}
+      window.localStorage.__proto__ = new Storage("__local");
+      window.localStorage_POLYFILLED = true;
+    }
     if (!sessionStorageAvailable) {
-			window.sessionStorage.__proto__ = new Storage("__session");
-			window.sessionStorage_POLYFILLED = true;
-		}
+      window.sessionStorage.__proto__ = new Storage("__session");
+      window.sessionStorage_POLYFILLED = true;
+    }
 
   }
 
@@ -137,7 +139,7 @@ if (!String.prototype.endsWith) {
       try {
         new Blob();
         return true;
-      } catch(e) {
+      } catch (e) {
         return false;
       }
     })(),
@@ -171,7 +173,7 @@ if (!String.prototype.endsWith) {
     if (typeof name !== "string") {
       name = String(name);
     }
-    if (/[^a-z0-9\-#$%&"*+.\^_`|~]/i.test(name)) {
+    if (/[^a-z0-9\-#$%&"*+.^_`|~]/i.test(name)) {
       throw new TypeError("Invalid character in header field name");
     }
     return name.toLowerCase();
@@ -189,7 +191,10 @@ if (!String.prototype.endsWith) {
     var iterator = {
       next: function() {
         var value = items.shift();
-        return {done: value === undefined, value: value};
+        return {
+          done: value === undefined,
+          value: value
+        };
       }
     };
 
@@ -224,7 +229,7 @@ if (!String.prototype.endsWith) {
     name = normalizeName(name);
     value = normalizeValue(value);
     var oldValue = this.map[name];
-    this.map[name] = oldValue ? oldValue+","+value : value;
+    this.map[name] = oldValue ? oldValue + "," + value : value;
   };
 
   Headers.prototype["delete"] = function(name) {
@@ -254,19 +259,25 @@ if (!String.prototype.endsWith) {
 
   Headers.prototype.keys = function() {
     var items = [];
-    this.forEach(function(value, name) { items.push(name); });
+    this.forEach(function(value, name) {
+      items.push(name);
+    });
     return iteratorFor(items);
   };
 
   Headers.prototype.values = function() {
     var items = [];
-    this.forEach(function(value) { items.push(value); });
+    this.forEach(function(value) {
+      items.push(value);
+    });
     return iteratorFor(items);
   };
 
   Headers.prototype.entries = function() {
     var items = [];
-    this.forEach(function(value, name) { items.push([name, value]); });
+    this.forEach(function(value, name) {
+      items.push([name, value]);
+    });
     return iteratorFor(items);
   };
 
@@ -465,7 +476,9 @@ if (!String.prototype.endsWith) {
   }
 
   Request.prototype.clone = function() {
-    return new Request(this, { body: this._bodyInit });
+    return new Request(this, {
+      body: this._bodyInit
+    });
   };
 
   function decode(body) {
@@ -525,7 +538,10 @@ if (!String.prototype.endsWith) {
   };
 
   Response.error = function() {
-    var response = new Response(null, {status: 0, statusText: ""});
+    var response = new Response(null, {
+      status: 0,
+      statusText: ""
+    });
     response.type = "error";
     return response;
   };
@@ -537,7 +553,12 @@ if (!String.prototype.endsWith) {
       throw new RangeError("Invalid status code");
     }
 
-    return new Response(null, {status: status, headers: {location: url}});
+    return new Response(null, {
+      status: status,
+      headers: {
+        location: url
+      }
+    });
   };
 
   self.Headers = Headers;

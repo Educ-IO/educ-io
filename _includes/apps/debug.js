@@ -18,7 +18,7 @@ App = function() {
   var _promisify = fn => new Promise(resolve => resolve(fn ? ಠ_ಠ._isF(fn) ? fn() : fn : true));
 
   var _run = (module, test, id) => {
-
+ 
     /* <!-- Check we have a module and a button --> */
     var _module = ಠ_ಠ._tests[module],
       _id = $(`#${id}`);

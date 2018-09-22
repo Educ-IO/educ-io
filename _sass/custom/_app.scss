@@ -52,16 +52,8 @@ html, body {
   }
 }
 
-@keyframes ellipsis {
-  to {
-    width: 1.25em;    
-  }
-}
-
-@-webkit-keyframes ellipsis {
-  to {
-    width: 1.25em;    
-  }
+@include animation-keyframes(ellipsis) {
+  to {width: 1.25em;}
 }
 // -- Ellipsis Waiting -- //
 

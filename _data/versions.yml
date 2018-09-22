@@ -1,4 +1,8 @@
 site :
+  0.0.10i :
+    name : CSS Updates
+    desc : Minor Style Updates and bug fixes
+    type : minor
   0.0.10h :
     name : Folders 0.0.7c-beta
     desc : Renaming with regex search/replace

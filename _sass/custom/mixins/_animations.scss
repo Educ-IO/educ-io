@@ -1,5 +1,28 @@
-@mixin animation($details) {
+@mixin animation($details...) {
   -webkit-animation: $details;
      -moz-animation: $details;
+       -o-animation: $details;
 					animation: $details;
+}
+
+@mixin animation-state($details...) {
+  -webkit-animation-play-state: $details;
+	   -moz-animation-play-state: $details;
+	     -o-animation-play-state: $details;
+	        animation-play-state: $details;
+}
+
+@mixin animation-keyframes($name) {
+  @-webkit-keyframes #{$name} {
+    @content;
+  }
+  @-moz-keyframes #{$name} {
+    @content;
+  }
+  @-o-keyframes #{$name} {
+    @content;
+  }
+  @keyframes #{$name} {
+    @content;
+  }
 }

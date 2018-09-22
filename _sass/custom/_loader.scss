@@ -100,6 +100,7 @@ div.loader {
   &.md-1 {padding-top: 0.45rem !important;}
   &.md-18 {padding-top: 0.3rem !important;}
   &.md-24 {padding-top: 0.19rem !important;}
+  @include animation(fadeInGracefully 0.6s ease-in-out);
 }
 .btn:not([class^="btn-outline-"]):not([class*=" btn-outline-"]):not([class^="btn-light"]):not([class*=" btn-light"]) {
   i.material-icons {color: $colour-background-menu !important;}
@@ -111,35 +112,23 @@ div.loader {
   }
 }
 
-.pause-animation {
-	-webkit-animation-play-state: paused !important; 
-	-moz-animation-play-state: paused !important; 
-	-o-animation-play-state: paused !important;
-	animation-play-state: paused !important;
+@include animation-keyframes(fadeInGracefully) {
+  0% {display: none; opacity: 0;}
+	0.001% {display: block; opacity: 0;}
+  100% {display: block; opacity: 1;}
 }
 
-// == Loading Animation == //#
-@-webkit-keyframes spin {
+.pause-animation {
+  @include animation-state(paused !important);
+}
+
+// == Loading Animation == //
+@include animation-keyframes(spin) {
   from {-webkit-transform: rotate(0deg);}
   to   {-webkit-transform: rotate(359deg);}
 }
- 
-@-moz-keyframes spin {
-  from {-moz-transform: rotate(0deg);}
-  to   {-moz-transform: rotate(359deg);}
-}
- 
-@-o-keyframes spin {
-  from {-o-transform: rotate(0deg);}
-  to   {-o-transform: rotate(359deg);}
-}
- 
-@keyframes spin{
-  from {transform: rotate(0deg);}
-  to   {transform: rotate(359deg);}
-}
 
-@keyframes opacity {
+@include animation-keyframes(opacity) {
 	0% { opacity: 0.05; }
 	10% { opacity: 0.2 }
 	20% { opacity: 0.4 }
