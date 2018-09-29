@@ -322,7 +322,7 @@ reflect:
   name: Reflect
   desc: _Produce_ and _share_ __reflective reports__, tracking _evidence_ and your _progress_
   link: /reflect/
-  colour: 00833a
+  colour: 36936d
   logo: images/reflect_logo.svg
   learn: /guides/reflect
   imports:
@@ -601,16 +601,47 @@ reflect:
     desc: Create a new Reflective Report
     hash: create.report
     auth: google
-  - name: Open Report
-    desc: Open a saved Report from your Drive
-    hash: open.report
-    imports:
-      - google
+    buttons:
+    - name: Create
+      desc: Create a new Reflective Report
+      hash: create.report
+      auth: google
+    - name: Open
+      desc: Open a saved Report from your Drive
+      hash: open.report
+      imports:
+        - google
+      auth: google
+    - name: Analyse
+      desc: Check progress on Report Completion
+      hash: analyse.report
+      auth: google
+  - name: Evidence Tracker
+    desc: Create a new Evidence Tracker
+    hash: create.tracker
     auth: google
-  - name: Create Form
-    desc: Create a new Form for Reports
-    hash: create.form
-    auth: google
+    buttons:
+    - name: Create
+      desc: Create a new Evidence Tracker
+      hash: create.tracker
+      auth: google
+    - name: Open
+      desc: Create an existing Evidence Tracker
+      hash: open.tracker
+      imports:
+        - google
+      auth: google
+    - name: Analyse
+      desc: Check progress on Tracker Completion
+      hash: analyse.tracker
+      auth: google
+  - name: Form
+    desc: Create a new Form
+    buttons:
+    - name: Create
+      desc: Create a new Form for Reports
+      hash: create.form
+      auth: google
   published: false
 
 

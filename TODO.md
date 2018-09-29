@@ -2,6 +2,7 @@ TODO LIST
 =========
 General
 -------
+
 * ** IMPORTANT ** Failed 'Recent' App load (e.g. newly deleted folder) --> Remove from Recent List
 
 * ** IMPORTANT ** Loading Spinner for 'Get Help' - can be slow sometimes!
@@ -116,10 +117,11 @@ Merge
 
 Folders
 -------
+* Keyboard Shortcuts
 * Use new format MODAL form returns (once Data is stable ... activate by including Data helper in App Build)
   + Update validate method on App callers to accept object, rather than value array
   + Update _return methods on App callers to accept object, rather than value array
-* Check Spreadsheet API Permission for logging! Is this covered by drive permission?
+* Check Spreadsheet API Permission for logging! Is this covered by drive permission? YES
 * Colour Code Files/Folders?
 
 Reflect
@@ -151,6 +153,7 @@ Survey
 
 Complete
 --------
+* ** IMPORTANT ** Drop down button groups <-- DONE
 * ** IMPORTANT ** Google Logo on Login button - looks like it has inherited some CSS for top padding... <-- DONE
 * Add Tags to events
 	-> Added UI element <-- DONE

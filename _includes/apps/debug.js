@@ -43,7 +43,6 @@ App = function() {
         ಠ_ಠ.Flags.error(`Module: ${module} | Test: ${test}`, e);
       })
       .then(() => _id.removeClass("loader disabled").find(`i.result-${_result ? "success" : "failure"}`).removeClass("d-none"));
-
   };
   /* <!-- Internal Functions --> */
 

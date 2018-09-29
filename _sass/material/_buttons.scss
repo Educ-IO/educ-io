@@ -6,13 +6,17 @@
 @import "mixins/hover";
 
 .btn {
-  border: 0;
+  &:not(.btn-flat) {
+    border: 0;
+	}
+  &:not([class*="btn-outline-"]) {
+    border: 0;
+	}
 	will-change: box-shadow, transform;
   @include transition-standard(box-shadow);
   box-shadow: map-get($btn-elevation-shadow, shadow);
 
   @include focus-hover {
-    // border: 0;
     background-image: linear-gradient(to bottom, $btn-overlay, $btn-overlay);
     box-shadow: map-get($btn-elevation-shadow-focus, shadow);
   }
@@ -26,8 +30,14 @@
   }
 
   &:focus {
-    outline: 0;
-    border: 0;
+    &:not(.btn-flat) {
+      outline: 0;
+      border: 0;
+    }
+    &:not([class*="btn-outline-"]) {
+      outline: 0;
+      border: 0;
+    }
   }
 
   &:not(:disabled):not(.disabled) {

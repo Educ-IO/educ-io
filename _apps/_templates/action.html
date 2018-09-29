@@ -11,18 +11,18 @@
       <div class="modal-body">
         {{#if instructions}}{{{instructions}}}{{/if}}
         <div class="d-flex flex-column align-items-center">
-          {{#each actions}}<div id="{{../id}}_{{@index}}" class="action input-group col-md-12 p-1 no-gutters flex-row{{#if options}}{{else}}col-lg-10 col-xl-8{{/if}} align-items-center">
+          {{#each actions}}<div id="{{../id}}_{{@index}}" class="action input-group col-md-12 p-1 no-gutters flex-row{{#if options}}{{else}}col-lg-10 col-xl-8{{/if}} align-items-stretch">
             {{#if options}}<select class="form-control custom-select" id="{{../id}}_{{@index}}_select" name="{{../id}}_{{@index}}_select">
               {{#each options}}<option value="{{@key}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</option>{{/each}}
             </select>{{else}}<input data-field="{{@index}}" type="text" class="form-control disabled" value="{{#if name}}{{name}}{{else}}{{this}}{{/if}}" disabled>{{/if}}
-            <div class="input-group-append">
-              <button id="{{../id}}_{{@index}}_btn" data-action="{{@key}}" type="button" href="#" class="btn btn-action ml-md-1 ml-lg-2 ml-xl-3">{{#if desc}}{{desc}}{{else}}{{name}}{{/if}}</button>
+            <div class="input-group-append d-flex">
+              <button id="{{../id}}_{{@index}}_btn" data-action="{{@key}}" type="button" href="#" class="btn btn-flat btn-action h-100 d-flex mb-0">{{#if desc}}{{desc}}{{else}}{{name}}{{/if}}</button>
             </div>
           </div>{{/each}}
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-flat" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary btn-outline-secondary btn-flat" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
