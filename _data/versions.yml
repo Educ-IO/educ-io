@@ -1,4 +1,8 @@
 site :
+  0.0.10k :
+    name : CSS Updates
+    desc : Minor Style Updates and bug fixes
+    type : minor
   0.0.10j :
     name : CSS Updates
     desc : Minor Style Updates, drop down start buttons and bug fixes
