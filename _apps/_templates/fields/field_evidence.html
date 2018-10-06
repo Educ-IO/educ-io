@@ -3,12 +3,9 @@
 <div id="{{id}}" {{#if name}} name="{{name}}"{{/if}}{{#if style}} style="{{style}}"{{/if}} class="evidence-holder{{#if class}} {{class}}{{/if}}"{{#if field}} data-field="{{field}}"{{/if}} {{#if order}} data-order="{{order}}"{{/if}}>
 	<div class="input-group{{#if large}} input-group-lg{{/if}} evidence">
 		<textarea id="{{id}}_DETAILS" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional" data-output-name="Details" rows="1" aria-label="{{#if details}}{{details}}{{else}}Details{{/if}}" placeholder="{{#if details}}{{details}}{{else}}Details{{/if}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
-		<div class="btn-group{{#if large}} btn-group-lg{{/if}}">
-			<button id="{{id}}_TYPE" type="button" class="btn{{#if large}} btn-lg{{/if}} btn-dark complex-list-type" data-default="{{type}}">{{type}}</button>
-			<button type="button" class="btn{{#if large}} btn-lg{{/if}} btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				<span class="sr-only">Toggle Dropdown</span>
-			</button>
-			<div class="dropdown-menu">
+		<div class="input-group-append">
+			<button id="{{id}}_TYPE" type="button" class="btn{{#if large}} btn-lg{{/if}} btn-dark complex-list-type dropdown-toggle" data-default="{{type}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{type}}</button>
+			<div class="dropdown-menu dropdown-menu-right">
 				{{#each options}}
 				{{#if divider}}<div class="dropdown-divider"></div>{{/if}}
 				<a class="dropdown-item{{#if value}} {{value}}_SELECTOR {{/if}}{{#if class}} {{class}}{{/if}}" href="#" data-value="{{#if value}}{{value}}{{else}}{{this}}{{/if}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>		

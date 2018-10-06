@@ -497,25 +497,6 @@ Google_API = (options, factory) => {
       fields: "files(description,id,modifiedByMeTime,name,version)",
     }),
 
-    download: (id, team) => team ? _call(NETWORKS.general.download, "drive/v3/files/" + id, {
-      alt: "media",
-      supportsTeamDrives: true
-    }) : _call(NETWORKS.general.download, "drive/v3/files/" + id, {
-      alt: "media",
-    }),
-
-    upload: (metadata, binary, mimeType, team, id) => _upload(metadata, binary, mimeType, team, id),
-
-    export: id => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {
-      mimeType: "application/vnd.google-apps.script+json"
-    }),
-
-    save: (id, files, team) => _call(NETWORKS.general.patch, "upload/drive/v3/files/" + id + "?uploadType=media" + (team ? "&supportsTeamDrives=true" : ""), {
-      files: files
-    }, "application/json"),
-
-    update: (id, file, team) => _call(NETWORKS.general.patch, "drive/v3/files/" + id + (team ? "?supportsTeamDrives=true" : ""), file, "application/json"),
-
     pick: (title, multiple, team, views, callback, context) => _pick(title, multiple, team, views, callback, context),
 
     permissions: {
@@ -576,9 +557,24 @@ Google_API = (options, factory) => {
         return _call(NETWORKS.general.post, _url, file);
       },
 
+      upload: (metadata, binary, mimeType, team, id) => _upload(metadata, binary, mimeType, team, id),
+
+      download: (id, team) => team ? _call(NETWORKS.general.download, "drive/v3/files/" + id, {
+        alt: "media",
+        supportsTeamDrives: true
+      }) : _call(NETWORKS.general.download, "drive/v3/files/" + id, {
+        alt: "media",
+      }),
+
       export: (id, format) => _call(NETWORKS.general.get, "drive/v3/files/" + id + "/export", {
         mimeType: format
       }, null, "application/binary"),
+
+      save: (id, files, team) => _call(NETWORKS.general.patch, "upload/drive/v3/files/" + id + "?uploadType=media" + (team ? "&supportsTeamDrives=true" : ""), {
+        files: files
+      }, "application/json"),
+
+      update: (id, file, team) => _call(NETWORKS.general.patch, "drive/v3/files/" + id + (team ? "?supportsTeamDrives=true" : ""), file, "application/json"),
 
     },
 

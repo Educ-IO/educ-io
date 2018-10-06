@@ -63,7 +63,7 @@ Dialog = (options, factory) => {
             () => new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"),
             folder => folder && factory.Google.folders.is(folder.mimeType) ? factory.Flags.log("Google Drive Folder Picked", folder) && resolve(folder) : reject()
           );
-        }).then(folder => $(`#${$(e.target).data("target")}`).val(folder.id).attr("title", folder.name)).catch();
+        }).then(folder => $(`#${$(e.target).data("targets")}`).val(folder.id).attr("title", folder.name)).catch();
       });
 
     },
@@ -79,7 +79,7 @@ Dialog = (options, factory) => {
 
     options: (target, dialog) => {
       var value = _extractDataValueOrText(target),
-        destination = dialog.find(_makeIds(target.data("target"))),
+        destination = dialog.find(_makeIds(target.data("targets"))),
         current = destination.val();
       if (value != current) {
         var _siblings = target.siblings("[data-action='options']").toArray(),
@@ -120,7 +120,7 @@ Dialog = (options, factory) => {
     replace: (target, dialog) => {
       var _regex = target.data("regex"),
         _replace = target.data("replace"),
-        _target = target.data("target");
+        _target = target.data("targets");
       if (_regex && _replace && _target) {
         _regex = dialog.find(`#${_regex}`).val();
         _replace = dialog.find(`#${_replace}`).val();

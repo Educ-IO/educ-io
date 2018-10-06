@@ -215,7 +215,7 @@ SaaD = (options, factory) => {
       return sheet;
     })
     .then(sheet => _populateDataSheet(sheet.spreadsheetId, sheet.sheets[0].properties.sheetId, sheet.sheets[0].properties.title))
-    .then(sheet => factory.Google.update(sheet.spreadsheetId, {properties: options.properties}))
+    .then(sheet => factory.Google.files.update(sheet.spreadsheetId, {properties: options.properties}))
     .then(response => response.id);
 
   var _open = id => {

@@ -239,6 +239,8 @@ Display = function() {
         });
         
         Handlebars.registerHelper("concat", (...args) => _.reduce(args, (m, a) => _.isObject(a) ? m : (m + a), ""));
+        
+        Handlebars.registerHelper("either", (a, b) => (_.isUndefined(a) || _.isNull(a) || a === "") ? b : a);
 
         Handlebars.registerHelper("replace", (value, replace, replacement) => value ? value.replace(new RegExp(replace, "g"), replacement) : "");
 

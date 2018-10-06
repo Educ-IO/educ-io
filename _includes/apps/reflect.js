@@ -22,7 +22,8 @@ App = function() {
     _types = [TYPE_SCALE, TYPE_FORM, TYPE_REPORT, TYPE_REVIEW],
     STATE_FORM_OPENED = "opened-form",
     STATE_REPORT_OPENED = "opened-report",
-    STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED];
+    STATE_TRACKER_OPENED = "opened-tracker",
+    STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED, STATE_TRACKER_OPENED];
 
   const _pick = function() {
 
@@ -43,7 +44,7 @@ App = function() {
   /* <!-- Internal Handlers --> */
   var _evidence = {
 
-    default: (e) => {
+    default: e => {
       e.preventDefault();
       return $(e.currentTarget).parents(".evidence-holder");
     },
@@ -109,7 +110,7 @@ App = function() {
           if (++_current == _total) finish();
         };
         _.each(files, source => {
-          ಠ_ಠ.Google.upload({
+          ಠ_ಠ.Google.files.upload({
               name: source.name
             }, source, source.type)
             .then(uploaded => ಠ_ಠ.Google.files.get(uploaded.id).then(file => {
@@ -251,7 +252,8 @@ App = function() {
         name: "CREATE",
         content: folder ? folder : "Google Drive"
       }),
-      actions: actions
+      actions: actions,
+      large: true
     }).then(result => {
       ಠ_ಠ.Flags.log("Create Action Selected:", result);
       return result.action.command == "scale" ?
@@ -275,17 +277,25 @@ App = function() {
 
       /* <!-- Handle Populate Textual Fields from Google Doc --> */
       form.find("button[data-action='load-g-doc'], a[data-action='load-g-doc']").off("click.doc").on("click.doc", e => {
-        new Promise((resolve, reject) => {
+        var finish;
+        return new Promise((resolve, reject) => {
           ಠ_ಠ.Google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
             "Select a Document to Load Text From", false, true,
             () => new google.picker.DocsView(google.picker.ViewId.DOCUMENTS).setIncludeFolders(true).setParent("root"),
-            file => file ? ಠ_ಠ.Flags.log("Google Drive Document Picked", file) && ಠ_ಠ.Google.files.export(file.id, "text/plain")
-            .then(download => new ಠ_ಠ.Google.reader().promiseAsText(download).then(text => resolve(text))) : reject()
+            file => {
+              finish = ಠ_ಠ.Display.busy({
+                class: "loader-medium w-100 h-100",
+                fn: true
+              });
+              file ? ಠ_ಠ.Flags.log("Google Drive Document Picked", file) && (file.mimeType == "text/plain" ? ಠ_ಠ.Google.files.download(file.id) : ಠ_ಠ.Google.files.export(file.id, "text/plain"))
+              .then(download => ಠ_ಠ.Google.reader().promiseAsText(download).then(text => resolve(text))).catch(e => ಠ_ಠ.Flags.error(`Failed to download file: ${file.id}`, e) && reject(e)) : reject();
+            }
           );
         }).then(text => {
-          var _$ = $("#" + $(e.target).data("target")).val(text);
+          var _$ = $("#" + $(e.target).data("targets")).val(text);
           if (_$.is("textarea.resizable")) autosize.update(_$[0]);
-        }).catch();
+          finish ? finish() : true;
+        }).catch(() => finish ? finish() : false);
       });
 
       return form;
@@ -326,7 +336,7 @@ App = function() {
   var _load = file => {
     if (ಠ_ಠ.Google.files.is(TYPE_REPORT)(file)) {
       _file = file;
-      return ಠ_ಠ.Google.download(file.id).then(_process);
+      return ಠ_ಠ.Google.files.download(file.id).then(_process);
     } else {
       ಠ_ಠ.Flags.error(`Supplied ID is not a recognised Reflect File Type: ${file.id}`);
       return Promise.reject();
@@ -358,8 +368,8 @@ App = function() {
           _data = JSON.stringify(_toSave.data),
           _mime = TYPE_REPORT;
         ((!_file || force) ?
-          ಠ_ಠ.Google.upload(_meta, _data, _mime) :
-          ಠ_ಠ.Google.upload(_meta, _data, _mime, null, _file.id))
+          ಠ_ಠ.Google.files.upload(_meta, _data, _mime) :
+          ಠ_ಠ.Google.files.upload(_meta, _data, _mime, null, _file.id))
         .then(uploaded => {
             _file = uploaded;
             return ಠ_ಠ.Recent.add(uploaded.id, uploaded.name.replace(/.REFLECT$/i, ""), "#google,load." + uploaded.id).then(() => ಠ_ಠ.Flags.log("Saved:", uploaded));
@@ -532,8 +542,9 @@ App = function() {
             ಠ_ಠ.Router.clean(true);
 
           } else if ((/TEST/i).test(command)) {
+            
+            return EMAIL;
 
-            (EMAIL).test(command[1]);
 
           }
 

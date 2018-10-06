@@ -12,7 +12,7 @@ Forms = function() {
   /* <!-- Internal Variables --> */
 		
 	/* <!-- == UK Teachers' Standards == --> */
-	var standards = (markdown) => [
+	var standards = markdown => [
 		/* <!-- Standard 1 --> */
 		{
 			number: 1,
@@ -589,6 +589,7 @@ Forms = function() {
 						item: "Target",
 						type: "Evidence Type",
 						icon: "gps_fixed",
+            required: true,
 						help: markdown("Enter details of the targets you are setting yourself this week, together with the type of evidence that will confirm you have met the target. Then save them to the list below."),
 						options: [
 							"Lesson Plan",

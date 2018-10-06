@@ -2,7 +2,11 @@
 {{#if description}}<!-- {{description}} -->{{/if}}
 <div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}>
 	<label class="{{#if wide}}col-12{{else}}col-md-3{{/if}} col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
-	<div class="{{#if wide}}col-12{{else}}col-md-9{{/if}}">
+	<div class="{{#if wide}}col-12{{else}}col-md-9{{/if}}"> 
+    {{#if button}}<div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
+			{{> control_button b_small="true" b_icon_large="true" b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
+			{{> control_button b_small="true" b_id=(concat id "_BUTTON") b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button }}
+		</div>{{/if}}
 		<div class="input-group{{#if large}} input-group-lg{{/if}}">
 			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
 			{{#if rows}}
@@ -10,7 +14,7 @@
 			{{else}}
 			<input id="{{id}}" name="{{id}}" data-output-name="Value" type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable"{{#if required}} required="required"{{/if}} {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}/>
 			{{/if}}
-			{{#if button}}<span class="input-group-append">
+			{{#if button}}<span class="input-group-append d-none d-lg-flex">
 				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
 				{{> control_button b_id=(concat id "_BUTTON") b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button }}
       </span>{{/if}}

@@ -78,7 +78,7 @@ App = function() {
 
     get: () => _config.find().then(result => result ? _config.load(result) : result),
 
-    load: file => ಠ_ಠ.Google.download(file.id).then(loaded => {
+    load: file => ಠ_ಠ.Google.files.download(file.id).then(loaded => {
       return ಠ_ಠ.Google.reader().promiseAsText(loaded).then(parsed => {
         ಠ_ಠ.Flags.log(`Loaded Docket Config [${file.name} / ${file.id}]: ${parsed}`);
         _config.id = file.id;

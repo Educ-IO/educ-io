@@ -318,7 +318,7 @@ Tasks = ಠ_ಠ => {
       return sheet;
     })
     .then(sheet => _populateDataSheet(sheet.spreadsheetId, sheet.sheets[0].properties.sheetId, sheet.sheets[0].properties.title))
-    .then(sheet => ಠ_ಠ.Google.update(sheet.spreadsheetId, {
+    .then(sheet => ಠ_ಠ.Google.files.update(sheet.spreadsheetId, {
       properties: {
         DOCKET: "DATA"
       }

@@ -158,7 +158,7 @@ App = function() {
       mimeType: ಠ_ಠ.Google.files.natives()[0]
     };
 
-    return ಠ_ಠ.Google.upload(metadata, new Blob([template], {
+    return ಠ_ಠ.Google.files.upload(metadata, new Blob([template], {
       type: "text/html"
     }), "text/html");
 
@@ -176,7 +176,7 @@ App = function() {
       mimeType: "application/pdf"
     };
 
-    return ಠ_ಠ.Google.upload(metadata,
+    return ಠ_ಠ.Google.files.upload(metadata,
       new Blob(_generatePDF(template).output("blob"), {
         type: "application/pdf"
       }), "application/pdf");

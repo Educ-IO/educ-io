@@ -416,7 +416,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
       folder: folder,
       state: _state
     });
-    ಠ_ಠ.Google.upload(_meta, _data, mime).then(uploaded => ಠ_ಠ.Flags.log(`Folders ${prefix} File Saved`, uploaded))
+    ಠ_ಠ.Google.files.upload(_meta, _data, mime).then(uploaded => ಠ_ಠ.Flags.log(`Folders ${prefix} File Saved`, uploaded))
       .catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error"))
       .then(finish);
   };
@@ -670,7 +670,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
   var _enableDownloads = target => {
     target.find("a.download").on("click.download", e => {
-      ಠ_ಠ.Google.download($(e.target).data("id"), _team).then(binary => {
+      ಠ_ಠ.Google.files.download($(e.target).data("id"), _team).then(binary => {
         try {
           saveAs(binary, $(e.target).data("name"));
         } catch (e) {
@@ -1371,7 +1371,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
             var _upload = (metadata, id) => {
 
-              ಠ_ಠ.Google.upload(metadata ? metadata : {
+              ಠ_ಠ.Google.files.upload(metadata ? metadata : {
                   name: _name,
                   parents: mirror ? (file.parents ? file.parents : []).concat(mirror) : file.parents,
                   teamDriveId: _team,
@@ -1402,13 +1402,13 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
           };
           metadata.mimeType = targetMimeType;
 
-          ಠ_ಠ.Google.download(file.id, _team).then(binary => {
+          ಠ_ಠ.Google.files.download(file.id, _team).then(binary => {
 
             (inPlace ?
-              ಠ_ಠ.Google.upload(metadata, binary, sourceMimeType, _team, file.id) :
-              ಠ_ಠ.Google.upload(metadata, binary, sourceMimeType, _team))
+              ಠ_ಠ.Google.files.upload(metadata, binary, sourceMimeType, _team, file.id) :
+              ಠ_ಠ.Google.files.upload(metadata, binary, sourceMimeType, _team))
             .then(uploaded => prefixAfterConversion ?
-                ಠ_ಠ.Google.update(file.id, {
+                ಠ_ಠ.Google.files.update(file.id, {
                   name: prefixAfterConversion + file.name
                 }, _team)
                 .then(() => resolve(uploaded))
@@ -1547,7 +1547,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
             } : {
               properties: _properties
             };
-            ಠ_ಠ.Google.update(item.id, _data, _team).then(updated => {
+            ಠ_ಠ.Google.files.update(item.id, _data, _team).then(updated => {
               item.needs_Review = needsReview(item);
               resolve(updated);
             });
@@ -1570,7 +1570,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
         _processItems(item => `${item && item.star ? "Un-" : ""}Starring`, item => new Promise(resolve => {
 
           var _star = !item.star;
-          ಠ_ಠ.Google.update(item.id, {
+          ಠ_ಠ.Google.files.update(item.id, {
             starred: _star
           }, _team).then(updated => {
             item.star = _star;
@@ -1667,7 +1667,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
           _processItems("Tagging", (item, parameters) => new Promise(resolve => {
 
-            ಠ_ಠ.Google.update(item.id, parameters, _team).then(() => {
+            ಠ_ಠ.Google.files.update(item.id, parameters, _team).then(() => {
               if (!item[values.private ? "appProperties" : "properties"]) item[values.private ? "appProperties" : "properties"] = {};
               item[values.private ? "appProperties" : "properties"][values.name] = values.value;
               item.needs_Review = needsReview(item);
@@ -1911,7 +1911,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
           _processItems("Renaming", item => new Promise(resolve => {
             
-            ಠ_ಠ.Google.update(item.id, {name: item[_name]}, _team).then(updated => {
+            ಠ_ಠ.Google.files.update(item.id, {name: item[_name]}, _team).then(updated => {
               item.name = updated.name;
               delete item[_name];
               resolve(item);

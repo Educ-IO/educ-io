@@ -3,6 +3,8 @@ TODO LIST
 General
 -------
 
+* ** IMPORTANT ** Loader Version contained within element
+
 * ** IMPORTANT ** Failed 'Recent' App load (e.g. newly deleted folder) --> Remove from Recent List
 
 * ** IMPORTANT ** Loading Spinner for 'Get Help' - can be slow sometimes!
@@ -127,7 +129,6 @@ Folders
 Reflect
 -------
 * ** IMPORTANT ** Including Save buttons at the end of Reflect Forms by cloning menu items from NAV (with imports etc)
-
 * ** IMPORTANT ** Should have anchor links using smooth scroll to different parts of the forms, to make navigation of the form easier!
 
 * Lesson Observation Form
@@ -153,6 +154,13 @@ Survey
 
 Complete
 --------
+* ** BUG ** Field_SPAN Weeks run from Sunday -> Sunday <-- DONE
+* FIELD_SPAN template should use full width and bring button controls into append group on XL <-- DONE
+* Move FIELD_SPAN template to use control_button template instead of button rendering itself? <-- DONE
+* Put loader in TextBox when loading from Google Doc, to indicate progress / action <-- DONE
+* ** BUG ** Support loading from text doc as well as Google Doc! <-- DONE
+* ** BUG ** Weird visual bug with background transparent on optional (?) Complex Data Type field, e.g. Targets on Reflect Form [Grammarly Issue! Important CSS Stlye doesn't override local style...] <-- DONE
+* Input group for evidence, including merge split button <-- DONE
 * ** IMPORTANT ** Drop down button groups <-- DONE
 * ** IMPORTANT ** Google Logo on Login button - looks like it has inherited some CSS for top padding... <-- DONE
 * Add Tags to events

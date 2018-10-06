@@ -351,7 +351,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
 		target.find(".table-header a").on("click", e => {
 			e.preventDefault();
-			$($(e.target).data("target")).fadeToggle(FADE_DELAY).promise().done(el => $(el).find("input[type='text']:visible").first().focus());
+			$($(e.target).data("targets")).fadeToggle(FADE_DELAY).promise().done(el => $(el).find("input[type='text']:visible").first().focus());
 		});
 
 		/* <!-- Set up Table --> */

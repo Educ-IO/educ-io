@@ -32,7 +32,7 @@ App = function() {
 
   };
 
-  var _loadSurvey = id => ಠ_ಠ.Google.download(id)
+  var _loadSurvey = id => ಠ_ಠ.Google.files.download(id)
     .then(loaded => {
       ಠ_ಠ.Display.log("Loaded:", loaded);
       ಠ_ಠ.Display.state().enter(STATE_OPENED);

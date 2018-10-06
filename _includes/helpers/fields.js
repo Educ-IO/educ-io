@@ -38,16 +38,16 @@ Fields = options => {
 
 		var _handler = control => {
 
-			if (control.data("target") && control.data("value")) {
+			if (control.data("targets") && control.data("value")) {
 
-				var _target = $("#" + control.data("target"));
+				var _target = $("#" + control.data("targets"));
 
-				if (_target.data("target")) {
+				if (_target.data("targets")) {
 
 					var _span = control.data("span") ? control.data("span") : "";
 					_target.data("span", _span);
 
-					_target = $("#" + _target.data("target"));
+					_target = $("#" + _target.data("targets"));
 
 					var _start = _target.find("input[name='start']"),
 						_end = _target.find("input[name='end']");
@@ -58,7 +58,7 @@ Fields = options => {
 
 						if (_start_Date.isValid()) {
 
-							_end_Date = _start_Date.clone().add(1, _span);
+							_end_Date = _start_Date.clone().add(1, _span).subtract(1, "d");
 							_start.val(_start_Date.format(DATE_FORMAT_M));
 							_end.val(_end_Date.format(DATE_FORMAT_M));
 
@@ -67,7 +67,7 @@ Fields = options => {
 									var _value = $(e.currentTarget).val();
 									if (_value) {
 										_value = moment(_value, DATE_FORMAT_M);
-										if (_value.isValid()) end.val(_value.add(1, span).format(DATE_FORMAT_M));
+										if (_value.isValid()) end.val(_value.add(1, span).subtract(1, "d").format(DATE_FORMAT_M));
 									} else {
 										end.val("");
 									}
@@ -113,9 +113,9 @@ Fields = options => {
 		/* <!-- Wire up numerical fields --> */
 		form.find(".alter-numerical").click(e => {
 			var _this = $(e.currentTarget);
-			if (_this.data("target") && _this.data("value")) {
+			if (_this.data("targets") && _this.data("value")) {
 
-				var _target = $(`#${_this.data("target")}`),
+				var _target = $(`#${_this.data("targets")}`),
 					_value = Number(_this.data("value"));
 				var _min = _target.data("min") ? Number(_target.data("min")) : 0,
 					_max = _target.data("max") ? Number(_target.data("max")) : Number.MAX_VALUE;
@@ -142,7 +142,7 @@ Fields = options => {
 					} else {
 						_target.val(_current);
 					}
-					if (_target.data("target")) $("#" + _target.data("target")).val(_current <= _min ? 0 : _current);
+					if (_target.data("targets")) $("#" + _target.data("targets")).val(_current <= _min ? 0 : _current);
 
 				}
 
@@ -156,7 +156,7 @@ Fields = options => {
 		/* <!-- Wire up eraser actions --> */
 		form.find(".eraser").click(e => {
 			var _this = $(e.currentTarget),
-				_target = _this.data("target");
+				_target = _this.data("targets");
 			if (_target) {
 				$(`#${_target}, #${_target} > input`).val("").removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
 			}
@@ -173,15 +173,15 @@ Fields = options => {
 		/* <!-- Wire up radio fields --> */
 		form.find("input[type='radio'], input[type='checkbox']").change(e => {
 			var _this = $(e.currentTarget);
-			if (_this.data("target")) {
+			if (_this.data("targets")) {
 
 				_this.parents("div").find(".to-dim").addClass("md-inactive");
 				_this.siblings(".to-dim").removeClass("md-inactive");
 
 				if (_this.data("value") && _this.prop("checked")) {
-					autosize.update($(`#${_this.data("target")}`).val(_this.data("value")));
+					autosize.update($(`#${_this.data("targets")}`).val(_this.data("value")));
 				} else {
-					autosize.update($(`#${_this.data("target")}`).val(""));
+					autosize.update($(`#${_this.data("targets")}`).val(""));
 				}
 
 			}
@@ -193,9 +193,9 @@ Fields = options => {
 
 		form.find("button.dropdown-item, a.dropdown-item").click(e => {
 			var _this = $(e.currentTarget);
-			if (_this.data("target") && _this.data("value")) {
+			if (_this.data("targets") && _this.data("value")) {
 				e.preventDefault();
-				form.find(`#${_this.data("target")}`).text(_this.data("value"));
+				form.find(`#${_this.data("targets")}, #${_this.data("targets")}:first-child`).text(_this.data("value"));
 			}
 		});
 
@@ -216,7 +216,7 @@ Fields = options => {
 				if (_type == _default) _type = "";
 
 				/* <!-- Add new Item to List --> */
-				var _list = form.find(`#${_this.data("target")}`);
+				var _list = form.find(`#${_this.data("targets")}`);
 				if (_list.children(".list-item").length === 0) _this.closest(".input-group").children("input[type='checkbox']").prop("checked", true);
 				if (options.templater) $(options.templater({
 					template: "list_item",
@@ -281,7 +281,7 @@ Fields = options => {
 	var _me = form => {
 
 		form.find(".textual-input-button[data-action='me']").off("click.me")
-			.on("click.me", e => $(`#${$(e.currentTarget).data("target")}`).val(options.me()));
+			.on("click.me", e => $(`#${$(e.currentTarget).data("targets")}`).val(options.me()));
 
 	};
 

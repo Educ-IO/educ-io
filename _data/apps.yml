@@ -383,7 +383,7 @@ reflect:
     - help
     - service
     - main
-    - forms
+    - reflect/forms
   scripts: 
     - extends/regex
     - extends/array
@@ -459,7 +459,7 @@ reflect:
         general: AIzaSyDCjK2aSKu9CAb3lCXxegwy-G9VTdNBAak
         oauth: 969160887251-lnkpkhpet6ojgtkposr49f0uuubbbpq2.apps.googleusercontent.com
   menus:
-    - name: Reports
+    - name: Report
       groups:
         all:
           commands:
@@ -512,7 +512,36 @@ reflect:
               hash: close
               disabled_until:
                 - opened-report
-    - name: Forms
+    - name: Tracker
+      groups:
+        all:
+          commands:
+            - name: Create
+              desc: Create a new Tracker
+              hash: create.tracker
+              auth: google
+            - name: Open
+              desc: Open a saved Tracker from your Drive
+              hash: open.tracker
+              imports:
+                - google
+              auth: google
+            - name: Export
+              desc: Export this Tracker by downloading the data
+              hash: export
+              id: _cmd_Tracker_Export
+              disabled_until:
+                - opened-tracker
+              auth: google
+              imports:
+                - xlsx
+                - filesaver
+            - name: Close
+              desc: Close this Tracker
+              hash: close
+              disabled_until:
+                - opened-tracker
+    - name: Form
       groups:
         all:
           commands:
@@ -550,6 +579,7 @@ reflect:
               disabled_until:
                 - opened-form
     - name: Analyse
+      visibility: debug
       groups:
         all:
           commands:
@@ -616,6 +646,7 @@ reflect:
       desc: Check progress on Report Completion
       hash: analyse.report
       auth: google
+      visibility: debug
   - name: Evidence Tracker
     desc: Create a new Evidence Tracker
     hash: create.tracker
@@ -635,6 +666,7 @@ reflect:
       desc: Check progress on Tracker Completion
       hash: analyse.tracker
       auth: google
+      visibility: debug
   - name: Form
     desc: Create a new Form
     buttons:
