@@ -640,6 +640,8 @@ Google_API = (options, factory) => {
 
     folders: {
 
+      native: () => FOLDER,
+      
       check: is => item => is ? item.mimeType === FOLDER : item.mimeType !== FOLDER,
 
       is: type => type === FOLDER,

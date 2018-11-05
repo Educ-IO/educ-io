@@ -8,6 +8,8 @@ layout: compress
 		
 		<title>Redirecting</title>
 		
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
 		{% assign sync_imports = page.imports | where_exp: "item", "item.load == 'sync'" | map: "name" %}{% if sync_imports %}{% for import in sync_imports %}{% if site.data.imports[import].type == "js" %}
   	{% if jekyll.environment == site.debug %}{% for script in site.data.imports[import].dev %}
 		<script src="{{ script.url }}"{% if import_script.integrity %} integrity="{{ script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ script.crossorigin }}"{% endif %}{% if script.defer %} defer{% endif %}{% if script.async %} async{% endif %}></script>
@@ -17,6 +19,10 @@ layout: compress
     
 	</head>
 	
-	<body>Redirecting</body>
+	<body>
+    <h2>
+      Redirecting
+    </h2>
+  </body>
 	
 </html>

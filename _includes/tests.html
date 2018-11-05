@@ -1,0 +1,7 @@
+{% if page.app and page.app != "" and site.data.apps[page.app] %}
+  {% for test in site.tests %}
+    {% if test.script %}{% if test.for contains page.app or test.for contains "all" %}<script type="text/javascript" charset="utf-8" data-type="test" data-src="{{ item.title | replace ' ', '_' | downcase }}">
+      {{ site.app.namespace }}.{{ site.app.tests }}.{% include {{ test.script }}.js %}
+    </script>{% endif %}{% endif %}
+  {% endfor %}
+{% endif %}

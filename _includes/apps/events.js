@@ -9,7 +9,7 @@ App = function() {
   /* <!-- Internal Constants --> */
   const _encodeID = id => id.replace(/[.@]/g, ""),
     _encodeValue = value => value.replace(/\./g, "%2E"),
-    _decodeValue = value => value.replace(/%2E/g, ".");
+    _decodeValue = value => value && value.replace ? value.replace(/%2E/g, ".") : value;
   const STATE_OPENED = "opened",
     STATE_MONTH = "monthly",
     STATE_EVENT = "single-event",
@@ -319,6 +319,18 @@ App = function() {
 
   };
 
+  var _searchProperties = (id, property, value) => {
+    ಠ_ಠ.Flags.log(`Searching for Tag: ${property} = ${value} in Calendar: ${_id}`);
+    return _searchEvents(_id, property, value)
+                .then(events => ಠ_ಠ.Display.state().swap([STATE_EVENT, STATE_MONTH], STATE_SEARCHED) && _displayEvents(_id, events))
+                .catch(e => ಠ_ಠ.Flags.error("Events Loading Error:", e))
+                .then(ಠ_ಠ.Display.busy({
+                  target: ಠ_ಠ.container,
+                  status: "Loading Events",
+                  fn: true
+                }));
+  };
+  
   var _openCalendars = () => new Promise((resolve, reject) => {
 
     var _busy = ಠ_ಠ.Display.busy({
@@ -493,129 +505,114 @@ App = function() {
           _table = null;
         },
         start: () => _shortcuts(),
-        route: (handled, command) => {
-
-          if (handled) return;
-          var _finish, _data, _item;
-
-          if ((/OPEN/i).test(command)) {
-
-            ((/CALENDAR/i).test(command[1])) ?
-            _openCalendars()
-              .then(calendar => {
-                _finish = ಠ_ಠ.Display.busy({
-                  target: ಠ_ಠ.container,
-                  status: "Loading Calendar",
-                  fn: true
-                });
-                ಠ_ಠ.Flags.log("Loaded Calendar:", calendar);
-                return (_id = calendar.id);
-              })
-              .then(_loadEvents)
-              .then(events => _displayEvents(_id, events))
-              .catch(e => ಠ_ಠ.Flags.error("Calendar Loading Error:", e))
-              .then(() => _finish ? _finish() : false): false;
-
-          } else if ((/CLOSE/i).test(command)) {
-
-            if (_id && (/CALENDAR/i).test(command[1])) {
-              ಠ_ಠ.Router.clean(true);
-            }
-
-          } else if ((/LOAD/i).test(command)) {
-
-            var _calendar = command[2] ? _decodeValue(command[2]) : false,
-              _event = command[3] ? _decodeValue(command[3]) : false;
-
-            if ((/ITEM/i).test(command[1]) && _calendar && _event) {
-
-              _finish = ಠ_ಠ.Display.busy({
-                target: ಠ_ಠ.container,
-                status: "Loading Event",
-                fn: true
-              });
-
-              _loadEvent(_calendar, _event)
+        routes: {
+          open_calendar: {
+            matches: [/OPEN/i, /CALENDAR/i],
+            fn: () => _openCalendars()
+                        .then(calendar => {
+                          ಠ_ಠ.Flags.log("Loaded Calendar:", calendar);
+                          return (_id = calendar.id);
+                        })
+                        .then(_loadEvents)
+                        .then(events => _displayEvents(_id, events))
+                        .catch(e => ಠ_ಠ.Flags.error("Calendar Loading Error:", e))
+                        .then(ಠ_ಠ.Display.busy({
+                            target: ಠ_ಠ.container,
+                            status: "Loading Calendar",
+                            fn: true
+                          }))
+          },
+          close_calendar: {
+            matches: [/CLOSE/i, /CALENDAR/i],
+            state: STATE_OPENED,
+            fn: () => ಠ_ಠ.Router.clean(true)
+          },
+          jump: {
+            matches: /JUMP/i,
+            state: STATE_OPENED,
+            fn: _jump
+          },
+          today: {
+            matches: /TODAY/i,
+            state: STATE_OPENED,
+            fn: () =>  _goto(moment().startOf("month").toDate())
+          },
+          forward: {
+            matches: /FORWARD/i,
+            state: STATE_OPENED,
+            fn: () => _goto(moment(_current).clone().add(1, "months"))
+          },
+          backward: {
+            matches: /BACKWARD/i,
+            state: STATE_OPENED,
+            fn: () => _goto(moment(_current).clone().subtract(1, "months"))
+          },
+          load_calendar: {
+            matches: [/LOAD/i, /CALENDAR/i],
+            length: 1,
+            fn: command => _refresh(_decodeValue(command))
+          },
+          load_item: {
+            matches: [/LOAD/i, /ITEM/i],
+            length: 2,
+            fn: command => {
+              var _calendar = _decodeValue(command[0]);
+              _loadEvent(_calendar, _decodeValue(command[1]))
                 .then(event => {
                   ಠ_ಠ.Flags.log("Event:", event);
                   ಠ_ಠ.Display.state().swap([STATE_SEARCHED, STATE_MONTH], STATE_EVENT);
                   _displayEvents((_id = _calendar), [event]);
                 })
                 .catch(e => ಠ_ಠ.Flags.error("Event Loading Error:", e))
-                .then(() => _finish ? _finish() : false);
-
-            } else if ((/CALENDAR/i).test(command[1]) && _calendar) {
-
-              _refresh(_calendar);
-
+                .then(ಠ_ಠ.Display.busy({
+                  target: ಠ_ಠ.container,
+                  status: "Loading Event",
+                  fn: true
+                }));
             }
-
-          } else if ((/REMOVE/i).test(command)) {
-
-            if ((/LIST/i).test(command[1]) && command[2]) {
-
-              ಠ_ಠ.Flags.log(`Removing List Item: ${command[2]}`);
-              _data = DB.getCollection(_id);
-              _item = _data.by("id", command[2]);
+          },
+          remove_list: {
+            matches: [/REMOVE/i, /LIST/i],
+            state: STATE_OPENED,
+            length: 1,
+            fn: command => {
+              ಠ_ಠ.Flags.log(`Removing List Item: ${command}`);
+              var _data = DB.getCollection(_id),
+                  _item = _data.by("id", command);
               _data.remove(_item);
               _table.update();
-
-            } else if ((/TAG/i).test(command[1])) {
-
-              ಠ_ಠ.Flags.log(`Removing Tag (${command[3]}) from: ${command[2]}`);
-              _process(command[2], (calendar, event) => _deTagEvent(calendar, event, command[3]));
-
             }
-
-          } else if ((/TAG/i).test(command)) {
-
-            if (_id && command[1]) {
-
-              ಠ_ಠ.Flags.log(`Tagging Item: ${command[1]} in Calendar: ${_id}`);
-              _process(command[1], _tagEvent);
-
-            }
-
-          } else if ((/SEARCH/i).test(command)) {
-
-            if (_id && (/PROPERTIES/i).test(command[1]) && command[2]) {
-
-              ಠ_ಠ.Flags.log(`Searching for Tag: ${command[2]} =  ${command[3]} in Calendar: ${_id}`);
-              _finish = ಠ_ಠ.Display.busy({
-                target: ಠ_ಠ.container,
-                status: "Loading Events",
-                fn: true
-              });
-              _searchEvents(_id, command[2], command[3] ? command[3] : true)
-                .then(events => ಠ_ಠ.Display.state().swap([STATE_EVENT, STATE_MONTH], STATE_SEARCHED) && _displayEvents(_id, events))
-                .catch(e => ಠ_ಠ.Flags.error("Events Loading Error:", e))
-                .then(() => _finish ? _finish() : false);
-
-            } else if (_id) {
-
-              _search(_id);
-
-            }
-
-          } else if ((/JUMP/i).test(command)) {
-
-            _jump();
-
-          } else if ((/TODAY/i).test(command)) {
-
-            _goto(moment().startOf("month").toDate());
-
-          } else if ((/FORWARD/i).test(command)) {
-
-            _goto(moment(_current).clone().add(1, "months"));
-
-          } else if ((/BACKWARD/i).test(command)) {
-
-            _goto(moment(_current).clone().subtract(1, "months"));
-
+          },
+          search_property: {
+            matches: [/SEARCH/i, /PROPERTIES/i],
+            state: STATE_OPENED,
+            length: 1,
+            fn: command => _searchProperties(_id, command, true),
+          },
+          search_properties: {
+            matches: [/SEARCH/i, /PROPERTIES/i],
+            state: STATE_OPENED,
+            length: 2,
+            fn: command => _searchProperties(_id, command[0], command[1]),
+          },
+          search: {
+            state: STATE_OPENED,
+            fn: () => _search(_id)
+          },
+          remove_tag: {
+            matches: [/REMOVE/i, /TAG/i],
+            state: STATE_OPENED,
+            length: 2,
+            fn: command => ಠ_ಠ.Flags.log(`Removing Tag (${command[1]}) from: ${command[0]}`) &&_process(command[0], (calendar, event) => _deTagEvent(calendar, event, command[1]))
+          },
+          tag_item: {
+            matches: /TAG/i,
+            state: STATE_OPENED,
+            length: 1,
+            fn: command => ಠ_ಠ.Flags.log(`Tagging Item: ${command} in Calendar: ${_id}`) && _process(command, _tagEvent)
           }
-
         },
+        route: () => false, /* <!-- PARAMETERS: handled, command --> */
       });
 
       /* <!-- Return for Chaining --> */

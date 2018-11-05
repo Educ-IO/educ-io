@@ -3,15 +3,11 @@ TODO LIST
 General
 -------
 
-* ** IMPORTANT ** Loader Version contained within element
-
-* ** IMPORTANT ** Failed 'Recent' App load (e.g. newly deleted folder) --> Remove from Recent List
+* ** IMPORTANT ** Loader version contained within element
 
 * ** IMPORTANT ** Loading Spinner for 'Get Help' - can be slow sometimes!
 * ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
-
-* Is Waves working properly???
 
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
 * Animated Logo -- Via Javascript?
@@ -26,8 +22,6 @@ General
 
 * Material Design menu display animations
 
-
-
 Datatable
 ---------
 
@@ -41,7 +35,6 @@ Picker
 
 Router
 ------
-* Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings.
 
 Apps
 ----
@@ -154,6 +147,8 @@ Survey
 
 Complete
 --------
+* Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings. <== DONE
+* ** IMPORTANT ** Failed 'Recent' App load (e.g. newly deleted folder) --> Remove from Recent List <== DONE
 * ** BUG ** Field_SPAN Weeks run from Sunday -> Sunday <-- DONE
 * FIELD_SPAN template should use full width and bring button controls into append group on XL <-- DONE
 * Move FIELD_SPAN template to use control_button template instead of button rendering itself? <-- DONE

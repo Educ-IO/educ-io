@@ -22,18 +22,6 @@ App = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-
-  var _pick = () => new Promise((resolve, reject) => {
-
-    /* <!-- Open Sheet from Google Drive Picker --> */
-    ಠ_ಠ.Google.pick(
-      "Select a Docket Sheet to Open", false, true,
-      () => [new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS).setIncludeFolders(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED],
-      file => file ? ಠ_ಠ.Flags.log("Google Drive File Picked from Open", file) && resolve(file.id) : reject()
-    );
-
-  });
-
   var _config = {
 
     name: "config.json",
@@ -421,7 +409,7 @@ App = function() {
             .then(_finish);
         }).catch(e => e);
     },
-    
+
     edit: target => {
 
       if (!target) return;
@@ -953,81 +941,61 @@ App = function() {
         recent: false,
         simple: true,
         start: () => {
-          
           var _busy = ಠ_ಠ.Display.busy({
             target: ಠ_ಠ.container,
             status: "Loading Config",
             fn: true
           });
-
           _config.get()
             .then(config => !config ? ಠ_ಠ.Router.run(STATE_READY) :
               _busy({
                 message: "Loaded Config"
               }) && _start(config, _busy).then(result => result ? _busy() : ಠ_ಠ.Router.run(STATE_CONFIG)));
-          
         },
         test: () => ಠ_ಠ.Display.state().in(STATE_OPENED),
         clear: () => _tasks ? _tasks.close() : false,
-        route: (handled, command) => {
-
-          if (handled) return;
-          var _finish;
-
-          if ((/CREATE/i).test(command)) {
-
-            _finish = ಠ_ಠ.Display.busy({
-              target: ಠ_ಠ.container,
-              status: "Creating Config",
-              fn: true
-            });
-
-            _config.clear()
-              .then(() => _tasks.create())
-              .then(id => _config.create(id))
-              .then(() => _start(_config.config, _finish))
-              .then(_finish);
-
-          } else if ((/OPEN/i).test(command)) {
-
-            /* <!-- Pick, then Load the Selected File --> */
-            var _picked;
-            _pick()
-              .then(id => _picked = id)
-              .then(() => _finish = ಠ_ಠ.Display.busy({
-                target: ಠ_ಠ.container,
-                status: "Loading Config",
-                fn: true
+        routes: {
+          archive: {
+            matches: /ARCHIVE/i,
+            fn: _archive.show
+          },
+          backward: {
+            matches: /BACKWARD/i,
+            fn: () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().subtract(1, "weeks"))
+          },
+          calendar: {
+            matches: /CALENDAR/i,
+            fn: () => _options.calendar()
+              .then(result => _config.update(_config.id, {
+                calendar: result
               }))
-              .then(() => _config.find())
-              .then(config => config ? _config.update(config.id, {
-                data: _picked
-              }) : _config.create(_picked))
-              .then(() => _start(_config.config, _finish))
-              .catch(e => ಠ_ಠ.Flags.error("Picking Error", e ? e : "No Inner Error"));
-
-          } else if ((/CONFIG/i).test(command)) {
-
-            if (command.length > 1 && (/CLEAR/i).test(command[1])) {
-
-              ಠ_ಠ.Display.confirm({
-                  id: "clear_Config",
-                  target: ಠ_ಠ.container,
-                  message: "Please confirm that you wish to <strong>clear</strong> the configuration. This will <strong>not delete</strong> your data.",
-                  action: "Clear"
-                })
-                .then(confirm => confirm ? ಠ_ಠ.Display.busy() && _config.clear() : false)
-                .then(cleared => cleared ? ಠ_ಠ.Display.state().exit([STATE_CONFIG, STATE_OPENED]) && ಠ_ಠ.Router.run(STATE_READY) : false)
-                .catch(e => e ? ಠ_ಠ.Flags.error("Clear Config Error", e) : ಠ_ಠ.Flags.log("Clear Config Cancelled"));
-
-            } else if (command.length > 1 && (/SHOW/i).test(command[1])) {
-
-              var _details = {};
-              _finish = ಠ_ಠ.Display.busy({
+          },
+          classes: {
+            matches: /CLASSES/i,
+            fn: () => _options.classes().then(result => _config.update(_config.id, {
+              classes: result
+            }))
+          },
+          config_clear: {
+            matches: [/CONFIG/i, /CLEAR/i],
+            fn: () => () => ಠ_ಠ.Display.confirm({
+                id: "clear_Config",
                 target: ಠ_ಠ.container,
-                fn: true
-              });
-
+                message: "Please confirm that you wish to <strong>clear</strong> the configuration. This will <strong>not delete</strong> your data.",
+                action: "Clear"
+              })
+              .then(confirm => confirm ? ಠ_ಠ.Display.busy() && _config.clear() : false)
+              .then(cleared => cleared ? ಠ_ಠ.Display.state().exit([STATE_CONFIG, STATE_OPENED]) && ಠ_ಠ.Router.run(STATE_READY) : false)
+              .catch(e => e ? ಠ_ಠ.Flags.error("Clear Config Error", e) : ಠ_ಠ.Flags.log("Clear Config Cancelled"))
+          },
+          config_show: {
+            matches: [/CONFIG/i, /SHOW/i],
+            fn: () => {
+              var _details = {},
+                _finish = ಠ_ಠ.Display.busy({
+                  target: ಠ_ಠ.container,
+                  fn: true
+                });
               _config.find()
                 .then(result => result ? _config.load(_details.file = result) : result)
                 .then(config => config ? _details.config = config : config)
@@ -1036,77 +1004,87 @@ App = function() {
                   target: ಠ_ಠ.container,
                   code: _.escape(JSON.stringify(_details, null, 4))
                 }) : config);
-
             }
-
-          } else if ((/ARCHIVE/i).test(command)) {
-
-            _archive.show();
-
-          } else if ((/NEW/i).test(command) && command.length > 1 && (/TASK/i).test(command[1])) {
-
-            _new.task();
-
-          } else if ((/EDIT/i).test(command) && command.length > 2 && (/TAGS/i).test(command[1])) {
-
-            _show.edit($(`#item_${command[2]}`));
-
-          } else if ((/CALENDAR/i).test(command)) {
-
-            _options.calendar().then(result => _config.update(_config.id, {
-              calendar: result
-            }));
-
-          } else if ((/ISSUES/i).test(command)) {
-
-            _options.issues().then(result => _config.update(_config.id, {
+          },
+          create: () => {
+            var _finish;
+            _config.clear()
+              .then(() => _tasks.create())
+              .then(id => _config.create(id))
+              .then(() => _start(_config.config, _finish))
+              .then(_finish = ಠ_ಠ.Display.busy({
+                target: ಠ_ಠ.container,
+                status: "Creating Config",
+                fn: true
+              }));
+          },
+          edit_tags: {
+            matches: [/EDIT/i, /TAGS/i],
+            length: 1,
+            fn: command => _show.edit($(`#item_${command}`))
+          },
+          forward: {
+            matches: /FORWARD/i,
+            fn: () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().add(1, "weeks")),
+          },
+          issues: {
+            matches: /ISSUES/i,
+            fn: () => _options.issues().then(result => _config.update(_config.id, {
               issues: result
-            }));
-
-          } else if ((/CLASSES/i).test(command)) {
-
-            _options.classes().then(result => _config.update(_config.id, {
-              classes: result
-            }));
-
-          } else if ((/JUMP/i).test(command)) {
-
-            _jump();
-
-          } else if ((/TODAY/i).test(command)) {
-
-            _show.weekly(moment(_show.today));
-
-          } else if ((/FORWARD/i).test(command)) {
-
-            _show.weekly(moment(_show.show ? _show.show : _show.today).clone().add(1, "weeks"));
-
-          } else if ((/BACKWARD/i).test(command)) {
-
-            _show.weekly(moment(_show.show ? _show.show : _show.today).clone().subtract(1, "weeks"));
-
-          } else if ((/REMOVE/i).test(command) && command.length == 4 && (/TAG/i).test(command[1])) {
-
-            _show.detag($(`#item_${command[2]}`), command[3]);
-
-          } else if ((/SEARCH/i).test(command)) {
-
-            command.length > 1 && (/TAGS/i).test(command[1]) ?
-              _show.tagged(command[2])
-              .then(results => ಠ_ಠ.Flags.log(`Found Docket ${results.length} Item${results.length > 1 ? "s" : ""}`, results)) :
-              _find.search();
-
-          } else if ((/REFRESH/i).test(command)) {
-
-            _refresh();
-
-          } else {
-
-            var _parsed = moment(command);
-            if (_parsed.isValid()) _show.weekly(_parsed);
-
+            }))
+          },
+          jump: {
+            matches: /JUMP/i,
+            fn: _jump
+          },
+          new_task: {
+            matches: [/NEW/i, /TASK/i],
+            fn: _new.task
+          },
+          open: {
+            options: {
+              title: "Select a Docket Sheet to Open",
+              view: "SPREADSHEETS",
+            },
+            success: value => {
+              var _picked = value.id,
+                _finish = ಠ_ಠ.Display.busy({
+                  target: ಠ_ಠ.container,
+                  status: "Loading Config",
+                  fn: true
+                });
+              _config.find()
+                .then(config => config ? _config.update(config.id, {
+                  data: _picked
+                }) : _config.create(_picked))
+                .then(() => _start(_config.config, _finish));
+            },
+          },
+          refresh: {
+            matches: /REFRESH/i,
+            fn: _refresh
+          },
+          remove_tag: {
+            matches: [/REMOVE/i, /TAG/i],
+            length: 2,
+            fn: command => _show.detag($(`#item_${command[0]}`), command[1])
+          },
+          search_tags: {
+            matches: [/SEARCH/i, /TAGS/i],
+            length: 1,
+            fn: command => _show.tagged(command).then(results => ಠ_ಠ.Flags.log(`Found Docket ${results.length} Item${results.length > 1 ? "s" : ""}`, results))
+          },
+          search: _find.search,
+          today: {
+            matches: /TODAY/i,
+            fn: () => _show.weekly(moment(_show.today))
           }
-
+        },
+        route: (handled, command) => {
+          /* <!-- TODO: More elegant expression here! --> */
+          if (handled) return;
+          var _parsed = moment(command);
+          if (_parsed.isValid()) _show.weekly(_parsed);
         }
       });
 

@@ -20,24 +20,6 @@ App = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _pick = {
-
-    survey: () => ಠ_ಠ.Main.pick("Select a Survey to Open",
-      () => [new google.picker.DocsView().setMimeTypes(TYPE).setIncludeFolders(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED],
-      "Google Drive Merge Picked", TYPE),
-
-    sheet: () => ಠ_ಠ.Main.pick("Select a Sheet to Open",
-      () => [new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS).setIncludeFolders(true).setParent("root"), google.picker.ViewId.RECENTLY_PICKED],
-      "Google Drive Sheet Picked", ಠ_ಠ.Google.files.natives()[1]),
-
-  };
-
-  var _loadSurvey = id => ಠ_ಠ.Google.files.download(id)
-    .then(loaded => {
-      ಠ_ಠ.Display.log("Loaded:", loaded);
-      ಠ_ಠ.Display.state().enter(STATE_OPENED);
-    });
-
   var _createSurvey = () => new Promise(resolve => {
 
     ಠ_ಠ.Display.template.show({
@@ -99,39 +81,35 @@ App = function() {
         states: STATES,
         test: () => ಠ_ಠ.Display.state().in(STATE_OPENED),
         clear: () => {},
-        route: (handled, command) => {
-
-          if (handled) return;
-          
-          if ((/OPEN/i).test(command)) {
-
-            if ((/OPEN/i).test(command[1]) && command[1]) {
-
-              /* <!-- Load Existing Survey File --> */
-              _loadSurvey(command[1]);
-
-            } else {
-
-              /* <!-- Pick Existing Survey File --> */
-              _pick.survey().then(survey => {
-                ಠ_ಠ.Flags.log("SURVEY:", survey);
-                _loadSurvey(survey.id);
-              }).catch(e => ಠ_ಠ.Flags.error("Picker Failure: ", e ? e : "No Inner Error"));
-
-            }
-
-          } else if ((/CREATE/i).test(command)) {
-
-            _createSurvey();
-
-          } else if ((/CLOSE/i).test(command)) {
-
-            ಠ_ಠ.Router.clean(true);
-
-          }
-
-        }
-
+        routes: {
+          load: {
+            options: {
+              download: true
+            },
+            success: value => {
+              ಠ_ಠ.Display.log("Loaded:", value.result);
+              ಠ_ಠ.Display.state().enter(STATE_OPENED);
+            },
+          },
+          open: {
+            options: {
+              title: "Select a Survey to Open",
+              view: "DOCS",
+              mime: TYPE,
+              folders: true,
+              all: true,
+              recent: true,
+              download: true
+            },
+            success: value => {
+              ಠ_ಠ.Display.log("Opened:", value.result);
+              ಠ_ಠ.Display.state().enter(STATE_OPENED);
+            },
+          },
+          create: _createSurvey,
+        },
+        route: () => false,
+        /* <!-- PARAMETERS: handled, command --> */
       });
 
       /* <!-- Return for Chaining --> */

@@ -1,45 +1,45 @@
 App = function() {
-	"use strict";
+  "use strict";
 
-	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
+  /* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
 
-	/* <!-- Returns an instance of this if required --> */
-	if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
+  /* <!-- Returns an instance of this if required --> */
+  if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
-	/* <!-- Internal Constants --> */
-    const STATE_READY = "ready",
+  /* <!-- Internal Constants --> */
+  const STATE_READY = "ready",
     STATE_OPENED = "opened",
     STATES = [STATE_READY, STATE_OPENED];
-	/* <!-- Internal Constants --> */
+  /* <!-- Internal Constants --> */
 
-	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, _credentials, _showdown;
+  /* <!-- Internal Variables --> */
+  var ಠ_ಠ, _credentials, _showdown;
   var _config, _tasks, _start;
-	/* <!-- Internal Variables --> */
+  /* <!-- Internal Variables --> */
 
-	/* <!-- Internal Functions --> */
-	/* <!-- Internal Functions --> */
+  /* <!-- Internal Functions --> */
+  /* <!-- Internal Functions --> */
 
-	/* <!-- External Visibility --> */
-	return {
+  /* <!-- External Visibility --> */
+  return {
 
-		/* <!-- External Functions --> */
-		initialise: function(container) {
+    /* <!-- External Functions --> */
+    initialise: function(container) {
 
-			/* <!-- Get a reference to the Container --> */
-			ಠ_ಠ = container;
+      /* <!-- Get a reference to the Container --> */
+      ಠ_ಠ = container;
 
-			/* <!-- Set Container Reference to this --> */
-			container.App = this;
-			
-			/* <!-- Set Up the Default Router --> */
+      /* <!-- Set Container Reference to this --> */
+      container.App = this;
+
+      /* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
         name: "Accounts",
         states: STATES,
         recent: false,
         simple: true,
         start: () => {
-          
+
           var _busy = ಠ_ಠ.Display.busy({
             target: ಠ_ಠ.container,
             status: "Loading DBs",
@@ -56,35 +56,31 @@ App = function() {
         clear: () => {
           if (_tasks) _tasks.close();
         },
-        route: (handled, command) => {
+        routes: {
+          create: () => {
 
-          if (handled) return;
-          var _finish;
-
-          if ((/CREATE/i).test(command)) {
-
-            _finish = ಠ_ಠ.Display.busy({
-              target: ಠ_ಠ.container,
-              status: "Creating DB",
-              fn: true
-            });
-
+            /* <!-- TODO: Check this logical order actually works! --> */
+            var _finish;
             _config.clear()
               .then(() => _tasks.create())
               .then(id => _config.create(id))
               .then(() => _start(_config.config, _finish))
-              .then(_finish);
-
-          }
-
-        }
+              .then(_finish = ಠ_ಠ.Display.busy({
+                target: ಠ_ಠ.container,
+                status: "Creating DB",
+                fn: true
+              }));
+          },
+        },
+        route: () => false,
+        /* <!-- PARAMETERS: handled, command --> */
       });
 
-			/* <!-- Return for Chaining --> */
-			return this;
+      /* <!-- Return for Chaining --> */
+      return this;
 
-		},
-    
+    },
+
     /* <!-- Start App after fully loaded --> */
     start: () => {
 
@@ -97,21 +93,21 @@ App = function() {
       _showdown = new showdown.Converter({
         strikethrough: true
       });
-     
+
       /* <!-- Create Credentials Reference --> */
       _credentials = ಠ_ಠ.Credentials(ಠ_ಠ);
-      
+
     },
-    
-		/* <!-- Clear the existing state --> */
-		clean: () => ಠ_ಠ.Router.clean(false),
-		
+
+    /* <!-- Clear the existing state --> */
+    clean: () => ಠ_ಠ.Router.clean(false),
+
     credentials: _credentials,
-    
+
     showdown: _showdown,
-    
-    
-    
-	};
+
+
+
+  };
 
 };

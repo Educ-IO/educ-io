@@ -1,4 +1,4 @@
-Example = options => {
+Example = function() {
   "use strict";
 
   /* <!-- HELPER: Form data to/from JSON Object --> */
@@ -8,15 +8,12 @@ Example = options => {
 
   /* <!-- Internal Constants --> */
   const FACTORY = this;
-  const DEFAULTS = {
-    DELAY : ms => new Promise(resolve => setTimeout(resolve, ms)),
-    RANDOM : (lower, higher) => Math.random() * (higher - lower) + lower
-  }, DEBUG = FACTORY.Flags && FACTORY.Flags.debug(),
-     LOG = DEBUG ? FACTORY.Flags.log : () => false;
+  const DELAY = FACTORY.App.delay,
+     RANDOM = FACTORY.App.random,
+     RACE = FACTORY.App.race(500);
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
@@ -26,23 +23,29 @@ Example = options => {
   return {
 
     /* <!-- External Functions --> */
-		start: () => options.DELAY(options.RANDOM(100, 500)).then(() => {
-      LOG("START Called");
+		start: () => DELAY(RANDOM(100, 500)).then(() => {
+      FACTORY.Flags.log("START Called");
+      return true;
+      
+    }),
+    
+    test1: () => DELAY(RANDOM(200, 2000)).then(() => {
+      FACTORY.Flags.log("TEST 1 Complete");
       return true;
     }),
     
-    test1: () => options.DELAY(options.RANDOM(200, 2000)).then(() => {
-      LOG("TEST 1 Complete");
-      return true;
-    }),
-    
-    test2: () => options.DELAY(options.RANDOM(300, 3000)).then(() => {
-      LOG("TEST 2 Complete");
+    test2: () => DELAY(RANDOM(300, 3000)).then(() => {
+      FACTORY.Flags.log("TEST 2 Complete");
       return false;
     }),
     
+    test3: () => RACE(DELAY(1000).then(() => {
+      FACTORY.Flags.log("TEST 3 Complete");
+      return true;
+    })),
+    
     finish: () => {
-      LOG("FINISH Called");
+      FACTORY.Flags.log("FINISH Called");
       return true;
     },
     /* <!-- External Functions --> */

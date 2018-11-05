@@ -3,7 +3,7 @@ layout: simple
 title: Home
 permalink: /
 style: page
-title: Web Apps & Tools built for Google Apps
+description: Web Apps & Tools built for Google Apps
 css:
   primary:
     - bootstrap/functions

@@ -4,7 +4,7 @@
 	<div class="input-group{{#if large}} input-group-lg{{/if}} evidence">
 		<textarea id="{{id}}_DETAILS" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional" data-output-name="Details" rows="1" aria-label="{{#if details}}{{details}}{{else}}Details{{/if}}" placeholder="{{#if details}}{{details}}{{else}}Details{{/if}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
 		<div class="input-group-append">
-			<button id="{{id}}_TYPE" type="button" class="btn{{#if large}} btn-lg{{/if}} btn-dark complex-list-type dropdown-toggle" data-default="{{type}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{type}}</button>
+      {{> control_button b_id=(concat id "_TYPE") b_class="btn-dark complex-list-type dropdown-toggle" b_default=type b_text=type b_toggle="dropdown"}}
 			<div class="dropdown-menu dropdown-menu-right">
 				{{#each options}}
 				{{#if divider}}<div class="dropdown-divider"></div>{{/if}}

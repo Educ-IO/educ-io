@@ -1,22 +1,13 @@
-SaaD = options => {
+SaaD = function() {
   "use strict";
-
-  /* <!-- HELPER: Form data to/from JSON Object --> */
-  /* <!-- PARAMETERS: Options (see below) and a factory context (to generate modules, helpers etc) --> */
-  /* <!-- REQUIRES: Global Scope: JQuery, Underscore --> */
-  /* <!-- REQUIRES: Factory Scope: Flags --> */
 
   /* <!-- Internal Constants --> */
   const FACTORY = this;
-  const DEFAULTS = {
-    DELAY : ms => new Promise(resolve => setTimeout(resolve, ms)),
-    RANDOM : (lower, higher) => Math.random() * (higher - lower) + lower
-  }, DEBUG = FACTORY.Flags && FACTORY.Flags.debug(),
-     LOG = DEBUG ? FACTORY.Flags.log : () => false;
+  const DELAY = FACTORY.App.delay,
+     RANDOM = FACTORY.App.random;
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
@@ -26,23 +17,23 @@ SaaD = options => {
   return {
 
     /* <!-- External Functions --> */
-		start: () => options.DELAY(options.RANDOM(100, 500)).then(() => {
-      LOG("START Called");
+		start: () => DELAY(RANDOM(100, 500)).then(() => {
+      FACTORY.Flags.log("START Called");
       return true;
     }),
     
-    create: () => options.DELAY(options.RANDOM(200, 2000)).then(() => {
-      LOG("CREATE Complete");
+    create: () => DELAY(RANDOM(200, 2000)).then(() => {
+      FACTORY.Flags.log("CREATE Complete");
       return true;
     }),
     
-    query: () => options.DELAY(options.RANDOM(300, 3000)).then(() => {
-      LOG("QUERY Complete");
+    query: () => DELAY(RANDOM(300, 3000)).then(() => {
+      FACTORY.Flags.log("QUERY Complete");
       return true;
     }),
     
     finish: () => {
-      LOG("FINISH Called");
+      FACTORY.Flags.log("FINISH Called");
       return true;
     },
     /* <!-- External Functions --> */

@@ -384,6 +384,10 @@ reflect:
     - service
     - main
     - reflect/forms
+    - reflect/templates/evidence_tracker
+    - reflect/templates/form_master
+    - reflect/templates/uk_teachers_reflection
+    - reflect/scales/uk_teachers_standards
   scripts: 
     - extends/regex
     - extends/array
@@ -1693,13 +1697,13 @@ merge:
             commands:
               - name: Open Sheet
                 desc: Load data (to merge) from a Google Sheet
-                hash: load.data.sheet
+                hash: open.data.sheet
                 auth: google
                 imports:
                 - google
               - name: Open Form
                 desc: Load data (to merge) from a Google Form
-                hash: load.data.form
+                hash: open.data.form
                 auth: google
                 imports:
                 - google
@@ -1709,13 +1713,13 @@ merge:
             commands:
               - name: Load Doc
                 desc: Load a template (to merge into) from a Google Doc
-                hash: load.template.doc
+                hash: open.template.doc
                 auth: google
                 imports:
                 - google
               - name: Load Sheet
                 desc: Load a template (to merge into) from a Google Sheet
-                hash: load.template.sheet
+                hash: open.template.sheet
                 auth: google
                 imports:
                 - google         
@@ -3089,6 +3093,7 @@ debug:
     - display
     - help
     - service
+    - router
     - main
   scripts: 
     - extends/regex
@@ -3115,7 +3120,7 @@ debug:
     - shared/HELP_UNAVAILABLE
     - debug/PUBLIC
     - debug/INSTRUCTIONS
-    - debug/README
+    - debug/FEATURES
     - debug/TESTS
   scopes:
     google:

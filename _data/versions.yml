@@ -1,4 +1,12 @@
 site :
+  0.0.2 :
+    name : Overhauled App Router
+    desc : Major Changes to app routing and testing
+    type : major
+  0.0.11 :
+    name : Router Updates
+    desc : Changes to route path and state for Apps
+    type : minor
   0.0.10l :
     name : CSS Updates
     desc : Minor Style Updates and bug fixes

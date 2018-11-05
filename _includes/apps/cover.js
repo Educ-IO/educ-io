@@ -31,7 +31,8 @@ App = function() {
 			/* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
         name: "Cover",
-        states: STATES
+        states: STATES,
+        route: () => false, /* <!-- PARAMETERS: handled, command --> */
       });
 
 			/* <!-- Return for Chaining --> */

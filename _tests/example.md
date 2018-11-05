@@ -15,5 +15,11 @@ tests:
     auth: google
     scopes:
       - https://www.googleapis.com/auth/drive.file
+  - name: Test 3
+    desc: Third Example Test
+    function: test3
+    auth: google
+    scopes:
+      - https://www.googleapis.com/auth/drive.file
 ---
-These are example tests, to verify that the debug testing system is, in itself, functioning properly! __Click__ on the individual tests below to __run them__, visual __status__ of the tests will be shown within the __button__. Test 1 should __succeed__{:.badge .badge-pill .badge-success .text-uppercase} and Test 2 should __fail__{:.badge .badge-pill .badge-danger .text-uppercase}. End.
+These are example tests, to verify that the debug testing system is, in itself, functioning properly! __Click__ on the individual tests below to __run them__, visual __status__ of the tests will be shown within the __button__. Test 1 should __succeed__{:.badge .badge-pill .badge-success .text-uppercase}, Test 2 and Test 3 should __fail__{:.badge .badge-pill .badge-danger .text-uppercase}.
