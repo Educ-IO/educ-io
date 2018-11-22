@@ -3343,6 +3343,10 @@ tagadoc:
   colour: cc0
   action: Find out more
   versions:
+    1.2.0 :
+      name : Live Updates
+      desc : Edited Tags are immediately displayed in open Documents and Calendar Events
+      type : minor
     1.1.0 :
       name : Removed Edit Icon for read-only Documents
       desc : Edit icon is only displayed for Documents where tags can be edited

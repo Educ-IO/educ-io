@@ -39,6 +39,7 @@ globals:
   Mousetrap: false
   Hammer: false
   objectHash: false
+  chrome: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false

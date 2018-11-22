@@ -319,6 +319,12 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
   /* <!-- Internal Objects --> */
 
   /* <!-- Internal Functions --> */
+  var _updateTags = () => {
+    if (chrome && chrome.runtime) chrome.runtime.sendMessage("ekniapbebejhamindielmdgpceijdpff", {
+      action: "update"
+    });
+  };
+
   var locate = row => {
       var _position = row.position().top - row.height();
       ಠ_ಠ.Flags.log(`Setting scroll position for id=${row.attr("id")} to ${_position}`);
@@ -1552,7 +1558,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
               resolve(updated);
             });
 
-          }), null, items, collection, table, id);
+          }), null, items, collection, table, id).then(_updateTags);
 
         }).catch(e => e ? ಠ_ಠ.Flags.error("De-Tagging Error", e) : ಠ_ಠ.Flags.log("De-Tagging Cancelled"));
 
@@ -1674,7 +1680,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
               resolve(item);
             });
 
-          }), _data, items, collection, table, id);
+          }), _data, items, collection, table, id).then(_updateTags);
 
         }
 
@@ -1901,7 +1907,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
         if (_valid(values)) {
 
           var _name = "__NEW_NAME",
-              _candidates = [];
+            _candidates = [];
           _.each(values.names, (name, index) => {
             if (items[index].name != name) {
               collection.by("id", items[index].id)[_name] = name;
@@ -1910,8 +1916,10 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
           });
 
           _processItems("Renaming", item => new Promise(resolve => {
-            
-            ಠ_ಠ.Google.files.update(item.id, {name: item[_name]}, _team).then(updated => {
+
+            ಠ_ಠ.Google.files.update(item.id, {
+              name: item[_name]
+            }, _team).then(updated => {
               item.name = updated.name;
               delete item[_name];
               resolve(item);

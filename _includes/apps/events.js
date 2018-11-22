@@ -81,6 +81,10 @@ App = function() {
   /* <!-- Internal Objects --> */
 
   /* <!-- Internal Functions --> */
+  var _updateTags = () => {
+    if (chrome && chrome.runtime) chrome.runtime.sendMessage("ekniapbebejhamindielmdgpceijdpff", {action: "update"});  
+  };
+  
   var _format = {
       duration: (start, end) => `${start && end ? `For ${moment.duration(start.diff(end)).humanize()}` : ""}`,
       date: (start, end) => `${start ? start.format(start.hour() === 0 && start.minute() === 0 && start.second() === 0 && !end ? "LL" : "LLL") : ""}`,
@@ -150,6 +154,7 @@ App = function() {
         };
 
         ಠ_ಠ.Google.calendar.events.update(id, event.id, _data).then(event => {
+          _updateTags();
           resolve(event);
         }).catch(e => ಠ_ಠ.Flags.error("Patch Error", e) && reject(e));
 
@@ -182,6 +187,7 @@ App = function() {
             }
           };
           ಠ_ಠ.Google.calendar.events.update(id, event.id, _data).then(event => {
+            _updateTags();
             resolve(event);
           }).catch(e => ಠ_ಠ.Flags.error("Patch Error", e) && reject(e));
         } else {
@@ -267,6 +273,7 @@ App = function() {
             year: _current.format("YYYY")
           }) : "",
           action: {
+            class:  ಠ_ಠ.Display.state().in(STATE_EVENT) ? "d-none btn-secondary" : null,
             list: [{
               action: "search",
               icon: "search"
@@ -573,7 +580,7 @@ App = function() {
           },
           remove_list: {
             matches: [/REMOVE/i, /LIST/i],
-            state: STATE_OPENED,
+            state: [STATE_OPENED, STATE_EVENT],
             length: 1,
             fn: command => {
               ಠ_ಠ.Flags.log(`Removing List Item: ${command}`);
@@ -585,7 +592,7 @@ App = function() {
           },
           search_property: {
             matches: [/SEARCH/i, /PROPERTIES/i],
-            state: STATE_OPENED,
+            state:  [STATE_OPENED, STATE_EVENT],
             length: 1,
             fn: command => _searchProperties(_id, command, true),
           },
@@ -596,18 +603,18 @@ App = function() {
             fn: command => _searchProperties(_id, command[0], command[1]),
           },
           search: {
-            state: STATE_OPENED,
+            state:  [STATE_OPENED, STATE_EVENT],
             fn: () => _search(_id)
           },
           remove_tag: {
             matches: [/REMOVE/i, /TAG/i],
-            state: STATE_OPENED,
+            state: [STATE_OPENED, STATE_EVENT],
             length: 2,
-            fn: command => ಠ_ಠ.Flags.log(`Removing Tag (${command[1]}) from: ${command[0]}`) &&_process(command[0], (calendar, event) => _deTagEvent(calendar, event, command[1]))
+            fn: command => ಠ_ಠ.Flags.log(`Removing Tag (${command[1]}) from: ${command[0]}`) && _process(command[0], (calendar, event) => _deTagEvent(calendar, event, command[1]))
           },
           tag_item: {
             matches: /TAG/i,
-            state: STATE_OPENED,
+            state: [STATE_OPENED, STATE_EVENT],
             length: 1,
             fn: command => ಠ_ಠ.Flags.log(`Tagging Item: ${command} in Calendar: ${_id}`) && _process(command, _tagEvent)
           }

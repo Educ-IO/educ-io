@@ -1,4 +1,8 @@
 site :
+  0.1.1 :
+    name : Updated Events App
+    desc : Bug Fixes and Real-Time Extension Updates
+    type : major
   0.1.0a :
     name : Overhauled App Router
     desc : Major Changes to app routing and testing
@@ -750,6 +754,9 @@ cover :
     name : Early testing version
     type : minor
 events :
+  0.0.3-alpha :
+    name : Bug Fixes and Real-Time Extension Updates
+    type : minor
   0.0.2a-alpha :
     name : Basic Functionality
     type : minor

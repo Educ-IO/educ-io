@@ -522,11 +522,11 @@ App = function() {
             sizes: date.isoWeekday() >= 6 ? {
               xs: 12
             } : {
-              lg: type.large ? 8 : type.small.before ? 4 : 6,
+              lg: type.large ? 9 : type.small.before ? 3 : 6,
               xl: type.large ? 6 : type.small.before || type.small.after ? 3 : 4
             },
             row_sizes: date.isoWeekday() == 6 ? {
-              lg: type.large ? 8 : type.small.before ? 4 : 6,
+              lg: type.large ? 9 : type.small.before ? 3 : 6,
               xl: type.large ? 6 : type.small.before || type.small.after ? 3 : 4
             } : false,
             title: date.format("ddd"),
