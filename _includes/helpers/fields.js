@@ -283,6 +283,8 @@ Fields = options => {
 		form.find(".textual-input-button[data-action='me']").off("click.me")
 			.on("click.me", e => $(`#${$(e.currentTarget).data("targets")}`).val(options.me()));
 
+    form.find("input[data-input-default='me'], textarea[data-input-default='me']").val(options.me());
+    
 	};
 
 	var _datetime = form => {

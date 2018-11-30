@@ -644,21 +644,6 @@ App = function() {
           }
         });
 
-      /* <!-- Swipe and Touch Controls --> */
-      var swipe_control = new Hammer(_diary[0]);
-      swipe_control.get("swipe").set({
-        direction: Hammer.DIRECTION_HORIZONTAL
-      });
-      swipe_control.on("swipe", e => {
-        if (e.pointerType == "touch") {
-          if (e.type == "swipeleft" || (e.type == "swipe" && e.direction == 2)) {
-            _show.weekly(moment(_show.show ? _show.show : _show.today).clone().add(1, "weeks"));
-          } else if (e.type == "swiperight" || (e.type == "swipe" && e.direction == 4)) {
-            _show.weekly(moment(_show.show ? _show.show : _show.today).clone().subtract(1, "weeks"));
-          }
-        }
-      });
-
       /* <!-- Scroll to today if visible --> */
       if (Element.prototype.scrollIntoView) {
         var _now = _diary.find("div.focussed").length == 1 ? _diary.find("div.focussed") : _diary.find("div.present");
@@ -859,42 +844,7 @@ App = function() {
 
   };
 
-  var _shortcuts = result => {
-
-    /* <!-- Bind Keyboard shortcuts --> */
-    var _from = () => moment(_show.show ? _show.show : _show.today).clone();
-    Mousetrap.bind("t", () => _show.weekly(moment(_show.today)));
-    Mousetrap.bind("T", () => _show.weekly(moment(_show.today)));
-    Mousetrap.bind("<", () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().subtract(1, "weeks")));
-    Mousetrap.bind(">", () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().add(1, "weeks")));
-    Mousetrap.bind(",", () => {
-      var _start = _from();
-      _show.weekly(_start.subtract(_start.isoWeekday() == 7 ? 2 : 1, "days"));
-    });
-    Mousetrap.bind(".", () => {
-      var _start = _from();
-      _show.weekly(_start.add(_start.isoWeekday() == 6 ? 2 : 1, "days"));
-    });
-    Mousetrap.bind("n", () => _new.task());
-    Mousetrap.bind("N", () => _new.task());
-
-    Mousetrap.bind("s", () => _find.search());
-    Mousetrap.bind("S", () => _find.search());
-
-    Mousetrap.bind("f", () => _find.search());
-    Mousetrap.bind("F", () => _find.search());
-
-    Mousetrap.bind("g", () => _jump());
-    Mousetrap.bind("G", () => _jump());
-
-    Mousetrap.bind("j", () => _jump());
-    Mousetrap.bind("J", () => _jump());
-
-    Mousetrap.bind("r", () => _refresh());
-    Mousetrap.bind("R", () => _refresh());
-
-    return result;
-  };
+  var _from = () => moment(_show.show ? _show.show : _show.today).clone();
 
   var _start = (config, busy) => {
 
@@ -912,7 +862,7 @@ App = function() {
         if (busy) busy({
           message: "Loaded Data"
         });
-        return _show.weekly(moment()).then(result => _shortcuts(result));
+        return _show.weekly(moment());
       })
       .catch(e => {
         ಠ_ಠ.Flags.error("Data Error", e ? e : "No Inner Error");
@@ -959,9 +909,19 @@ App = function() {
             matches: /ARCHIVE/i,
             fn: _archive.show
           },
+          backward_day: {
+            matches: [/BACKWARD/i, /DAY/i],
+            keys: ",",
+            fn: () => {
+              var _start = _from();
+              _show.weekly(_start.subtract(_start.isoWeekday() == 7 ? 2 : 1, "days"));
+            },
+          },
           backward: {
             matches: /BACKWARD/i,
-            fn: () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().subtract(1, "weeks"))
+            keys: "<",
+            actions: "swiperight",
+            fn: () => _show.weekly(_from().subtract(1, "weeks"))
           },
           calendar: {
             matches: /CALENDAR/i,
@@ -1023,9 +983,19 @@ App = function() {
             length: 1,
             fn: command => _show.edit($(`#item_${command}`))
           },
+          forward_day: {
+            matches: [/FORWARD/i, /DAY/i],
+            keys: ".",
+            fn: () => {
+              var _start = _from();
+              _show.weekly(_start.add(_start.isoWeekday() == 6 ? 2 : 1, "days"));
+            },
+          },
           forward: {
             matches: /FORWARD/i,
-            fn: () => _show.weekly(moment(_show.show ? _show.show : _show.today).clone().add(1, "weeks")),
+            keys: ">",
+            actions: "swipeleft",
+            fn: () => _show.weekly(_from().add(1, "weeks")),
           },
           issues: {
             matches: /ISSUES/i,
@@ -1035,10 +1005,12 @@ App = function() {
           },
           jump: {
             matches: /JUMP/i,
+            keys: ["j", "J", "g", "G"],
             fn: _jump
           },
           new_task: {
             matches: [/NEW/i, /TASK/i],
+            keys: ["n", "N"],
             fn: _new.task
           },
           open: {
@@ -1062,6 +1034,7 @@ App = function() {
           },
           refresh: {
             matches: /REFRESH/i,
+            keys: ["r", "R"],
             fn: _refresh
           },
           remove_tag: {
@@ -1074,10 +1047,14 @@ App = function() {
             length: 1,
             fn: command => _show.tagged(command).then(results => ಠ_ಠ.Flags.log(`Found Docket ${results.length} Item${results.length > 1 ? "s" : ""}`, results))
           },
-          search: _find.search,
+          search: {
+            keys: ["s", "S", "f", "F"],
+            fn: _find.search,
+          },
           today: {
             matches: /TODAY/i,
-            fn: () => _show.weekly(moment(_show.today))
+            keys: ["t", "T"],
+            fn: () => _show.weekly(moment(_show.today)),
           }
         },
         route: (handled, command) => {

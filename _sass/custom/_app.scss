@@ -4,6 +4,11 @@ html, body {
   height: 100vh;
 }
 
+// -- General -- //
+.text-select {
+  user-select: text;
+}
+
 // -- General Buttons -- //
 .btn {
   text-transform: none;

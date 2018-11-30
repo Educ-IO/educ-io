@@ -132,11 +132,27 @@ table {
 		}
 		.material-icons {font-size: 0.90rem;}
 		&.filtered {
-			background-color: lighten($colour-highlight, 52%);
+      background: repeating-linear-gradient(
+        45deg,
+        $colour-background,
+        $colour-background 10px,
+        lighten($colour-highlight, 45%) 10px,
+        lighten($colour-highlight, 45%) 20px
+      );
 			&.inverse {
-				background-color: darken($colour-highlight, 10%);
+        background: repeating-linear-gradient(
+          45deg,
+          lighten($colour-highlight, 10%),
+          lighten($colour-highlight, 10%) 10px,
+          darken($colour-highlight, 5%) 10px,
+          darken($colour-highlight, 5%) 20px
+        );
 				a {
-					color: $colour-background;	
+					color: $colour-background;
+          &:before, &:after {color: rgba($colour-background, 0.6) !important;}
+				}
+        .material-icons.text-muted {
+					color: darken($colour-background, 5%) !important;	
 				}
 			}
 		}

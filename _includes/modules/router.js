@@ -46,7 +46,7 @@ Router = function() {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Functions --> */
-  var _start, _end, _enter = (recent, fn, simple, state) => {
+  var _start, _end, _shortcuts, _keyboard, _touch, _enter = (recent, fn, simple, state) => {
 
       /* <!-- Load the Initial Instructions --> */
       var _show = recent => ಠ_ಠ.Display.doc.show({
@@ -233,6 +233,7 @@ Router = function() {
         },
         instructions: { /* <!-- Show App Instructions --> */
           matches: /INSTRUCTIONS/i,
+          keys: ["i", "I"],
           fn: command => {
             /* <!-- Load the Instructions --> */
             var show = (name, title) => ಠ_ಠ.Display.doc.show({
@@ -276,8 +277,26 @@ Router = function() {
           _.defaults(_options.routes[name], route) :
           route));
 
-        /* <!-- Setup the start and end methods --> */
-        _start = (deadend, state) => _enter(_options.recent === undefined ? 5 : _options.recent, deadend ? null : _options.start, _options.simple, state);
+        /* <!-- Setup the shortcuts, start and end methods --> */
+        _keyboard = debug => window.Mousetrap ? _.each(_options.routes, (route, name) => {
+          /* <!-- Bind Shortcut key/s if required --> */
+          if (route.keys && (!route.length || route.length === 0)) {
+            route.keys = _.isArray(route.keys) ? route.keys : [route.keys];
+            _.each(route.keys, key => window.Mousetrap.bind(key, ((state, fn, debug, name) => () => (!state || ಠ_ಠ.Display.state().in(state, true)) ? (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && fn() : false)(route.state, route.fn, debug, name)));
+          }
+        }) : true;
+        _touch = debug => window.Hammer ? _.each(_options.routes, (route, name) => {
+          /* <!-- Bind Touch Actions if required --> */
+          if (route.actions && (!route.length || route.length === 0)) {
+            route.actions = _.isArray(route.actions) ? route.actions : [route.actions];
+            var _target = route.target ? route.target : "__default";
+            var _hammer = this[_target] ? this[_target] :
+              (this[_target] = new window.Hammer((route.target ? $(route.target) : ಠ_ಠ.container)[0]));
+            _hammer.on(route.actions.join(" "), ((state, fn, debug, name) => e => (!state || ಠ_ಠ.Display.state().in(state, true)) ? (!debug || ಠ_ಠ.Flags.log(`Touch Action ${e.type} routed to : ${name}`)) && fn() : false)(route.state, route.fn, debug, name));
+          }
+        }, {}) : true;
+        _shortcuts = debug => _keyboard(debug) && _touch(debug),
+          _start = (deadend, state) => _enter(_options.recent === undefined ? 5 : _options.recent, deadend ? null : _options.start, _options.simple, state);
         _end = () => _exit(_options.test, _options.states ? _options.states : [], _options.clear);
 
       })(options);
@@ -286,7 +305,8 @@ Router = function() {
 
         if (!_options) SETUP();
 
-        var _handled = true;
+        var _handled = true,
+          _debug;
 
         if (!command || command === false || command[0] === false || (/PUBLIC/i).test(command)) {
 
@@ -304,8 +324,11 @@ Router = function() {
 
         } else if (command === true || /AUTH/i.test(command) || (command && command[0] === true && command.length == 2)) {
 
+          /* <!-- Debug Flag: For future logging --> */
+          _debug = ಠ_ಠ.Flags && ಠ_ಠ.Flags.debug();
+
           /* <!-- Kick off the App Start Process --> */
-          command[0] === true ? _start(false, command[1]) : _start();
+          _shortcuts(_debug) && (command[0] === true ? _start(false, command[1]) : _start());
 
         } else {
 
@@ -316,17 +339,17 @@ Router = function() {
               index === 0 ? match.test(command) : false : command.length > index && match.test(command[index])) : false,
 
             _check = (route, command) => (!route.qualifier || route.qualifier(command)) &&
-              (route.length === undefined ||
+            (route.length === undefined ||
+              (
                 (
-                  (
-                    _.isObject(route.length) &&
-                    (route.length.min !== undefined || route.length.max !== undefined) &&
-                    (route.length.min === undefined || command.length >= route.length.min) &&
-                    (route.length.max === undefined || command.length <= route.length.max)
-                  ) || (_.isNumber(route.length) && command.length == route.length)
-                )
-              ) && (route.next === undefined || route.next.test(command)),
-              
+                  _.isObject(route.length) &&
+                  (route.length.min !== undefined || route.length.max !== undefined) &&
+                  (route.length.min === undefined || command.length >= route.length.min) &&
+                  (route.length.max === undefined || command.length <= route.length.max)
+                ) || (_.isNumber(route.length) && command.length == route.length)
+              )
+            ) && (route.next === undefined || route.next.test(command)),
+
             _route = _.find(_options.routes, route => route.active !== false &&
               (!route.state || ಠ_ಠ.Display.state().in(route.state, true)) &&
               _match(route, command) && _check(route, STRIP(command, (route.__length = route.matches.length))));
@@ -349,7 +372,7 @@ Router = function() {
           _route && _route.fn ? _execute(_route, command) === false ? (_handled = false) : true : (_handled = false);
 
           /* <!-- Log is available, so debug log --> */
-          if (_handled && ಠ_ಠ.Flags && ಠ_ಠ.Flags.debug()) ಠ_ಠ.Flags.log(`Routed to : ${JSON.stringify(_route)} with: ${JSON.stringify(command)}`);
+          if (_handled && _debug) ಠ_ಠ.Flags.log(`Routed to : ${JSON.stringify(_route)} with: ${JSON.stringify(command)}`);
 
         }
 

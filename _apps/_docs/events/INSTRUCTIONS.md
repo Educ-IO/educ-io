@@ -24,7 +24,7 @@ Returns the focus to __this month__.
 
 ##### Keyboard Shortcuts
 
-You can navigate forwards *&gt;*{:.kb-shortcut} and backwards *&gt;*{:.kb-shortcut} a month (or by swiping left / right on a touch enabled device). *j*{:.kb-shortcut} will jump to an arbitrary date, and to return to today, press *t*{:.kb-shortcut}. Searching is available by pressing *s*{:.kb-shortcut}. To refresh/reload the data from your Docket sheet, press *r*{:.kb-shortcut}.
+You can navigate forwards *&gt;*{:.kb-shortcut} and backwards *&gt;*{:.kb-shortcut} a month (or by swiping left / right on a touch enabled device). *j*{:.kb-shortcut} will jump to an arbitrary date, and to return to today, press *t*{:.kb-shortcut}. Searching is available by pressing *s*{:.kb-shortcut}. To refresh/reload the data from the Calendar, press *r*{:.kb-shortcut}.
 
 ##### Editing Tags
 

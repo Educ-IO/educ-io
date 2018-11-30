@@ -470,8 +470,8 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 			e: _filters.inverted(),
 			s: _sorts,
 			c: table.headers.length,
-			r: _.isNumber(options.header_rows()) ? options.header_rows() : 1,
-			z: _.isNumber(options.hide_rows()) ? options.hide_rows() : 0,
+			r: _.isNumber(options.header_rows && options.header_rows()) ? options.header_rows() : 1,
+			z: _.isNumber(options.hide_rows && options.hide_rows()) ? options.hide_rows() : 0,
 			h: _.chain(table.headers).filter(h => h.hide(true)).map(h => ({
 				n: h.name,
 				h: h.hide_always,

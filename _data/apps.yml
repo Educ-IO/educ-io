@@ -99,8 +99,8 @@ view:
     - shared/rows
     - shared/datatable
     - shared/headers
+    - shared/link
     - fields/field_numeric
-    - view/link
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -109,11 +109,11 @@ view:
     - shared/HELP_INDETERMINATE
     - shared/HELP_UNAVAILABLE
     - shared/HEADERS
+    - shared/LINK_INSTRUCTIONS
     - view/PUBLIC
     - view/FEATURES
     - view/README
     - view/INSTRUCTIONS
-    - view/LINK_INSTRUCTIONS
     - view/EXPORT_FORMATS
     - view/EXPORT_SIZE
     - view/TUTORIALS
@@ -387,6 +387,7 @@ reflect:
     - reflect/templates/evidence_tracker
     - reflect/templates/form_master
     - reflect/templates/uk_teachers_reflection
+    - reflect/templates/students_volunteering
     - reflect/scales/uk_teachers_standards
   scripts: 
     - extends/regex
@@ -457,6 +458,10 @@ reflect:
       - scope: https://www.googleapis.com/auth/spreadsheets
         name: View / Edit your Google Spreadsheets
         reason: This app needs to write data to your spreadsheets in order to record periodic progress from your reflections.
+        request: lazy
+      - scope: https://www.googleapis.com/auth/gmail.send
+        name: Send Emails
+        reason: This app can send emails on your behalf to allow for reports to be validated.
         request: lazy
   keys:
     google:
@@ -1331,6 +1336,8 @@ events:
       load: last
     - name: google
       load: lazy
+    - name: clipboard
+      load: lazy
   helpers:
     - network
     - google
@@ -1338,6 +1345,7 @@ events:
     - css
     - fields
     - filters
+    - strings
     - dialog
   modules:
     - flags
@@ -1370,6 +1378,7 @@ events:
     - shared/control_icon
     - shared/control_button
     - shared/populate_buttons
+    - shared/link
     - events/header
     - events/rows
     - events/tag
@@ -1381,6 +1390,7 @@ events:
     - shared/HELP_AVAILABLE
     - shared/HELP_INDETERMINATE
     - shared/HELP_UNAVAILABLE
+    - shared/LINK_INSTRUCTIONS
     - events/PUBLIC
     - events/FEATURES
     - events/README
@@ -1413,10 +1423,12 @@ events:
           commands:
             - name: Open
               desc: Open an Existing Calendar
+              shortcut: "o" 
               hash: open.calendar
               auth: google
             - name: Close
               desc: Close currently opened Calendar
+              shortcut: "c"
               hash: close.calendar
               disabled_until:
                 - opened
@@ -1449,6 +1461,20 @@ events:
               hash: jump
               disabled_until:
                 - opened
+    - name: Share
+      groups:
+        all:
+          commands:
+            - name: Shortcut Link
+              desc: Share this view with others
+              hash: link
+              imports:
+                - clipboard
+              disabled_until:
+                - monthly
+                - searched
+                - property
+                - event
     - name: Settings
     - name: About
       short_name: Help
@@ -1458,6 +1484,7 @@ events:
             - name: Instructions
               hash: instructions
               desc: More details about how to use this app
+              shortcut: "i"
             - name: Tutorials
               hash: tutorials
               desc: Ways in which you can use this app
@@ -2691,6 +2718,7 @@ docket:
             - name: Instructions
               hash: instructions
               desc: More details about how to use this app
+              shortcut: "i"
             - name: Tutorials
               hash: tutorials
               desc: Ways in which you can use this app

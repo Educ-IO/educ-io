@@ -1,23 +1,37 @@
 Filters = options => {
-	"use strict";
-  
+  "use strict";
+
   /* <!-- MODULE: Parse string Filters and Builds a Filter Query for Loki --> */
   /* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
-	/* <!-- @options.normal: Normal Filters [Optional]  --> */
-	/* <!-- @options.inverted: Inverted Filters [Optional]  --> */
-	/* <!-- REQUIRES: Global Scope: Underscore, Moment --> */
-  
+  /* <!-- @options.normal: Normal Filters [Optional]  --> */
+  /* <!-- @options.inverted: Inverted Filters [Optional]  --> */
+  /* <!-- REQUIRES: Global Scope: Underscore, Moment --> */
+
   /* <!-- Internal Consts --> */
-  const NEGATE = "!!", CONTAINS = "$", REGEX = "##", 
-        LTE = ["<=", "=<"], GTE = [">=","=>"],
-        NOW = "now", NE = "<>", CONTAINS_NONE = ["!$", "$!"],
-        EQ = "=", GT = ">", LT = "<", BETWEEN = "->",
-        PAST = "past", FUTURE = "future", TODAY = "today", VALUED = "@@";
-	const DEFAULTS = {normal : {}, inverted : {}};
+  const NEGATE = "!!",
+    CONTAINS = "$",
+    REGEX = "##",
+    LTE = ["<=", "=<"],
+    GTE = [">=", "=>"],
+    NOW = "now",
+    NE = "<>",
+    CONTAINS_NONE = ["!$", "$!"],
+    EQ = "=",
+    GT = ">",
+    LT = "<",
+    BETWEEN = "->",
+    PAST = "past",
+    FUTURE = "future",
+    TODAY = "today",
+    VALUED = "@@";
+  const DEFAULTS = {
+    normal: {},
+    inverted: {}
+  };
   /* <!-- Internal Consts --> */
 
   /* <!-- Internal Variables --> */
-	options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
+  options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Methods --> */
@@ -25,7 +39,17 @@ Filters = options => {
     var _query, _join = join ? join : "$and";
     _.map(_.keys(filters), field => {
       var _condition = {};
-      _condition[field] = filters[field];
+      if (filters[field].$magic) {
+        _condition[field] = filters[field].$magic == PAST ? {
+          "$lt": new Date()
+        } : filters[field].$magic == FUTURE ? {
+          "$gt": new Date()
+        } : filters[field].$magic == TODAY ? {
+          "$between": [moment().startOf("day"), moment().endOf("day")]
+        } : filters[field];
+      } else {
+        _condition[field] = filters[field];
+      }
       if (!_query) {
         _query = _condition;
       } else {
@@ -96,7 +120,7 @@ Filters = options => {
       var _value = value.split(BETWEEN);
       if (_value.length == 2) {
         var val_1 = _value[0].trim(),
-            val_2 = _value[1].trim();
+          val_2 = _value[1].trim();
         if (val_1 && val_2) _filter = {
           "$between": [val_1, val_2]
         };
@@ -107,26 +131,14 @@ Filters = options => {
       }
     } else if (value == VALUED) {
       _filter = {
-        "$aeq" : undefined
-       };
+        "$aeq": undefined
+      };
     } else if (value) {
-      if (value.toLowerCase() == PAST) {
-        _filter = {
-          "$lt": new Date()
-        };
-      } else if (value.toLowerCase() == FUTURE) {
-        _filter = {
-          "$gt": new Date()
-        };
-      } else if (value.toLowerCase() == TODAY) {
-        _filter = {
-          "$between": [moment().startOf("day"), moment().endOf("day")]
-        };
-      } else {
-        _filter = {
-          "$regex": [RegExp.escape(value), "i"]
-        };
-      }
+      _filter = (value.toLowerCase() == PAST || value.toLowerCase() == FUTURE || value.toLowerCase() == TODAY) ? {
+        "$magic": value.toLowerCase()
+      } : {
+        "$regex": [RegExp.escape(value), "i"]
+      };
     }
     if (_filter) {
       if (_invert) {

@@ -2,7 +2,7 @@
 {{#each rows}}<tr id="{{#if safe}}{{safe}}{{else}}{{#if id}}{{id}}{{/if}}{{/if}}">
   {{#exists type}}<td class="text-center pb-0" title="{{type}}"><i class="material-icons mr-1 md-24">{{#is type "Single"}}event{{else}}{{#is type "Series"}}date_range{{else}}calendar_today{{/is}}{{/is}}</i></td>{{/exists}}
   {{#exists id}}<td><a class="text-left wrap-text small mw-25 link" href="{{url}}" target="_blank" title="Open in Google" data-type="out">{{id}}</a></td>{{/exists}}
-  {{#exists when}}<td>{{when}}{{#if duration}}<small class="form-text text-muted">{{duration}}</small>{{/if}}</td>{{/exists}}
+  {{#exists when}}<td>{{#exists when_display}}{{when_display}}{{else}}{{when}}{{/exists}}{{#if duration}}<small class="form-text text-muted">{{duration}}</small>{{/if}}</td>{{/exists}}
   {{#exists what}}<td class="name-link">{{#if __failure }}<i class="material-icons text-danger mr-2 md-18 font-weight-bold">error_outline</i>{{/if}}{{#if __success }}<i class="material-icons text-success mr-2 md-18 font-weight-light">done</i>{{/if}}<span class="event-name wrap-text mw-60{{#if name_class}} {{name_class}}{{/if}}">{{what}}</span>{{#if where}}<small class="form-text text-muted">{{where}}</small>{{/if}}
   {{#if files}}{{#each files}}<small class="form-text"><img class="pr-1" src="{{iconLink}}" title="{{mimeType}}"/><a href="{{fileUrl}}" target="_blank">{{title}}</a></small>{{/each}}{{/if}}
   </td>{{/exists}}
