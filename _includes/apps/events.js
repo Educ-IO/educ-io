@@ -300,7 +300,7 @@ App = function() {
               year: _current.format("YYYY")
             }) : "",
             action: {
-              class: ಠ_ಠ.Display.state().in(STATE_EVENT) ? "d-none btn-secondary" : null,
+              class: ಠ_ಠ.Display.state().in([STATE_EVENT, STATE_SEARCH, STATE_PROPERTY], true) ? "d-none btn-secondary" : null,
               list: [{
                 action: "search",
                 icon: "search"

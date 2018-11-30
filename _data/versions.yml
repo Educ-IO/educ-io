@@ -1,5 +1,5 @@
 site :
-  0.1.1a :
+  0.1.1b :
     name : Updated Events App
     desc : Bug Fixes and Share Links in Events
     type : minor
