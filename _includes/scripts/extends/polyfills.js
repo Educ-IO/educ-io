@@ -15,8 +15,8 @@ if (!String.prototype.endsWith) {
 /* <!-- Local Object Storage for LocalForage | Polyfill --> */
 (function() {
 
-  var localStorageAvailable = __storageAvailable(window.localStorage),
-    sessionStorageAvailable = __storageAvailable(window.sessionStorage);
+  var localStorageAvailable = window.__storageAvailable(window.localStorage),
+    sessionStorageAvailable = window.__storageAvailable(window.sessionStorage);
 
   if (!localStorageAvailable || !sessionStorageAvailable) {
 

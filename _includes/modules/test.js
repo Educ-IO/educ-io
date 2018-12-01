@@ -13,21 +13,7 @@ Page = function() {
       return false;
     }
   }
-
-  var __storageAvailable = function(storage) {
-    if (typeof storage == "undefined" || !storage) return false;
-    try {
-      var name = "__TEST_NAME__",
-        value = "__TEST_VALUE__",
-        result = true;
-      storage.setItem(name, value);
-      result = (storage.getItem(name) == value);
-      storage.removeItem(name);
-      return result;
-    } catch (err) {
-      return false;
-    }
-  };
+  
   var _existsCrypto = function() {
     return window.crypto &&
       window.crypto.getRandomValues &&
@@ -393,7 +379,7 @@ Page = function() {
       url: "https://caniuse.com/#feat=namevalue-storage",
       required: false,
       test: function() {
-        return (__storageAvailable(window.localStorage) && __storageAvailable(window.sessionStorage));
+        return (window.__storageAvailable(window.localStorage) && window.__storageAvailable(window.sessionStorage));
       },
       success: {
         icon: "check",
@@ -416,7 +402,7 @@ Page = function() {
       required: false,
       test: function() {
 
-        if (!localforage || !__storageAvailable(window.localStorage)) {
+        if (!localforage || !window.__storageAvailable(window.localStorage)) {
           return false;
         } else {
           const DB = localforage.createInstance({

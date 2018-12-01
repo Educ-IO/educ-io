@@ -599,4 +599,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-03-25
+ᕕ( ᐛ )ᕗ JD - 2018-12-01

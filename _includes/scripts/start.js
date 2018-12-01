@@ -1,5 +1,23 @@
 (function() {
 
+  /* <!-- Test Storage Availability (inc Mobile Safari | Incognito Mode) --> */
+  window.__storageAvailable = function(storage) {
+    if (typeof storage == "undefined") return false;
+    try { /* <!-- Hack for IOS/Safari Incognito Mode) --> */
+      var name = "__TEST_NAME__",
+        value = "__TEST_VALUE__",
+        result = true;
+      storage.setItem(name, value);
+      result = (storage.getItem(name) == value);
+      storage.removeItem(name);
+      return result;
+    }
+    catch (err) {
+      return false;
+    }
+  };
+  /* <!-- Test Storage Availability (inc Mobile Safari | Incognito Mode) --> */
+  
 	/*jshint ignore:start*/
 	if ({{ site.app.namespace }} && {{ site.app.namespace }}._isF({{ site.app.namespace }}.Controller)) {{ site.app.namespace }}.Controller();
 	/*jshint ignore:end*/
@@ -9,8 +27,8 @@
 			!Array.prototype.map ||
 			!Array.prototype.filter ||
 			typeof Object.assign != "function" ||
-			!__storageAvailable(window.localStorage) ||
-			!__storageAvailable(window.sessionStorage) ||
+			!window.__storageAvailable(window.localStorage) ||
+			!window.__storageAvailable(window.sessionStorage) ||
 			!window.fetch;
 	
 	if (polyfill) {

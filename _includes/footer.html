@@ -7,7 +7,6 @@
 		{% include analytics.html %}
 {% endif %}
 <script type="text/javascript" charset="utf-8" data-src="start">
-	{% include scripts/extends/storage.js %}
 	{% include scripts/start.js %}
 </script>
 {% assign imports = false %}{% if page.imports %}{% assign imports = page.imports %}{% elsif layout.imports %}{% assign imports = layout.imports %}{% elsif page.app and page.app != "" and site.data.apps[page.app].imports %}{% assign imports = site.data.apps[page.app].imports %}{% endif %}
