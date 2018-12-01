@@ -9,7 +9,7 @@ Controller = function() {
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
-	var ಠ_ಠ, fonts_handled = false;
+	var ಠ_ಠ, fonts_handled = false, err = (window && window.console ? window.console.error : e => e);
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
@@ -62,8 +62,8 @@ Controller = function() {
 						});
 					}
 				}
-			} catch (e) {
-				console.error("ERROR SETTING FONT DISPLAY/API:", e);
+			} catch (e) { 
+				err("ERROR SETTING FONT DISPLAY/API:", e);
 			}
 		}
 	};
@@ -170,7 +170,7 @@ Controller = function() {
 					if (ಠ_ಠ.SETUP && ಠ_ಠ.SETUP.SERVICE && ಠ_ಠ.Service) ಠ_ಠ.Service.register();
 				}
 				if (ಠ_ಠ.IMPORTS.LOAD_AFTER) {
-					_load(ಠ_ಠ.IMPORTS.LOAD_AFTER).then(() => {_finalise(true);}).catch(e => {console.error(e); _finalise(true);});
+					_load(ಠ_ಠ.IMPORTS.LOAD_AFTER).then(() => {_finalise(true);}).catch(e => {err(e); _finalise(true);});
 				} else {
 					_finalise(true);
 				}
@@ -178,16 +178,16 @@ Controller = function() {
 
 			var _start = function(result, next) {
 				if (result === true) {
-					if (next) _load(next).then(() => {_proceed(true);}).catch(e => {console.error(e);_proceed(false);});
+					if (next) _load(next).then(() => {_proceed(true);}).catch(e => {err(e);_proceed(false);});
 					_removeClass("css-sensitive");
 					if (ಠ_ಠ.App && ಠ_ಠ.App.route) ಠ_ಠ.App.route([false, false]);
 				}
 			};
 			
 			if (ಠ_ಠ.IMPORTS.LOAD_FIRST && ಠ_ಠ.IMPORTS.LOAD_LAST) {
-				_load(ಠ_ಠ.IMPORTS.LOAD_FIRST).then(() => {_start(true, ಠ_ಠ.IMPORTS.LOAD_LAST);}).catch(e => {console.error(e);_proceed(false);});
+				_load(ಠ_ಠ.IMPORTS.LOAD_FIRST).then(() => {_start(true, ಠ_ಠ.IMPORTS.LOAD_LAST);}).catch(e => {err(e);_proceed(false);});
 			} else if (ಠ_ಠ.IMPORTS.LOAD_FIRST || ಠ_ಠ.IMPORTS.LOAD_LAST) {
-				_load(ಠ_ಠ.IMPORTS.LOAD_FIRST || ಠ_ಠ.IMPORTS.LOAD_LAST).then(() => {_start(true); _proceed(true);}).catch(e => {console.error(e);_start(false);_proceed(false);});
+				_load(ಠ_ಠ.IMPORTS.LOAD_FIRST || ಠ_ಠ.IMPORTS.LOAD_LAST).then(() => {_start(true); _proceed(true);}).catch(e => {err(e);_start(false);_proceed(false);});
 			} else {
 				_proceed(true);
 			}

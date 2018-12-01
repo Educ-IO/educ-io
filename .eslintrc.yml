@@ -87,3 +87,10 @@ globals:
   SaaD: true
   Credentials: true
   Events: true
+  Link: true
+  __Ω__UK_Teachers_Standards: true
+  __Σ__Evidence_Tracker: true
+  __Σ__Form_Master: true
+  __Σ__UK_Teachers_Reflection: true
+  __Σ__Students_Volunteering: true
+  __storageAvailable: true

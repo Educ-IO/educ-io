@@ -19,8 +19,15 @@ Flags = function() {
 		_key = false,
 		_oauth = false,
 		_performance = false,
-		_base, _dir;
-
+		_base, _dir,
+    _default = v => v,
+    _context = (window && window.console ? window.console : {}),
+    _err = (window && window.console ? window.console.error : _default),
+    _log = (window && window.console ? window.console.log : _default),
+    _start = (window && window.console ? window.console.time : _default),
+    _end = (window && window.console ? window.console.timeEnd : _default);
+      
+  
 	/* <!-- Internal Functions --> */
 	var _parse = function() {
 
@@ -35,7 +42,7 @@ Flags = function() {
 
 		_debug = _alert ? _alert : (_url.param("debug") === "" || _url.fparam("debug") === "");
 		if (_debug) window.onerror = function(m, u, l, c, o) {
-			console.error("Error: " + m + " Script: " + u + " Line: " + l + " Column: " + c + " Trace: " + o);
+			_err(`Error: ${m} Script: ${u} Line: ${l} Column: ${c} Trace: ${o}`);
 		};
 
 		_development = (_url.attr("host").split(".")[0] == "dev" || _url.param("dev") === "" || _url.fparam("dev") === "");
@@ -129,17 +136,18 @@ Flags = function() {
 					},
 
 					error: function(message, exception) {
-						_alert ? alert("ERROR - " + message + " : " + JSON.stringify(exception)) : (exception ? console.log("ERROR - " + message, exception) : console.log("ERROR - " + message));
+						_alert && window && window.alert ?
+              window.alert(`ERROR - ${message} : ${JSON.stringify(exception)}`) : (exception ? _log(`ERROR - ${message}`, exception) : _log(`ERROR - ${message}`));
 						return this;
 					},
 
 					log: function() {
-						if (_debug && console) console.log.apply(console, arguments);
+						if (_debug) _log.apply(_context, arguments);
 						return this;
 					},
 
 					time: function(name, end) {
-						if ((_debug || _performance) && console) end ? console.timeEnd.apply(console, [name]) : console.time.apply(console, [name]);
+						if (_debug || _performance) end ? _end.apply(_context, [name]) : _start.apply(_context, [name]);
 						return this;
 					},
 

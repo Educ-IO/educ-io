@@ -22,8 +22,6 @@ General
 
 * Material Design menu display animations
 
-* Router should include key-press shortcut handling! Would be neater to handle state tests that way! Also handle swipes / touch events. <--
-
 * Filters => Populate filter boxes on parameterised views.
 
 Datatable
@@ -151,6 +149,7 @@ Survey
 
 Complete
 --------
+* Router should include key-press shortcut handling! Would be neater to handle state tests that way! Also handle swipes / touch events. <-- DONE
 * Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings. <== DONE
 * ** IMPORTANT ** Failed 'Recent' App load (e.g. newly deleted folder) --> Remove from Recent List <== DONE
 * ** BUG ** Field_SPAN Weeks run from Sunday -> Sunday <-- DONE

@@ -139,6 +139,25 @@ App = function() {
       action: "update"
     }) : false,
 
+    patch: (calendar, event, property, value) => new Promise((resolve, reject) => {
+
+      var _properties = {};
+      _properties[property] = value;
+      var _data = {
+        extendedProperties: {
+          shared: _properties
+        }
+      };
+
+      ಠ_ಠ.Google.calendar.events.update(calendar, event, _data)
+        .then(event => {
+          _tags.update();
+          resolve(event);
+        })
+        .catch(e => ಠ_ಠ.Flags.error("Patch Error", e) && reject(e));
+      
+    }),
+    
     add: (id, event) => new Promise((resolve, reject) => {
 
       var _decode = values => ({
@@ -176,28 +195,10 @@ App = function() {
 
       _tag.then(values => {
 
-        if (values) {
-
-          values = _decode(values);
-          var _properties = {};
-          _properties[values.name] = values.value;
-          var _data = {
-            extendedProperties: {
-              shared: _properties
-            }
-          };
-
-          ಠ_ಠ.Google.calendar.events.update(id, event.id, _data).then(event => {
-            _tags.update();
-            resolve(event);
-          }).catch(e => ಠ_ಠ.Flags.error("Patch Error", e) && reject(e));
-
-        } else {
-
+        values ?
+          (values = _decode(values)) && _tags.patch(id, event.id, values.name, values.value).then(event => resolve(event)).catch(e => reject(e)) :
           resolve(false);
-
-        }
-
+        
       }).catch(e => e ? (ಠ_ಠ.Flags.error("Tagging Error", e) && reject(e)) : (ಠ_ಠ.Flags.log("Tagging Cancelled") && resolve(false)));
 
     }),
@@ -212,21 +213,9 @@ App = function() {
         })
         .then(confirm => {
 
-          if (confirm) {
-            var _properties = {};
-            _properties[property] = null;
-            var _data = {
-              extendedProperties: {
-                shared: _properties
-              }
-            };
-            ಠ_ಠ.Google.calendar.events.update(id, event.id, _data).then(event => {
-              _tags.update();
-              resolve(event);
-            }).catch(e => ಠ_ಠ.Flags.error("Patch Error", e) && reject(e));
-          } else {
+          confirm ?
+            _tags.patch(id, event.id, property, null).then(event => resolve(event)).catch(e => reject(e)) :
             resolve(false);
-          }
 
         }).catch(e => e ? (ಠ_ಠ.Flags.error("De-Tagging Error", e) && reject(e)) : (ಠ_ಠ.Flags.log("De-Tagging Cancelled") && resolve(false)));
     }),
@@ -570,7 +559,6 @@ App = function() {
             length: 0,
             keys: ["l", "L"],
             fn: () => {
-
               var _data = _table.dehydrate();
               _data.i = {
                 i: _id,
@@ -582,44 +570,8 @@ App = function() {
                 } : "",
                 m: ಠ_ಠ.Display.state().in(STATE_MONTH) && _current ? _current.toISOString() : "",
               };
-
-              var _link = ಠ_ಠ.Flags.full("events/#google,view." + ಠ_ಠ.Strings().base64.encode(JSON.stringify(_data))),
-                _clipboard;
-
-              ಠ_ಠ.Display.modal("link", {
-                id: "generate_link",
-                target: ಠ_ಠ.container,
-                title: "Your Events Link",
-                instructions: ಠ_ಠ.Display.doc.get("LINK_INSTRUCTIONS"),
-                link: _link,
-                qr_link: () => "https://chart.googleapis.com/chart?cht=qr&chs=540x540&choe=UTF-8&chl=" + encodeURIComponent(_link),
-                details: _.escape(JSON.stringify(_data, null, 4)),
-              }, dialog => {
-
-                dialog.find("#link_copy").attr("data-clipboard-text", _link);
-
-                _clipboard = new ClipboardJS("#generate_link .copy-trigger", {
-                  container: document.getElementById("generate_link")
-                });
-
-                dialog.find("#link_shorten").one("click.shorten", () => {
-                  ಠ_ಠ.Google.url.insert(_link).then(url => {
-                    _link = url.id;
-                    var _qr = "https://chart.googleapis.com/chart?cht=qr&chs=540x540&choe=UTF-8&chl=" + encodeURIComponent(_link);
-                    dialog.find("#link_text").text(_link);
-                    dialog.find("#qr_copy").attr("data-clipboard-text", _qr);
-                    dialog.find("#qr_code").attr("src", _qr);
-                  }).catch(e => ಠ_ಠ.Flags.error("Link Shorten Failure", e ? e : "No Inner Error"));
-
-                });
-
-                $("#qr").on("show.bs.collapse", () => $("#details").collapse("hide"));
-                $("#details").on("show.bs.collapse", () => $("#qr").collapse("hide"));
-
-              }).then(() => {
-                if (_clipboard) _clipboard.destroy();
-              });
-
+              
+							ಠ_ಠ.Link({app: "events", route: "view", data: _data}, ಠ_ಠ).generate();
             }
           },
           view: {

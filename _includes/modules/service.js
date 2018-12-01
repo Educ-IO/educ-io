@@ -4,7 +4,7 @@ Service = function() {
 	if (this && this._isF && this._isF(this.Service)) return new this.Service().initialise(this);
 	
   /* <!-- Internal Variables --> */
-	var ಠ_ಠ;
+	var ಠ_ಠ, _err = (window && window.console ? window.console.error : e => e);
 	/* <!-- Internal Variables --> */
 	
 	/* <!-- Internal Functions --> */
@@ -140,7 +140,7 @@ Service = function() {
 
           return;
 
-        }).catch(e => console.error("Service Worker NOT Registered:", e));
+        }).catch(e => _err("Service Worker NOT Registered:", e));
 
         document.onkeydown = function(e) {
 
@@ -152,7 +152,7 @@ Service = function() {
 
             if (k == 82 || k == 76) {
 
-              try {if (!ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.busy();} catch (e) {}
+              try {if (!ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.busy();} catch (e) {_err(e);}
 
               var _clear = function() {
                 if (!ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.busy({

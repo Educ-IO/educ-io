@@ -132,8 +132,8 @@ Tasks = ಠ_ಠ => {
     var _due = item[META.column_details.value].match(EXTRACT_DATE);
     
     /* <!-- Set Due Date if available --> */
-    (item[META.header_due.value] = _due && _due.length >= 1 ? moment(_due[0], ["DD/MM/YYYY", "D/M/YY", "DD-MM-YY", "DD-MM-YYYY", "DD-MMM-YY", "DD-MMM-YYYY", "YYYY-MM-DD"]) : "") ?
-    (item._countdown = item[META.header_due.value].diff(moment(), "days")) : delete item._countdown;
+    !(item[META.header_due.value] = _due && _due.length >= 1 ? moment(_due[0], ["DD/MM/YYYY", "D/M/YY", "DD-MM-YY", "DD-MM-YYYY", "DD-MMM-YY", "DD-MMM-YYYY", "YYYY-MM-DD"]) : "") ?
+    delete item._countdown : (item._countdown = item[META.header_due.value].diff(moment(), "days"));
     
     /* <!-- Extract Time from Details if found --> */
     var _all = item[META.column_details.value].match(EXTRACT_ALLDAY),
@@ -143,8 +143,8 @@ Tasks = ಠ_ಠ => {
     if (_due && _due.length >= 1 && _time && _time.length >= 1 && item[META.header_due.value] && item[META.header_due.value].isValid() && _due[0].indexOf(_time[1]) >= 0) _time = null;
     
     /* <!-- Set Time if available --> */
-    (item[META.header_time.value] = _all && _all.length >= 1 ? _all[_all.length >= 2 ? 2 : 1] : _time && _time.length >= 1 ? _time[1] : "") ?
-    (item._timed = true) : delete item._timed;
+    !(item[META.header_time.value] = _all && _all.length >= 1 ? _all[_all.length >= 2 ? 2 : 1] : _time && _time.length >= 1 ? _time[1] : "") ?
+    delete item._timed : (item._timed = true);
 
     /* <!-- Split Tabs into Badges --> */
     if (item[META.column_tags.value]) item[META.header_badges.value] = item[META.column_tags.value].split(SPLIT_TAGS);

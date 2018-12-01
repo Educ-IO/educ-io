@@ -156,39 +156,7 @@ App = function() {
             fn: () => {
               var _data = _view.table().dehydrate();
               _data.i = _view.id();
-
-              var _link = ಠ_ಠ.Flags.full("view/#google,view." + ಠ_ಠ.Strings().base64.encode(JSON.stringify(_data))),
-                _clipboard;
-
-              ಠ_ಠ.Display.modal("link", {
-                id: "generate_link",
-                target: ಠ_ಠ.container,
-                title: "Your View Link",
-                instructions: ಠ_ಠ.Display.doc.get("LINK_INSTRUCTIONS"),
-                link: _link,
-                qr_link: () => "https://chart.googleapis.com/chart?cht=qr&chs=540x540&choe=UTF-8&chl=" + encodeURIComponent(_link),
-                details: _.escape(JSON.stringify(_data, null, 4)),
-              }).then(() => {
-                if (_clipboard) _clipboard.destroy();
-              });
-
-              _clipboard = new ClipboardJS("#generate_link .copy-trigger", {
-                container: document.getElementById("generate_link")
-              });
-
-              ಠ_ಠ.container.find("#link_shorten").one("click.shorten", () => {
-                ಠ_ಠ.Google.url.insert(_link).then(url => {
-                  _link = url.id;
-                  var _qr = "https://chart.googleapis.com/chart?cht=qr&chs=540x540&choe=UTF-8&chl=" + encodeURIComponent(_link);
-                  ಠ_ಠ.container.find("#link_text").text(_link);
-                  ಠ_ಠ.container.find("#qr_copy").attr("data-clipboard-text", _qr);
-                  ಠ_ಠ.container.find("#qr_code").attr("src", _qr);
-                }).catch(e => ಠ_ಠ.Flags.error("Link Shorten Failure", e ? e : "No Inner Error"));
-
-              });
-
-              $("#qr").on("show.bs.collapse", () => $("#details").collapse("hide"));
-              $("#details").on("show.bs.collapse", () => $("#qr").collapse("hide"));
+              ಠ_ಠ.Link({app: "view", route: "view", data: _data}, ಠ_ಠ).generate();
             }
           },
           defaults: {
