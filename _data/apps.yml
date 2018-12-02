@@ -40,6 +40,8 @@ view:
       load: last
     - name: moment_all
       load: last
+    - name: mousetrap
+      load: last
     - name: waves-css
       load: last
     - name: waves-js
@@ -181,6 +183,7 @@ view:
             - name: Close
               desc: Close the current Sheet
               hash: close
+              shortcut: "c"
               disabled_until:
                 - opened
     - name: Share
@@ -190,7 +193,8 @@ view:
           commands:
             - name: Create
               desc: Create a link to this View
-              hash: link.full
+              hash: link
+              shortcut: "l"
               auth: google
               scope: https://www.googleapis.com/auth/urlshortener
               imports:
@@ -210,7 +214,8 @@ view:
                 - filesaver
             - name: Filtered View
               desc: Export the filtered view/s to Legacy Formats
-              hash: export.filtered
+              hash: export
+              shortcut: "e"
               disabled_until:
                 - opened
               imports:
@@ -228,6 +233,7 @@ view:
             - name: Refresh
               desc: Refresh the current data (clears filters, sorts & visibilities)
               hash: refresh
+              shortcut: "r"
               disabled_until:
                 - opened
             - name: Virtual Scroll
@@ -269,6 +275,7 @@ view:
             - name: Instructions
               hash: instructions
               desc: More details about how to use this app
+              shortcut: "i"
             - name: Tutorials
               hash: tutorials
               desc: Ways in which you can use this app
@@ -294,6 +301,7 @@ view:
               divider: true
             - name: Get Help
               hash: help
+              shortcut: "h"
               desc: Get help or request a feature
               class: font-weight-bold
               imports:
@@ -352,6 +360,8 @@ reflect:
     - name: autosize
       load: last
     - name: showdown
+      load: last
+    - name: mousetrap
       load: last
     - name: bootstrap-material-datepicker-js
       load: last
@@ -731,6 +741,8 @@ folders:
       load: last
     - name: autosize
       load: last
+    - name: mousetrap
+      load: last
     - name: moment
       load: last
     - name: filesaver
@@ -841,6 +853,7 @@ folders:
             - name: Open Drive
               desc: Open 
               hash: open.root
+              shortcut: "o"
               auth: google
             - name: Open a Folder
               desc: Open a Google Drive Folder
@@ -855,6 +868,7 @@ folders:
             - name: Refresh
               desc: Refresh the Folder View
               hash: refresh
+              shortcut: "r"
               disabled_until:
                 - opened
               auth: google
@@ -867,12 +881,14 @@ folders:
             - name: Tally
               desc: Count Files / Folders within these Folders
               hash: tally
+              shortcut: "t"
               disabled_until:
                 - opened
               auth: google
             - name: Close
               desc: Close the current Folder
               hash: close
+              shortcut: "c"
               disabled_until:
                 - opened
     - name: Results
@@ -943,6 +959,7 @@ folders:
           commands:
             - name: Instructions
               hash: instructions
+              shortcut: "i"
               desc: More details about how to use this app
             - name: Tutorials
               hash: tutorials
@@ -969,6 +986,7 @@ folders:
               divider: true
             - name: Get Help
               hash: help
+              shortcut: "h"
               desc: Get help or request a feature
               class: font-weight-bold
               imports:
@@ -1444,13 +1462,13 @@ events:
               shortcut: "&gt;"
               hash: forward
               disabled_until:
-                - opened
+                - monthly
             - name: Backward
               desc: Go backward a month
               shortcut: "&lt;"
               hash: backward
               disabled_until:
-                - opened
+                - monthly
             - name: This Month
               desc: Jump to this month
               shortcut: "t"
@@ -1462,7 +1480,13 @@ events:
               shortcut: "j"
               hash: jump
               disabled_until:
-                - opened
+                - monthly
+            - name: Search
+              desc: Search Calendar Events
+              shortcut: "s"
+              hash: search
+              disabled_until:
+                - monthly
     - name: Share
       groups:
         all:
@@ -1470,6 +1494,7 @@ events:
             - name: Shortcut Link
               desc: Share this view with others
               hash: link
+              shortcut: "l"
               imports:
                 - clipboard
               disabled_until:
@@ -1507,6 +1532,7 @@ events:
               divider: true
             - name: Get Help
               hash: help
+              shortcut: "h"
               desc: Get help or request a feature
               class: font-weight-bold
               imports:
@@ -2741,6 +2767,7 @@ docket:
               divider: true
             - name: Get Help
               hash: help
+              shortcut: "h"
               desc: Get help or request a feature
               class: font-weight-bold
               imports:
@@ -3100,6 +3127,8 @@ debug:
     - name: bootstrap-js
       load: last
     - name: showdown
+      load: last
+    - name: mousetrap
       load: last
     - name: waves-css
       load: last

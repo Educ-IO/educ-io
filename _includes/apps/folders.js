@@ -206,6 +206,7 @@ App = function() {
         },
         routes: {
           open_root: { /* <!-- Pick, or Load the Root Folder --> */
+            keys: ["o", "O"],
             matches: [/OPEN/i, /ROOT/i],
             fn: () => _loadFolder("root", false)
           },
@@ -222,6 +223,9 @@ App = function() {
               mime: ಠ_ಠ.Google.folders.native()
             }),
             success: value => _openFolder(value.result, true),
+          },
+          close: {
+            keys: ["c", "C"],
           },
           close_results: {
             matches: [/CLOSE/i, /RESULTS/i],
@@ -252,6 +256,7 @@ App = function() {
           tally : {
             matches: /TALLY/i,
             state: STATE_OPENED,
+            keys: "t",
             fn: command => _folder.tally.run(command),
           },
           convert : {
@@ -288,6 +293,7 @@ App = function() {
           },
           search: {
             state: STATE_OPENED,
+            keys: "s",
             fn: command => _folder.search(command)
           },
           clone : {
@@ -320,6 +326,7 @@ App = function() {
           refresh : {
             matches: /REFRESH/i,
             state: STATE_OPENED,
+            keys: "r",
             fn: () => _openFolder(_folder.folder(), false),
           },
           load: command => {

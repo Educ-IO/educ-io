@@ -114,7 +114,6 @@ Merge
 
 Folders
 -------
-* Keyboard Shortcuts
 * Use new format MODAL form returns (once Data is stable ... activate by including Data helper in App Build)
   + Update validate method on App callers to accept object, rather than value array
   + Update _return methods on App callers to accept object, rather than value array
@@ -149,6 +148,7 @@ Survey
 
 Complete
 --------
+* Keyboard Shortcuts in Folders App <== DONE
 * Router should include key-press shortcut handling! Would be neater to handle state tests that way! Also handle swipes / touch events. <-- DONE
 * Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings. <== DONE
 * ** IMPORTANT ** Failed 'Recent' App load (e.g. newly deleted folder) --> Remove from Recent List <== DONE
@@ -599,4 +599,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-12-01
+ᕕ( ᐛ )ᕗ JD - 2018-03-25

@@ -35,6 +35,8 @@ Router = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var _routed = () => true;
+  
   var _initialise = () => {
 
     APP.hooks.start.push(() => {
@@ -53,7 +55,7 @@ Router = function() {
       matches: [/TEST/i, /OVERRIDE/i],
       length: 2,
       state: STATE_TEST_1,
-      fn: command => _tests.length = (STATE.enter(STATE_TEST_3) && command.length == 2 && command[0] === "abcd12345" && command[1] === "efgh67890"),
+      fn: command => (_tests.length = (STATE.enter(STATE_TEST_3) && command.length == 2 && command[0] === "abcd12345" && command[1] === "efgh67890")) && _routed(command),
     };
     
     APP.hooks.routes.test_override_3 = {
@@ -62,20 +64,21 @@ Router = function() {
         min: 3,
         max: 5
       },
-      fn: command => _tests.range = (command.length >= 3 && command.length <= 5),
+      fn: command => (_tests.range = (command.length >= 3 && command.length <= 5)) && _routed(command),
     };
 
     APP.hooks.routes.test_override_2 = {
       matches: [/TEST/i, /OVERRIDE/i],
       length: 1,
       state: STATE_TEST_1,
-      fn: command => _tests.complex = (STATE.enter(STATE_TEST_2) && command === "abcd12345"),
+      fn: command => (_tests.complex = (STATE.enter(STATE_TEST_2) && command === "abcd12345")) && _routed(command),
     };
 
     APP.hooks.routes.test_override_1 = {
       matches: [/TEST/i, /OVERRIDE/i],
       length: 0,
-      fn: command => _tests.state = (STATE.enter(STATE_TEST_1) && command === null),
+      keys: "p",
+      fn: command => (_tests.state = (STATE.enter(STATE_TEST_1) && command === null)) && _routed(command),
     };
 
     APP.hooks.routes.load_override = {
@@ -87,7 +90,14 @@ Router = function() {
       matches: [/TEST/i, /OVERRIDE/i],
       length: 3,
       state: STATE_TEST_1,
-      fn: command => _tests.length = (STATE.enter(STATE_TEST_4) && command.length == 3 && command[0] === "abcd12345" && command[1] === "efgh67890" && command[2] === "TRUE"),
+      fn: command => (_tests.length = (STATE.enter(STATE_TEST_4) && command.length == 3 && command[0] === "abcd12345" && command[1] === "efgh67890" && command[2] === "TRUE")) && _routed(command),
+    };
+    
+    APP.hooks.routes.test_override_6 = {
+      matches: [/TEST/i, /OVERRIDE/i, /OVERRIDE/i],
+      length: 0,
+      keys: "r",
+      fn: command => (_tests.state = (STATE.enter(STATE_TEST_4) && command === null)) && _routed(command),
     };
     
     APP.hooks.routes.test = {
@@ -122,6 +132,7 @@ Router = function() {
 
     test_Router_Simple: () => PAUSE().then(
       () => RACE(new Promise(resolve => {
+        _routed = () => true;
         _route = (handled, command) => resolve(_tests.simple === true && handled === true && command);
         window.location.hash = "test";
       }))
@@ -129,13 +140,15 @@ Router = function() {
 
     test_Router_State: () => PAUSE().then(
       () => RACE(new Promise(resolve => {
-        _route = (handled, command) => resolve(_tests.state === true && handled === true && STATE.in(STATE_TEST_1) &&  command.length == 2);
+        _routed = () => true;
+        _route = (handled, command) => resolve(_tests.state === true && handled === true && STATE.in(STATE_TEST_1) && command.length == 2);
         window.location.hash = "test.override";
       }))
     ),
 
     test_Router_Complex: () => PAUSE().then(
       () => RACE(new Promise(resolve => {
+        _routed = () => true;
         _route = (handled, command) => resolve(_tests.complex === true && handled && STATE.in([STATE_TEST_1, STATE_TEST_2]) &&  command.length == 3);
         STATE.enter(STATE_TEST_1);
         window.location.hash = "test.override.abcd12345";
@@ -144,6 +157,7 @@ Router = function() {
 
     test_Router_Range: () => PAUSE().then(
       () => RACE(new Promise(resolve => {
+        _routed = () => true;
         _route = (handled, command) => {
           var _result = (_tests.range === true && handled && command.length == 6);
           _tests.range = false;
@@ -158,6 +172,7 @@ Router = function() {
     
     test_Router_Length: () => PAUSE().then(
       () => RACE(new Promise(resolve => {
+        _routed = () => true;
         _route = (handled, command) => {
           var _result = (_tests.length === true && STATE.in([STATE_TEST_1, STATE_TEST_3]) && handled && command.length == 4);
           _tests.length = false;
@@ -167,6 +182,24 @@ Router = function() {
           window.location.hash = "test.override.abcd12345.efgh67890.TRUE";
         };
         window.location.hash = "test.override.abcd12345.efgh67890";
+      }))
+    ),
+    
+    test_Router_KeyPress: () => PAUSE().then(
+      () => RACE(new Promise(resolve => {
+        _routed = () => {
+          if (_tests.state === true && STATE.in(STATE_TEST_1)) {
+            _routed = () => {
+              resolve(_tests.state === true && STATE.in(STATE_TEST_4));
+              return true;
+            };
+            window.document.dispatchEvent(new KeyboardEvent("keypress", {"keyCode": 82, "which": 82}));
+          } else {
+            resolve(false);
+          }
+          return true;
+        };
+				window.document.dispatchEvent(new KeyboardEvent("keypress", {"keyCode": 80, "which": 80}));
       }))
     ),
 

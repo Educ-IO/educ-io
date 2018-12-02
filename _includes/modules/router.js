@@ -256,6 +256,7 @@ Router = function() {
         },
         help: { /* <!-- Request Help --> */
           matches: /HELP/i,
+          keys: ["h", "H"],
           fn: () => ಠ_ಠ.Help.provide(ಠ_ಠ.Flags.dir()),
         }
       };
@@ -282,7 +283,7 @@ Router = function() {
           /* <!-- Bind Shortcut key/s if required --> */
           if (route.keys && (!route.length || route.length === 0)) {
             route.keys = _.isArray(route.keys) ? route.keys : [route.keys];
-            _.each(route.keys, key => window.Mousetrap.bind(key, ((state, fn, debug, name) => () => (!state || ಠ_ಠ.Display.state().in(state, true)) ? (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && fn() : false)(route.state, route.fn, debug, name)));
+            _.each(route.keys, key => window.Mousetrap.bind(key, ((state, fn, debug, name) => () => (!state || ಠ_ಠ.Display.state().in(state, true)) ? (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && fn(null) : false)(route.state, route.fn, debug, name)));
           }
         }) : true;
         _touch = debug => window.Hammer ? _.each(_options.routes, (route, name) => {
@@ -292,7 +293,7 @@ Router = function() {
             var _target = route.target ? route.target : "__default";
             var _hammer = this[_target] ? this[_target] :
               (this[_target] = new window.Hammer((route.target ? $(route.target) : ಠ_ಠ.container)[0]));
-            _hammer.on(route.actions.join(" "), ((state, fn, debug, name) => e => (!state || ಠ_ಠ.Display.state().in(state, true)) ? (!debug || ಠ_ಠ.Flags.log(`Touch Action ${e.type} routed to : ${name}`)) && fn() : false)(route.state, route.fn, debug, name));
+            _hammer.on(route.actions.join(" "), ((state, fn, debug, name) => e => (!state || ಠ_ಠ.Display.state().in(state, true)) ? (!debug || ಠ_ಠ.Flags.log(`Touch Action ${e.type} routed to : ${name}`)) && fn(null) : false)(route.state, route.fn, debug, name));
           }
         }, {}) : true;
         _shortcuts = debug => _keyboard(debug) && _touch(debug),

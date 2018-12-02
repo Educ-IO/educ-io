@@ -23,5 +23,9 @@ tests:
     desc: Multiple Overriding Length App Routing
     function: test_Router_Length
     auth: google
+  - name: Shortcut
+    desc: Keyboard Shortcuts
+    function: test_Router_KeyPress
+    auth: google
 ---
 To verify the functionality of the __app router__, which controls ther majority of button and menu actions, providing __stateful routing__ of commands in all apps.

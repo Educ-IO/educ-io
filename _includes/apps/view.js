@@ -91,6 +91,9 @@ App = function() {
             }),
             success: value => loader(value.result, /FULL/i.test(value.command))
           },
+          close: {
+            keys: ["c", "C"],
+          },
           load: {
             options: () => ({
               mime: ಠ_ಠ.Google.files.natives()[1]
@@ -133,6 +136,7 @@ App = function() {
           export: {
             matches: /EXPORT/i,
             state: STATE_OPENED,
+            keys: ["e", "E"],
             fn: () => _view.export()
           },
           freeze_rows: {
@@ -153,6 +157,7 @@ App = function() {
           link: {
             matches: /LINK/i,
             state: STATE_OPENED,
+            keys: ["l", "L"],
             fn: () => {
               var _data = _view.table().dehydrate();
               _data.i = _view.id();
@@ -167,6 +172,7 @@ App = function() {
           refresh: {
             matches: /REFRESH/i,
             state: STATE_OPENED,
+            keys: ["r", "R"],
             fn: () => _view.refresh()
           },
           view: {
