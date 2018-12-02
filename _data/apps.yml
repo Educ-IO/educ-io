@@ -2806,7 +2806,7 @@ docket:
 
 accounts:
   name: Accounts
-  desc: 
+  desc: Securely store account _passwords_ in a Google sheet, with __extra__ encryption
   link: /accounts/
   colour: 333333
   logo: images/accounts_logo.svg

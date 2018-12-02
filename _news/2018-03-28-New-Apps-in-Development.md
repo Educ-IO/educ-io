@@ -4,28 +4,70 @@ layout: page
 published: true
 support: true
 lead: New __tool releases__ in the pipeline
+date: 2018-12-02
 ---
+
+{% include {{ site.data.apps.accounts.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
+
+#### Accounts
+
+{{site.data.apps.accounts.desc}}
+{:.alert .alert-secondary}
+
+* * *
+{:.pb-2}
+
+{% include {{ site.data.apps.events.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
+
+#### Events __[Released!](/docket){:.text-light}__{:.float-right .badge .badge-primary .ml-2}
+
+{{site.data.apps.events.desc}}
+{:.alert .alert-secondary}
+
+Add and edit tags for your calendar events:
+
++ __View__ any calendar you have permission to
++ __Tag events__ for easy and fast catagorisation
++ Efficiently __filter__ and __search__ by tags
++ Integrate seamlessly with our [Tag-a-Doc](/extensions/tag-a-doc) Extension
+
+* * *
+{:.pb-2}
+
+{% include {{ site.data.apps.tiles.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
+
+#### Tiles
+
+{{site.data.apps.tiles.desc}}
+{:.alert .alert-secondary}
+
+* * *
+{:.pb-2}
 
 {% include {{ site.data.apps.docket.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
 
-#### Docket
+#### Docket __[Released!](/docket){:.text-light}__{:.float-right .badge .badge-primary .ml-2}
 
-_Manage_ your __workload__ in a simple and powerful way with this fusion of __diary__ and __tasklist__
+{{site.data.apps.docket.desc}}
 {:.alert .alert-secondary}
 
 A different way to organise your time, focussed on what needs to __get done__.
 
++ Fuses the best of both worlds, a __diary__ and __tasklist__ - in a single app!
 + Fully web-based and, like all our apps, with mobile, tablet, laptop and desktop support
 + Create tasks which __automatically roll over__ to the next day until complete
 + Add future work, and events
 + __Tag items__ for easy and fast catagorisation
 + Use [Markdown](https://www.markdownguide.org/){:target="_blank" rel="noopener"} format in your tasks/events to include text decoration and links to emails, documents, other systems
 
+* * *
+{:.pb-2}
+
 {% include {{ site.data.apps.reflect.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
 
 #### Reflect
 
-_Produce_ and _share_ __reflective reports__, tracking _evidence_ and your _progress_.
+{{site.data.apps.reflect.desc}}
 {:.alert .alert-secondary}
 
 __Reflect__ allows you to record your achievements on a regular basis, collect and track evidence and share your reports with others. You can use our designed forms, tweak them or even build your own. Forms and your responses are stored in Google Drive so they are easily shared and edited.
@@ -36,14 +78,17 @@ __Reflect__ allows you to record your achievements on a regular basis, collect a
 + Allows __customised report__ templates, and suggested email routing, for personalised applications (e.g. Appropriate Bodies, SCITTs etc.).
 + Use default __UK Teachers' Standards__ or your custom scales.
 
+* * *
+{:.pb-2}
+
 {% include {{ site.data.apps.merge.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em;  margin-left: 0.5em;"}
 
 #### Merge
 
-_Produce_ __merged__ documents from your sheets __data__
+{{site.data.apps.merge.desc}}
 {:.alert .alert-secondary}
 
-Another merging tool for Google Docs, but a little better and with a few __distinctive features__.
+Another merging tool for Google Docs, but a little _better_ and with a few __distinctive features__.
 
 + Fully web-based, marking merges __easier__ and __faster__
 + Create __HTML emails__ from your sheets data and docs design

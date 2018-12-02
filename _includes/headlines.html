@@ -1,14 +1,14 @@
-{% assign _recent_articles = site.articles | sort: 'date' | reverse | limit:10 %}{% assign _recent_news = site.news | sort: 'date' | reverse | limit:10 %}{% assign _recent_extensions = site.extensions | where_exp:"e", "e.headline != nil" | sort: 'date' | reverse | limit:10 %}{% assign _recent_apps = site.apps | where_exp:"a", "a.headline != nil" | sort: 'date' | reverse | limit:10 %}{% assign _recent = site.array %}{% for _article in _recent_articles %}{% assign _recent = _recent | push: _article %}{% endfor %}{% for _news in _recent_news %}{% assign _recent = _recent | push: _news %}{% endfor %}{% for _extension in _recent_extensions %}{% assign _recent = _recent | push: _extension %}{% endfor %}{% for _app in _recent_apps %}{% assign _recent = _recent | push: _app %}{% endfor %}{% assign _recent = _recent | sort: 'date' | reverse | limit:5 %}
+{% assign _recent_articles = site.articles | sort: 'date' | reverse | limit:10 %}{% assign _recent_news = site.news | sort: 'date' | reverse | limit:10 %}{% assign _recent_extensions = site.extensions | where_exp:"e", "e.headline != nil" | sort: 'date' | reverse | limit:10 %}{% assign _recent_apps = site.apps | where_exp:"a", "a.headline != nil" | sort: 'date' | reverse | limit:10 %}{% assign _recent = site.array %}{% for _article in _recent_articles %}{% assign _recent = _recent | push: _article %}{% endfor %}{% for _news in _recent_news %}{% assign _recent = _recent | push: _news %}{% endfor %}{% for _extension in _recent_extensions %}{% assign _recent = _recent | push: _extension %}{% endfor %}{% for _app in _recent_apps %}{% assign _recent = _recent | push: _app %}{% endfor %}{% assign _recent = _recent | sort: 'date' | reverse %}
 {% if _recent.size > 0 %}<div id="headlines" class="carousel slide mt-1 mb-2" data-ride="carousel" data-interval="6000">
   
   <ol class="carousel-indicators mb-1">
-    {% for post in _recent %}
+    {% for post in _recent limit:6 %}
     <li data-target="#headlines" data-slide-to="{{ forloop.index0 }}"{% if forloop.first %} class="active"{% endif %}></li>
     {% endfor %}
   </ol>
   
   <div class="carousel-inner">
-    {% for post in _recent %}<div class="carousel-item{% if forloop.first %} active{% endif %}">
+    {% for post in _recent limit:6 %}<div class="carousel-item{% if forloop.first %} active{% endif %}{% if forloop.index == 6 %} inverse{% endif %}">
       <div class="carousel-background border rounded w-100" alt="Headline {{ forloop.index }}">
         <div class="row align-items-center justify-content-center">
           <div class="col col-8 col-lg-10 text-center py-4 py-md-3">
@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>{% endfor %}
-  </div>        
+  </div>
   
   <a class="carousel-control-prev" href="#headlines" role="button" data-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>

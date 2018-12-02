@@ -4,8 +4,13 @@
       color: $colour-background;
       a {color: inherit !important;}
       p {color: transparentize($colour-background, 0.1);}
+      &.inverse {
+        color: $colour-general-light;
+      	a {color: inherit !important;}
+      	p {color: transparentize($colour-general-light, 0.1);}
+      }
     }
-    @for $i from 1 through 5 {
+    @for $i from 1 through 6 {
       .carousel-item:nth-child(#{$i}) .carousel-background {
         border-color: darken(nth($colours-headline, $i), 30%) !important;
         background-color: nth($colours-headline, $i);

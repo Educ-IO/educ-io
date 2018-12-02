@@ -132,24 +132,21 @@ Router = function() {
 
     test_Router_Simple: () => PAUSE().then(
       () => RACE(new Promise(resolve => {
-        _routed = () => true;
-        _route = (handled, command) => resolve(_tests.simple === true && handled === true && command);
+        (_routed = () => true) && (_route = (handled, command) => resolve(_tests.simple === true && handled === true && command));
         window.location.hash = "test";
       }))
     ),
 
     test_Router_State: () => PAUSE().then(
       () => RACE(new Promise(resolve => {
-        _routed = () => true;
-        _route = (handled, command) => resolve(_tests.state === true && handled === true && STATE.in(STATE_TEST_1) && command.length == 2);
+        (_routed = () => true) && (_route = (handled, command) => resolve(_tests.state === true && handled === true && STATE.in(STATE_TEST_1) && command.length == 2));
         window.location.hash = "test.override";
       }))
     ),
 
     test_Router_Complex: () => PAUSE().then(
       () => RACE(new Promise(resolve => {
-        _routed = () => true;
-        _route = (handled, command) => resolve(_tests.complex === true && handled && STATE.in([STATE_TEST_1, STATE_TEST_2]) &&  command.length == 3);
+        (_routed = () => true) && (_route = (handled, command) => resolve(_tests.complex === true && handled && STATE.in([STATE_TEST_1, STATE_TEST_2]) &&  command.length == 3));
         STATE.enter(STATE_TEST_1);
         window.location.hash = "test.override.abcd12345";
       }))
@@ -157,30 +154,28 @@ Router = function() {
 
     test_Router_Range: () => PAUSE().then(
       () => RACE(new Promise(resolve => {
-        _routed = () => true;
-        _route = (handled, command) => {
+        (_routed = () => true) && (_route = (handled, command) => {
           var _result = (_tests.range === true && handled && command.length == 6);
           _tests.range = false;
           _route = (handled, command) => {
             resolve(_result && _tests.range === false && !handled && command.length == 8);
           };
           window.location.hash = "test.range.first.second.third.fourth.fifth.sixth";
-        };
+        });
         window.location.hash = "test.range.first.second.third.fourth";
       }))
     ),
     
     test_Router_Length: () => PAUSE().then(
       () => RACE(new Promise(resolve => {
-        _routed = () => true;
-        _route = (handled, command) => {
+        (_routed = () => true) && (_route = (handled, command) => {
           var _result = (_tests.length === true && STATE.in([STATE_TEST_1, STATE_TEST_3]) && handled && command.length == 4);
           _tests.length = false;
           _route = (handled, command) => {
             resolve(_result && _tests.length === true && STATE.in([STATE_TEST_1, STATE_TEST_3, STATE_TEST_4]) && handled && command.length == 5);
           };
           window.location.hash = "test.override.abcd12345.efgh67890.TRUE";
-        };
+        });
         window.location.hash = "test.override.abcd12345.efgh67890";
       }))
     ),

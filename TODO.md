@@ -32,7 +32,6 @@ Auth
 
 Picker
 ------
-* Filter for correctly returned doc type on picker (recent shows al,hl types?)
 * Picker can be difficult if third party cookies or referral headers are blocked .....
 
 Router
@@ -148,6 +147,7 @@ Survey
 
 Complete
 --------
+* Filter for correctly returned doc type on picker (recent shows al,hl types?) <-- DONE
 * Keyboard Shortcuts in Folders App <== DONE
 * Router should include key-press shortcut handling! Would be neater to handle state tests that way! Also handle swipes / touch events. <-- DONE
 * Swap Route function to register routes, with more concise checking of arguments to stop matching in data strings. <== DONE
