@@ -18,6 +18,30 @@ App = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var loader = (file, log) => {
+
+    ಠ_ಠ.Router.clean(false); /* <!-- Clear the existing state --> */
+    var _sheet;
+
+    return ಠ_ಠ.Google.sheets.get(file.id, true)
+      .then(sheet => {
+        ಠ_ಠ.Flags.log("Google Drive Sheet Opened", sheet);
+        return sheet;
+      })
+      .then(sheet => {
+        if (sheet && log) ಠ_ಠ.Recent.add(sheet.spreadsheetId,
+          sheet.properties.title, `#google,load.${sheet.spreadsheetId}`);
+        return (_sheet = sheet);
+      })
+      .catch(e => ಠ_ಠ.Flags.error("Loading Google Sheet", e ? e : "No Inner Error"))
+      .then(ಠ_ಠ.Display.busy({
+        target: ಠ_ಠ.container,
+        status: "Loading Sheet",
+        fn: true
+      }))
+      .then(() => _sheet);
+
+  };
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -36,27 +60,35 @@ App = function() {
       this.route = ಠ_ಠ.Router.create({
         name: "Accounts",
         states: STATES,
-        recent: false,
-        simple: true,
-        start: () => {
-
-          var _busy = ಠ_ಠ.Display.busy({
-            target: ಠ_ಠ.container,
-            status: "Loading DBs",
-            fn: true
-          });
-
-          _config.get()
-            .then(config => !config ? ಠ_ಠ.Router.run(STATE_READY) :
-              _busy({
-                message: "Loaded Config"
-              }) && _start(config, _busy).then(result => result ? _busy() : ಠ_ಠ.Router.run("")));
-        },
+        recent: true,
         test: () => ಠ_ಠ.Display.state().in(STATE_OPENED),
-        clear: () => {
-          if (_tasks) _tasks.close();
-        },
+        clear: () => true,
         routes: {
+          open: {
+            options: () => ({
+              title: "Select an Accounts Sheet to Open",
+              view: "SPREADSHEETS",
+              mime: ಠ_ಠ.Google.files.natives()[1],
+              properties: {
+                ACCOUNTS: "DATA"
+              },
+              all: true,
+              recent: true,
+            }),
+            success: value => loader(value.result, true)
+          },
+          close: {
+            keys: ["c", "C"],
+          },
+          load: {
+            options: () => ({
+              mime: ಠ_ಠ.Google.files.natives()[1],
+              properties: {
+                ACCOUNTS: "DATA"
+              },
+            }),
+            success: value => loader(value.result, true)
+          },
           create: () => {
 
             /* <!-- TODO: Check this logical order actually works! --> */

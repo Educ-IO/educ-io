@@ -2873,6 +2873,7 @@ accounts:
     - items
     - recent
     - router
+    - accounts/credentials
   scripts: 
     - extends/regex
     - extends/array
@@ -3073,18 +3074,13 @@ accounts:
         hash: create
         auth: google
         class: state-ready
-      - name: Open Existing
-        desc: Open an Existing Accounts DB
+      - name: Open 
+        desc: Open an existing Accounts DB
         hash: open
         auth: google
-        class: state-config disabled
+        class: state-ready
         imports:
           - google
-      - name: Clear Config
-        desc: Clear current config to restart!
-        hash: config.clear
-        auth: google
-        class: state-config disabled
   published: false
   
   
@@ -3402,6 +3398,10 @@ tagadoc:
   colour: cc0
   action: Find out more
   versions:
+    1.2.2 :
+      name : Added Paths
+      desc : Paths are now shown in open Documents
+      type : minor
     1.2.0 :
       name : Live Updates
       desc : Edited Tags are immediately displayed in open Documents and Calendar Events
