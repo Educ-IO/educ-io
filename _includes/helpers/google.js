@@ -223,7 +223,7 @@ Google_API = (options, factory) => {
     return _call(NETWORKS.general.get, "drive/v3/files/" + id, _data);
   };
 
-  var _pick = (title, multiple, team, views, callback, context) => {
+  var _pick = (title, multiple, team, views, callback, context, get) => {
 
     if (google.picker) {
 
@@ -234,19 +234,16 @@ Google_API = (options, factory) => {
         .setAppId(CLIENT_ID)
         .setOAuthToken(_token())
         .setOrigin(origin)
-        .setCallback(((callback, context) => {
-          return data => {
+        .setCallback(((callback, context) => data => {
             if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
-              if (!multiple) {
-                callback(data[google.picker.Response.DOCUMENTS][0], context);
-              } else {
-                callback(data[google.picker.Response.DOCUMENTS], context);
-              }
+              var _files = data[google.picker.Response.DOCUMENTS];
+              multiple ?
+                (get ? Promise.all(_.map(_files, file => _get(file.id))) : Promise.resolve(_files)).then(files => callback(files, context)) :
+                (get ? _get(_files[0].id) : Promise.resolve(_files[0])).then(file => callback(file, context));
             } else if (data[google.picker.Response.ACTION] == google.picker.Action.CANCEL) {
               callback(false, context);
             }
-          };
-        })(callback, context));
+          })(callback, context));
 
       if (multiple) picker.enableFeature(google.picker.Feature.MULTISELECT_ENABLED);
       /* <!-- This doesn't currently work, although it is in the Google Drive Picker API Documentation --> */
@@ -274,7 +271,7 @@ Google_API = (options, factory) => {
     } else {
 
       google.load("picker", "1", {
-        "callback": ((title, multiple, team, views, callback, context) => () => _pick(title, multiple, team, views, callback, context))(title, multiple, team, views, callback, context)
+        "callback": ((title, multiple, team, views, callback, context, get) => () => _pick(title, multiple, team, views, callback, context, get))(title, multiple, team, views, callback, context, get)
       });
 
     }
@@ -497,7 +494,7 @@ Google_API = (options, factory) => {
       fields: "files(description,id,modifiedByMeTime,name,version)",
     }),
 
-    pick: (title, multiple, team, views, callback, context) => _pick(title, multiple, team, views, callback, context),
+    pick: _pick,
 
     permissions: {
 
@@ -575,6 +572,14 @@ Google_API = (options, factory) => {
       }, "application/json"),
 
       update: (id, file, team) => _call(NETWORKS.general.patch, "drive/v3/files/" + id + (team ? "?supportsTeamDrives=true" : ""), file, "application/json"),
+      
+      tag: (name, value, app) => {
+        var _values = {};
+        _values[name] = value;
+        var _properties = {};
+        _properties[app ? "appProperties" : "properties"] = _values;
+        return _properties;
+      },
 
     },
 
@@ -702,7 +707,7 @@ Google_API = (options, factory) => {
         if (meta) _data.sheets[0].developerMetadata = _.map((_.isArray(meta) ? meta : [meta]), meta => ({
           "metadataId": meta.id,
           "metadataKey": meta.key,
-          "metadataValue": meta.value,
+          "metadataValue": String(meta.value),
           "visibility": meta.visibility ? meta.visibility : "DOCUMENT"
         }));
         return _call(NETWORKS.sheets.post, "v4/spreadsheets", _data, "application/json");

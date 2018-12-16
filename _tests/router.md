@@ -7,6 +7,14 @@ tests:
     desc: Test Simple Single Word App Routing
     function: test_Router_Simple
     auth: google
+  - name: Missed
+    desc: Test Wrong Word App Routing
+    function: test_Router_Missed
+    auth: google
+  - name: Partial
+    desc: Parital Single Word App Routing
+    function: test_Router_Partial
+    auth: google
   - name: State
     desc: Test State-Setting App Routing
     function: test_Router_State

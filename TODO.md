@@ -64,17 +64,24 @@ Mobile
 
 Docket
 ------
+* Handle AM/PM as timed events
+
 * Overlay events from Google Calendar - Need to do the OAuth Google Acceptance Form
+
 * Add tasks from Github Issues (maybe? - or is an extension a better route, with push adding to the Docket sheet?)
+
 * Handle clash on updates / delete
 	-> User notification of issues <-- DONE
   -> Need to roll-back UI updates
+  
 * Drag / Drop re-ordering
 	-> Dragging & Dropping <-- DONE
   -> Button Re-Ordering (maybe just for small screens?) <-- DONE
   -> Persist Changes back to Spreadsheet - efficient multi-cell updates with hash/update checking?
+  
 * Faster Add on Mobile Dialogs - perhaps pinch action to confirm, or buttons at the top too?
 * Date Bug on MacOS - Localised formats? (Could be related to https://bugs.chromium.org/p/chromium/issues/detail?id=171813) ... Need to verify on SauceLabs / Mac
+
 * Ghost / Zombie Tasks
 
 Tiles
@@ -147,6 +154,7 @@ Survey
 
 Complete
 --------
+* Router File Open/Load support for Properties Filtering <-- DONE
 * Filter for correctly returned doc type on picker (recent shows al,hl types?) <-- DONE
 * Keyboard Shortcuts in Folders App <== DONE
 * Router should include key-press shortcut handling! Would be neater to handle state tests that way! Also handle swipes / touch events. <-- DONE
@@ -599,4 +607,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-03-25
+ᕕ( ᐛ )ᕗ JD - 2018-12-15

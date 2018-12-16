@@ -2537,11 +2537,13 @@ docket:
     - google/sheets/notation
     - google/sheets/metadata
     - google/sheets/grid
+    - google/sheets/format
     - google
     - data
     - css
     - fields
     - dialog
+    - colours
   modules:
     - flags
     - controller
@@ -2858,11 +2860,13 @@ accounts:
     - google/sheets/notation
     - google/sheets/metadata
     - google/sheets/grid
+    - google/sheets/format
     - google
     - data
     - css
     - fields
     - dialog
+    - colours
   modules:
     - flags
     - controller
@@ -3107,12 +3111,15 @@ debug:
       - custom/mixins/transitions
       - custom/mixins/gradients
       - custom/variables
+      - custom/highlight
   imports:
     - name: underscore
       load: first
     - name: jquery
       load: first
     - name: popper
+      load: first
+    - name: chai
       load: first
     - name: handlebars
       load: last
@@ -3130,6 +3137,12 @@ debug:
       load: last
     - name: waves-js
       load: last
+    - name: loki
+      load: last
+    - name: localforage
+      load: last
+    - name: objectHash
+      load: last
     - name: google
       load: lazy
   helpers:
@@ -3137,11 +3150,15 @@ debug:
     - google/sheets/notation
     - google/sheets/metadata
     - google/sheets/grid
+    - google/sheets/format
+    - google/sheets/properties
     - google
     - data
     - css
     - fields
     - dialog
+    - saad
+    - colours
   modules:
     - flags
     - controller
@@ -3177,6 +3194,7 @@ debug:
     - debug/INSTRUCTIONS
     - debug/FEATURES
     - debug/TESTS
+    - debug/ALL
   scopes:
     google:
       - scope: email
@@ -3199,8 +3217,18 @@ debug:
     google:
         general: AIzaSyCjzmLYLXdUlRsSkvVb7BSv1638qmFERvk
         oauth: 685325083823-ht0iv9sa3d09op75e46r3bag1io447vl.apps.googleusercontent.com
+  menus:
+    - name: Options
+      groups:
+        all:
+          commands:
+            - name: Leave Traces
+              desc: Do not delete files used while running tests
+              hash: loud
+              toggle:
+                - traces
   tests:
-  published: false
+  published: true
   hidden: true
   
   

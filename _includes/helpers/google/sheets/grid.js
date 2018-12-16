@@ -19,6 +19,18 @@ Google_Sheets_Grid = options => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var _rows = (start_Row, end_Row) => ({
+    "sheetId": options.sheet,
+    "startRowIndex": start_Row,
+    "endRowIndex": end_Row,
+  });
+
+  var _columns = (start_Col, end_Col) => ({
+    "sheetId": options.sheet,
+    "startColumnIndex": start_Col,
+    "endColumnIndex": end_Col,
+  });
+
   var _range = (start_Row, end_Row, start_Col, end_Col) => ({
     "sheetId": options.sheet,
     "startRowIndex": start_Row,
@@ -53,6 +65,8 @@ Google_Sheets_Grid = options => {
         "fields": "pixelSize"
       }),
 
+      range: () => _columns(start, end),
+
     }),
 
     dimension: _dimension,
@@ -68,6 +82,8 @@ Google_Sheets_Grid = options => {
         },
         "fields": "pixelSize"
       }),
+
+      range: () => _rows(start, end),
 
     }),
 

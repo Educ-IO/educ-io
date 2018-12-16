@@ -9,6 +9,12 @@ tests:
     auth: google
     scopes:
       - https://www.googleapis.com/auth/drive.file
+  - name: Open
+    desc: Opens an existing DB
+    function: open
+    auth: google
+    scopes:
+      - https://www.googleapis.com/auth/drive.file
   - name: Query
     desc: Queries a DB
     function: query

@@ -35,7 +35,7 @@ Google_Sheets_Metadata = (options, factory) => {
   });
   
   var _sheet = id => ({
-    sheetId: id,
+    sheetId: (id === null || id === undefined ? options.sheet : id),
   });
   
   var _spreadsheet = () => ({

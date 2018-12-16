@@ -9,8 +9,8 @@ Example = function() {
   /* <!-- Internal Constants --> */
   const FACTORY = this;
   const DELAY = FACTORY.App.delay,
-     RANDOM = FACTORY.App.random,
-     RACE = FACTORY.App.race(500);
+    RANDOM = FACTORY.App.random,
+    RACE = FACTORY.App.race(500);
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -23,31 +23,18 @@ Example = function() {
   return {
 
     /* <!-- External Functions --> */
-		start: () => DELAY(RANDOM(100, 500)).then(() => {
-      FACTORY.Flags.log("START Called");
-      return true;
-      
-    }),
-    
-    test1: () => DELAY(RANDOM(200, 2000)).then(() => {
-      FACTORY.Flags.log("TEST 1 Complete");
-      return true;
-    }),
-    
-    test2: () => DELAY(RANDOM(300, 3000)).then(() => {
-      FACTORY.Flags.log("TEST 2 Complete");
-      return false;
-    }),
-    
-    test3: () => RACE(DELAY(1000).then(() => {
-      FACTORY.Flags.log("TEST 3 Complete");
-      return true;
-    })),
-    
-    finish: () => {
-      FACTORY.Flags.log("FINISH Called");
-      return true;
-    },
+    start: () => FACTORY.Flags.log("START Called").reflect(true),
+
+    test1: () => DELAY(RANDOM(200, 2000)).then(() =>
+      FACTORY.Flags.log("TEST 1 Complete").reflect(true)),
+
+    test2: () => DELAY(RANDOM(300, 3000)).then(() =>
+      FACTORY.Flags.log("TEST 2 Complete").reflect(false)),
+
+    test3: () => RACE(DELAY(1000).then(() =>
+      FACTORY.Flags.log("TEST 3 Complete").reflect(true))),
+
+    finish: () => FACTORY.Flags.log("FINISH Called").reflect(true),
     /* <!-- External Functions --> */
 
   };

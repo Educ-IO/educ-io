@@ -42,13 +42,8 @@ Main = function() {
 				(ಠ_ಠ.Page ? [ಠ_ಠ.Display, ಠ_ಠ.Page] : [ಠ_ಠ.Display])
 					.forEach((m) => {if (m && m.start) m.start();});
 				
-				/* <!-- Handle Highlights --> */	
-				if (ಠ_ಠ.Flags.highlight()) {
-					var _none = "highlight_none order-2";
-					var _highlight = "order-1";
-					$(".highlight_all").addClass(_none).removeClass(_highlight)
-						.filter(".highlight_" + ಠ_ಠ.Flags.highlight().toLowerCase()).removeClass(_none).addClass(_highlight);
-				}
+				/* <!-- Handle Highlights --> */
+        ಠ_ಠ.Display.highlight();
         
         /* <!-- Smooth Scroll Anchors --> */	
         if (ಠ_ಠ.Scroll) ಠ_ಠ.Scroll().start();

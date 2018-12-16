@@ -40,6 +40,7 @@ globals:
   Hammer: false
   objectHash: false
   chrome: false
+  chai: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -81,13 +82,17 @@ globals:
   Google_Sheets_Grid: true
   Google_Sheets_Metadata: true
   Google_Sheets_Notation: true
+  Google_Sheets_Format: true
+  Google_Sheets_Properties: true
   Dialog: true
   Example: true
-  Saad: true
   SaaD: true
   Credentials: true
   Events: true
   Link: true
+  Schema: true
+  Colours: true
+  Sheets: true
   __Ω__UK_Teachers_Standards: true
   __Σ__Evidence_Tracker: true
   __Σ__Form_Master: true

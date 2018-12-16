@@ -909,7 +909,7 @@ html2canvas:
       id: __html2canvas
 
 fetchjsonp:
-  name: fetch-jsonp
+  name: Fetch-jsonp
   desc: JSONP with the Fetch API
   url: https://cdnjs.com/libraries/fetch-jsonp
   project: https://github.com/camsong/fetch-jsonp
@@ -949,7 +949,7 @@ jspdf:
       id: __jspdf
 
 clusterize-js:
-  name: clusterize.js
+  name: Clusterize.js
   desc: Tiny vanilla JS plugin to display large data sets easily
   url: https://cdnjs.com/libraries/clusterize.js
   project: https://github.com/NeXTs/Clusterize.js
@@ -968,7 +968,7 @@ clusterize-js:
       id: __clusterize-js
       
 clusterize-css:
-  name: clusterize.js (CSS)
+  name: Clusterize.js (CSS)
   desc: Tiny vanilla JS plugin to display large data sets easily
   url: https://cdnjs.com/libraries/clusterize.js
   project: https://github.com/NeXTs/Clusterize.js
@@ -988,7 +988,7 @@ clusterize-css:
       id: __clusterize-css
 
 scrollreveal:
-  name: scrollReveal.js
+  name: ScrollReveal.js
   desc: Easily reveal elements as they enter the viewport
   url: https://cdnjs.com/libraries/scrollReveal.js
   project: https://github.com/jlmakes/scrollreveal
@@ -1127,7 +1127,7 @@ waves-css:
       id: __waves-css
 
 mousetrap:
-  name: Waves
+  name: Mousetrap
   desc: Simple library for handling keyboard shortcuts
   url: https://cdnjs.com/libraries/mousetrap
   project: https://github.com/ccampbell/mousetrap
@@ -1168,7 +1168,7 @@ maths:
       id: __maths
       
 objectHash:
-  name: Maths.js
+  name: Object Hash
   desc: Generate hashes from javascript objects in node and the browser.
   url: https://www.jsdelivr.com/package/npm/object-hash
   project: https://github.com/puleos/object-hash
@@ -1188,3 +1188,24 @@ objectHash:
       crossorigin: anonymous
       map: true
       id: __objectHash
+      
+chai:
+  name: Chai Assertion Library
+  desc: Chai is a BDD / TDD assertion library for node and the browser that can be delightfully paired with any javascript testing framework.
+  url: https://cdnjs.com/libraries/chai
+  project: https://www.chaijs.com/
+  version: 4.2.0
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/chai/4.2.0/chai.min.js
+      integrity: sha256-sMMA1cOFAFz/t0L4VJaaewaXG1CdvRf+habglhQFKbQ=
+      crossorigin: anonymous
+      map: true
+      id: __chai
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/chai/4.2.0/chai.js
+      integrity: sha256-Oe35Xz+Zi1EffYsTw5ENBhzOS06LOTV5PSV4OVvnyU8=
+      crossorigin: anonymous
+      map: true
+      id: __chai

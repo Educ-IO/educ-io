@@ -115,6 +115,12 @@ Flags = function() {
 
 				var _return = {
 
+          reflect: value => value,
+          
+          negative: () => false,
+          
+          positive: () => true,
+          
 					alert: function() {
 						return _alert;
 					},

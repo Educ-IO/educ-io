@@ -14,27 +14,24 @@ Router = function() {
 
     EXPAND = (options, command) => options ? _.isFunction(options) ? options(command) : options : false,
 
+    REJECT = {
+      MIME: (files, options) => options !== null && options.mime !== undefined && !_.every(_.isArray(files) ? files : [files], file => _.find(options.mime.split(","), mime => file.mimeType.localeCompare(mime.trim()) === 0)) && ಠ_ಠ.Flags.log(`Google Drive Files MIME types${_.isArray(files) ? "" : ` (${files.mimeType})`} not matched to ${options.mime}`, files),
+      PROPERTIES: (files, options) => options !== null && options.properties !== undefined && !_.every(_.isArray(files) ? files : [files], file => _.isMatch(_.extend({}, file.properties, file.appProperties), options.properties)) && ಠ_ಠ.Flags.log(`Google Drive Files PROPERTIES${_.isArray(files) ? "" : ` (${JSON.stringify(_.extend({}, files.properties, files.appProperties))})`} not matched to ${JSON.stringify(options.properties)}`, files),
+    },
+
+    HANDLE = (options, resolve, reject) => files => files && (!_.isArray(files) || files.length > 0) ?
+    REJECT.MIME(files, options) || REJECT.PROPERTIES(files, options) ?
+    reject() :
+    ಠ_ಠ.Flags.log("Google Drive File/s Picked from Open", files) && resolve(files) :
+    ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject(),
+
     PICK = (picker => ({
       single: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
         options && options.title ? options.title : "Select a File to Open", false, true, picker(options),
-        file => file ?
-        (options.mime !== undefined && !_.find(options.mime.split(","), mime => file.mimeType.localeCompare(mime.trim()) === 0)) ?
-        ಠ_ಠ.Flags.log(`Google Drive File mismatched MIME type: ${file.mimeType} not matched to ${options.mime}`) && reject() :
-        (options.properties !== undefined) && !_.isMatch(_.extend({}, file.properties, file.appProperties), options.properties) ? 
-                  ಠ_ಠ.Flags.log(`Google Drive File mismatched PROPERTY type: ${JSON.stringify(_.extend({}, file.properties, file.appProperties))} not matched to ${JSON.stringify(options.properties)}`) && reject() :
-        ಠ_ಠ.Flags.log("Google Drive File Picked from Open", file) && resolve(file) :
-        ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject()
-      )),
+        HANDLE(options, resolve, reject), null, true)),
       multiple: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
         options && options.title ? options.title : "Select a File/s to Open", true, true, picker(options),
-        files => files && files.length > 0 ?
-        (options.mime !== undefined && !_.every(files, file => _.find(options.mime.split(","), mime => file.mimeType.localeCompare(mime.trim()) === 0))) ?
-        ಠ_ಠ.Flags.log(`Google Drive Files MIME types not all matched to ${options.mime}`, files) && reject() :
-        (options.properties !== undefined) && !_.every(files, file => _.isMatch(_.extend({}, file.properties, file.appProperties), options.properties)) ? 
-                  ಠ_ಠ.Flags.log(`Google Drive Files PROPERTIES not all matched to ${JSON.stringify(options.properties)}`) && reject() :
-        ಠ_ಠ.Flags.log("Google Drive File/s Picked from Open", files) && resolve(files) :
-        ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject()
-      )),
+        HANDLE(options, resolve, reject), null, true)),
     }))(options => () => [new google.picker
         .DocsView(options ? google.picker.ViewId[options.view] : null)
         .setMimeTypes(options && options.mime ? options.mime : null)
@@ -157,19 +154,17 @@ Router = function() {
             ಠ_ಠ.Google.files.get(_id, true)
               .then(file => {
                 ಠ_ಠ.Flags.log(`Opened Google Drive File: ${_id}`, file);
-                (options.mime !== undefined && !_.find(options.mime.split(","), mime => file.mimeType.localeCompare(mime.trim()) === 0)) ?
-                ಠ_ಠ.Flags.log(`Google Drive File mismatched MIME type: ${file.mimeType} not matched to ${options.mime}`) && reject() : 
-                (options.properties !== undefined) && !_.isMatch(_.extend({}, file.properties, file.appProperties), options.properties) ? 
-                  ಠ_ಠ.Flags.log(`Google Drive File mismatched PROPERTY type: ${JSON.stringify(_.extend({}, file.properties, file.appProperties))} not matched to ${JSON.stringify(options.properties)}`) && reject() :
+                REJECT.MIME(file, options) || REJECT.PROPERTIES(file, options) ?
+                  reject() :
                   (options.download === true ? ಠ_ಠ.Google.files.download(file.id)
-                   .then(download => ({
+                    .then(download => ({
                       file: file,
                       download: download
                     })) : Promise.resolve(file))
-                    .then(result => resolve({
-                      command: command,
-                      result: result
-                    }));
+                  .then(result => resolve({
+                    command: command,
+                    result: result
+                  }));
               })
               .catch(e => {
                 ಠ_ಠ.Flags.error(`Opening Google Drive File: ${_id}`, e);

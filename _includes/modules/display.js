@@ -49,20 +49,20 @@ Display = function() {
       _t > (_height - _b) ? "top" : "bottom" :
       _l > (_width - _r) ? "left" : "right";
   };
-  
+
   var _top = () => (document.scrollingElement || document.documentElement).scrollTop;
-  
-  var _drag = () => {      
+
+  var _drag = () => {
     var div = document.createElement("div");
     return ("draggable" in div) || ("ondragstart" in div && "ondrop" in div);
   };
-  
+
   var _placement = (show, trigger) => $(trigger).data("placement") ? $(trigger).data("placement") : _calculate($(trigger));
 
   var _popovers = (targets, options) => targets.popover(_.defaults(options ? options : {}, {
     trigger: "focus"
   }));
-  
+
   var _tooltips = (targets, options) => targets.tooltip(_.defaults(options ? options : {}, {
     trigger: "hover",
     placement: _placement
@@ -124,7 +124,7 @@ Display = function() {
   };
 
   var _breakpoint = size => $(`div.bs-breakpoints span.${size}`).css("display") == "block";
-  
+
   var _username = name => name && name.length == 3 ? name.split(" ").join("") : name;
   /* <!-- Internal Functions --> */
 
@@ -156,7 +156,7 @@ Display = function() {
       if (window.Handlebars) {
 
         Handlebars.registerHelper("username", variable => _username(variable));
-        
+
         Handlebars.registerHelper("isDate", function(variable, options) {
           if (variable && variable instanceof Date) {
             return options.fn(this);
@@ -222,7 +222,11 @@ Display = function() {
             "is": (a, b) => (a % 2 === 0 ? b.toLowerCase() == "even" : b.toLowerCase() == "odd"),
             "in": (a, b) => {
               var _b, _a = String(a);
-              try {_b = JSON.parse(b);} catch (e) {b = {};}
+              try {
+                _b = JSON.parse(b);
+              } catch (e) {
+                b = {};
+              }
               return _b[_a];
             },
           };
@@ -234,12 +238,16 @@ Display = function() {
 
         Handlebars.registerHelper("choose", (a, b, _default) => {
           var _b, _a = String(a);
-          try {_b = JSON.parse(b);} catch (e) {_b = {};}
+          try {
+            _b = JSON.parse(b);
+          } catch (e) {
+            _b = {};
+          }
           return _b[_a] ? _b[_a] : _default ? _default : "";
         });
-        
+
         Handlebars.registerHelper("concat", (...args) => _.reduce(args, (m, a) => _.isObject(a) ? m : (m + a), ""));
-        
+
         Handlebars.registerHelper("either", (a, b) => (_.isUndefined(a) || _.isNull(a) || a === "") ? b : a);
 
         Handlebars.registerHelper("replace", (value, replace, replacement) => value ? value.replace(new RegExp(replace, "g"), replacement) : "");
@@ -269,12 +277,23 @@ Display = function() {
     },
 
     username: _username,
-    
+
     popovers: (targets, options) => _popovers(targets, options),
 
     tooltips: (targets, options) => _tooltips(targets, options),
 
     commarise: value => _commarise(value),
+
+    highlight: () => {
+
+      if (ಠ_ಠ.Flags.highlight()) {
+        var _none = "highlight_none order-2";
+        var _highlight = "order-1";
+        $(".highlight_all").addClass(_none).removeClass(_highlight)
+          .filter(".highlight_" + ಠ_ಠ.Flags.highlight().toLowerCase()).removeClass(_none).addClass(_highlight);
+      }
+
+    },
 
     doc: {
 
@@ -342,9 +361,9 @@ Display = function() {
     },
 
     drag: _drag,
-    
+
     top: _top,
-    
+
     size: {
 
       is: {
@@ -936,7 +955,7 @@ Display = function() {
         });
         return _parent;
       };
-      
+
       var _remove = name => {
         if (_state[name]) {
           delete _state[name];
@@ -952,7 +971,7 @@ Display = function() {
         }
         return _ret;
       };
-      
+
       var _exit = names => {
         names = _arrayize(names, _.isString);
         _.each(names, name => {
@@ -968,7 +987,7 @@ Display = function() {
         enter: _enter,
 
         exit: _exit,
-        
+
         swap: (exit, enter) => {
           if (exit) _exit(exit);
           if (enter) _enter(enter);
@@ -987,6 +1006,13 @@ Display = function() {
           var all = _all();
           return (or ? _.some : _.every)(names, name => all.indexOf(name) >= 0);
         },
+        
+        toggle: names => {
+          var all = _all();
+          _arrayize(names, _.isString)
+            .forEach(name => all.indexOf(name) >= 0 ? _exit(name) : _enter(name));
+        }
+        
       };
 
     },

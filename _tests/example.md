@@ -12,12 +12,14 @@ tests:
   - name: Test 2
     desc: Second Example Test
     function: test2
+    expected: false
     auth: google
     scopes:
       - https://www.googleapis.com/auth/drive.file
   - name: Test 3
     desc: Third Example Test
     function: test3
+    expected: error
     auth: google
     scopes:
       - https://www.googleapis.com/auth/drive.file

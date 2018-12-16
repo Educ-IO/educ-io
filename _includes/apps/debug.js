@@ -11,15 +11,38 @@ App = function() {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  var ಠ_ಠ;
+  var ಠ_ಠ,
+    _total = 0,
+    _succeeded = 0,
+    _running = 0,
+    _left = 0;
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _promisify = fn => new Promise(resolve => resolve(fn ? ಠ_ಠ._isF(fn) ? fn() : fn : true));
+  var _random = (lower, higher) => Math.random() * (higher - lower) + lower;
 
-  var _all = (module, id) => _.each($(`#${id}`).siblings("a.btn").toArray(), (el, i) => _.delay(el => el.click(), i ? i * 1000 : 100, el));
+  var _promisify = (fn, value) => new Promise(resolve => resolve(fn ? ಠ_ಠ._isF(fn) ? fn(value) : fn : true));
 
-  var _one = (module, test, id) => {
+  var _update = (result, expected) => {
+    _running -= 1;
+    _left -= 1;
+    _succeeded += (result === (expected ?
+      /^\s*(false|0)\s*$/i.test(expected) ?
+      false : _.isString(expected) ?
+      expected.toLowerCase() : true : true)) ? 1 : 0;
+    $(`#${ID}_counter`)
+      .html(`${_succeeded}/${_total}  <strong>${Math.round(_succeeded/_total*100)}%</strong>`)
+      .toggleClass("text-success", _succeeded == _total);
+  };
+
+  var _all = (module, id) => _.each($(`#${id}`).siblings("a.btn").toArray(),
+    (el, i, all) => _.delay(el => {
+      if (i === 0) _left = all.length;
+      var _check = () => _running === 0 ? el.click() : _.delay(_check, _random(100, 400), el);
+      _check();
+    }, i ? i * 1000 : 100, el));
+
+  var _one = (module, test, id, expected) => {
 
     /* <!-- Check we have a module and a button --> */
     var _module = ಠ_ಠ._tests[module],
@@ -35,19 +58,34 @@ App = function() {
       _finish = _module.finish,
       _command = _module[test],
       _result;
+
+    /* <!-- Increment the total tests run counter --> */
+    _total += 1;
+
     _promisify(_start)
-      .then(() => _promisify(_command))
+      .then(value => _promisify(_command, value))
       .then(result => {
-        _result = result;
-        return _promisify(_finish);
+        _update((_result = result), expected);
+        return _promisify(_finish, {
+          test: test,
+          result: _result
+        });
       })
       .catch(e => {
+        _update("error", expected);
         ಠ_ಠ.Flags.error(`Module: ${module} | Test: ${test}`, e);
       })
       .then(() => _id.removeClass("loader disabled").find(`i.result-${_result ? "success" : "failure"}`).removeClass("d-none"));
   };
 
-  var _run = (module, test, id) => test == "__all" ? _all(module, id) : _one(module, test, id);
+  var _run = (module, test, id, expected) => test == "__all" ?
+    _all(module, id) : (_running += 1) && _one(module, test, id, expected);
+
+  var _everything = () => _.each($(".btn.test-all").toArray(),
+    (el, i) => _.delay(el => {
+      var _check = () => _left === 0 ? el.click() : _.delay(_check, _random(500, 1000), el);
+      _check();
+    }, i ? i * 5000 : 100, el));
   /* <!-- Internal Functions --> */
 
   /* <!-- Overridable Configuration --> */
@@ -57,9 +95,22 @@ App = function() {
     clear: [],
     route: [],
     routes: {
+      __loud: {
+        matches: /LOUD/i,
+        length: 0,
+        fn: () => ಠ_ಠ.Display.state().toggle("traces")
+      },
+      __run_all: {
+        matches: [/RUN/i, /ALL/i],
+        length: 0,
+        fn: _everything,
+      },
       __run_test: {
         matches: /RUN/i,
-        length: 3,
+        length: {
+          min: 3,
+          max: 4
+        },
         fn: command => _run.apply(this, command),
       },
     }
@@ -94,12 +145,19 @@ App = function() {
             instructions: ಠ_ಠ.Display.doc.get({
               name: "INSTRUCTIONS"
             }),
+            all: ಠ_ಠ.Display.doc.get({
+              name: "ALL"
+            }),
             tests: ಠ_ಠ.Display.doc.get({
               name: "TESTS"
             }),
             clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
           });
           _.each(_hooks.start, fn => fn());
+
+          /* <!-- Handle Highlights --> */
+          ಠ_ಠ.Display.highlight();
+
           return true;
         },
         test: () => {
@@ -142,7 +200,9 @@ App = function() {
       ]);
     },
 
-    random: (lower, higher) => Math.random() * (higher - lower) + lower,
+    random: _random,
+
+    running: _running,
 
   };
 

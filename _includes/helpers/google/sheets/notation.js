@@ -2,11 +2,6 @@ Google_Sheets_Notation = () => {
   "use strict";
 
   /* <!-- HELPER: Provides an helper set of functions for dealing with Google Sheets Notation --> */
-  /* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
-  /* <!-- @options.sheet: ID of the sheet to target (tab ID, not spreadsheet ID)  --> */
-  /* <!-- @options.visibility: Metadata visibility (if none supplied in the function call, defaults to DOCUMENT) --> */
-  /* <!-- @factory.Google_Sheets_Grid: Function to create a grid helper object --> */
-  /* <!-- REQUIRES: Global Scope: Underscore --> */
 
   /* === Internal Visibility === */
 
@@ -16,7 +11,7 @@ Google_Sheets_Notation = () => {
     R1: /^R([1-9]\d*)$/,
     R1C1: /^R([1-9]\d*)C([1-9]\d*)$/,
     C1: /^C([1-9]\d*)$/
-  };
+  }, RANGE = ":";
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -56,6 +51,16 @@ Google_Sheets_Notation = () => {
   var _convert = reference => NOTATIONS.R1C1.test(reference) ?
     _convertR1C1(reference) : NOTATIONS.A1.test(reference) ?
     _convertA1(reference) : reference;
+  
+  var _range = (reference, convert) => {
+      if (reference && reference.indexOf(RANGE) > 0) {
+        reference = [
+          (convert ? convert : _convert)(reference.split(RANGE)[0]),
+          (convert ? convert : _convert)(reference.split(RANGE)[1])
+        ].join(RANGE);
+      }
+      return reference;
+    };
   /* <!-- Internal Functions --> */
 
   /* === Internal Visibility === */
@@ -63,6 +68,12 @@ Google_Sheets_Notation = () => {
   /* === External Visibility === */
   return {
 
+    range: _range,
+    
+    rangeA1: reference => _range(reference, _convertA1),
+    
+		rangeR1C1: reference => _range(reference, _convertR1C1),
+    
     convert: _convert,
 
     convertA1: reference => NOTATIONS.A1.test(reference) ? _convertA1(reference) : reference,

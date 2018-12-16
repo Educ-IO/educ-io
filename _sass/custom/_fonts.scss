@@ -1,6 +1,6 @@
 h1, h2, h3, h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading, .navbar-brand, a.navbar-brand  {
 	letter-spacing: $font-spacing-heading;
-	font-family: $font-heading, apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	font-family: $font-heading, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	font-weight: $font-weight-heading;
 	em {
 		color: lighten($colour-highlight, 5%) !important;
