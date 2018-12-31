@@ -558,7 +558,7 @@ App = function() {
           _display = focus.format("YYYY-MM-DD"),
           _all = _show.prepare(_show.db ? _tasks.query(focus, _show.db, focus.isSame(_show.today)) : []),
           _diary = {
-            tasks: _.chain(_all).filter(item => !item._timed).sortBy("DETAILS").sortBy("ORDER").sortBy("_countdown").value(),
+            tasks: _.chain(_all).filter(item => !item._timed).sortBy("DETAILS").sortBy("GHOST").sortBy("ORDER").sortBy("_countdown").value(),
             events: _.chain(_all).filter(item => item._timed).sortBy(item => moment(item.TIME, ["h:m a", "H:m", "h:hh A"]).toDate()).value(),
           };
         _add(focus, {

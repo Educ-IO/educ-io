@@ -6,10 +6,12 @@ Tasks = ಠ_ಠ => {
   /* <!-- REQUIRES: Global Scope: Loki, JQuery, Underscore | App Scope: Google --> */
 
   /* <!-- Internal Constants --> */
-  const EXTRACT_ALLDAY = /(^|\s|\(|\{|\[)(all day)\b/i;
+  const EXTRACT_ALLDAY = /(^|\s|\(|\{|\[)(all day|all morning|all afternoon|all evening|[ap]m)\b/i;
   const EXTRACT_TIME = /\b((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))\b/i;
   const EXTRACT_DATE = /\b(\d{4})-(\d{2})-(\d{2})|((0?[1-9]|[12]\d|30|31)[^\w\d\r\n:](0?[1-9]|1[0-2]|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[^\w\d\r\n:](\d{4}|\d{2}))\b/i;
   const SPLIT_TAGS = /[^a-zA-Z0-9]/;
+  const ZOMBIE = 60,
+    GHOST = 120;
   const DB = new loki("docket.db"),
     NAMES = {
       spreadsheet: "Educ.IO | Docket Data",
@@ -109,6 +111,12 @@ Tasks = ಠ_ಠ => {
       },
       header_badges: {
         value: "BADGES",
+      },
+      header_ghost: {
+        value: "GHOST"
+      },
+      header_zombie: {
+        value: "ZOMBIE"
       }
     },
     STATUS = {
@@ -126,31 +134,35 @@ Tasks = ಠ_ಠ => {
     return value;
   }, {}));
 
-  var _process = item => {
+  var _process = (zombified, ghostly) => item => {
 
     /* <!-- Extract Date from Details if found --> */
     var _due = item[META.column_details.value].match(EXTRACT_DATE);
-    
+
     /* <!-- Set Due Date if available --> */
     !(item[META.header_due.value] = _due && _due.length >= 1 ? moment(_due[0], ["DD/MM/YYYY", "D/M/YY", "DD-MM-YY", "DD-MM-YYYY", "DD-MMM-YY", "DD-MMM-YYYY", "YYYY-MM-DD"]) : "") ?
-    delete item._countdown : (item._countdown = item[META.header_due.value].diff(moment(), "days"));
-    
+    delete item._countdown: (item._countdown = item[META.header_due.value].diff(moment(), "days"));
+
     /* <!-- Extract Time from Details if found --> */
     var _all = item[META.column_details.value].match(EXTRACT_ALLDAY),
       _time = item[META.column_details.value].match(EXTRACT_TIME);
-    
+
     /* <!-- If time is actually part of the due date, discard time (better than look-ahead regex matching?). --> */
     if (_due && _due.length >= 1 && _time && _time.length >= 1 && item[META.header_due.value] && item[META.header_due.value].isValid() && _due[0].indexOf(_time[1]) >= 0) _time = null;
-    
+
     /* <!-- Set Time if available --> */
     !(item[META.header_time.value] = _all && _all.length >= 1 ? _all[_all.length >= 2 ? 2 : 1] : _time && _time.length >= 1 ? _time[1] : "") ?
-    delete item._timed : (item._timed = true);
+    delete item._timed: (item._timed = true);
 
     /* <!-- Split Tabs into Badges --> */
     if (item[META.column_tags.value]) item[META.header_badges.value] = item[META.column_tags.value].split(SPLIT_TAGS);
 
     /* <!-- Set Appropriate Status --> */
     if (item[META.column_status.value] && item[META.column_status.value].toUpperCase() == "COMPLETE") item._complete = true;
+
+    /* <!-- Set Zombie | Ghost Status --> */
+    if (!item._timed && !item._complete && item._countdown === undefined)(item[META.header_ghost.value] = item[META.column_from.value].isBefore(ghostly)) ?
+      item._dormant = item[META.column_from.value].fromNow() : (item[META.header_zombie.value] = item[META.column_from.value].isBefore(zombified));
 
     return item;
   };
@@ -167,7 +179,10 @@ Tasks = ಠ_ಠ => {
     _data.last = Math.max(_data.last !== undefined ? _data.last : 0, (_row.__ROW = index));
 
     /* <!-- Set on-the-fly Item Properties (TIME and BADGES, so we can query them) --> */
-    if (_row[META.column_details.value]) list.push(_process(_row));
+    var __process = _process(
+      moment().startOf("day").subtract(ZOMBIE, "days"),
+      moment().startOf("day").subtract(GHOST, "days"));
+    if (_row[META.column_details.value]) list.push(__process(_row));
 
     return list;
 
@@ -836,7 +851,9 @@ Tasks = ಠ_ಠ => {
       delete: _delete,
 
       process: items => {
-        _.each(_.isArray(items) ? items : [items], _process);
+        _.each(_.isArray(items) ? items : [items], _process(
+          moment().startOf("day").subtract(ZOMBIE, "days"),
+          moment().startOf("day").subtract(GHOST, "days")));
         return Promise.resolve(items);
       },
 

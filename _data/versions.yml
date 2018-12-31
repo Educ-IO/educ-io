@@ -1,4 +1,8 @@
 site :
+  0.1.1i :
+    name : Updated Docket App
+    desc : Spooky Ghost Tasks have arrived
+    type : minor
   0.1.1h :
     name : Updated Events App
     desc : Bug Fixes and Share Links in Events
@@ -797,6 +801,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  0.0.4j-beta :
+    name : Ghost Tasks
+    desc : Old tasks will begin to fade away to encourage rescheduling or deletion!
+    type : minor
   0.0.4k-beta :
     name : Adding Tags
     desc : Ability to add Tags to existing items

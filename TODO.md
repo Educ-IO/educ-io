@@ -64,8 +64,6 @@ Mobile
 
 Docket
 ------
-* Handle AM/PM as timed events
-
 * Overlay events from Google Calendar - Need to do the OAuth Google Acceptance Form
 
 * Add tasks from Github Issues (maybe? - or is an extension a better route, with push adding to the Docket sheet?)
@@ -81,8 +79,6 @@ Docket
   
 * Faster Add on Mobile Dialogs - perhaps pinch action to confirm, or buttons at the top too?
 * Date Bug on MacOS - Localised formats? (Could be related to https://bugs.chromium.org/p/chromium/issues/detail?id=171813) ... Need to verify on SauceLabs / Mac
-
-* Ghost / Zombie Tasks
 
 Tiles
 -----
@@ -154,6 +150,8 @@ Survey
 
 Complete
 --------
+* Ghost / Zombie Tasks <-- DONE
+* Handle AM/PM as timed events <-- DONE
 * Router File Open/Load support for Properties Filtering <-- DONE
 * Filter for correctly returned doc type on picker (recent shows al,hl types?) <-- DONE
 * Keyboard Shortcuts in Folders App <== DONE
