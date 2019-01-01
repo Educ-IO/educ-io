@@ -161,8 +161,7 @@ Tasks = ಠ_ಠ => {
     if (item[META.column_status.value] && item[META.column_status.value].toUpperCase() == "COMPLETE") item._complete = true;
 
     /* <!-- Set Zombie | Ghost Status --> */
-    if (!item._timed && !item._complete && item._countdown === undefined)(item[META.header_ghost.value] = item[META.column_from.value].isBefore(ghostly)) ?
-      item._dormant = item[META.column_from.value].fromNow() : (item[META.header_zombie.value] = item[META.column_from.value].isBefore(zombified));
+    if (!item._timed && !item._complete && item._countdown === undefined) (item[META.header_ghost.value] = item[META.column_from.value].isBefore(ghostly)) ? (item._dormant = item[META.column_from.value].fromNow()) : (item[META.header_zombie.value] = item[META.column_from.value].isBefore(zombified));
 
     return item;
   };

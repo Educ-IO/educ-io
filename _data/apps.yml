@@ -3286,22 +3286,22 @@ shiny:
   colour: 000080
   action: Find out more
   versions:
-    0.5.3:
+    0.5.5:
       name : Minor Updates
       desc : Added checks/removal for un-intended numerical lists
-      type : beta
+      type : beta | production | minor
       changes :
         - details: When starting a line with a number, followed by a period (.) and then a space, this is parsed as a numerical list. This version removes them unless you press CTRL-ALT-P to print.
     0.5 :
       name : Minor Updates
       desc : Added Per-Printed Page Headers
-      type : live
+      type : minor
       changes :
         - details: Using the _CTRL-T_{:.kb-shortcut} shortcut, a header is inserted which will be printed on each page.
     0.4 :
       name : Minor Updates
       desc : Updated Library Dependencies and Print Styling
-      type : live
+      type : minor
       changes :
         - details: Default printed output is now rendered in **12pt** with **double-line** spacing
           url:
