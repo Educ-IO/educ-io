@@ -605,28 +605,27 @@ App = function() {
 
       /* <!-- Drag / Drop --> */
       var _get = data => !data || data.indexOf("item_") !== 0 ? false : $(`#${data}`),
-        _items = _diary.find("div.item[draggable=true]");
-      _items.on("dragstart.item", e => {
-          e.originalEvent.dataTransfer.setData("text/plain", e.target.id);
-        })
-        .on("dragleave.item", e => {
-          e.preventDefault();
-          var _destination = $(e.target);
-          _destination.removeClass("drop-target");
-        })
-        .on("dragover.item", e => {
-          e.preventDefault();
+        _items = _diary.find("div.item[draggable=true]"),
+        _clear = _.debounce(items => items.removeClass("drop-target"), 100);
+      _items
+        .on("dragstart.item", e => e.originalEvent.dataTransfer.setData("text/plain", e.target.id))
+        .on("dragend.item", () => _clear($("div.item.drop-target")))
+        .on("dragover.item", e => e.preventDefault())
+        .on("dragenter.item", e => {
           var _destination = $(e.target);
           _destination = _destination.is("div.item[draggable=true]") ? _destination : _destination.parents("div.item[draggable=true]");
-          if (!_destination.hasClass("drop-target")) _destination.addClass("drop-target");
+          if (!_destination.hasClass("drop-target")) {
+            _clear($("div.item.drop-target").not(`#${_destination[0].id}`));
+            _destination.addClass("drop-target");
+          }
         })
         .on("drop.item", e => {
           e.preventDefault();
-          var _source = _get(e.originalEvent.dataTransfer.getData("text/plain"));
-          if (!_source) return;
+          var _id = e.originalEvent.dataTransfer.getData("text/plain"),
+            _source = _get(_id);
           var _destination = $(e.target);
           _destination = _destination.is("div.item[draggable=true]") ? _destination : _destination.parents("div.item[draggable=true]");
-          _destination.removeClass("drop-target");
+          if (!_source || _id == _destination.id) return;
           if (_source.parents(".group")[0] == _destination.parents(".group")[0]) {
             _source.insertBefore(_destination);
             _source.addClass("bg-bright");
@@ -640,7 +639,11 @@ App = function() {
               if (_item && _item.ORDER != _order)(_item.ORDER = _order) && _list.push(_item);
             });
             /* <!-- Save List --> */
-            if (_list.length > 0) ಠ_ಠ.Flags.log("LIST TO SAVE:", _list);
+            if (_list.length > 0) {
+              ಠ_ಠ.Flags.log("LIST TO UPDATE:", _list);
+              _.each(_list, item => _tasks.items.update(item)
+                .then(r => (r === false) ? ಠ_ಠ.Flags.error("Update Item Failed", item) : true));
+            }
           }
         });
 

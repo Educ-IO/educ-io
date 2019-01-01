@@ -71,7 +71,24 @@
       }
       margin-top: 0.15rem;
     }
+    .display.small > a {margin-top: -0.15em;}
     span > i, a > i {margin-top: 0.2rem !important;}
+    svg {
+      height: 1.4em;
+    	width: 1.4em;
+      .e, .g {
+        stroke-linecap: round;
+        stroke: $colour-general;
+      }
+      .g {
+        fill: $colour-background;
+      	stroke-width: 1em;
+      }
+      .e {
+        fill: $colour-general;
+        stroke-width: 0.1em;
+      }
+    }
   }
 }
 

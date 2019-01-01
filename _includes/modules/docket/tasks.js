@@ -57,6 +57,7 @@ Tasks = ಠ_ಠ => {
           width: 80,
           index: true,
           hash: true,
+          type: "int",
         }
       },
       column_status: {
@@ -161,7 +162,7 @@ Tasks = ಠ_ಠ => {
     if (item[META.column_status.value] && item[META.column_status.value].toUpperCase() == "COMPLETE") item._complete = true;
 
     /* <!-- Set Zombie | Ghost Status --> */
-    if (!item._timed && !item._complete && item._countdown === undefined) (item[META.header_ghost.value] = item[META.column_from.value].isBefore(ghostly)) ? (item._dormant = item[META.column_from.value].fromNow()) : (item[META.header_zombie.value] = item[META.column_from.value].isBefore(zombified));
+    if (!item._timed && !item._complete && item._countdown === undefined)(item[META.header_ghost.value] = item[META.column_from.value].isBefore(ghostly)) ? (item._dormant = item[META.column_from.value].fromNow()) : (item[META.header_zombie.value] = item[META.column_from.value].isBefore(zombified));
 
     return item;
   };
@@ -171,7 +172,11 @@ Tasks = ಠ_ಠ => {
     var _row = {};
     _.each(_data.columns.meta, column => {
       var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
-      _row[column.developerMetadata.metadataValue] = _val && column.isDate ? moment(_val) : _val;
+      /* <!-- Parse Value if required --> */
+      _row[column.developerMetadata.metadataValue] = _val ?
+        column.isDate ? moment(_val) :
+        column.isInteger ? parseInt(_val, 10) :
+        _val : _val;
     });
 
     /* <!-- Set ROW / Index Reference --> */

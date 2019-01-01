@@ -1,7 +1,7 @@
 site :
-  0.1.1j :
+  0.1.1k :
     name : Updated Docket App
-    desc : Spooky Ghost Tasks have arrived
+    desc : Spooky Ghost Tasks in Docket have arrived
     type : minor
   0.1.1h :
     name : Updated Events App
@@ -801,7 +801,11 @@ accounts :
     name : Early testing version
     type : minor
 docket :
-  0.0.4j-beta :
+  0.0.4m-beta :
+    name : Drag and Drop Bug fixes
+    desc : Smoother Dragging and Dropping for Task re-ordering
+    type : minor
+  0.0.4l-beta :
     name : Ghost Tasks
     desc : Old tasks will begin to fade away to encourage rescheduling or deletion!
     type : minor

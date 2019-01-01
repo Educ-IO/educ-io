@@ -16,6 +16,8 @@ rules:
   semi:
     - error
     - always
+  no-cond-assign: [1, except-parens]
+  no-const-assign: 1
 globals:
   $: false
   jQuery: false
