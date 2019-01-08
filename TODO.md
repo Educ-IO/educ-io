@@ -3,6 +3,9 @@ TODO LIST
 General
 -------
 
+* Loader for triggered code loads (e.g. on navigate)
+* Keypress - Enter on Dialog / Input Dialogs
+
 * ** IMPORTANT ** Loader version contained within element
 
 * ** IMPORTANT ** Loading Spinner for 'Get Help' - can be slow sometimes!
@@ -71,7 +74,8 @@ Docket
 * Handle clash on updates / delete
 	-> User notification of issues <-- DONE
   -> Need to roll-back UI updates
-  
+
+* Re-Ordering Items by touch...
 * Faster Add on Mobile Dialogs - perhaps pinch action to confirm, or buttons at the top too?
 * Date Bug on MacOS - Localised formats? (Could be related to https://bugs.chromium.org/p/chromium/issues/detail?id=171813) ... Need to verify on SauceLabs / Mac
 
@@ -86,6 +90,10 @@ Grades
 
 View
 ----
+* Import Password-Protected / Encrypted Spreadsheets
+
+* Offer save direct to Google Drive for Exporting (with share by link option)
+
 * Turn off advanced table display for fewer filtered rows?
 	+ Important to help deal with flickers
 * Pass Date column information to readonly view
@@ -145,6 +153,7 @@ Survey
 
 Complete
 --------
+* Export Password-Protected / Encrypted Spreadsheets <-- DONE
 * Drag / Drop re-ordering <== DONE
 	-> Dragging & Dropping <-- DONE
   -> Button Re-Ordering (maybe just for small screens?) <-- DONE
@@ -604,4 +613,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-12-15
+ᕕ( ᐛ )ᕗ JD - 2018-01-08

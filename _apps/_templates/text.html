@@ -21,10 +21,14 @@
             <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="col-12 col-lg-9 form-control form-control-lg" rows="{{#if rows}}{{rows}}{{else}}2{{/if}}"></textarea>
           </div>
           {{else}}
+          {{#if password}}
+          <input {{#if id}}id="{{id}}_VALUE" {{/if}} autocomplete="{{#present autocomplete}}{{autocomplete}}{{else}}new-password{{/present}}" type="password" name="value" class="form-control form-control-lg w-100" />
+          {{else}}
           {{#if simple}}
           <input {{#if id}}id="{{id}}_VALUE" {{/if}} type="text" name="value" class="form-control form-control-lg w-100" />
           {{else}}
           <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="form-control form-control-lg w-100" rows="{{#if rows}}{{rows}}{{else}}2{{/if}}"></textarea>
+          {{/if}}
           {{/if}}
           {{/present}}
         </form>

@@ -2,6 +2,7 @@ Making sharing parts (what we call _views_) of your [Google Sheets](https://www.
 
 + Find data __fast__ with free-text & simple searching.
 + __Export__ filtered or non-filtered data to a variety of formats (including legacy formats such as .xls).
++ Generated __password protected__ Excel sheets from your Google Sheets data.
 + Craft your data into _views_, share with others just what is __relevant to them__.
 + Views are __always current__ as they load data directly from your sheets & include one-click column sorting.
 + __Hide columns completely__ from your _views_, & group adjacent columns so they can be __hidden / shown__ with a __single click__.

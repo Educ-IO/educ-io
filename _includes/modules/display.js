@@ -484,7 +484,7 @@ Display = function() {
 
 			}
 		*/
-    inform: options => {
+    inform: (options, shown) => {
 
       return new Promise((resolve, reject) => {
 
@@ -494,6 +494,9 @@ Display = function() {
         var dialog = $(_template("inform")(options));
         _target(options).append(dialog);
 
+        /* <!-- Set Shown Event Handler (if present) --> */
+        if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
+        
         /* <!-- Set Basic Event Handlers --> */
         dialog.on("hidden.bs.modal", () => dialog.remove() && resolve());
 
@@ -761,7 +764,7 @@ Display = function() {
         var _submitted = false,
           _submit = () => {
             var _name = dialog.find("textarea[name='name'], input[type='text'][name='name']").val();
-            var _value = dialog.find("textarea[name='value'], input[type='text'][name='value']").val();
+            var _value = dialog.find("textarea[name='value'], input[type='text'][name='value'], input[type='password'][name='value']").val();
             _clean();
             if (_value && (!options.validate || options.validate.test(_value)))
               resolve(_name ? {
@@ -771,7 +774,7 @@ Display = function() {
           };
 
         /* <!-- Handle Enter Key (if simple) --> */
-        if (options.simple) dialog.keypress(e => {
+        if (options.simple || options.password) dialog.keypress(e => {
           if (e.which == 13) {
             event.preventDefault();
             _submitted = true;
@@ -786,7 +789,7 @@ Display = function() {
         dialog.on("hidden.bs.modal", () => dialog.remove() && (_submitted ? _submit() : reject()));
 
         /* <!-- Show the Modal Dialog --> */
-        dialog.on("shown.bs.modal", () => dialog.find("textarea[name='value'], input[type='text'][name='value']").focus());
+        dialog.on("shown.bs.modal", () => dialog.find("textarea[name='value'], input[type='text'][name='value'], input[type='password'][name='value']").focus());
         dialog.modal("show");
 
       });

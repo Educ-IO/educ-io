@@ -1,4 +1,4 @@
-# Last Updated: 2018-12-01
+# Last Updated: 2019-01-07
 
 localstorage:
   name: localStorage
@@ -24,18 +24,18 @@ jsdiff:
   desc: This allows the 'diffing', or comparsion, of text.
   url: https://cdnjs.com/libraries/jsdiff
   project: https://github.com/kpdecker/jsdiff
-  version: 3.5.0
-  last: 3.4.0
+  version: 4.0.1
+  last: 3.5.0
   license: BSD-3-Clause
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.5.0/diff.min.js
-      integrity: sha256-i/ln3ud5Grfa72JdQZfmvpIRZLGRx7uGxNKgoy10S3A=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/4.0.1/diff.min.js
+      integrity: sha256-xofEpXTFTnsOK+GIsjgJc1ZN0kSE3KsTtZJ2GQaWs3I=
       crossorigin: anonymous
       id: __jsdiff
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.5.0/diff.js
-      integrity: sha256-GohE5pijQCRc5q81JQLFszd3AyiRqci/3Le8DIv+9bE=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jsdiff/4.0.1/diff.js
+      integrity: sha256-Cn/jebBEs2G6OVuM3y+zqIOs3TSaz5xII5Nv92pV/JI=
       crossorigin: anonymous
       id: __jsdiff
 
@@ -63,18 +63,18 @@ screenfull:
   desc: This makes handling full screen functionality easier.
   url: https://cdnjs.com/libraries/screenfull.js
   project: https://github.com/sindresorhus/screenfull.js
-  version: 3.3.3
-  last: 3.3.2
+  version: 4.0.0
+  last: 3.3.3
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.3.3/screenfull.min.js
-      integrity: sha256-ULK0G2N+co+TT4C60EB0nElSM1e+tI2EFVa+bR/4juU=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/4.0.0/screenfull.min.js
+      integrity: sha256-s/La9l5oAErDFpKA2KkY0QpqI43ygUUYIYYfVx6O+vU=
       crossorigin: anonymous
       id: __screenfull
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.3.3/screenfull.js
-      integrity: sha256-48tYMFsE3KPBgahRjgk9b0ERUGVzzotFLR8vChfAhKE=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/4.0.0/screenfull.js
+      integrity: sha256-D5SXfF5zV9c57rgxaAOo72Y8YgvouJDUic1RfSSpyww=
       crossorigin: anonymous
       id: __screenfull
 
@@ -224,19 +224,19 @@ bootstrap-js:
   desc: This is a toolkit / framework for site design, layout and presentation.
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
-  version: 4.1.3
-  last: 4.1.2
+  version: 4.2.1
+  last: 4.1.3
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js
-      integrity: sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js
+      integrity: sha256-63ld7aiYP6UxBifJWEzz87ldJyVnETUABZAYs5Qcsmc=
       crossorigin: anonymous
       map: true
       id: __bootstrap-js
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.js
-      integrity: sha256-82SVOjZ1qLdrq8VUmAisFapCSq1bpgavtXQaDGLPAAg=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.js
+      integrity: sha256-K0KkaRh1fs/UYfKcnzBK9G/X7HgzuaeVI1hJPS8Sxs4=
       crossorigin: anonymous
       map: true
       id: __bootstrap-js
@@ -266,18 +266,18 @@ loki:
   desc: A fast data querying and manipulation library.
   url: https://cdnjs.com/libraries/lokijs
   project: http://lokijs.org
-  version: 1.5.5
-  last: 1.5.3
+  version: 1.5.6
+  last: 1.5.5
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/lokijs/1.5.5/lokijs.min.js
-      integrity: sha256-os5dNdSHfX1PBGf6rV+0J8OPf40j52TF7B33dLqNPD4=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/lokijs/1.5.6/lokijs.min.js
+      integrity: sha256-J8qzUJMa9OYE/uRGingztquh99KcOd3Zmt6w5Ch8V5U=
       crossorigin: anonymous
       id: __loki
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/lokijs/1.5.5/lokijs.min.js
-      integrity: sha256-os5dNdSHfX1PBGf6rV+0J8OPf40j52TF7B33dLqNPD4=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/lokijs/1.5.6/lokijs.min.js
+      integrity: sha256-J8qzUJMa9OYE/uRGingztquh99KcOd3Zmt6w5Ch8V5U=
       crossorigin: anonymous
       id: __loki
 
@@ -305,18 +305,18 @@ yaml:
   desc: Used to parse YAML data structures.
   url: https://cdnjs.com/libraries/js-yaml
   project: https://github.com/nodeca/js-yaml
-  version: 3.12.0
-  last: 3.11.0
+  version: 3.12.1
+  last: 3.12.0
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.12.0/js-yaml.min.js
-      integrity: sha256-VDV4IpYWirG9Caah5vULCWIJ1IGOyuZMI1AHewjwbb8=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.12.1/js-yaml.min.js
+      integrity: sha256-xYfEFU0LN08iGcGajx1rqWTnYWIdaCHYME9C46FGIwE=
       crossorigin: anonymous
       id: __yaml
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.12.0/js-yaml.js
-      integrity: sha256-3JCRPsErdtwb3+BatquOs995rP2MY87+0AcElS04Fk8=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.12.1/js-yaml.js
+      integrity: sha256-5GZXRyiUOktpfj6dXSOkt0Vja7JPe+yiqV7pFDuXoRo=
       crossorigin: anonymous
       id: __yaml
 
@@ -497,17 +497,18 @@ fontface:
   desc: Web Font Loader
   url: https://cdnjs.com/libraries/fontfaceobserver
   project: https://fontfaceobserver.com/
-  version: 2.0.13
+  version: 2.1.0
+  last: 2.0.13
   license: BSD-3-Clause
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/fontfaceobserver/2.0.13/fontfaceobserver.standalone.js
-      integrity: sha256-zY8Pmq4BuvlVm12gHfQKRy92UAZcWNqQzBS29Pcdlqk=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/fontfaceobserver/2.1.0/fontfaceobserver.standalone.js
+      integrity: sha256-fhre4iYmFiwPsIkJajvUGcWlfVAEPjG/bnsuopL2NB8=
       crossorigin: anonymous
       id: __fontface
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/fontfaceobserver/2.0.13/fontfaceobserver.standalone.js
-      integrity: sha256-zY8Pmq4BuvlVm12gHfQKRy92UAZcWNqQzBS29Pcdlqk=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/fontfaceobserver/2.1.0/fontfaceobserver.standalone.js
+      integrity: sha256-fhre4iYmFiwPsIkJajvUGcWlfVAEPjG/bnsuopL2NB8=
       crossorigin: anonymous
       id: __fontface
 
@@ -697,18 +698,18 @@ moment:
   desc: Flexible Parsing and Display of dates
   url: https://cdnjs.com/libraries/moment.js
   project: https://github.com/moment/moment/
-  version: 2.22.2
-  last: 2.22.1
+  version: 2.23.0
+  last: 2.22.2
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js
-      integrity: sha256-CutOzxCRucUsn6C6TcEYsauvvYilEniTXldPa6/wu0k=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js
+      integrity: sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=
       crossorigin: anonymous
       id: __moment
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js
-      integrity: sha256-59IZ5dbLyByZgSsRE3Z0TjDuX7e1AiqW5bZ8Bg50dsU=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.js
+      integrity: sha256-l6SU+rVSlkyIcMsqjy0mb6ne/qPpYotdVSFd9vLmV1A=
       crossorigin: anonymous
       id: __moment
       
@@ -717,18 +718,18 @@ moment_all:
   desc: Flexible Parsing and Display of dates (including locales)
   url: https://cdnjs.com/libraries/moment.js
   project: https://github.com/moment/moment/
-  version: 2.22.2
-  last: 2.22.1
+  version: 2.23.0
+  last: 2.22.2
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js
-      integrity: sha256-VrmtNHAdGzjNsUNtWYG55xxE9xDTz4gF63x/prKXKH0=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment-with-locales.min.js
+      integrity: sha256-2upzq+m3oG9Q4Xye6pGvLrXgrzOKtTgR1D2GCLUzL2o=
       crossorigin: anonymous
       id: __moment
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.js
-      integrity: sha256-uAmtcHxcK7o0T9gFmupKERz4zIJwFBUkWZFtzqUZ5ag=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment-with-locales.js
+      integrity: sha256-osLxzCLEKZXpeTpaGXuhS4istEryijEwZt+q0vpq698=
       crossorigin: anonymous
       id: __moment
 
@@ -757,18 +758,19 @@ sprintf:
   desc: JavaScript sprintf implementation
   url: https://cdnjs.com/libraries/sprintf
   project: https://github.com/alexei/sprintf.js
-  version: 1.1.1
+  version: 1.1.2
+  last: 1.1.1
   license: BSD-3-Clause
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/sprintf/1.1.1/sprintf.min.js
-      integrity: sha256-eVgCKximJ7hwWhTBw52jq3541BGK6y88M79oQxJt4Jk=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/sprintf/1.1.2/sprintf.min.js
+      integrity: sha256-6rSEKvygjVuveLg6nGaMMD+9XTlJrDHGq8eDuxHlFyA=
       crossorigin: anonymous
       map: true
       id: __sprintf
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/sprintf/1.1.1/sprintf.js
-      integrity: sha256-PEpGhUXWF9LuZLlCnJqemwT6Or8HMc5AzeDMB29U9dQ=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/sprintf/1.1.2/sprintf.js
+      integrity: sha256-la3UPxFjhb4iF0Uwf64C0GdRsB1Pk53x3rsX2+Lr9Os=
       crossorigin: anonymous
       id: __sprintf
       
@@ -933,18 +935,18 @@ jspdf:
   desc: Generate PDFs with Javascript
   url: https://cdnjs.com/libraries/jspdf
   project: https://github.com/MrRio/jsPDF
-  version: 1.4.1
-  last: 1.3.5
+  version: 1.5.3
+  last: 1.4.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js
-      integrity: sha256-tzkPfJgrAehd0mUYdxwWvn+TQrk2VjRJL/xP9iW5fhk=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js
+      integrity: sha256-gJWdmuCRBovJMD9D/TVdo4TIK8u5Sti11764sZT1DhI=
       crossorigin: anonymous
       id: __jspdf
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js
-      integrity: sha256-vvNL15qzI3rwnPrldX3MeOQDN0AJ/B4XItdVftTxjUA=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js
+      integrity: sha256-DupmmuWppxPjtcG83ndhh/32A9xDMRFYkGOVzvpfSIk=
       crossorigin: anonymous
       id: __jspdf
 
@@ -1052,18 +1054,18 @@ rellax:
   desc: A buttery smooth, super lightweight, vanilla javascript parallax library
   url: https://cdnjs.com/libraries/rellax
   project: https://github.com/dixonandmoe/rellax
-  version: 1.7.1
-  last: 1.7.0
+  version: 1.7.2
+  last: 1.7.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/rellax/1.7.1/rellax.min.js
-      integrity: sha256-D8Gs+q912m9K1KjzTzBQas+zR0oQtxQEZDHh8NVVDx8=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/rellax/1.7.2/rellax.min.js
+      integrity: sha256-Vhfa4z8Ga9mivH+FZ0geafpbTOyBeXXiR32wNU0xCco=
       crossorigin: anonymous
       id: __rellax
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/rellax/1.7.1/rellax.js
-      integrity: sha256-RUXpPjcWWmWUtMmaAZrqc29MI6Px4KeUh2waC3KRfqI=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/rellax/1.7.2/rellax.js
+      integrity: sha256-txsxsNKCkwPlX9nUvt1PqPlmGN4UamC4mS4R9+Qmoqg=
       crossorigin: anonymous
       id: __rellax
 
@@ -1072,18 +1074,18 @@ three:
   desc: JavaScript 3D library
   url: https://cdnjs.com/libraries/three.js
   project: https://github.com/mrdoob/three.js
-  version: 99
-  last: 96
+  version: 100
+  last: 99
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/99/three.min.js
-      integrity: sha256-V0EyXecXmQqSk1QW7iej2g+pzqX02oz78cnceES2ZCs=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/100/three.min.js
+      integrity: sha256-lt0ajSauzZnVSX3P22JwQ+kij14gNJDF1EZYfEV3zDU=
       crossorigin: anonymous
       id: __three
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/99/three.js
-      integrity: sha256-QlZjRhqOlDukXFfprbpsdrDQws7TtQdTGDh7F7Q3310=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/100/three.js
+      integrity: sha256-k+Vwb5PxT7aLeaym8WXCnWUo1EpRRgo9EGFBzTBJZHA=
       crossorigin: anonymous
       id: __three
 
@@ -1151,19 +1153,19 @@ maths:
   desc: An extensive math library for JavaScript and Node.js. It features a flexible expression parser and offers an integrated solution to work with numbers, big numbers, complex numbers, units, and matrices.
   url: https://cdnjs.com/libraries/mathjs
   project: http://mathjs.org/
-  version: 5.3.0
-  last: 5.1.2
+  version: 5.4.0
+  last: 5.3.0
   license: Apache-2.0
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.3.0/math.min.js
-      integrity: sha256-BQp6wt0eYHMHjdhKgaDt04IHVVn/hWiVP8fESp/TrCU=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.4.0/math.min.js
+      integrity: sha256-KofhgFi7Tz0qJQ+PFUv1YY4AnYkWrnOeoYCKKpNexj8=
       crossorigin: anonymous
       map: true
       id: __maths
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.3.0/math.js
-      integrity: sha256-dbfK4QdcYMMN6dhGjL508ywd+fxeWQZTJyjFkv9cDpg=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.4.0/math.js
+      integrity: sha256-H9EoN3ti+CyD2qtXR4/nmSxPay4NQTjssDXHM7S2yZI=
       crossorigin: anonymous
       id: __maths
       
@@ -1209,3 +1211,24 @@ chai:
       crossorigin: anonymous
       map: true
       id: __chai
+      
+xlsxpopulate:
+  name: XLSX Populate Library
+  desc: Excel XLSX parser/generator written in JavaScript with Node.js and browser support, jQuery/d3-style method chaining, encryption, and a focus on keeping existing workbook features and styles intact.
+  url: https://www.jsdelivr.com/package/npm/xlsx-populate
+  project: https://github.com/dtjohnson/xlsx-populate
+  version: 1.17.0
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdn.jsdelivr.net/npm/xlsx-populate@1.17.0/browser/xlsx-populate.min.js
+      integrity: sha256-fMzoe6p5CAdKxTmu+wp8T/OzLONHbnVgaedHzpUI2qU=
+      crossorigin: anonymous
+      map: true
+      id: __xlsxpopulate
+  dev:
+    - url: https://cdn.jsdelivr.net/npm/xlsx-populate@1.17.0/browser/xlsx-populate.js
+      integrity: sha256-HygTL2fvfQz59MCk92D0wre9tl3QK3pMuSNVmLGuvys=
+      crossorigin: anonymous
+      map: true
+      id: __xlsxpopulate

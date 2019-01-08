@@ -24,6 +24,7 @@ globals:
   hello: false
   Handlebars: false
   XLSX: false
+  XlsxPopulate: false
   saveAs: false
   showdown: false
   loki: false

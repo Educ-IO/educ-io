@@ -89,7 +89,10 @@ Google_API = (options, factory) => {
   const FORM = "application/vnd.google-apps.form";
   const NATIVES = [DOC, SHEET, SLIDE, DRAWING, FORM];
   const APP_DATA = "appDataFolder";
-
+  
+  const SKELETON = "id,name,size,parents,mimeType";
+  const FIELDS = "id,name,description,mimeType,version,parents,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties";
+  
   const EVENTS = {
     SEARCH: {
       PROGRESS: "google-search-progress",
@@ -204,21 +207,20 @@ Google_API = (options, factory) => {
   };
 
   var _get = (id, team) => {
-    var _fields = "id,name,description,mimeType,version,parents,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties",
-      _data = team ?
+    var _data = team ?
       team === true ? {
-        fields: _fields,
+        fields: FIELDS,
         includeTeamDriveItems: true,
         supportsTeamDrives: true,
         corpora: "user,allTeamDrives"
       } : {
-        fields: _fields,
+        fields: FIELDS,
         teamDriveId: team,
         includeTeamDriveItems: true,
         supportsTeamDrives: true,
         corpora: "teamDrive"
       } : {
-        fields: _fields,
+        fields: FIELDS,
       };
     return _call(NETWORKS.general.get, "drive/v3/files/" + id, _data);
   };
@@ -315,7 +317,7 @@ Google_API = (options, factory) => {
       pageSize: PAGE_SIZE,
       q: "trashed = false" + _i + _n + _m + _e + _p + _v + _s,
       orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-      fields: skeleton ? "kind,nextPageToken,incompleteSearch,files(id,name,size,parents,mimeType" + (team ? ",teamDriveId" : "") + ")" : "kind,nextPageToken,incompleteSearch,files(description,id,modifiedByMeTime,name,version,mimeType,webViewLink,webContentLink,iconLink,hasThumbnail,thumbnailLink,size,parents,starred,shared,properties,appProperties" + (team ? ",teamDriveId" : "") + ")",
+      fields: `kind,nextPageToken,incompleteSearch,files(${skeleton ? SKELETON : FIELDS}${team ? ",teamDriveId" : ""})`,
     };
 
     if (team) {
@@ -440,7 +442,7 @@ Google_API = (options, factory) => {
 
   };
 
-  var _upload = (metadata, binary, mimeType, team, id) => {
+  var _upload = (metadata, binary, mimeType, team, id, fields) => {
 
     var _boundary = "**********%%**********";
 
@@ -454,7 +456,7 @@ Google_API = (options, factory) => {
 
     return _call(
       id ? NETWORKS.general.patch : NETWORKS.general.post,
-      "upload/drive/v3/files/" + (id ? id + "?newRevision=true&" : "?") + "uploadType=multipart" + (team ? "&supportsTeamDrives=true" : ""), _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
+      `upload/drive/v3/files/${id?`${id}?newRevision=true&`:"?"}uploadType=multipart${team ? "&supportsTeamDrives=true":""}${fields ? `&fields=${fields === true ? FIELDS : fields}`:""}`, _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
 
   };
   /* <!-- Internal Functions --> */
@@ -507,6 +509,41 @@ Google_API = (options, factory) => {
         });
       },
 
+      /* <!-- Roles = owner | organizer | fileOrganizer | writer | commenter | reader --> */
+      share: (id, team) => {
+
+        var _parameters = `?sendNotificationEmail=false${team ? `&teamDriveId=${team}&supportsTeamDrives=true` : ""}`,
+          _url = `drive/v3/files/${id}/permissions${_parameters}`;
+
+        return {
+        
+          user: (user, role) => _call(NETWORKS.general.post, _url, {
+            type: "user",
+            emailAddress: user,
+            role: role
+          }),
+
+					group: (group, role) => _call(NETWORKS.general.post, _url, {
+            type: "group",
+            emailAddress: group,
+            role: role
+          }),
+
+          domain: (domain, role) => _call(NETWORKS.general.post, _url, {
+            type: "domain",
+            domain: domain,
+            role: role
+          }),
+
+          anyone: role => _call(NETWORKS.general.post, _url, {
+            type: "anyone",
+            role: role
+          }),
+          
+        };
+        
+      },
+
     },
 
     appData: {
@@ -554,7 +591,7 @@ Google_API = (options, factory) => {
         return _call(NETWORKS.general.post, _url, file);
       },
 
-      upload: (metadata, binary, mimeType, team, id) => _upload(metadata, binary, mimeType, team, id),
+      upload: (metadata, binary, mimeType, team, id, fields) => _upload(metadata, binary, mimeType, team, id, fields),
 
       download: (id, team) => team ? _call(NETWORKS.general.download, "drive/v3/files/" + id, {
         alt: "media",

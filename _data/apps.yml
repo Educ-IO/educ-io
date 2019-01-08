@@ -50,7 +50,11 @@ view:
       load: lazy
     - name: xlsx
       load: lazy
+    - name: xlsxpopulate
+      load: lazy
     - name: filesaver
+      load: lazy
+    - name: dropzone
       load: lazy
     - name: clipboard
       load: lazy
@@ -90,7 +94,11 @@ view:
     - alert
     - loader
     - recent
+    - text
+    - files
+    - upload
     - help
+    - inform
     - shared/control_icon
     - shared/control_button
     - shared/populate_buttons
@@ -104,6 +112,7 @@ view:
     - shared/headers
     - shared/link
     - fields/field_numeric
+    - view/uploaded
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -119,7 +128,11 @@ view:
     - view/INSTRUCTIONS
     - view/EXPORT_FORMATS
     - view/EXPORT_SIZE
+    - view/EXPORT_DESTINATION
     - view/TUTORIALS
+    - view/IMPORT
+    - view/PASSWORD_INSTRUCTIONS
+    - view/UPLOADED_DETAILS
   scopes:
     google:
       - scope: email
@@ -171,6 +184,13 @@ view:
               imports:
                 - google
               auth: google
+            - name: Import
+              desc: Import an existing Spreadsheet to Google Sheets
+              hash: import
+              imports:
+                - dropzone
+              auth: google
+              visibility: debug
             - name: Save View
               desc: Save your current view to Google Drive
               hash: save
@@ -211,7 +231,9 @@ view:
                 - opened
               imports:
                 - xlsx
+                - xlsxpopulate
                 - filesaver
+                - clipboard
             - name: Filtered View
               desc: Export the filtered view/s to Legacy Formats
               hash: export
@@ -220,7 +242,9 @@ view:
                 - opened
               imports:
                 - xlsx
+                - xlsxpopulate
                 - filesaver
+                - clipboard
     - name: Settings
       groups:
         all:
@@ -3286,6 +3310,12 @@ shiny:
   colour: 000080
   action: Find out more
   versions:
+    0.5.6:
+      name : Minor Updates
+      desc : Bug Fix
+      type : beta | production | minor
+      changes :
+        - details: Lines indented with 4 spaces / a	tab are handled as code blocks in Markdown. For longer sentences, this can cause issues with wider pages and text not being wrapped properly. This version removes these before Markdown parsing to avoid this behaviour. Code blocks can still be used by 'fencing' code blocks by including ``` or ~~~ before and after the block.
     0.5.5:
       name : Minor Updates
       desc : Added checks/removal for un-intended numerical lists

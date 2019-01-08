@@ -103,6 +103,11 @@ App = function() {
           save: {
             /* <!-- TODO: Save As JSON to Google Drive --> */
           },
+          import: {
+            success: value => {
+              ಠ_ಠ.Flags.log("Imported File", value);
+            }
+          },
           headers_increment: {
             matches: [/HEADERS/i, /INCREMENT/i],
             state: STATE_OPENED,
