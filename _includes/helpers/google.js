@@ -51,6 +51,9 @@ Google_API = (options, factory) => {
       value.slice(0, value.length - test.length) : value :
       present >= 0;
   };
+
+  const TEAM = (id, team, start) =>
+    team ? `?${id !== team ? `${start ? "?" : "&"}teamDriveId=${team}&`:""}supportsTeamDrives=true` : "";
   /* <!-- Internal Constants --> */
 
   /* <!-- Network Constants --> */
@@ -76,7 +79,14 @@ Google_API = (options, factory) => {
     concurrent: 1,
     timeout: 30000,
   };
-  const URLS = [GENERAL_URL, SHEETS_URL, SCRIPTS_URL];
+  const ADMIN_URL = {
+    name: "admin",
+    url: "https://admin.googleapis.com/",
+    rate: 1,
+    concurrent: 1,
+    timeout: 30000,
+  };
+  const URLS = [GENERAL_URL, SHEETS_URL, SCRIPTS_URL, ADMIN_URL];
   /* <!-- Network Constants --> */
 
   /* <!-- Internal Constants --> */
@@ -89,10 +99,10 @@ Google_API = (options, factory) => {
   const FORM = "application/vnd.google-apps.form";
   const NATIVES = [DOC, SHEET, SLIDE, DRAWING, FORM];
   const APP_DATA = "appDataFolder";
-  
+
   const SKELETON = "id,name,size,parents,mimeType";
   const FIELDS = "id,name,description,mimeType,version,parents,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties";
-  
+
   const EVENTS = {
     SEARCH: {
       PROGRESS: "google-search-progress",
@@ -171,7 +181,7 @@ Google_API = (options, factory) => {
 
   var _arrayize = (value, test) => value && test(value) ? [value] : !value ? [] : value;
 
-  var _list = (url, property, list, data, next) => {
+  var _list = (method, url, property, list, data, next) => {
 
     return new Promise((resolve, reject) => {
 
@@ -185,12 +195,12 @@ Google_API = (options, factory) => {
           };
         }
 
-        NETWORKS.general.get(url, data).then(value => {
+        method(url, data).then(value => {
 
           list = list.concat(value[property]);
 
           value.nextPageToken ?
-            _list(url, property, list, data, value.nextPageToken).then(list => resolve(list)) : resolve(list);
+            _list(method, url, property, list, data, value.nextPageToken).then(list => resolve(list)) : resolve(list);
 
         }).catch(e => reject(e));
 
@@ -237,15 +247,15 @@ Google_API = (options, factory) => {
         .setOAuthToken(_token())
         .setOrigin(origin)
         .setCallback(((callback, context) => data => {
-            if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
-              var _files = data[google.picker.Response.DOCUMENTS];
-              multiple ?
-                (get ? Promise.all(_.map(_files, file => _get(file.id))) : Promise.resolve(_files)).then(files => callback(files, context)) :
-                (get ? _get(_files[0].id) : Promise.resolve(_files[0])).then(file => callback(file, context));
-            } else if (data[google.picker.Response.ACTION] == google.picker.Action.CANCEL) {
-              callback(false, context);
-            }
-          })(callback, context));
+          if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+            var _files = data[google.picker.Response.DOCUMENTS];
+            multiple ?
+              (get ? Promise.all(_.map(_files, file => _get(file.id))) : Promise.resolve(_files)).then(files => callback(files, context)) :
+              (get ? _get(_files[0].id) : Promise.resolve(_files[0])).then(file => callback(file, context));
+          } else if (data[google.picker.Response.ACTION] == google.picker.Action.CANCEL) {
+            callback(false, context);
+          }
+        })(callback, context));
 
       if (multiple) picker.enableFeature(google.picker.Feature.MULTISELECT_ENABLED);
       /* <!-- This doesn't currently work, although it is in the Google Drive Picker API Documentation --> */
@@ -331,7 +341,7 @@ Google_API = (options, factory) => {
       _data.spaces = "drive";
     }
 
-    return _list("drive/v3/files", "files", [], _data);
+    return _list(NETWORKS.general.get, "drive/v3/files", "files", [], _data);
 
   };
 
@@ -456,7 +466,7 @@ Google_API = (options, factory) => {
 
     return _call(
       id ? NETWORKS.general.patch : NETWORKS.general.post,
-      `upload/drive/v3/files/${id?`${id}?newRevision=true&`:"?"}uploadType=multipart${team ? "&supportsTeamDrives=true":""}${fields ? `&fields=${fields === true ? FIELDS : fields}`:""}`, _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
+      `upload/drive/v3/files/${id?`${id}?newRevision=true&`:"?"}uploadType=multipart${TEAM(id, team, true)}${fields ? `&fields=${fields === true ? FIELDS : fields}`:""}`, _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
 
   };
   /* <!-- Internal Functions --> */
@@ -490,7 +500,7 @@ Google_API = (options, factory) => {
       parameters: data,
     }),
 
-    scripts: () => _list("drive/v3/files", "files", [], {
+    scripts: () => _list(NETWORKS.general.get, "drive/v3/files", "files", [], {
       q: "mimeType = 'application/vnd.google-apps.script' and trashed = false",
       orderBy: "modifiedByMeTime desc,name",
       fields: "files(description,id,modifiedByMeTime,name,version)",
@@ -500,30 +510,30 @@ Google_API = (options, factory) => {
 
     permissions: {
 
-      get: (id, team) => {
-        var _team = team ? `?teamDriveId=${team}&supportsTeamDrives=true` : "",
-          _url = `drive/v3/files/${id}/permissions${_team}`,
+      get: (id, team, admin) => {
+        var _url = `drive/v3/files/${id}/permissions${TEAM(id, team, true)}`,
           _fields = "id,type,emailAddress,domain,role,allowFileDiscovery,displayName,photoLink,expirationTime,deleted";
-        return _list(_url, "permissions", [], {
-          fields: `kind,nextPageToken,permissions(${_fields}${team ? ",teamDrivePermissionDetails" : ""})`
+        return _list(NETWORKS.general.get, _url, "permissions", [], {
+          fields: `kind,nextPageToken,permissions(${_fields}${team ? ",teamDrivePermissionDetails" : ""})`,
+          useDomainAdminAccess: !!admin,
         });
       },
 
       /* <!-- Roles = owner | organizer | fileOrganizer | writer | commenter | reader --> */
       share: (id, team) => {
 
-        var _parameters = `?sendNotificationEmail=false${team ? `&teamDriveId=${team}&supportsTeamDrives=true` : ""}`,
+        var _parameters = `?sendNotificationEmail=false${TEAM(id, team, false)}`,
           _url = `drive/v3/files/${id}/permissions${_parameters}`;
 
         return {
-        
+
           user: (user, role) => _call(NETWORKS.general.post, _url, {
             type: "user",
             emailAddress: user,
             role: role
           }),
 
-					group: (group, role) => _call(NETWORKS.general.post, _url, {
+          group: (group, role) => _call(NETWORKS.general.post, _url, {
             type: "group",
             emailAddress: group,
             role: role
@@ -539,9 +549,9 @@ Google_API = (options, factory) => {
             type: "anyone",
             role: role
           }),
-          
+
         };
-        
+
       },
 
     },
@@ -574,8 +584,7 @@ Google_API = (options, factory) => {
       native: type => type && NATIVES.indexOf(type.toLowerCase()) >= 0,
 
       delete: (id, team, trash) => {
-        var _team = team ? `?teamDriveId=${team}&supportsTeamDrives=true` : "",
-          _url = `drive/v3/files/${id}${_team}`;
+        var _url = `drive/v3/files/${id}${TEAM(id, team, true)}`;
         var _data = trash ? {
           trashed: true
         } : null;
@@ -586,8 +595,7 @@ Google_API = (options, factory) => {
       get: (id, team) => _get(id, team),
 
       copy: (id, team, file) => {
-        var _team = team ? `?teamDriveId=${team}&supportsTeamDrives=true` : "",
-          _url = `drive/v3/files/${id}/copy${_team}`;
+        var _url = `drive/v3/files/${id}/copy${TEAM(id, team, true)}`;
         return _call(NETWORKS.general.post, _url, file);
       },
 
@@ -604,12 +612,12 @@ Google_API = (options, factory) => {
         mimeType: format
       }, null, "application/binary"),
 
-      save: (id, files, team) => _call(NETWORKS.general.patch, "upload/drive/v3/files/" + id + "?uploadType=media" + (team ? "&supportsTeamDrives=true" : ""), {
+      save: (id, files, team) => _call(NETWORKS.general.patch, `upload/drive/v3/files/${id}?uploadType=media${TEAM(id, team, false)}`, {
         files: files
       }, "application/json"),
 
-      update: (id, file, team) => _call(NETWORKS.general.patch, "drive/v3/files/" + id + (team ? "?supportsTeamDrives=true" : ""), file, "application/json"),
-      
+      update: (id, file, team) => _call(NETWORKS.general.patch, `drive/v3/files/${id}${TEAM(id, team, true)}`, file, "application/json"),
+
       tag: (name, value, app) => {
         var _values = {};
         _values[name] = value;
@@ -626,7 +634,7 @@ Google_API = (options, factory) => {
         fields: "id,summary,description,timeZone",
       }),
 
-      list: (id, start, end) => _list(
+      list: (id, start, end) => _list(NETWORKS.general.get,
         `calendar/v3/calendars/${id}/events`, "items", [], STRIP_NULLS({
           orderBy: "startTime",
           singleEvents: true,
@@ -635,7 +643,7 @@ Google_API = (options, factory) => {
           fields: "kind,nextPageToken,items(id,summary,description,start,end,extendedProperties,organizer,attendees,attachments,recurringEventId,source,status,htmlLink,location)",
         })),
 
-      search: (id, property, query) => _list(
+      search: (id, property, query) => _list(NETWORKS.general.get,
         `calendar/v3/calendars/${id}/events`, "items", [], STRIP_NULLS({
           orderBy: "startTime",
           singleEvents: true,
@@ -659,7 +667,7 @@ Google_API = (options, factory) => {
     calendars: {
 
       list: () => _list(
-        "calendar/v3/users/me/calendarList", "items", [], {
+        NETWORKS.general.get, "calendar/v3/users/me/calendarList", "items", [], {
           orderBy: "summary",
           fields: "kind,nextPageToken,items(id,summary,summaryOverride,description,accessRole)",
         }),
@@ -672,10 +680,11 @@ Google_API = (options, factory) => {
         fields: "kind,id,name,colorRgb,capabilities",
       }),
 
-      list: () => _list(
-        "drive/v3/teamdrives", "teamDrives", [], {
+      list: (details, admin) => _list(
+        NETWORKS.general.get, "drive/v3/teamdrives", "teamDrives", [], {
           orderBy: "name",
-          fields: "kind,nextPageToken,teamDrives(id,name,colorRgb)",
+          fields: `kind,nextPageToken,teamDrives(id,name,colorRgb${details ? ",createdTime,capabilities,restrictions" : ""})`,
+          useDomainAdminAccess: !!admin,
         }),
 
     },
@@ -683,7 +692,7 @@ Google_API = (options, factory) => {
     folders: {
 
       native: () => FOLDER,
-      
+
       check: is => item => is ? item.mimeType === FOLDER : item.mimeType !== FOLDER,
 
       is: type => type === FOLDER,
@@ -712,7 +721,7 @@ Google_API = (options, factory) => {
 
       files: (ids, skeleton, team) => _contents(_arrayize(ids, _.isString), null, null, [FOLDER], null, null, null, skeleton, team),
 
-      create: (name, parent, data, team) => _call(NETWORKS.general.post, "drive/v3/files" + (team ? "?supportsTeamDrives=true" : ""),
+      create: (name, parent, data, team) => _call(NETWORKS.general.post, `drive/v3/files${TEAM(null, team, true)}`,
         _.defaults({
           mimeType: FOLDER,
           name: name,
@@ -805,6 +814,21 @@ Google_API = (options, factory) => {
         })
 
       }
+
+    },
+
+    groups: {
+
+      get: (id, details) => _call(NETWORKS.general.get, `admin/directory/v1/groups/${id}`, {
+        fields: `kind,id,etag,email,name,description${details ? ",directMembersCount,adminCreated,aliases,nonEditableAliases" : ""}`
+      }),
+
+      members: (id, details) => _list(
+        NETWORKS.general.get, `admin/directory/v1/groups/${id}/members`, "members", [], {
+          includeDerivedMembership: true,
+          orderBy: "email",
+          fields: `kind,nextPageToken,members(kind,etag,id,email,role${details ? ",type,status,delivery_settings" : ""})`,
+        }),
 
     },
 

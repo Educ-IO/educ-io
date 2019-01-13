@@ -4,7 +4,8 @@ Main = function() {
   if (this && this._isF && this._isF(this.Main)) return new this.Main().initialise(this);
 
   /* <!-- Internal Constants --> */
-  const LOGIN_RACE = 5000;
+  const LOGIN_RACE = 5000,
+    STATE_AUTH = "authenticated";
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -221,6 +222,9 @@ Main = function() {
     });
     $("#sign_out").show(200);
 
+    /* <!-- Register authenticated state --> */
+    ಠ_ಠ.Display.state().enter(STATE_AUTH);
+
     /* <!-- Route Authenticated --> */
     setupRouter(_routeIn);
 
@@ -280,6 +284,9 @@ Main = function() {
         google_SignIn();
       });
     $(".auth-only").hide();
+
+    /* <!-- De-Register authenticated state --> */
+    ಠ_ಠ.Display.state().exit(STATE_AUTH);
 
     /* <!-- Route Un-Authenticated --> */
     setupRouter(_routeOut);

@@ -96,6 +96,8 @@ globals:
   Schema: true
   Colours: true
   Sheets: true
+  TeamDrives: true
+  Groups: true
   __Ω__UK_Teachers_Standards: true
   __Σ__Evidence_Tracker: true
   __Σ__Form_Master: true

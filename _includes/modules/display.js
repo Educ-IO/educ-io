@@ -11,7 +11,8 @@ Display = function() {
 
   /* <!-- Internal Variables --> */
   var ಠ_ಠ, _root, _state = {},
-    _debug = false;
+    _debug = false,
+    _log = false;
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
@@ -153,12 +154,23 @@ Display = function() {
 
     start: () => {
 
+      /* <!-- Set Logging State --> */
+      if (ಠ_ಠ.Flags && ಠ_ಠ.Flags.debug()) _log = ಠ_ಠ.Flags.log;
+
       if (window.Handlebars) {
 
         Handlebars.registerHelper("username", variable => _username(variable));
 
         Handlebars.registerHelper("isDate", function(variable, options) {
           if (variable && variable instanceof Date) {
+            return options.fn(this);
+          } else {
+            return options.inverse(this);
+          }
+        });
+
+        Handlebars.registerHelper("isArray", function(variable, options) {
+          if (variable && variable.constructor === Array) {
             return options.fn(this);
           } else {
             return options.inverse(this);
@@ -186,7 +198,8 @@ Display = function() {
         Handlebars.registerHelper("present", function(variable, options) {
           if (typeof variable !== "undefined" &&
             variable !== null &&
-            !(Object.keys(variable).length === 0 && variable.constructor === Object)) {
+            !(variable.constructor === Object && Object.keys(variable).length === 0) &&
+            !(variable.constructor === Array && variable.length === 0)) {
             return options.fn(this);
           } else {
             return options.inverse(this);
@@ -496,7 +509,7 @@ Display = function() {
 
         /* <!-- Set Shown Event Handler (if present) --> */
         if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
-        
+
         /* <!-- Set Basic Event Handlers --> */
         dialog.on("hidden.bs.modal", () => dialog.remove() && resolve());
 
@@ -544,7 +557,7 @@ Display = function() {
               }));
 
               /* <!-- Log is available, so debug log --> */
-              if (ಠ_ಠ.Flags && ಠ_ಠ.Flags.debug()) ಠ_ಠ.Flags.log(`Parsed Values from Template: ${template} using ${ಠ_ಠ.Data ? "the Data helper" : "serializeArray"}`, _values);
+              if (_log) _log(`Parsed Values from Template: ${template} using ${ಠ_ಠ.Data ? "the Data helper" : "serializeArray"}`, _values);
 
               if (options.validate && !options.validate(_values)) _valid = false;
               if (_valid) {
@@ -941,11 +954,14 @@ Display = function() {
 
     state: function() {
 
+      const LOG = "STATE MANAGEMENT";
+
       var _parent = this;
 
       var _add = name => {
         if (!_state[name]) {
           _state[name] = true;
+          if (_log) _log(`${LOG}: Added State: ${name}`, JSON.stringify(_state));
           return true;
         }
         return false;
@@ -962,6 +978,7 @@ Display = function() {
       var _remove = name => {
         if (_state[name]) {
           delete _state[name];
+          if (_log) _log(`${LOG}: Removed State: ${name}`, JSON.stringify(_state));
           return true;
         }
         return false;
@@ -1009,13 +1026,13 @@ Display = function() {
           var all = _all();
           return (or ? _.some : _.every)(names, name => all.indexOf(name) >= 0);
         },
-        
+
         toggle: names => {
           var all = _all();
           _arrayize(names, _.isString)
             .forEach(name => all.indexOf(name) >= 0 ? _exit(name) : _enter(name));
         }
-        
+
       };
 
     },

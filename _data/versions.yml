@@ -1,4 +1,7 @@
 site :
+  0.1.1p :
+    name : Updated Folders App
+    desc : Team Drive Permission Auditing Tool
   0.1.1m :
     name : Updated View App
     desc : Password-Protected Excel Outputs and exporting to Google Drive
@@ -604,6 +607,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.7d-beta :
+    name : Team Drives
+    desc : Ability to display all team drives plus permissions
+    type : minor
   0.0.7c-beta :
     name : Bulk Renaming
     desc : Updated renaming to include regex search/replace

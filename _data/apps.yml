@@ -32,7 +32,7 @@ view:
       load: last
     - name: urlparser
       load: last
-    - name: bootstrap-md-js
+    - name: bootstrap-js
       load: last
     - name: loki
       load: last
@@ -797,6 +797,8 @@ folders:
     - router
     - datatable
     - folders/folder
+    - folders/team-drives
+    - folders/groups
   scripts: 
     - extends/regex
     - extends/array
@@ -828,6 +830,8 @@ folders:
     - folders/permissions
     - folders/audit
     - folders/rename
+    - folders/drive_rows
+    - folders/group_members
   docs:
     - shared/FILTERS
     - shared/JUMP
@@ -861,6 +865,10 @@ folders:
         name: View and manage the files in your Google Drive
         reason: In order to search, manage and convert your Drive files.
         request: login
+      - scope: https://www.googleapis.com/auth/admin.directory.group.readonly
+        name: View groups on your domain.
+        reason: Allows you to enumerate group members to see who can access team drives etc.
+        request: lazy
       - scope: https://www.googleapis.com/auth/drive.install
         name: Special scope used to let users approve installation of an app.
         reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
@@ -889,6 +897,18 @@ folders:
               desc: Open a Google Team Drive
               hash: open.team
               auth: google
+            - name: Team Drives
+              desc: Show all team drives and their associated permissions
+              hash: show.team.false
+              disabled_until:
+                - authenticated
+              auth: google
+            - name: Domain Team Drives
+              desc: Show all domain team drives and their associated permissions
+              hash: show.team.true
+              disabled_until:
+                - authenticated
+              auth: google
             - name: Refresh
               desc: Refresh the Folder View
               hash: refresh
@@ -910,11 +930,12 @@ folders:
                 - opened
               auth: google
             - name: Close
-              desc: Close the current Folder
+              desc: Close the current Folder or Team Drives
               hash: close
               shortcut: "c"
               disabled_until:
                 - opened
+                - team
     - name: Results
       groups:
         all:
@@ -1031,6 +1052,10 @@ folders:
     - name: Open a Team Drive
       desc: Open a Google Team Drive
       hash: open.team
+      auth: google
+    - name: Show Team Drives
+      desc: Show all team drives and their associated permissions
+      hash: show.team.false
       auth: google
   published: true
 

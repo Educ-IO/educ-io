@@ -220,7 +220,7 @@ tether:
       id: __tether
 
 bootstrap-js:
-  name: Bootstrap (JS)
+  name: Bootstrap
   desc: This is a toolkit / framework for site design, layout and presentation.
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
@@ -242,7 +242,7 @@ bootstrap-js:
       id: __bootstrap-js
 
 bootstrap-md-js:
-  name: Bootstrap Material Design (JS)
+  name: Bootstrap Material Design
   desc: Material Design for Bootstrap.
   url: https://www.jsdelivr.com/package/npm/bootstrap-material-design
   project: https://github.com/FezVrasta/bootstrap-material-design

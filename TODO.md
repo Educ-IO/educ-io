@@ -2,9 +2,9 @@ TODO LIST
 =========
 General
 -------
+* DNT for testing code...
 
 * Loader for triggered code loads (e.g. on navigate)
-* Keypress - Enter on Dialog / Input Dialogs
 
 * ** IMPORTANT ** Loader version contained within element
 
@@ -153,6 +153,7 @@ Survey
 
 Complete
 --------
+* Keypress - Enter on Password Input Dialogs <-- DONE
 * Export Password-Protected / Encrypted Spreadsheets <-- DONE
 * Drag / Drop re-ordering <== DONE
 	-> Dragging & Dropping <-- DONE

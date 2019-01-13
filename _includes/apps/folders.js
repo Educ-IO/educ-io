@@ -10,7 +10,8 @@ App = function() {
   const TYPE = "application/x.educ-io.folders-",
     STATE_OPENED = "opened",
     STATE_SEARCHED = "searched",
-    STATES = [STATE_OPENED, STATE_SEARCHED];
+    STATE_TEAM = "team",
+    STATES = [STATE_OPENED, STATE_SEARCHED, STATE_TEAM];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -218,7 +219,7 @@ App = function() {
             options: () => ({
               title: "Select a Folder to Open",
               view: "FOLDERS",
-							folders: true,
+              folders: true,
               recent: true,
               mime: ಠ_ಠ.Google.folders.native()
             }),
@@ -235,56 +236,64 @@ App = function() {
               if (_folder) _folder.close();
             }
           },
-          remove_list : {
+          remove_list: {
             matches: [/REMOVE/i, /LIST/i],
             state: STATE_OPENED,
             length: 1,
             fn: command => _folder.remove(command)
           },
-          remove_tag : {
+          remove_tag: {
             matches: [/REMOVE/i, /TAG/i],
             state: STATE_OPENED,
             length: 2,
             fn: command => _folder.detag(command[0], command[1])
           },
-          remove_tab : {
+          remove_tab: {
             matches: [/REMOVE/i, /TAB/i],
             state: STATE_OPENED,
             length: 1,
             fn: command => _folder.close(command)
           },
-          tally : {
+          tally: {
             matches: /TALLY/i,
             state: STATE_OPENED,
             keys: "t",
             fn: command => _folder.tally.run(command),
           },
-          convert : {
+          convert: {
             matches: /CONVERT/i,
             state: STATE_OPENED,
             fn: command => _folder.convert(command),
           },
-          tag : {
+          tag: {
             matches: /TAG/i,
             state: STATE_OPENED,
             fn: command => _folder.tag(command),
           },
-          star : {
+          star: {
             matches: /STAR/i,
             state: STATE_OPENED,
             length: 1,
             fn: command => _folder.star(command),
           },
-          visibility_columns : {
+          visibility_columns: {
             matches: [/VISIBILITY/i, /COLUMNS/i],
             state: STATE_OPENED,
-            fn: () =>  _folder.table().columns.visibility(),
+            fn: () => _folder.table().columns.visibility(),
           },
           search_properties: {
             matches: [/SEARCH/i, /PROPERTIES/i],
-            state: STATE_OPENED,
-            length: 2,
-            fn: command => _folder.searchTag(command[0], command[1])
+            length: {
+              min: 2,
+              max: 3
+            },
+            fn: command => (_folder ?
+                Promise.resolve() :
+                _loadFolder(command.length === 3 ? command[2] : "root", false))
+              .then(() => _folder.searchTag(
+                command[0].replace(new RegExp("%2E", "gi"), "."),
+                command[1].replace(new RegExp("%2E", "gi"), ".")
+              )),
           },
           search_root: {
             matches: [/SEARCH/i, /ROOT/i],
@@ -296,38 +305,53 @@ App = function() {
             keys: "s",
             fn: command => _folder.search(command)
           },
-          clone : {
+          clone: {
             matches: /CLONE/i,
             state: STATE_OPENED,
             fn: command => _folder.clone(command),
           },
-          audit : {
+          audit: {
             matches: /AUDIT/i,
             state: STATE_OPENED,
             fn: command => _folder.audit(command),
           },
-          rename : {
+          rename: {
             matches: /RENAME/i,
             state: STATE_OPENED,
             fn: command => _folder.rename(command),
           },
-          delete_folder : {
+          delete_folder: {
             matches: /DELETE/i,
             state: STATE_OPENED,
             length: 1,
             fn: command => _folder.delete(command),
           },
-          delete : {
+          delete: {
             matches: /DELETE/i,
             state: STATE_OPENED,
             length: 0,
             fn: () => _folder.delete(),
           },
-          refresh : {
+          refresh: {
             matches: /REFRESH/i,
             state: STATE_OPENED,
             keys: "r",
             fn: () => _openFolder(_folder.folder(), false),
+          },
+          teamdrives: {
+            matches: [/^SHOW/i, /^TEAM$/i],
+            length: 1,
+            fn: command => _.compose(
+              () => ಠ_ಠ.TeamDrives(ಠ_ಠ).show(String(command) == "true")
+              .then(() => ಠ_ಠ.Display.state().enter(STATE_TEAM)),
+              () => ಠ_ಠ.container.empty(),
+              ಠ_ಠ.Router.clean
+            )(),
+          },
+          groups: {
+            matches: [/^SHOW/i, /^GROUP$/i],
+            length: 1,
+            fn: command => (command = command.replace(new RegExp("%2E", "gi"), ".")) && ಠ_ಠ.Groups(ಠ_ಠ).show(command, $(`[data-group='${command}']`).children(".permission")),
           },
           load: command => {
             ((/TEAM/i).test(command[0]) ?
@@ -335,16 +359,16 @@ App = function() {
               _loadFolder(_.isArray(command) ? command[0] : command, true,
                 _.isArray(command) && /TAG/i.test(command[1]) ? null : _.isArray(command) && /FILTER/i.test(command[1]) ? null : _.isArray(command) && command[1] ? command[1] : null,
                 _.isArray(command) && /TAG/i.test(command[1]) ? command.slice(3) : _.isArray(command) && /TAG/i.test(command[2]) ? command.slice(3) : null)).then(() => {
-                  var _filter = _.isArray(command) && /FILTER/i.test(command[1]) ? command[2] : _.isArray(command) && /FILTER/i.test(command[2]) ? command[3] : false;
-                  ಠ_ಠ.Flags.log(`Folder Fully Loaded${_filter ? ` - Now Filtering for ${_filter}` : ""}`);
-                  if (_filter) _folder.filter(_filter);
-                });
-					}
+              var _filter = _.isArray(command) && /FILTER/i.test(command[1]) ? command[2] : _.isArray(command) && /FILTER/i.test(command[2]) ? command[3] : false;
+              ಠ_ಠ.Flags.log(`Folder Fully Loaded${_filter ? ` - Now Filtering for ${_filter}` : ""}`);
+              if (_filter) _folder.filter(_filter);
+            });
+          }
         },
         route: (handled, command) => {
 
           if (handled) return;
-          
+
           if ((/TEST/i).test(command)) {
 
             if (_folder) _folder.test(

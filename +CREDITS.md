@@ -8,8 +8,9 @@ lead: This website and apps rely on code from the wider open-source community. B
 
 - - -
 
-{% assign imports = site.array %}{% for app in site.data.apps %}{% if app[1].published and app[1].imports and app[1].imports.size > 0 %}{% assign names = app[1].imports | map: "name" %}{% assign imports = names | concat: imports %}{% endif %}{% endfor %}{% assign imports = imports | uniq | sort %}
-{% for import in imports %}{% assign __import = site.data.imports[import] %}
+{% assign imports = site.array %}{% for app in site.data.apps %}{% if app[1].published and app[1].imports and app[1].imports.size > 0 %}{% assign names = app[1].imports | map: "name" %}
+{% assign imports = names | concat: imports %}{% endif %}{% endfor %}{% assign imports = imports | uniq | sort %}
+{% assign last = "" %}{% for import in imports %}{% assign __import = site.data.imports[import] %}{% if __import.name != last %}{% assign last = __import.name %}
 ##### {{ __import.name }}
 {% if __import.version %}+ Version: _{{ __import.version }}_{:.text-muted}{% endif %}
 {% if __import.project %}+ Link: [{{ __import.project }}]({{ __import.project }}){:target="_blank"}{% endif %}
@@ -19,5 +20,5 @@ lead: This website and apps rely on code from the wider open-source community. B
 {:.small}
 {% endif %}
 {% unless forloop.last %}* * *{% endunless %}
-{% endfor %}
+{% endif %}{% endfor %}
 {% include copyright.md %}
