@@ -534,7 +534,12 @@ App = function() {
             matches: [/SEARCH/i, /PROPERTIES/i],
             state: STATE_DISPLAY,
             length: 2,
-            fn: command => _load_Properties(_id, command[0], command[1]),
+            fn: command => _load_Properties(_id, _decodeValue(command[0]), _decodeValue(command[1])),
+          },
+          search_properties_shortcut: {
+            matches: [/SEARCH/i, /PROPERTIES/i],
+            length: 3,
+            fn: command => _load_Properties(_decodeValue(command[2]), _decodeValue(command[0]), _decodeValue(command[1])),
           },
           search: {
             state: STATE_MONTH,

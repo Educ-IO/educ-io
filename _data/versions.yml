@@ -1,4 +1,7 @@
 site :
+  0.1.1q :
+    name : Updated Events App
+    desc : Search Property Shortcut
   0.1.1p :
     name : Updated Folders App
     desc : Team Drive Permission Auditing Tool
@@ -776,6 +779,9 @@ cover :
     name : Early testing version
     type : minor
 events :
+  0.0.3b-alpha :
+    name : Added Search Property Shortcut (from other apps)
+    type : minor
   0.0.3a-alpha :
     name : Bug Fixes and Share View Links
     type : minor
