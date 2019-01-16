@@ -45,13 +45,21 @@
     will-change: padding-top, background-color;
     @include transition(padding-top 0.25s ease, background-color 0.8s linear);
     &.drop-target {padding-top: 1em !important;}
-    &.due-soon {@include complex_LinearGradient(100grad,rgba($colour-warning, 0.2) rgba($colour-warning, 0.05) rgba($colour-warning, 0),0% 40% 100%);};
-    &.overdue {@include complex_LinearGradient(100grad,rgba($colour-error, 0.2) rgba($colour-error, 0.05) rgba($colour-error, 0),0% 40% 100%);};
-    &.editable {cursor: pointer};
+    &.due-soon > .display, &.overdue > .display {border-radius: 3px;}
+    &.due-soon > .display {@include complex_LinearGradient(100grad,rgba($colour-warning, 0.2) rgba($colour-warning, 0.05) rgba($colour-warning, 0),0% 40% 100%);}
+    &.overdue >  .display {@include complex_LinearGradient(100grad,rgba($colour-error, 0.2) rgba($colour-error, 0.05) rgba($colour-error, 0),0% 40% 100%);}
+    &.editable {
+      cursor: pointer;
+      &:hover {
+        box-shadow: map-get($shadows, 2);
+        border-radius: 4px;
+      }
+    };
     padding-top: 0.1rem;
     &:not(:last-child) {border-bottom: 1px dashed $colour-emphasis};
     .text-faded {opacity: 0.5;}
     .text-very-faded {opacity: 0.25;}
+    a.text-very-faded:hover {opacity: 0.75;}
     .loader {margin: 0.1rem 0.2rem 0.2rem 0;}
     p {
       margin: 0.1rem 0 0.2rem 0;
@@ -89,6 +97,7 @@
         stroke-width: 0.1em;
       }
     }
+    a.hover-dark:hover {color: $colour-general;}
   }
 }
 

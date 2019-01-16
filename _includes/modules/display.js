@@ -258,6 +258,8 @@ Display = function() {
           }
           return _b[_a] ? _b[_a] : _default ? _default : "";
         });
+        
+        Handlebars.registerHelper("which", (which, a, b) => which ? a : b);
 
         Handlebars.registerHelper("concat", (...args) => _.reduce(args, (m, a) => _.isObject(a) ? m : (m + a), ""));
 

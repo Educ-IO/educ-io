@@ -1,4 +1,7 @@
 site :
+  0.1.1r :
+    name : Updated Docket App
+    desc : Visual Tweaks and Improvements
   0.1.1q :
     name : Updated Events App
     desc : Search Property Shortcut
@@ -821,6 +824,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  0.0.4n-beta :
+    name : Visual Tweaks and Improvements
+    desc : Better editing button arrangement for smaller columns and wider text on mobile
+    type : minor
   0.0.4m-beta :
     name : Drag and Drop Bug fixes
     desc : Smoother Dragging and Dropping for Task re-ordering

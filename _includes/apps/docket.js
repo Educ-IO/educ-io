@@ -154,7 +154,7 @@ App = function() {
       });
 
       /* <!-- Enable Keyboard Shortcuts --> */
-      container.find("div.editing textarea")
+      container.find("div.edit textarea")
         .keydown(e => {
           var code = e.keyCode ? e.keyCode : e.which;
           if (code == 13 || code == 27) e.preventDefault(); /* <!-- Enter or Escape Pressed --> */
@@ -163,7 +163,8 @@ App = function() {
           var code = e.keyCode ? e.keyCode : e.which;
           var _handle = target => {
             var parent = $(target).parents("div.item");
-            parent.find("div.editing, div.display").toggleClass("d-none");
+            parent.find("div.edit, div.display").toggleClass("d-none");
+            parent.toggleClass("editable").toggleClass("editing");
             return parent;
           };
           if (code == 13) {
@@ -184,11 +185,11 @@ App = function() {
           _clicked = $(e.target);
         _target.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
         !_clicked.is("input, textarea, a, span, a > i") ?
-          e.shiftKey ? e.preventDefault() || _show.clear() || _show.complete(_target) : _target.find("div.editing, div.display").toggleClass("d-none") : false;
-        if (_target.find("div.editing").is(":visible")) {
+          e.shiftKey ? e.preventDefault() || _show.clear() || _show.complete(_target) : _target.find("div.edit, div.display").toggleClass("d-none") && _target.toggleClass("editable").toggleClass("editing") : false;
+        if (_target.find("div.edit").is(":visible")) {
 
           /* <!-- Focus Cursor on Text Area --> */
-          _target.find("div.editing textarea").focus();
+          _target.find("div.edit textarea").focus();
 
           /* <!-- Scroll to target if possible --> */
           if (Element.prototype.scrollIntoView && _target[0].scrollIntoView) {
@@ -204,7 +205,7 @@ App = function() {
 
           if (_target.attr("draggable")) {
 
-            var _movable = new Hammer(_target.find("div.editing")[0]);
+            var _movable = new Hammer(_target.find("div.edit")[0]);
             _movable.get("pan").set({
               direction: Hammer.DIRECTION_VERTICAL,
               threshold: _target.height() / 2
@@ -323,7 +324,7 @@ App = function() {
         _finish = _show.busy(target, _item);
 
       /* <!-- Update Item --> */
-      _item.DETAILS = target.find("div.editing textarea").val();
+      _item.DETAILS = target.find("div.edit textarea").val();
       _item.DISPLAY = _showdown.makeHtml(_item.DETAILS);
 
       /* <!-- Process Item, Reconcile UI then Update Database --> */
@@ -369,7 +370,7 @@ App = function() {
     cancel: target => {
 
       /* <!-- Reconcile UI --> */
-      target.find("div.editing textarea").val(_show.get(target).DETAILS);
+      target.find("div.edit textarea").val(_show.get(target).DETAILS);
       return Promise.resolve();
     },
 
@@ -535,6 +536,7 @@ App = function() {
             class: date.isoWeekday() >= 6 ? `p-0 ${css.block}` : css.block,
             action: action,
             title_class: css.title,
+            wide: css.wide,
             tasks: tasks,
             events: events
           });
@@ -564,7 +566,8 @@ App = function() {
         _add(focus, {
             block: focus.isSame(_show.today) || (focus.isoWeekday() == 6 && focus.clone().add(1, "days").isSame(_show.today)) ?
               "present bg-highlight-gradient top-to-bottom" : _diff === 0 ? "focussed bg-light" : focus.isBefore(_show.today) ? "past text-muted" : "future",
-            title: focus.isSame(_show.today) ? "present" : _diff === 0 ? "bg-bright-gradient left-to-right" : ""
+            title: focus.isSame(_show.today) ? "present" : _diff === 0 ? "bg-bright-gradient left-to-right" : "",
+            wide: _diff === 0
           },
           _display, _diary.tasks, _diary.events, _sizes);
       });
