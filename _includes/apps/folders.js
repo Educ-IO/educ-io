@@ -15,7 +15,7 @@ App = function() {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  var ಠ_ಠ, _folder, _path;
+  var ಠ_ಠ, ರ‿ರ = {};
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
@@ -56,36 +56,37 @@ App = function() {
 
     folder.url = "#google,load." + (folder.team ? "team." : "") + folder.id + (teamDrive ? "." + teamDrive : "");
 
-    if (!_folder || !_path) {
+    if (!ರ‿ರ.folder || !ರ‿ರ.path) {
 
       /* <!-- Root Folder --> */
-      _path = [folder];
+      ರ‿ರ.path = [folder];
 
-    } else if (folder.parents && folder.parents.indexOf(_folder.id()) >= 0) {
+    } else if (folder.parents && folder.parents.indexOf(ರ‿ರ.folder.id()) >= 0) {
 
       /* <!-- Child of the current Folder --> */
-      _path.push(folder);
+      ರ‿ರ.path.push(folder);
 
     } else {
 
       /* <!-- Check if it's in the paths already --> */
-      var _existing = _.findIndex(_path, p => p.id === folder.id) + 1;
+      var _existing = _.findIndex(ರ‿ರ.path, p => p.id === folder.id) + 1;
       if (_existing > 0) {
 
         /* <!-- Existing in Current Path, so splice back to it --> */
-        _path.splice(_existing, _path.length - _existing);
+        ರ‿ರ.path.splice(_existing, ರ‿ರ.path.length - _existing);
 
       } else {
 
         /* <!-- Start a new Path --> */
-        _path = [folder];
+        ರ‿ರ.path = [folder];
 
       }
 
     }
 
-    _showPath(_path, ಠ_ಠ.container);
-    _folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state, _folder ? _folder.tally.get() : null, resolve, reject);
+    _showPath(ರ‿ರ.path, ಠ_ಠ.container);
+    ರ‿ರ.folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state, 
+                            ರ‿ರ.folder ? ರ‿ರ.folder.tally.get() : null, resolve, reject);
     if (log) ಠ_ಠ.Recent.add(folder.id, folder.name, folder.url).then(() => _resize());
     ಠ_ಠ.Display.state().enter(STATE_OPENED);
 
@@ -133,7 +134,8 @@ App = function() {
         /* <!-- This is a file, so open the parent and process any extra instructions via a complete method --> */
         if (file.parents && file.parents.length > 0) return ಠ_ಠ.Google.files.get(file.parents[0], teamDrive).then(folder => {
           _openFolder(folder, log, teamDrive, state, response => {
-            if (tags && _.isArray(tags)) _folder.tag(file.id, tags[0], tags.length > 1 ? tags[1] : "");
+            if (tags && _.isArray(tags))
+              ರ‿ರ.folder.tag(file.id, tags[0], tags.length > 1 ? tags[1] : "");
             resolve(response);
           }, reject);
         });
@@ -200,11 +202,8 @@ App = function() {
       this.route = ಠ_ಠ.Router.create({
         name: "Folders",
         states: STATES,
-        test: () => !!(_folder || _path),
-        clear: () => {
-          _path = null;
-          _folder = null;
-        },
+        test: () => ಠ_ಠ.Display.state().in(STATES, true),
+        clear: () => _.each(ರ‿ರ, (value, key, list) => list[key] = null),
         routes: {
           open_root: { /* <!-- Pick, or Load the Root Folder --> */
             keys: ["o", "O"],
@@ -233,53 +232,53 @@ App = function() {
             state: STATE_SEARCHED,
             fn: () => {
               ಠ_ಠ.Display.state().exit([STATE_SEARCHED]);
-              if (_folder) _folder.close();
+              if (ರ‿ರ.folder) ರ‿ರ.folder.close();
             }
           },
           remove_list: {
             matches: [/REMOVE/i, /LIST/i],
             state: STATE_OPENED,
             length: 1,
-            fn: command => _folder.remove(command)
+            fn: command => ರ‿ರ.folder.remove(command)
           },
           remove_tag: {
             matches: [/REMOVE/i, /TAG/i],
             state: STATE_OPENED,
             length: 2,
-            fn: command => _folder.detag(command[0], command[1])
+            fn: command => ರ‿ರ.folder.detag(command[0], command[1])
           },
           remove_tab: {
             matches: [/REMOVE/i, /TAB/i],
             state: STATE_OPENED,
             length: 1,
-            fn: command => _folder.close(command)
+            fn: command => ರ‿ರ.folder.close(command)
           },
           tally: {
             matches: /TALLY/i,
             state: STATE_OPENED,
             keys: "t",
-            fn: command => _folder.tally.run(command),
+            fn: command => ರ‿ರ.folder.tally.run(command),
           },
           convert: {
             matches: /CONVERT/i,
             state: STATE_OPENED,
-            fn: command => _folder.convert(command),
+            fn: command => ರ‿ರ.folder.convert(command),
           },
           tag: {
             matches: /TAG/i,
             state: STATE_OPENED,
-            fn: command => _folder.tag(command),
+            fn: command => ರ‿ರ.folder.tag(command),
           },
           star: {
             matches: /STAR/i,
             state: STATE_OPENED,
             length: 1,
-            fn: command => _folder.star(command),
+            fn: command => ರ‿ರ.folder.star(command),
           },
           visibility_columns: {
             matches: [/VISIBILITY/i, /COLUMNS/i],
             state: STATE_OPENED,
-            fn: () => _folder.table().columns.visibility(),
+            fn: () => ರ‿ರ.folder.table().columns.visibility(),
           },
           search_properties: {
             matches: [/SEARCH/i, /PROPERTIES/i],
@@ -287,10 +286,10 @@ App = function() {
               min: 2,
               max: 3
             },
-            fn: command => (_folder ?
+            fn: command => (ರ‿ರ.folder ?
                 Promise.resolve() :
                 _loadFolder(command.length === 3 ? command[2] : "root", false))
-              .then(() => _folder.searchTag(
+              .then(() => ರ‿ರ.folder.searchTag(
                 command[0].replace(new RegExp("%2E", "gi"), "."),
                 command[1].replace(new RegExp("%2E", "gi"), ".")
               )),
@@ -298,45 +297,45 @@ App = function() {
           search_root: {
             matches: [/SEARCH/i, /ROOT/i],
             state: STATE_OPENED,
-            fn: () => _folder.search("root")
+            fn: () => ರ‿ರ.folder.search("root")
           },
           search: {
             state: STATE_OPENED,
             keys: "s",
-            fn: command => _folder.search(command)
+            fn: command => ರ‿ರ.folder.search(command)
           },
           clone: {
             matches: /CLONE/i,
             state: STATE_OPENED,
-            fn: command => _folder.clone(command),
+            fn: command => ರ‿ರ.folder.clone(command),
           },
           audit: {
             matches: /AUDIT/i,
             state: STATE_OPENED,
-            fn: command => _folder.audit(command),
+            fn: command => ರ‿ರ.folder.audit(command),
           },
           rename: {
             matches: /RENAME/i,
             state: STATE_OPENED,
-            fn: command => _folder.rename(command),
+            fn: command => ರ‿ರ.folder.rename(command),
           },
           delete_folder: {
             matches: /DELETE/i,
             state: STATE_OPENED,
             length: 1,
-            fn: command => _folder.delete(command),
+            fn: command => ರ‿ರ.folder.delete(command),
           },
           delete: {
             matches: /DELETE/i,
             state: STATE_OPENED,
             length: 0,
-            fn: () => _folder.delete(),
+            fn: () => ರ‿ರ.folder.delete(),
           },
           refresh: {
             matches: /REFRESH/i,
             state: STATE_OPENED,
             keys: "r",
-            fn: () => _openFolder(_folder.folder(), false),
+            fn: () => _openFolder(ರ‿ರ.folder.folder(), false),
           },
           teamdrives: {
             matches: [/^SHOW/i, /^TEAM$/i],
@@ -361,7 +360,7 @@ App = function() {
                 _.isArray(command) && /TAG/i.test(command[1]) ? command.slice(3) : _.isArray(command) && /TAG/i.test(command[2]) ? command.slice(3) : null)).then(() => {
               var _filter = _.isArray(command) && /FILTER/i.test(command[1]) ? command[2] : _.isArray(command) && /FILTER/i.test(command[2]) ? command[3] : false;
               ಠ_ಠ.Flags.log(`Folder Fully Loaded${_filter ? ` - Now Filtering for ${_filter}` : ""}`);
-              if (_filter) _folder.filter(_filter);
+              if (_filter) ರ‿ರ.folder.filter(_filter);
             });
           }
         },
@@ -371,7 +370,7 @@ App = function() {
 
           if ((/TEST/i).test(command)) {
 
-            if (_folder) _folder.test(
+            if (ರ‿ರ.folder) ರ‿ರ.folder.test(
               ((/TEST/i).test(command[0])) ? command[1] : null,
               ((/TEST/i).test(command[0])) ? command[2] : null,
               ((/TEST/i).test(command[0])) ? command[3] ? true : null : null

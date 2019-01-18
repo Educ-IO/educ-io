@@ -84,6 +84,17 @@ TeamDrives = ಠ_ಠ => {
               _drives[drive.id] = {
                 id: drive.id,
                 name: drive.name,
+                details: {
+                  created: drive.createdTime ? moment(drive.createdTime) : null,
+                  domainOnly: drive.restrictions && drive.restrictions.domainUsersOnly,
+                  teamOnly: drive.restrictions && drive.restrictions.teamMembersOnly,
+                  comment: drive.capabilities && drive.capabilities.canComment,
+                  add: drive.capabilities && drive.capabilities.canAddChildren,
+                  delete: drive.capabilities && drive.capabilities.canDeleteChildren,
+                  download: drive.capabilities && drive.capabilities.canDownload,
+                  edit: drive.capabilities && drive.capabilities.canEdit,
+                  manage: drive.capabilities && drive.capabilities.canManageMembers,
+                },
                 permissions: _perms
               };
             _drives[drive.id].permissions[permission.role].push({
@@ -129,10 +140,7 @@ TeamDrives = ಠ_ಠ => {
 
     _data.insert(_.map(_drives, drive => {
       var _drive = value[drive];
-      return _.extend({
-        id: _drive.id,
-        name: _drive.name,
-      }, _drive.permissions);
+      return _.extend(_.omit(_drive, "permissions"), _drive.permissions);
     }));
 
     return ಠ_ಠ.Datatable(ಠ_ಠ, {

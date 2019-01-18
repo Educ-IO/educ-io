@@ -9,6 +9,7 @@
  "start_url": "/",
  "version": "{{ site.data.versions.site.first[1].numeric }}",
  "manifest_version": 2,
+ "orientation": "any",
  "icons": [
   {
    "src": "/ico/android-icon-36x36.png",

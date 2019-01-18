@@ -1,4 +1,8 @@
 site :
+  0.1.1v :
+    name : Updated Folders App
+    desc : Team Drives capability information
+    numeric : 0.1.1.2
   0.1.1u :
     name : Updated Docket App
     desc : Visual Tweaks and Improvements
@@ -614,6 +618,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.7e-beta :
+    name : Team Drives
+    desc : Team Drive capability information
+    type : minor
   0.0.7d-beta :
     name : Team Drives
     desc : Ability to display all team drives plus permissions

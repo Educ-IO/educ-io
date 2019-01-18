@@ -177,10 +177,10 @@ Display = function() {
           }
         });
 
-        Handlebars.registerHelper("localeDate", variable => {
+        Handlebars.registerHelper("localeDate", (variable, short) => {
           if (!variable) return;
           if (!(variable = (variable._isAMomentObject ? variable.toDate() : variable instanceof Date ? variable : false))) return;
-          return (variable.getHours() === 0 && variable.getMinutes() === 0 && variable.getSeconds() === 0 && variable.getMilliseconds() === 0) ? variable.toLocaleDateString() : variable.toLocaleString();
+          return (short || (variable.getHours() === 0 && variable.getMinutes() === 0 && variable.getSeconds() === 0 && variable.getMilliseconds() === 0)) ? variable.toLocaleDateString() : variable.toLocaleString();
         });
 
         Handlebars.registerHelper("formatBytes", variable => {

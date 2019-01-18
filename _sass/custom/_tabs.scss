@@ -23,7 +23,7 @@ div.tab-pane, .scroller {
 
 	&::-webkit-scrollbar-thumb {
 		background-color: rgba($colour-highlight, 0.4);
-		border: 3px solid transparent;
+		border: 1px solid transparent;
 		border-radius: 9px;
 		background-clip: content-box;
 	}

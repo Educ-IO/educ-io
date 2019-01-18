@@ -275,6 +275,7 @@ App = function() {
           data: _data,
           headers: headers,
         }, {
+          classes: ["table-hover"],
           filters: parameters ? parameters.f : {},
           inverted_Filters: parameters ? parameters.e : {},
           sorts: parameters ? parameters.s : {},

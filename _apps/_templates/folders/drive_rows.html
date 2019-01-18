@@ -1,26 +1,33 @@
 {% raw %}
-{{#each rows}}<tr data-drive="{{id}}">{{#each this}}<td data-type="{{@key}}">{{#isDate this}}{{localeDate this}}{{else}}{{#present this}}
+{{#each rows}}<tr data-drive="{{id}}">{{#each this}}{{#is @key "details"}}{{else}}<td data-type="{{@key}}">{{#isDate this}}{{localeDate this}}{{else}}{{#present this}}
   {{#is @key "id"}}
   	<a href="https://drive.google.com/drive/folders/{{../id}}" target="_blank">{{this}}</a>
 	{{else is @key "name"}}
   	<a href="#load.team.{{../id}}">{{this}}</a>
+  	{{#exists ../details}}<div class="mb-1">
+  		{{#exists ../details.created}}{{> pill icon="timeline" icon_size="18" class="mr-2" title=(concat "Drive Created - " (localeDate ../details.created false)) details=(localeDate ../details.created true)}}{{/exists}}
+  		{{#if ../details.domainOnly}}{{> pill type="danger" icon="domain" icon_size="18" class="mr-1" title="Organisation / Domain Users Only"}}{{/if}}
+  		{{#if ../details.teamOnly}}{{> pill type="danger" icon="people_outline" icon_size="18" class="mr-1" title="Team Users Only"}}{{/if}}
+  	</div>
+  	<div>
+  		{{#if ../details.comment}}{{> pill type="success" icon="comment" title="You can comment on items"}}{{/if}}
+      {{#if ../details.download}}{{> pill type="success" icon="get_app" title="You can download/export files"}}{{/if}}
+      {{#if ../details.add}}{{> pill type="success" icon="save" title="You can add/save to this drive"}}{{/if}}
+      {{#if ../details.edit}}{{> pill type="success" icon="create" title="You can edit items"}}{{/if}}
+      {{#if ../details.delete}}{{> pill type="success" icon="delete" title="You can delete/move items"}}{{/if}}
+      {{#if ../details.manage}}{{> pill type="success" icon="share" title="You can manage members of this drive"}}{{/if}}
+  	</div>{{/exists}}
   {{else}}
   	{{#isArray this}}
       {{#each this}}
   		{{#if @first}}
         <small class="d-flex flex-wrap align-items-center">
-          <div class="px-1 d-inline-flex justify-content-center align-items-center border rounded alert-light">
-            <i class="material-icons md-1">{{role.icon}}</i>
-            <span class="px-1">{{#if role.title}}{{role.title}}{{else}}{{role.name}}{{/if}}</span>
-          </div>
+          {{> pill type="primary" icon=role.icon details=(either role.title role.name)}}
         </small>
   		{{/if}}
       <div{{#is type.name "Group"}} data-group="{{email}}"{{/is}}>
         <small class="d-flex flex-wrap align-items-center mt-1 permission">
-          <div class="mr-2 px-1 d-inline-flex justify-content-center align-items-center border rounded alert-{{#if deleted}}danger{{else}}dark{{/if}}"{{#if email}} title="{{email}}"{{/if}}>
-            <i class="material-icons md-1">{{type.icon}}</i>
-            <span class="px-1">{{type.name}}</span>
-          </div>
+          {{> pill type=(which deleted "danger" "dark") class="mr-2" icon=type.icon title=email details=type.name}}
           {{#is type.name "Group"}}
           <a href="#google|https://www.googleapis.com/auth/admin.directory.group.readonly,show.group.{{replace email '\.' '%2E'}}" class="font-weight-bold" title="Click to load/reload member list">{{name}}</a>
           <button class="btn btn-secondary btn-sm p-0 ml-2 justify-content-center align-items-center member_toggle d-none" type="button" onclick="$(document.getElementById('_{{../../id}}__{{@../key}}__{{replace email '@' '_'}}')).collapse('toggle');" aria-expanded="false" aria-controls="{{../../id}}__{{@../key}}__{{email}}" title="Click to show/hide member list"><i class="material-icons md-1 small">swap_vert</i></button>
@@ -30,9 +37,7 @@
         </small>
       </div>
       {{/each}}
-  	{{else}}
- 			{{this}}
   	{{/isArray}}
 	{{/is}}
-  {{/present}}{{/isDate}}</td>{{/each}}</tr>{{/each}}
+  {{/present}}{{/isDate}}</td>{{/is}}{{/each}}</tr>{{/each}}
 {% endraw %}

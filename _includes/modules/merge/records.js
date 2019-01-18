@@ -110,9 +110,9 @@ Records = (ಠ_ಠ, file, target, tab) => {
       id: _cols.id,
       name: _headings.tabs[0].name,
       data: _cols.data(),
-      headers: _cols.headers(),
-      classes: ["table-responsive"]
+      headers: _cols.headers()
     }, {
+      classes: ["table-responsive", "table-hover"],
       template: "meta_rows",
       advanced: false,
       collapsed: true,
@@ -140,8 +140,8 @@ Records = (ಠ_ಠ, file, target, tab) => {
       name: _headings.tabs[1].name,
       data: _rows.data(),
       headers: _rows.headers(),
-      classes: ["table-responsive"],
     }, {
+      classes: ["table-responsive", "table-hover"],
       advanced: false,
       collapsed: true,
       removable: true

@@ -219,8 +219,9 @@ const SAFE_NAMES = {
       id: value.index,
       name: value.name,
       headers: headers,
-      data: table
+      data: table,
     }, {
+      classes: ["table-hover"],
       widths: value.widths,
       frozen: _grid.frozen(),
       header_rows: _grid.header_rows,

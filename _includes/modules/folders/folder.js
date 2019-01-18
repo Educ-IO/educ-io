@@ -738,6 +738,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
         data: _data,
         headers: headers,
       }, {
+        classes: ["table-hover"],
         advanced: false,
         collapsed: true
       }, target, target => _update(target));

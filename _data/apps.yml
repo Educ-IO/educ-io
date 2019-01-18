@@ -820,6 +820,7 @@ folders:
     - shared/control_icon
     - shared/control_button
     - shared/populate_buttons
+    - shared/pill
     - folders/rows
     - folders/search
     - folders/convert
