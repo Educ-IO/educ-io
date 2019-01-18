@@ -2,6 +2,7 @@ site :
   0.1.1t :
     name : Updated Docket App
     desc : Visual Tweaks and Improvements
+    numeric : 0.1.1.1
   0.1.1q :
     name : Updated Events App
     desc : Search Property Shortcut

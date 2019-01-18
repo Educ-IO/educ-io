@@ -43,21 +43,33 @@
 #diary, #diary_list {
 	div.item {
     will-change: padding-top, background-color;
-    @include transition(padding-top 0.25s ease, background-color 0.8s linear);
+    @include transition(padding-top 0.2s ease, background-color 0.6s linear);
     &.drop-target {padding-top: 1em !important;}
     &.due-soon > .display, &.overdue > .display {border-radius: 3px;}
     &.due-soon > .display {@include complex_LinearGradient(100grad,rgba($colour-warning, 0.2) rgba($colour-warning, 0.05) rgba($colour-warning, 0),0% 40% 100%);}
     &.overdue >  .display {@include complex_LinearGradient(100grad,rgba($colour-error, 0.2) rgba($colour-error, 0.05) rgba($colour-error, 0),0% 40% 100%);}
     &.editable {
       cursor: pointer;
+      border-radius: 4px;
       &:hover {
         box-shadow: map-get($shadows, 2);
-        border-radius: 4px;
         border-bottom-color: transparent;
+        background-color: rgba(gold, 0.5);
+      }
+      &.complete, &.background {
+        &:hover {
+        	background-color: rgba(gold, 0.1);
+        }
+      }
+      &.background {
+        &:hover {
+        	box-shadow: map-get($shadows, 1);
+        }
       }
     };
     padding-top: 0.1rem;
     &:not(:last-child) {border-bottom: 1px dashed $colour-emphasis};
+    &:last-child {border-bottom: 1px solid transparent};
     .text-faded {opacity: 0.5;}
     .text-very-faded {opacity: 0.25;}
     a.text-very-faded:hover {opacity: 0.75;}
@@ -81,7 +93,7 @@
       margin-top: 0.15rem;
     }
     .display.small > a {margin-top: -0.15em;}
-    span > i, a > i {margin-top: 0.2rem !important;}
+    span > i, a > i {margin-top: 0.25rem !important;}
     svg {
       height: 1.4em;
     	width: 1.4em;

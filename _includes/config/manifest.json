@@ -3,12 +3,11 @@
  "name":"{{ site.title }}",
  "description": "{{ site.description }}",
  "display": "fullscreen",
- "orientation": "landscape",
  "lang": "en-GB",
  "background_color": "#ffffff",
  "theme_color": "#ffffff",
  "start_url": "/",
- "version": "{{ site.version }}",
+ "version": "{{ site.data.versions.site.first[1].numeric }}",
  "manifest_version": 2,
  "icons": [
   {
