@@ -1011,7 +1011,6 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
           clear: _dialog.handlers.clear,
           options: _dialog.handlers.options,
           populate: (target, dialog, options) => {
-
             var _shortcut = ಠ_ಠ.Dialog({}, ಠ_ಠ).populate.shortcuts(target, dialog, options, [
               ["mime", "#mimeTypes"],
               ["include", "#includeRegexes"],

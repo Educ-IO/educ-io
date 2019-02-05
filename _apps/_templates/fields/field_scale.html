@@ -1,15 +1,44 @@
 {% raw %}
+
+{{!-- ================= DISPLAY PARAMETERS ================== --}}
+{{!-- template = Template Name --}}
+{{!-- id = Control ID --}}
+{{!-- [large] = Size of Form Element Group --}}
+{{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
+
+{{!-- [markers] = Array of markers --}}
+{{!-- [type] = Passed to marker template, is type for items added to each marker (e.g. Evidence) --}}
+{{!-- [items_details] = Placeholder details for Marker Items --}}
+{{!-- [list_field] = Field Name for list (e.g. Evidence) --}}
+{{!-- [help] = Help information (html) to display --}}
+{{!-- [description] = Template Description --}}
+
+{{!-- ================= OUTPUT PARAMETERS =================== --}}
+{{!-- [field] = Form Element Group Data Field Name --}}
+{{!-- [order] = Data Output Order --}}
+{{!-- ======================================================= --}}
+
+{{!-- =================== OUTPUT FORMAT ===================== --}}
+{{!-- Value = false : If nothing has been added --}}
+{{!-- ------------------------------------------------------- --}}
+{{!-- Order = field order if supplied --}}
+{{!-- Values = Tree Collection of Markers (with values/items) --}}
+{{!-- ======================================================= --}}
+
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}>
-	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
+<div class="form-group{{#if large}} form-group-lg{{/if}} row"
+     data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}
+     {{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
+	<label class="col-md-3 col-form-label" for="{{id}}">{{val "" title field}}</label>
 	<div class="col-md-9">
-		<ul class="list-group" id="{{id}}" name="{{#if name}}{{name}}{{else}}{{id}}{{/if}}">
+		<ul class="list-group" id="{{id}}" name="{{val '' name id}}">
 			{{#each markers}}
 			{{!-- Call Partial Template, concatenating the ID with this parent ID and the Index, and also passing an incremented index for display --}}
-			{{> field_marker id=(concat ../id "_" @index) options=../options type=../type evidence=../evidence number=(inc @index)}}
+			{{> field_marker id=(concat ../id "_" @index) options=../options type=../type items_details=../items_details list_field=../list_field number=(inc @index)}}
 			{{/each}}
 		</ul>
-		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted mt-1 mt-md-2 text-justify">{{{help}}}</div>{{/if}}
+		{{#if help}}<div id="{{id}}_HELP" 
+                     class="form-text text-muted mt-1 mt-md-2 text-justify">{{{help}}}</div>{{/if}}
 	</div>
 </div>
 {% endraw %}

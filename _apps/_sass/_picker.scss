@@ -1,25 +1,25 @@
 // -- Google Drive File Picker -- //
-.picker.modal-dialog.picker-dialog {
+.picker.picker-dialog {
 	pointer-events: all !important;
-	z-index: 1100!important;
+	z-index: 1100 !important;
 }
 
-.picker.modal-dialog-content.picker-dialog-content {
+.picker.picker-dialog-content {
 	max-width: 100% !important;
 }
 
 @media screen and (max-width: 991px) {
- .picker.modal-dialog {
+ .picker {
 	  height: 80% !important; 
     max-width: 86% !important;
  }
- .picker.modal-dialog-content.picker-dialog-content {
+ .picker.picker-dialog-content {
    height: 100% !important; 
  }
 }
 
 @media screen and (min-width: 992px) {
- .picker.modal-dialog {
+ .picker {
     max-width: 60% !important;
  }
 }

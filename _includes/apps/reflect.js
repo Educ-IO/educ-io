@@ -27,136 +27,6 @@ App = function() {
     STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED, STATE_TRACKER_OPENED];
   /* <!-- Internal Constants --> */
 
-  /* <!-- Internal Handlers --> */
-  var _evidence = {
-
-    default: e => {
-      e.preventDefault();
-      return $(e.currentTarget).parents(".evidence-holder");
-    },
-
-    add: (o, list, check) => {
-
-      if (check !== false) {
-        var checks = list.find("input[type='checkbox']");
-        if (checks && checks.length == 1 && !checks.prop("checked")) checks.prop("checked", true);
-      }
-
-      if (!o.template) o.template = "list_item";
-      if (!o.delete) o.delete = "Remove";
-
-      /* <!-- Add new Item to List --> */
-      $(ಠ_ಠ.Display.template.get(o)).appendTo(list.find(".list-data")).find("a.delete").click(
-        function(e) {
-          e.preventDefault();
-          var _this = $(e.currentTarget).parent();
-          if (_this.siblings(".list-item").length === 0) {
-            _this.closest(".input-group").children("input[type='checkbox']").prop("checked", false);
-          }
-          _this.remove();
-        }
-      );
-    },
-
-    picker: e => {
-      var _pickEvidence = list => {
-          ಠ_ಠ.Router.pick.multiple({
-              title: "Select a File / Folder to Use",
-              view: "DOCS"
-            })
-            .then(files => _.each(files, (file, i) => _evidence.add({
-              id: file[google.picker.Document.ID],
-              url: file[google.picker.Document.URL],
-              details: file[google.picker.Document.NAME],
-              type: list.find("button[data-default]").data("default"),
-              icon_url: file[google.picker.Document.ICON_URL]
-            }, list, i === 0)))
-            .catch(e => e ? ಠ_ಠ.Flags.error("Picking Google Drive File", e) : false);
-        },
-        _list = _evidence.default(e);
-      _pickEvidence(_list);
-    },
-
-    file: e => {
-      var _list = _evidence.default(e);
-      ಠ_ಠ.Display.files({
-        id: "reflect_prompt_file",
-        title: "Please upload file/s ...",
-        message: ಠ_ಠ.Display.doc.get({
-          name: "FILE",
-          content: "evidence",
-        }),
-        action: "Upload"
-      }).then(files => {
-        var _total = files.length,
-          _current = 0;
-        var finish = ಠ_ಠ.Display.busy({
-          target: _list.closest("li"),
-          class: "loader-small w-100",
-          fn: true
-        });
-        var _complete = function() {
-          if (++_current == _total) finish();
-        };
-        _.each(files, source => {
-          ಠ_ಠ.Google.files.upload({
-              name: source.name
-            }, source, source.type)
-            .then(uploaded => ಠ_ಠ.Google.files.get(uploaded.id).then(file => {
-              _evidence.add({
-                id: file.id,
-                url: file.webViewLink,
-                details: file.name,
-                type: _list.find("button[data-default]").data("default"),
-                icon_url: file.iconLink
-              }, _list, true);
-              _complete();
-            }))
-            .catch(e => {
-              ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error");
-              _complete();
-            });
-        });
-
-      }).catch(e => e ? ಠ_ಠ.Flags.error("Displaying File Upload Prompt", e) : ಠ_ಠ.Flags.log("File Upload Cancelled"));
-    },
-
-    web: e => {
-      var _list = _evidence.default(e);
-      ಠ_ಠ.Display.text({
-        id: "reflect_prompt_url",
-        title: "Please enter a URL ...",
-        name: "Name",
-        value: "URL",
-        message: ಠ_ಠ.Display.doc.get({
-          name: "URL",
-          content: "evidence",
-        }),
-        validate: /^((?:(ftps?|https?):\/\/)?((?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9][0-9]|[0-9])\.(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9][0-9]|[0-9])\.)(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9][0-9]|[0-9])\.)(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9][0-9]|[0-9]))|(?:(?:(?:[a-zA-Z0-9._-]+){1,2}[\w]{2,4})))(?::(\d+))?((?:\/[\w]+)*)(?:\/|(\/[\w]+\.[\w]{3,4})|(\?(?:([\w]+=[\w]+)&)*([\w]+=[\w]+))?|\?(?:(wsdl|wadl))))$/i
-      }).then(url => {
-        var _url = url.value ? url.value : url,
-          _name = url.name ? url.name : "Web Link";
-        _evidence.add({
-          url: _url.indexOf("://") > 0 ? _url : "http://" + _url,
-          details: _name,
-          type: _list.find("button[data-default]").data("default"),
-          icon: "public"
-        }, _list, true);
-      }).catch(e => e ? ಠ_ಠ.Flags.error("Displaying URL Prompt", e) : ಠ_ಠ.Flags.log("URL Prompt Cancelled"));
-    },
-
-    paper: e => {
-      var _list = _evidence.default(e);
-      _evidence.add({
-        details: "Offline / Paper",
-        type: _list.find("button[data-default]").data("default"),
-        icon: "local_printshop"
-      }, _list, true);
-    },
-
-  };
-  /* <!-- Internal Handlers --> */
-
   /* <!-- Action Functions --> */
   var _actions = {
 
@@ -227,8 +97,10 @@ App = function() {
       ಠ_ಠ.Display.state().enter(state).protect("a.jump").on("JUMP");
       return ಠ_ಠ.Fields({
           me: ಠ_ಠ.me ? ಠ_ಠ.me.full_name : undefined,
-          templater: ಠ_ಠ.Display.template.get
-        })
+          templater: ಠ_ಠ.Display.template.get,
+          list_upload_content: "Evidence",
+          list_web_content: "Evidence"
+        }, ಠ_ಠ)
         .on(ಠ_ಠ.Display.template.show(_return));
     },
 
@@ -265,12 +137,15 @@ App = function() {
       var template = _create.display(name.toLowerCase(), state, loaded);
 
       /* <!-- Handle Evidence Selection Buttons --> */
+      /*
       template.find("button.g-picker, a.g-picker").off("click.picker").on("click.picker", _evidence.picker);
       template.find("button.g-file, a.g-file").off("click.file").on("click.file", _evidence.file);
       template.find("button.web, a.web").off("click.web").on("click.web", _evidence.web);
       template.find("button.paper, a.paper").off("click.paper").on("click.paper", _evidence.paper);
+			*/
 
       /* <!-- Handle Populate Textual Fields from Google Doc --> */
+      /*
       template.find("button[data-action='load-g-doc'], a[data-action='load-g-doc']").off("click.doc").on("click.doc", e => {
         var finish;
         return new Promise((resolve, reject) => {
@@ -291,6 +166,7 @@ App = function() {
           finish ? finish() : true;
         }).catch(() => finish ? finish() : false);
       });
+      */
 
       return template;
 

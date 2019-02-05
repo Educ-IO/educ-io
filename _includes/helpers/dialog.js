@@ -60,7 +60,17 @@ Dialog = (options, factory) => {
         new Promise((resolve, reject) => {
           factory.Google.pick( /* <!-- Open Google Document from Google Drive Picker --> */
             "Select a Folder", false, true,
-            () => new google.picker.DocsView(google.picker.ViewId.FOLDERS).setIncludeFolders(true).setSelectFolderEnabled(true).setParent("root"),
+            () => [
+              new google.picker.DocsView(google.picker.ViewId.FOLDERS)
+              .setIncludeFolders(true)
+              .setSelectFolderEnabled(true)
+              .setParent("root")
+              .setMimeTypes("application/vnd.google-apps.folder"),
+              new google.picker.DocsView(google.picker.ViewId.DOCS)
+              .setIncludeFolders(true)
+              .setEnableTeamDrives(true)
+              .setMimeTypes("application/vnd.google-apps.folder")
+            ],
             folder => folder && factory.Google.folders.is(folder.mimeType) ? factory.Flags.log("Google Drive Folder Picked", folder) && resolve(folder) : reject()
           );
         }).then(folder => $(`#${$(e.target).data("targets")}`).val(folder.id).attr("title", folder.name)).catch();
@@ -69,10 +79,8 @@ Dialog = (options, factory) => {
     },
 
     lock: (target, dialog) => {
-
       var _el = dialog.find(_makeIds(target.data("lock"))).toggleClass("locked");
       target.find("i.material-icons").text(_el.hasClass("locked") ? "lock" : "lock_open");
-
     },
 
     clear: (target, dialog) => dialog.find(_makeIds(target.data("clear"))).val("").filter("textarea.resizable").map((i, el) => autosize.update(el)),

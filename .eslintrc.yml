@@ -29,6 +29,7 @@ globals:
   showdown: false
   loki: false
   google: false
+  gapi: false
   localforage: false
   ClipboardJS: false
   Hashes: false
@@ -44,6 +45,7 @@ globals:
   objectHash: false
   chrome: false
   chai: false
+  chance: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false

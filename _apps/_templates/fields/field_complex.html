@@ -1,35 +1,81 @@
 {% raw %}
+
+{{!-- ================= DISPLAY PARAMETERS ================== --}}
+{{!-- template = Template Name --}}
+{{!-- id = Control ID --}}
+{{!-- [large] = Size of Form Element Group --}}
+{{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
+{{!-- [icon] = Icon for left-side of Element Group --}}
+{{!-- [details] = This text will be the details textbox placeholder) --}}
+{{!-- [required] = Text/Details Input is required (only relevant if there is a blank option). --}}
+{{!-- [prefix] = Button Text (default) for Dropdown Button (displayed as prefix in output). --}}
+{{!-- [options] = Collection of selection options for each item. Can be strings, or by value/name pairs. If name/value pairs are used, value is used for selected display and return object, but name is displayed in the dropdown list. --}}
+{{!-- [type] = Name of Item type, for visual display (e.g. 'Add |Target| to List). Defaults to Item. --}}
+{{!-- [help] = Help information (html) to display --}}
+{{!-- [description] = Template Description --}}
+
+{{!-- ================= OUTPUT PARAMETERS =================== --}}
+{{!-- [field] = Form Element Group Data Field Name --}}
+{{!-- [order] = Data Output Order --}}
+{{!-- ======================================================= --}}
+
+{{!-- =================== OUTPUT FORMAT ===================== --}}
+{{!-- Value = false : If nothing has been added --}}
+{{!-- ------------------------------------------------------- --}}
+{{!-- Order = field order if supplied --}}
+{{!-- Values.Items[].Value = Details String (suffixed with [|PREFIX|: |SELECTED OPTION|])  --}}
+{{!-- Values.Items[].Type = Item Type from input, or Item if none supplied --}}
+{{!-- ======================================================= --}}
+
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}>
-	<label class="col-md-3 col-form-label" for="{{id}}">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
+<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}{{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
+	<label class="col-md-3 col-form-label" for="{{id}}">{{val "" title field}}</label>
 	<div class="col-md-9">
     <div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
-			{{> control_button b_small="true" b_icon_large="true" b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE") b_icon="refresh" }}
-      <div class="btn-group" role="group">
-        {{> control_button b_small="true" b_id=(concat id "_TYPE") b_class="btn-dark complex-list-type dropdown-toggle" b_default=type b_text=type b_toggle="dropdown"}}
+			{{> control_button b_small="true" b_icon_large="true" b_class="btn-secondary eraser no-active"
+      	b_title="Clear / Reset" b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE") b_icon="refresh" }}
+      {{#if prefix}}{{#if options}}<div class="btn-group" role="group">
+        {{> control_button b_small="true" b_id=(concat id "_TYPE")
+        	b_class="btn-dark complex-list-type dropdown-toggle"
+        	b_default=prefix b_text=prefix b_toggle="dropdown"}}
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{id}}_TYPE">
           {{#each options}}
-          <a class="dropdown-item" href="#" data-targets="{{../id}}_TYPE" data-value="{{#if value}}{{value}}{{else}}{{this}}{{/if}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
+          <a class="dropdown-item" href="#" data-targets="{{../id}}_TYPE"
+             data-value="{{val "" value this}}">{{val "" name this}}</a>
           {{/each}}
         </div>
-      </div>
-      {{> control_button b_small="true" b_icon_large="true" b_class="btn-primary complex-list-add" b_title=(concat "Add " item " to List") b_item=item b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE") b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" }}
+      </div>{{/if}}{{/if}}
+      {{> control_button b_small="true" b_icon_large="true" b_class="btn-primary complex-list-add"
+      	b_title=(concat "Add " type " to List") b_item=(either type "Item") b_details=(concat id "_DETAILS")
+      	b_type=(concat id "_TYPE") b_target=(concat id "_LIST") b_icon="add_circle_outline"
+      	b_icon_type="light" }}
     </div>
 		<div class="input-group">
 			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
 			<input id="{{id}}" name="{{id}}" hidden="hidden" type="checkbox">
-			<textarea id="{{id}}_DETAILS" class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#unless required}} optional{{/unless}}" rows="1" aria-label="{{#if details}}{{details}}{{else}}Details{{/if}}" placeholder="{{#if details}}{{details}}{{else}}Details{{/if}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
+			<textarea id="{{id}}_DETAILS" 
+                class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#unless required}} optional{{/unless}}"
+                rows="1" aria-label="{{either details 'Details'}}"
+                placeholder="{{either details 'Details'}}"
+                {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
 			<span class="input-group-append d-none d-lg-flex">
-				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE") b_icon="refresh" }}
-				{{> control_button b_id=(concat id "_TYPE") b_class="btn-dark complex-list-type dropdown-toggle" b_default=type b_text=type b_toggle="dropdown"}}
+				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
+        	b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE") b_icon="refresh" }}
+        {{#if prefix}}{{#if options}}{{> control_button b_id=(concat id "_TYPE")
+        	b_class="btn-dark complex-list-type dropdown-toggle"
+        	b_default=prefix b_text=prefix b_toggle="dropdown"}}
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{id}}_TYPE">
 					{{#each options}}
-					<a class="dropdown-item" href="#" data-targets="{{../id}}_TYPE" data-value="{{#if value}}{{value}}{{else}}{{this}}{{/if}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
+					<a class="dropdown-item" href="#" data-targets="{{../id}}_TYPE"
+             data-value="{{val "" value this}}">{{val "" name this}}</a>
 					{{/each}}
 				</div>
+        {{/if}}{{/if}}
       </span>
       <span class="input-group-append d-none d-lg-flex">
-        {{> control_button b_class="btn-primary complex-list-add" b_title=(concat "Add " item " to List") b_item=item b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE") b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" }}
+        {{> control_button b_class="btn-primary complex-list-add" b_title=(concat "Add " type " to List")
+        	b_item=(either type "Item") b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
+        	b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" }}
 			</span>
 		</div>
 		<div id="{{id}}_LIST" class="list-data d-flex flex-column mt-1 mt-md-2"></div>

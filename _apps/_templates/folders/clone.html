@@ -37,6 +37,7 @@
 							<input type="text" id="outputTo" name="output" class="form-control"{{#if state}}{{#if state.output}} value="{{state.output}}"{{/if}}{{/if}} readonly />
 							<div class="input-group-append">
 								{{> control_button b_class="btn-outline-primary" b_title="Select Folder from Google Drive" b_target="outputTo" b_action="load-g-folder" b_text="Browse" }}
+                {{> control_button b_class="btn-dark" b_title="Create Folder" b_target="outputTo" b_action="create-g-folder" b_icon="create_new_folder" }}
 								{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target="outputTo" b_icon="refresh" }}
 							</div>
 						</div>

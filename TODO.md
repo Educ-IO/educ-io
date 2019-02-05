@@ -4,7 +4,7 @@ General
 -------
 * Loader for triggered code loads (e.g. on navigate)
 
-* ** IMPORTANT ** Loader version contained within element
+* ** IMPORTANT ** Loader/Spinner contained within element
 
 * ** IMPORTANT ** Loading Spinner for 'Get Help' - can be slow sometimes!
 * ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
@@ -120,8 +120,6 @@ Folders
 * Use new format MODAL form returns (once Data is stable ... activate by including Data helper in App Build)
   + Update validate method on App callers to accept object, rather than value array
   + Update _return methods on App callers to accept object, rather than value array
-* Check Spreadsheet API Permission for logging! Is this covered by drive permission? YES
-* Colour Code Files/Folders?
 
 Reflect
 -------
@@ -129,13 +127,11 @@ Reflect
 * ** IMPORTANT ** Should have anchor links using smooth scroll to different parts of the forms, to make navigation of the form easier!
 
 * Lesson Observation Form
-* ** IMPORTANT ** >1 Evidence Items not outputted in JSON (De-Hydrate)
 * ** IMPORTANT ** Evidence Check Boxes not being toggled (Re-Hydrate)
 * ** IMPORTANT ** Feedback on successful save?
 * ** IMPORTANT ** Save, Send & Complete Instructions / About
 * ** IMPORTANT ** Re-Hydrate Functionality
 * ** IMPORTANT ** * Optional Gradings against standards
-* 'Save' Screenshot does not work with dynamic / loaded Stylesheets -> Fixed in Version 1.0.0 but not on CDN-JS
 * Change UI Buttons (Save, Complete etc) for Report / Form
 * Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL
 * Email group from above.
@@ -151,6 +147,9 @@ Survey
 
 Complete
 --------
+* 'Save' Screenshot does not work with dynamic / loaded Stylesheets -> Fixed in Version 1.0.0 but not on CDN-JS <-- DONE
+* ** IMPORTANT ** >1 Evidence Items not outputted in JSON (De-Hydrate) <-- DONE
+* Check Spreadsheet API Permission for logging! Is this covered by drive permission? YES <-- DONE
 * DNT for testing code... <-- DONE
 * Keypress - Enter on Password Input Dialogs <-- DONE
 * Export Password-Protected / Encrypted Spreadsheets <-- DONE
@@ -613,4 +612,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2018-01-08
+ᕕ( ᐛ )ᕗ JD - 2019-02-05

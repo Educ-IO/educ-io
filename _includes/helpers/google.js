@@ -25,7 +25,8 @@ Google_API = (options, factory) => {
       function() {
         var _arguments = arguments;
         return new Promise((resolve, reject) => {
-          var clean = (events) => _.each(events, (handler, event) => reader.removeEventListener(event, handler)),
+          var clean = events => _.each(events, (handler, event) =>
+              reader.removeEventListener(event, handler)),
             events = {
               load: () => clean(events) && resolve(reader.result),
               abort: () => clean(events) && reject(),
@@ -237,7 +238,7 @@ Google_API = (options, factory) => {
 
   var _pick = (title, multiple, team, views, callback, context, get) => {
 
-    if (google.picker) {
+    if (window.google && google.picker) {
 
       /* <!-- This seems to cause a high number of failures: .setDeveloperKey(KEY) --> */
       var origin = `${window.location.protocol}//${window.location.host}`,
@@ -258,9 +259,8 @@ Google_API = (options, factory) => {
         })(callback, context));
 
       if (multiple) picker.enableFeature(google.picker.Feature.MULTISELECT_ENABLED);
-      /* <!-- This doesn't currently work, although it is in the Google Drive Picker API Documentation --> */
+      /* <!-- This doesn't currently work in Google Loader v1, but does in GAPI --> */
       if (team) picker.enableFeature(google.picker.Feature.SUPPORT_TEAM_DRIVES);
-
       if (views && typeof views === "function") views = views();
       if (!views || (Array.isArray(views) && views.length === 0)) {
         var view = new google.picker.DocsView()
@@ -282,9 +282,15 @@ Google_API = (options, factory) => {
 
     } else {
 
-      google.load("picker", "1", {
-        "callback": ((title, multiple, team, views, callback, context, get) => () => _pick(title, multiple, team, views, callback, context, get))(title, multiple, team, views, callback, context, get)
-      });
+      var _callback = ((title, multiple, team, views, callback, context, get) => () => _pick(title, multiple, team, views, callback, context, get))(title, multiple, team, views, callback, context, get);
+
+      window.google ?
+        google.load("picker", "1", {
+          "callback": _callback
+        }) :
+        gapi.load("picker", {
+          "callback": _callback
+        });
 
     }
 

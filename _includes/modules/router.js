@@ -258,7 +258,6 @@ Router = function() {
         },
         help: { /* <!-- Request Help --> */
           matches: /HELP/i,
-          keys: ["h", "H"],
           fn: () => ಠ_ಠ.Help.provide(ಠ_ಠ.Flags.dir()),
         }
       };

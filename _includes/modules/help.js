@@ -80,6 +80,7 @@ Help = function() {
           var _target = modal.find(".modal-content"),
             _results = _target.find(".result").hide(200),
             _busy = ಠ_ಠ.Display.busy({
+              class: "loader-large h-100 w-100 position-absolute",
               target: _target,
               fn: true,
               status: "Checking Status"
@@ -93,7 +94,6 @@ Help = function() {
               _target.find(".btn-primary").toggle(submit === true);
               if (window.autosize) autosize(modal.find("textarea.resizable"));
             };
-
 
           fetchJsonp(`${ಠ_ಠ.SETUP.CHECK.url}?check=${_checks.join(";")}`)
             .then(response => response.json())

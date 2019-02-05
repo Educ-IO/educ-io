@@ -1,17 +1,49 @@
 {% raw %}
+
+{{!-- ================= DISPLAY PARAMETERS ================== --}}
+{{!-- template = Template Name --}}
+{{!-- id = Control ID --}}
+{{!-- [large] = Size of Form Element Group --}}
+{{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
+{{!-- [icon] = Icon for left-side of Element Group --}}
+{{!-- [options] = Collection of selection options. They can be strings, or by value/name pairs. --}}
+{{!-- [details] = Whether details input should be displayed (this text will be the field placeholder) --}}
+{{!-- [required] = Input is required (only relevant if there is a blank option) --}}
+{{!-- [help] = Help information (html) to display --}}
+{{!-- [description] = Template Description --}}
+
+{{!-- ================= OUTPUT PARAMETERS =================== --}}
+{{!-- [field] = Form Element Group Data Field Name --}}
+{{!-- [order] = Data Output Order --}}
+{{!-- ======================================================= --}}
+
+{{!-- =================== OUTPUT FORMAT ===================== --}}
+{{!-- {} / Nothing : If nothing has been entered --}}
+{{!-- ------------------------------------------------------- --}}
+{{!-- Order = field order if supplied --}}
+{{!-- Values.Value = selected value as string --}}
+{{!-- Values.Details = entered details text value --}}
+{{!-- ======================================================= --}}
+
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}>
-	<label class="col-md-3 col-form-label" for="{{id}}_SELECTOR">{{#if title}}{{title}}{{else}}{{field}}{{/if}}</label>
+<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}{{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
+	<label class="col-md-3 col-form-label" for="{{id}}_SELECTOR">{{val "" title field}}</label>
 	<div class="col-md-9">
 		<div class="input-group{{#if large}} input-group-lg{{/if}}">
 			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
-			<select id="{{id}}_SELECTOR" class="form-control{{#if large}} form-control-lg{{/if}}" data-for="{{id}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>
+			<select id="{{id}}_SELECTOR" class="form-control{{#if large}} form-control-lg{{/if}}"
+              data-for="{{id}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>
 				{{#each options}}
-					<option value="{{#if value}}{{value}}{{else}}{{this}}{{/if}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</option>
+					<option value="{{val "" value this}}">{{val "" name this}}</option>
 				{{/each}}
 			</select>
 		</div>
-		<input id="{{id}}" name="{{id}}" data-output-name="Value" type="text" readonly="readonly"{{#if required}} required="required"{{/if}} style="display: none;" />
+		<input id="{{id}}" name="{{id}}" data-output-name="Value" type="text"
+           readonly="readonly"{{#if required}} required="required"{{/if}} style="display: none;" />
+    {{#if details}}<textarea data-for="{{id}}" name="Details" data-output-name="Details"
+                             id="{{id}}_DETAILS" name="{{id}}_DETAILS"
+                             class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2"
+                             rows="1" aria-label="{{details}}" placeholder="{{details}}"></textarea>{{/if}}
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}
 	</div>
 </div>

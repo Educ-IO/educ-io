@@ -535,20 +535,22 @@ fetch:
 
 google:
   name: Google Javascript API
-  project: https://developers.google.com/loader/
+  project: https://developers.google.com/api-client-library/javascript/
   desc: The Google Javascript Loader / API provides access to specific services and components, such as the Google Drive Picker (that can be found in many web apps).
   type: js
   css: 
     - _picker
   prod:
-    - url: https://www.google.com/jsapi
+    - url: https://apis.google.com/js/api.js
+      old_url: https://www.google.com/jsapi
       mode: no-cors
       id: __google
   dev:
-    - url: https://www.google.com/jsapi
+    - url: https://apis.google.com/js/api.js
+      old_url: https://www.google.com/jsapi
       mode: no-cors
       id: __google
-
+      
 lazy:
   name: Lazy JS
   desc: A functional utility library.
@@ -1232,3 +1234,23 @@ xlsxpopulate:
       crossorigin: anonymous
       map: true
       id: __xlsxpopulate
+
+chance:
+  name: Chance Random Data Library
+  desc: Utility library to generate anything random
+  project: https://github.com/chancejs/chancejs
+  version: 1.0.19
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/chance/1.0.18/chance.min.js
+      integrity: sha256-+bo9VPNB85DWg5DKk5YGyHqCd4zCK4fjnhD9hSIM/aI=
+      crossorigin: anonymous
+      map: true
+      id: __chance
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/chance/1.0.18/chance.min.js
+      integrity: sha256-+bo9VPNB85DWg5DKk5YGyHqCd4zCK4fjnhD9hSIM/aI=
+      crossorigin: anonymous
+      map: true
+      id: __chance

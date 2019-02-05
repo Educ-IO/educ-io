@@ -325,7 +325,6 @@ view:
               divider: true
             - name: Get Help
               hash: help
-              shortcut: "h"
               desc: Get help or request a feature
               class: font-weight-bold
               imports:
@@ -441,8 +440,9 @@ reflect:
     - help
     - shared/control_icon
     - shared/control_button
+    - shared/list_item
     - fields/field_complex
-    - fields/field_evidence
+    - fields/field_items
     - fields/field_numeric
     - fields/field_marker
     - fields/field_radio
@@ -451,7 +451,6 @@ reflect:
     - fields/field_span
     - fields/field_textual
     - reflect/group
-    - reflect/list_item
     - reflect/form
     - reflect/recovery
   docs:
@@ -1032,7 +1031,6 @@ folders:
               divider: true
             - name: Get Help
               hash: help
-              shortcut: "h"
               desc: Get help or request a feature
               class: font-weight-bold
               imports:
@@ -1582,7 +1580,6 @@ events:
               divider: true
             - name: Get Help
               hash: help
-              shortcut: "h"
               desc: Get help or request a feature
               class: font-weight-bold
               imports:
@@ -2819,7 +2816,6 @@ docket:
               divider: true
             - name: Get Help
               hash: help
-              shortcut: "h"
               desc: Get help or request a feature
               class: font-weight-bold
               imports:
@@ -3171,6 +3167,10 @@ debug:
       load: first
     - name: chai
       load: first
+    - name: chance
+      load: first
+    - name: moment
+      load: first
     - name: handlebars
       load: last
     - name: hello
@@ -3192,6 +3192,10 @@ debug:
     - name: localforage
       load: last
     - name: objectHash
+      load: last
+    - name: autosize
+      load: last
+    - name: showdown
       load: last
     - name: google
       load: lazy
@@ -3232,7 +3236,19 @@ debug:
     - text
     - shared/control_icon
     - shared/control_button
+    - shared/list_item
+    - fields/field_complex
+    - fields/field_items
+    - fields/field_numeric
+    - fields/field_marker
+    - fields/field_radio
+    - fields/field_scale
+    - fields/field_select
+    - fields/field_span
+    - fields/field_textual
     - debug/host
+    - debug/data/dialog
+    - debug/data/form
   docs:
     - shared/FILTERS
     - shared/JUMP
