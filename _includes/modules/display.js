@@ -258,16 +258,22 @@ Display = function() {
           }
           return _b[_a] ? _b[_a] : _default ? _default : "";
         });
-        
+
         Handlebars.registerHelper("which", (which, a, b) => which ? a : b);
 
         Handlebars.registerHelper("concat", (...args) => _.reduce(args, (m, a) => _.isObject(a) ? m : (m + a), ""));
-        
+
         Handlebars.registerHelper("val", (_default, ...args) => {
-          var _val = _.find(args, arg => arg !== undefined && arg !==null);
+          var _val = _.find(args, arg => arg !== undefined && arg !== null);
           return _val === undefined ? _default : _val;
         });
-        
+
+        Handlebars.registerHelper("any", (...args) =>
+          _.some(args, arg => arg !== undefined && arg !== null));
+
+        Handlebars.registerHelper("all", (...args) =>
+          _.every(args, arg => arg !== undefined && arg !== null));
+
         Handlebars.registerHelper("either", (a, b) => (_.isUndefined(a) || _.isNull(a) || a === "") ? b : a);
 
         Handlebars.registerHelper("replace", (value, replace, replacement) => value ? value.replace(new RegExp(replace, "g"), replacement) : "");
@@ -619,7 +625,7 @@ Display = function() {
         /* <!-- Show the Modal Dialog --> */
         dialog.modal({
           show: true,
-          backdrop : options.backdrop !== undefined ? options.backdrop : true,
+          backdrop: options.backdrop !== undefined ? options.backdrop : true,
         });
 
       });

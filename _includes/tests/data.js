@@ -31,6 +31,27 @@ Data = function() {
       }),
       c: () => GEN.p(6, "0123456789abcdef")
     };
+  const RUN = (promises, err) => _.reduce(promises, (all, promise) => all.then(
+    result => promise().then(Array.prototype.concat.bind(result)).catch(err)), Promise.resolve([]));
+  const GENERATE = fn => {
+
+    var _return = {
+        state: [],
+        fields: []
+      },
+      _order = 0;
+
+    var _add = field => {
+      if (field.order === undefined) field.order = ++_order;
+      _return.state.push(field);
+      _return.fields.push(DISPLAY.template.get(field).trim());
+    };
+
+    fn && _.isFunction(fn) ? _add(fn()) : _.times(GEN.i(1, 10), () => _add(_.sample(fn)()));
+
+    return _return;
+
+  };
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -38,21 +59,128 @@ Data = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _modal = (template, options, populate, check) => DISPLAY.modal(template, _.extend({
-    backdrop: false,
-    class: debug ? "" : "d-none",
-  }, options), modal => {
-    FACTORY.Fields({
-      me: FACTORY.me ? FACTORY.me.full_name : undefined,
-      templater: DISPLAY.template.get
-    }, FACTORY).on(modal);
-    dialog.handlers.keyboard.enter(modal);
-    if (populate) populate(modal);
-    (debug ? LONG_PAUSE : PAUSE)().then(
-      () => modal.find(".modal-footer > .btn.btn-primary").click()
-    );
-  }).then(values => check ? check(values) : values);
+  var _modal = (template, options, err, populate, check) => DISPLAY.modal(template, _.extend({
+      backdrop: false,
+      class: debug ? "" : "d-none",
+    }, options), modal => {
+      FACTORY.Fields({
+        me: FACTORY.me ? FACTORY.me.full_name : undefined,
+        templater: DISPLAY.template.get
+      }, FACTORY).on(modal);
+      dialog.handlers.keyboard.enter(modal);
+      if (populate) populate(modal);
+      (debug ? LONG_PAUSE : PAUSE)().then(
+        () => modal.find(".modal-footer > .btn.btn-primary").click()
+      );
+    })
+    .then(values => check ? check(values) : values)
+    .catch(err);
   /* <!-- Internal Functions --> */
+
+  /* <!-- Scaffolding Functions --> */
+  var _showdown = window.showdown ? new showdown.Converter({
+      tables: true
+    }) : false,
+    _markdown = markdown => _showdown ? _showdown.makeHtml(markdown) : markdown,
+    _blocks = {
+      basic: title => {
+        if (title && debug) FACTORY.Flags.log("Generating Test FORM for:", title);
+        return {
+          id: `__${GEN.an(GEN.i(20, 30))}`,
+          field: GEN.a(GEN.i(10, 15)),
+          title: GEN.t(GEN.i(5, 25)),
+          help: _markdown(GEN.t(GEN.i(10, 40))),
+          large: GEN.b(),
+          required: GEN.b(),
+          _title: title,
+        };
+      },
+      spans: [{
+          value: "Custom",
+          name: "Custom"
+        },
+        {
+          span: "d",
+          value: "Daily",
+          name: "Daily"
+        },
+        {
+          span: "w",
+          value: "Weekly",
+          name: "Weekly"
+        },
+        {
+          span: "M",
+          value: "Monthly",
+          name: "Monthly"
+        },
+        {
+          span: "y",
+          value: "Yearly",
+          name: "Yearly"
+        }
+      ],
+      options: () => _.map(_.range(GEN.i(2, 10)), () => ({
+        class: `btn-${_.sample(
+                              ["primary","info","success","warning","danger","dark"])}`,
+        value: GEN.an(GEN.i(10, 30)),
+        icon: _.sample(["", "visibility_off"])
+      })),
+      pairs: () => _.map(_.range(GEN.i(4, 20)), () => ({
+        value: GEN.a(GEN.i(5, 10)),
+        name: GEN.t(GEN.i(10, 30)),
+      })),
+      lists: () => _.map(_.range(GEN.i(4, 8)), () => ({
+        value: GEN.a(GEN.i(5, 10)),
+        name: GEN.t(GEN.i(10, 30)),
+        class: `${GEN.a(GEN.i(5, 10))} ${GEN.b() ? "offline" : "paper"}`,
+        divider: GEN.b(10)
+      })),
+      children: (level, options) => {
+        if (level > GEN.i(1, 5)) return null;
+        return _.map(_.range(1, GEN.i(2, 8)), number => {
+          var _return = {
+            value: number,
+            details: GEN.t(GEN.i(0, 60)),
+          };
+          if (GEN.b(40)) _return.children = _blocks.children(level + 1, options);
+          if (_return.children === null) delete _return.children;
+          if (_return.children === undefined) { /* <!-- Evidence only if a Leaf --> */
+            if (GEN.b(90)) {
+              _return.evidence = true;
+              if (GEN.b(70))
+                _return._data = {
+                  options: _.map(_.range(GEN.i(0, 4)), () => _.sample(options)),
+                  details: GEN.t(GEN.i(0, 100))
+                };
+            }
+          }
+          return _return;
+        });
+      },
+      scale: options => ({
+        name: GEN.t(GEN.i(5, 20)),
+        title: GEN.t(GEN.i(10, 30)),
+        scale: _.map(_.range(1, GEN.i(2, 11)), number => {
+          var _return = {
+            number: number,
+            type: GEN.t(GEN.i(5, 10)),
+            name: GEN.an(GEN.i(10, 20)),
+            details: GEN.t(GEN.i(0, 50)),
+            colour: `#${GEN.c()}`,
+            criteria: _.map(_.range(1, GEN.i(1, 6)), number => ({
+              value: number,
+              name: GEN.t(GEN.i(10, 30)),
+              details: _markdown(GEN.t(GEN.i(0, 200))),
+            })),
+          };
+          if (GEN.b(90)) _return.children = _blocks.children(1, options);
+          if (_return.children === null) delete _return.children;
+          return _return;
+        })
+      }),
+    };
+  /* <!-- Scaffolding Functions --> */
 
   /* <!-- External Visibility --> */
   return {
@@ -80,7 +208,7 @@ Data = function() {
           title: "Testing Dialog",
           validate: values => values ? true : false,
           state: state,
-        }, populate, check);
+        }, _err, populate, check);
 
         var _set = {
           text: (el, val) => el.val(val),
@@ -223,104 +351,7 @@ Data = function() {
 
         var _err = e => resolve(FACTORY.Flags.error("Forms Test FAILED", e).reflect(false));
 
-        var _showdown = new showdown.Converter({
-            tables: true
-          }),
-          _markdown = markdown => _showdown.makeHtml(markdown),
-          _blocks = {
-            basic: title => {
-              if (title && debug) FACTORY.Flags.log("Generating Test FORM for:", title);
-              return {
-                id: `__${GEN.an(GEN.i(20, 30))}`,
-                field: GEN.a(GEN.i(10, 15)),
-                title: GEN.t(GEN.i(5, 25)),
-                help: _markdown(GEN.t(GEN.i(10, 40))),
-                large: GEN.b(),
-                required: GEN.b(),
-                _title: title,
-              };
-            },
-            spans: [{
-                value: "Custom",
-                name: "Custom"
-              },
-              {
-                span: "w",
-                value: "Weekly",
-                name: "Weekly"
-              },
-              {
-                span: "M",
-                value: "Monthly",
-                name: "Monthly"
-              },
-              {
-                span: "y",
-                value: "Yearly",
-                name: "Yearly"
-              }
-            ],
-            options: () => _.map(_.range(GEN.i(2, 10)), () => ({
-              class: `btn-${_.sample(
-                              ["primary","info","success","warning","danger","dark"])}`,
-              value: GEN.an(GEN.i(10, 30)),
-              icon: _.sample(["", "visibility_off"])
-            })),
-            pairs: () => _.map(_.range(GEN.i(4, 20)), () => ({
-              value: GEN.a(GEN.i(5, 10)),
-              name: GEN.t(GEN.i(10, 30)),
-            })),
-            lists: () => _.map(_.range(GEN.i(4, 8)), () => ({
-              value: GEN.a(GEN.i(5, 10)),
-              name: GEN.t(GEN.i(10, 30)),
-              class: `${GEN.a(GEN.i(5, 10))} ${GEN.b() ? "offline" : "paper"}`,
-              divider: GEN.b(10)
-            })),
-            children: (level, options) => {
-              if (level > GEN.i(1, 5)) return null;
-              return _.map(_.range(1, GEN.i(2, 8)), number => {
-                var _return = {
-                  value: number,
-                  details: GEN.t(GEN.i(0, 60)),
-                };
-                if (GEN.b(40)) _return.children = _blocks.children(level + 1, options);
-                if (_return.children === null) delete _return.children;
-                if (_return.children === undefined) { /* <!-- Evidence only if a Leaf --> */
-                  if (GEN.b(90)) {
-                    _return.evidence = true;
-                    if (GEN.b(70))
-                      _return._data = {
-                        options: _.map(_.range(GEN.i(0, 4)), () => _.sample(options)),
-                        details: GEN.t(GEN.i(0, 100))
-                      };
-                  }
-                }
-                return _return;
-              });
-            },
-            scale: options => ({
-              name: GEN.t(GEN.i(5, 20)),
-              title: GEN.t(GEN.i(10, 30)),
-              scale: _.map(_.range(1, GEN.i(2, 11)), number => {
-                var _return = {
-                  number: number,
-                  type: GEN.t(GEN.i(5, 10)),
-                  name: GEN.an(GEN.i(10, 20)),
-                  details: GEN.t(GEN.i(0, 50)),
-                  colour: `#${GEN.c()}`,
-                  criteria: _.map(_.range(1, GEN.i(1, 6)), number => ({
-                    value: number,
-                    name: GEN.t(GEN.i(10, 30)),
-                    details: _markdown(GEN.t(GEN.i(0, 200))),
-                  })),
-                };
-                if (GEN.b(90)) _return.children = _blocks.children(1, options);
-                if (_return.children === null) delete _return.children;
-                return _return;
-              })
-            }),
-          },
-          _checks = {
+        var _checks = {
             list: (list, map) => (name, values) => {
               list.length > 0 ?
                 list.length == 1 ?
@@ -443,38 +474,59 @@ Data = function() {
                   icon: "query_builder",
                   type: _default,
                   options: _blocks.spans,
+                  _value: null,
                 });
+              /*
               _return._value = (value => (name, values) => {
                 values.to.have.deep.nested.property(`${name}.Values.Type[0]`, value);
                 values.to.have.deep.nested.property(`${name}.Values.Type[1]`, value);
               })(_default);
+             	*/
+              return _return;
+            },
+            span_Selected: () => {
+              var _default = "Custom",
+                _return = _.extend(_blocks.basic("Selected Date Span"), {
+                  template: "field_span",
+                  icon: "query_builder",
+                  type: _default,
+                  options: _blocks.spans
+                });
+              _return._value = ((span, start) => (name, values) => {
+                values.to.have.deep.nested.property(`${name}.Values.Type[0]`, span.value);
+                values.to.have.deep.nested.property(`${name}.Values.Type[1]`, span.value);
+                values.to.have.deep.nested.property(`${name}.Values.Start`,
+                  start.format("YYYY-MM-DD"));
+                values.to.have.deep.nested.property(`${name}.Values.End`,
+                  start.clone().add(1, span.span).add(-1, "d").format("YYYY-MM-DD"));
+              })(_blocks.spans[_blocks.spans.length - 1], moment(new Date()));
+              _return._populate = ((id, span) => modal => {
+                modal.find(`[data-id='${id}'] a.dropdown-item[data-value='${span.value}']`).first().click();
+              })(_return.id, _blocks.spans[_blocks.spans.length - 1]);
               return _return;
             },
             span_Date: () => {
-              var _start = new Date(),
-                _end = new Date(_start),
-                _default = "Weekly",
+              var _start = moment(new Date()),
+                _end = _start.clone().add(7, "d"),
+                _default = "Custom",
                 _details = GEN.t(GEN.i(10, 30)),
                 _return = _.extend(_blocks.basic("Date Span"), {
                   template: "field_span",
                   icon: "query_builder",
                   type: _default,
                   options: _blocks.spans,
-                  details: GEN.t(GEN.i(10, 30))
+                  details: _details
                 });
-              _end.setDate(_end.getDate() + 7);
               _return._value = ((value, start, end, details) => (name, values) => {
-                values.to.have.deep.nested.property(`${name}.Values.Type[0]`, value);
-                values.to.have.deep.nested.property(`${name}.Values.Type[1]`, value);
                 values.to.have.deep.nested.property(`${name}.Values.Start`,
-                  start.toISOString().split("T")[0]);
+                  start.format("YYYY-MM-DD"));
                 values.to.have.deep.nested.property(`${name}.Values.End`,
-                  end.toISOString().split("T")[0]);
+                  end.format("YYYY-MM-DD"));
                 values.to.have.deep.nested.property(`${name}.Values.Details`, details);
               })(_default, _start, _end, _details);
               _return._populate = ((id, start, end, details) => modal => {
-                modal.find(`#${id}_START`).val(start.toISOString().split("T")[0]);
-                modal.find(`#${id}_END`).val(end.toISOString().split("T")[0]);
+                modal.find(`#${id}_START`).val(start.format("YYYY-MM-DD"));
+                modal.find(`#${id}_END`).val(end.format("YYYY-MM-DD"));
                 modal.find(`#${id}_DETAILS`).val(details);
               })(_return.id, _start, _end, _details);
               return _return;
@@ -697,33 +749,13 @@ Data = function() {
             },
           };
 
-        var _generate = fn => {
-
-          var _return = {
-              state: [],
-              fields: []
-            },
-            _order = 0;
-
-          var _add = field => {
-            if (field.order === undefined) field.order = ++_order;
-            _return.state.push(field);
-            _return.fields.push(DISPLAY.template.get(field).trim());
-          };
-
-          fn ? _add(fn()) : _.times(GEN.i(1, 10), () => _add(_.sample(_types)()));
-
-          return _return;
-
-        };
-
         var _form = (fields, populate, check, title) => _modal("form", {
             id: "forms_form",
             title: `Testing ${title ? title : "Form"}`,
             fields: fields,
-          }, populate, check),
+          }, _err, populate, check),
           _test = type => {
-            var _data = _generate(type);
+            var _data = GENERATE(type);
             return _form(_data.fields.join("\n").trim(),
               modal => {
 
@@ -737,27 +769,31 @@ Data = function() {
 
                 _.each(_data.state, value => {
 
-                  var _name = value.field ? value.field : value.id;
+                  try {
+                    var _name = value.field ? value.field : value.id;
 
-                  if (_name !== value.id) values.to.not.have.a.property(value.id);
+                    if (_name !== value.id) values.to.not.have.a.property(value.id);
 
-                  if (value._value === null) {
+                    if (value._value === null) {
 
-                    /* <!-- Test there is no value --> */
-                    values.to.not.have.a.property(_name);
+                      /* <!-- Test there is no value --> */
+                      values.to.not.have.a.property(_name);
 
-                  } else {
+                    } else {
 
-                    /* <!-- Test Order --> */
-                    var _order = value.order ? value.order : false;
-                    values.to.have.deep.nested.property(`${_name}.Order`, _order);
+                      /* <!-- Test Order --> */
+                      var _order = value.order ? value.order : false;
+                      values.to.have.deep.nested.property(`${_name}.Order`, _order);
 
-                    /* <!-- Test Value/s --> */
-                    value._value !== undefined ? _.isFunction(value._value) ?
-                      value._value(_name, values) :
-                      values.to.have.deep.nested.property(`${_name}.Value`, value._value) :
-                      values.to.have.deep.nested.property(`${_name}.Value`);
+                      /* <!-- Test Value/s --> */
+                      value._value !== undefined ? _.isFunction(value._value) ?
+                        value._value(_name, values) :
+                        values.to.have.deep.nested.property(`${_name}.Value`, value._value) :
+                        values.to.have.deep.nested.property(`${_name}.Value`);
 
+                    }
+                  } catch (err) {
+                    _err(err);
                   }
 
                 });
@@ -769,11 +805,8 @@ Data = function() {
 
         try {
 
-          const run = promises => _.reduce(promises, (all, promise) => all.then(
-            result => promise().then(Array.prototype.concat.bind(result))), Promise.resolve([]));
-
-          run(_.map(_types, type => () => _test(type)))
-            .then(() => _test())
+          RUN(_.map(_types, type => () => _test(type)), _err)
+            .then(() => _test(_types))
             .then(() => resolve(FACTORY.Flags.log("Forms Test SUCCEEDED").reflect(true)))
             .catch(_err);
 
@@ -791,9 +824,290 @@ Data = function() {
 
         var _err = e => resolve(FACTORY.Flags.error("Interactions Test FAILED", e).reflect(false));
 
+        var _interactions = {
+            text: (input, clear) => {
+              var value = GEN.t(GEN.i(1, 100));
+              input.val(value);
+              FACTORY.Flags.log("Set Field Value to:", value);
+              expect(input.val()).to.be.a("string").that.equals(value);
+              if (clear) {
+                clear.click();
+                FACTORY.Flags.log("Cleared Field");
+              } else {
+                input.val("");
+              }
+              expect(input.val()).to.be.empty;
+            }
+          },
+          _form = (fields, interact, title) => _modal("form", {
+            id: "interaction_form",
+            title: `Testing ${title ? title : "Interaction"}`,
+            fields: fields,
+          }, _err, interact),
+          _types = {
+            textual: () => _.extend(_blocks.basic("Textbox Field"), {
+              template: "field_textual",
+              _interact: field => {
+                var input = field.find("input[type='text'], textarea"),
+                  clear = field.find("button.eraser");
+                _.times(GEN.i(1, 10), () => _interactions.text(input, clear));
+              }
+            }),
+            numeric: () => _.extend(_blocks.basic("Stepped Numeric Field"), {
+              template: "field_numeric",
+              increment: GEN.i(2, 20),
+              min: 0,
+              max: GEN.i(200, 300),
+              suffix: GEN.t(GEN.i(5, 10)),
+              details: GEN.t(GEN.i(5, 10)),
+              _interact: (field, modal, state) => {
+                var details = field.find("textarea"),
+                  display = field.find("input[type='text']"),
+                  value = field.find("input[type='number']"),
+                  increase = field.find("button.alter-numerical.btn-primary").first(),
+                  decrease = field.find("button.alter-numerical.btn-info").first(),
+                  clear = field.find("button.eraser").first(),
+                  _cleared = () => {
+                    /* <!-- Clear Inputs --> */
+                    clear.click();
+                    expect(value.val()).to.be.empty;
+                    expect(display.val()).to.be.empty;
+                  };
+                _.times(GEN.i(1, 10), () => _interactions.text(details));
+                _.times(GEN.i(1, 10), () => {
+
+                  /* <!-- Test Increases (Up to / Above Potential Maximum) --> */
+                  _.times(GEN.i(1, Math.round((state.max * 2) / state.increment)), index => {
+                    increase.click();
+                    var _value = Math.min((index + 1) * state.increment, state.max);
+                    expect(Number(value.val())).to.be.a("number")
+                      .that.equals(_value);
+                    expect(display.val()).to.be.a("string")
+                      .that.equals(`${_value} ${state.suffix}`);
+                  });
+
+                  /* <!-- Clear Inputs --> */
+                  _cleared();
+
+                  /* <!-- Test Max Value --> */
+                  _.times(Math.round((state.max / state.increment) + 1), () => increase.click());
+                  expect(Number(value.val())).to.be.a("number")
+                    .that.equals(state.max);
+
+                  /* <!-- Test Decreases (Down to / Below Minimum) --> */
+                  _.times(GEN.i(1, Math.round((state.max * 2) / state.increment)), index => {
+                    decrease.click();
+                    var _value = Math.max(state.max - ((index + 1) * state.increment), state.min);
+                    expect(Number(value.val())).to.be.a("number")
+                      .that.equals(_value);
+                    _value === 0 ?
+                      expect(display.val()).to.be.empty :
+                      expect(display.val()).to.be.a("string")
+                      .that.equals(`${_value} ${state.suffix}`);
+
+                  });
+
+                  /* <!-- Clear Inputs --> */
+                  _cleared();
+
+                });
+              }
+            }),
+            span: () => _.extend(_blocks.basic("Date Span Field"), {
+              template: "field_span",
+              icon: "query_builder",
+              type: "Weekly",
+              span: "w",
+              options: _blocks.spans,
+              details: GEN.t(GEN.i(10, 30)),
+              _interact: (field, modal, state) => {
+
+                var start = field.find(`input[type='text']#${state.id}_START`),
+                  end = field.find(`input[type='text']#${state.id}_END`),
+                  details = field.find(`textarea#${state.id}_DETAILS`),
+                  clear = field.find("button.eraser"),
+                  increase = field.find("button.alter-numerical.btn-primary"),
+                  decrease = field.find("button.alter-numerical.btn-info"),
+                  format = "YYYY-MM-DD",
+                  _start = moment(new Date()),
+                  _end = moment(new Date(_start));
+                /* <!-- Check details textarea --> */
+                _.times(GEN.i(1, 10), () => _interactions.text(details));
+
+                /* <!-- Check initial date --> */
+                _end.add(6, "d");
+                start.val(_start.format(format)).change();
+
+                expect(start.val()).to.be.a("string")
+                  .that.equals(_start.format(format));
+                expect(end.val()).to.be.a("string")
+                  .that.equals(_end.format(format));
+
+                /* <!-- Check increase/decrease date --> */
+                increase.first().click();
+                _start.add(7, "d");
+                _end.add(7, "d");
+                expect(start.val()).to.be.a("string")
+                  .that.equals(_start.format(format));
+                expect(end.val()).to.be.a("string")
+                  .that.equals(_end.format(format));
+                decrease.first().click();
+                _start.add(-7, "d");
+                _end.add(-7, "d");
+                expect(start.val()).to.be.a("string")
+                  .that.equals(_start.format(format));
+                expect(end.val()).to.be.a("string")
+                  .that.equals(_end.format(format));
+
+                /* <!-- Check clear --> */
+                clear.first().click();
+                expect(start.val()).to.be.empty;
+                expect(end.val()).to.be.empty;
+
+                /* <!-- Test Each Option --> */
+                start.val(_start.format(format)).change();
+                _.each(_blocks.spans, span => {
+                  field.find(`a.dropdown-item[data-value='${span.value}']`).first().click();
+                  expect(start.val()).to.be.a("string")
+                    .that.equals(_start.format(format));
+                  span.value == "Custom" ?
+                    expect(end.val()).to.be.a("string").that.equals(_end.format(format)) :
+                    expect(end.val()).to.be.a("string")
+                    .that.equals(_start.clone()
+                      .add(1, span.span ? span.span : "d")
+                      .add(-1, "d").format(format));
+
+                });
+
+              },
+            }),
+            radio: () => _.extend(_blocks.basic("Radio Options Field"), {
+              template: "field_radio",
+              icon: "gavel",
+              options: _blocks.options(),
+              details: GEN.t(GEN.i(10, 50)),
+              _interact: (field, modal, state) => {
+                var display = field.find(`textarea#${state.id}`),
+                  details = field.find(`textarea[name='${state.id}_DETAILS']`);
+
+                /* <!-- Check each option --> */
+                _.each(state.options, option => {
+                  field.find(`input[type='radio'][data-value='${option.value}']`)
+                    .first().parent("label").click();
+                  expect(display.val()).to.be.a("string")
+                    .that.equals(option.value);
+                });
+
+                /* <!-- Check clear option --> */
+                field.find("input[type='radio']:not([data-value])")
+                  .first().parent("label").click();
+                expect(display.val()).to.be.empty;
+
+                /* <!-- Check details textarea --> */
+                _.times(GEN.i(1, 10), () => _interactions.text(details));
+
+              },
+            }),
+            complex: () => _.extend(_blocks.basic("Complex (with Options Selection)"), {
+              template: "field_complex",
+              icon: "query_builder",
+              options: _blocks.pairs(),
+              details: GEN.t(GEN.i(10, 50)),
+              prefix: GEN.t(GEN.i(5, 10)),
+              type: GEN.an(GEN.i(10, 15)),
+              _interact: (field, modal, state) => {
+                var _additions = _.map(_.range(GEN.i(1, 10)), () => ({
+                    option: _.sample(state.options),
+                    details: GEN.t(GEN.i(10, 50)),
+                  })),
+                  details = field.find(`textarea#${state.id}_DETAILS`),
+                  button = field.find(`button#${state.id}_TYPE`),
+                  list = field.find(`div#${state.id}_LIST`),
+                  add = field.find("button.btn-primary");
+
+                /* <!-- Check details textarea --> */
+                _.times(GEN.i(1, 10), () => _interactions.text(details));
+
+                /* <!-- Check default button text --> */
+                expect(button.first().text().trim()).to.be.a("string")
+                  .that.equals(state.prefix);
+
+                /* <!-- Check missing details --> */
+                add.first().click();
+                expect(details.hasClass("invalid")).to.equal(true);
+
+                /* <!-- Add Basic Item --> */
+                var _details = GEN.t(GEN.i(10, 50));
+                details.val(_details);
+                add.first().click();
+                var _item = list.find(".list-item").last();
+                expect(_item.find("span[data-output-name='Value']").text())
+                  .to.be.a("string")
+                  .that.equals(`${_details}`);
+                expect(_item.find("span[data-output-name='Type']").text())
+                  .to.be.a("string")
+                  .that.equals(state.type);
+                expect(details.val()).to.be.empty;
+
+                /* <!-- Check each addition --> */
+                _.each(_additions, addition => {
+
+                  var _option = field.find(`a.dropdown-item[data-value='${addition.option.value}']`);
+                  expect(_option.first().text().trim()).to.be.a("string")
+                    .that.equals(addition.option.name.trim());
+                  _option.first().click();
+                  expect(button.first().text().trim()).to.be.a("string")
+                    .that.equals(addition.option.value.trim());
+
+                  details.val(addition.details);
+                  add.first().click();
+
+                  var _item = list.find(".list-item").last();
+                  expect(_item.find("span[data-output-name='Value']").text())
+                    .to.be.a("string")
+                    .that.equals(`${addition.details} [${state.prefix}: ${addition.option.value}]`);
+                  expect(_item.find("span[data-output-name='Type']").text())
+                    .to.be.a("string")
+                    .that.equals(state.type);
+
+                });
+
+                /* <!-- Remove all List Items --> */
+                list.find(".list-item").each(function() {
+                  var _count = list.find(".list-item").length;
+                  $(this).find("a.delete").click();
+                  expect(list.find(".list-item").length)
+                    .to.be.a("number")
+                    .that.equals(_count - 1);
+                });
+
+              },
+            }),
+          },
+          _test = type => {
+            var _data = GENERATE(type);
+            return _form(_data.fields.join("\n").trim(), modal => {
+                try {
+                  _.each(_data.state, f => {
+                    if (f._interact) {
+                      var _field = modal.find(`[data-id='${f.id}']`);
+                      FACTORY.Flags.log("Interacting with Field:", _field);
+                      f._interact(_field, modal, f);
+                    }
+                  });
+                } catch (err) {
+                  _err(err);
+                }
+              },
+              _data.state.length === 1 && _data.state[0]._title ? _data.state[0]._title : false);
+          };
+
         try {
 
-          resolve(FACTORY.Flags.log("Interactions Test SUCCEEDED").reflect(true));
+          RUN(_.map(_types, type => () => _test(type)), _err)
+            .then(() => _test(_types))
+            .then(() => resolve(FACTORY.Flags.log("Interactions Test SUCCEEDED").reflect(true)))
+            .catch(_err);
 
         } catch (err) {
           _err(err);

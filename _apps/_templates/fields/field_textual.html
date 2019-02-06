@@ -5,7 +5,8 @@
 {{!-- id = Control ID --}}
 {{!-- [large] = Size of Form Element Group --}}
 {{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
-{{!-- [button] = Button Text --}}
+{{!-- [clear] = Whether clear button should be displayed --}}
+{{!-- [button] = Button Text (will include clear button too) --}}
 {{!-- [action] = Button Action Command --}}
 {{!-- [icon] = Icon for left-side of Element Group --}}
 {{!-- [rows] = Number of Rows of Text to Expect (decides between text input and textbox) --}}
@@ -33,22 +34,22 @@
 	<label class="{{which wide 'col-12' 'col-md-3'}} col-form-label"
          for="{{id}}">{{val "" title field}}</label>
 	<div class="{{which wide 'col-12' 'col-md-9'}}"> 
-    {{#if button}}<div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
+    {{#if (any button clear)}}<div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
 			{{> control_button b_small="true" b_icon_large="true" 
     		b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
-			{{> control_button b_small="true" b_id=(concat id "_BUTTON")
-    		b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button }}
+			{{#if button}}{{> control_button b_small="true" b_id=(concat id "_BUTTON")
+    		b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button }}{{/if}}
 		</div>{{/if}}
 		<div class="input-group{{#if large}} input-group-lg{{/if}}">
 			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
 			{{#if rows}}
 			<textarea id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} class="form-control{{#if large}} form-control-lg{{/if}} resizable optional"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}} rows="{{rows}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>{{#if value}}{{value}}{{/if}}</textarea>
 			{{else}}
-			<input id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}}{{#if value}} value="{{value}}"{{/if}} {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}/>
+			<input id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}}{{#if value}} value="{{value}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}/>
 			{{/if}}
-			{{#if button}}<span class="input-group-append d-none d-lg-flex">
+			{{#if (any button clear)}}<span class="input-group-append d-none d-lg-flex">
 				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
-				{{> control_button b_id=(concat id "_BUTTON") b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button }}
+				{{#if button}}{{> control_button b_id=(concat id "_BUTTON") b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button }}{{/if}}
       </span>{{/if}}
 		</div>
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}

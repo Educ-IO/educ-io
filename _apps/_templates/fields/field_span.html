@@ -6,6 +6,8 @@
 {{!-- [large] = Size of Form Element Group --}}
 {{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
 {{!-- [icon] = Icon for left-side of Element Group (at larger screen sizes only) --}}
+{{!-- [type] = Default Text for the Span Button --}}
+{{!-- [span] = Default Span Value for the Span Button --}}
 {{!-- [details] = Whether details input should be displayed (this text will be the field placeholder) --}}
 {{!-- [options] = Collection of shortcut options (e.g. Weekly, Monthly) to display. They can have a span (Moment style), a value (for output) and a name (for display). --}}
 {{!-- [required] = Input is required --}}
@@ -30,38 +32,64 @@
 	<label class="col-md-3 col-form-label" for="{{id}}">{{val "" title field}}</label>
 	<div class="col-md-9">
 		<div class="btn-group float-right mb-1 d-xl-none" role="group" id="{{id}}_BUTTONS">
-			{{#if options}}{{> control_button b_small="true" b_class="btn-info alter-numerical" b_title="Decrease" b_target=id b_modifier=(concat id "_PERIOD") b_icon="remove" b_value=(concat "-" (either increment 1)) }}
-    	{{> control_button b_small="true" b_class="btn-primary alter-numerical" b_title="Increase" b_target=id b_modifier=(concat id "_PERIOD") b_icon="add" b_value=(either increment 1)}}
-      {{> control_button b_id=(concat id "_PERIOD") b_class="btn-dark complex-list-type dropdown-toggle" b_targets=id b_default=type b_text=type b_span="" b_output_type="String" b_output_name="Type" b_toggle="dropdown"}}
+			{{#if options}}{{> control_button b_small="true" 
+      	b_class="btn-info alter-numerical" b_title="Decrease" b_target=id
+      	b_modifier=(concat id "_PERIOD") b_icon="remove" b_value=(concat "-" (either increment 1)) }}
+    	{{> control_button b_small="true" b_class="btn-primary alter-numerical"
+      	b_title="Increase" b_target=id b_modifier=(concat id "_PERIOD") b_icon="add"
+      	b_value=(either increment 1)}}
+      {{> control_button b_id=(concat id "_PERIOD") b_class="btn-dark complex-list-type dropdown-toggle" 
+      	b_targets=id b_default=type b_text=type b_span=(either span "") 
+      	b_output_type="String" b_output_name="Type" b_toggle="dropdown"}}
 			<div class="dropdown-menu" aria-labelledby="{{id}}_PERIOD">
 				{{#each options}}
-				<a class="dropdown-item alter-span" href="#" data-targets="{{../id}}_PERIOD" data-value="{{#if value}}{{value}}{{else}}{{this}}{{/if}}"{{#exists span}}{{#if span}} data-span="{{span}}"{{/if}}{{/exists}}>{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>				
+        <a class="dropdown-item alter-span" href="#" data-targets="{{../id}}_PERIOD"
+           data-value="{{val "" value this}}"
+           {{#exists span}}{{#if span}} data-span="{{span}}"{{/if}}{{/exists}}>{{val "" name this}}</a>
 				{{/each}}
 			</div>{{/if}}
 		</div>
 		<div id="{{id}}" class="input-group{{#if large}} input-group-lg{{/if}} input-daterange dt-picker">
 			{{#if icon}}{{> control_icon visible_at="xl" large=large icon=icon }}{{/if}}
-			<input id="{{id}}_START" type="text" data-output-type="Date" data-output-name="Start" class="form-control"
-             name="{{id}}_start" aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}" {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}{{#if required}} required="required"{{/if}}/>
+			<input id="{{id}}_START" type="text" data-output-type="Date" data-output-name="Start"
+             class="form-control" name="{{id}}_start" aria-label="{{val "" title field}}"
+             {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+             {{#if required}} required="required"{{/if}}/>
 			{{#if icon}}{{> control_icon prepend="true" append="true" large=large icon="forward" }}{{/if}}
-    	<input id="{{id}}_END" type="text" data-output-type="Date" data-output-name="End" class="form-control"
-             name="{{id}}_end" aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}" {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}{{#if required}} required="required"{{/if}}/>
+    	<input id="{{id}}_END" type="text" data-output-type="Date" data-output-name="End"
+             class="form-control" name="{{id}}_end" aria-label="{{val "" title field}}"
+             {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+             {{#if required}} required="required"{{/if}}/>
 			<span class="input-group-append d-xl-none">
-				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
+				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
+        	b_target=id b_icon="refresh" }}
 			</span>
       <span class="input-group-append d-none d-xl-flex">
-				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
-        {{#if options}}{{> control_button b_small="true" b_class="btn-info alter-numerical" b_title="Decrease" b_target=id b_modifier=(concat id "_PERIOD") b_icon="remove" b_value=(concat "-" (either increment 1)) }}
-    	{{> control_button b_small="true" b_class="btn-primary alter-numerical" b_title="Increase" b_target=id b_modifier=(concat id "_PERIOD") b_icon="add" b_value=(either increment 1)}}
-      {{> control_button b_id=(concat id "_PERIOD") b_class="btn-dark complex-list-type dropdown-toggle" b_targets=id b_default=type b_text=type b_span="" b_output_type="String" b_output_name="Type" b_toggle="dropdown"}}
+				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
+        	b_target=id b_icon="refresh" }}
+        {{#if options}}{{> control_button b_small="true"
+        	b_class="btn-info alter-numerical" b_title="Decrease" b_target=id
+        	b_modifier=(concat id "_PERIOD") b_icon="remove" b_value=(concat "-" (either increment 1)) }}
+    		{{> control_button b_small="true" b_class="btn-primary alter-numerical"
+        	b_title="Increase" b_target=id b_modifier=(concat id "_PERIOD") b_icon="add"
+        	b_value=(either increment 1)}}
+      	{{> control_button b_id=(concat id "_PERIOD")
+        	b_class="btn-dark complex-list-type dropdown-toggle" b_targets=id b_default=type
+        	b_text=type b_span=(either span "") b_output_type="String" b_output_name="Type"
+        	b_toggle="dropdown"}}
 			<div class="dropdown-menu" aria-labelledby="{{id}}_PERIOD">
 				{{#each options}}
-				<a class="dropdown-item alter-span" href="#" data-targets="{{../id}}_PERIOD" data-value="{{#if value}}{{value}}{{else}}{{this}}{{/if}}"{{#exists span}}{{#if span}} data-span="{{span}}"{{/if}}{{/exists}}>{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>				
+				<a class="dropdown-item alter-span" href="#" data-targets="{{../id}}_PERIOD"
+           data-value="{{val "" value this}}"
+           {{#exists span}}{{#if span}} data-span="{{span}}"{{/if}}{{/exists}}>{{val "" name this}}</a>
 				{{/each}}
 			</div>{{/if}}
 			</span>
 		</div>
-		{{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS" name="{{id}}_details" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2" rows="1" aria-label="{{details}}" placeholder="{{details}}"></textarea>{{/if}}
+		{{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS"
+                   		name="{{id}}_details"
+                      class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2"
+                      rows="1" aria-label="{{details}}" placeholder="{{details}}"></textarea>{{/if}}
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}
 	</div>
 </div>

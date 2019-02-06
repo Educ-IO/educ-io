@@ -145,8 +145,8 @@ App = function() {
             instructions: ಠ_ಠ.Display.doc.get({
               name: "INSTRUCTIONS"
             }),
-            all: ಠ_ಠ.Display.doc.get({
-              name: "ALL"
+            run_all: ಠ_ಠ.Display.doc.get({
+              name: "RUN_ALL"
             }),
             tests: ಠ_ಠ.Display.doc.get({
               name: "TESTS"

@@ -3260,7 +3260,7 @@ debug:
     - debug/INSTRUCTIONS
     - debug/FEATURES
     - debug/TESTS
-    - debug/ALL
+    - debug/RUN_ALL
   scopes:
     google:
       - scope: email
@@ -3498,6 +3498,10 @@ tagadoc:
   colour: cc0
   action: Find out more
   versions:
+    1.2.4 :
+      name : Bug Fix
+      desc : Updated for recent Google Calendar design refresh
+      type : minor
     1.2.3 :
       name : Search Shortcuts
       desc : Tags now display search shortcuts, which link back to Folders and Events Apps

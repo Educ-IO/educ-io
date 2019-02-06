@@ -42,6 +42,13 @@ Fields = (options, factory) => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var _get = id => {
+    if (!id) return false;
+    var ids = id.indexOf("||") > 0 ? id.split("||") : [id];
+    var selector = _.reduce(ids, (memo, id) => `${memo ? `${memo}, `: ""}#${id}, #${id} > input`, "");
+    return $(selector);
+  };
+
   var _listen = form => {
 
     /* <!-- Wire up event / visibility listeners --> */
@@ -64,7 +71,10 @@ Fields = (options, factory) => {
 
         if (_target.data("targets")) {
 
-          var _span = control.data("span") ? control.data("span") : "";
+          var _span = control.data("span") ?
+            control.data("span") :
+            control.parent(".dropdown-menu").siblings("button[data-span]") ?
+            control.parent(".dropdown-menu").siblings("button[data-span]").data("span") : "";
           _target.data("span", _span);
 
           _target = $("#" + _target.data("targets"));
@@ -122,9 +132,11 @@ Fields = (options, factory) => {
 
     };
 
-    form.find("button.alter-span, a.alter-span").click(e => _handler($(e.currentTarget)));
+    form.find("button.alter-span, a.alter-span")
+      .click(e => _handler($(e.currentTarget)));
 
-    form.find("button.alter-span:first-child, a.alter-span:first-child").each((i, el) => _handler($(el)));
+    form.find("button.alter-span:first-child, a.alter-span:first-child")
+      .each((i, el) => _handler($(el)));
 
   };
 
@@ -153,8 +165,9 @@ Fields = (options, factory) => {
         } else {
 
           var _suffix = _target.data("suffix"),
-            _current = Number(_target.val() ? (_suffix ? _target.val().split(" ")[0] : _target.val()) : 0);
-          if (_current + _value <= _max) _current += _value;
+            _current = Number(_target.val() ?
+              (_suffix ? _target.val().split(" ")[0] : _target.val()) : 0);
+          (_current + _value <= _max) ? _current += _value: _current = _max;
           if (_current <= _min) {
             _target.val("");
           } else if (_suffix) {
@@ -176,14 +189,20 @@ Fields = (options, factory) => {
     /* <!-- Wire up eraser actions --> */
     form.find(".eraser").click(e => {
       var _this = $(e.currentTarget),
-        _target = _this.data("targets");
-      if (_target) {
-        $(`#${_target}, #${_target} > input`).val("").removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
-      }
-      if (_this.data("reset")) {
-        var _reset = $(`#${_this.data("reset")}`);
-        if (_reset.data("default")) _reset.text(_reset.data("default"));
-      }
+        _clear = _get(_this.data("targets")),
+        _reset = _get(_this.data("reset"));
+
+      if (_clear) _clear.each(function() {
+        $(this).val("")
+          .change()
+          .removeClass("invalid")
+          .filter("textarea.resizable").map((i, el) => autosize.update(el));
+      });
+      if (_reset) _reset.each(function() {
+        var _$ = $(this),
+          _default = _$.data("default");
+        if (_default) _$.text(_default);
+      });
     });
 
   };

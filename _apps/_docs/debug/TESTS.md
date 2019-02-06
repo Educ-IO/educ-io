@@ -1,5 +1,5 @@
 {% for item in site.tests %}
-<div class="row highlight_all highlight_{{ item.title | downcase }} px-2 px-lg-3 px-xl-4 py-3 py-lg-3 py-xl-4 mb-1" markdown="1"><div class="col" markdown="1">
+<div class="row highlight_all highlight_{{ item.title | downcase }} pb-3 pb-xl-4 m-1 m-xl-2" markdown="1"><div class="col" markdown="1">
     
 #### {{ item.title }}
     

@@ -51,11 +51,11 @@ Data = (options, factory) => {
             el.text().trim() : (el[0].nodeName == "A") ? {
               Id: el.prop("id"),
               Url: el.prop("href"),
-              Text: el.text()
+              Text: el.text().trim()
             } : (el[0].nodeName == "IMG") ? {
               Url: el.prop("src")
             } : (el[0].nodeName == "BUTTON") ?
-            (el.data("default") && el.data("default") == el.text()) ? null : el.text().trim() :
+            (el.data("default") && el.data("default") == el.text().trim()) ? null : el.text().trim() :
             el.val();
 
           /* <!-- DEBUG: Log Return Value --> */

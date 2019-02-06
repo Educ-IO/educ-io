@@ -4,13 +4,16 @@
     <div class="col">
       {{#if instructions}}{{{ instructions }}}{{/if}}
       <div class="d-flex justify-content-start align-items-center">
-        {{#if all}}{{{ all }}}{{/if}}
+        {{#if run_all}}{{{ run_all }}}{{/if}}
         <span id="{{id}}_counter" class="display-3 text-muted"></span>
       </div>
     </div>
   </div>
-  <div class="row d-flex flex-column">
-    {{#if tests}}{{{ tests }}}{{/if}}
+  <div class="row">
+    <div class="d-flex flex-column">
+      {{#if tests}}{{{ tests }}}{{/if}}
+    </div>
   </div>
+  
 </div>
 {% endraw %}
