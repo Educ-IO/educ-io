@@ -11,6 +11,8 @@
 {{!-- [prefix] = Button Text (default) for Dropdown Button (displayed as prefix in output). --}}
 {{!-- [options] = Collection of selection options for each item. Can be strings, or by value/name pairs. If name/value pairs are used, value is used for selected display and return object, but name is displayed in the dropdown list. --}}
 {{!-- [type] = Name of Item type, for visual display (e.g. 'Add |Target| to List). Defaults to Item. --}}
+{{!-- [list_field] = Field Name for list (e.g. Targets) --}}
+{{!-- [items] Name of Items Field Holder (e.g. Items) --}}
 {{!-- [help] = Help information (html) to display --}}
 {{!-- [description] = Template Description --}}
 
@@ -52,7 +54,7 @@
     </div>
 		<div class="input-group">
 			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
-			<input id="{{id}}" name="{{id}}" hidden="hidden" type="checkbox">
+			<input id="{{id}}" name="{{id}}_VALUE" data-output-name="Value" hidden="hidden" type="checkbox">
 			<textarea id="{{id}}_DETAILS" 
                 class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#unless required}} optional{{/unless}}"
                 rows="1" aria-label="{{either details 'Details'}}"
@@ -78,7 +80,9 @@
         	b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" }}
 			</span>
 		</div>
-		<div id="{{id}}_LIST" class="list-data d-flex flex-column mt-1 mt-md-2"></div>
+		<div id="{{id}}_LIST" data-holder-field="{{either items 'Items'}}"
+         class="list-data list-group list-group-light d-flex flex-column my-1 my-md-2"
+         data-controls="{{id}}"{{#if list_field}} data-output-name="{{list_field}}"{{/if}}></div>
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-justify">{{{help}}}</div>{{/if}}
 	</div>
 </div>

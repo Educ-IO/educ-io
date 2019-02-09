@@ -1,20 +1,28 @@
 {% raw %}
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="d-flex align-items-center flex-row mt-1 list-item{{#if class}} {{class}}{{/if}}">
-	<a class="align-self-center d-flex delete icon" href="#" title="{{delete}}">
+<div 
+   class="d-flex align-items-center flex-row list-item list-group-item p-2{{#if class}} {{class}}{{/if}}">
+	<a class="align-self-center d-flex delete icon" href="#" title="{{either delete 'Delete Item from List'}}">
 		<i class="align-self-center mr-2 material-icons text-danger">delete_forever</i>
 	</a>
-	<p data-output-name="Items"
-     class="align-self-center{{#present icon}} d-flex{{/present}} px-0 py-0 mx-0 my-0">
-		{{#present icon_url}}<img data-output-name="Icon_Url" class="ml-1 mr-2{{#if class}} {{class}}{{/if}}" src="{{icon_url}}"/>{{else}}{{#present icon}}<i data-output-name="Icon" class="align-self-center mr-2 material-icons{{#if class}} {{class}}{{/if}}">{{icon}}</i>{{/present}}{{/present}}
-		{{#if url}}
-		<a data-output-name="Value"
-       {{#present id}}id="{{id}}" {{else}}{{#present for}}id="{{for}}" {{/present}}{{/present}}href="{{url}}"
+	<p{{#if template}} data-template="{{template}}"{{/if}}data-output-name="{{either field 'Items'}}"
+     class="align-self-center d-flex align-items-center px-0 py-0 mx-0 my-0">
+		{{#present (either icon_url Icon_Url)}}<img data-output-name="Icon_Url"
+    	class="ml-1 mr-2{{#if class}} {{class}}{{/if}}" src="{{#with Icon_Url}}{{either Url this}}{{else}}{{icon_url}}{{/with}}"/>{{else}}<i data-output-name="Icon" class="align-self-center mr-2 material-icons{{#if class}} {{class}}{{/if}}">{{either icon Icon}}</i>{{/present}}
+		{{#if url}}<a data-output-name="Value"
+       {{#present id}}id="{{id}}"{{else}}{{#present for}}id="{{for}}"{{/present}}{{/present}}
+       href="{{url}}"
        target="_blank">{{details}}</a>
 		{{else}}
-		<span data-output-name="Value">{{details}}</span>
-		{{/if}}
-		<span data-output-name="Type" class="badge badge-secondary ml-2 align-self-center">{{type}}</span>
+    {{#if Value}}{{#if Value.Url}}{{#with Value}}<a data-output-name="Value"
+       {{#present Id}}id="{{Id}}"{{else}}{{#present For}}id="{{For}}"{{/present}}{{/present}}
+       href="{{Url}}"
+       target="_blank">{{Text}}</a>
+    {{/with}}{{else}}
+		<span data-output-name="Value">{{Value}}</span>
+		{{/if}}{{else}}
+		<span data-output-name="Value">{{val "" details}}</span>{{/if}}{{/if}}
+		<span data-output-name="Type" class="badge badge-secondary ml-2 align-self-center">{{val "" type Type}}</span>
 	</p>
 </div>
 {% endraw %}

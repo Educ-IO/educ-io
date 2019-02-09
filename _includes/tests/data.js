@@ -30,36 +30,33 @@ Data = function() {
         max: max
       }),
       c: () => GEN.p(6, "0123456789abcdef")
+    },
+    RUN = promises => _.reduce(promises, (all, promise) => all.then(
+      result => promise().then(Array.prototype.concat.bind(result))
+    ), Promise.resolve([])),
+    GENERATE = fn => {
+      var _return = {
+          state: [],
+          fields: []
+        },
+        _order = 0;
+      var _add = field => {
+        if (field.order === undefined) field.order = ++_order;
+        _return.state.push(field);
+        _return.fields.push(DISPLAY.template.get(field).trim());
+      };
+      fn && _.isFunction(fn) ?
+        _add(fn()) : _.times(GEN.i(4, 10), () => _add(_.sample(fn)()));
+      return _return;
     };
-  const RUN = (promises, err) => _.reduce(promises, (all, promise) => all.then(
-    result => promise().then(Array.prototype.concat.bind(result)).catch(err)), Promise.resolve([]));
-  const GENERATE = fn => {
-
-    var _return = {
-        state: [],
-        fields: []
-      },
-      _order = 0;
-
-    var _add = field => {
-      if (field.order === undefined) field.order = ++_order;
-      _return.state.push(field);
-      _return.fields.push(DISPLAY.template.get(field).trim());
-    };
-
-    fn && _.isFunction(fn) ? _add(fn()) : _.times(GEN.i(1, 10), () => _add(_.sample(fn)()));
-
-    return _return;
-
-  };
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  var debug, expect, dialog;
+  var debug, expect, dialog, data;
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _modal = (template, options, err, populate, check) => DISPLAY.modal(template, _.extend({
+  var _modal = (template, options, populate, check) => DISPLAY.modal(template, _.extend({
       backdrop: false,
       class: debug ? "" : "d-none",
     }, options), modal => {
@@ -74,7 +71,10 @@ Data = function() {
       );
     })
     .then(values => check ? check(values) : values)
-    .catch(err);
+    .then(result => {
+      if (result === false) throw "CHECK method failed";
+      return result;
+    });
   /* <!-- Internal Functions --> */
 
   /* <!-- Scaffolding Functions --> */
@@ -82,6 +82,19 @@ Data = function() {
       tables: true
     }) : false,
     _markdown = markdown => _showdown ? _showdown.makeHtml(markdown) : markdown,
+    _checks = {
+      list: (list, map, field) => (name, values) => {
+        list.length > 0 ?
+          list.length == 1 ?
+          values.to.have.deep.nested.property(
+            `${name}.Values${field ? `.${field}` : ""}.Items`, map(list[0])) :
+          values.to.have.deep.nested.property(
+            `${name}.Values${field ? `.${field}` : ""}.Items`)
+          .to.have.ordered.members(_.map(list, map)) &&
+          values.to.have.deep.nested.property(`${name}.Values.Value`, true) :
+          values.to.have.deep.nested.property(`${name}.Value`, false);
+      },
+    },
     _blocks = {
       basic: title => {
         if (title && debug) FACTORY.Flags.log("Generating Test FORM for:", title);
@@ -179,6 +192,470 @@ Data = function() {
           return _return;
         })
       }),
+      types: {
+        textual_Me: () => {
+          var _return = _.extend(_blocks.basic("Current User (Click)"), {
+            template: "field_textual",
+            icon: "face",
+            button: "Me!",
+            action: "me",
+          });
+          _return._value = (value => value)(FACTORY.me.full_name());
+          _return._populate = (id => modal => {
+            modal.find(`[data-id='${id}'] [data-action='me']`).first().click();
+          })(_return.id);
+          return _return;
+        },
+        textual_General: () => {
+          var _return = _.extend(_blocks.basic("Textbox"), {
+            template: "field_textual",
+          });
+          _return._value = GEN.b(70) ? GEN.t(GEN.i(1, 50)) : null;
+          _return._populate = ((id, value) => modal => {
+            value ? modal.find(`[data-id='${id}'] input[type='text']`).val(value) : false;
+          })(_return.id, _return._value);
+          return _return;
+        },
+        textual_Default: () => {
+          var _return = _.extend(_blocks.basic("Current User (Default)"), {
+            template: "field_textual",
+            default: "me",
+          });
+          _return._value = FACTORY.me.full_name();
+          return _return;
+        },
+        textual_Empty: () => {
+          var _return = _.extend(_blocks.basic("Empty Value"), {
+            template: "field_textual",
+            value: "",
+          });
+          _return._value = null;
+          return _return;
+        },
+        textual_Value: () => {
+          var _return = _.extend(_blocks.basic("Default Value"), {
+            template: "field_textual",
+            value: GEN.b(90) ? GEN.t(GEN.i(1, 10)) : null,
+          });
+          _return._value = _return.value;
+          return _return;
+        },
+        textual_Large: () => {
+          var _return = _.extend(_blocks.basic("Textarea"), {
+            template: "field_textual",
+            rows: GEN.i(3, 6),
+            wide: GEN.b(70),
+            button: "Load",
+            action: "load-g-doc",
+          });
+          _return._value = GEN.b(90) ? GEN.t(GEN.i(100, 500)) : null;
+          _return._populate = ((id, value) => modal => {
+            value ? modal.find(`[data-id='${id}'] textarea`).val(value) : false;
+          })(_return.id, _return._value);
+          return _return;
+        },
+        numeric_Empty: () => _.extend(_blocks.basic("Empty Numeric"), {
+          template: "field_numeric",
+          _value: null
+        }),
+        numeric_Stepped: () => {
+          var _number = GEN.i(1, 2000),
+            _return = _.extend(_blocks.basic("Numeric"), {
+              template: "field_numeric",
+              increment: _number,
+            });
+          _return._value = (value => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Values.Number`, value);
+            values.to.have.deep.nested.property(`${name}.Values.Value`, String(value));
+          })(_number);
+          _return._populate = (id => modal => {
+            modal.find(`[data-id='${id}'] button.btn-primary`).first().click();
+          })(_return.id);
+          return _return;
+        },
+        numeric_Complex: () => {
+          var _number = GEN.i(2, 20),
+            _value = GEN.b(80),
+            _return = _.extend(_blocks.basic("Numeric (with suffix/details)"), {
+              template: "field_numeric",
+              increment: _number,
+              min: 0,
+              max: _number,
+              suffix: GEN.t(GEN.i(5, 10)),
+              details: GEN.t(GEN.i(10, 50)),
+            });
+          _return._value = ((value, suffix, details) => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Values.Number`, value);
+            value ?
+              values.to.have.deep.nested.property(`${name}.Values.Value`, `${value} ${suffix}`) :
+              values.to.not.have.deep.nested.property(`${name}.Values.Value`);
+            values.to.have.deep.nested.property(`${name}.Values.Details`, details);
+          })(_value ? _number : 0, _return.suffix, _return.details);
+          _return._populate = ((id, value, details) => modal => {
+            modal.find(`[data-id='${id}'] button.btn-primary`).first().click();
+            modal.find(`[data-id='${id}'] textarea`).val(details);
+            if (!value) modal.find(`[data-id='${id}'] button.btn-info`).first().click();
+          })(_return.id, _value, _return.details);
+          return _return;
+        },
+        span_Empty: () => {
+          var _default = "Custom",
+            _return = _.extend(_blocks.basic("Empty Date Span"), {
+              template: "field_span",
+              icon: "query_builder",
+              type: _default,
+              options: _blocks.spans,
+              _value: null,
+            });
+          return _return;
+        },
+        span_Selected: () => {
+          var _default = "Custom",
+            _return = _.extend(_blocks.basic("Selected Date Span"), {
+              template: "field_span",
+              icon: "query_builder",
+              type: _default,
+              options: _blocks.spans
+            }),
+            _span = GEN.i(1, _blocks.spans.length - 1);
+          _return._value = ((span, start) => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Values.Type`, span.value);
+            values.to.have.deep.nested.property(`${name}.Values.Start`,
+              start.format("YYYY-MM-DD"));
+            values.to.have.deep.nested.property(`${name}.Values.End`,
+              start.clone().add(1, span.span).add(-1, "d").format("YYYY-MM-DD"));
+          })(_blocks.spans[_span], moment(new Date()));
+          _return._populate = ((id, span) => modal => {
+            modal.find(`[data-id='${id}'] a.dropdown-item[data-value='${$.escapeSelector(span.value)}']`)
+              .first().click();
+          })(_return.id, _blocks.spans[_span]);
+          return _return;
+        },
+        span_Date: () => {
+          var _start = moment(new Date()),
+            _end = _start.clone().add(7, "d"),
+            _default = "Custom",
+            _details = GEN.t(GEN.i(10, 30)),
+            _return = _.extend(_blocks.basic("Date Span"), {
+              template: "field_span",
+              icon: "query_builder",
+              type: _default,
+              options: _blocks.spans,
+              details: _details
+            });
+          _return._value = ((value, start, end, details) => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Values.Start`,
+              start.format("YYYY-MM-DD"));
+            values.to.have.deep.nested.property(`${name}.Values.End`,
+              end.format("YYYY-MM-DD"));
+            values.to.have.deep.nested.property(`${name}.Values.Details`, details);
+          })(_default, _start, _end, _details);
+          _return._populate = ((id, start, end, details) => modal => {
+            modal.find(`#${id}_START`).val(start.format("YYYY-MM-DD"));
+            modal.find(`#${id}_END`).val(end.format("YYYY-MM-DD"));
+            modal.find(`#${id}_DETAILS`).val(details);
+          })(_return.id, _start, _end, _details);
+          return _return;
+        },
+        radio_Empty: () => _.extend(_blocks.basic("Un-Selected Options"), {
+          template: "field_radio",
+          options: _blocks.options(),
+          _value: null,
+        }),
+        radio_Options: () => {
+          var _options = _blocks.options(),
+            _option = _.sample(_options),
+            _return = _.extend(_blocks.basic("Selected Options"), {
+              template: "field_radio",
+              icon: "gavel",
+              options: _options,
+              required: true,
+            });
+          _return._value = (option => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Value`, option.value);
+          })(_option);
+          _return._populate = ((id, option) => modal => {
+            modal.find(`[data-id='${id}'] input[data-value='${$.escapeSelector(option.value)}']`).first()
+              .parent("label").click();
+          })(_return.id, _option);
+          return _return;
+        },
+        radio_OptionsWithDetails: () => {
+          var _options = _blocks.options(),
+            _option = _.sample(_options),
+            _details = GEN.t(GEN.i(10, 50)),
+            _return = _.extend(_blocks.basic("Selected Options (with Details)"), {
+              template: "field_radio",
+              icon: "gavel",
+              options: _options,
+              details: GEN.t(GEN.i(10, 50)),
+            });
+          _return._value = ((option, details) => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Values.Value`, option.value);
+            values.to.have.deep.nested.property(`${name}.Values.Details`, details);
+          })(_option, _details);
+          _return._populate = ((id, option, details) => modal => {
+            modal.find(`[data-id='${id}'] input[data-value='${$.escapeSelector(option.value)}']`).first()
+              .parent("label").click();
+            modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(details);
+          })(_return.id, _option, _details);
+          return _return;
+        },
+        select_Empty: () => _.extend(_blocks.basic("No Selection"), {
+          template: "field_select",
+          options: _blocks.pairs(),
+          _value: null,
+        }),
+        select_Default: () => {
+          var _options = _blocks.pairs(),
+            _option = _.sample(_options);
+          var _return = _.extend(_blocks.basic("Default Selection"), {
+            template: "field_select",
+            options: _blocks.pairs(),
+            default: _option,
+          });
+          _return._value = (option => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Value`, option.value);
+          })(_option);
+          return _return;
+        },
+        select_Options: () => {
+          var _options = _blocks.pairs(),
+            _option = _.sample(_options),
+            _details = GEN.b() ? GEN.t(GEN.i(10, 50)) : "",
+            _return = _.extend(_blocks.basic("Selection"), {
+              template: "field_select",
+              icon: "query_builder",
+              options: _options,
+              details: GEN.t(GEN.i(10, 50)),
+            });
+          _return._value = ((option, details) => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Values.Value`, option.value);
+            if (details) values.to.have.deep.nested.property(`${name}.Values.Details`, details);
+          })(_option, _details);
+          _return._populate = ((id, option, details) => modal => {
+            modal.find(`[data-id='${id}'] select#${id}_SELECT`).val(option.value).trigger("change");
+            modal.find(`[data-id='${id}'] input#${id}`).val(option.value);
+            if (details) modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(details);
+          })(_return.id, _option, _details);
+          return _return;
+        },
+        complex_Empty: () => _.extend(_blocks.basic("Empty Complex"), {
+          template: "field_complex",
+          _value: null,
+        }),
+        complex_Add: () => {
+          var _additions = _.map(_.range(GEN.i(1, 10)), () => ({
+              details: GEN.b(90) ? GEN.t(GEN.i(10, 50)) : "",
+            })),
+            _return = _.extend(_blocks.basic("Complex"), {
+              template: "field_complex",
+              icon: "query_builder",
+              details: GEN.t(GEN.i(10, 50)),
+              type: GEN.t(GEN.i(5, 10)),
+            });
+          _return._value = ((additions, type) => _checks.list(additions, item => ({
+            Value: item.details.trim(),
+            Type: type.trim(),
+            __type: "list_item",
+          })))(_.filter(_additions, "details"), _return.type);
+          _return._populate = ((id, additions) => modal => {
+            _.each(additions, addition => {
+              if (addition.details)
+                modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(addition.details);
+              modal.find(`[data-id='${id}'] button.btn-primary`).first().delay(100).click();
+            });
+          })(_return.id, _additions);
+          return _return;
+        },
+        complex_AddWithOptions: () => {
+          var _options = _blocks.pairs(),
+            _additions = _.map(_.range(GEN.i(1, 10)), () => ({
+              option: _.sample(_options),
+              details: GEN.b() ? GEN.t(GEN.i(10, 50)) : "",
+            })),
+            _return = _.extend(_blocks.basic("Complex (with Options Selection)"), {
+              template: "field_complex",
+              icon: "query_builder",
+              options: _options,
+              details: GEN.t(GEN.i(10, 50)),
+              prefix: GEN.t(GEN.i(5, 10)),
+              list_field: GEN.a(GEN.i(5, 10))
+            });
+          _return._value = ((additions, prefix, field) => additions && additions.length > 0 ?
+            _checks.list(additions, item => ({
+              Value: (`${item.details} [${prefix}: ${item.option.value}]`).trim(),
+              Type: "Item",
+              __type: "list_item",
+            }), field) : null)(_.filter(_additions, "details"), _return.prefix, _return.list_field);
+          _return._populate = ((id, additions) => modal => {
+            _.each(additions, addition => {
+              modal.find(`[data-id='${id}'] > div > div`).first()
+                .find(`[data-value='${addition.option.value}']`).click();
+              if (addition.details)
+                modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(addition.details);
+              modal.find(`[data-id='${id}'] button.btn-primary`).first().delay(100).click();
+            });
+          })(_return.id, _additions);
+          return _return;
+        },
+        scale_Empty: title => {
+          var _options = _blocks.lists(),
+            _scale = _blocks.scale(_options),
+            _return = _.extend(_blocks.basic(title ? title : "Empty Evidence Scale"), {
+              template: "field_scale",
+              type: GEN.t(GEN.i(5, 10)),
+              items_details: GEN.t(GEN.i(10, 50)),
+              list_field: "Evidence",
+              scale: _scale,
+              markers: _scale.scale,
+              options: _options,
+              _value: null,
+            });
+          return _return;
+        },
+        scale_Evidence: () => {
+
+          var _return = _blocks.types.scale_Empty("Evidence Scale");
+          _return._value = ((scale, type, list_field) => (name, values) => {
+
+            values = values.to.have.deep.nested.property(`${name}.Values`);
+            values.to.be.an("object");
+
+            var _check = (parents, numbers) => marker => {
+
+              var _safe = value => value.replace(/\./g, "\\.");
+              var _number = `${marker.number ? marker.number : marker.value}`,
+                _numbers = _.reduce(numbers, (memo, number) =>
+                  `${memo ? `${memo}.` : ""}${number}`, ""),
+                _name = `${_numbers ? `${_numbers}.`:""}${_number}${marker.name?
+                                                      ` ${marker.name}`:""}`;
+
+              var __parents = _.tap(_.clone(parents), p => p.push(_name));
+              var __numbers = _.tap(_.clone(numbers), n => n.push(_number));
+
+              if (marker._data) {
+
+                var _data = marker._data,
+                  _path = _.reduce(__parents, (memo, parent) =>
+                    `${memo ? `${memo}.` : ""}${_safe(parent)}`, "");
+
+                values.to.have.deep.nested.property(`${_path}.Value`, true);
+
+                if (_data.details)
+                  values.to.have.deep.nested.property(`${_path}.Details`, _data.details);
+
+                if (_data.options) {
+
+                  _.each(_data.options, (option, index, list) => {
+
+                    values.to.have.deep.nested.property(
+                      `${_path}.${list_field}.Items${list.length > 1 ? `[${index}]`: ""}.Icon`,
+                      "local_printshop");
+
+                    values.to.have.deep.nested.property(
+                      `${_path}.${list_field}.Items${list.length > 1 ? `[${index}]`: ""}.Value`,
+                      option.class.endsWith("paper") ? "Paper" : "Offline");
+
+                    values.to.have.deep.nested.property(
+                      `${_path}.${list_field}.Items${list.length > 1 ? `[${index}]`: ""}.Type`,
+                      type);
+
+                  });
+                }
+
+              }
+
+              if (marker.children) _.each(marker.children, _check(__parents, __numbers));
+
+            };
+
+            _.each(scale.scale, _check([], []));
+
+          })(_return.scale, _return.type.trim(), _return.list_field.trim());
+          _return._populate = ((id, scale) => modal => {
+
+            var _marker = parent => marker => {
+
+              var _name = `${parent ? `${parent}.` : ""}${marker.number ? 
+                                                      marker.number : marker.value}`,
+                _output = `${_name}${marker.name ? ` ${marker.name}`: ""}`;
+
+              var _el = modal.find(`[data-id='${id}'] li[data-output-name='${$.escapeSelector(_output)}']`);
+              if (marker.children || marker._data) {
+                _el.find("> div > label.material-switch").delay(100).click();
+                if (marker.children) {
+                  _.each(marker.children, _marker(_name));
+                } else {
+                  _el.find("textarea").val(marker._data.details);
+                  _.each(marker._data.options, option => {
+                    var __el = _el.find("div.dropdown-menu")
+                      .find(`.dropdown-item[data-value='${$.escapeSelector(option.value)}']`);
+                    __el.delay(100).click();
+                  });
+                }
+              }
+
+            };
+
+            _.each(scale.scale, _marker());
+
+          })(_return.id, _return.scale);
+          return _return;
+        },
+      }
+    },
+    _populate = state => modal => {
+      if (debug) FACTORY.Flags.log("Populating Fields with:", state);
+      _.each(state, value => value._populate ? value._populate(modal) : false);
+      if (debug) FACTORY.Flags.log("Populating COMPLETE", modal);
+    },
+    _check = (state, err) => values => {
+
+      /* <!-- Test Conditions --> */
+      var _expect = expect(values).to.be.an("object");
+
+      var _error = _.find(state, value => {
+
+        try {
+
+          var _name = value.field ? value.field : value.id;
+
+          if (_name !== value.id) _expect.to.not.have.a.property(value.id);
+
+          if (value._value === null) {
+
+            /* <!-- Test there is no value --> */
+            _expect.to.not.have.a.property(_name);
+
+          } else {
+
+            /* <!-- Test Order --> */
+            var _order = value.order ? value.order : false;
+            _expect.to.have.deep.nested.property(`${_name}.Order`, _order);
+
+            /* <!-- Test Value/s --> */
+            value._value !== undefined ? _.isFunction(value._value) ?
+              value._value(_name, _expect) :
+              _expect.to.have.deep.nested.property(`${_name}.Value`, value._value) :
+              _expect.to.have.deep.nested.property(`${_name}.Value`);
+
+          }
+
+        } catch (e) {
+          err(e);
+          return true;
+        }
+
+      });
+
+      return _error ?
+        FACTORY.Flags.error(
+          `** FAILED ** ${_error._title ? _error._title : _error.template}`,
+          _.extend(_error, {
+            __values: values
+          })).reflect(false) : true;
+
     };
   /* <!-- Scaffolding Functions --> */
 
@@ -191,7 +668,8 @@ Data = function() {
       /* <!-- Set Up Testing Framework --> */
       debug = FACTORY.Flags.debug();
       expect = chai.expect;
-      dialog = FACTORY.Dialog({}, FACTORY);
+      dialog = FACTORY.Dialog({}, FACTORY),
+        data = FACTORY.Data({}, FACTORY);
 
       return FACTORY.Flags.log("START Called").reflect(true);
 
@@ -201,14 +679,17 @@ Data = function() {
 
       PAUSE().then(() => {
 
-        var _err = e => resolve(FACTORY.Flags.error("Dialogs Test FAILED", e).reflect(false));
+        var _fail = e => resolve(FACTORY.Flags.error("Dialogs Test FAILED", e)
+            .reflect(false)),
+          _succeed = () => resolve(FACTORY.Flags.log("Dialogs Test SUCCEEDED")
+            .reflect(true));
 
         var _dialog = (populate, check, state) => _modal("dialog", {
           id: "dialogs_dialog",
           title: "Testing Dialog",
           validate: values => values ? true : false,
           state: state,
-        }, _err, populate, check);
+        }, populate, check);
 
         var _set = {
           text: (el, val) => el.val(val),
@@ -301,10 +782,13 @@ Data = function() {
                   /* <!-- Test Conditions --> */
                   values = expect(values).to.be.an("object");
                   _.each(_state, (value, key) => {
+
                     var _name = value.name ? value.name : key,
                       _order = value.order ? value.order : false;
+
                     values.to.have.deep.nested.property(`${_name}.Value`, value.value);
                     values.to.have.deep.nested.property(`${_name}.Order`, _order);
+
                   });
 
                   return true;
@@ -334,11 +818,11 @@ Data = function() {
 
               });
             })
-            .then(() => resolve(FACTORY.Flags.log("Dialogs Test SUCCEEDED").reflect(true)))
-            .catch(_err);
+            .then(_succeed)
+            .catch(_fail);
 
         } catch (err) {
-          _err(err);
+          _fail(err);
         }
 
       });
@@ -349,469 +833,35 @@ Data = function() {
 
       PAUSE().then(() => {
 
-        var _err = e => resolve(FACTORY.Flags.error("Forms Test FAILED", e).reflect(false));
-
-        var _checks = {
-            list: (list, map) => (name, values) => {
-              list.length > 0 ?
-                list.length == 1 ?
-                values.to.have.deep.nested.property(`${name}.Values.Items`, map(list[0])) :
-                values.to.have.deep.nested.property(`${name}.Values.Items`)
-                .to.have.ordered.members(_.map(list, map)) :
-                values.to.have.deep.nested.property(`${name}.Value`, false);
-            },
-          },
-          _types = {
-            textual_Me: () => {
-              var _return = _.extend(_blocks.basic("Current User (Click)"), {
-                template: "field_textual",
-                icon: "face",
-                button: "Me!",
-                action: "me",
-              });
-              _return._value = (value => value)(FACTORY.me.full_name());
-              _return._populate = (id => modal => {
-                modal.find(`[data-id='${id}'] [data-action='me']`).first().click();
-              })(_return.id);
-              return _return;
-            },
-            textual_General: () => {
-              var _return = _.extend(_blocks.basic("Textbox"), {
-                template: "field_textual",
-              });
-              _return._value = GEN.b(70) ? GEN.t(GEN.i(1, 50)) : null;
-              _return._populate = ((id, value) => modal => {
-                value ? modal.find(`[data-id='${id}'] input[type='text']`).val(value) : false;
-              })(_return.id, _return._value);
-              return _return;
-            },
-            textual_Default: () => {
-              var _return = _.extend(_blocks.basic("Current User (Default)"), {
-                template: "field_textual",
-                default: "me",
-              });
-              _return._value = FACTORY.me.full_name();
-              return _return;
-            },
-            textual_Empty: () => {
-              var _return = _.extend(_blocks.basic("Empty Value"), {
-                template: "field_textual",
-                value: "",
-              });
-              _return._value = null;
-              return _return;
-            },
-            textual_Value: () => {
-              var _return = _.extend(_blocks.basic("Default Value"), {
-                template: "field_textual",
-                value: GEN.b(90) ? GEN.t(GEN.i(1, 10)) : null,
-              });
-              _return._value = _return.value;
-              return _return;
-            },
-            textual_Large: () => {
-              var _return = _.extend(_blocks.basic("Textarea"), {
-                template: "field_textual",
-                rows: GEN.i(3, 6),
-                wide: GEN.b(70),
-                button: "Load",
-                action: "load-g-doc",
-              });
-              _return._value = GEN.b(90) ? GEN.t(GEN.i(100, 500)) : null;
-              _return._populate = ((id, value) => modal => {
-                value ? modal.find(`[data-id='${id}'] textarea`).val(value) : false;
-              })(_return.id, _return._value);
-              return _return;
-            },
-            numeric_Empty: () => _.extend(_blocks.basic("Empty Numeric"), {
-              template: "field_numeric",
-              _value: null
-            }),
-            numeric_Stepped: () => {
-              var _number = GEN.i(1, 2000),
-                _return = _.extend(_blocks.basic("Numeric"), {
-                  template: "field_numeric",
-                  increment: _number,
-                });
-              _return._value = (value => (name, values) => {
-                values.to.have.deep.nested.property(`${name}.Values.Number`, value);
-                values.to.have.deep.nested.property(`${name}.Values.Value`, String(value));
-              })(_number);
-              _return._populate = (id => modal => {
-                modal.find(`[data-id='${id}'] button.btn-primary`).first().click();
-              })(_return.id);
-              return _return;
-            },
-            numeric_Complex: () => {
-              var _number = GEN.i(2, 20),
-                _value = GEN.b(80),
-                _return = _.extend(_blocks.basic("Numeric (with suffix/details)"), {
-                  template: "field_numeric",
-                  increment: _number,
-                  min: 0,
-                  max: _number,
-                  suffix: GEN.t(GEN.i(5, 10)),
-                  details: GEN.t(GEN.i(10, 50)),
-                });
-              _return._value = ((value, suffix, details) => (name, values) => {
-                values.to.have.deep.nested.property(`${name}.Values.Number`, value);
-                value ?
-                  values.to.have.deep.nested.property(`${name}.Values.Value`, `${value} ${suffix}`) :
-                  values.to.not.have.deep.nested.property(`${name}.Values.Value`);
-                values.to.have.deep.nested.property(`${name}.Values.Details`, details);
-              })(_value ? _number : 0, _return.suffix, _return.details);
-              _return._populate = ((id, value, details) => modal => {
-                modal.find(`[data-id='${id}'] button.btn-primary`).first().click();
-                modal.find(`[data-id='${id}'] textarea`).val(details);
-                if (!value) modal.find(`[data-id='${id}'] button.btn-info`).first().click();
-              })(_return.id, _value, _return.details);
-              return _return;
-            },
-            span_Empty: () => {
-              var _default = "Custom",
-                _return = _.extend(_blocks.basic("Empty Date Span"), {
-                  template: "field_span",
-                  icon: "query_builder",
-                  type: _default,
-                  options: _blocks.spans,
-                  _value: null,
-                });
-              /*
-              _return._value = (value => (name, values) => {
-                values.to.have.deep.nested.property(`${name}.Values.Type[0]`, value);
-                values.to.have.deep.nested.property(`${name}.Values.Type[1]`, value);
-              })(_default);
-             	*/
-              return _return;
-            },
-            span_Selected: () => {
-              var _default = "Custom",
-                _return = _.extend(_blocks.basic("Selected Date Span"), {
-                  template: "field_span",
-                  icon: "query_builder",
-                  type: _default,
-                  options: _blocks.spans
-                });
-              _return._value = ((span, start) => (name, values) => {
-                values.to.have.deep.nested.property(`${name}.Values.Type[0]`, span.value);
-                values.to.have.deep.nested.property(`${name}.Values.Type[1]`, span.value);
-                values.to.have.deep.nested.property(`${name}.Values.Start`,
-                  start.format("YYYY-MM-DD"));
-                values.to.have.deep.nested.property(`${name}.Values.End`,
-                  start.clone().add(1, span.span).add(-1, "d").format("YYYY-MM-DD"));
-              })(_blocks.spans[_blocks.spans.length - 1], moment(new Date()));
-              _return._populate = ((id, span) => modal => {
-                modal.find(`[data-id='${id}'] a.dropdown-item[data-value='${span.value}']`).first().click();
-              })(_return.id, _blocks.spans[_blocks.spans.length - 1]);
-              return _return;
-            },
-            span_Date: () => {
-              var _start = moment(new Date()),
-                _end = _start.clone().add(7, "d"),
-                _default = "Custom",
-                _details = GEN.t(GEN.i(10, 30)),
-                _return = _.extend(_blocks.basic("Date Span"), {
-                  template: "field_span",
-                  icon: "query_builder",
-                  type: _default,
-                  options: _blocks.spans,
-                  details: _details
-                });
-              _return._value = ((value, start, end, details) => (name, values) => {
-                values.to.have.deep.nested.property(`${name}.Values.Start`,
-                  start.format("YYYY-MM-DD"));
-                values.to.have.deep.nested.property(`${name}.Values.End`,
-                  end.format("YYYY-MM-DD"));
-                values.to.have.deep.nested.property(`${name}.Values.Details`, details);
-              })(_default, _start, _end, _details);
-              _return._populate = ((id, start, end, details) => modal => {
-                modal.find(`#${id}_START`).val(start.format("YYYY-MM-DD"));
-                modal.find(`#${id}_END`).val(end.format("YYYY-MM-DD"));
-                modal.find(`#${id}_DETAILS`).val(details);
-              })(_return.id, _start, _end, _details);
-              return _return;
-            },
-            radio_Empty: () => _.extend(_blocks.basic("Un-Selected Options"), {
-              template: "field_radio",
-              options: _blocks.options(),
-              _value: false,
-            }),
-            radio_Options: () => {
-              var _options = _blocks.options(),
-                _option = _.sample(_options),
-                _details = GEN.t(GEN.i(10, 50)),
-                _return = _.extend(_blocks.basic("Selected Options"), {
-                  template: "field_radio",
-                  icon: "gavel",
-                  options: _options,
-                  details: GEN.t(GEN.i(10, 50)),
-                });
-              _return._value = ((option, details) => (name, values) => {
-                values.to.have.deep.nested.property(`${name}.Values.Value`, option.value);
-                values.to.have.deep.nested.property(`${name}.Values.Details`, details);
-              })(_option, _details);
-              _return._populate = ((id, option, details) => modal => {
-                modal.find(`[data-id='${id}'] input[data-value='${option.value}']`).first()
-                  .parent("label").click();
-                modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(details);
-              })(_return.id, _option, _details);
-              return _return;
-            },
-            select_Empty: () => {
-              var _options = _blocks.pairs(),
-                _option = _options[0],
-                _return = _.extend(_blocks.basic("No Selection"), {
-                  template: "field_select",
-                  options: _options,
-                });
-              _return._value = (option => (name, values) => {
-                values.to.have.deep.nested.property(`${name}.Value`, option.value);
-              })(_option);
-              return _return;
-            },
-            select_Options: () => {
-              var _options = _blocks.pairs(),
-                _option = _.sample(_options),
-                _details = GEN.b() ? GEN.t(GEN.i(10, 50)) : "",
-                _return = _.extend(_blocks.basic("Selection"), {
-                  template: "field_select",
-                  icon: "query_builder",
-                  options: _options,
-                  details: GEN.t(GEN.i(10, 50)),
-                });
-              _return._value = ((option, details) => (name, values) => {
-                values.to.have.deep.nested.property(`${name}.Values.Value`, option.value);
-                if (details) values.to.have.deep.nested.property(`${name}.Values.Details`, details);
-              })(_option, _details);
-              _return._populate = ((id, option, details) => modal => {
-                modal.find(`[data-id='${id}'] select#${id}_SELECT`).val(option.value).trigger("change");
-                modal.find(`[data-id='${id}'] input#${id}`).val(option.value);
-                if (details) modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(details);
-              })(_return.id, _option, _details);
-              return _return;
-            },
-            complex_Empty: () => _.extend(_blocks.basic("Empty Complex"), {
-              template: "field_complex",
-              _value: false,
-            }),
-            complex_Add: () => {
-              var _additions = _.map(_.range(GEN.i(1, 10)), () => ({
-                  details: GEN.b(90) ? GEN.t(GEN.i(10, 50)) : "",
-                })),
-                _return = _.extend(_blocks.basic("Complex"), {
-                  template: "field_complex",
-                  icon: "query_builder",
-                  details: GEN.t(GEN.i(10, 50)),
-                  type: GEN.t(GEN.i(5, 10)),
-                });
-              _return._value = ((additions, type) => _checks.list(additions, item => ({
-                Value: item.details.trim(),
-                Type: type.trim()
-              })))(_.filter(_additions, "details"), _return.type);
-              _return._populate = ((id, additions) => modal => {
-                _.each(additions, addition => {
-                  if (addition.details)
-                    modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(addition.details);
-                  modal.find(`[data-id='${id}'] button.btn-primary`).first().delay(100).click();
-                });
-              })(_return.id, _additions);
-              return _return;
-            },
-            complex_AddWithOptions: () => {
-              var _options = _blocks.pairs(),
-                _additions = _.map(_.range(GEN.i(1, 10)), () => ({
-                  option: _.sample(_options),
-                  details: GEN.b() ? GEN.t(GEN.i(10, 50)) : "",
-                })),
-                _return = _.extend(_blocks.basic("Complex (with Options Selection)"), {
-                  template: "field_complex",
-                  icon: "query_builder",
-                  options: _options,
-                  details: GEN.t(GEN.i(10, 50)),
-                  prefix: GEN.t(GEN.i(5, 10))
-                });
-              _return._value = ((additions, prefix) => _checks.list(additions, item => ({
-                Value: (`${item.details} [${prefix}: ${item.option.value}]`).trim(),
-                Type: "Item"
-              })))(_.filter(_additions, "details"), _return.prefix);
-              _return._populate = ((id, additions) => modal => {
-                _.each(additions, addition => {
-                  modal.find(`[data-id='${id}'] > div > div`).first()
-                    .find(`[data-value='${addition.option.value}']`).click();
-                  if (addition.details)
-                    modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(addition.details);
-                  modal.find(`[data-id='${id}'] button.btn-primary`).first().delay(100).click();
-                });
-              })(_return.id, _additions);
-              return _return;
-            },
-            scale_Empty: title => {
-              var _options = _blocks.lists(),
-                _scale = _blocks.scale(_options),
-                _return = _.extend(_blocks.basic(title ? title : "Empty Evidence Scale"), {
-                  template: "field_scale",
-                  type: GEN.t(GEN.i(5, 10)),
-                  items_details: GEN.t(GEN.i(10, 50)),
-                  list_field: "Evidence",
-                  scale: _scale,
-                  markers: _scale.scale,
-                  options: _options,
-                  _value: null,
-                });
-              return _return;
-            },
-            scale_Evidence: () => {
-
-              var _return = _types.scale_Empty("Evidence Scale");
-              _return._value = ((scale, type, list_field) => (name, values) => {
-
-                values = values.to.have.deep.nested.property(`${name}.Values`);
-                values.to.be.an("object");
-
-                var _check = (parents, numbers) => marker => {
-
-                  var _safe = value => value.replace(/\./g, "\\.");
-                  var _number = `${marker.number ? marker.number : marker.value}`,
-                    _numbers = _.reduce(numbers, (memo, number) =>
-                      `${memo ? `${memo}.` : ""}${number}`, ""),
-                    _name = `${_numbers ? `${_numbers}.`:""}${_number}${marker.name?
-                      ` ${marker.name}`:""}`;
-
-                  var __parents = _.tap(_.clone(parents), p => p.push(_name));
-                  var __numbers = _.tap(_.clone(numbers), n => n.push(_number));
-
-                  if (marker._data) {
-
-                    var _data = marker._data,
-                      _path = _.reduce(__parents, (memo, parent) =>
-                        `${memo ? `${memo}.` : ""}${_safe(parent)}`, "");
-
-                    if (_data.details)
-                      values.to.have.deep.nested.property(`${_path}.Details`, _data.details);
-
-                    if (_data.options) {
-
-                      _.each(_data.options, (option, index, list) => {
-
-                        values.to.have.deep.nested.property(
-                          `${_path}.${list_field}.Items${list.length > 1 ? `[${index}]`: ""}.Icon`,
-                          "local_printshop");
-
-                        values.to.have.deep.nested.property(
-                          `${_path}.${list_field}.Items${list.length > 1 ? `[${index}]`: ""}.Value`,
-                          option.class.endsWith("paper") ? "Paper" : "Offline");
-
-                        values.to.have.deep.nested.property(
-                          `${_path}.${list_field}.Items${list.length > 1 ? `[${index}]`: ""}.Type`,
-                          type);
-
-                      });
-                    }
-
-                  }
-
-                  if (marker.children) _.each(marker.children, _check(__parents, __numbers));
-
-                };
-
-                _.each(scale.scale, _check([], []));
-
-              })(_return.scale, _return.type.trim(), _return.list_field.trim());
-              _return._populate = ((id, scale) => modal => {
-
-                var _marker = parent => marker => {
-
-                  var _name = `${parent ? `${parent}.` : ""}${marker.number ? 
-                       marker.number : marker.value}`,
-                    _output = `${_name}${marker.name ? ` ${marker.name}`: ""}`;
-                  var _el = modal.find(`[data-id='${id}'] li[data-output-name='${_output}']`);
-
-                  if (marker.children || marker._data) {
-                    _el.find("> div > label.material-switch").delay(100).click();
-                    if (marker.children) {
-                      _.each(marker.children, _marker(_name));
-                    } else {
-                      _el.find("textarea").val(marker._data.details);
-                      _.each(marker._data.options, option => {
-                        _el.find("div.dropdown-menu")
-                          .find(`.dropdown-item[data-value='${option.value}']`)
-                          .delay(100).click();
-                      });
-                    }
-                  }
-
-                };
-
-                _.each(scale.scale, _marker());
-
-              })(_return.id, _return.scale);
-              return _return;
-            },
-          };
+        var _fail = e => resolve(FACTORY.Flags.error("Forms Test FAILED", e)
+            .reflect(false)),
+          _succeed = () => resolve(FACTORY.Flags.log("Forms Test SUCCEEDED")
+            .reflect(true));
 
         var _form = (fields, populate, check, title) => _modal("form", {
             id: "forms_form",
             title: `Testing ${title ? title : "Form"}`,
             fields: fields,
-          }, _err, populate, check),
+          }, populate, check),
           _test = type => {
             var _data = GENERATE(type);
-            return _form(_data.fields.join("\n").trim(),
-              modal => {
-
-                if (debug) FACTORY.Flags.log("Populating Fields with:", _data.state);
-                _.each(_data.state, value => value._populate ? value._populate(modal) : false);
-
-              }, values => {
-
-                /* <!-- Test Conditions --> */
-                values = expect(values).to.be.an("object");
-
-                _.each(_data.state, value => {
-
-                  try {
-                    var _name = value.field ? value.field : value.id;
-
-                    if (_name !== value.id) values.to.not.have.a.property(value.id);
-
-                    if (value._value === null) {
-
-                      /* <!-- Test there is no value --> */
-                      values.to.not.have.a.property(_name);
-
-                    } else {
-
-                      /* <!-- Test Order --> */
-                      var _order = value.order ? value.order : false;
-                      values.to.have.deep.nested.property(`${_name}.Order`, _order);
-
-                      /* <!-- Test Value/s --> */
-                      value._value !== undefined ? _.isFunction(value._value) ?
-                        value._value(_name, values) :
-                        values.to.have.deep.nested.property(`${_name}.Value`, value._value) :
-                        values.to.have.deep.nested.property(`${_name}.Value`);
-
-                    }
-                  } catch (err) {
-                    _err(err);
-                  }
-
-                });
-
-                return true;
-
-              }, _data.state.length === 1 && _data.state[0]._title ? _data.state[0]._title : false);
+            return _form(
+              _data.fields.join("\n").trim(),
+              _populate(_data.state),
+              _check(_data.state, _fail),
+              _data.state.length === 1 && _data.state[0]._title ?
+              _data.state[0]._title : false);
           };
 
         try {
 
-          RUN(_.map(_types, type => () => _test(type)), _err)
-            .then(() => _test(_types))
-            .then(() => resolve(FACTORY.Flags.log("Forms Test SUCCEEDED").reflect(true)))
-            .catch(_err);
+          RUN(_.map(_blocks.types, type => () => _test(type)))
+            .then(() => _test(_blocks.types))
+            .then(_succeed)
+            .catch(_fail);
 
         } catch (err) {
-          _err(err);
+          _fail(err);
         }
 
       });
@@ -822,7 +872,10 @@ Data = function() {
 
       PAUSE().then(() => {
 
-        var _err = e => resolve(FACTORY.Flags.error("Interactions Test FAILED", e).reflect(false));
+        var _fail = e => resolve(FACTORY.Flags.error("Interactions Test FAILED", e)
+            .reflect(false)),
+          _succeed = () => resolve(FACTORY.Flags.log("Interactions Test SUCCEEDED")
+            .reflect(true));
 
         var _interactions = {
             text: (input, clear) => {
@@ -840,10 +893,10 @@ Data = function() {
             }
           },
           _form = (fields, interact, title) => _modal("form", {
-            id: "interaction_form",
+            id: "interactions_form",
             title: `Testing ${title ? title : "Interaction"}`,
             fields: fields,
-          }, _err, interact),
+          }, interact),
           _types = {
             textual: () => _.extend(_blocks.basic("Textbox Field"), {
               template: "field_textual",
@@ -967,7 +1020,8 @@ Data = function() {
                 /* <!-- Test Each Option --> */
                 start.val(_start.format(format)).change();
                 _.each(_blocks.spans, span => {
-                  field.find(`a.dropdown-item[data-value='${span.value}']`).first().click();
+                  field.find(`a.dropdown-item[data-value='${$.escapeSelector(span.value)}']`)
+                    .first().click();
                   expect(start.val()).to.be.a("string")
                     .that.equals(_start.format(format));
                   span.value == "Custom" ?
@@ -992,7 +1046,7 @@ Data = function() {
 
                 /* <!-- Check each option --> */
                 _.each(state.options, option => {
-                  field.find(`input[type='radio'][data-value='${option.value}']`)
+                  field.find(`input[type='radio'][data-value='${$.escapeSelector(option.value)}']`)
                     .first().parent("label").click();
                   expect(display.val()).to.be.a("string")
                     .that.equals(option.value);
@@ -1030,7 +1084,7 @@ Data = function() {
 
                 /* <!-- Check default button text --> */
                 expect(button.first().text().trim()).to.be.a("string")
-                  .that.equals(state.prefix);
+                  .that.equals(state.prefix.trim());
 
                 /* <!-- Check missing details --> */
                 add.first().click();
@@ -1052,7 +1106,8 @@ Data = function() {
                 /* <!-- Check each addition --> */
                 _.each(_additions, addition => {
 
-                  var _option = field.find(`a.dropdown-item[data-value='${addition.option.value}']`);
+                  var _option = field
+                    .find(`a.dropdown-item[data-value='${$.escapeSelector(addition.option.value)}']`);
                   expect(_option.first().text().trim()).to.be.a("string")
                     .that.equals(addition.option.name.trim());
                   _option.first().click();
@@ -1096,7 +1151,7 @@ Data = function() {
                     }
                   });
                 } catch (err) {
-                  _err(err);
+                  _fail(err);
                 }
               },
               _data.state.length === 1 && _data.state[0]._title ? _data.state[0]._title : false);
@@ -1104,13 +1159,13 @@ Data = function() {
 
         try {
 
-          RUN(_.map(_types, type => () => _test(type)), _err)
+          RUN(_.map(_types, type => () => _test(type)))
             .then(() => _test(_types))
-            .then(() => resolve(FACTORY.Flags.log("Interactions Test SUCCEEDED").reflect(true)))
-            .catch(_err);
+            .then(_succeed)
+            .catch(_fail);
 
         } catch (err) {
-          _err(err);
+          _fail(err);
         }
 
       });
@@ -1121,14 +1176,65 @@ Data = function() {
 
       PAUSE().then(() => {
 
-        var _err = e => resolve(FACTORY.Flags.error("Persistence Test FAILED", e).reflect(false));
+        var _fail = e => resolve(FACTORY.Flags.error("Persistence Test FAILED", e)
+            .reflect(false)),
+          _succeed = () => resolve(FACTORY.Flags.log("Persistence Test SUCCEEDED")
+            .reflect(true));
+
+        var _form = (fields, populate, check) => _modal("form", {
+            id: "persistence_form",
+            title: "Testing Form",
+            fields: fields,
+          }, populate, check),
+          _test = type => {
+            var _data = GENERATE(type),
+              _process = fields => values => {
+
+                /* <!-- Test Conditions --> */
+                expect(values).to.be.an("object");
+
+                /* <!-- Load, Populate and Test new Form --> */
+                return _form(
+                  fields.join("\n").trim(),
+                  modal => {
+                    try {
+                      data.rehydrate(modal.find("form"), values);
+                    } catch (e) {
+                      return _fail(e);
+                    }
+                  },
+                  _check(_data.state, _fail)
+                );
+              };
+
+            return _form(
+              _data.fields.join("\n").trim(),
+              _populate(_data.state),
+              _process(_data.fields, _data.state, _fail)
+            );
+
+          },
+          _types = {
+            me: _blocks.types.textual_Me,
+            textual: _blocks.types.textual_General,
+            numeric: _blocks.types.numeric_Complex,
+            date: _blocks.types.span_Date,
+            radio: _blocks.types.radio_OptionsWithDetails,
+            select: _blocks.types.select_Options,
+            items: _blocks.types.complex_Add,
+            complex: _blocks.types.complex_AddWithOptions,
+            scale: _blocks.types.scale_Evidence
+          };
 
         try {
 
-          resolve(FACTORY.Flags.log("Persistence Test SUCCEEDED").reflect(true));
+          RUN(_.map(_types, type => () => _test(type)))
+            .then(() => _test(_types))
+            .then(_succeed)
+            .catch(_fail);
 
         } catch (err) {
-          _err(err);
+          _fail(err);
         }
 
       });

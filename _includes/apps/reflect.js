@@ -95,6 +95,8 @@ App = function() {
       if (_template) _template.__name = name;
       _return.target = ಠ_ಠ.container.empty();
       ಠ_ಠ.Display.state().enter(state).protect("a.jump").on("JUMP");
+      
+      /* <!-- ToDo - Maybe DEFER this until after load for loaded forms --> */
       return ಠ_ಠ.Fields({
           me: ಠ_ಠ.me ? ಠ_ಠ.me.full_name : undefined,
           templater: ಠ_ಠ.Display.template.get,

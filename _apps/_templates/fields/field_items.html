@@ -50,7 +50,8 @@
 			</div>
 		</div>
 	</div>
-	<div id="{{id}}_LIST" class="list-data d-flex flex-column mt-1 mt-md-2"
+	<div id="{{id}}_LIST" data-holder-field="{{either items 'Items'}}"
+       class="list-data list-group list-group-light d-flex flex-column mt-1 mt-md-2"
        {{#if list}} data-output-name="{{list}}"{{/if}}></div>
 	{{#if help}}<div id="{{id}}_HELP"
                    class="form-text text-muted mt-1 mt-md-2 text-justify">{{{help}}}</div>{{/if}}

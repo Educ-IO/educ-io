@@ -79,7 +79,8 @@
 						<div class="col-lg-4 d-flex align-items-center">
 							<div class="custom-control custom-checkbox">
 								<input type="checkbox" class="custom-control-input" id="checkEntry1"
-                       name="check_1"{{#with state}}{{#if check_1}} checked{{/if}}{{/with}}>
+                       data-output-always="true" name="check_1"
+                       {{#with state}}{{#if check_1}} checked{{/if}}{{/with}}>
 								<label class="custom-control-label" for="checkEntry1">CheckBox 1</label>
 								<small class="form-text text-muted">First CheckBox Field (check_1)</small>
 							</div>

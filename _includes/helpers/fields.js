@@ -49,6 +49,19 @@ Fields = (options, factory) => {
     return $(selector);
   };
 
+  var _remove = e => {
+    e.preventDefault();
+    var _this = $(e.currentTarget).closest(options.list_item);
+    if (_this.siblings(options.list_item).length === 0) {
+      var _controls = _this.closest("[data-controls]").data("controls");
+      if (_controls) {
+        _controls = $(`#${_controls}`);
+        if (_controls.is("input[type='checkbox']")) _controls.prop("checked", false);
+      }
+    }
+    _this.remove();
+  };
+
   var _listen = form => {
 
     /* <!-- Wire up event / visibility listeners --> */
@@ -256,19 +269,18 @@ Fields = (options, factory) => {
 
         /* <!-- Add new Item to List --> */
         var _list = form.find(`#${_this.data("targets")}`);
-        if (_list.children(".list-item").length === 0) _this.closest(".input-group").children("input[type='checkbox']").prop("checked", true);
+        if (_list.children(".list-item").length === 0) {
+          var _controls = _list.data("controls");
+          if (_controls) {
+            _controls = $(`#${_controls}`);
+            if (_controls.is("input[type='checkbox']")) _controls.prop("checked", true);
+          }
+        }
         if (options.templater) $(options.templater({
           template: "list_item",
           details: `${_details}${_type ? ` [${_default}: ${_type}]` : ""}`,
-          type: _this.data("item"),
-          delete: "Remove"
-        })).appendTo(_list).find("a.delete").click(e => {
-          e.preventDefault();
-          if ($(e.currentTarget).parent().siblings(".list-item").length === 0) {
-            _this.closest(".input-group").children("input[type='checkbox']").prop("checked", false);
-          }
-          $(e.currentTarget).parent().remove();
-        });
+          type: _this.data("item")
+        })).appendTo(_list).find("a.delete").click(_remove);
 
         /* <!-- Clear Up ready for next list item --> */
         _holder.off("change.validity.test").val("")
@@ -352,6 +364,11 @@ Fields = (options, factory) => {
 
     var _handlers = {
 
+      delete: e => {
+        e.preventDefault();
+
+      },
+
       default: e => $(_.tap(e, e => e.preventDefault()).currentTarget).parents(options.list_holder),
 
       add: (value, list, check) => {
@@ -366,17 +383,7 @@ Fields = (options, factory) => {
 
         /* <!-- Add new Item to List --> */
         $(factory.Display.template.get(value))
-          .appendTo(list.find(options.list_data))
-          .find("a.delete")
-          .click(e => {
-            e.preventDefault();
-            var _this = $(e.currentTarget).parent();
-            if (_this.siblings(options.list_item).length === 0)
-              _this.closest(".input-group")
-              .children("input[type='checkbox']")
-              .prop("checked", false);
-            _this.remove();
-          });
+          .appendTo(list.find(options.list_data)).find("a.delete").click(_remove);
       },
 
       picker: e => {
@@ -387,10 +394,12 @@ Fields = (options, factory) => {
             })
             .then(files => _.each(files, (file, i) => _handlers.add({
               id: file[google.picker.Document.ID],
-              url: file[google.picker.Document.URL],
+              url: file[google.picker.Document.URL] ?
+                file[google.picker.Document.URL] : file.webViewLink,
               details: file[google.picker.Document.NAME],
               type: list.find("button[data-default]").data("default"),
-              icon_url: file[google.picker.Document.ICON_URL]
+              icon_url: file[google.picker.Document.ICON_URL] ?
+                file[google.picker.Document.ICON_URL] : file.iconLink
             }, list, i === 0)))
             .catch(e => e ? factory.Flags.error("Picking Google Drive File", e) : false);
         };
@@ -487,6 +496,8 @@ Fields = (options, factory) => {
     form.find("button.offline, a.offline")
       .off("click.offline").on("click.offline", _handlers.simple(options.list_offline_title));
 
+    /* <!-- TODO: Handle existing list items from Hydration (e.g. Delete Button)! --> */
+
   };
 
   var _doc = form => {
@@ -523,11 +534,17 @@ Fields = (options, factory) => {
 
   };
 
+  var _deletes = form => {
+
+    form.find(`${options.list_item} a.delete`).click(_remove);
+
+  };
+
   var _start = () => {
     _steps = [
       _listen, _numerical, _erase, _radio, _menus,
       _complex, _reveal, _dim, _autosize, _me, _datetime,
-      _spans, _list, _doc
+      _spans, _list, _doc, _deletes
     ];
   };
   /* <!-- Internal Functions --> */

@@ -145,6 +145,7 @@ __Σ__UK_Teachers_Reflection = markdown => {
 						type: "Target",
 						prefix: "Evidence Type",
 						icon: "gps_fixed",
+            list_field: "Targets",
             required: true,
 						help: markdown("Enter details of the targets you are setting yourself this week, together with the type of evidence that will confirm you have met the target. Then save them to the list below."),
 						options: [

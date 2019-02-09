@@ -1,5 +1,6 @@
 ---
 title: Example
+display: Example-ception
 for: [debug]
 script: tests/example
 tests:

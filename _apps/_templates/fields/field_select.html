@@ -7,6 +7,7 @@
 {{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
 {{!-- [icon] = Icon for left-side of Element Group --}}
 {{!-- [options] = Collection of selection options. They can be strings, or by value/name pairs. --}}
+{{!-- [default] = Default selected option (if none supplied, no positive selection will return empty). --}}
 {{!-- [details] = Whether details input should be displayed (this text will be the field placeholder) --}}
 {{!-- [required] = Input is required (only relevant if there is a blank option) --}}
 {{!-- [help] = Help information (html) to display --}}
@@ -21,6 +22,7 @@
 {{!-- {} / Nothing : If nothing has been entered --}}
 {{!-- ------------------------------------------------------- --}}
 {{!-- Order = field order if supplied --}}
+{{!-- Value = selected value as string (if no details) --}}
 {{!-- Values.Value = selected value as string --}}
 {{!-- Values.Details = entered details text value --}}
 {{!-- ======================================================= --}}
@@ -34,12 +36,14 @@
 			<select id="{{id}}_SELECTOR" class="form-control{{#if large}} form-control-lg{{/if}}"
               data-for="{{id}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>
 				{{#each options}}
-					<option value="{{val "" value this}}">{{val "" name this}}</option>
+					<option value="{{val '' value this}}"
+                  {{#is this "eq" ../default}} selected="selected"{{/is}}>{{val "" name this}}</option>
 				{{/each}}
 			</select>
 		</div>
 		<input id="{{id}}" name="{{id}}" data-output-name="Value" type="text"
-           readonly="readonly"{{#if required}} required="required"{{/if}} style="display: none;" />
+           readonly="readonly"{{#if required}} required="required"{{/if}}
+           style="display: none;"{{#with default}} value="{{val '' value this}}"{{/with}}/>
     {{#if details}}<textarea data-for="{{id}}" name="Details" data-output-name="Details"
                              id="{{id}}_DETAILS" name="{{id}}_DETAILS"
                              class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2"

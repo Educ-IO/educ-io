@@ -21,6 +21,7 @@
 {{!-- Value = false : If nothing has been selected --}}
 {{!-- ------------------------------------------------------- --}}
 {{!-- Order = field order if supplied --}}
+{{!-- Value = selected option.value as string (if no details) --}}
 {{!-- Values.Value = selected option.value --}}
 {{!-- Values.Details = further text details (if present) --}}
 {{!-- ======================================================= --}}
@@ -55,8 +56,8 @@
 		</div>
 		<div class="input-group{{#if large}} input-group-lg{{/if}} mt-1">
 			{{#if icon}}{{> control_icon visible_at="lg" large=large icon=icon }}{{/if}}
-			<textarea id="{{id}}" name="{{id}}" data-output-name="Value" 
-                type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable optional"
+			<textarea id="{{id}}" name="{{id}}" data-output-name="Value" type="text"
+                class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#unless required}} optional{{/unless}}"
                 readonly="readonly" rows="1"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
                 {{#if required}} required="required"{{/if}}></textarea>
 		</div>
