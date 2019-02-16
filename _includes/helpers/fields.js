@@ -49,6 +49,29 @@ Fields = (options, factory) => {
     return $(selector);
   };
 
+  var _number = (value, target, min, max) => {
+
+    /* <!-- Fall back to defaults --> */
+    max = (max === undefined || max === null) ?
+      Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : Number.MAX_VALUE : max;
+    min = (min === undefined || min === null) ?
+      Number.MIN_SAFE_INTEGER ? Number.MIN_SAFE_INTEGER : Number.MIN_VALUE : min;
+
+    var _suffix = target.data("suffix"),
+      _current = Number(target.val() ?
+        (_suffix ? target.val().split(" ")[0] : target.val()) : 0);
+    (_current + value <= max) ? _current += value: _current = max;
+    if (_current <= min) {
+      target.val("");
+    } else if (_suffix) {
+      target.val(`${_current} ${_suffix}`);
+    } else {
+      target.val(_current);
+    }
+    if (target.data("targets")) $("#" + target.data("targets")).val(_current <= min ? 0 : _current);
+
+  };
+
   var _remove = e => {
     e.preventDefault();
     var _this = $(e.currentTarget).closest(options.list_item);
@@ -59,6 +82,17 @@ Fields = (options, factory) => {
         if (_controls.is("input[type='checkbox']")) _controls.prop("checked", false);
       }
     }
+
+    /* <!-- Get Optional Tags --> */
+    var _field = _this.closest("[data-output-field]");
+    _.each(_this.find("[data-output-name]"), el => {
+      var _el = $(el),
+        _links = _field.find(`[data-item='${_el.data("output-name")}']`);
+      if (_links.length > 0 && _links.data("targets")) {
+        var _target = $(`#${_links.data("targets")}`);
+        if (_links.attr("type") == "number") _number(Number("-" + _el.text()), _target, 0);
+      }
+    });
     _this.remove();
   };
 
@@ -110,7 +144,8 @@ Fields = (options, factory) => {
                   var _value = $(e.currentTarget).val();
                   if (_value) {
                     _value = moment(_value, DATE_FORMAT_M);
-                    if (_value.isValid()) end.val(_value.add(1, span).subtract(1, "d").format(DATE_FORMAT_M));
+                    if (_value.isValid())
+                      end.val(_value.add(1, span).subtract(1, "d").format(DATE_FORMAT_M));
                   } else {
                     end.val("");
                   }
@@ -163,7 +198,7 @@ Fields = (options, factory) => {
         var _target = $(`#${_this.data("targets")}`),
           _value = Number(_this.data("value"));
         var _min = _target.data("min") ? Number(_target.data("min")) : 0,
-          _max = _target.data("max") ? Number(_target.data("max")) : Number.MAX_VALUE;
+          _max = _target.data("max") ? Number(_target.data("max")) : null;
 
         if (_target.hasClass("input-daterange") && _this.data("modifier")) {
 
@@ -177,18 +212,7 @@ Fields = (options, factory) => {
 
         } else {
 
-          var _suffix = _target.data("suffix"),
-            _current = Number(_target.val() ?
-              (_suffix ? _target.val().split(" ")[0] : _target.val()) : 0);
-          (_current + _value <= _max) ? _current += _value: _current = _max;
-          if (_current <= _min) {
-            _target.val("");
-          } else if (_suffix) {
-            _target.val(`${_current} ${_suffix}`);
-          } else {
-            _target.val(_current);
-          }
-          if (_target.data("targets")) $("#" + _target.data("targets")).val(_current <= _min ? 0 : _current);
+          _number(_value, _target, _min, _max);
 
         }
 
@@ -257,9 +281,10 @@ Fields = (options, factory) => {
 
     form.find("button.complex-list-add, a.complex-list-add").click(e => {
       var _this = $(e.currentTarget);
-      var _holder = form.find(`#${_this.data("details")}`),
+      var _field = _this.closest("[data-output-field]"),
+        _holder = form.find(`#${_this.data("details")}`),
         _details = _holder.val();
-      if (_details) {
+      if (!_holder.data("required") || _details) {
 
         /* <!-- Get Type and Defaults --> */
         var _selector = form.find(`#${_this.data("type")}`),
@@ -267,8 +292,10 @@ Fields = (options, factory) => {
           _default = _selector.data("default");
         if (_type == _default) _type = "";
 
-        /* <!-- Add new Item to List --> */
+        /* <!-- Get the List we are adding to --> */
         var _list = form.find(`#${_this.data("targets")}`);
+
+        /* <!-- Check the Checked Value input control if required --> */
         if (_list.children(".list-item").length === 0) {
           var _controls = _list.data("controls");
           if (_controls) {
@@ -276,11 +303,32 @@ Fields = (options, factory) => {
             if (_controls.is("input[type='checkbox']")) _controls.prop("checked", true);
           }
         }
-        if (options.templater) $(options.templater({
+
+        /* <!-- Create Template Options --> */
+        var _item = _this.data("item");
+        var _template = {
           template: "list_item",
-          details: `${_details}${_type ? ` [${_default}: ${_type}]` : ""}`,
-          type: _this.data("item")
-        })).appendTo(_list).find("a.delete").click(_remove);
+          details: `${_details}${(_details && _type) ? " " : ""}${_type ? `[${_default}: ${_type}]` : ""}`,
+          type: _item
+        };
+        if (_list.data("holder-field")) _template.field = _list.data("holder-field");
+
+        /* <!-- Get Optional Tags --> */
+        _.reduce(_field.find(`input[data-item][data-item!='${$.escapeSelector(_item)}']`),
+          (memo, input) => _.tap(memo, memo => {
+            var _input = $(input),
+              _val = _input.val(),
+              _type = _input.data("item").toLowerCase();
+            if (_val && _type && memo[_type] === undefined) memo[_type] = _val;
+            if (_input.data("targets")) {
+              var _target = $(`#${_input.data("targets")}`);
+              if (_input.attr("type") == "number") _number(Number(_val), _target, 0);
+            }
+          }), _template);
+
+        /* <!-- Create & Append Item --> */
+        if (options.templater) $(options.templater(_template))
+          .appendTo(_list).find("a.delete").click(_remove);
 
         /* <!-- Clear Up ready for next list item --> */
         _holder.off("change.validity.test").val("")

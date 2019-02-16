@@ -205,7 +205,8 @@ Data = (options, factory) => {
               if (item.__type) {
                 try {
                   var _template = _.extend(item, {
-                    template: item.__type
+                    template: item.__type,
+                    field: _holder,
                   });
                   _template = factory.Display.template.get(_template);
                   $(_template).appendTo(_el);

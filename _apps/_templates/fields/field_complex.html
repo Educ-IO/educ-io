@@ -47,15 +47,15 @@
           {{/each}}
         </div>
       </div>{{/if}}{{/if}}
-      {{> control_button b_small="true" b_icon_large="true" b_class="btn-primary complex-list-add"
-      	b_title=(concat "Add " type " to List") b_item=(either type "Item") b_details=(concat id "_DETAILS")
-      	b_type=(concat id "_TYPE") b_target=(concat id "_LIST") b_icon="add_circle_outline"
-      	b_icon_type="light" }}
+      {{> control_button b_small="true" b_icon_large="true" b_class="btn-success complex-list-add"
+      	b_title=(concat "Add " type " to List") b_item=(either type "Item") 
+        b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
+        b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" }}
     </div>
 		<div class="input-group">
 			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
 			<input id="{{id}}" name="{{id}}_VALUE" data-output-name="Value" hidden="hidden" type="checkbox">
-			<textarea id="{{id}}_DETAILS" 
+			<textarea id="{{id}}_DETAILS" data-required="true"
                 class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#unless required}} optional{{/unless}}"
                 rows="1" aria-label="{{either details 'Details'}}"
                 placeholder="{{either details 'Details'}}"
@@ -75,7 +75,7 @@
         {{/if}}{{/if}}
       </span>
       <span class="input-group-append d-none d-lg-flex">
-        {{> control_button b_class="btn-primary complex-list-add" b_title=(concat "Add " type " to List")
+        {{> control_button b_class="btn-success complex-list-add" b_title=(concat "Add " type " to List")
         	b_item=(either type "Item") b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
         	b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" }}
 			</span>

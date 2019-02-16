@@ -1,4 +1,4 @@
-# Last Updated: 2019-01-07
+# Last Updated: 2019-02-16
 
 localstorage:
   name: localStorage
@@ -142,17 +142,17 @@ hello:
   desc: This is used to manage login / tokens for OAuth2 Services.
   url: https://cdnjs.com/libraries/hellojs
   project: https://github.com/MrSwitch/hello.js
-  version: 1.17.1
-  last: 1.16.1
+  version: 1.18.1
+  last: 1.17.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.17.1/hello.min.js
+    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.18.0/hello.min.js
       integrity: sha256-pKFV5C2DP6gWmmr+zWBVeI206oYqwRDGA3teFiDqh4c=
       crossorigin: anonymous
       id: __hello
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.17.1/hello.js
+    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.18.0/hello.js
       integrity: sha256-BfCGnvqIG9y8fX/lMr23kQs7VrnnCRZVmzagIi/yT1c=
       crossorigin: anonymous
       id: __hello
@@ -224,19 +224,19 @@ bootstrap-js:
   desc: This is a toolkit / framework for site design, layout and presentation.
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
-  version: 4.2.1
-  last: 4.1.3
+  version: 4.3.1
+  last: 4.2.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js
-      integrity: sha256-63ld7aiYP6UxBifJWEzz87ldJyVnETUABZAYs5Qcsmc=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js
+      integrity: sha256-CjSoeELFOcH0/uxWu6mC/Vlrc1AARqbm/jiiImDGV3s=
       crossorigin: anonymous
       map: true
       id: __bootstrap-js
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.js
-      integrity: sha256-K0KkaRh1fs/UYfKcnzBK9G/X7HgzuaeVI1hJPS8Sxs4=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.js
+      integrity: sha256-pl1bSrtlqtN/MCyW8XUTYuJCKohp9/iJESVW1344SBM=
       crossorigin: anonymous
       map: true
       id: __bootstrap-js
@@ -477,18 +477,18 @@ handlebars:
   desc: Used for HTML Templating in the browser.
   url: https://cdnjs.com/libraries/handlebars.js
   project: http://handlebarsjs.com/
-  version: 4.0.12
-  last: 4.0.11
+  version: 4.1.0
+  last: 4.0.12
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.runtime.min.js
-      integrity: sha256-fqlP/jrZtkHRW/kmrDOLIAo7QUNgyC9CNGl/gGh4hRM=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.0/handlebars.runtime.min.js
+      integrity: sha256-TXIHNNCHKrYGcTC8qzH3tTXzGaddAm321jR0m/i3ElY=
       crossorigin: anonymous
       id: __handlebars
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.js
-      integrity: sha256-mvJ6g+rm7zIOI34HKiaR2qmIibFpr/e7C3okTlh/Cb0=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.0/handlebars.js
+      integrity: sha256-037cJp3zWERytxD1Ux+YaylOBZUCgAQ1oicgEgpvGac=
       crossorigin: anonymous
       id: __handlebars
 
@@ -597,19 +597,19 @@ popper:
   desc: Utility for managing tooltips, dropdowns, popovers etc.
   url: https://cdnjs.com/libraries/popper.js
   project: https://github.com/FezVrasta/popper.js
-  version: 1.14.6
-  last: 1.14.4
+  version: 1.14.7
+  last: 1.14.6
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js
-      integrity: sha256-WHwIASWxNdKakx7TceUP/BqWQYMcEIfeLNdFMoFfRWA=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js
+      integrity: sha256-ZvOgfh+ptkpoa2Y4HkRY28ir89u/+VRyDE7sB7hEEcI=
       crossorigin: anonymous
       map: true
       id: __popper
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.js
-      integrity: sha256-awnyktR66d3+Hym/H0vYBQ1GkO06rFGkzKQcBj7npVE=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.js
+      integrity: sha256-xuqf1wnBhJrMktA1gWCaALUrLzy3aao/uBmwny2ybq8=
       crossorigin: anonymous
       map: true
       id: __popper
@@ -700,18 +700,18 @@ moment:
   desc: Flexible Parsing and Display of dates
   url: https://cdnjs.com/libraries/moment.js
   project: https://github.com/moment/moment/
-  version: 2.23.0
-  last: 2.22.2
+  version: 2.24.0
+  last: 2.23.0
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js
-      integrity: sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js
+      integrity: sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=
       crossorigin: anonymous
       id: __moment
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.js
-      integrity: sha256-l6SU+rVSlkyIcMsqjy0mb6ne/qPpYotdVSFd9vLmV1A=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js
+      integrity: sha256-H9jAz//QLkDOy/nzE9G4aYijQtkLt9FvGmdUTwBk6gs=
       crossorigin: anonymous
       id: __moment
       
@@ -720,18 +720,18 @@ moment_all:
   desc: Flexible Parsing and Display of dates (including locales)
   url: https://cdnjs.com/libraries/moment.js
   project: https://github.com/moment/moment/
-  version: 2.23.0
-  last: 2.22.2
+  version: 2.24.0
+  last: 2.23.0
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment-with-locales.min.js
-      integrity: sha256-2upzq+m3oG9Q4Xye6pGvLrXgrzOKtTgR1D2GCLUzL2o=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js
+      integrity: sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo=
       crossorigin: anonymous
       id: __moment
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment-with-locales.js
-      integrity: sha256-osLxzCLEKZXpeTpaGXuhS4istEryijEwZt+q0vpq698=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.js
+      integrity: sha256-dgFbqbQVzjkZPQxWd8PBtzGiRBhChc4I2wO/q/s+Xeo=
       crossorigin: anonymous
       id: __moment
 
@@ -1076,18 +1076,18 @@ three:
   desc: JavaScript 3D library
   url: https://cdnjs.com/libraries/three.js
   project: https://github.com/mrdoob/three.js
-  version: 100
-  last: 99
+  version: 101
+  last: 100
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/100/three.min.js
-      integrity: sha256-lt0ajSauzZnVSX3P22JwQ+kij14gNJDF1EZYfEV3zDU=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/101/three.min.js
+      integrity: sha256-5T+ZS9wTWxA6WoyT+ACFGUxHsSiOuUZBWjDoamjrv6w=
       crossorigin: anonymous
       id: __three
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/100/three.js
-      integrity: sha256-k+Vwb5PxT7aLeaym8WXCnWUo1EpRRgo9EGFBzTBJZHA=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/101/three.js
+      integrity: sha256-RyTgT+AfEJDVIZ8Yj5eMwXqJGdOxhy8/E78RvQBgEoI=
       crossorigin: anonymous
       id: __three
 
@@ -1155,19 +1155,19 @@ maths:
   desc: An extensive math library for JavaScript and Node.js. It features a flexible expression parser and offers an integrated solution to work with numbers, big numbers, complex numbers, units, and matrices.
   url: https://cdnjs.com/libraries/mathjs
   project: http://mathjs.org/
-  version: 5.4.0
-  last: 5.3.0
+  version: 5.4.2
+  last: 5.4.0
   license: Apache-2.0
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.4.0/math.min.js
-      integrity: sha256-KofhgFi7Tz0qJQ+PFUv1YY4AnYkWrnOeoYCKKpNexj8=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.4.2/math.min.js
+      integrity: sha256-W2xP+GeD3rATAAJ/rtjz0uNLqO9Ve9yk9744ImX8GWY=
       crossorigin: anonymous
       map: true
       id: __maths
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.4.0/math.js
-      integrity: sha256-H9EoN3ti+CyD2qtXR4/nmSxPay4NQTjssDXHM7S2yZI=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.4.2/math.js
+      integrity: sha256-7eRK6Yne+fwrqk/5Q4QmzdMTo1uo2tAncnfo7lU9z9I=
       crossorigin: anonymous
       id: __maths
       
@@ -1219,18 +1219,19 @@ xlsxpopulate:
   desc: Excel XLSX parser/generator written in JavaScript with Node.js and browser support, jQuery/d3-style method chaining, encryption, and a focus on keeping existing workbook features and styles intact.
   url: https://www.jsdelivr.com/package/npm/xlsx-populate
   project: https://github.com/dtjohnson/xlsx-populate
-  version: 1.17.0
+  version: 1.19.1
+  last: 1.17.0
   license: MIT
   type: js
   prod:
-    - url: https://cdn.jsdelivr.net/npm/xlsx-populate@1.17.0/browser/xlsx-populate.min.js
+    - url: https://cdn.jsdelivr.net/npm/xlsx-populate@1.19.1/browser/xlsx-populate.min.js
       integrity: sha256-fMzoe6p5CAdKxTmu+wp8T/OzLONHbnVgaedHzpUI2qU=
       crossorigin: anonymous
       map: true
       id: __xlsxpopulate
   dev:
-    - url: https://cdn.jsdelivr.net/npm/xlsx-populate@1.17.0/browser/xlsx-populate.js
-      integrity: sha256-HygTL2fvfQz59MCk92D0wre9tl3QK3pMuSNVmLGuvys=
+    - url: https://cdn.jsdelivr.net/npm/xlsx-populate@1.19.1/browser/xlsx-populate.js
+      integrity: sha256-y3C/iRjJKlD9T+PapHj0y6MWjZxmo8Hnc9VmZ2eBgvg=
       crossorigin: anonymous
       map: true
       id: __xlsxpopulate
@@ -1238,8 +1239,9 @@ xlsxpopulate:
 chance:
   name: Chance Random Data Library
   desc: Utility library to generate anything random
+  url: https://cdnjs.com/libraries/chance
   project: https://github.com/chancejs/chancejs
-  version: 1.0.19
+  version: 1.0.18
   license: MIT
   type: js
   prod:

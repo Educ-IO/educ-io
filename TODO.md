@@ -2,8 +2,6 @@ TODO LIST
 =========
 General
 -------
-* Loader for triggered code loads (e.g. on navigate)
-
 * ** IMPORTANT ** Loader/Spinner contained within element
 
 * ** IMPORTANT ** Loading Spinner for 'Get Help' - can be slow sometimes!
@@ -88,10 +86,6 @@ Grades
 
 View
 ----
-* Import Password-Protected / Encrypted Spreadsheets
-
-* Offer save direct to Google Drive for Exporting (with share by link option)
-
 * Turn off advanced table display for fewer filtered rows?
 	+ Important to help deal with flickers
 * Pass Date column information to readonly view
@@ -127,15 +121,16 @@ Reflect
 * ** IMPORTANT ** Should have anchor links using smooth scroll to different parts of the forms, to make navigation of the form easier!
 
 * Lesson Observation Form
-* ** IMPORTANT ** Evidence Check Boxes not being toggled (Re-Hydrate)
+
 * ** IMPORTANT ** Feedback on successful save?
 * ** IMPORTANT ** Save, Send & Complete Instructions / About
-* ** IMPORTANT ** Re-Hydrate Functionality
-* ** IMPORTANT ** * Optional Gradings against standards
+* ** BUG ** Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS
+* ** IMPORTANT ** Optional Gradings against standards
+
 * Change UI Buttons (Save, Complete etc) for Report / Form
 * Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL
 * Email group from above.
-* Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS
+
 
 Publish
 -------
@@ -147,6 +142,12 @@ Survey
 
 Complete
 --------
+* ** BUG ** - Click and Drag overrrides text box select handling when editing a Docket Item. <-- DONE
+* Make Durations field type <== DONE
+* Loader for triggered code loads (e.g. on navigate) <-- DONE
+* Offer save direct to Google Drive for Exporting (with share by link option) <-- DONE
+* ** IMPORTANT ** Evidence Check Boxes not being toggled (Re-Hydrate) <-- DONE
+* ** IMPORTANT ** Re-Hydrate Functionality <-- DONE
 * 'Save' Screenshot does not work with dynamic / loaded Stylesheets -> Fixed in Version 1.0.0 but not on CDN-JS <-- DONE
 * ** IMPORTANT ** >1 Evidence Items not outputted in JSON (De-Hydrate) <-- DONE
 * Check Spreadsheet API Permission for logging! Is this covered by drive permission? YES <-- DONE
@@ -612,4 +613,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2019-02-05
+ᕕ( ᐛ )ᕗ JD - 2019-02-10

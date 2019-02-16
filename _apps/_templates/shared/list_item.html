@@ -9,6 +9,7 @@
      class="align-self-center d-flex align-items-center px-0 py-0 mx-0 my-0">
 		{{#present (either icon_url Icon_Url)}}<img data-output-name="Icon_Url"
     	class="ml-1 mr-2{{#if class}} {{class}}{{/if}}" src="{{#with Icon_Url}}{{either Url this}}{{else}}{{icon_url}}{{/with}}"/>{{else}}<i data-output-name="Icon" class="align-self-center mr-2 material-icons{{#if class}} {{class}}{{/if}}">{{either icon Icon}}</i>{{/present}}
+    {{#present (either date Date)}}<span data-output-name="Date" class="text-muted badge badge-light mr-1 align-self-center">{{val "" date Date}}</span>{{/present}}
 		{{#if url}}<a data-output-name="Value"
        {{#present id}}id="{{id}}"{{else}}{{#present for}}id="{{for}}"{{/present}}{{/present}}
        href="{{url}}"
@@ -19,10 +20,13 @@
        href="{{Url}}"
        target="_blank">{{Text}}</a>
     {{/with}}{{else}}
-		<span data-output-name="Value">{{Value}}</span>
+		<span data-output-name="Value">{{val "" Value}}</span>
 		{{/if}}{{else}}
-		<span data-output-name="Value">{{val "" details}}</span>{{/if}}{{/if}}
-		<span data-output-name="Type" class="badge badge-secondary ml-2 align-self-center">{{val "" type Type}}</span>
+		<span data-output-name="Value">{{#exists details}}{{val "" details}}{{/exists}}</span>{{/if}}{{/if}}
+    {{#present (either number Number)}}<span data-output-name="Number" 
+    	class="ml-2 badge badge-dark align-self-center">{{val "" number Number}}</span>{{/present}}
+		<span data-output-name="Type" 
+      	class="badge badge-secondary {{#present (either number Number)}}ml-1{{else}}ml-2{{/present}} align-self-center">{{val "" type Type}}</span>
 	</p>
 </div>
 {% endraw %}

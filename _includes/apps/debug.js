@@ -1,6 +1,6 @@
 App = function() {
   "use strict";
-
+  
   /* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
 
   /* <!-- Returns an instance of this if required --> */

@@ -9,6 +9,7 @@ Data = function() {
     PAUSE = () => DELAY(RANDOM(200, 500)),
     LONG_PAUSE = () => DELAY(RANDOM(1000, 3000)),
     GEN = {
+      d: () => chance.date(),
       b: p => chance.bool({
         likelihood: p ? p : 50
       }),
@@ -29,7 +30,8 @@ Data = function() {
         min: min,
         max: max
       }),
-      c: () => GEN.p(6, "0123456789abcdef")
+      c: () => GEN.p(6, "0123456789abcdef"),
+      o: array => array[GEN.i(0, array.length - 1)],
     },
     RUN = promises => _.reduce(promises, (all, promise) => all.then(
       result => promise().then(Array.prototype.concat.bind(result))
@@ -83,13 +85,13 @@ Data = function() {
     }) : false,
     _markdown = markdown => _showdown ? _showdown.makeHtml(markdown) : markdown,
     _checks = {
-      list: (list, map, field) => (name, values) => {
+      list: (list, map, field, items) => (name, values) => {
         list.length > 0 ?
           list.length == 1 ?
           values.to.have.deep.nested.property(
-            `${name}.Values${field ? `.${field}` : ""}.Items`, map(list[0])) :
+            `${name}.Values${field ? `.${field}` : ""}.${items ? items : "Items"}`, map(list[0])) :
           values.to.have.deep.nested.property(
-            `${name}.Values${field ? `.${field}` : ""}.Items`)
+            `${name}.Values${field ? `.${field}` : ""}.${items ? items : "Items"}`)
           .to.have.ordered.members(_.map(list, map)) &&
           values.to.have.deep.nested.property(`${name}.Values.Value`, true) :
           values.to.have.deep.nested.property(`${name}.Value`, false);
@@ -454,16 +456,17 @@ Data = function() {
               details: GEN.t(GEN.i(10, 50)),
               type: GEN.t(GEN.i(5, 10)),
             });
-          _return._value = ((additions, type) => _checks.list(additions, item => ({
-            Value: item.details.trim(),
-            Type: type.trim(),
-            __type: "list_item",
-          })))(_.filter(_additions, "details"), _return.type);
+          _return._value = ((additions, type) => additions && additions.length > 0 ?
+            _checks.list(additions, item => ({
+              Value: item.details.trim(),
+              Type: type.trim(),
+              __type: "list_item",
+            })) : null)(_.filter(_additions, "details"), _return.type);
           _return._populate = ((id, additions) => modal => {
             _.each(additions, addition => {
               if (addition.details)
                 modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(addition.details);
-              modal.find(`[data-id='${id}'] button.btn-primary`).first().delay(100).click();
+              modal.find(`[data-id='${id}'] button.btn-success`).first().delay(100).click();
             });
           })(_return.id, _additions);
           return _return;
@@ -494,7 +497,59 @@ Data = function() {
                 .find(`[data-value='${addition.option.value}']`).click();
               if (addition.details)
                 modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(addition.details);
-              modal.find(`[data-id='${id}'] button.btn-primary`).first().delay(100).click();
+              modal.find(`[data-id='${id}'] button.btn-success`).first().delay(100).click();
+            });
+          })(_return.id, _additions);
+          return _return;
+        },
+        durations_Add: () => {
+          var _type = GEN.a(GEN.i(5, 10)),
+            _increment = GEN.o([0.25, 0.5, 0.75, 1, 1.5, 2, 2.5]),
+            _additions = _.map(_.range(GEN.i(1, 10)), () => ({
+              date: moment(GEN.d()),
+              total: GEN.i(1, 10),
+              details: GEN.b() ? GEN.t(GEN.i(10, 50)) : "",
+              type: _type,
+              increment: _increment,
+            })),
+            _return = _.extend(_blocks.basic("Durations"), {
+              template: "field_durations",
+              icon_date: "calendar_today",
+              icon_number: "alarm_add",
+              details: GEN.t(GEN.i(10, 50)),
+              suffix: GEN.t(GEN.i(5, 10)),
+              list_field: GEN.a(GEN.i(5, 10)),
+              items: GEN.a(GEN.i(5, 10)),
+              type: _type,
+              increment: _increment,
+            });
+          _return._value = ((additions, prefix, field, type, total, suffix, items) => additions &&
+            additions.length > 0 ?
+            (name, values) => {
+              values.to.have.deep.nested.property(`${name}.Values.Total`, total);
+              values.to.have.deep.nested.property(`${name}.Values.Display`, `${total} ${suffix}`);
+              return _checks.list(additions, item => {
+                var _item = {
+                  Date: item.date.format("YYYY-MM-DD"),
+                  Type: item.type,
+                  Number: String(item.total * item.increment),
+                  __type: "list_item",
+                };
+                if (item.details) _item.Value = item.details.trim();
+                return _item;
+              }, field, items)(name, values);
+            } : null)(_additions, _return.prefix, _return.list_field, _return.type,
+            _.reduce(_additions, (total, add) => total + (add.total * add.increment), 0),
+            _return.suffix, _return.items);
+          _return._populate = ((id, additions) => modal => {
+            _.each(additions, addition => {
+              modal.find(`[data-id='${id}'] input#${id}_DATE`).val(addition.date.format("YYYY-MM-DD"));
+              _.times(addition.total, () =>
+                modal.find(`[data-id='${id}'] button.alter-numerical.btn-primary`).first().click());
+              if (addition.details)
+                modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(addition.details);
+              modal.find(`[data-id='${id}'] button.btn-success`).first().delay(100).click();
+              modal.find(`[data-id='${id}'] button.eraser`).first().click();
             });
           })(_return.id, _additions);
           return _return;
@@ -515,9 +570,12 @@ Data = function() {
           return _return;
         },
         scale_Evidence: () => {
-
-          var _return = _blocks.types.scale_Empty("Evidence Scale");
-          _return._value = ((scale, type, list_field) => (name, values) => {
+          var _return = _blocks.types.scale_Empty("Evidence Scale"),
+            _test = (value, marker) => value === true ? value : marker.children ?
+            _.reduce(marker.children, _test, value) : marker._data && marker._data.details ?
+            true : false,
+            _value = _.reduce(_return.scale.scale, _test, false);
+          _return._value = ((scale, type, list_field, value) => value ? (name, values) => {
 
             values = values.to.have.deep.nested.property(`${name}.Values`);
             values.to.be.an("object");
@@ -572,7 +630,7 @@ Data = function() {
 
             _.each(scale.scale, _check([], []));
 
-          })(_return.scale, _return.type.trim(), _return.list_field.trim());
+          } : null)(_return.scale, _return.type.trim(), _return.list_field.trim(), _value);
           _return._populate = ((id, scale) => modal => {
 
             var _marker = parent => marker => {
@@ -1077,7 +1135,7 @@ Data = function() {
                   details = field.find(`textarea#${state.id}_DETAILS`),
                   button = field.find(`button#${state.id}_TYPE`),
                   list = field.find(`div#${state.id}_LIST`),
-                  add = field.find("button.btn-primary");
+                  add = field.find("button.btn-success");
 
                 /* <!-- Check details textarea --> */
                 _.times(GEN.i(1, 10), () => _interactions.text(details));
@@ -1097,7 +1155,7 @@ Data = function() {
                 var _item = list.find(".list-item").last();
                 expect(_item.find("span[data-output-name='Value']").text())
                   .to.be.a("string")
-                  .that.equals(`${_details}`);
+                  .that.equals(_details);
                 expect(_item.find("span[data-output-name='Type']").text())
                   .to.be.a("string")
                   .that.equals(state.type);
@@ -1134,6 +1192,131 @@ Data = function() {
                   expect(list.find(".list-item").length)
                     .to.be.a("number")
                     .that.equals(_count - 1);
+                });
+
+              },
+            }),
+            duration: () => _.extend(_blocks.basic("Durations"), {
+              template: "field_durations",
+              icon_date: "calendar_today",
+              icon_number: "alarm_add",
+              details: GEN.t(GEN.i(10, 50)),
+              suffix: GEN.t(GEN.i(5, 10)),
+              type: GEN.an(GEN.i(10, 15)),
+              items: GEN.n(GEN.i(10, 15)),
+              increment: GEN.o([0.25, 0.5, 0.75, 1, 1.5, 2]),
+              _interact: (field, modal, state) => {
+                var _additions = _.map(_.range(GEN.i(1, 10)), () => ({
+                    date: moment(GEN.d()),
+                    total: GEN.i(1, 10),
+                    details: GEN.t(GEN.i(10, 50)),
+                  })),
+                  duration = field.find(`input#${state.id}_DURATION`),
+                  details = field.find(`textarea#${state.id}_DETAILS`),
+                  total = field.find(`input#${state.id}_TOTAL`),
+                  display = field.find(`input#${state.id}_DISPLAY`),
+                  increase = field.find("button.alter-numerical.btn-primary").first(),
+                  value = field.find(`input#${state.id}_NUMERIC`),
+                  clear = field.find("button.eraser").first(),
+                  format = "YYYY-MM-DD",
+                  start = moment(GEN.d()),
+                  date = field.find(`input#${state.id}_DATE`),
+                  list = field.find(`div#${state.id}_LIST`),
+                  add = field.find("button.btn-success");
+
+                /* <!-- Check details textarea --> */
+                _.times(GEN.i(1, 10), () => _interactions.text(details));
+
+                /* <!-- Test Increases --> */
+                var _total = GEN.i(1, 10);
+                _.times(_total, index => {
+                  increase.click();
+                  var _value = (index + 1) * state.increment;
+                  expect(Number(value.val())).to.be.a("number")
+                    .that.equals(_value);
+                  expect(duration.val()).to.be.a("string")
+                    .that.equals(`${_value} ${state.suffix}`);
+                });
+
+                /* <!-- Add Basic Item --> */
+                var _details = GEN.t(GEN.i(10, 50));
+                details.val(_details);
+                date.val(start.format(format));
+                _total = _total * state.increment;
+
+                add.first().click();
+
+                var _check = (dt, d, t) => {
+                  var _item = list.find(".list-item").last();
+                  expect(_item.find("span[data-output-name='Date']").text())
+                    .to.be.a("string")
+                    .that.equals(dt.format(format));
+                  expect(_item.find("span[data-output-name='Value']").text())
+                    .to.be.a("string")
+                    .that.equals(d);
+                  expect(_item.find("span[data-output-name='Number']").text())
+                    .to.be.a("string")
+                    .that.equals(String(t));
+                  expect(_item.find("span[data-output-name='Type']").text())
+                    .to.be.a("string")
+                    .that.equals(state.type);
+                  expect(details.val()).to.be.empty;
+                };
+                _check(start, _details, _total);
+
+                /* <!-- Check clear --> */
+                clear.first().click();
+                expect(date.val()).to.be.empty;
+                expect(duration.val()).to.be.empty;
+
+                /* <!-- Check Totals --> */
+                expect(Number(total.val()))
+                  .to.be.a("number")
+                  .that.equals(_total);
+                expect(display.val())
+                  .to.be.a("string")
+                  .that.equals(`${_total} ${state.suffix}`);
+
+                /* <!-- Remove Item --> */
+                list.find(".list-item").last().find("a.delete").click();
+
+                /* <!-- Check Totals --> */
+                expect(Number(total.val()))
+                  .to.be.a("number")
+                  .that.equals(0);
+                expect(display.val()).to.be.empty;
+
+                /* <!-- Check each addition --> */
+                var _running = 0;
+                _.each(_additions, addition => {
+
+                  details.val(addition.details);
+                  date.val(addition.date.format(format));
+                  _.times(addition.total, () => increase.click());
+                  add.first().click();
+
+                  var _total = addition.total * state.increment;
+                  _check(addition.date, addition.details, _total);
+
+                  expect(Number(total.val()))
+                    .to.be.a("number")
+                    .that.equals(_running += _total);
+
+                  /* <!-- Clear Inputs --> */
+                  clear.first().click();
+
+                });
+
+                /* <!-- Remove all List Items --> */
+                list.find(".list-item").each(function() {
+                  var _count = list.find(".list-item").length;
+                  $(this).find("a.delete").click();
+                  expect(list.find(".list-item").length)
+                    .to.be.a("number")
+                    .that.equals(_count - 1);
+                  expect(Number(total.val()))
+                    .to.be.a("number")
+                    .that.equals(_running -= Number($(this).find("span[data-output-name='Number']").text()));
                 });
 
               },
@@ -1223,6 +1406,7 @@ Data = function() {
             select: _blocks.types.select_Options,
             items: _blocks.types.complex_Add,
             complex: _blocks.types.complex_AddWithOptions,
+            durations: _blocks.types.durations_Add,
             scale: _blocks.types.scale_Evidence
           };
 

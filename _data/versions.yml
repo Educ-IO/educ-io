@@ -1,8 +1,8 @@
 site :
-  0.1.1y :
+  0.1.1z :
     name : Updated Debug Tests
     desc : Improved Testing in advance of Reflect App release
-    numeric : 0.1.1.5
+    numeric : 0.1.1.6
   0.1.1v :
     name : Updated Folders App
     desc : Team Drives capability information
@@ -837,6 +837,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  0.0.4o-beta :
+    name : Drag and Drop Bug fixes
+    desc : Disabled Dragging an item whilst editing
+    type : minor
   0.0.4n-beta :
     name : Visual Tweaks and Improvements
     desc : Better editing button arrangement for smaller columns and wider text on mobile

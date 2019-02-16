@@ -164,7 +164,10 @@ App = function() {
           var _handle = target => {
             var parent = $(target).parents("div.item");
             parent.find("div.edit, div.display").toggleClass("d-none");
-            parent.toggleClass("editable").toggleClass("editing");
+            parent.toggleClass("editable").toggleClass("editing")
+              .attr("draggable", (i, attr) =>
+                attr === undefined || attr === null || attr === false || attr === "false" ?
+                "true" : "false");
             return parent;
           };
           if (code == 13) {
@@ -185,7 +188,12 @@ App = function() {
           _clicked = $(e.target);
         _target.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
         !_clicked.is("input, textarea, a, span, a > i") ?
-          e.shiftKey ? e.preventDefault() || _show.clear() || _show.complete(_target) : _target.find("div.edit, div.display").toggleClass("d-none") && _target.toggleClass("editable").toggleClass("editing") : false;
+          e.shiftKey ? e.preventDefault() || _show.clear() || _show.complete(_target) :
+          _target.find("div.edit, div.display").toggleClass("d-none") &&
+          _target.toggleClass("editable").toggleClass("editing")
+          .attr("draggable", (i, attr) =>
+            attr === undefined || attr === null || attr === false || attr === "false" ?
+            "true" : "false") : false;
         if (_target.find("div.edit").is(":visible")) {
 
           /* <!-- Focus Cursor on Text Area --> */

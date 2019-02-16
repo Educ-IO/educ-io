@@ -450,6 +450,7 @@ reflect:
     - fields/field_select
     - fields/field_span
     - fields/field_textual
+    - fields/field_durations
     - reflect/group
     - reflect/form
     - reflect/recovery
@@ -556,6 +557,7 @@ reflect:
               disabled_until:
                 - opened-report
     - name: Tracker
+      visibility: debug
       groups:
         all:
           commands:
@@ -585,6 +587,7 @@ reflect:
               disabled_until:
                 - opened-tracker
     - name: Form
+      visibility: debug
       groups:
         all:
           commands:
@@ -3246,6 +3249,7 @@ debug:
     - fields/field_select
     - fields/field_span
     - fields/field_textual
+    - fields/field_durations
     - debug/host
     - debug/data/dialog
     - debug/data/form
