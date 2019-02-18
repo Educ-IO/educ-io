@@ -30,7 +30,9 @@ button.close {
   padding: 0;
   background-color: transparent;
   border: 0;
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 // Future-proof disabling of clicks on `<a>` elements

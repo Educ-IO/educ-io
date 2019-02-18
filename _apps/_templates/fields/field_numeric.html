@@ -53,9 +53,9 @@
 			<span class="input-group-append d-none d-lg-flex">
 				{{> control_button b_class="btn-secondary eraser no-active"
         	b_title="Clear / Reset" b_target=(concat id "||" id "_NUMERIC") b_icon="refresh" }}
-        {{> control_button b_class="btn-info alter-numerical d-flex h-100"
+        {{> control_button b_class="btn-info alter-numerical"
         	b_title="Decrement" b_target=id b_icon="remove" b_value=(concat "-" (either increment 1)) }}
-    		{{> control_button b_class="btn-primary alter-numerical d-flex h-100"
+    		{{> control_button b_class="btn-primary alter-numerical"
         	b_title="Increment" b_target=id b_icon="add" b_value=(either increment 1)}}
 			</span>
 		</div>

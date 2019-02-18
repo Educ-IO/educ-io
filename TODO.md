@@ -63,6 +63,7 @@ Mobile
 
 Docket
 ------
+* ** BUG ** ? Delete item can lead to subsequent hash failures on changes.
 * Overlay events from Google Calendar - Need to do the OAuth Google Acceptance Form
 
 * Add tasks from Github Issues (maybe? - or is an extension a better route, with push adding to the Docket sheet?)
@@ -73,7 +74,6 @@ Docket
 
 * Re-Ordering Items by touch...
 * Faster Add on Mobile Dialogs - perhaps pinch action to confirm, or buttons at the top too?
-* Date Bug on MacOS - Localised formats? (Could be related to https://bugs.chromium.org/p/chromium/issues/detail?id=171813) ... Need to verify on SauceLabs / Mac
 
 Tiles
 -----
@@ -111,12 +111,15 @@ Merge
 
 Folders
 -------
+* ** FEATURE ** - Batch Clone to multiple folders: https://www.cloudconnectcommunity.com/ccc/ls/community/g-suite/post/4860149603500032
 * Use new format MODAL form returns (once Data is stable ... activate by including Data helper in App Build)
   + Update validate method on App callers to accept object, rather than value array
   + Update _return methods on App callers to accept object, rather than value array
 
 Reflect
 -------
+* ** NEW FIELD ** Range Field - https://getbootstrap.com/docs/4.3/components/forms/#range
+
 * ** IMPORTANT ** Including Save buttons at the end of Reflect Forms by cloning menu items from NAV (with imports etc)
 * ** IMPORTANT ** Should have anchor links using smooth scroll to different parts of the forms, to make navigation of the form easier!
 
@@ -124,7 +127,6 @@ Reflect
 
 * ** IMPORTANT ** Feedback on successful save?
 * ** IMPORTANT ** Save, Send & Complete Instructions / About
-* ** BUG ** Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS
 * ** IMPORTANT ** Optional Gradings against standards
 
 * Change UI Buttons (Save, Complete etc) for Report / Form
@@ -142,6 +144,8 @@ Survey
 
 Complete
 --------
+* ** BUG ** Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS <-- DONE
+* ** IMPORTANT ** Enable Auto-Prefixer for CSS Build <-- DONE
 * ** BUG ** - Click and Drag overrrides text box select handling when editing a Docket Item. <-- DONE
 * Make Durations field type <== DONE
 * Loader for triggered code loads (e.g. on navigate) <-- DONE

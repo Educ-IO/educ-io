@@ -7,7 +7,7 @@
 			<p class="lead">{{ app.desc | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</p>
 			{{ text | markdownify }}
 			<div class="d-flex flex-column flex-lg-row flex-wrap lead mb-3 mt-4">
-        {% assign buttons = site.array %}{% for button in include.buttons %}{% if button.visibility %}{% if jekyll.environment == button.visiblity or button.visiblity == true %}{% assign buttons = buttons | push: button %}{% endif %}{% else %}{% assign buttons = buttons | push: button %}{% endif %}{% endfor %}
+        {% assign buttons = site.array %}{% for button in include.buttons %}{% if button.visibility %}{% if jekyll.environment == button.visibility or button.visibility == true %}{% assign buttons = buttons | push: button %}{% endif %}{% else %}{% assign buttons = buttons | push: button %}{% endif %}{% endfor %}
 				{% for button in buttons %}
         {% if button.buttons %}
         <div class="btn-group{% unless button.hash %} dropdown{% endunless %} mt-2 mr-lg-3"{% unless button.hash %} role="group"{% endunless %}>
@@ -18,7 +18,7 @@
         {% else %}
           {% include command.html type="button" id=id quiet="true" class="btn btn-lg btn-action dropdown-toggle flex-fill waves-effect" command=button dropdown="true" %}
         {% endif %}
-        {% assign sub_buttons = site.array %}{% for sub_button in button.buttons %}{% if sub_button.visibility %}{% if jekyll.environment == sub_button.visiblity or sub_button.visiblity == true %}{% assign sub_buttons = sub_buttons | push: sub_button %}{% endif %}{% else %}{% assign sub_buttons = sub_buttons | push: sub_button %}{% endif %}{% endfor %}
+        {% assign sub_buttons = site.array %}{% for sub_button in button.buttons %}{% if sub_button.visibility %}{% if jekyll.environment == sub_button.visibility or sub_button.visibility == true %}{% assign sub_buttons = sub_buttons | push: sub_button %}{% endif %}{% else %}{% assign sub_buttons = sub_buttons | push: sub_button %}{% endif %}{% endfor %}
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{ id }}">
             {% for sub_button in sub_buttons %}
             {% include command.html quiet="true" class="dropdown-item" command=sub_button %}

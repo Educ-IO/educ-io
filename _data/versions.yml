@@ -1,4 +1,8 @@
 site :
+  0.1.2a :
+    name : Updated Routes
+    desc : Improved Routing Flexibility in advance of Reflect App release
+    numeric : 0.1.1.7
   0.1.1z :
     name : Updated Debug Tests
     desc : Improved Testing in advance of Reflect App release

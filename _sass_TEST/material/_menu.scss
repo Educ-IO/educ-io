@@ -1,0 +1,9 @@
+@import "variables/general";
+@import "variables/elevation";
+@import "variables/menu";
+
+@import "mixins/movement";
+
+.dropdown-menu {
+  box-shadow: map-get($menu-elevation-shadow, shadow);
+}

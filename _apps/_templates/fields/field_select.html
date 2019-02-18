@@ -33,7 +33,7 @@
 	<div class="col-md-9">
 		<div class="input-group{{#if large}} input-group-lg{{/if}}">
 			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
-			<select id="{{id}}_SELECTOR" class="form-control{{#if large}} form-control-lg{{/if}}"
+			<select id="{{id}}_SELECTOR" class="custom-select form-control{{#if large}} form-control-lg{{/if}}"
               data-for="{{id}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>
 				{{#each options}}
 					<option value="{{val '' value this}}"

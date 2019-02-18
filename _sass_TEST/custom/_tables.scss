@@ -1,0 +1,176 @@
+/* -- General Table Styling -- */
+table {
+	thead {
+		z-index: 2;
+		> th {
+			display: none;
+		}
+		tr {
+			background-color: $colour-background;
+			th {
+				position: relative;
+			}
+		}
+		.sort {
+      a {&:after {margin-left: 0.3em;}}
+			&.asc a {
+				&:after {content: "🠟";}
+			}
+			&.desc a {
+				&:after {content: "🠝";}
+			}
+		}
+	}
+	tbody {
+		outline: 0;
+		.extra-row {
+			margin-top: 0 !important;
+			margin-bottom: 0 !important;
+			&.keep-parity {
+				display: none;
+			}
+		}
+		.wrap-text {
+			overflow-wrap: break-word;
+    	word-wrap: break-word;
+    	display: inline-block;
+			&.mw-25 {max-width: 25pc !important;}
+			&.mw-50 {max-width: 50pc !important;}
+			&.mw-60 {max-width: 60pc !important;}
+			&.mw-75 {max-width: 75pc !important;}
+			&.mw-80 {max-width: 80pc !important;}
+			&.mw-90 {max-width: 90pc !important;}
+		}
+		
+	}
+}
+
+.table-fixed-width, .table-frozen {
+	table-layout: fixed;
+}
+
+.table-filtered {
+	tr {
+		th, td {
+			&.to-hide {
+				background-color: rgba($colour-deemphasise, 0.3);
+				color: darken($colour-deemphasise, 25%);
+				a {
+					color: $colour-emphasis !important;
+          &:hover {color: darken($colour-emphasis, 10%) !important;}
+          &:before, &:after {color: rgba($colour-emphasis, 0.5) !important;}
+				}
+			}
+			a {
+				color: $colour-highlight;
+				text-align: center;
+        &:hover {
+          text-decoration: none;
+          color: darken($colour-highlight, 10%);
+        }
+        &:before, &:after {color: rgba($colour-highlight, 0.5);}
+			}
+		}
+	}
+	thead tr {
+		th:not(.to-hide):not(.d-none) + .to-hide, th.to-hide + :not(.to-hide), th.to-hide-prefix {
+			&:before {
+				cursor: pointer;
+    		pointer-events: all;
+				position: absolute;
+				bottom: -0.1em;
+				color: darken($colour-deemphasise, 10%);
+				content: "+/-";
+				text-align: left;
+			}
+		}
+		th:not(.to-hide):not(.d-none) + .to-hide, th.to-hide + :not(.to-hide) {
+			&:after {
+				position: absolute;
+				bottom: .4em;
+				left: 0;
+				content: "";
+				border-left: .4em solid darken($colour-deemphasise, 10%);
+				height: 20%;
+			}
+		}
+		th:not(.to-hide):not(.d-none) + .to-hide {
+			&:before {
+				left: -1.6em;
+			}
+		}
+		th.to-hide + :not(.to-hide) {
+			&:before {
+				left: 0.6em;
+			}
+		}
+		th.to-hide-prefix {
+			&:before {
+				right: 1.6em;
+			}
+			&:after {
+				position: absolute;
+				bottom: .4em;
+				right: 0;
+				content: "";
+				border-right: .4em solid darken($colour-deemphasise, 10%);
+				height: 20%;
+			}
+		}
+	}
+	
+	th {
+		text-align: center;
+		pointer-events: none;
+		&.table-header {
+			.heading-icons {
+				position: absolute;
+				right: 0.1em;
+				top: 0em;
+				.material-icons {margin: 0 0 0 0.1em;}
+			}
+		}
+		.material-icons {font-size: 0.90rem;}
+		&.filtered {
+      background: repeating-linear-gradient(
+        45deg,
+        $colour-background,
+        $colour-background 10px,
+        lighten($colour-highlight, 45%) 10px,
+        lighten($colour-highlight, 45%) 20px
+      );
+			&.inverse {
+        background: repeating-linear-gradient(
+          45deg,
+          lighten($colour-highlight, 10%),
+          lighten($colour-highlight, 10%) 10px,
+          darken($colour-highlight, 5%) 10px,
+          darken($colour-highlight, 5%) 20px
+        );
+				a {
+					color: $colour-background;
+          &:before, &:after {color: rgba($colour-background, 0.6) !important;}
+				}
+        .material-icons.text-muted {
+					color: darken($colour-background, 5%) !important;	
+				}
+			}
+		}
+		&.to-hide {
+			&:after, + th:after {
+				position: absolute;
+				bottom: .4em;
+				left: 0;
+				content: "";
+			}
+			&:after {
+				width: 100%;
+				border-bottom: .4em dashed darken($colour-deemphasise, 10%); 
+			}
+		}
+		a {
+			cursor: pointer;
+    	pointer-events: all;
+		}
+	}
+}

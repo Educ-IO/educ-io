@@ -1,0 +1,1 @@
++ **Scale** - A scale is a set of statements, areas or goals which can be measured against, or evidence supplied to show that they have been met. It can be created from scratch, or an existing scale can be selected upon which to base it.

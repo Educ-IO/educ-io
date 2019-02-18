@@ -110,10 +110,12 @@ p {
 abbr[title],
 abbr[data-original-title] { // 1
   text-decoration: underline; // 2
-  text-decoration: underline dotted; // 2
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted; // 2
   cursor: help; // 3
   border-bottom: 0; // 4
-  text-decoration-skip-ink: none; // 5
+  -webkit-text-decoration-skip-ink: none;
+          text-decoration-skip-ink: none; // 5
 }
 
 address {
@@ -181,12 +183,14 @@ sup { top: -.5em; }
 
 a {
   color: $link-color;
-  text-decoration: $link-decoration;
+  -webkit-text-decoration: $link-decoration;
+          text-decoration: $link-decoration;
   background-color: transparent; // Remove the gray background on active links in IE 10.
 
   @include hover {
     color: $link-hover-color;
-    text-decoration: $link-hover-decoration;
+    -webkit-text-decoration: $link-hover-decoration;
+            text-decoration: $link-hover-decoration;
   }
 }
 

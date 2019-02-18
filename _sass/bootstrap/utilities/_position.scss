@@ -24,7 +24,8 @@
 }
 
 .sticky-top {
-  @supports (position: sticky) {
+  @supports ((position: -webkit-sticky) or (position: sticky)) {
+    position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: $zindex-sticky;

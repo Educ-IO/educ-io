@@ -1,0 +1,73 @@
+.form-tabbed {
+  border-left: 1px solid #eceeef;
+}
+
+form {
+  .dim {
+    opacity: 0.25;
+  }
+  .optional {
+    background-color: $colour-optional !important;
+  }
+  .invalid {
+    background-color: $colour-invalid !important;
+  }
+  textarea, .resizable {
+    width: 100%;
+    max-width: 100%;
+    resize: vertical;
+  }
+  .marker-label {
+    display: inline;
+  }
+  
+  /* -- Material Switch -- */
+  .material-switch-label {
+    display: inline-block;
+    max-width: 80%;
+  }
+
+  .material-switch {
+    display: inline-block;
+    position: relative;
+    width: 40px;
+    height: 16px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.26);
+    -webkit-transition: background 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    vertical-align: middle;
+    cursor: pointer;
+  }
+
+  .material-switch::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: 24px;
+    height: 24px;
+    background: #fafafa;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.28);
+    border-radius: 50%;
+    -webkit-transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .material-switch:active::before {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.28), 0 0 0 20px rgba(128,128,128,0.1);
+  }
+
+  input:checked + .material-switch {
+    background: rgba(0,150,136,0.5);
+  }
+
+  input:checked + .material-switch::before {
+    left: 20px;
+    background: #009688;
+  }
+
+  input:checked + .material-switch:active::before {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.28), 0 0 0 20px rgba(0,150,136,0.2);
+  }
+}

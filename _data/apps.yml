@@ -418,7 +418,6 @@ reflect:
     - service
     - main
     - reflect/forms
-    - reflect/templates/evidence_tracker
     - reflect/templates/form_master
     - reflect/templates/uk_teachers_reflection
     - reflect/templates/students_volunteering
@@ -470,8 +469,13 @@ reflect:
     - reflect/URL
     - reflect/FILE
     - reflect/CREATE
+    - reflect/CREATE_FORM
+    - reflect/CREATE_REPORT
+    - reflect/CREATE_SCALE
+    - reflect/CREATE_TRACKER
     - reflect/IMPORT
     - reflect/TUTORIALS
+    - reflect/FORM
   scopes:
     google:
       - scope: email
@@ -556,81 +560,22 @@ reflect:
               hash: close
               disabled_until:
                 - opened-report
-    - name: Tracker
-      visibility: debug
+    - name: Forms
       groups:
         all:
           commands:
             - name: Create
-              desc: Create a new Tracker
-              hash: create.tracker
-              auth: google
-            - name: Open
-              desc: Open a saved Tracker from your Drive
-              hash: open.tracker
-              imports:
-                - google
-              auth: google
-            - name: Export
-              desc: Export this Tracker by downloading the data
-              hash: export
-              id: _cmd_Tracker_Export
-              disabled_until:
-                - opened-tracker
-              auth: google
-              imports:
-                - xlsx
-                - filesaver
-            - name: Close
-              desc: Close this Tracker
-              hash: close
-              disabled_until:
-                - opened-tracker
-    - name: Form
-      visibility: debug
-      groups:
-        all:
-          commands:
-            - name: Create
-              desc: Create a new Form for Reports
+              desc: Create a new Form
               hash: create.form
               auth: google
             - name: Open
-              desc: Open a Saved Form from your Drive
+              desc: Open a saved Form from your Drive
               hash: open.form
               imports:
                 - google
               auth: google
-            - name: Save
-              desc: Save this Form in your Drive
-              hash: save
-              disabled_until:
-                - opened-form
-              imports:
-                - google
-              auth: google
-            - name: Send
-              desc: Send this Form to be used for Reports
-              hash: share
-              disabled_until:
-                - opened-form
-              auth: google
-            - name: Manage Scales
-              desc: Manage Scales for your Forms
-              hash: scales
-              auth: google
-            - name: Close
-              desc: Close this Form
-              hash: close
-              disabled_until:
-                - opened-form
-    - name: Analyse
-      visibility: debug
-      groups:
-        all:
-          commands:
             - name: Progress
-              desc: Check progress on Report Completion
+              desc: Check progress on Form Completion
               hash: progress
               auth: google
     - name: About
@@ -693,33 +638,6 @@ reflect:
       hash: analyse.report
       auth: google
       visibility: debug
-  - name: Evidence Tracker
-    desc: Create a new Evidence Tracker
-    hash: create.tracker
-    auth: google
-    buttons:
-    - name: Create
-      desc: Create a new Evidence Tracker
-      hash: create.tracker
-      auth: google
-    - name: Open
-      desc: Create an existing Evidence Tracker
-      hash: open.tracker
-      imports:
-        - google
-      auth: google
-    - name: Analyse
-      desc: Check progress on Tracker Completion
-      hash: analyse.tracker
-      auth: google
-      visibility: debug
-  - name: Form
-    desc: Create a new Form
-    buttons:
-    - name: Create
-      desc: Create a new Form for Reports
-      hash: create.form
-      auth: google
   published: false
 
 

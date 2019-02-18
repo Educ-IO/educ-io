@@ -10,13 +10,15 @@ Router = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Constants --> */
-  const STRIP = (command, number) => _.isArray(command) ? _.rest(command, number ? number : 1) : _.isString(command) ? [] : command,
+  const STR = JSON.stringify,
+    STRIP = (command, number) => _.isArray(command) ? _.rest(command, number ? number : 1) : _.isString(command) ? [] : command,
 
-    EXPAND = (options, command) => options ? _.isFunction(options) ? options(command) : options : false,
+    EXPAND = (options, command) => options ? _.isFunction(options) ?
+    options(command) : options : false,
 
     REJECT = {
       MIME: (files, options) => options !== null && options.mime !== undefined && !_.every(_.isArray(files) ? files : [files], file => _.find(options.mime.split(","), mime => file.mimeType.localeCompare(mime.trim()) === 0)) && ಠ_ಠ.Flags.log(`Google Drive Files MIME types${_.isArray(files) ? "" : ` (${files.mimeType})`} not matched to ${options.mime}`, files),
-      PROPERTIES: (files, options) => options !== null && options.properties !== undefined && !_.every(_.isArray(files) ? files : [files], file => _.isMatch(_.extend({}, file.properties, file.appProperties), options.properties)) && ಠ_ಠ.Flags.log(`Google Drive Files PROPERTIES${_.isArray(files) ? "" : ` (${JSON.stringify(_.extend({}, files.properties, files.appProperties))})`} not matched to ${JSON.stringify(options.properties)}`, files),
+      PROPERTIES: (files, options) => options !== null && options.properties !== undefined && !_.every(_.isArray(files) ? files : [files], file => _.isMatch(_.extend({}, file.properties, file.appProperties), options.properties)) && ಠ_ಠ.Flags.log(`Google Drive Files PROPERTIES${_.isArray(files) ? "" : ` (${STR(_.extend({}, files.properties, files.appProperties))})`} not matched to ${STR(options.properties)}`, files),
     },
 
     HANDLE = (options, resolve, reject) => files => files && (!_.isArray(files) || files.length > 0) ?
@@ -27,7 +29,8 @@ Router = function() {
 
     PICK = (picker => ({
       single: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
-        options && options.title ? options.title : "Select a File to Open", false, true, picker(options),
+        options && options.title ?
+        options.title : "Select a File to Open", false, true, picker(options),
         HANDLE(options, resolve, reject), null, true)),
       multiple: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
         options && options.title ? options.title : "Select a File/s to Open", true, true, picker(options),
@@ -63,7 +66,8 @@ Router = function() {
         _complete = state ? () => ಠ_ಠ.Display.state().enter(state) && _fn() : _fn;
 
       recent > 0 ?
-        ಠ_ಠ.Recent.last(recent).then(_show).then(_complete).catch(e => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error")) :
+        ಠ_ಠ.Recent.last(recent).then(_show).then(_complete)
+        .catch(e => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error")) :
         simple && fn ? _complete() : _show() && _complete();
 
     },
@@ -140,14 +144,16 @@ Router = function() {
         open: {
           matches: /OPEN/i,
           /* <!-- OPTIONS: Multiple | Single property dictates single or multiple files returned, all other options passed through to picker method -->  */
-          fn: (command, options) => options && options.mutiple ? PICK.multiple(options) : PICK.single(options),
+          fn: (command, options) => options && options.mutiple ?
+            PICK.multiple(options) : PICK.single(options),
         },
         load: {
           matches: /LOAD/i,
           length: {
             min: 1
           },
-          qualifier: command => /^[a-zA-Z0-9-_]+$/.test(_.isArray(command) ? command[0] : command),
+          qualifier: command => /^[a-zA-Z0-9-_]+$/.test(_.isArray(command) ?
+            command[0] : command),
           /* <!-- OPTIONS: download = boolean, default false (whether downloaded file is returned), mime = comma separated mime list (as per Picker) -->  */
           fn: (command, options) => new Promise((resolve, reject) => {
             var _id = _.isArray(command) ? command[0] : command;
@@ -265,20 +271,52 @@ Router = function() {
       /* <!-- Setup method, delayed call until routing is triggered (to ensure underscore is loaded) --> */
       const SETUP = (options => () => {
 
+        
         /* <!-- Ensure a routes object exists --> */
         _options = _.defaults(options, {
-          routes: {}
+          routes: {},
+          test: () => ಠ_ಠ.Display.state().in(_options.states, true),
+          clear: () => _.each(_options.state, (value, key, list) => list[key] = null),
         });
 
+        
+        /* <!-- Recursively Expand Child Routes --> */
+        var _expand = (route, name) => {
+          var _name = value => `${name}_${value}`,
+            _matches = value => route.matches ?
+            (_.isArray(route.matches) ? route.matches : [route.matches])
+            .concat(value.matches ? value.matches : []) :
+            value.matches,
+            _extend = matches => ({
+              matches: matches,
+              state: route.state,
+              length: route.length,
+            });
+          _.each(route.routes, (route, name) => {
+            route = _.extend(_.isFunction(route) ? 
+                             {fn: route} : route, _extend(_matches(route)));
+            if (!_options.routes[name = _name(name)] && route.fn)
+              _options.routes[name] = route;
+            if (route.routes) _expand(route, name);
+          });
+          delete route.routes;
+          return route;
+        };
+        _.each(_options.routes, (route, name) =>
+          route.routes && !_expand(route, name).fn ? delete _options.routes[name] : false);
+
+        
         /* <!-- Integrate the default routes with the custom supplied ones --> */
-        _.each(ROUTES, (route, name) => _options.routes[name] = (_options.routes[name] ?
+        var _integrate = (route, name) => _options.routes[name] = (_options.routes[name] ?
           _.isFunction(_options.routes[name]) ?
           _.defaults({
             fn: _options.routes[name]
           }, route) :
           _.defaults(_options.routes[name], route) :
-          route));
+          route);
+        _.each(ROUTES, _integrate);
 
+        
         /* <!-- Setup the shortcuts, start and end methods --> */
         _keyboard = debug => window.Mousetrap ? _.each(_options.routes, (route, name) => {
           /* <!-- Bind Shortcut key/s if required --> */
@@ -293,7 +331,8 @@ Router = function() {
             route.actions = _.isArray(route.actions) ? route.actions : [route.actions];
             var _target = route.target ? route.target : "__default";
             var _hammer = this[_target] ? this[_target] :
-              (this[_target] = new window.Hammer((route.target ? $(route.target) : ಠ_ಠ.container)[0]));
+              (this[_target] = new window.Hammer((route.target ?
+                $(route.target) : ಠ_ಠ.container)[0]));
             _hammer.on(route.actions.join(" "), ((state, fn, debug, name) => e => (!state || ಠ_ಠ.Display.state().in(state, true)) ? (!debug || ಠ_ಠ.Flags.log(`Touch Action ${e.type} routed to : ${name}`)) && fn(null) : false)(route.state, route.fn, debug, name));
           }
         }, {}) : true;
@@ -371,10 +410,12 @@ Router = function() {
           };
 
           /* <!-- Execute the route if available --> */
-          _route && _route.fn ? _execute(_route, command) === false ? (_handled = false) : true : (_handled = false);
+          _route && _route.fn ? _execute(_route, command) === false ?
+            (_handled = false) : true : (_handled = false);
 
           /* <!-- Log is available, so debug log --> */
-          if (_handled && _debug) ಠ_ಠ.Flags.log(`Routed to : ${JSON.stringify(_route)} with: ${JSON.stringify(command)}`);
+          if (_handled && _debug)
+            ಠ_ಠ.Flags.log(`Routed to: ${STR(_route)} with: ${STR(command)}`);
 
         }
 

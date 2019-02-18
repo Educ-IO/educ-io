@@ -6,7 +6,7 @@ timezone:							Europe/London
 
 # Dependencies
 markdown:							kramdown
-
+  
 # Styling
 sass:
   sass_dir:						_sass

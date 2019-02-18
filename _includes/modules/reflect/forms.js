@@ -45,6 +45,16 @@ Forms = function() {
     }
 
   };
+  
+  var _all = type => _.reduce(_cache[type ? type : "forms"], (list, value, key) => {
+      list.push({
+        key: key,
+        name: value.name,
+        title: value.title,
+        type: value.type,
+      });
+      return list;
+    }, []);
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -88,15 +98,12 @@ Forms = function() {
 
     },
 
-    all: type => _.reduce(_cache[type ? type : "forms"], (list, value, key) => {
-      list.push({
-        key: key,
-        name: value.name,
-        title: value.title,
-        type: value.type,
-      });
-      return list;
-    }, []),
+    all: _all,
+    
+    selection: type => _.map(_.filter(_all(), {type: type ? type : "Report"}), item => ({
+            value: item.key,
+            name: item.title,
+          })),
 
     has: name => !!(_cache.forms[name]),
 

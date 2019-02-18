@@ -1,0 +1,122 @@
+// -- Outline Letter Logo -- //
+a.navbar-brand.logo, .navbar-brand a.logo {
+	max-height: 48px;
+	svg {
+		height: 40px;	
+		pointer-events: visible;
+		path {
+			&.o {
+				stroke: $colour-highlight;
+				stroke-width: 2;
+				stroke-linejoin: round;
+				stroke-linecap: butt;
+			}
+			&.f {
+				fill: lighten($colour-highlight, 50%); // #ffedfa
+				fill-opacity: .89;
+				fill-rule: evenodd;
+			}
+		}
+		&:hover {
+			path {
+				&.o {stroke: darken($colour-highlight, 30%);}
+				&.f {fill: lighten($colour-highlight, 45%);}
+			}
+		}	
+	}
+}
+// -- Outline Letter Logo -- //
+
+// -- Menu Branding -- //
+.dropdown-heading {
+  &:first-child {margin-top: -0.5em;}
+	padding: 0.5rem 1rem 0.2rem 1rem;
+	font-weight: 400;
+	line-height: 1;
+	margin-bottom: 2px;
+	text-wrap: nowrap;
+	font-size: 100%;
+	border-bottom: 1px dashed lighten($colour-highlight, 25%);
+  background-color: transparentize($colour-highlight, 0.95);
+}
+// -- Menu Branding -- //
+
+// -- Outline App Logo -- //
+.dropdown-item svg, .app-logo svg, .jumbotron h1 svg, svg.logo {
+	path, use {
+    &.c, &.f {stroke-width: 1;}
+    &.c {fill-opacity: 0;}
+    &.f {fill-opacity: 0.3;}
+    &.d {
+      fill-opacity: 0.05;
+      stroke-dasharray: 8;
+    }
+    &.f, &.d {fill: lighten($colour-highlight, 10%);}
+		&.o, &.d {stroke-width: 2;}
+		&.p {stroke-width: 3;}
+		&.o, &.p {
+			stroke-linejoin: round;
+			stroke-linecap: round;
+		}
+    &.o, &.p, &.d {stroke: darken($colour-highlight, 10%);}
+   	&.c {stroke: lighten($colour-highlight, 40%);} 
+	}
+}
+
+.dropdown-item {
+	svg {
+		max-height: 1em;
+		max-width: 1em;
+		margin: 0 0.5em 0.2em -0.5em;
+	}
+}
+
+svg.logo {
+	max-height: 2em;
+	max-width: 2em;
+}
+
+.app-logo svg {
+  max-width: 100%;
+  height: auto;
+}
+
+a.app-logo svg {
+  pointer-events: visible;
+  &:hover {
+    path {
+      &.o, &.p {stroke: darken($colour-highlight, 20%);}
+    }
+  }
+}
+// -- Outline Letter Logo -- //
+
+// -- Keyboard Shortcuts -- //
+em.kb-shortcut {
+	white-space: nowrap !important;
+	font-size: 90%;
+	font-style: normal;
+	text-transform: uppercase;
+	border-radius: 0.2rem;
+	padding: 0 0.2rem;
+	margin: 0 0.1rem;
+	background-color: $colour-general;
+	color: $colour-background;
+}
+.tooltip em.kb-shortcut {
+  background-color: $colour-background !important;
+	color: $colour-general  !important;
+}
+// -- Keyboard Shortcuts -- //
+
+// -- Badges -- //
+.badge-bright {
+	color: $colour-bright-foreground;
+	background-color: $colour-bright-background;
+}
+
+.badge-rainbow {
+  color: $colour-background !important;
+  @include arrayed_Gradient(darken(rgba(0,255,0,0.9), 10%) rgba(255,0,0,0.9) rgba(0,0,255,0.9), 74%);
+}
+// -- Badges -- //

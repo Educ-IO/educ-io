@@ -1,0 +1,5 @@
+$carousel-control-bg:													$white-divider !default;
+$carousel-control-bg-hover:										rgba(204, 204, 204, 0.25) !default;
+$carousel-control-elevation-shadow:						map-get($elevation-shadows, 6) !default;
+$carousel-control-elevation-shadow-active:		map-get($elevation-shadows, 12) !default;
+$carousel-control-size:												2.5rem !default;

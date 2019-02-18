@@ -9,7 +9,8 @@ App = function() {
   }
 
   /* <!-- Internal Variables --> */
-  var ಠ_ಠ, _forms, _template, _form, _tracker, _folder, _file;
+  var ಠ_ಠ, /* <!-- Context --> */
+    ರ‿ರ = {}; /* <!-- State --> */
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Constants --> */
@@ -20,7 +21,7 @@ App = function() {
     TYPE_REPORT = "application/x.educ-io.reflect-report",
     TYPE_REVIEW = "application/x.educ-io.reflect-review",
     TYPE_TRACKER = "application/x.educ-io.reflect-tracker",
-    _types = [TYPE_SCALE, TYPE_FORM, TYPE_REPORT, TYPE_REVIEW, TYPE_TRACKER],
+    TYPES = [TYPE_SCALE, TYPE_FORM, TYPE_REPORT, TYPE_REVIEW, TYPE_TRACKER],
     STATE_FORM_OPENED = "opened-form",
     STATE_REPORT_OPENED = "opened-report",
     STATE_TRACKER_OPENED = "opened-tracker",
@@ -34,6 +35,7 @@ App = function() {
       name: "Scale",
       desc: "Create Scale",
       command: "scale",
+      doc: "CREATE_SCALE",
       options: [{
           name: "New ..."
         },
@@ -48,34 +50,25 @@ App = function() {
       name: "Form",
       desc: "Create Form",
       command: "form",
+      doc: "CREATE_FORM",
       options: [{
-          name: "New ..."
-        },
-        {
-          value: "report",
-          name: "Reflective Report"
-        }
-      ]
+        name: "New ..."
+      }].concat(ರ‿ರ.forms.selection("Report"))
     }),
 
     reports: () => ({
       name: "Report",
       desc: "Create Report",
       command: "report",
-      options: _.reduce(
-        _.filter(_forms.all(), item => item.type == "Report"), (list, item) => {
-          list.push({
-            value: item.key,
-            name: item.title,
-          });
-          return list;
-        }, []),
+      doc: "CREATE_REPORT",
+      options: ರ‿ರ.forms.selection("Report"),
     }),
 
     trackers: () => ({
       name: "Tracker",
       desc: "Create Tracker",
       command: "tracker",
+      doc: "CREATE_TRACKER",
       options: [{
         value: "uk_teachers",
         name: "UK Teachers' Standards"
@@ -85,17 +78,36 @@ App = function() {
   };
   /* <!-- Action Functions --> */
 
+  /* <-- Edit Functions --> */
+  var _edit = {
+
+    form: form => ಠ_ಠ.Display.text({
+      id: "form_editor",
+      title: "Create/Edit Form ...",
+      message: ಠ_ಠ.Display.doc.get({
+        name: "FORM",
+      }),
+      state: {
+        value: JSON.stringify(form, null, 2)
+      },
+      action: "Save",
+      rows: 10
+    }),
+
+  };
+  /* <-- Edit Functions --> */
+
   /* <!-- Create Functions --> */
   var _create = {
 
     display: (name, state, template) => {
-      var _initial = template ? _forms.create(name, template) : _forms.get(name),
+      var _initial = template ? ರ‿ರ.forms.create(name, template) : ರ‿ರ.forms.get(name),
         _return = _initial.form;
-      _template = _initial.template;
-      if (_template) _template.__name = name;
+      ರ‿ರ.template = _initial.template;
+      if (ರ‿ರ.template) ರ‿ರ.template.__name = name;
       _return.target = ಠ_ಠ.container.empty();
       ಠ_ಠ.Display.state().enter(state).protect("a.jump").on("JUMP");
-      
+
       /* <!-- ToDo - Maybe DEFER this until after load for loaded forms --> */
       return ಠ_ಠ.Fields({
           me: ಠ_ಠ.me ? ಠ_ಠ.me.full_name : undefined,
@@ -106,69 +118,34 @@ App = function() {
         .on(ಠ_ಠ.Display.template.show(_return));
     },
 
-    parent: id => new Promise(resolve => ಠ_ಠ.Google.files.get(id, true).then(f => {
-      ಠ_ಠ.Google.folders.is(true)(f) ? resolve(f) : ಠ_ಠ.Flags.error(`Supplied ID is not a folder: ${id}`) && resolve();
-    }).catch(e => {
-      ಠ_ಠ.Flags.error(`Opening Google Drive Folder: ${id}`, e) && resolve();
-    })),
+    parent: id => new Promise(resolve => ಠ_ಠ.Google.files.get(id, true)
+      .then(f => {
+        ಠ_ಠ.Google.folders.is(true)(f) ?
+          resolve(f) : ಠ_ಠ.Flags.error(`Supplied ID is not a folder: ${id}`) && resolve();
+      }).catch(e => {
+        ಠ_ಠ.Flags.error(`Opening Google Drive Folder: ${id}`, e) && resolve();
+      })),
 
     prompt: (actions, folder) => ಠ_ಠ.Display.action({
       id: "create_chooser",
       title: "Create with Reflect ...",
-      instructions: ಠ_ಠ.Display.doc.get({
+      instructions: [ಠ_ಠ.Display.doc.get({
         name: "CREATE",
         content: folder ? folder : "Google Drive"
-      }),
+      })].concat(_.map(actions, action => ಠ_ಠ.Display.doc.get(action.doc))).join("\n"),
       actions: actions,
       large: true
     }).then(result => {
       ಠ_ಠ.Flags.log("Create Action Selected:", result);
-      return result.action.command == "scale" ?
-        _create.scale(result.option.value) :
-        result.action.command == "form" ?
-        Promise.resolve(_create.display("template", STATE_FORM_OPENED)) :
-        result.action.command == "report" ?
-        _create.report(result.option.value) :
-        result.action.command == "tracker" ?
-        _create.tracker(result.option.value) : null;
-    }).catch(e => e ? ಠ_ಠ.Flags.error("Displaying Create Prompt", e) : ಠ_ಠ.Flags.log("Create Prompt Cancelled")),
+      return result.action.command ?
+        _create[result.action.command](result.option.value) : null;
+    }).catch(e => e ? ಠ_ಠ.Flags.error("Displaying Create Prompt", e) :
+      ಠ_ಠ.Flags.log("Create Prompt Cancelled")),
 
     template: (name, loaded, state) => {
 
       /* <!-- Display Relevant Form --> */
       var template = _create.display(name.toLowerCase(), state, loaded);
-
-      /* <!-- Handle Evidence Selection Buttons --> */
-      /*
-      template.find("button.g-picker, a.g-picker").off("click.picker").on("click.picker", _evidence.picker);
-      template.find("button.g-file, a.g-file").off("click.file").on("click.file", _evidence.file);
-      template.find("button.web, a.web").off("click.web").on("click.web", _evidence.web);
-      template.find("button.paper, a.paper").off("click.paper").on("click.paper", _evidence.paper);
-			*/
-
-      /* <!-- Handle Populate Textual Fields from Google Doc --> */
-      /*
-      template.find("button[data-action='load-g-doc'], a[data-action='load-g-doc']").off("click.doc").on("click.doc", e => {
-        var finish;
-        return new Promise((resolve, reject) => {
-          ಠ_ಠ.Router.pick.single({
-            title: "Select a Document to Load Text From",
-            view: "DOCUMENTS"
-          }).then(file => {
-            finish = ಠ_ಠ.Display.busy({
-              class: "loader-medium w-100 h-100",
-              fn: true
-            });
-            file ? ಠ_ಠ.Flags.log("Google Drive Document Picked", file) && (file.mimeType == "text/plain" ? ಠ_ಠ.Google.files.download(file.id) : ಠ_ಠ.Google.files.export(file.id, "text/plain"))
-              .then(download => ಠ_ಠ.Google.reader().promiseAsText(download).then(text => resolve(text))).catch(e => ಠ_ಠ.Flags.error(`Failed to download file: ${file.id}`, e) && reject(e)) : reject();
-          });
-        }).then(text => {
-          var _$ = $("#" + $(e.target).data("targets")).val(text);
-          if (_$.is("textarea.resizable")) autosize.update(_$[0]);
-          finish ? finish() : true;
-        }).catch(() => finish ? finish() : false);
-      });
-      */
 
       return template;
 
@@ -178,6 +155,33 @@ App = function() {
 
     tracker: (name, loaded) => _create.template(name, loaded, STATE_TRACKER_OPENED),
 
+    form: name => _edit.form(ರ‿ರ.forms.get(name).template).then(result => {
+        if (result) {
+          var _result = JSON.parse(result);
+          var _title = _result.title ?
+            Promise.resolve(_result.title) :
+            _result.name ?
+            Promise.resolve(_result.name) :
+            ಠ_ಠ.Display.text({
+              id: "form_name",
+              title: "File Name for Form",
+              simple: true
+            });
+          return _title.then(title => {
+            var _meta = {
+                name: `${title}.reflect`
+              },
+              _mime = TYPE_FORM;
+            return ಠ_ಠ.Google.files.upload(_meta, _result, _mime);
+          });
+        } else {
+          return Promise.reject();
+        }
+      })
+      .then(uploaded => uploaded)
+      .then(() => ಠ_ಠ.Display.state().enter(STATE_FORM_OPENED).protect("a.jump").on("JUMP"))
+      .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Create Prompt", e) : false),
+
     load: form => _create.report(form.__name, form)
 
   };
@@ -186,31 +190,36 @@ App = function() {
   /* <!-- Internal Functions --> */
   var _prepare = () => {
 
-    var _title = _template && _template.title ? _template.title : _template && _template.name ? _template.name : "Report",
+    var _title = ರ‿ರ.template && ರ‿ರ.template.title ?
+      ರ‿ರ.template.title : ರ‿ರ.template && ರ‿ರ.template.name ?
+      ರ‿ರ.template.name : "Report",
       _date = new Date().toLocaleDateString();
 
     return {
       name: `${_title} [${_date}].reflect`,
       data: {
-        form: _template,
-        report: ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form)
+        form: ರ‿ರ.template,
+        report: ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(ರ‿ರ.form)
       }
     };
 
   };
 
-  var _process = loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded).then(report => {
-    ಠ_ಠ.Flags.log(`Loaded Report File: ${report}`);
-    report = JSON.parse(report);
-    _form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(_create.load(report.form), report.report);
-  });
+  var _process = loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded)
+    .then(report => {
+      ಠ_ಠ.Flags.log(`Loaded Report File: ${report}`);
+      report = JSON.parse(report);
+      ರ‿ರ.form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(_create.load(report.form), report.report);
+    });
 
   /* <!-- TODO: Need to check type / format in process if route is from IMPORT - maybe need a further facading function? Maybe inference by properties? --> */
 
   var _load = file => {
     if (ಠ_ಠ.Google.files.is(TYPE_REPORT)(file)) {
-      _file = file;
+      ರ‿ರ.file = file;
       return ಠ_ಠ.Google.files.download(file.id).then(_process);
+    } else if (ಠ_ಠ.Google.files.is(TYPE_FORM)(file)) {
+      /* <!-- TODO: Process Loading Form here! --> */
     } else {
       ಠ_ಠ.Flags.error(`Supplied ID is not a recognised Reflect File Type: ${file.id}`);
       return Promise.reject();
@@ -228,7 +237,7 @@ App = function() {
       saver = (thumbType, thumb) => {
         var _meta = {
             name: _toSave.name,
-            parents: (_folder ? _folder.id : null),
+            parents: (ರ‿ರ.folder ? ರ‿ರ.folder.id : null),
             properties: {
               reflectForm: _toSave.data.form
             },
@@ -241,18 +250,18 @@ App = function() {
           },
           _data = JSON.stringify(_toSave.data),
           _mime = TYPE_REPORT;
-        ((!_file || force) ?
+        ((!ರ‿ರ.file || force) ?
           ಠ_ಠ.Google.files.upload(_meta, _data, _mime) :
-          ಠ_ಠ.Google.files.upload(_meta, _data, _mime, null, _file.id))
+          ಠ_ಠ.Google.files.upload(_meta, _data, _mime, null, ರ‿ರ.file.id))
         .then(uploaded => {
-            _file = uploaded;
+            ರ‿ರ.file = uploaded;
             return ಠ_ಠ.Recent.add(uploaded.id, uploaded.name.replace(/.REFLECT$/i, ""), "#google,load." + uploaded.id).then(() => ಠ_ಠ.Flags.log("Saved:", uploaded));
           })
           .catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error"))
           .then(finish);
       };
 
-    (html2canvas ?
+    (window.html2canvas ?
       html2canvas($("form[role='form'][data-name]")[0], {
         logging: window.scrollTo(0, 0)
       }) :
@@ -292,13 +301,8 @@ App = function() {
       /* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
         name: "Folders",
+        state: ರ‿ರ,
         states: STATES,
-        test: () => !!(_form || _folder || _tracker),
-        clear: () => {
-          _form = null;
-          _folder = null;
-          _tracker = null;
-        },
         instructions: [{
             match: /SAVE/i,
             show: "SAVE_INSTRUCTIONS",
@@ -316,92 +320,116 @@ App = function() {
           }
         ],
         routes: {
+
           open: {
             options: {
               title: "Select a Reflect File to Open",
               view: "DOCS",
-              mime: _types.join(","),
+              mime: TYPES.join(","),
             },
             success: value => _load(value.result)
-              .then(() => ಠ_ಠ.Recent.add(value.result.id, value.result.name.replace(/.REFLECT$/i, ""), "#google,load." + value.result.id))
-              .catch(e => ಠ_ಠ.Flags.error(`Loading File from Google Drive: ${value.result.id}`, e))
+              .then(() => ಠ_ಠ.Recent.add(value.result.id,
+                value.result.name.replace(/.REFLECT$/i, ""),
+                `#google,load.${value.result.id}`))
+              .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e))
               .then(ಠ_ಠ.Display.busy(true)),
           },
+
           import: {
             success: value => _process(value.result),
           },
+
           load: {
             success: value => _load(value.result).then(ಠ_ಠ.Display.busy(true)),
           },
-          export: () => _form ? _export() : false,
-          /* <!-- Create and download a new saved file  --> */
-          clone: () => _form ? _save(true) : false,
-          /* <!-- Force creation of a new file on save --> */
+
+          export: () => ರ‿ರ.form ? _export() : false,
+
+          clone: () => ರ‿ರ.form ? _save(true) : false,
+
           scales: { /* <!-- We're managing existing scales --> */
             matches: /SCALES/i,
-            fn: () => _form ? _save(true) : false,
+            fn: () => ರ‿ರ.form ? _save(true) : false,
             active: true,
           },
-          report_save_clone: {
-            matches: [/SAVE/i, /CLONE/i],
-            state: STATE_REPORT_OPENED,
-            fn: () => $("#_cmd_Report_Clone").click()
-          },
-          report_save_export: {
-            matches: [/SAVE/i, /EXPORT/i],
-            state: STATE_REPORT_OPENED,
-            fn: () => $("#_cmd_Report_Export").click()
-          },
-          report_save: {
-            matches: [/SAVE/i, /REPORT/i],
-            state: STATE_REPORT_OPENED,
-            fn: () => $("#_cmd_Report_Clone").click()
-          },
+
           save: {
-            fn: _save
-          },
-          create_form: {
-            matches: [/CREATE/i, /FORM/i],
+            matches: /SAVE/i,
             length: 0,
-            fn: () => _create.prompt([_actions.forms()]).then(form => _form = form)
+            fn: _save,
+            routes: {
+              report: {
+                state: STATE_REPORT_OPENED,
+                routes: {
+                  clone: {
+                    matches: /CLONE/i,
+                    fn: () => $("#_cmd_Report_Clone").click()
+                  },
+                  export: {
+                    matches: /EXPORT/i,
+                    fn: () => $("#_cmd_Report_Export").click()
+                  },
+                  report_save: {
+                    matches: /REPORT/i,
+                    fn: _save
+                  },
+                }
+              }
+            }
           },
-          create_form_in_folder: {
-            matches: [/CREATE/i, /FORM/i],
-            length: 1,
-            fn: command => _create.parent(command).then(folder => _create.prompt([_actions.forms()], folder)).then(form => _form = form)
-          },
-          create_report: {
-            matches: [/CREATE/i, /REPORT/i],
-            length: 1,
-            fn: command => (_forms.has(command.toLowerCase()) ?
-                Promise.resolve(_create.report(command.toLowerCase())) :
-                _create.prompt([_actions.reports()]))
-              .then(form => _form = form)
-          },
-          create_report_in_folder: {
-            matches: [/CREATE/i, /REPORT/i],
-            length: 2,
-            fn: command => _create.parent(command[0]).then(folder => _create.prompt([_actions.reports()], folder)).then(form => _form = form)
-          },
-          create_tracker: {
-            matches: [/CREATE/i, /TRACKER/i],
-            length: 1,
-            fn: command => (_forms.has(command.toLowerCase()) ?
-                Promise.resolve(_create.tracker(command.toLowerCase())) :
-                _create.prompt([_actions.trackers()]))
-              .then(tracker => _tracker = tracker)
-          },
-          create_tracker_in_folder: {
-            matches: [/CREATE/i, /TRACKER/i],
-            length: 1,
-            fn: command => _create.parent(command[0]).then(folder => _create.prompt([_actions.trackers()], folder)).then(tracker => _tracker = tracker)
-          },
-          create_in_folder: {
+
+          create: {
             matches: /CREATE/i,
-            length: 1,
-            fn: command => _create.parent(command[1]).then(folder => _create.prompt([_actions.scales(), _actions.forms(), _actions.reports()], folder)).then(form => _form = form)
+            length: 0,
+            fn: () => _create.prompt([_actions.scales(), _actions.forms(),
+                _actions.reports()
+              ])
+              .then(form => ರ‿ರ.form = form),
+            routes: {
+              form: {
+                matches: /FORM/i,
+                routes: {
+                  drive: () => _create.prompt([_actions.forms()])
+                    .then(form => ರ‿ರ.form = form),
+                  folder: {
+                    length: 1,
+                    fn: command => _create.parent(command)
+                      .then(folder => _create.prompt([_actions.forms()], folder))
+                      .then(form => ರ‿ರ.form = form)
+                  },
+                }
+              },
+              report: {
+                matches: /REPORT/i,
+                routes: {
+                  prompt: () => _create.prompt([_actions.reports()])
+                    .then(form => ರ‿ರ.form = form),
+                  named: {
+                    length: 1,
+                    fn: command => (ರ‿ರ.forms.has(command.toLowerCase()) ?
+                        Promise.resolve(_create.report(command.toLowerCase())) :
+                        _create.prompt([_actions.reports()]))
+                      .then(form => ರ‿ರ.form = form)
+                  },
+                  folder: {
+                    length: 2,
+                    fn: command => _create.parent(command[0])
+                      .then(folder => _create.prompt([_actions.reports()], folder))
+                      .then(form => ರ‿ರ.form = form)
+                  },
+                },
+              },
+              folder: {
+                length: 1,
+                fn: command => _create.parent(command[1])
+                  .then(folder => _create.prompt([_actions.scales(),
+                    _actions.forms(), _actions.reports()
+                  ], folder))
+                  .then(form => ರ‿ರ.form = form)
+              }
+            },
           },
-          create: () => _create.prompt([_actions.scales(), _actions.forms(), _actions.reports()]).then(form => _form = form),
+
         },
         route: () => false,
         /* <!-- PARAMETERS: handled, command --> */
@@ -413,7 +441,7 @@ App = function() {
     },
 
     start: () => {
-      if (!_forms) _forms = ಠ_ಠ.Forms();
+      ರ‿ರ.forms = ರ‿ರ.forms ? ರ‿ರ.forms : ಠ_ಠ.Forms();
       moment().format();
     },
 

@@ -32,7 +32,8 @@
   float: left;
   width: 100%;
   margin-right: -100%;
-  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
   @include transition($carousel-transition);
 }
 
@@ -44,12 +45,14 @@
 
 .carousel-item-next:not(.carousel-item-left),
 .active.carousel-item-right {
-  transform: translateX(100%);
+  -webkit-transform: translateX(100%);
+          transform: translateX(100%);
 }
 
 .carousel-item-prev:not(.carousel-item-right),
 .active.carousel-item-left {
-  transform: translateX(-100%);
+  -webkit-transform: translateX(-100%);
+          transform: translateX(-100%);
 }
 
 
@@ -61,7 +64,8 @@
   .carousel-item {
     opacity: 0;
     transition-property: opacity;
-    transform: none;
+    -webkit-transform: none;
+            transform: none;
   }
 
   .carousel-item.active,

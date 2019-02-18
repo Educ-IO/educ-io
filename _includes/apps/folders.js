@@ -201,9 +201,8 @@ App = function() {
       /* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
         name: "Folders",
+        state: ರ‿ರ,
         states: STATES,
-        test: () => ಠ_ಠ.Display.state().in(STATES, true),
-        clear: () => _.each(ರ‿ರ, (value, key, list) => list[key] = null),
         routes: {
           open_root: { /* <!-- Pick, or Load the Root Folder --> */
             keys: ["o", "O"],

@@ -1,0 +1,42 @@
+/* == Fonts == */
+$font-heading:								"Cabin Sketch";
+$font-weight-heading:					600;
+$font-weight:									400;
+$font-spacing-heading:				0.1rem;
+
+/* == Colours == */
+$colour-background: 					#ffffff;
+$colour-general:              #000000;
+$colour-general-light:        lighten($colour-general, 10%);
+$colour-general-lighter:      lighten($colour-general, 40%);
+$colour-emphasis: 						#cccccc;
+$colour-light-emphasis: 			#eeeeee;
+$colour-very-light-emphasis:  #f7f7f7;
+$colour-foreground: 					darken($colour-emphasis, 10%);
+$colour-debug: 								#888888;
+$colour-deemphasise:          #f3f3f3;
+$colour-section:              #fafafa;
+$colour-support:              #28a745;
+$colour-optional:             #f8fec7;
+$colour-invalid:              #ffcccc;
+$colour-success:              #28a745;
+$colour-light-success:				#c5dcca;
+$colour-warning:              #ffc107;
+$colour-error:                #dc3545;
+$colour-contrasting-link:     #006FF5;
+$colour-contrasting-primary:  #006BEB;
+$colour-contrasting-success:  #1F8434;
+$colour-contrasting-secondary:#6D747E;
+$colour-bright-foreground:		#212529;
+$colour-bright-background:		#ff0;
+$colour-active:               #ffff15;
+$colour-background-menu:      #fafafa;
+$colour-1:                    rgba(241, 194, 50, 0.8);
+$colour-2:                    rgba(147, 196, 125, 0.8);
+$colour-3:                    rgba(109, 158, 235, 0.8);
+$colour-4:                    rgba(224, 102, 102, 0.8);
+$colour-5:                    rgba(68, 68, 68, 0.64);
+$colours-headline:            rgba(241, 194, 50, 0.8), rgba(147, 196, 125, 0.8), rgba(109, 158, 235, 0.8), rgba(224, 102, 102, 0.8), rgba(68, 68, 68, 0.64), rgba(220, 230, 230, 0.5);
+
+/* == Breakpoints == */
+$small:									      "max-width: 32.5em";

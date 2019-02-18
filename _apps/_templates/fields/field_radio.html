@@ -32,24 +32,24 @@
 	<div class="col-md-9">
     <div class="btn-group btn-group-toggle d-flex d-lg-none flex-wrap"
          data-toggle="buttons" id="{{id}}_BUTTONS_SM">
-			{{#each options}}<label class="btn{{#if ../large}} btn-lg{{/if}} {{class}} d-flex h-100 waves-effect">
+			{{#each options}}<label class="btn{{#if ../large}} btn-lg{{/if}} {{class}} d-flex waves-effect">
 					<input type="radio" name="{{../id}}_OPTIONS" autocomplete="off"
                  data-targets="{{../id}}" data-value="{{value}}" />
 					<i class="material-icons md-18 md-light md-inactive to-dim">{{either icon "check"}}</i>
 				</label>{{/each}}
-			<label class="btn btn-secondary d-flex h-100 no-active waves-effect" title="Clear / Reset">
+			<label class="btn btn-secondary d-flex no-active waves-effect" title="Clear / Reset">
 				<input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-targets="{{id}}" />
 				<i class="pl-1 material-icons md-18 md-dark">refresh</i>
 			</label>
 		</div>
 		<div class="btn-group{{#if large}} btn-group-lg{{/if}} btn-group-toggle d-none d-lg-flex flex-wrap"
          data-toggle="buttons" id="{{id}}_BUTTONS_LG">
-			{{#each options}}<label class="btn{{#if ../large}} btn-lg{{/if}} {{class}} d-flex h-100 waves-effect">
+			{{#each options}}<label class="btn{{#if ../large}} btn-lg{{/if}} {{class}} d-flex waves-effect">
 					<input type="radio" name="{{../id}}_OPTIONS" autocomplete="off"
                  data-targets="{{../id}}" data-value="{{value}}" />
 					<i class="material-icons md-light md-inactive to-dim md-{{either ../large '24' '18'}}">{{either icon "check"}}</i>
 				</label>{{/each}}
-			<label class="btn btn-secondary d-flex{{#if large}} btn-lg{{/if}} h-100 no-active waves-effect" title="Clear / Reset">
+			<label class="btn btn-secondary d-flex{{#if large}} btn-lg{{/if}} no-active waves-effect" title="Clear / Reset">
 				<input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-targets="{{id}}" />
 				<i class="pl-1 material-icons md-dark md-{{either large '24' '18'}}">refresh</i>
 			</label>

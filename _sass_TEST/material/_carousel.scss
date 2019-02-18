@@ -1,0 +1,45 @@
+@import "variables/general";
+@import "variables/elevation";
+@import "variables/carousel";
+
+@import "mixins/hover";
+
+.carousel-control-next,
+.carousel-control-prev {
+  background-color: $carousel-control-bg;
+  border-radius: 50%;
+  box-shadow: map-get($carousel-control-elevation-shadow, shadow);
+  color: $carousel-control-color;
+  cursor: pointer;
+  height: $carousel-control-size;
+  line-height: 1;
+  margin-top: ($carousel-control-size / -2);
+  opacity: 0;
+  top: 50%;
+  user-select: none;
+  width: $carousel-control-size;
+
+  @include active-focus-hover {
+    background-color: $carousel-control-bg-hover;
+    color: $carousel-control-color;
+    text-decoration: none;
+  }
+
+  &:active {
+    box-shadow: map-get($carousel-control-elevation-shadow-active, shadow);
+  }
+
+  // Added hover here because of weird background stuff
+  &:focus, &:hover {
+    opacity: 1;
+    outline: 0;
+  }
+}
+
+.carousel-control-next {
+  right: ($carousel-control-size / 2);
+}
+
+.carousel-control-prev {
+  left: ($carousel-control-size / 2);
+}
