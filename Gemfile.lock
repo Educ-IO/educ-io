@@ -3,15 +3,12 @@ GEM
   specs:
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
-    autoprefixer-rails (6.3.7)
-      execjs
     colorator (1.1.0)
     concurrent-ruby (1.1.4)
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
     eventmachine (1.2.7)
-    execjs (2.7.0)
     ffi (1.10.0)
     forwardable-extended (2.6.0)
     http_parser.rb (0.6.0)
@@ -60,7 +57,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  autoprefixer-rails
   jekyll
 
 BUNDLED WITH
