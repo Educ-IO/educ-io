@@ -1,9 +1,0 @@
-@import "variables/general";
-@import "variables/elevation";
-@import "variables/navbar";
-
-.navbar {
-	will-change: box-shadow, transform;
-  @include transition-standard(box-shadow);
-  box-shadow: map-get($navbar-elevation-shadow, shadow);
-}
