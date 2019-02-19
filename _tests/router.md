@@ -3,6 +3,9 @@ title: Router
 for: [debug]
 script: tests/router
 tests:
+  - name: Prepare
+    desc: Test Route Preparation Mechanisms
+    function: test_Router_Prepare
   - name: Simple
     desc: Test Simple Single Word App Routing
     function: test_Router_Simple

@@ -13,8 +13,8 @@ Router = function() {
   const STR = JSON.stringify,
     STRIP = (command, number) => _.isArray(command) ? _.rest(command, number ? number : 1) : _.isString(command) ? [] : command,
 
-    EXPAND = (options, command) => options ? _.isFunction(options) ?
-    options(command) : options : false,
+    PREPARE = (options, command) => options ?
+    _.isFunction(options) ? options(command) : options : false,
 
     REJECT = {
       MIME: (files, options) => options !== null && options.mime !== undefined && !_.every(_.isArray(files) ? files : [files], file => _.find(options.mime.split(","), mime => file.mimeType.localeCompare(mime.trim()) === 0)) && ಠ_ಠ.Flags.log(`Google Drive Files MIME types${_.isArray(files) ? "" : ` (${files.mimeType})`} not matched to ${options.mime}`, files),
@@ -48,6 +48,37 @@ Router = function() {
       ] : [])
       .concat(options.recent ? [google.picker.ViewId.RECENTLY_PICKED] : []));
   /* <!-- Internal Constants --> */
+
+  /* <!-- Internal Setup Constants --> */
+  const EXPAND = (routes, route, name) => {
+      var _name = value => `${name ? `${name}_`: ""}${value}`,
+        _matches = value => route.matches ?
+        value.matches ? (_.isArray(route.matches) ? route.matches : [route.matches])
+        .concat(value.matches ? value.matches : []) : route.matches : value.matches,
+        _default = () => ({
+          state: route.state,
+          length: route.length,
+        }),
+        _extend = matches => ({
+          matches: matches,
+        });
+      _.each(route.routes, (route, name) => {
+        route = _.extend(_default(), _.isFunction(route) ? {
+          fn: route
+        } : route, _extend(_matches(route)));
+        if (!routes[name = _name(name)] && route.fn)
+          routes[name] = route;
+        if (route.routes) EXPAND(routes, route, name);
+      });
+      delete route.routes;
+      return route;
+    },
+    INTEGRATE = (routes, route, name) => routes[name] = (routes[name] ?
+      _.isFunction(_options.routes[name]) ?
+      _.defaults({
+        fn: routes[name]
+      }, route) : _.defaults(routes[name], route) : route);
+  /* <!-- Internal Setup Constants --> */
 
   /* <!-- Internal Functions --> */
   var _start, _end, _shortcuts, _keyboard, _touch, _enter = (recent, fn, simple, state) => {
@@ -108,6 +139,10 @@ Router = function() {
     pick: PICK,
 
     strip: STRIP,
+
+    expand: EXPAND,
+
+    integrate: INTEGRATE,
 
     /*
       Options are : {
@@ -268,10 +303,9 @@ Router = function() {
         }
       };
 
-      /* <!-- Setup method, delayed call until routing is triggered (to ensure underscore is loaded) --> */
+      /* <!-- Call delayed until routing is triggered (ensure underscore is loaded) --> */
       const SETUP = (options => () => {
 
-        
         /* <!-- Ensure a routes object exists --> */
         _options = _.defaults(options, {
           routes: {},
@@ -279,44 +313,14 @@ Router = function() {
           clear: () => _.each(_options.state, (value, key, list) => list[key] = null),
         });
 
-        
         /* <!-- Recursively Expand Child Routes --> */
-        var _expand = (route, name) => {
-          var _name = value => `${name}_${value}`,
-            _matches = value => route.matches ?
-            (_.isArray(route.matches) ? route.matches : [route.matches])
-            .concat(value.matches ? value.matches : []) :
-            value.matches,
-            _extend = matches => ({
-              matches: matches,
-              state: route.state,
-              length: route.length,
-            });
-          _.each(route.routes, (route, name) => {
-            route = _.extend(_.isFunction(route) ? 
-                             {fn: route} : route, _extend(_matches(route)));
-            if (!_options.routes[name = _name(name)] && route.fn)
-              _options.routes[name] = route;
-            if (route.routes) _expand(route, name);
-          });
-          delete route.routes;
-          return route;
-        };
         _.each(_options.routes, (route, name) =>
-          route.routes && !_expand(route, name).fn ? delete _options.routes[name] : false);
+          route.routes && !EXPAND(_options.routes, route, name).fn ?
+          delete _options.routes[name] : false);
 
-        
         /* <!-- Integrate the default routes with the custom supplied ones --> */
-        var _integrate = (route, name) => _options.routes[name] = (_options.routes[name] ?
-          _.isFunction(_options.routes[name]) ?
-          _.defaults({
-            fn: _options.routes[name]
-          }, route) :
-          _.defaults(_options.routes[name], route) :
-          route);
-        _.each(ROUTES, _integrate);
+        _.each(ROUTES, (route, name) => INTEGRATE(_options.routes, route, name));
 
-        
         /* <!-- Setup the shortcuts, start and end methods --> */
         _keyboard = debug => window.Mousetrap ? _.each(_options.routes, (route, name) => {
           /* <!-- Bind Shortcut key/s if required --> */
@@ -397,7 +401,7 @@ Router = function() {
 
           var _execute = (route, command) => {
             var l_command = STRIP(command, route.__length),
-              l_options = EXPAND(route.options, l_command),
+              l_options = PREPARE(route.options, l_command),
               l_result = route.fn(_.isArray(l_command) ? l_command.length === 0 ? null : l_command.length == 1 ? l_command[0] : l_command : l_command, l_options);
             return l_result && l_result.then ? l_result
               .then(result => route.success ? route.success(

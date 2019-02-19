@@ -13,7 +13,10 @@ Router = function() {
     DELAY = APP.delay,
     RANDOM = APP.random,
     PAUSE = () => DELAY(RANDOM(300, 500)),
-    STATE = FACTORY.Display.state();
+    STATE = FACTORY.Display.state(),
+    GEN = FACTORY.App.generate,
+    ARRAYS = FACTORY.App.arrays,
+    SIMPLIFY = FACTORY.App.simplify;
   const STATE_TEST_1 = "test-1",
     STATE_TEST_2 = "test-2",
     STATE_TEST_3 = "test-3",
@@ -146,12 +149,153 @@ Router = function() {
       _route = null;
 
       for (var test in _tests) _tests[test] = false;
-      
+
       STATE.clear();
 
       return FACTORY.Flags.log("Test START Called").reflect(true);
 
     },
+
+    test_Router_Prepare: () => new Promise(resolve => {
+
+      PAUSE().then(() => {
+
+        try {
+
+          /* <!-- Test Route Expansion --> */
+          var _static = {
+              test1: {
+                matches: /TEST1/i,
+                fn: () => true,
+                length: 0,
+                routes: {
+                  test2: {
+                    state: STATE_TEST_1,
+                    fn: () => true,
+                    routes: {
+                      test3: {
+                        matches: /TEST3/i,
+                        fn: () => true,
+                        routes: {
+                          test6: {
+                            matches: [/TEST6/i, /TEST7/i],
+                            length: 0,
+                            fn: () => true,
+                          }
+                        },
+                      },
+                      test4: {
+                        matches: /TEST4/i,
+                        length: 1,
+                        fn: () => true,
+                      },
+                      test5: {
+                        matches: /TEST5/i,
+                        length: 2,
+                        state: STATE_TEST_2,
+                        fn: () => true
+                      },
+                    }
+                  }
+                }
+              }
+            },
+            _create = (tests, parent, max, current) => {
+              current !== undefined ? current += 1 : current = 0;
+              return _.reduce(_.range(0, GEN.i(5, 10)), memo => {
+                var _route = {};
+
+                /* <!-- Local Route --> */
+                if (GEN.b()) _route.length = GEN.i(0, 5);
+                if (GEN.b()) _route.state = GEN.an(GEN.i(5, 20));
+                if (GEN.b()) _route.matches = SIMPLIFY(_.map(_.range(0, GEN.i(1, 3)),
+                  () => new RegExp(GEN.a(5, 10).toUpperCase())));
+
+                var _key = GEN.a(GEN.i(10, 20));
+
+                /* <!-- Parent Route Integration --> */
+                var _parent = {
+                  keys: `${parent.keys ? `${parent.keys}_` : ""}${_key}`,
+                  length: _route.length === undefined ? parent.length : _route.length,
+                  matches: SIMPLIFY(ARRAYS(parent.matches).concat(ARRAYS(_route.matches))),
+                  state: _route.state === undefined ? parent.state : _route.state
+                };
+
+                if ((current < max && GEN.b(30))) _route.routes = _create(tests, _parent, max, current);
+                if (!_route.routes || GEN.b(60)) {
+                  _route.fn = () => true;
+                  tests.push([_parent.keys, _parent.length, _parent.matches, _parent.state]);
+                }
+
+                memo[_key] = _route;
+
+                return memo;
+              }, {});
+            },
+            _tests = [],
+            _dynamic = _create(_tests, {}, 5);
+
+          var _expand = routes => _.each(routes, (route, name) =>
+            route.routes && !FACTORY.Router.expand(routes, route, name).fn ?
+            delete routes[name] : false);
+
+          _expand(_static);
+
+          expect(_static).to.be.an("object");
+
+          expect(_.keys(_static)).to.be.an("array")
+            .and.to.have.ordered.members([
+              "test1",
+              "test1_test2",
+              "test1_test2_test3",
+              "test1_test2_test3_test6",
+              "test1_test2_test4",
+              "test1_test2_test5",
+            ]);
+
+          var _test = (values, path, length, matches, state) => {
+            expect(values).to.have.a.nested.property(`${path}.fn`).to.be.a("function");
+            if (length !== null && length !== undefined)
+              expect(values).to.have.a.nested.property(`${path}.length`, length);
+            if (state !== null && state !== undefined)
+              expect(values).to.have.a.nested.property(`${path}.state`, state);
+            var _regex = (path, regex) => {
+              expect(values).to.have.a.nested.property(path);
+              expect(values).to.have.a.nested.property(`${path}.source`)
+                .and.to.equal(regex.source);
+              expect(values).to.have.a.nested.property(`${path}.flags`)
+                .and.to.equal(regex.flags);
+            };
+            _.isArray(matches) ? _.each(matches, (match, index) => {
+              _regex(`${path}.matches[${index}]`, match);
+            }) : _regex(`${path}.matches`, matches);
+          };
+
+          _test(_static, "test1", 0, /TEST1/i);
+          _test(_static, "test1_test2", 0, /TEST1/i, STATE_TEST_1);
+          _test(_static, "test1_test2_test3_test6", 0, [/TEST1/i, /TEST3/i, /TEST6/i, /TEST7/i], STATE_TEST_1);
+          _test(_static, "test1_test2_test3", 0, [/TEST1/i, /TEST3/i], STATE_TEST_1);
+          _test(_static, "test1_test2_test4", 1, [/TEST1/i, /TEST4/i], STATE_TEST_1);
+          _test(_static, "test1_test2_test5", 2, [/TEST1/i, /TEST5/i], STATE_TEST_2);
+
+          _expand(_dynamic);
+
+          expect(_dynamic).to.be.an("object");
+
+          expect(_.keys(_dynamic)).to.be.an("array")
+            .and.to.have.members(_.map(_tests, test => test[0]));
+
+          _.each(_tests, test => _test.apply(this, [_dynamic].concat(test)));
+
+          resolve(FACTORY.Flags.log("Route Prepare Test SUCCEEDED").reflect(true));
+
+        } catch (err) {
+          resolve(FACTORY.Flags.error("Route Prepare Test FAILED", err).reflect(false));
+        }
+
+      });
+
+    }),
 
     test_Router_Simple: () =>
       _simple("Simple Router", "test", (handled, command, hash) => new Promise(resolve => {

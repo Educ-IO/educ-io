@@ -1,8 +1,8 @@
 site :
-  0.1.2a :
+  0.1.2b :
     name : Updated Routes
     desc : Improved Routing Flexibility in advance of Reflect App release
-    numeric : 0.1.1.7
+    numeric : 0.1.1.8
   0.1.1z :
     name : Updated Debug Tests
     desc : Improved Testing in advance of Reflect App release
@@ -776,6 +776,9 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.4-alpha :
+    name : Form Saving/Loading, Simplified Routing and Tech Preview
+    type : minor
   0.0.3c-alpha :
     name : Form Saving Methods
     type : minor

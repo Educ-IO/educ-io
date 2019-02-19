@@ -8,34 +8,8 @@ Data = function() {
     RANDOM = FACTORY.App.random,
     PAUSE = () => DELAY(RANDOM(200, 500)),
     LONG_PAUSE = () => DELAY(RANDOM(1000, 3000)),
-    GEN = {
-      d: () => chance.date(),
-      b: p => chance.bool({
-        likelihood: p ? p : 50
-      }),
-      s: l => l === undefined ? chance.string() : chance.string({
-        length: l
-      }),
-      p: (l, p) => chance.string(
-        _.extend(l === undefined ? {} : {
-          length: l
-        }, p === undefined ? {} : {
-          pool: p
-        })),
-      a: l => GEN.p(l, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
-      n: l => GEN.p(l, "0123456789"),
-      an: l => GEN.p(l, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"),
-      t: l => GEN.p(l, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _-.,:;()!?'"),
-      i: (min, max) => min === undefined || max === undefined ? chance.integer : chance.integer({
-        min: min,
-        max: max
-      }),
-      c: () => GEN.p(6, "0123456789abcdef"),
-      o: array => array[GEN.i(0, array.length - 1)],
-    },
-    RUN = promises => _.reduce(promises, (all, promise) => all.then(
-      result => promise().then(Array.prototype.concat.bind(result))
-    ), Promise.resolve([])),
+    GEN = FACTORY.App.generate,
+    RUN = FACTORY.App.serial,
     GENERATE = fn => {
       var _return = {
           state: [],

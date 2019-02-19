@@ -1,6 +1,6 @@
 App = function() {
   "use strict";
-  
+
   /* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
 
   /* <!-- Returns an instance of this if required --> */
@@ -19,7 +19,38 @@ App = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _random = (lower, higher) => Math.random() * (higher - lower) + lower;
+  const RANDOM = (lower, higher) => Math.random() * (higher - lower) + lower,
+    GENERATE = {
+      d: () => chance.date(),
+      b: p => chance.bool({
+        likelihood: p ? p : 50
+      }),
+      s: l => l === undefined ? chance.string() : chance.string({
+        length: l
+      }),
+      p: (l, p) => chance.string(
+        _.extend(l === undefined ? {} : {
+          length: l
+        }, p === undefined ? {} : {
+          pool: p
+        })),
+      a: l => GENERATE.p(l, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+      n: l => GENERATE.p(l, "0123456789"),
+      an: l => GENERATE.p(l, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"),
+      t: l => GENERATE.p(l, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _-.,:;()!?'"),
+      i: (min, max) => min === undefined || max === undefined ?
+        chance.integer : chance.integer({
+          min: min,
+          max: max
+        }),
+      c: () => GENERATE.p(6, "0123456789abcdef"),
+      o: array => array[GENERATE.i(0, array.length - 1)],
+    },
+    SERIAL = promises => _.reduce(promises, (all, promise) => all.then(
+      result => promise().then(Array.prototype.concat.bind(result))
+    ), Promise.resolve([])),
+    ARRAYS = value => value === undefined || value === null ? [] : _.isArray(value) ? value : [value],
+    SIMPLIFY = value => value && _.isArray(value) && value.length == 1 ? value[0] : value;
 
   var _promisify = (fn, value) => new Promise(resolve => resolve(fn ? ಠ_ಠ._isF(fn) ? fn(value) : fn : true));
 
@@ -38,7 +69,7 @@ App = function() {
   var _all = (module, id) => _.each($(`#${id}`).siblings("a.btn").toArray(),
     (el, i, all) => _.delay(el => {
       if (i === 0) _left = all.length;
-      var _check = () => _running === 0 ? el.click() : _.delay(_check, _random(100, 400), el);
+      var _check = () => _running === 0 ? el.click() : _.delay(_check, RANDOM(100, 400), el);
       _check();
     }, i ? i * 1000 : 100, el));
 
@@ -83,7 +114,7 @@ App = function() {
 
   var _everything = () => _.each($(".btn.test-all").toArray(),
     (el, i) => _.delay(el => {
-      var _check = () => _left === 0 ? el.click() : _.delay(_check, _random(500, 1000), el);
+      var _check = () => _left === 0 ? el.click() : _.delay(_check, RANDOM(500, 1000), el);
       _check();
     }, i ? i * 5000 : 100, el));
   /* <!-- Internal Functions --> */
@@ -200,9 +231,19 @@ App = function() {
       ]);
     },
 
-    random: _random,
-
     running: _running,
+
+    /* <!-- Helper Functions --> */
+    arrays: ARRAYS,
+
+    generate: GENERATE,
+
+    random: RANDOM,
+
+    serial: SERIAL,
+
+    simplify: SIMPLIFY,
+    /* <!-- Helper Functions --> */
 
   };
 
