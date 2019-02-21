@@ -18,6 +18,13 @@ App = function() {
   var ಠ_ಠ, ರ‿ರ = {};
   /* <!-- Internal Variables --> */
 
+  /* <!-- Plumbing Functions --> */
+  const BUSY = () => _.wrap(ಠ_ಠ.Display.busy({
+    target: ಠ_ಠ.container,
+    fn: true
+  }), (busy, value) => _.tap(value, () => busy()));
+  /* <!-- Plumbing Functions --> */
+
   /* <!-- Internal Functions --> */
   var _resize = () => {
 
@@ -26,11 +33,12 @@ App = function() {
 
     /* <!-- Handle Screen / Window Resize Events --> */
     var _resizer = () => {
-      var _height = 0;
+      var _h = 0;
       $("#site_nav, #paths, #folder_tabs").each(function() {
-        _height += $(this).outerHeight(true);
+        _h += $(this).outerHeight(true);
       });
-      _css.removeRule(_style, "div.tab-pane").addRule(_style, "div.tab-pane", "max-height: " + ($(window).height() - _height - 20) + "px !important;");
+      _css.removeRule(_style, "div.tab-pane")
+        .addRule(_style, "div.tab-pane", "max-height: " + ($(window).height() - _h - 20) + "px !important;");
     };
     var _resize_Timeout = 0;
     $(window).off("resize").on("resize", () => {
@@ -85,8 +93,8 @@ App = function() {
     }
 
     _showPath(ರ‿ರ.path, ಠ_ಠ.container);
-    ರ‿ರ.folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state, 
-                            ರ‿ರ.folder ? ರ‿ರ.folder.tally.get() : null, resolve, reject);
+    ರ‿ರ.folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state,
+      ರ‿ರ.folder ? ರ‿ರ.folder.tally.get() : null, resolve, reject);
     if (log) ಠ_ಠ.Recent.add(folder.id, folder.name, folder.url).then(() => _resize());
     ಠ_ಠ.Display.state().enter(STATE_OPENED);
 
@@ -94,76 +102,69 @@ App = function() {
 
   var _load = (loader, rootTeamDrive, log, teamDrive, state, tags) => new Promise((resolve, reject) => {
 
-    var _finish = ಠ_ಠ.Display.busy({
-      target: ಠ_ಠ.container,
-      fn: true
-    });
+    loader.catch(e => ಠ_ಠ.Flags.error("File / Folder Load Failure", e))
+      .then(BUSY())
+      .then(file => {
 
-    loader.then(file => {
+        var _task = () => { /* <!-- This is a folders file to load and read/action --> */
 
-      _finish();
+            ಠ_ಠ.Google.download(file.id).then(loaded => {
+              ಠ_ಠ.Google.reader().promiseAsText(loaded).then(parsed => {
+                ಠ_ಠ.Flags.log(`Loaded Folders File [${file.mimeType}]: ${parsed}`);
+                parsed = JSON.parse(parsed);
+                if (parsed && parsed.folder) {
+                  _load(Promise.resolve(parsed.folder), !!parsed.folder.team, false, parsed.folder.team, parsed.state)
+                    .then(result => resolve(result))
+                    .catch(e => reject(e));
+                } else {
+                  reject();
+                }
 
-      ಠ_ಠ.Flags.log(`Loaded: ${JSON.stringify(file)}`);
+              }).catch(e => reject(e));
+            }).catch(e => reject(e));
 
-      if (ಠ_ಠ.Google.files.in(TYPE)(file)) {
+          },
+          _folder = () => { /* <!-- This is a folder to display --> */
 
-        /* <!-- This is a folders file to load and read/action --> */
-        ಠ_ಠ.Google.download(file.id).then(loaded => {
-          ಠ_ಠ.Google.reader().promiseAsText(loaded).then(parsed => {
-            ಠ_ಠ.Flags.log(`Loaded Folders File [${file.mimeType}]: ${parsed}`);
-            parsed = JSON.parse(parsed);
-            if (parsed && parsed.folder) {
-              _load(Promise.resolve(parsed.folder), !!parsed.folder.team, false, parsed.folder.team, parsed.state)
-                .then(result => resolve(result))
-                .catch(e => reject(e));
-            } else {
-              reject();
-            }
+            teamDrive = file.teamDriveId ? file.teamDriveId : teamDrive;
+            file.team = !!(rootTeamDrive || file.id == teamDrive);
+            _openFolder(file, log, teamDrive, state, resolve, reject);
 
-          }).catch(e => reject(e));
-        }).catch(e => reject(e));
+          },
+          _file = () => { /* <!-- File, open parent & process extra instructions via a complete method --> */
 
-      } else if (file.kind == "drive#teamDrive" || ಠ_ಠ.Google.folders.check(true)(file)) {
+            if (file.parents && file.parents.length > 0)
+              return ಠ_ಠ.Google.files.get(file.parents[0], teamDrive).then(folder => {
+                _openFolder(folder, log, teamDrive, state, response => {
+                  if (tags && _.isArray(tags))
+                    ರ‿ರ.folder.tag(file.id, tags[0], tags.length > 1 ? tags[1] : "");
+                  resolve(response);
+                }, reject);
+              });
 
-        /* <!-- This is a folder to display --> */
-        file.team = rootTeamDrive;
-        _openFolder(file, log, teamDrive, state, resolve, reject);
+          };
 
-      } else {
+        file ? ಠ_ಠ.Flags.log(`Loaded: ${JSON.stringify(file)}`) &&
+          ಠ_ಠ.Google.files.in(TYPE)(file) ? _task() :
+          file.kind == "drive#teamDrive" || ಠ_ಠ.Google.folders.check(true)(file) ?
+          _folder() : _file() : false;
 
-        /* <!-- This is a file, so open the parent and process any extra instructions via a complete method --> */
-        if (file.parents && file.parents.length > 0) return ಠ_ಠ.Google.files.get(file.parents[0], teamDrive).then(folder => {
-          _openFolder(folder, log, teamDrive, state, response => {
-            if (tags && _.isArray(tags))
-              ರ‿ರ.folder.tag(file.id, tags[0], tags.length > 1 ? tags[1] : "");
-            resolve(response);
-          }, reject);
-        });
+      });
 
-      }
-
-    }).catch(e => {
-      _finish();
-      ಠ_ಠ.Flags.error("File / Folder Load Failure", e ? e : "No Inner Error");
-    });
   });
 
-  var _loadFolder = (id, log, teamDrive, tags) => id ? _load(ಠ_ಠ.Google.files.get(id, teamDrive), false, log, teamDrive, null, tags) : Promise.reject();
+  var _loadFolder = (id, log, teamDrive, tags) => id ?
+    _load(ಠ_ಠ.Google.files.get(id, teamDrive ? teamDrive : true), false, log, teamDrive, null, tags) :
+    Promise.reject();
 
   var _loadTeamDrive = (id, log) => id ? _load(ಠ_ಠ.Google.teamDrives.get(id), true, log) : Promise.reject();
 
   var _openTeamDrive = () => {
 
-    var _busy = ಠ_ಠ.Display.busy({
-      target: ಠ_ಠ.container,
-      fn: true
-    });
-
-    ಠ_ಠ.Google.teamDrives.list().then(drives => {
-
-      _busy();
-
-      ಠ_ಠ.Display.choose({
+    ಠ_ಠ.Google.teamDrives.list()
+      .catch(e => ಠ_ಠ.Flags.error("Team Drive Load Failure", e))
+      .then(BUSY())
+      .then(drives => drives ? ಠ_ಠ.Display.choose({
         id: "folders_teamDrives",
         title: "Please Choose a Team Drive to Open ...",
         action: drives && drives.length > 0 ? "Open" : false,
@@ -172,16 +173,10 @@ App = function() {
           name: drive.name
         })),
         instructions: !drives || drives.length === 0 ? ಠ_ಠ.Display.doc.get("NO_TEAM_DRIVES") : ""
-      }).then(option => {
-
-        if (option) {
-          option.team = true;
-          _openFolder(option, true);
-        }
-
-      }).catch(e => e ? ಠ_ಠ.Flags.error("Team Drive Select:", e) : ಠ_ಠ.Flags.log("Team Drive Select Cancelled"));
-
-    }).catch(e => ಠ_ಠ.Flags.error("Team Drive Load Failure", e ? e : "No Inner Error"));
+      }) : false)
+      .then(option => option ? _openFolder(option, option.team = true) : false)
+      .catch(e => e ? ಠ_ಠ.Flags.error("Team Drive Select:", e) :
+        ಠ_ಠ.Flags.log("Team Drive Select Cancelled"));
 
   };
   /* <!-- Internal Functions --> */
@@ -252,6 +247,12 @@ App = function() {
             length: 1,
             fn: command => ರ‿ರ.folder.close(command)
           },
+          info: {
+            matches: /INFO/i,
+            state: STATE_OPENED,
+            keys: "i",
+            fn: command => ರ‿ರ.folder.info(command),
+          },
           tally: {
             matches: /TALLY/i,
             state: STATE_OPENED,
@@ -317,6 +318,21 @@ App = function() {
             matches: /RENAME/i,
             state: STATE_OPENED,
             fn: command => ರ‿ರ.folder.rename(command),
+          },
+          move: {
+            matches: /MOVE/i,
+            state: STATE_OPENED,
+            length: 0,
+            fn: () => ರ‿ರ.folder.move(),
+          },
+          move_to: {
+            matches: /MOVE/i,
+            state: STATE_OPENED,
+            length: {
+              min: 1,
+              max: 2,
+            },
+            fn: command => ರ‿ರ.folder.move_to(command),
           },
           delete_folder: {
             matches: /DELETE/i,

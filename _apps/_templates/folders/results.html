@@ -9,11 +9,9 @@
         </button>
       </div>
       <div class="modal-body">
-				<ul class="list-group">
-  				{{#exists folders}}<li class="list-group-item">Folders: <strong>{{folders}}</strong></li>{{/exists}}
-  				{{#exists files}}<li class="list-group-item">Files: <strong>{{files}}</strong></li>{{/exists}}
-  				{{#exists size}}<li class="list-group-item">Total Size of Files: <strong>{{formatBytes size}}</strong></li>{{/exists}}
-				</ul>
+        {{#with descendents}}{{> counts title="All Descendents"
+        	class="mb-2 mb-lg-3 list-group-light"}}{{/with}}
+        {{#with children}}{{> counts title="Children"}}{{/with}}
         {{#if mime}}<p>
           <button class="btn btn-info ml-2 mt-3" type="button" data-toggle="collapse" data-target="#mimeTypes" aria-expanded="false" aria-controls="mimeTypes">
             By Mime Type

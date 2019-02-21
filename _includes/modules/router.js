@@ -26,7 +26,7 @@ Router = function() {
     reject() :
     ಠ_ಠ.Flags.log("Google Drive File/s Picked from Open", files) && resolve(files) :
     ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject(),
-
+ 
     PICK = (picker => ({
       single: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
         options && options.title ?
@@ -45,6 +45,7 @@ Router = function() {
       .concat(options.all ? [new google.picker
         .DocsView(options ? google.picker.ViewId[options.view] : null)
         .setMimeTypes(options && options.mime ? options.mime : null)
+        .setSelectFolderEnabled(options && options.folders ? true : false)
       ] : [])
       .concat(options.recent ? [google.picker.ViewId.RECENTLY_PICKED] : []));
   /* <!-- Internal Constants --> */

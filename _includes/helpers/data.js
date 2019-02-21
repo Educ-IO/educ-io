@@ -92,7 +92,7 @@ Data = (options, factory) => {
             /* <!-- This will normally exclude (=== false) values --> */
             if (_valid(__val, !_el.data("output-always"))) {
               var _name = _el.data("output-name"),
-                _type = (_type = el.data("template")) ? _type : false;
+                _type = ((_type = el.data("template")) ? _type : false);
               if (_type) _val.__type = _type;
               _val = set(_val, _name, __val);
             }
@@ -133,7 +133,7 @@ Data = (options, factory) => {
 
             /* <!-- This will normally exclude (=== false) values --> */
             if (_valid(_val, !_$.data("output-always"))) {
-              var _type = (_type = _$.data("template")) ? _type : false,
+              var _type = ((_type = _$.data("template")) ? _type : false),
                 _name = _$.data("output-name");
               if (_type && _.isObject(_val)) _val.__type = _type;
 
@@ -197,9 +197,9 @@ Data = (options, factory) => {
           /* <!-- Defer to click handler if available --> */
           _option.length == 1 ? _option.click() : _el.text(val);
         } else {
-          var _holder = (_holder = _el.data("holder-field")) ? _holder : false;
+          var _holder = ((_holder = _el.data("holder-field")) ? _holder : false);
           if (_holder) {
-            var _name = (_name = _el.data("output-name")) ? _name : false,
+            var _name = ((_name = _el.data("output-name")) ? _name : false),
               _val = _name ? val[_holder] : val;
             if (_val) _.each(_.isArray(_val) ? _val : [_val], item => {
               if (item.__type) {
@@ -241,9 +241,9 @@ Data = (options, factory) => {
 
       if (_name && data[_name]) {
 
-        var _values = (_values = data[_name].Values) ? _values : {
+        var _values = ((_values = data[_name].Values) ? _values : {
             "Value": data[_name].Value
-          },
+          }),
           _targets = _descendants(_$, true);
 
         /* <!-- Iterate through all the field parts --> */

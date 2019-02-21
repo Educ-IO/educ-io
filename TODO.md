@@ -2,6 +2,8 @@ TODO LIST
 =========
 General
 -------
+* ** IMPORTANT ** Recent Items -> Multiple accounts!!!
+
 * ** IMPORTANT ** Loader/Spinner contained within element
 
 * ** IMPORTANT ** Loading Spinner for 'Get Help' - can be slow sometimes!

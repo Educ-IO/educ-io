@@ -1688,7 +1688,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
     },
 
-    tally: (id, collection, table, items) => {
+    tally: descendents => (id, collection, table, items) => {
 
       var _name = "Tally @ " + new Date().toLocaleTimeString();
 
@@ -1748,7 +1748,8 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
             };
             _tallyCache[parent][_isFolder(item) ? "folders" : "files"] += 1;
             _tallyCache[parent].size += (item.size ? parseInt(item.size) : 0);
-            if (_isFolder(item) && _tallyCache[item.id]) _aggregate(_tallyCache[item.id], _tallyCache[parent]);
+            if (_isFolder(item) && _tallyCache[item.id])
+              _aggregate(_tallyCache[item.id], _tallyCache[parent]);
           }));
 
           return _count(items, results);
@@ -1788,7 +1789,8 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
             if (_folders && _folders.length > 0) {
 
               /* <!-- Batch these Child IDs into Arrays with length not longer than BATCH_SIZE --> */
-              var _batches = _.chain(_folders).map(folder => folder.id).groupBy((v, i) => Math.floor(i / BATCH_SIZE)).toArray().value();
+              var _batches = _.chain(_folders)
+                .map(folder => folder.id).groupBy((v, i) => Math.floor(i / BATCH_SIZE)).toArray().value();
               _iterate_batch(_batches.shift(), _batches, () => _finish());
 
             } else {
@@ -1801,7 +1803,8 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
           ಠ_ಠ.Google.folders.children(folder_ids, true, _team)
             .then(_complete)
-            .catch(e => ಠ_ಠ.Flags.error("Processing Tally for Google Drive Folders: " + JSON.stringify(folder_ids), e ? e : "No Inner Error"));
+            .catch(e => ಠ_ಠ.Flags.error("Processing Tally for Google Drive Folders: " +
+              JSON.stringify(folder_ids), e ? e : "No Inner Error"));
 
         });
 
@@ -1815,9 +1818,14 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
           folders: __folders.length,
           size: 0,
           mime: {}
-        });
+        }),
+        _children = {
+          files: _totals.files,
+          folders: _totals.folders,
+          size: _totals.size,
+        };
 
-      _processItems("Tallying", item => new Promise(resolve => {
+      (descendents ? _processItems("Tallying", item => new Promise(resolve => {
 
         _tally(item.id, {
           files: 0,
@@ -1839,7 +1847,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
         });
 
-      }), null, __folders, collection, table, id).then(() => {
+      }), null, __folders, collection, table, id) : Promise.resolve()).then(() => {
 
         /* <!-- Measure the Performance (end) --> */
         ಠ_ಠ.Flags.time(_name, true);
@@ -1861,10 +1869,9 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
           id: "tally_results",
           target: ಠ_ಠ.container,
           title: "Tally Results",
-          folders: _totals.folders,
-          files: _totals.files,
-          size: _totals.size,
-          mime: _mimes
+          descendents: descendents ? _totals : null,
+          children: _children,
+          mime: _mimes,
         });
       });
 
@@ -1933,6 +1940,44 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
     },
 
+    move: (id, collection, table, items, parameters) => {
+
+      (parameters ?
+        Promise.resolve({
+          id: parameters[0],
+          teamDriveId: parameters[1]
+        }) :
+        ಠ_ಠ.Router.pick.single({
+          title: "Please Pick Destination Folder",
+          view: "FOLDERS",
+          mime: ಠ_ಠ.Google.folders.native(),
+          folders: true,
+          all: true,
+        }))
+      .then(folder => ಠ_ಠ.Display.confirm({
+            id: "move_results",
+            target: ಠ_ಠ.container,
+            message: `Please confirm that you wish to move <strong>${items.length === 1 ? items[0].name : items.length}</strong>${items.length > 1 ? " Items" : ""} to ${folder.name}.`,
+            action: "Move"
+          })
+          .then(confirm => {
+            if (!confirm) return;
+            var total = 0;
+            return _processItems("Moving", item =>
+                ಠ_ಠ.Google.files.move(item.id, item.parents, folder.id, folder.teamDriveId)
+                .then(value => value ? total += 1 : false), null, items, collection, table, id)
+              .then(() => total > 1 ? ಠ_ಠ.Display.modal("results", {
+                id: "move_results",
+                target: ಠ_ಠ.container,
+                title: "Move Results",
+                files: total,
+              }) : false);
+          })
+          .catch(e => e ? ಠ_ಠ.Flags.error("Moving Error", e) : ಠ_ಠ.Flags.log("Moving Cancelled")))
+        .catch(e => e ? ಠ_ಠ.Flags.error("Picking Google Drive Folder", e) : false);
+
+    },
+
     test: (id, collection, table, items, parameters) => {
 
       var _count = 0;
@@ -1991,15 +2036,21 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
     rename: id => _items.process(_items.rename, id),
 
+    move: id => _items.process(_items.move, id),
+
+    move_to: parameters => _items.process(_items.move, null, null, parameters),
+
     filter: id => _getTable().filter("id", id),
 
     tally: {
 
       get: () => _tallyCache,
 
-      run: id => _items.process(_items.tally, id),
+      run: id => _items.process(_items.tally(true), id),
 
     },
+
+    info: id => _items.process(_items.tally(false), id),
 
     remove: id => _items.process(_items.remove, id),
 

@@ -54,7 +54,7 @@ Google_API = (options, factory) => {
   };
 
   const TEAM = (id, team, start) =>
-    team ? `?${id !== team ? `${start ? "?" : "&"}teamDriveId=${team}&`:""}supportsTeamDrives=true` : "";
+    team ? `${id !== team ? `${start ? "?" : "&"}teamDriveId=${team}&`:""}supportsTeamDrives=true` : "";
   /* <!-- Internal Constants --> */
 
   /* <!-- Network Constants --> */
@@ -102,7 +102,7 @@ Google_API = (options, factory) => {
   const APP_DATA = "appDataFolder";
 
   const SKELETON = "id,name,size,parents,mimeType";
-  const FIELDS = "id,name,description,mimeType,version,parents,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties";
+  const FIELDS = "id,name,description,mimeType,version,parents,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId";
 
   const EVENTS = {
     SEARCH: {
@@ -240,7 +240,6 @@ Google_API = (options, factory) => {
 
     if (window.google && google.picker) {
 
-      /* <!-- This seems to cause a high number of failures: .setDeveloperKey(KEY) --> */
       var origin = `${window.location.protocol}//${window.location.host}`,
         picker = new google.picker.PickerBuilder()
         .setTitle(title)
@@ -249,10 +248,13 @@ Google_API = (options, factory) => {
         .setOrigin(origin)
         .setCallback(((callback, context) => data => {
           if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+            /* <!-- TODO: TeamDrive Items picked from Recent don't have teamDriveId ... --> */
             var _files = data[google.picker.Response.DOCUMENTS];
             multiple ?
-              (get ? Promise.all(_.map(_files, file => _get(file.id))) : Promise.resolve(_files)).then(files => callback(files, context)) :
-              (get ? _get(_files[0].id) : Promise.resolve(_files[0])).then(file => callback(file, context));
+              (get ? Promise.all(_.map(_files, file => _get(file.id, file.teamDriveId))) :
+                Promise.resolve(_files)).then(files => callback(files, context)) :
+              (get ? _get(_files[0].id, _files[0].teamDriveId) : Promise.resolve(_files[0]))
+              .then(file => callback(file, context));
           } else if (data[google.picker.Response.ACTION] == google.picker.Action.CANCEL) {
             callback(false, context);
           }
@@ -262,6 +264,7 @@ Google_API = (options, factory) => {
       /* <!-- This doesn't currently work in Google Loader v1, but does in GAPI --> */
       if (team) picker.enableFeature(google.picker.Feature.SUPPORT_TEAM_DRIVES);
       if (views && typeof views === "function") views = views();
+      var make = view => _.isString(view) ? view = new google.picker.View(view) : view;
       if (!views || (Array.isArray(views) && views.length === 0)) {
         var view = new google.picker.DocsView()
           .setIncludeFolders(true)
@@ -270,11 +273,11 @@ Google_API = (options, factory) => {
         picker.addView(view.setEnableTeamDrives ? view.setEnableTeamDrives(team) : view);
       } else if (Array.isArray(views)) {
         views.forEach(function(view) {
-          picker.addView(view.setEnableTeamDrives ? view.setEnableTeamDrives(team) : view);
+          picker.addView((view = make(view)).setEnableTeamDrives ? view.setEnableTeamDrives(team) : view);
         });
         if (views.length == 1) picker.enableFeature(google.picker.Feature.NAV_HIDDEN);
       } else {
-        picker.addView(views.setEnableTeamDrives ? views.setEnableTeamDrives(team) : views);
+        picker.addView((views = make(views)).setEnableTeamDrives ? views.setEnableTeamDrives(team) : views);
         picker.enableFeature(google.picker.Feature.NAV_HIDDEN);
       }
 
@@ -623,6 +626,8 @@ Google_API = (options, factory) => {
       }, "application/json"),
 
       update: (id, file, team) => _call(NETWORKS.general.patch, `drive/v3/files/${id}${TEAM(id, team, true)}`, file, "application/json"),
+
+      move: (id, source, destination, team) => _call(NETWORKS.general.patch, `drive/v3/files/${id}?addParents=${_arrayize(destination, _.isString).join(",")}&removeParents=${_arrayize(source, _.isString).join(",")}${TEAM(id, team, false)}`),
 
       tag: (name, value, app) => {
         var _values = {};

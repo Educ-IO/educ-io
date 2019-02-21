@@ -1,4 +1,8 @@
 site :
+  0.1.2c :
+    name : Bug Fixes
+    desc : Bug Fixes and Plumbing Code for New Features
+    numeric : 0.1.1.9
   0.1.2b :
     name : Updated Routes
     desc : Improved Routing Flexibility in advance of Reflect App release

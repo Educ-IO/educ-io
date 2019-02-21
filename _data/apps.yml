@@ -745,6 +745,7 @@ folders:
     - folders/search
     - folders/convert
     - folders/results
+    - folders/counts
     - folders/tag
     - folders/clone
     - folders/custom_properties
@@ -844,9 +845,16 @@ folders:
                 - opened
               auth: google
             - name: Tally
-              desc: Count Files / Folders within these Folders
+              desc: Count Descendent Files / Folders within these Folders
               hash: tally
               shortcut: "t"
+              disabled_until:
+                - opened
+              auth: google
+            - name: Info
+              desc: Count Files / Folders within these Folders
+              hash: info
+              shortcut: "i"
               disabled_until:
                 - opened
               auth: google
@@ -904,6 +912,14 @@ folders:
                 - opened
               imports:
                 - google
+            - name: Move
+              desc: Move folders and files in the current folder or search results
+              hash: move
+              disabled_until:
+                - opened
+              imports:
+                - google
+              visibility: debug
             - name: Close
               desc: Close the current search results
               hash: close.results
