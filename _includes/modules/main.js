@@ -11,6 +11,13 @@ Main = function() {
   /* <!-- Internal Variables --> */
   var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "App"];
   /* <!-- Internal Variables --> */
+  
+  /* <!-- Plumbing Functions --> */
+  const BUSY = () => _.wrap(ಠ_ಠ.Display.busy({
+    target: ಠ_ಠ.container,
+    fn: true
+  }), (busy, value) => _.tap(value, () => busy()));
+  /* <!-- Plumbing Functions --> */
 
   /* <!-- Internal Functions --> */
 
@@ -429,6 +436,8 @@ Main = function() {
       );
 
     }),
+    
+    busy: BUSY,
     /* <!-- External Functions --> */
 
   };

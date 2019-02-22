@@ -18,13 +18,6 @@ App = function() {
   var ಠ_ಠ, ರ‿ರ = {};
   /* <!-- Internal Variables --> */
 
-  /* <!-- Plumbing Functions --> */
-  const BUSY = () => _.wrap(ಠ_ಠ.Display.busy({
-    target: ಠ_ಠ.container,
-    fn: true
-  }), (busy, value) => _.tap(value, () => busy()));
-  /* <!-- Plumbing Functions --> */
-
   /* <!-- Internal Functions --> */
   var _resize = () => {
 
@@ -103,7 +96,7 @@ App = function() {
   var _load = (loader, rootTeamDrive, log, teamDrive, state, tags) => new Promise((resolve, reject) => {
 
     loader.catch(e => ಠ_ಠ.Flags.error("File / Folder Load Failure", e))
-      .then(BUSY())
+      .then(ಠ_ಠ.Main.busy())
       .then(file => {
 
         var _task = () => { /* <!-- This is a folders file to load and read/action --> */
@@ -163,7 +156,7 @@ App = function() {
 
     ಠ_ಠ.Google.teamDrives.list()
       .catch(e => ಠ_ಠ.Flags.error("Team Drive Load Failure", e))
-      .then(BUSY())
+      .then(ಠ_ಠ.Main.busy())
       .then(drives => drives ? ಠ_ಠ.Display.choose({
         id: "folders_teamDrives",
         title: "Please Choose a Team Drive to Open ...",

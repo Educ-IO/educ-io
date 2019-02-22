@@ -2,6 +2,8 @@ TODO LIST
 =========
 General
 -------
+* ** IMPORTANT ** Headless Tests -> Write new permission request handing!!!
+
 * ** IMPORTANT ** Recent Items -> Multiple accounts!!!
 
 * ** IMPORTANT ** Loader/Spinner contained within element
@@ -120,9 +122,10 @@ Folders
 
 Reflect
 -------
+* Thumbnail / Content Hint for Form (render?)
+
 * ** NEW FIELD ** Range Field - https://getbootstrap.com/docs/4.3/components/forms/#range
 
-* ** IMPORTANT ** Including Save buttons at the end of Reflect Forms by cloning menu items from NAV (with imports etc)
 * ** IMPORTANT ** Should have anchor links using smooth scroll to different parts of the forms, to make navigation of the form easier!
 
 * Lesson Observation Form
@@ -146,6 +149,7 @@ Survey
 
 Complete
 --------
+* ** IMPORTANT ** Including Save buttons at the end of Reflect Forms by cloning menu items from NAV (with imports etc) <-- DONE
 * ** BUG ** Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS <-- DONE
 * ** IMPORTANT ** Enable Auto-Prefixer for CSS Build <-- DONE
 * ** BUG ** - Click and Drag overrrides text box select handling when editing a Docket Item. <-- DONE
@@ -619,4 +623,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2019-02-10
+ᕕ( ᐛ )ᕗ JD - 2019-02-22

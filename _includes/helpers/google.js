@@ -102,7 +102,7 @@ Google_API = (options, factory) => {
   const APP_DATA = "appDataFolder";
 
   const SKELETON = "id,name,size,parents,mimeType";
-  const FIELDS = "id,name,description,mimeType,version,parents,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId";
+  const FIELDS = "id,name,description,mimeType,version,parents,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId,ownedByMe,capabilities";
 
   const EVENTS = {
     SEARCH: {
@@ -336,7 +336,7 @@ Google_API = (options, factory) => {
       pageSize: PAGE_SIZE,
       q: "trashed = false" + _i + _n + _m + _e + _p + _v + _s,
       orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-      fields: `kind,nextPageToken,incompleteSearch,files(${skeleton ? SKELETON : FIELDS}${team ? ",teamDriveId" : ""})`,
+      fields: `kind,nextPageToken,incompleteSearch,files(${skeleton ? SKELETON : FIELDS}${skeleton && team ? ",teamDriveId" : ""})`,
     };
 
     if (team) {
@@ -636,6 +636,17 @@ Google_API = (options, factory) => {
         _properties[app ? "appProperties" : "properties"] = _values;
         return _properties;
       },
+      
+      type: (mime, corpora, spaces) => _list(NETWORKS.general.get, "drive/v3/files", "files", [], {
+        pageSize: PAGE_SIZE,
+        q: `trashed = false and mimeType = '${mime}'`,
+        orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
+        fields: `kind,nextPageToken,incompleteSearch,files(${FIELDS},teamDriveId)`,
+        includeTeamDriveItems : true,
+        supportsTeamDrives : true,
+        corpora : corpora ? corpora : "user,allTeamDrives",
+        spaces : spaces ? spaces : "drive",
+      }),
 
     },
 

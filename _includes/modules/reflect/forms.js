@@ -4,12 +4,30 @@ Forms = function() {
   /* <!-- Returns an instance of this if required --> */
   if (this && this._isF && this._isF(this.Forms)) return new this.Forms().initialise(this);
 
-  /* <!-- Internal Constants --> */
-  /* <!-- Internal Constants --> */
-
   /* <!-- Internal Variables --> */
   var ಠ_ಠ, _showdown, _cache;
   /* <!-- Internal Variables --> */
+
+  /* <!-- Internal Constants --> */
+  const TYPES = [{
+        name: "scales",
+        prefix: "Ω",
+        mime: "application/x.educ-io.reflect-scale",
+      },
+      {
+        name: "forms",
+        prefix: "Σ",
+        mime: "application/x.educ-io.reflect-form",
+      },
+    ],
+    MARKDOWN = value => _.reduce(value, (memo, value, key) => {
+      var _match;
+      (_.isString(value) && _.isString(key) && (_match = key.match(/__(\S+)__/))) ?
+      memo[_match[1]] = _showdown.makeHtml(value):
+        memo[key] = _.isObject(value) || _.isArray(value) ? MARKDOWN(value) : value;
+      return memo;
+    }, {});
+  /* <!-- Internal Constants --> */
 
   /* <!-- Internal Functions --> */
   var _create = (id, template) => {
@@ -45,16 +63,16 @@ Forms = function() {
     }
 
   };
-  
+
   var _all = type => _.reduce(_cache[type ? type : "forms"], (list, value, key) => {
-      list.push({
-        key: key,
-        name: value.name,
-        title: value.title,
-        type: value.type,
-      });
-      return list;
-    }, []);
+    list.push({
+      key: key,
+      name: value.name,
+      title: value.title,
+      type: value.type,
+    });
+    return list;
+  }, []);
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -72,23 +90,26 @@ Forms = function() {
       });
 
       /* <!-- Initialise Default Scales and Forms --> */
-      _cache = _.reduce([{
-          name: "scales",
-          prefix: "Ω"
-        },
-        {
-          name: "forms",
-          prefix: "Σ"
-        },
-      ], (cache, type) => {
+      _cache = _.reduce(TYPES, (cache, type) => {
         var _prefix = `__${type.prefix}__`;
         cache[type.name] = _.reduce(
-          _.filter(_.keys(ಠ_ಠ), key => key.indexOf(_prefix) === 0), (value, key) => {
-            value[key.substring(_prefix.length).toLowerCase()] = ಠ_ಠ[key](markdown => _showdown.makeHtml(markdown));
+          _.filter(_.keys(ಠ_ಠ), key => key.indexOf(_prefix) === 0),
+          (value, key) => {
+            value[key.substring(_prefix.length).toLowerCase()] = MARKDOWN(ಠ_ಠ[key]);
             return value;
           }, {});
         return cache;
       }, {});
+
+      /* <!-- Get Scales & Forms from Google Drive --> */
+      _.each(TYPES, type => ಠ_ಠ.Google.files.type(type.mime)
+          .then(files => _.each(files, file => {
+            ಠ_ಠ.Google.files.download(file.id)
+              .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
+              .then(content => JSON.parse(content))
+              .then(content => _cache[type.name][file.id.toLowerCase()] = MARKDOWN(content));
+          }))
+          .catch(e => ಠ_ಠ.Flags.error(`Error Searching Google Drive for File Type: ${type.mime}`, e)));
 
       /* <!-- Log Cached Values --> */
       ಠ_ಠ.Flags.log("Cache:", _cache);
@@ -99,11 +120,13 @@ Forms = function() {
     },
 
     all: _all,
-    
-    selection: type => _.map(_.filter(_all(), {type: type ? type : "Report"}), item => ({
-            value: item.key,
-            name: item.title,
-          })),
+
+    selection: type => _.map(_.filter(_all(), {
+      type: type ? type : "Report"
+    }), item => ({
+      value: item.key,
+      name: item.title,
+    })),
 
     has: name => !!(_cache.forms[name]),
 

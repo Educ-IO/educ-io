@@ -486,6 +486,10 @@ reflect:
         name: View your basic profile info
         reason: In order to display your name on the navigation menu, once you have signed in.
         request: login
+      - scope: https://www.googleapis.com/auth/drive.appdata
+        name: View and manage its own configuration data in your Google Drive
+        reason: In order to record your settings in Google Drive.
+        request: login
       - scope: https://www.googleapis.com/auth/drive.file
         name: View and manage Google Drive files and folders that you have opened or created with this app
         reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.

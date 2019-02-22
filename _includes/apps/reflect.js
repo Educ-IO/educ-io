@@ -100,7 +100,7 @@ App = function() {
                 name: `${title}.reflect`
               },
               _mime = TYPE_FORM;
-            return ಠ_ಠ.Google.files.upload(_meta, _result, _mime);
+            return ಠ_ಠ.Google.files.upload(_meta, JSON.stringify(_result), _mime);
           });
         } else {
           return Promise.reject();
@@ -186,10 +186,16 @@ App = function() {
   /* <!-- Process Functions --> */
   var _process = {
 
-    report: data => _create.load(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Report File: ${data}`)).form,
-      form => (ರ‿ರ.form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(form, data.report))),
+    report: data => {
+      _create.load(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Report File: ${data}`)).form,
+        form => (ರ‿ರ.form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(form, data.report)));
+      return true;
+    },
 
-    form: data => _edit.form(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Form File: ${data}`))),
+    form: data => {
+      _edit.form(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Form File: ${data}`)));
+      return true;
+    },
 
   };
   /* <!-- Process Functions --> */
@@ -303,6 +309,7 @@ App = function() {
         name: "Reflect",
         state: ರ‿ರ,
         states: STATES,
+        start: () => ರ‿ರ.forms = ರ‿ರ.forms ? ರ‿ರ.forms : ಠ_ಠ.Forms(),
         instructions: [{
             match: /SAVE/i,
             show: "SAVE_INSTRUCTIONS",
@@ -332,7 +339,7 @@ App = function() {
                 value.result.name.replace(/.REFLECT$/i, ""),
                 `#google,load.${value.result.id}`))
               .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e))
-              .then(ಠ_ಠ.Display.busy(true)),
+              .then(ಠ_ಠ.Main.busy()),
           },
 
           import: {
@@ -340,7 +347,7 @@ App = function() {
           },
 
           load: {
-            success: value => _action.load(value.result).then(ಠ_ಠ.Display.busy(true)),
+            success: value => _action.load(value.result).then(ಠ_ಠ.Main.busy()),
           },
 
           export: () => ರ‿ರ.form ? _action.export() : false,
@@ -437,7 +444,6 @@ App = function() {
     },
 
     start: () => {
-      ರ‿ರ.forms = ರ‿ರ.forms ? ರ‿ರ.forms : ಠ_ಠ.Forms();
       moment().format();
     },
 

@@ -16,7 +16,7 @@
               {{#each options}}<option value="{{@key}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</option>{{/each}}
             </select>{{else}}<input data-field="{{@index}}" type="text" class="form-control disabled" value="{{#if name}}{{name}}{{else}}{{this}}{{/if}}" disabled>{{/if}}
             <div class="input-group-append d-flex">
-              <button id="{{../id}}_{{@index}}_btn" data-action="{{@key}}" type="button" href="#" class="btn{{#if../ large}} btn-lg{{/if}} btn-flat btn-action h-100 d-flex mb-0">{{#if desc}}{{desc}}{{else}}{{name}}{{/if}}</button>
+              <button id="{{../id}}_{{@index}}_btn" data-action="{{@key}}" data-dismiss="modal" type="button" href="#" class="btn{{#if../ large}} btn-lg{{/if}} btn-flat btn-action h-100 d-flex mb-0">{{#if desc}}{{desc}}{{else}}{{name}}{{/if}}</button>
             </div>
           </div>{{/each}}
         </div>
