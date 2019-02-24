@@ -242,7 +242,7 @@ Display = function() {
               }
               return _b[_a];
             },
-            "eq": (a, b) => _.isEqual(a, b) 
+            "eq": (a, b) => _.isEqual(a, b)
           };
 
           if (!operators[operator]) throw new Error(`IS doesn't understand the operator ${operator}`);
@@ -707,9 +707,14 @@ Display = function() {
 
         /* <!-- Set Event Handlers --> */
         dialog.find(".modal-footer button.btn-primary").click(() => {
-          var _value = dialog.find("input[name='choices']:checked, select[name='choices'] option:selected").val();
+          var _value = dialog.find(
+            ["input[name='choices']:checked", "select[name='choices'] option:selected"].join(", ")
+          );
+          _value = (!options.multiple || _value.length === 1) ?
+            options.choices[_value.val()] :
+            _.map(_value, value => options.choices[$(value).val()]);
           _clean();
-          if (_value && options.choices[_value]) resolve(options.choices[_value]);
+          if (_value) resolve(_value);
         });
 
         dialog.on("hidden.bs.modal", () => dialog.remove() && reject());

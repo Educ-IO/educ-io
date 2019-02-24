@@ -11,12 +11,13 @@
       <div class="modal-body">
         {{#if instructions}}{{{instructions}}}{{/if}}
         <form>
-        {{#if __LONG}}
+        {{#if (any __LONG multiple)}}
           <div class="form-group">
             {{#if desc}}<label for="choices">{{desc}}</label>{{/if}}
-            <select class="custom-select form-control" id="choices" name="choices">
+            <select class="custom-select form-control" id="choices" name="choices"
+                    size="{{either size 5}}"{{#if multiple}}multiple{{/if}}>
               {{#each choices}}
-              <option value="{{@key}}">{{#exists name}}{{#if name}}{{name}}{{#exists desc}}{{#if desc}} - {{desc}}{{/if}}{{/exists}}{{/if}}{{else}}{{this}}{{/exists}}</option>
+              <option value="{{@key}}"{{#if class}} class="{{class}}"{{/if}}{{#if title}} title="{{title}}"{{/if}}>{{#exists name}}{{#if name}}{{name}}{{#exists desc}}{{#if desc}} - {{desc}}{{/if}}{{/exists}}{{/if}}{{else}}{{this}}{{/exists}}</option>
               {{/each}}
             </select>
           </div>
@@ -37,7 +38,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-outline-secondary btn-flat waves-effect" data-dismiss="modal">Close</button>
-        {{#if action}}<button type="button" class="btn btn-primary waves-effect" data-dismiss="modal">{{action}}</button>{{/if}}
+        <button type="button" class="btn btn-primary waves-effect" data-dismiss="modal">{{#if action}}{{action}}{{else}}Select{{/if}}</button>
       </div>
     </div>
   </div>

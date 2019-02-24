@@ -1,0 +1,1 @@
+A visual scale designer is _on the way_. But for the time being, it is a __JSON-only__ affair!

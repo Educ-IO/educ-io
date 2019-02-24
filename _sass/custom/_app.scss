@@ -297,3 +297,8 @@ a.disabled, input.disabled, .btn-disabled {
 .list-group-light > .list-group-item {
   background-color: $colour-light-success;
 }
+
+// -- Option Background -- //
+select > option.trusted {
+  background-color: $colour-light-success;
+}

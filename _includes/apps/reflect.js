@@ -23,7 +23,8 @@ App = function() {
   const STATE_FORM_OPENED = "opened-form",
     STATE_REPORT_OPENED = "opened-report",
     STATE_TRACKER_OPENED = "opened-tracker",
-    STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED, STATE_TRACKER_OPENED];
+    STATE_SCALE_OPENED = "opened-tracker",
+    STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED, STATE_TRACKER_OPENED, STATE_SCALE_OPENED];
   const EMAIL = /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi;
   /* <!-- Internal Constants --> */
 
@@ -32,18 +33,20 @@ App = function() {
   /* <-- Edit Functions --> */
   var _edit = {
 
-    form: form => ಠ_ಠ.Display.text({
-      id: "form_editor",
-      title: "Create/Edit Form ...",
-      message: ಠ_ಠ.Display.doc.get({
-        name: "FORM",
-      }),
+    generic: (value, help, title, id) => ಠ_ಠ.Display.text({
+      id: id ? id : "generic_editor",
+      title: title ? title : "Create/Edit ...",
+      message: help ? ಠ_ಠ.Display.doc.get(help) : "",
       state: {
-        value: form ? JSON.stringify(form, null, 2) : "" /* <-- TODO: Default Template Form? --> */
+        value: value ? JSON.stringify(value, null, 2) : ""
       },
       action: "Save",
       rows: 10
     }),
+
+    form: form => _edit.generic(form, "FORM", "Create/Edit Form ...", "form_editor"),
+
+    scale: scale => _edit.generic(scale, "SCALE", "Create/Edit Scale ...", "scale_editor"),
 
   };
   /* <-- Edit Functions --> */
@@ -81,36 +84,39 @@ App = function() {
         ಠ_ಠ.Flags.error(`Opening Google Drive Folder: ${id}`, e) && resolve();
       })),
 
-    report: (name, form, process) => _create.display(name.toLowerCase(), STATE_REPORT_OPENED, form, process),
+    load: (form, process) => _create.report(form.__name, form, process),
 
-    form: name => _edit.form(ರ‿ರ.forms.get(name).template).then(result => {
-        if (result) {
-          var _result = JSON.parse(result);
-          var _title = _result.title ?
-            Promise.resolve(_result.title) :
-            _result.name ?
-            Promise.resolve(_result.name) :
-            ಠ_ಠ.Display.text({
-              id: "form_name",
-              title: "File Name for Form",
-              simple: true
-            });
-          return _title.then(title => {
-            var _meta = {
-                name: `${title}.reflect`
-              },
-              _mime = TYPE_FORM;
-            return ಠ_ಠ.Google.files.upload(_meta, JSON.stringify(_result), _mime);
+    generic: (edit, value, mime) => edit(value).then(result => {
+      var _process = result => {
+        var _title = result.title ?
+          Promise.resolve(result.title) :
+          result.name ?
+          Promise.resolve(result.name) :
+          ಠ_ಠ.Display.text({
+            id: "file_name",
+            title: "File Name",
+            simple: true
           });
-        } else {
-          return Promise.reject();
-        }
-      })
-      .then(uploaded => uploaded)
+        return _title.then(title => ಠ_ಠ.Google.files.upload({
+          name: `${title}.reflect`
+        }, JSON.stringify(result), mime));
+      };
+      result ? _process(JSON.parse(result)) : Promise.reject();
+    }),
+
+
+    report: (name, form, process) => _create.display(name, STATE_REPORT_OPENED, form, process),
+
+    form: name => _create.generic(_edit.form, ರ‿ರ.forms.get(name).template, TYPE_FORM)
       .then(() => ಠ_ಠ.Display.state().enter(STATE_FORM_OPENED).protect("a.jump").on("JUMP"))
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Create Prompt", e) : false),
 
-    load: (form, process) => _create.report(form.__name, form, process)
+    scale: name => _create.generic(_edit.scale, ರ‿ರ.forms.scale(name), TYPE_SCALE)
+      .then(() => ಠ_ಠ.Display.state().enter(STATE_SCALE_OPENED).protect("a.jump").on("JUMP"))
+      .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Create Prompt", e) : false),
+
+    tracker: name => name,
+    /* <!-- TODO: Tracker Creation --> */
 
   };
   /* <!-- Create Functions --> */
@@ -118,6 +124,20 @@ App = function() {
 
   /* <!-- Prompt Functions --> */
   var _prompt = {
+
+    choose: (options, title, instructions, multiple) => ಠ_ಠ.Display.choose({
+        id: "select_chooser",
+        title: title,
+        instructions: ಠ_ಠ.Display.doc.get(instructions),
+        choices: options,
+        multiple: multiple,
+        action: "Select",
+      })
+      .catch(e => ಠ_ಠ.Flags.error(e ? "Displaying Select Prompt" : "Select Prompt Cancelled", e))
+      .then(result => {
+        ಠ_ಠ.Flags.log("Selected:", result);
+        return result;
+      }),
 
     create: (actions, folder) => ಠ_ಠ.Display.action({
       id: "create_chooser",
@@ -132,8 +152,7 @@ App = function() {
       ಠ_ಠ.Flags.log("Create Action Selected:", result);
       return result.action.command ?
         _create[result.action.command](result.option.value) : null;
-    }).catch(e => e ? ಠ_ಠ.Flags.error("Displaying Create Prompt", e) :
-      ಠ_ಠ.Flags.log("Create Prompt Cancelled")),
+    }).catch(e => ಠ_ಠ.Flags.error(e ? "Displaying Create Prompt" : "Create Prompt Cancelled", e)),
 
     scales: () => ({
       name: "Scale",
@@ -141,13 +160,8 @@ App = function() {
       command: "scale",
       doc: "CREATE_SCALE",
       options: [{
-          name: "New ..."
-        },
-        {
-          value: "uk_teachers",
-          name: "UK Teachers' Standards"
-        }
-      ]
+        name: "New ..."
+      }].concat(ರ‿ರ.forms.selection("scales", "Scale"))
     }),
 
     forms: () => ({
@@ -157,7 +171,7 @@ App = function() {
       doc: "CREATE_FORM",
       options: [{
         name: "New ..."
-      }].concat(ರ‿ರ.forms.selection("Report"))
+      }].concat(ರ‿ರ.forms.selection("forms", "Report"))
     }),
 
     reports: () => ({
@@ -165,7 +179,7 @@ App = function() {
       desc: "Create Report",
       command: "report",
       doc: "CREATE_REPORT",
-      options: ರ‿ರ.forms.selection("Report"),
+      options: ರ‿ರ.forms.selection("forms", "Report"),
     }),
 
     trackers: () => ({
@@ -173,10 +187,7 @@ App = function() {
       desc: "Create Tracker",
       command: "tracker",
       doc: "CREATE_TRACKER",
-      options: [{
-        value: "uk_teachers",
-        name: "UK Teachers' Standards"
-      }]
+      options: ರ‿ರ.forms.selection("scales", "Scale")
     }),
 
   };
@@ -196,6 +207,9 @@ App = function() {
       _edit.form(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Form File: ${data}`)));
       return true;
     },
+
+    tracker: data => data,
+    /* <!-- TODO: Process Tracker Loading --> */
 
   };
   /* <!-- Process Functions --> */
@@ -254,8 +268,8 @@ App = function() {
             _meta = {
               name: _saving.name,
               parents: (ರ‿ರ.folder ? ರ‿ರ.folder.id : null),
-              properties: {
-                reflectForm: _saving.data.form
+              appProperties: {
+                FORM: _saving.data.form,
               }
             },
             _data = JSON.stringify(_saving.data),
@@ -354,6 +368,13 @@ App = function() {
 
           clone: () => ರ‿ರ.form ? _action.save(true) : false,
 
+          analyse: {
+            matches: /ANALYSE/i,
+            fn: () => _prompt.choose(
+                ರ‿ರ.forms.selection("forms", "Report"), "Select a Form ...", "ANALYSE", true)
+              .then(result => result) /* <!-- TODO: Display Analysis --> */
+          },
+
           scales: {
             matches: /SCALES/i,
             fn: () => EMAIL ? false : false
@@ -387,7 +408,8 @@ App = function() {
           create: {
             matches: /CREATE/i,
             length: 0,
-            fn: () => _prompt.create([_prompt.scales(), _prompt.forms(), _prompt.reports()])
+            fn: () => _prompt.create(
+                [_prompt.scales(), _prompt.forms(), _prompt.reports(), _prompt.trackers()])
               .then(form => ರ‿ರ.form = form),
             routes: {
               form: {
@@ -410,22 +432,50 @@ App = function() {
                     .then(form => ರ‿ರ.form = form),
                   named: {
                     length: 1,
-                    fn: command => (ರ‿ರ.forms.has(command.toLowerCase()) ?
-                        Promise.resolve(_create.report(command.toLowerCase())) :
+                    fn: command => (ರ‿ರ.forms.has(command) ?
+                        Promise.resolve(_create.report(command)) :
                         _prompt.create([_prompt.reports()]))
                       .then(form => ರ‿ರ.form = form)
                   },
                   folder: {
                     length: 2,
                     fn: command => _create.parent(command[0])
-                      .then(folder => _prompt.create([_prompt.reports()], folder))
+                      .then(folder => ರ‿ರ.forms.has(command[1]) ?
+                        Promise.resolve(_create.report(command[1])) :
+                        _prompt.create([_prompt.reports()], folder))
                       .then(form => ರ‿ರ.form = form)
                   },
                 },
               },
+              tracker: {
+                matches: /TRACKER/i,
+                routes: {
+                  prompt: () => _prompt.create([_prompt.trackers()])
+                    .then(tracker => ರ‿ರ.tracker = tracker),
+                  folder: {
+                    length: 1,
+                    fn: command => _create.parent(command)
+                      .then(folder => _prompt.create([_prompt.trackers()], folder))
+                      .then(tracker => ರ‿ರ.tracker = tracker)
+                  },
+                },
+              },
+              scale: {
+                matches: /SCALE/i,
+                routes: {
+                  drive: () => _prompt.create([_prompt.scales()])
+                    .then(scale => ರ‿ರ.scale = scale),
+                  folder: {
+                    length: 1,
+                    fn: command => _create.parent(command)
+                      .then(folder => _prompt.create([_prompt.scales()], folder))
+                      .then(scale => ರ‿ರ.scale = scale)
+                  },
+                }
+              },
               folder: {
                 length: 1,
-                fn: command => _create.parent(command[1])
+                fn: command => _create.parent(command)
                   .then(folder =>
                     _prompt.create([_prompt.scales(), _prompt.forms(), _prompt.reports()], folder))
                   .then(form => ರ‿ರ.form = form)

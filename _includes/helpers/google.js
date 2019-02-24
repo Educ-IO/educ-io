@@ -641,7 +641,7 @@ Google_API = (options, factory) => {
         pageSize: PAGE_SIZE,
         q: `trashed = false and mimeType = '${mime}'`,
         orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-        fields: `kind,nextPageToken,incompleteSearch,files(${FIELDS},teamDriveId)`,
+        fields: `kind,nextPageToken,incompleteSearch,files(${FIELDS},owners)`,
         includeTeamDriveItems : true,
         supportsTeamDrives : true,
         corpora : corpora ? corpora : "user,allTeamDrives",

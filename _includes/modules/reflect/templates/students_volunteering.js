@@ -18,6 +18,9 @@ __Σ__Students_Volunteering = {
           large: true,
           required: true,
           readonly: true,
+          analyse: {
+            type: "row"
+          },
         },
         span : {
           template: "field_span",

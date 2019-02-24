@@ -2,6 +2,7 @@ __Ω__UK_Teachers_Standards = {
   /* <!-- SCALE: UK Teachers' Standards --> */
   name: "Teachers' Standards",
   title: "UK Teachers' Standards",
+  type: "Scale",
   scale: [
     /* <!-- Standard 1 --> */
     {

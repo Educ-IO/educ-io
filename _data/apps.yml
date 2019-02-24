@@ -476,6 +476,8 @@ reflect:
     - reflect/IMPORT
     - reflect/TUTORIALS
     - reflect/FORM
+    - reflect/ANALYSE
+    - reflect/SCALE
   scopes:
     google:
       - scope: email
@@ -549,6 +551,7 @@ reflect:
               disabled_until:
                 - opened-report
               auth: google
+              visibility: debug
             - name: Export
               desc: Export this Report by downloading the data
               hash: export
@@ -559,6 +562,7 @@ reflect:
               imports:
                 - xlsx
                 - filesaver
+              visibility: debug
             - name: Close
               desc: Close this Report
               hash: close
@@ -578,9 +582,28 @@ reflect:
               imports:
                 - google
               auth: google
-            - name: Progress
-              desc: Check progress on Form Completion
-              hash: progress
+            - name: Analyse
+              desc: Anaylse submitted Form Reports
+              hash: analyse
+              auth: google
+    - name: Trackers
+      groups:
+        all:
+          commands:
+            - name: Create
+              desc: Create a new Tracker
+              hash: create.tracker
+              auth: google
+              visibility: debug
+            - name: Open
+              desc: Open a saved Tracker from your Drive
+              hash: open.tracker
+              imports:
+                - google
+              auth: google
+              visibility: debug
+            - name: Create Scale
+              hash: create.scale
               auth: google
     - name: About
       short_name: Help
@@ -637,11 +660,6 @@ reflect:
       imports:
         - google
       auth: google
-    - name: Analyse
-      desc: Check progress on Report Completion
-      hash: analyse.report
-      auth: google
-      visibility: debug
   published: false
 
 
