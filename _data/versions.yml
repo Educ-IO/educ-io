@@ -1,4 +1,8 @@
 site :
+  0.1.2g :
+    name : Reflect v0.0.4b-alpha
+    desc : Bug Fixes
+    numeric : 0.1.1.14
   0.1.2f :
     name : Reflect v0.0.4a-alpha
     desc : Scales Creation and Loading
@@ -784,6 +788,9 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.4b-alpha :
+    name : Bug Fixes
+    type : minor
   0.0.4a-alpha :
     name : Scales Creation and Loading
     type : minor
