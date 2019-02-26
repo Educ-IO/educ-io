@@ -450,9 +450,12 @@ reflect:
     - fields/field_span
     - fields/field_textual
     - fields/field_durations
+    - fields/field_files
     - reflect/group
     - reflect/form
     - reflect/recovery
+    - reflect/analyse
+    - reflect/tracker
   docs:
     - shared/JUMP
     - shared/HELP
@@ -3206,6 +3209,7 @@ debug:
     - fields/field_span
     - fields/field_textual
     - fields/field_durations
+    - fields/field_files
     - debug/host
     - debug/data/dialog
     - debug/data/form

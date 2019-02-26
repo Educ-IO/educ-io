@@ -45,7 +45,7 @@ App = function() {
     }),
 
     form: form => _edit.generic(form, "FORM", "Create/Edit Form ...", "form_editor"),
-
+    
     scale: scale => _edit.generic(scale, "SCALE", "Create/Edit Scale ...", "scale_editor"),
 
   };
@@ -55,8 +55,8 @@ App = function() {
   /* <!-- Create Functions --> */
   var _create = {
 
-    display: (name, state, form, process) => {
-      var _initial = form ? ರ‿ರ.forms.create(name, form) : ರ‿ರ.forms.get(name),
+    display: (name, state, form, process, editable) => {
+      var _initial = form ? ರ‿ರ.forms.create(name, form, editable) : ರ‿ರ.forms.get(name, editable),
         _return = _initial.form;
       ರ‿ರ.template = _initial.template;
       if (ರ‿ರ.template) ರ‿ರ.template.__name = name;
@@ -84,7 +84,7 @@ App = function() {
         ಠ_ಠ.Flags.error(`Opening Google Drive Folder: ${id}`, e) && resolve();
       })),
 
-    load: (form, process) => _create.report(form.__name, form, process),
+    load: (form, process, editable) => _create.report(form.__name, editable, form, process),
 
     generic: (edit, value, mime) => edit(value).then(result => {
       var _process = result => {
@@ -105,7 +105,7 @@ App = function() {
     }),
 
 
-    report: (name, form, process) => _create.display(name, STATE_REPORT_OPENED, form, process),
+    report: (name, editable, form, process) => _create.display(name, STATE_REPORT_OPENED, form, process, editable),
 
     form: name => _create.generic(_edit.form, ರ‿ರ.forms.get(name).template, TYPE_FORM)
       .then(() => ಠ_ಠ.Display.state().enter(STATE_FORM_OPENED).protect("a.jump").on("JUMP"))
@@ -197,19 +197,18 @@ App = function() {
   /* <!-- Process Functions --> */
   var _process = {
 
-    report: data => {
+    report: (data, editable) => {
       _create.load(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Report File: ${data}`)).form,
-        form => (ರ‿ರ.form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(form, data.report)));
+        form => (ರ‿ರ.form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(form, data.report)), editable);
       return true;
     },
 
-    form: data => {
+    form: (data, editable) => {
       _edit.form(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Form File: ${data}`)));
       return true;
     },
 
-    tracker: data => data,
-    /* <!-- TODO: Process Tracker Loading --> */
+    tracker: (data, editable) => data, /* <!-- TODO: Process Tracker Loading --> */
 
   };
   /* <!-- Process Functions --> */
@@ -255,12 +254,12 @@ App = function() {
 
     load: file => ಠ_ಠ.Google.files.download((ರ‿ರ.file = file).id)
       .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
-      .then(content => JSON.parse(content))
-      .then(content =>
-        ಠ_ಠ.Google.files.is(TYPE_REPORT)(file) ? _process.report(content) :
-        ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ? _process.form(content) :
+      .then(content => ({content: JSON.parse(content), editable: file.capabilities && file.capabilities.canEdit}))
+      .then(value =>
+        ಠ_ಠ.Google.files.is(TYPE_REPORT)(file) ? _process.report(value.content, value.editable) :
+        ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ? _process.form(value.content, value.editable) :
         Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id}`)),
-
+    
     save: force => {
       _action.screenshot($("form[role='form'][data-name]")[0])
         .then(result => {
@@ -433,7 +432,7 @@ App = function() {
                   named: {
                     length: 1,
                     fn: command => (ರ‿ರ.forms.has(command) ?
-                        Promise.resolve(_create.report(command)) :
+                        Promise.resolve(_create.report(command, true)) :
                         _prompt.create([_prompt.reports()]))
                       .then(form => ರ‿ರ.form = form)
                   },
@@ -441,7 +440,7 @@ App = function() {
                     length: 2,
                     fn: command => _create.parent(command[0])
                       .then(folder => ರ‿ರ.forms.has(command[1]) ?
-                        Promise.resolve(_create.report(command[1])) :
+                        Promise.resolve(_create.report(command[1], true)) :
                         _prompt.create([_prompt.reports()], folder))
                       .then(form => ರ‿ರ.form = form)
                   },

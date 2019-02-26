@@ -34,7 +34,7 @@ Data = function() {
   /* <!-- Internal Functions --> */
   var _modal = (template, options, populate, check) => DISPLAY.modal(template, _.extend({
       backdrop: false,
-      class: debug ? "" : "d-none",
+      class: DISPLAY.state().in("traces") ? "" : "d-none",
     }, options), modal => {
       FACTORY.Fields({
         me: FACTORY.me ? FACTORY.me.full_name : undefined,
@@ -125,19 +125,19 @@ Data = function() {
         class: `${GEN.a(GEN.i(5, 10))} ${GEN.b() ? "offline" : "paper"}`,
         divider: GEN.b(10)
       })),
-      children: (level, options) => {
+      children: (level, options, evidence) => {
         if (level > GEN.i(1, 5)) return null;
         return _.map(_.range(1, GEN.i(2, 8)), number => {
           var _return = {
             value: number,
             details: GEN.t(GEN.i(0, 60)),
           };
-          if (GEN.b(40)) _return.children = _blocks.children(level + 1, options);
+          if (GEN.b(40)) _return.children = _blocks.children(level + 1, options, evidence);
           if (_return.children === null) delete _return.children;
           if (_return.children === undefined) { /* <!-- Evidence only if a Leaf --> */
-            if (GEN.b(90)) {
+            if (GEN.b(40)) {
               _return.evidence = true;
-              if (GEN.b(70))
+              if (GEN.b(80) && evidence !== false)
                 _return._data = {
                   options: _.map(_.range(GEN.i(0, 4)), () => _.sample(options)),
                   details: GEN.t(GEN.i(0, 100))
@@ -147,7 +147,7 @@ Data = function() {
           return _return;
         });
       },
-      scale: options => ({
+      scale: (options, evidence) => ({
         name: GEN.t(GEN.i(5, 20)),
         title: GEN.t(GEN.i(10, 30)),
         scale: _.map(_.range(1, GEN.i(2, 11)), number => {
@@ -163,7 +163,7 @@ Data = function() {
               details: _markdown(GEN.t(GEN.i(0, 200))),
             })),
           };
-          if (GEN.b(90)) _return.children = _blocks.children(1, options);
+          if (GEN.b(90)) _return.children = _blocks.children(1, options, evidence);
           if (_return.children === null) delete _return.children;
           return _return;
         })
@@ -461,7 +461,7 @@ Data = function() {
             });
           _return._value = ((additions, prefix, field) => additions && additions.length > 0 ?
             _checks.list(additions, item => ({
-              Value: (`${item.details} [${prefix}: ${item.option.value}]`).trim(),
+              Value: (`${item.details} [${prefix.trim()}: ${item.option.value}]`).trim(),
               Type: "Item",
               __type: "list_item",
             }), field) : null)(_.filter(_additions, "details"), _return.prefix, _return.list_field);
@@ -528,9 +528,9 @@ Data = function() {
           })(_return.id, _additions);
           return _return;
         },
-        scale_Empty: title => {
+        scale_Empty: (title, evidence) => {
           var _options = _blocks.lists(),
-            _scale = _blocks.scale(_options),
+            _scale = _blocks.scale(_options, evidence),
             _return = _.extend(_blocks.basic(title ? title : "Empty Evidence Scale"), {
               template: "field_scale",
               type: GEN.t(GEN.i(5, 10)),
@@ -543,13 +543,17 @@ Data = function() {
             });
           return _return;
         },
-        scale_Evidence: () => {
-          var _return = _blocks.types.scale_Empty("Evidence Scale"),
-            _test = (value, marker) => value === true ? value : marker.children ?
-            _.reduce(marker.children, _test, value) : marker._data && marker._data.details ?
-            true : false,
+        scale_Evidence: (title, evidence) => {
+
+          var _return = _blocks.types.scale_Empty(title ?
+              title : "Evidence Scale", evidence),
+            _test = (value, marker) => value === true ?
+            value : marker.evidence ?
+            true : marker.children ?
+            _.reduce(marker.children, _test, value) : false,
             _value = _.reduce(_return.scale.scale, _test, false);
-          _return._value = ((scale, type, list_field, value) => value ? (name, values) => {
+
+          _return._value = ((scale, type, list_field, value, test) => value ? (name, values) => {
 
             values = values.to.have.deep.nested.property(`${name}.Values`);
             values.to.be.an("object");
@@ -566,13 +570,15 @@ Data = function() {
               var __parents = _.tap(_.clone(parents), p => p.push(_name));
               var __numbers = _.tap(_.clone(numbers), n => n.push(_number));
 
+              var _path = _.reduce(__parents, (memo, parent) =>
+                `${memo ? `${memo}.` : ""}${_safe(parent)}`, "");
+
+              if (marker.evidence || marker.children && _.reduce(marker.children, test, false))
+                values.to.have.deep.nested.property(`${_path}.Value`, true);
+
               if (marker._data) {
 
-                var _data = marker._data,
-                  _path = _.reduce(__parents, (memo, parent) =>
-                    `${memo ? `${memo}.` : ""}${_safe(parent)}`, "");
-
-                values.to.have.deep.nested.property(`${_path}.Value`, true);
+                var _data = marker._data;
 
                 if (_data.details)
                   values.to.have.deep.nested.property(`${_path}.Details`, _data.details);
@@ -604,8 +610,9 @@ Data = function() {
 
             _.each(scale.scale, _check([], []));
 
-          } : null)(_return.scale, _return.type.trim(), _return.list_field.trim(), _value);
-          _return._populate = ((id, scale) => modal => {
+          } : null)(_return.scale, _return.type.trim(), _return.list_field.trim(), _value, _test);
+
+          _return._populate = ((id, scale, test) => modal => {
 
             var _marker = parent => marker => {
 
@@ -613,12 +620,14 @@ Data = function() {
                                                       marker.number : marker.value}`,
                 _output = `${_name}${marker.name ? ` ${marker.name}`: ""}`;
 
-              var _el = modal.find(`[data-id='${id}'] li[data-output-name='${$.escapeSelector(_output)}']`);
-              if (marker.children || marker._data) {
+              var _el = modal
+                .find(`[data-id='${id}'] li[data-output-name='${$.escapeSelector(_output)}']`);
+
+              if (marker.evidence || marker.children && _.reduce(marker.children, test, false)) {
                 _el.find("> div > label.material-switch").delay(100).click();
                 if (marker.children) {
                   _.each(marker.children, _marker(_name));
-                } else {
+                } else if (marker._data) {
                   _el.find("textarea").val(marker._data.details);
                   _.each(marker._data.options, option => {
                     var __el = _el.find("div.dropdown-menu")
@@ -632,9 +641,11 @@ Data = function() {
 
             _.each(scale.scale, _marker());
 
-          })(_return.id, _return.scale);
+          })(_return.id, _return.scale, _test);
           return _return;
+
         },
+        scale_NoEvidence: () => _blocks.types.scale_Evidence("No Evidence Scale", false),
       }
     },
     _populate = state => modal => {
@@ -915,7 +926,7 @@ Data = function() {
               input.val(value);
               FACTORY.Flags.log("Set Field Value to:", value);
               expect(input.val()).to.be.a("string").that.equals(value);
-              if (clear) {
+              if (clear && clear.length > 0) {
                 clear.click();
                 FACTORY.Flags.log("Cleared Field");
               } else {
@@ -932,6 +943,14 @@ Data = function() {
           _types = {
             textual: () => _.extend(_blocks.basic("Textbox Field"), {
               template: "field_textual",
+              _interact: field => {
+                var input = field.find("input[type='text'], textarea");
+                _.times(GEN.i(1, 10), () => _interactions.text(input));
+              }
+            }),
+            textual_eraser: () => _.extend(_blocks.basic("Textbox Field (with Eraser)"), {
+              template: "field_textual",
+              clear: true,
               _interact: field => {
                 var input = field.find("input[type='text'], textarea"),
                   clear = field.find("button.eraser");
@@ -1152,7 +1171,56 @@ Data = function() {
                   var _item = list.find(".list-item").last();
                   expect(_item.find("span[data-output-name='Value']").text())
                     .to.be.a("string")
-                    .that.equals(`${addition.details} [${state.prefix}: ${addition.option.value}]`);
+                    .that.equals(`${addition.details} [${state.prefix.trim()}: ${addition.option.value}]`);
+                  expect(_item.find("span[data-output-name='Type']").text())
+                    .to.be.a("string")
+                    .that.equals(state.type);
+
+                });
+
+                /* <!-- Remove all List Items --> */
+                list.find(".list-item").each(function() {
+                  var _count = list.find(".list-item").length;
+                  $(this).find("a.delete").click();
+                  expect(list.find(".list-item").length)
+                    .to.be.a("number")
+                    .that.equals(_count - 1);
+                });
+
+              },
+            }),
+            files: () => _.extend(_blocks.basic("Files"), {
+              template: "field_files",
+              options: _blocks.lists(),
+              details: GEN.t(GEN.i(10, 50)),
+              type: GEN.an(GEN.i(10, 15)),
+              _interact: (field, modal, state) => {
+
+                var _additions = _.map(_.range(GEN.i(1, 10)), () => (_.sample(state.options))),
+                  details = field.find(`textarea#${state.id}_FILES_DETAILS`),
+                  button = field.find(`button#${state.id}_FILES_TYPE`),
+                  list = field.find(`div#${state.id}_FILES_LIST`);
+
+                /* <!-- Check details textarea --> */
+                _.times(GEN.i(1, 10), () => _interactions.text(details));
+
+                /* <!-- Check default button text --> */
+                expect(button.first().text().trim()).to.be.a("string")
+                  .that.equals(state.type.trim());
+
+                /* <!-- Check each addition --> */
+                _.each(_additions, addition => {
+
+                  var _option = field
+                    .find(`a.dropdown-item[data-value='${$.escapeSelector(addition.value)}']`);
+                  expect(_option.first().text().trim()).to.be.a("string")
+                    .that.equals(addition.name.trim());
+                  _option.first().click();
+
+                  var _item = list.find(".list-item").last();
+                  expect(_item.find("span[data-output-name='Value']").text())
+                    .to.be.a("string")
+                    .that.equals(addition.class.endsWith("paper") ? "Paper" : "Offline");
                   expect(_item.find("span[data-output-name='Type']").text())
                     .to.be.a("string")
                     .that.equals(state.type);

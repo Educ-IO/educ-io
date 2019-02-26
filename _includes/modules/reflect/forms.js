@@ -25,12 +25,14 @@ Forms = function() {
       var _match;
       (_.isString(value) && _.isString(key) && (_match = key.match(/__(\S+)__/))) ?
       memo[_match[1]] = ರ‿ರ.showdown.makeHtml(value):
-        memo[key] = _.isObject(value) || _.isArray(value) ? MARKDOWN(value) : value;
+        memo[key] = !_.isRegExp(value) && (_.isObject(value) || _.isArray(value)) ?
+        MARKDOWN(value) : value;
       return memo;
     }, {}),
     DEEPCLONE = object => {
       var clone = _.clone(object);
-      _.each(clone, (value, key) => _.isObject(value) ? clone[key] = DEEPCLONE(value) : value);
+      _.each(clone, (value, key) => !_.isRegExp(value) && _.isObject(value) ?
+        clone[key] = DEEPCLONE(value) : value);
       return clone;
     },
     PROCESS = _.compose(MARKDOWN, DEEPCLONE);
@@ -47,7 +49,7 @@ Forms = function() {
     `${file.owners[0].displayName}${file.owners[0].emailAddress ? 
               ` (${file.owners[0].emailAddress})` : ""}` : "";
 
-  var _create = (id, template) => {
+  var _create = (id, template, editable) => {
 
     if (id && template) {
 
@@ -63,6 +65,7 @@ Forms = function() {
         for (var field_Id in group.fields) {
           var field = _.clone(group.fields[field_Id]);
           field.id = field_Id;
+          field.readonly = !!editable;
           if (field.order === undefined) field.order = ++_order;
           if (field.scale) {
             var _scale = _get(field.scale, ರ‿ರ.cache.scales);
@@ -167,17 +170,17 @@ Forms = function() {
 
     has: name => !!(_get(name, ರ‿ರ.cache.forms)),
 
-    get: name => {
+    get: (name, editable) => {
       var _form = _get(name, ರ‿ರ.cache.forms);
       return {
         template: _form,
-        form: _create(name, _form)
+        form: _create(name, _form, editable)
       };
     },
 
-    create: (id, template) => ({
+    create: (id, template, editable) => ({
       template: template,
-      form: _create(id, template)
+      form: _create(id, template, editable)
     }),
 
     scale: name => _get(name, ರ‿ರ.cache.scales)

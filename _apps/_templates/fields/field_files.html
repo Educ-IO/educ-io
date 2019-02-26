@@ -1,0 +1,39 @@
+{% raw %}
+
+{{!-- ================= DISPLAY PARAMETERS ================== --}}
+{{!-- template = Template Name --}}
+{{!-- id = Control ID --}}
+{{!-- [large] = Size of Form Element Group --}}
+{{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
+{{!-- [icon] = Icon for left-side of Element Group --}}
+{{!-- [details] = This text will be the details textbox placeholder) --}}
+{{!-- [options] = Collection of selection options for each item. Can be strings, or by value/name pairs. If name/value pairs are used, value is used for selected display and return object, but name is displayed in the dropdown list. --}}
+{{!-- [type] = Name of Item type, for visual display (e.g. 'Add |Target| to List). Defaults to Item. --}}
+{{!-- [list_field] = Field Name for list (e.g. Targets) --}}
+{{!-- [items] Name of Items Field Holder (e.g. Items) --}}
+{{!-- [help] = Help information (html) to display --}}
+{{!-- [description] = Template Description --}}
+
+{{!-- ================= OUTPUT PARAMETERS =================== --}}
+{{!-- [field] = Form Element Group Data Field Name --}}
+{{!-- [order] = Data Output Order --}}
+{{!-- ======================================================= --}}
+
+{{!-- =================== OUTPUT FORMAT ===================== --}}
+{{!-- Value = false : If nothing has been added --}}
+{{!-- ------------------------------------------------------- --}}
+{{!-- Order = field order if supplied --}}
+{{!-- Details = text from details box (not present if no text) --}}
+{{!-- [List].Items = Array of Icon, Type and Value (value determined by action) --}}
+{{!-- ======================================================= --}}
+
+{{#if description}}<!-- {{description}} -->{{/if}}
+<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}{{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
+	<label class="col-md-3 col-form-label" for="{{id}}">{{val "" title field}}</label>
+	<div class="col-md-9">
+		<input id="{{id}}" name="{{id}}_VALUE" data-output-name="Value" hidden="hidden" type="checkbox">
+    {{> field_items id=(concat id "_FILES") details=items_details controls=id
+  			class="mt-1 mt-md-2" type=type list=list_field items=(either items "Files") }}
+	</div>
+</div>
+{% endraw %}

@@ -161,6 +161,9 @@ Display = function() {
 
         Handlebars.registerHelper("username", variable => _username(variable));
 
+        Handlebars.registerHelper("string", variable => variable ? variable.toString ?
+          variable.toString() : JSON.stringify(variable) : "");
+
         Handlebars.registerHelper("isDate", function(variable, options) {
           if (variable && variable instanceof Date) {
             return options.fn(this);
@@ -262,22 +265,36 @@ Display = function() {
 
         Handlebars.registerHelper("which", (which, a, b) => which ? a : b);
 
-        Handlebars.registerHelper("concat", (...args) => _.reduce(args, (m, a) => _.isObject(a) ? m : (m + a), ""));
+        Handlebars.registerHelper("concat", function() {
+          return _.reduce(Array.prototype.slice.call(arguments, 0, arguments.length - 1),
+            (m, a) => _.isObject(a) ? m : (m + a), "");
+        });
 
-        Handlebars.registerHelper("val", (_default, ...args) => {
-          var _val = _.find(args, arg => arg !== undefined && arg !== null);
+        Handlebars.registerHelper("val", function(_default) {
+          var _val = _.find(Array.prototype.slice.call(arguments, 1, arguments.length - 1), arg => arg !== undefined && arg !== null);
           return _val === undefined ? _default : _val;
         });
 
-        Handlebars.registerHelper("any", (...args) =>
-          _.some(args, arg => arg !== undefined && arg !== null));
+        Handlebars.registerHelper("any", function() {
+          return _.some(Array.prototype.slice.call(arguments, 0, arguments.length - 1),
+            a => a !== undefined && a !== null && a !== false);
+        });
 
-        Handlebars.registerHelper("all", (...args) =>
-          _.every(args, arg => arg !== undefined && arg !== null));
+        Handlebars.registerHelper("all", function() {
+          return _.every(Array.prototype.slice.call(arguments, 0, arguments.length - 1),
+            a => a !== undefined && a !== null && a !== false);
+        });
 
-        Handlebars.registerHelper("either", (a, b) => (_.isUndefined(a) || _.isNull(a) || a === "") ? b : a);
+        Handlebars.registerHelper("none", function() {
+          return _.every(Array.prototype.slice.call(arguments, 0, arguments.length - 1),
+            a => a === undefined || a === null || a === false);
+        });
 
-        Handlebars.registerHelper("replace", (value, replace, replacement) => value ? value.replace(new RegExp(replace, "g"), replacement) : "");
+        Handlebars.registerHelper("either",
+          (a, b) => (_.isUndefined(a) || _.isNull(a) || a === "") ? b : a);
+
+        Handlebars.registerHelper("replace", (value, replace, replacement) =>
+          value ? value.replace(new RegExp(replace, "g"), replacement) : "");
 
         Handlebars.registerHelper("inc", (number, options) => {
           if (typeof(number) === "undefined" || number === null) return null;

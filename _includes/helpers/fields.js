@@ -290,6 +290,7 @@ Fields = (options, factory) => {
         var _selector = form.find(`#${_this.data("type")}`),
           _type = _selector.text().trim(),
           _default = _selector.data("default");
+        _default = _default ? _default.trim() : _default;
         if (_type == _default) _type = "";
 
         /* <!-- Get the List we are adding to --> */
@@ -422,8 +423,14 @@ Fields = (options, factory) => {
       add: (value, list, check) => {
 
         if (check !== false) {
-          var checks = list.find("input[type='checkbox']");
-          if (checks && checks.length == 1 && !checks.prop("checked")) checks.prop("checked", true);
+          var _controls = list.data("controls");
+          _controls = _controls ? _controls : list.find("[data-controls]").data("controls");
+          var checks = _controls ?
+            list.parents("[data-output-field]").find(`#${_controls}`) :
+            list.find("input[type='checkbox']");
+          if (checks && checks.length == 1 &&
+            checks.is("input[type='checkbox']") && !checks.prop("checked"))
+            checks.prop("checked", true);
         }
 
         if (!value.template) value.template = options.list_template;

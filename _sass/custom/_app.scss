@@ -300,5 +300,6 @@ a.disabled, input.disabled, .btn-disabled {
 
 // -- Option Background -- //
 select > option.trusted {
-  background-color: $colour-light-success;
+  color: $colour-dark-success !important;
+  font-weight: bolder;
 }

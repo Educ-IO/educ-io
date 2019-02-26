@@ -4,15 +4,15 @@ __Σ__Students_Volunteering = {
   title : "Student Volunteering Report",
   type : "Report",
   groups : {
-    basic : {
+    you : {
       template : "group",
-      name : "To Start",
+      name : "About You",
       fields : {
         name : {
           template: "field_textual",
           title: "About",
           field: "Name",
-          __help__: "Who completed this volunteering period?",
+          help: "Who completed this volunteering period?",
           icon: "face",
           default: "me",
           large: true,
@@ -22,6 +22,21 @@ __Σ__Students_Volunteering = {
             type: "row"
           },
         },
+        form_group : {
+          template: "field_select",
+          title: "What form group / div are you in?",
+          field: "Form Group",
+          default: "Please select ...",
+          options: ["Please select ...", "6B1","6B2", "6B3", "6D1", "6D2", "6D3", "6N1", 
+                    "6N2", "6N3", "6R1", "6R2", "6R3", "6S1", "6S2", "6S3", "6V1", "6V2", "6V3"],
+          
+        },
+      }
+    },
+    volunteering : {
+      template : "group",
+      name : "Volunteering",
+     	fields : {
         span : {
           template: "field_span",
           title: "Volunteering Period",
@@ -44,7 +59,7 @@ __Σ__Students_Volunteering = {
           icon_date: "calendar_today",
           icon_number: "alarm_add",
           help: "Please add the hours of volunteering undertaken during this period",
-          increment: 0.25,
+          increment: 0.5,
           min: 0,
           required: true,
           type: "Hours",
@@ -52,42 +67,74 @@ __Σ__Students_Volunteering = {
           items: "Periods",
           details: "Further details, if applicable",
         },
-        absences : {
-          template: "field_numeric",
-          title: "Total number of hours volunteered over this period?",
-          field: "Hours_",
-          icon: "query_builder",
-          help: "Please total up the number of hours you have volunteered for, during this period.",
-          increment: 0.5,
-          min: 0,
-          max: 30,
-          suffix: "hours/s volunteered",
-          details: "Further details, if applicable",
-          large: true
+      }
+    },
+    evidence : {
+      template: "group",
+      name: "Evidence",
+      __help__: "",
+      fields : {
+        volunteering_evidence : {
+          template : "field_files",
+          title : "Evidence",
+          field : "Volunteering Evidence",
+          icon : "assessment",
+          type : "Evidence",
+          list_field : "Evidence",
+          items_details : "Further details about the evidence you are submitting",
+          options: [
+            {name : "From Google Drive", value: "drive", class: "g-picker"},
+            {name : "From File", value: "file", class: "g-file"},
+            {name : "From Web", value: "web", class: "web"},
+          ],
+          __help__ : "",
+        },
+        supervisor : {
+          template: "field_textual",
+          title: "Supervisor",
+          field: "Volunteering Supervisor",
+          help: "Email address of your supervisor",
+          icon: "how_to_reg",
+          large: true,
+          required: true,
+          pattern: /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi
         },
       }
     },
     details : {
       template: "group",
       name: "Details",
-      __help__: "During the week, you should have targeted between __3__ and __6__ sub-standards, focussing upon them in your teaching and approach. Please gather material to support this, and link it here using the 'Evidence' buttons. Once you have begun teaching, and after having met with your mentor, you should also supply your __agreed__ overall assessment.",
+      __help__: "",
       fields : {
-        future_targets : {
-          template: "field_complex",
-          title: "Targets for the coming week",
-          field: "Future Targets",
-          type: "Target",
-          prefix: "Evidence Type",
-          icon: "gps_fixed",
-          required: true,
-          help: "Enter details of the targets you are setting yourself this week, together with the type of evidence that will confirm you have met the target. Then save them to the list below.",
+        overall_assessment : {
+          template: "field_radio",
+          title: "Overall Assessment",
+          field: "Overall Assessment",
+          icon: "gavel",
+          help: "How would you rate your overall experience over this period.",
+          large: true,
           options: [
-            "Lesson Plan",
-            "Lesson Observation",
-            "Audio / Visual Recording",
-            "Feedback (from Colleagues / Students)",
-            "Records (e.g. Google Sheet Markbook)",
-            "Other"
+            {
+              class: "btn-success",
+              value: "Wonderful",
+              icon: "sentiment_very_satisfied"
+            },
+            {
+              class: "btn-info",
+              value: "Ok",
+              icon: "sentiment_satisfied"
+            },
+            
+            {
+              class: "btn-warning",
+              value: "Not great",
+              icon: "sentiment_dissatisfied"
+            },
+            {
+              class: "btn-danger",
+              value: "Poor",
+              icon: "sentiment_very_dissatisfied"
+            }
           ]
         },
         further_reflections : {
@@ -98,47 +145,7 @@ __Σ__Students_Volunteering = {
           wide: true,
           button: "Load",
           action: "load-g-doc",
-          help: "Please record further thoughts about your progress here.",
-        },
-        overall_assessment : {
-          template: "field_radio",
-          title: "Overall Assessment",
-          field: "Overall Assessment",
-          icon: "gavel",
-          help: "Having discussed and agreed this, please assess your progress over this period.",
-          large: true,
-          options: [
-            {
-              class: "btn-primary",
-              value: "A: Excellent",
-              icon: ""
-            },
-            {
-              class: "btn-info",
-              value: "B: Secure",
-              icon: ""
-            },
-            {
-              class: "btn-success",
-              value: "C: Developing (Standards Met)",
-              icon: ""
-            },
-            {
-              class: "btn-warning",
-              value: "D: Emerging",
-              icon: ""
-            },
-            {
-              class: "btn-danger",
-              value: "E: Weak",
-              icon: ""
-            },
-            {
-              class: "btn-dark",
-              value: "Not enough evidence seen / Opportunity to assess",
-              icon: "visibility_off"
-            }
-          ]
+          help: "Please record further thoughts about your experiences here.",
         },
       }
     },

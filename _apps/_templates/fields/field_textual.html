@@ -42,10 +42,10 @@
 		</div>{{/if}}
 		<div class="input-group{{#if large}} input-group-lg{{/if}}">
 			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
-			{{#if rows}}
+			{{#if (all rows (none pattern))}}
 			<textarea id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} class="form-control{{#if large}} form-control-lg{{/if}} resizable optional"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}} rows="{{rows}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>{{either value ""}}</textarea>
 			{{else}}
-			<input id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}}{{#if value}} value="{{value}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}/>
+			<input id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}}{{#if value}} value="{{value}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}{{#if pattern}} pattern="{{string pattern}}"{{/if}}/>
 			{{/if}}
 			{{#if (any button clear)}}<span class="input-group-append d-none d-lg-flex">
 				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
