@@ -6,7 +6,9 @@
 {{!-- [large] = Size of Form Element Group --}}
 
 {{!-- [options] = name, value, class, divider (to trigger actions)  --}}
+{{!-- [readonly] = Input is disabled / readonly --}}
 {{!-- [icon] = Icon for left-side of Element Group --}}
+{{!-- [readonly] = Input is disabled / readonly --}}
 {{!-- [class] = class/es for list holder --}}
 {{!-- [details] = Placeholder details for Items --}}
 {{!-- [controls] = ID of checkbox element toggled by items added/removed from list --}}
@@ -39,15 +41,16 @@
               class="form-control{{#if large}} form-control-lg{{/if}} resizable optional"
               data-output-name="Details" rows="1" aria-label="{{either details 'Details'}}"
               placeholder="{{either details 'Details'}}"
-              {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
+              {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+              {{#if readonly}} readonly="readonly"{{/if}}></textarea>
 		<div class="input-group-append">
       {{> control_button b_id=(concat id "_TYPE")
       	b_class="btn-dark complex-list-type dropdown-toggle" b_default=type
-      	b_text=type b_toggle="dropdown"}}
+      	b_text=type b_toggle="dropdown" disabled=readonly }}
 			<div class="dropdown-menu dropdown-menu-right">
 				{{#each options}}
 				{{#if divider}}<div class="dropdown-divider"></div>{{/if}}
-				<a class="dropdown-item{{#if value}} {{value}}_SELECTOR{{/if}}{{#if class}} {{class}}{{/if}}"
+				<a class="dropdown-item{{#if value}} {{value}}_SELECTOR{{/if}}{{#if class}} {{class}}{{/if}}{{#if readonly}} disabled{{/if}}"
            href="#" data-value="{{either value this}}">{{either name this}}</a>		
 				{{/each}}
 			</div>
@@ -56,7 +59,8 @@
 	<div id="{{id}}_LIST" data-holder-field="{{either items 'Items'}}"
        class="list-data list-group list-group-light d-flex flex-column mt-1 mt-md-2"
        {{#if list}} data-output-name="{{list}}"{{/if}}
-       {{#if controls}} data-controls="{{controls}}"{{/if}}></div>
+       {{#if controls}} data-controls="{{controls}}"{{/if}}
+       {{#if readonly}} data-readonly="true"{{/if}}></div>
 	{{#if help}}<div id="{{id}}_HELP"
                    class="form-text text-muted mt-1 mt-md-2 text-justify">{{{help}}}</div>{{/if}}
 </div>

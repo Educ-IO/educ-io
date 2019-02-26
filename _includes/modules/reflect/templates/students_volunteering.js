@@ -10,7 +10,7 @@ __Σ__Students_Volunteering = {
       fields : {
         name : {
           template: "field_textual",
-          title: "About",
+          title: "Your Name",
           field: "Name",
           help: "Who completed this volunteering period?",
           icon: "face",
@@ -24,12 +24,11 @@ __Σ__Students_Volunteering = {
         },
         form_group : {
           template: "field_select",
-          title: "What form group / div are you in?",
+          title: "Your form group / div",
           field: "Form Group",
           default: "Please select ...",
           options: ["Please select ...", "6B1","6B2", "6B3", "6D1", "6D2", "6D3", "6N1", 
-                    "6N2", "6N3", "6R1", "6R2", "6R3", "6S1", "6S2", "6S3", "6V1", "6V2", "6V3"],
-          
+                    "6N2", "6N3", "6R1", "6R2", "6R3", "6S1", "6S2", "6S3", "6V1", "6V2", "6V3"], 
         },
       }
     },

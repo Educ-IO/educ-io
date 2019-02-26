@@ -5,12 +5,12 @@
 {{!-- id = Control ID --}}
 {{!-- [large] = Size of Form Element Group --}}
 {{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
+{{!-- [readonly] = Input is disabled / readonly --}}
 {{!-- [icon] = Icon for left-side of Element Group --}}
 {{!-- [details] = This text will be the details textbox placeholder) --}}
 {{!-- [options] = Collection of selection options for each item. Can be strings, or by value/name pairs. If name/value pairs are used, value is used for selected display and return object, but name is displayed in the dropdown list. --}}
 {{!-- [type] = Name of Item type, for visual display (e.g. 'Add |Target| to List). Defaults to Item. --}}
 {{!-- [list_field] = Field Name for list (e.g. Targets) --}}
-{{!-- [items] Name of Items Field Holder (e.g. Items) --}}
 {{!-- [help] = Help information (html) to display --}}
 {{!-- [description] = Template Description --}}
 
@@ -33,7 +33,7 @@
 	<div class="col-md-9">
 		<input id="{{id}}" name="{{id}}_VALUE" data-output-name="Value" hidden="hidden" type="checkbox">
     {{> field_items id=(concat id "_FILES") details=items_details controls=id
-  			class="mt-1 mt-md-2" type=type list=list_field items=(either items "Files") }}
+  			class="mt-1 mt-md-2" type=type list=list_field }}
 	</div>
 </div>
 {% endraw %}

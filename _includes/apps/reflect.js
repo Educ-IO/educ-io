@@ -44,8 +44,8 @@ App = function() {
       rows: 10
     }),
 
-    form: form => _edit.generic(form, "FORM", "Create/Edit Form ...", "form_editor"),
-    
+    form: (form, editable) => _edit.generic(form, "FORM", "Create/Edit Form ...", "form_editor", editable),
+
     scale: scale => _edit.generic(scale, "SCALE", "Create/Edit Scale ...", "scale_editor"),
 
   };
@@ -198,17 +198,21 @@ App = function() {
   var _process = {
 
     report: (data, editable) => {
-      _create.load(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Report File: ${data}`)).form,
+      _create.load(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Report File: ${JSON.stringify(data, null, 2)}`)).form,
         form => (ರ‿ರ.form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(form, data.report)), editable);
       return true;
     },
 
     form: (data, editable) => {
-      _edit.form(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Form File: ${data}`)));
+      _edit.form(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Form File: ${data}`)), editable);
       return true;
     },
 
-    tracker: (data, editable) => data, /* <!-- TODO: Process Tracker Loading --> */
+    tracker: (data, editable) => ({
+      data: data,
+      editable: editable
+    }),
+    /* <!-- TODO: Process Tracker Loading --> */
 
   };
   /* <!-- Process Functions --> */
@@ -254,12 +258,15 @@ App = function() {
 
     load: file => ಠ_ಠ.Google.files.download((ರ‿ರ.file = file).id)
       .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
-      .then(content => ({content: JSON.parse(content), editable: file.capabilities && file.capabilities.canEdit}))
+      .then(content => ({
+        content: JSON.parse(content),
+        editable: file.capabilities && file.capabilities.canEdit
+      }))
       .then(value =>
         ಠ_ಠ.Google.files.is(TYPE_REPORT)(file) ? _process.report(value.content, value.editable) :
         ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ? _process.form(value.content, value.editable) :
         Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id}`)),
-    
+
     save: force => {
       _action.screenshot($("form[role='form'][data-name]")[0])
         .then(result => {
@@ -283,6 +290,7 @@ App = function() {
         .catch(e => ಠ_ಠ.Flags.error("Saving Error", e ? e : "No Inner Error"))
         .then(ಠ_ಠ.Display.busy({
           target: $("body"),
+          status: "Saving Report",
           fn: true
         }));
 
@@ -352,15 +360,20 @@ App = function() {
                 value.result.name.replace(/.REFLECT$/i, ""),
                 `#google,load.${value.result.id}`))
               .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e))
-              .then(ಠ_ಠ.Main.busy()),
+              .then(ಠ_ಠ.Main.busy("Opening Report")),
           },
 
           import: {
-            success: value => _action.process(value.result),
+            success: value => ಠ_ಠ.Google.reader().promiseAsText(value.result)
+              .then(content => JSON.parse(content))
+              .then(value => value.form && value.report ?
+                _process.report(value, true) :
+                _process.form(value, true))
+              .then(ಠ_ಠ.Main.busy("Importing Report")),
           },
 
           load: {
-            success: value => _action.load(value.result).then(ಠ_ಠ.Main.busy()),
+            success: value => _action.load(value.result).then(ಠ_ಠ.Main.busy("Loading")),
           },
 
           export: () => ರ‿ರ.form ? _action.export() : false,

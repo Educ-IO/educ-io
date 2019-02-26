@@ -2,7 +2,8 @@
 {{#if description}}<!-- {{description}} -->{{/if}}
 <div 
    class="d-flex align-items-center flex-row list-item list-group-item p-2{{#if class}} {{class}}{{/if}}">
-	<a class="align-self-center d-flex delete icon" href="#" title="{{either delete 'Delete Item from List'}}">
+	<a class="align-self-center d-flex delete icon{{#if readonly}} disabled{{/if}}" href="#"
+     title="{{either delete 'Delete Item from List'}}">
 		<i class="align-self-center mr-2 material-icons text-danger">delete_forever</i>
 	</a>
 	<p{{#if template}} data-template="{{template}}"{{/if}}data-output-name="{{either field 'Items'}}"

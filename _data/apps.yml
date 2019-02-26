@@ -533,9 +533,6 @@ reflect:
             - name: Import
               desc: Import a saved Report from a file
               hash: import.report
-              imports:
-                - google
-              auth: google
             - name: Save
               desc: Save this Report
               hash: save
@@ -663,6 +660,9 @@ reflect:
       imports:
         - google
       auth: google
+    - name: Import
+      desc: Import a saved Report from a file
+      hash: import.report
   published: false
 
 

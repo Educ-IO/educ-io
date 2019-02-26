@@ -79,7 +79,7 @@ App = function() {
               var _click = function(el) {
                 var _el = $(el);
                 if (!_el.hasClass("loader")) el.click();
-              	if (!_el.hasClass("loader")) _.delay(_click, RANDOM(10, 100), el);
+                if (!_el.hasClass("loader")) _.delay(_click, RANDOM(10, 100), el);
               };
               _click(el);
               if (i === (all.length - 1)) _check(() => resolve(true), true);

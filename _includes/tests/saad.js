@@ -5,7 +5,7 @@ SaaD = function() {
   const FACTORY = this;
   const DELAY = FACTORY.App.delay,
     RANDOM = FACTORY.App.random,
-    RACE = FACTORY.App.race(10000),
+    RACE = FACTORY.App.race(20000),
     PAUSE = () => DELAY(RANDOM(1000, 2000));
   /* <!-- Internal Constants --> */
 

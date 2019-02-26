@@ -13,8 +13,9 @@ Main = function() {
   /* <!-- Internal Variables --> */
   
   /* <!-- Plumbing Functions --> */
-  const BUSY = () => _.wrap(ಠ_ಠ.Display.busy({
+  const BUSY = status => _.wrap(ಠ_ಠ.Display.busy({
     target: ಠ_ಠ.container,
+    status: status,
     fn: true
   }), (busy, value) => _.tap(value, () => busy()));
   /* <!-- Plumbing Functions --> */

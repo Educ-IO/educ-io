@@ -65,13 +65,17 @@ Forms = function() {
         for (var field_Id in group.fields) {
           var field = _.clone(group.fields[field_Id]);
           field.id = field_Id;
-          field.readonly = !!editable;
+          if (editable === false) field.readonly = true;
           if (field.order === undefined) field.order = ++_order;
           if (field.scale) {
             var _scale = _get(field.scale, ರ‿ರ.cache.scales);
             field.markers = PROCESS(_scale.scale);
           }
-          fields.push(ಠ_ಠ.Display.template.get(field));
+          try {
+            fields.push(ಠ_ಠ.Display.template.get(field));
+          } catch(e) {
+            ಠ_ಠ.Flags.error(`Error rendering template for field: ${field.id} | ${field.template}`, e);
+          }
         }
         group.fields = fields.join("").trim();
         groups.push(ಠ_ಠ.Display.template.get(group));

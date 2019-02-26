@@ -34,11 +34,12 @@
 	<label class="{{which wide 'col-12' 'col-md-3'}} col-form-label"
          for="{{id}}">{{val "" title field}}</label>
 	<div class="{{which wide 'col-12' 'col-md-9'}}"> 
-    {{#if (any button clear)}}<div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
+    {{#if (any button clear)}}<div role="group"
+    	class="btn-group float-right mb-1{{#unless readonly}} d-flex d-lg-none{{else}} d-none{{/unless}}">
 			{{> control_button b_small="true" b_icon_large="true" 
-    		b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
+    		b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" disabled=readonly }}
 			{{#if button}}{{> control_button b_small="true" b_id=(concat id "_BUTTON")
-    		b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button }}{{/if}}
+    		b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button disabled=readonly }}{{/if}}
 		</div>{{/if}}
 		<div class="input-group{{#if large}} input-group-lg{{/if}}">
 			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
@@ -47,9 +48,10 @@
 			{{else}}
 			<input id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}}{{#if value}} value="{{value}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}{{#if pattern}} pattern="{{string pattern}}"{{/if}}/>
 			{{/if}}
-			{{#if (any button clear)}}<span class="input-group-append d-none d-lg-flex">
-				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" }}
-				{{#if button}}{{> control_button b_id=(concat id "_BUTTON") b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button }}{{/if}}
+			{{#if (any button clear)}}<span class="input-group-append d-none{{#unless readonly}} d-lg-flex{{/unless}}">
+				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" disabled=readonly }}
+				{{#if button}}{{> control_button b_id=(concat id "_BUTTON") b_class="btn-primary textual-input-button"
+      		b_target=id b_action=action b_text=button disabled=readonly }}{{/if}}
       </span>{{/if}}
 		</div>
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}

@@ -8,6 +8,7 @@
 {{!-- [icon] = Icon for left-side of Element Group --}}
 {{!-- [details] = This text will be the details textbox placeholder) --}}
 {{!-- [required] = Text/Details Input is required (only relevant if there is a blank option). --}}
+{{!-- [readonly] = Input is disabled / readonly --}}
 {{!-- [prefix] = Button Text (default) for Dropdown Button (displayed as prefix in output). --}}
 {{!-- [options] = Collection of selection options for each item. Can be strings, or by value/name pairs. If name/value pairs are used, value is used for selected display and return object, but name is displayed in the dropdown list. --}}
 {{!-- [type] = Name of Item type, for visual display (e.g. 'Add |Target| to List). Defaults to Item. --}}
@@ -35,14 +36,14 @@
 	<div class="col-md-9">
     <div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
 			{{> control_button b_small="true" b_icon_large="true" b_class="btn-secondary eraser no-active"
-      	b_title="Clear / Reset" b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE") b_icon="refresh" }}
+      	b_title="Clear / Reset" b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly }}
       {{#if prefix}}{{#if options}}<div class="btn-group" role="group">
         {{> control_button b_small="true" b_id=(concat id "_TYPE")
         	b_class="btn-dark complex-list-type dropdown-toggle"
-        	b_default=prefix b_text=prefix b_toggle="dropdown"}}
+        	b_default=prefix b_text=prefix b_toggle="dropdown" disabled=readonly }}
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{id}}_TYPE">
           {{#each options}}
-          <a class="dropdown-item" href="#" data-targets="{{../id}}_TYPE"
+          <a class="dropdown-item{{#if readonly}} disabled{{/if}}" href="#" data-targets="{{../id}}_TYPE"
              data-value="{{val "" value this}}">{{val "" name this}}</a>
           {{/each}}
         </div>
@@ -59,16 +60,16 @@
                 class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#unless required}} optional{{/unless}}"
                 rows="1" aria-label="{{either details 'Details'}}"
                 placeholder="{{either details 'Details'}}"
-                {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>
+                {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}{{#if readonly}} readonly="readonly"{{/if}}></textarea>
 			<span class="input-group-append d-none d-lg-flex">
 				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
-        	b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE") b_icon="refresh" }}
+        	b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly }}
         {{#if prefix}}{{#if options}}{{> control_button b_id=(concat id "_TYPE")
         	b_class="btn-dark complex-list-type dropdown-toggle"
-        	b_default=prefix b_text=prefix b_toggle="dropdown"}}
+        	b_default=prefix b_text=prefix b_toggle="dropdown" disabled=readonly }}
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{id}}_TYPE">
 					{{#each options}}
-					<a class="dropdown-item" href="#" data-targets="{{../id}}_TYPE"
+					<a class="dropdown-item{{#if readonly}} disabled{{/if}}" href="#" data-targets="{{../id}}_TYPE"
              data-value="{{val "" value this}}">{{val "" name this}}</a>
 					{{/each}}
 				</div>
@@ -77,12 +78,13 @@
       <span class="input-group-append d-none d-lg-flex">
         {{> control_button b_class="btn-success complex-list-add" b_title=(concat "Add " type " to List")
         	b_item=(either type "Item") b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
-        	b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" }}
+        	b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" disabled=readonly }}
 			</span>
 		</div>
 		<div id="{{id}}_LIST" data-holder-field="{{either items 'Items'}}"
          class="list-data list-group list-group-light d-flex flex-column my-1 my-md-2"
-         data-controls="{{id}}"{{#if list_field}} data-output-name="{{list_field}}"{{/if}}></div>
+         data-controls="{{id}}"{{#if list_field}} data-output-name="{{list_field}}"{{/if}}
+         {{#if readonly}} data-readonly="true"{{/if}}></div>
 		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-justify">{{{help}}}</div>{{/if}}
 	</div>
 </div>

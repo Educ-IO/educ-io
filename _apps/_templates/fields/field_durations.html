@@ -1,7 +1,5 @@
 {% raw %}
 
-{{!-- ================= TODO: NOT YET DONE!!! ================== --}}
-
 {{!-- ================= DISPLAY PARAMETERS ================== --}}
 {{!-- template = Template Name --}}
 {{!-- id = Control ID --}}
@@ -9,6 +7,7 @@
 {{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
 {{!-- [icon] = Icon for left-side of Element Group --}}
 {{!-- [details] = This text will be the details textbox placeholder) --}}
+{{!-- [readonly] = Input is disabled / readonly --}}
 {{!-- [required] = Text/Details Input is required (only relevant if there is a blank option). --}}
 {{!-- [options] = Collection of selection options for each item. Can be strings, or by value/name pairs. If name/value pairs are used, value is used for selected display and return object, but name is displayed in the dropdown list. --}}
 {{!-- [type] = Name of Item type, for visual display (e.g. 'Add |Target| to List). Defaults to Item. --}}
@@ -39,31 +38,31 @@
     <div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
       {{> control_button b_icon_large="true" b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
         	b_target=(concat id "_DURATION" "||" id "_DETAILS" "||" id "_NUMERIC" "||" id "_DATE")
-        	b_reset=(concat id "_TYPE") b_icon="refresh"}}
+        	b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly }}
       {{> control_button b_icon_large="true" b_class="btn-info alter-numerical"
       	b_title="Decrease" b_target=(concat id "_DURATION") b_icon="remove"
-      	b_value=(concat "-" (either increment 1)) }}
+      	b_value=(concat "-" (either increment 1)) disabled=readonly }}
     	{{> control_button b_icon_large="true" b_class="btn-primary alter-numerical"
       	b_title="Increase" b_target=(concat id "_DURATION") b_icon="add"
-      	b_value=(either increment 1)}}
+      	b_value=(either increment 1) disabled=readonly }}
       {{> control_button b_icon_large="true" b_class="btn-success complex-list-add"
       	b_title=(concat "Add " type " to List") b_item=(either type "Item") 
       	b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
       	b_target=(concat id "_LIST") b_icon="add_circle_outline"
-      	b_icon_type="light" }}
+      	b_icon_type="light" disabled=readonly }}
     </div>
     
 		<div class="input-group">
 			{{#if icon_date}}{{> control_icon large=large icon=icon_date }}{{/if}}
       <input id="{{id}}_DATE" type="text" data-output-type="Date"
-             class="form-control{{#if large}} form-control-lg{{/if}} dt-picker" name="{{id}}_start"
+             class="form-control{{#if large}} form-control-lg{{/if}}{{#unless readonly}} dt-picker{{/unless}}" name="{{id}}_start"
              aria-label="{{val "" title field}}"
              {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
-             {{#if required}} required="required"{{/if}} data-item="Date"/>
+             {{#if required}} required="required"{{/if}} data-item="Date"{{#if readonly}} readonly="readonly"{{/if}} />
       {{#if icon_number}}{{> control_icon prepend="true" append="true"
       	large=large icon=icon_number }}{{/if}}
-      <input id="{{id}}_NUMERIC" name="{{id}}_NUMERIC" type="number" class="d-none" data-item="Number"
-             data-targets="{{id}}_DISPLAY" {{#if value}} value="{{value}}"{{/if}} />
+      <input id="{{id}}_NUMERIC" name="{{id}}_NUMERIC" type="number" hidden="hidden" class="d-none" data-item="Number"
+             data-targets="{{id}}_DISPLAY" {{#if value}} value="{{value}}"{{/if}}{{#if readonly}} readonly="readonly"{{/if}} />
       <input id="{{id}}_DURATION" name="{{id}}_DURATION" type="text"
              class="pl-2 form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly"
              aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"
@@ -71,43 +70,46 @@
              data-min="{{#if min}}{{min}}{{else}}0{{/if}}" data-max="{{#if max}}{{max}}{{/if}}"
              {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
              {{#if value}} value="{{value}}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}}
-             {{#if required}} required="required"{{/if}}/>
+             {{#if required}} required="required"{{/if}}
+             {{#if readonly}} readonly="readonly"{{/if}} />
       
 			<span class="input-group-append d-none d-lg-flex">
 				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
         	b_target=(concat id "_DURATION" "||" id "_DETAILS" "||" id "_NUMERIC" "||" id "_DATE")
-        	b_reset=(concat id "_TYPE") b_icon="refresh" }}
+        	b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly }}
       </span>
       
       <span class="input-group-append d-none d-lg-flex">
         {{> control_button b_class="btn-info alter-numerical"
         	b_title="Decrement" b_target=(concat id "_DURATION") b_icon="remove"
-        	b_value=(concat "-" (either increment 1)) }}
+        	b_value=(concat "-" (either increment 1)) disabled=readonly }}
     		{{> control_button b_class="btn-primary alter-numerical"
         	b_title="Increment" b_target=(concat id "_DURATION") b_icon="add"
-        	b_value=(either increment 1)}}
+        	b_value=(either increment 1) disabled=readonly }}
 			</span>
       
       <span class="input-group-append d-none d-lg-flex">
         {{> control_button b_class="btn-success complex-list-add" b_title=(concat "Add " type " to List")
         	b_item=(either type "Item") b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
-        	b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" }}
+        	b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" disabled=readonly }}
 			</span>
       
 		</div>
     
-    <input id="{{id}}" name="{{id}}_VALUE" data-output-name="Value" hidden="hidden" type="checkbox">
+    <input id="{{id}}" name="{{id}}_VALUE" data-output-name="Value" hidden="hidden" class="d-none" type="checkbox">
     
     {{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS"
 			data-name="value" name="{{id}}_DETAILS"
       class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2"
       rows="1" aria-label="{{either details 'Details'}}"
      	placeholder="{{either details 'Details'}}"
-      {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}></textarea>{{/if}}
+      {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+      {{#if readonly}} readonly="readonly"{{/if}}></textarea>{{/if}}
     
 		<div id="{{id}}_LIST" data-holder-field="{{either items 'Items'}}"
          class="list-data list-group list-group-light d-flex flex-column my-1 my-md-2"
-         data-controls="{{id}}"{{#if list_field}} data-output-name="{{list_field}}"{{/if}}></div>
+         data-controls="{{id}}"{{#if list_field}} data-output-name="{{list_field}}"{{/if}}
+         {{#if readonly}} data-readonly="true"{{/if}}></div>
     
     <div class="row">
       <label class="col-md-3 col-lg-6 col-xl-8 col-form-label text-right font-weight-bold text-muted" 
@@ -123,7 +125,8 @@
              {{#if suffix}} data-suffix="{{suffix}}"{{/if}}
              {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
              {{#if total}} value="{{total}}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}}
-             {{#if required}} required="required"{{/if}}/>
+             {{#if required}} required="required"{{/if}}
+             {{#if readonly}} readonly="readonly"{{/if}} />
 			</div>
     </div>
     

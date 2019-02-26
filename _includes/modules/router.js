@@ -26,7 +26,7 @@ Router = function() {
     reject() :
     ಠ_ಠ.Flags.log("Google Drive File/s Picked from Open", files) && resolve(files) :
     ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject(),
- 
+
     PICK = (picker => ({
       single: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
         options && options.title ?
@@ -226,7 +226,9 @@ Router = function() {
             ಠ_ಠ.Display.files({
                 id: options.id ? options.id : "prompt_file",
                 title: options.title ? options.title : "Please import file ...",
-                message: options.message ? options.message : ಠ_ಠ.Display.doc.get(options.template ? options.template : "IMPORT"),
+                message: options.message ?
+                  options.message : ಠ_ಠ.Display.doc.get(options.template ?
+                    options.template : "IMPORT"),
                 action: "Import",
                 single: true
               }).then(file => resolve(file))

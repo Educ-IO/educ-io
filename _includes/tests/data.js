@@ -115,6 +115,7 @@ Data = function() {
         value: GEN.an(GEN.i(10, 30)),
         icon: _.sample(["", "visibility_off"])
       })),
+      strings: () => _.map(_.range(GEN.i(4, 20)), () => GEN.t(GEN.i(10, 30))),
       pairs: () => _.map(_.range(GEN.i(4, 20)), () => ({
         value: GEN.a(GEN.i(5, 10)),
         name: GEN.t(GEN.i(10, 30)),
@@ -379,7 +380,10 @@ Data = function() {
         },
         select_Empty: () => _.extend(_blocks.basic("No Selection"), {
           template: "field_select",
-          options: _blocks.pairs(),
+          options: [{
+            value: "",
+            name: ""
+          }].concat(_blocks.pairs()),
           _value: null,
         }),
         select_Default: () => {
@@ -387,12 +391,61 @@ Data = function() {
             _option = _.sample(_options);
           var _return = _.extend(_blocks.basic("Default Selection"), {
             template: "field_select",
-            options: _blocks.pairs(),
+            options: _options,
             default: _option,
           });
           _return._value = (option => (name, values) => {
             values.to.have.deep.nested.property(`${name}.Value`, option.value);
           })(_option);
+          return _return;
+        },
+        select_Placeholder: () => {
+          var _options = _blocks.pairs(),
+            _placeholder = _.sample(_options);
+          _placeholder.value = "";
+          var _return = _.extend(_blocks.basic("Placeholder Selection"), {
+            template: "field_select",
+            options: _options,
+            default: _placeholder,
+            _value: null,
+          });
+          _return._populate = ((id, option) => modal => {
+            modal.find(`[data-id='${id}'] select#${id}`).val(option).trigger("change");
+          })(_return.id, _placeholder);
+          return _return;
+        },
+        select_String: () => {
+          var _options = _blocks.strings(),
+            _default = _options[0],
+            _option = _.sample(_.reject(_options, option => option == _default));
+          var _return = _.extend(_blocks.basic("String Selection"), {
+            template: "field_select",
+            options: _options,
+            default: _default,
+          });
+          _return._value = (option => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Value`, option);
+          })(_option);
+          _return._populate = ((id, option) => modal => {
+            modal.find(`[data-id='${id}'] select#${id}`).val(option).trigger("change");
+          })(_return.id, _option);
+          return _return;
+        },
+        select_NonDefault: () => {
+          var _options = _blocks.pairs(),
+            _default = _.sample(_options),
+            _option = _.sample(_.reject(_options, option => option.name == _default.name && option.value == _default.value));
+          var _return = _.extend(_blocks.basic("Non-Default Selection"), {
+            template: "field_select",
+            options: _options,
+            default: _default,
+          });
+          _return._value = (option => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Value`, option.value);
+          })(_option);
+          _return._populate = ((id, option) => modal => {
+            modal.find(`[data-id='${id}'] select#${id}`).val(option.value).trigger("change");
+          })(_return.id, _option);
           return _return;
         },
         select_Options: () => {
@@ -410,8 +463,7 @@ Data = function() {
             if (details) values.to.have.deep.nested.property(`${name}.Values.Details`, details);
           })(_option, _details);
           _return._populate = ((id, option, details) => modal => {
-            modal.find(`[data-id='${id}'] select#${id}_SELECT`).val(option.value).trigger("change");
-            modal.find(`[data-id='${id}'] input#${id}`).val(option.value);
+            modal.find(`[data-id='${id}'] select#${id}`).val(option.value).trigger("change");
             if (details) modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(details);
           })(_return.id, _option, _details);
           return _return;
@@ -1113,6 +1165,24 @@ Data = function() {
 
               },
             }),
+            select: () => {
+              var _options = _blocks.strings(),
+                _default = _options[0];
+              return _.extend(_blocks.basic("Select Field"), {
+                template: "field_select",
+                options: _options,
+                default: _default,
+                _interact: (field, modal, state) => {
+                  var selector = field.find(`select#${state.id}`);
+                  /* <!-- Check each option --> */
+                  _.each(state.options, option => {
+                    selector.val(option).trigger("change");
+                    expect(selector.val()).to.be.a("string")
+                      .that.equals(option);
+                  });
+                },
+              });
+            },
             complex: () => _.extend(_blocks.basic("Complex (with Options Selection)"), {
               template: "field_complex",
               icon: "query_builder",
@@ -1445,6 +1515,7 @@ Data = function() {
             numeric: _blocks.types.numeric_Complex,
             date: _blocks.types.span_Date,
             radio: _blocks.types.radio_OptionsWithDetails,
+            string: _blocks.types.select_String,
             select: _blocks.types.select_Options,
             items: _blocks.types.complex_Add,
             complex: _blocks.types.complex_AddWithOptions,

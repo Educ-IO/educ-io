@@ -208,6 +208,7 @@ Data = (options, factory) => {
                     template: item.__type,
                     field: _holder,
                   });
+                  if (_el.data("readonly")) _template.readonly = true;
                   _template = factory.Display.template.get(_template);
                   $(_template).appendTo(_el);
                 } catch (e) {
@@ -254,6 +255,7 @@ Data = (options, factory) => {
             _$.find(`*[data-value='${$.escapeSelector(_values[__name])}']`)
               .closest(".btn")
               .addClass("active")
+              .attr("aria-pressed", "true")
               .find(".md-inactive")
               .removeClass("md-inactive"); /* <!-- Highlight Active Button --> */
             value(__$, _values[__name]);

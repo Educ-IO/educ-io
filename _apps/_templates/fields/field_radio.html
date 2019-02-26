@@ -4,6 +4,7 @@
 {{!-- template = Template Name --}}
 {{!-- id = Control ID --}}
 {{!-- [large] = Size of Form Element Group --}}
+{{!-- [readonly] = Input is disabled / readonly --}}
 {{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
 {{!-- [icon] = Icon for left-side of Text Area Element Group (at larger screen sizes only) --}}
 {{!-- [details] = Whether details input should be displayed (this text will be the field placeholder) --}}
@@ -31,36 +32,46 @@
 <div class="form-group {{which large 'form-group-lg ' ''}}row" {{#if field}} data-output-field="{{field}}" {{/if}}{{#if order}} data-output-order="{{order}}" {{/if}}{{#if template}} data-template="{{template}}" {{/if}} data-id="{{id}}">
   <label class="col-md-3 col-form-label" for="{{id}}">{{val "" title field}}</label>
   <div class="col-md-9">
-    <div class="btn-group btn-group-toggle d-flex d-lg-none flex-wrap" data-toggle="buttons" id="{{id}}_BUTTONS_SM">
-      {{#each options}}<label class="btn {{which ../large 'btn-lg ' ''}}{{class}} d-flex justify-content-center waves-effect">
+    <div class="btn-group btn-group-toggle d-flex d-lg-none flex-wrap"
+         {{#unless readonly}} data-toggle="buttons"{{/unless}} id="{{id}}_BUTTONS_SM">
+      {{#each options}}<label role="button"
+          class="btn {{which ../large 'btn-lg ' ''}}{{class}} d-flex justify-content-center waves-effect{{#if ../readonly}} disabled{{/if}}"{{#if ../readonly}} aria-disabled="true"{{/if}}>
 					<input type="radio" name="{{../id}}_OPTIONS" autocomplete="off"
-                 data-targets="{{../id}}" data-value="{{value}}" />
+                 data-targets="{{../id}}" data-value="{{value}}"
+                 {{#if ../readonly}} class="disabled" disabled{{/if}} />
 					<i class="material-icons md-18 md-light md-inactive to-dim">{{either icon "check"}}</i>
 				</label>{{/each}}
-      <label class="btn btn-secondary d-flex justify-content-center no-active waves-effect" title="Clear / Reset">
-				<input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-targets="{{id}}" />
+      <label role="button" class="btn btn-secondary d-flex justify-content-center no-active waves-effect{{#if readonly}} disabled{{/if}}"
+             title="Clear / Reset"{{#if readonly}} aria-disabled="true"{{/if}}>
+				<input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-targets="{{id}}"{{#if readonly}} class="disabled" disabled{{/if}} />
 				<i class="material-icons md-18 md-dark">refresh</i>
 			</label>
     </div>
-    <div class="btn-group {{which large 'btn-group-lg ' ''}}btn-group-toggle d-none d-lg-flex flex-wrap" data-toggle="buttons" id="{{id}}_BUTTONS_LG">
-      {{#each options}}<label class="btn {{which ../large 'btn-lg ' ''}}d-flex justify-content-center waves-effect {{class}}">
+    <div class="btn-group {{which large 'btn-group-lg ' ''}}btn-group-toggle d-none d-lg-flex flex-wrap"
+         {{#unless readonly}} data-toggle="buttons"{{/unless}} id="{{id}}_BUTTONS_LG">
+      {{#each options}}<label role="button"
+          class="btn {{which ../large 'btn-lg ' ''}}d-flex justify-content-center waves-effect {{class}}{{#if ../readonly}} disabled{{/if}}"{{#if ../readonly}} aria-disabled="true"{{/if}}>
 					<input type="radio" name="{{../id}}_OPTIONS" autocomplete="off"
-                 data-targets="{{../id}}" data-value="{{value}}" />
+                 data-targets="{{../id}}" data-value="{{value}}"
+                 {{#if ../readonly}} disabled class="disabled"{{/if}} />
 					<i class="material-icons md-light md-inactive to-dim md-{{which ../large '24' '18'}}">{{either icon "check"}}</i>
 				</label>{{/each}}
-      <label class="btn btn-secondary d-flex justify-content-center {{which large 'btn-lg ' ''}}no-active waves-effect" title="Clear / Reset">
-				<input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-targets="{{id}}" />
+      <label role="button" class="btn btn-secondary d-flex justify-content-center {{which large 'btn-lg ' ''}}no-active waves-effect{{#if readonly}} disabled{{/if}}" title="Clear / Reset"
+             {{#if readonly}} aria-disabled="true"{{/if}}>
+				<input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-targets="{{id}}"{{#if readonly}} class="disabled" disabled{{/if}} />
 				<i class="material-icons md-dark md-{{which large '24' '18'}}">refresh</i>
 			</label>
     </div>
     <div class="input-group {{which large 'input-group-lg ' ''}}mt-1">
       {{#if icon}}{{> control_icon visible_at="lg" large=large icon=icon }}{{/if}}
       <textarea id="{{id}}" name="{{id}}" data-output-name="Value" type="text" class="form-control {{which large 'form-control-lg ' ''}}resizable{{#unless required}} optional{{/unless}}" readonly="readonly" rows="1" {{#if help}} aria-describedby="{{id}}_HELP"
-        {{/if}} {{#if required}} required="required" {{/if}}></textarea>
+        {{/if}}{{#if required}} required="required" {{/if}}{{#if readonly}} readonly="readonly"{{/if}}></textarea>
     </div>
-    {{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS" name="{{id}}_DETAILS" class="form-control {{which large 'form-control-lg ' ''}}resizable optional mt-2" rows="1" aria-label="{{details}}" placeholder="{{details}}"></textarea>{{/if}}
-    {{#if help}}
-    <div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}
+    {{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS"
+                   	name="{{id}}_DETAILS"
+                    class="form-control {{which large 'form-control-lg ' ''}}resizable optional mt-2"
+                    rows="1" aria-label="{{details}}" placeholder="{{details}}"{{#if readonly}} readonly="readonly"{{/if}}></textarea>{{/if}}
+    {{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}
   </div>
 </div>
 {% endraw %}

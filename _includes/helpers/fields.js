@@ -107,6 +107,17 @@ Fields = (options, factory) => {
     });
 
   };
+  
+  var _updates = form => {
+
+    /* <!-- Wire up select fields --> */
+    form.find("select[data-updates], input[data-updates]").change(e => {
+      var _this = $(e.currentTarget),
+          _val = val => val == _this.data("default") ? "" : val;
+      $(`#${_this.data("updates")}`).val(_val(_this.val()));
+    });
+
+  };
 
   var _spans = form => {
 
@@ -249,7 +260,7 @@ Fields = (options, factory) => {
     /* <!-- Wire up radio fields --> */
     form.find("input[type='radio'], input[type='checkbox']").change(e => {
       var _this = $(e.currentTarget);
-      if (_this.data("targets")) {
+      if (_this.data("targets") && !_this.hasClass("disabled")) {
 
         _this.parents("div").find(".to-dim").addClass("md-inactive");
         _this.siblings(".to-dim").removeClass("md-inactive");
@@ -384,7 +395,7 @@ Fields = (options, factory) => {
     form.find(".textual-input-button[data-action='me']").off("click.me")
       .on("click.me", e => $(`#${$(e.currentTarget).data("targets")}`).val(options.me()));
 
-    form.find("input[data-input-default='me'], textarea[data-input-default='me']").val(options.me());
+    form.find("input[data-input-default='me'], textarea[data-input-default='me']").val((index, value) => value ? value : options.me());
 
   };
 
@@ -599,7 +610,7 @@ Fields = (options, factory) => {
     _steps = [
       _listen, _numerical, _erase, _radio, _menus,
       _complex, _reveal, _dim, _autosize, _me, _datetime,
-      _spans, _list, _doc, _deletes
+      _spans, _list, _doc, _deletes, _updates
     ];
   };
   /* <!-- Internal Functions --> */
