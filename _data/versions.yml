@@ -1,6 +1,10 @@
 site :
+  0.1.2h :
+    name : Reflect v0.0.5-alpha
+    desc : Reflect Digital Signatures
+    numeric : 0.1.1.15
   0.1.2g :
-    name : Reflect v0.0.4b-alpha
+    name : Reflect v0.0.4c-alpha
     desc : Bug Fixes
     numeric : 0.1.1.14
   0.1.2f :
@@ -788,7 +792,10 @@ folders :
     name : Early testing version
     type : minor
 reflect :
-  0.0.4b-alpha :
+  0.0.5-alpha :
+    name : Digital Signing of Reports
+    type : minor
+  0.0.4c-alpha :
     name : Bug Fixes
     type : minor
   0.0.4a-alpha :

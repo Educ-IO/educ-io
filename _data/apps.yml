@@ -52,6 +52,8 @@ view:
       load: lazy
     - name: xlsxpopulate
       load: lazy
+    - name: base64
+      load: lazy
     - name: filesaver
       load: lazy
     - name: dropzone
@@ -233,6 +235,7 @@ view:
                 - xlsx
                 - xlsxpopulate
                 - filesaver
+                - base64
                 - clipboard
             - name: Filtered View
               desc: Export the filtered view/s to Legacy Formats
@@ -243,7 +246,8 @@ view:
               imports:
                 - xlsx
                 - xlsxpopulate
-                - filesaver
+                - filesave
+                - base64
                 - clipboard
     - name: Settings
       groups:
@@ -406,6 +410,7 @@ reflect:
     - data
     - network
     - google
+    - strings
     - fields
   modules:
     - flags
@@ -451,11 +456,15 @@ reflect:
     - fields/field_textual
     - fields/field_durations
     - fields/field_files
+    - reflect/heading
     - reflect/group
     - reflect/form
+    - reflect/signature
     - reflect/recovery
     - reflect/analyse
     - reflect/tracker
+    - reflect/count
+    - reflect/valid
   docs:
     - shared/JUMP
     - shared/HELP
@@ -469,6 +478,7 @@ reflect:
     - reflect/COMPLETE_INSTRUCTIONS
     - reflect/SAVE_INSTRUCTIONS
     - reflect/SEND_INSTRUCTIONS
+    - reflect/SIGN_INSTRUCTIONS
     - reflect/URL
     - reflect/FILE
     - reflect/CREATE
@@ -481,6 +491,8 @@ reflect:
     - reflect/FORM
     - reflect/ANALYSE
     - reflect/SCALE
+    - reflect/NO_SIGNATURES
+    - reflect/SIGNED_REPORT_SAVE_WARNING
   scopes:
     google:
       - scope: email

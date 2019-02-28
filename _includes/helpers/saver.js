@@ -19,7 +19,7 @@ Saver = (options, factory) => {
   var _save  = (data, name, type) => new Promise((resolve, reject) => {
 
     var value = (_.isString(data) && type == "application/octet-stream") ?
-        factory.Strings().stringToArrayBuffer(data) : data;
+        factory.Strings().arraybuffer.encode(data) : data;
     
     try {
       (factory.saveAs ? factory.saveAs : saveAs)(new Blob([value], {

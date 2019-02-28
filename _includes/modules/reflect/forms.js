@@ -49,7 +49,7 @@ Forms = function() {
     `${file.owners[0].displayName}${file.owners[0].emailAddress ? 
               ` (${file.owners[0].emailAddress})` : ""}` : "";
 
-  var _create = (id, template, editable) => {
+  var _create = (id, template, editable, signable) => {
 
     if (id && template) {
 
@@ -78,7 +78,12 @@ Forms = function() {
           }
         }
         group.fields = fields.join("").trim();
-        groups.push(ಠ_ಠ.Display.template.get(group));
+        try {
+          groups.push(ಠ_ಠ.Display.template.get(group));
+        } catch(e) {
+          ಠ_ಠ.Flags.error(`Error rendering template for group: ${group.id} | ${group.template}`, e);
+        }
+        
       }
 
       return {
@@ -88,6 +93,8 @@ Forms = function() {
         title: template.title,
         fields: groups.join("\n").trim(),
         owner: _file ? _owner(_file) : "",
+        editable: editable,
+        signable: signable,
       };
 
     }
@@ -174,17 +181,17 @@ Forms = function() {
 
     has: name => !!(_get(name, ರ‿ರ.cache.forms)),
 
-    get: (name, editable) => {
+    get: (name, editable, signable) => {
       var _form = _get(name, ರ‿ರ.cache.forms);
       return {
         template: _form,
-        form: _create(name, _form, editable)
+        form: _create(name, _form, editable, signable)
       };
     },
 
-    create: (id, template, editable) => ({
+    create: (id, template, editable, signable) => ({
       template: template,
-      form: _create(id, template, editable)
+      form: _create(id, template, editable, signable)
     }),
 
     scale: name => _get(name, ರ‿ರ.cache.scales)

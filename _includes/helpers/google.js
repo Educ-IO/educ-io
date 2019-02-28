@@ -627,7 +627,8 @@ Google_API = (options, factory) => {
 
       update: (id, file, team) => _call(NETWORKS.general.patch, `drive/v3/files/${id}${TEAM(id, team, true)}`, file, "application/json"),
 
-      move: (id, source, destination, team) => _call(NETWORKS.general.patch, `drive/v3/files/${id}?addParents=${_arrayize(destination, _.isString).join(",")}&removeParents=${_arrayize(source, _.isString).join(",")}${TEAM(id, team, false)}`),
+      move: (id, source, destination, team) => _call(NETWORKS.general.patch,
+        `drive/v3/files/${id}?addParents=${_arrayize(destination, _.isString).join(",")}&removeParents=${_arrayize(source, _.isString).join(",")}${TEAM(id, team, false)}`),
 
       tag: (name, value, app) => {
         var _values = {};
@@ -636,17 +637,69 @@ Google_API = (options, factory) => {
         _properties[app ? "appProperties" : "properties"] = _values;
         return _properties;
       },
-      
+
       type: (mime, corpora, spaces) => _list(NETWORKS.general.get, "drive/v3/files", "files", [], {
         pageSize: PAGE_SIZE,
         q: `trashed = false and mimeType = '${mime}'`,
         orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
         fields: `kind,nextPageToken,incompleteSearch,files(${FIELDS},owners)`,
-        includeTeamDriveItems : true,
-        supportsTeamDrives : true,
-        corpora : corpora ? corpora : "user,allTeamDrives",
-        spaces : spaces ? spaces : "drive",
+        includeTeamDriveItems: true,
+        supportsTeamDrives: true,
+        corpora: corpora ? corpora : "user,allTeamDrives",
+        spaces: spaces ? spaces : "drive",
       }),
+
+      comments: file => {
+
+        const FIELDS = "kind,id,createdTime,modifiedTime,author,content,anchor,deleted,resolved";
+
+        var fn = {
+
+          create: (content, anchor) => _call(NETWORKS.general.post,
+            `drive/v3/files/${file && file.id ? file.id : file}/comments?fields=${FIELDS}`, STRIP_NULLS({
+              content: content,
+              anchor: anchor,
+            })),
+
+
+          update: (id, content) => _call(NETWORKS.general.patch,
+            `drive/v3/files/${file && file.id ? file.id : file}/comments/${id}?fields=${FIELDS}`, STRIP_NULLS({
+              content: content,
+            })),
+
+          list: () => _list(NETWORKS.general.get,
+            `drive/v3/files/${file && file.id ? file.id : file}/comments`, "comments", [], STRIP_NULLS({
+              fields: `kind,nextPageToken,comments(${FIELDS})`
+            })),
+
+        };
+
+        return fn;
+
+      },
+
+      revisions: file => {
+
+        const FIELDS = "kind,id,mimeType,modifiedTime,md5Checksum,size";
+
+        var fn = {
+
+          list: () => _list(NETWORKS.general.get,
+            `drive/v3/files/${file && file.id ? file.id : file}/revisions`, "revisions", [], STRIP_NULLS({
+              fields: `kind,nextPageToken,revisions(${FIELDS})`,
+            })),
+
+          get: id => _call(NETWORKS.general.get,
+            `drive/v3/files/${file && file.id ? file.id : file}/revisions/${id}`, STRIP_NULLS({
+              fields: FIELDS,
+            })),
+
+          latest: () => fn.get("head"),
+
+        };
+
+        return fn;
+      },
 
     },
 

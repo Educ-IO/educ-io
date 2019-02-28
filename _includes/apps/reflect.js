@@ -8,11 +8,6 @@ App = function() {
     return new this.App().initialise(this);
   }
 
-  /* <!-- Internal Variables --> */
-  var ಠ_ಠ, /* <!-- Context --> */
-    ರ‿ರ = {}; /* <!-- State --> */
-  /* <!-- Internal Variables --> */
-
   /* <!-- Internal Constants --> */
   const TYPE_SCALE = "application/x.educ-io.reflect-scale",
     TYPE_FORM = "application/x.educ-io.reflect-form",
@@ -26,12 +21,19 @@ App = function() {
     STATE_SCALE_OPENED = "opened-tracker",
     STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED, STATE_TRACKER_OPENED, STATE_SCALE_OPENED];
   const EMAIL = /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi;
+  const MARKER = "=== SIGNED ===";
+  const FN = {};
   /* <!-- Internal Constants --> */
+
+  /* <!-- Internal Variables --> */
+  var ಠ_ಠ, /* <!-- Context --> */
+    ರ‿ರ = {}; /* <!-- State --> */
+  /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
 
   /* <-- Edit Functions --> */
-  var _edit = {
+  FN.edit = {
 
     generic: (value, help, title, id) => ಠ_ಠ.Display.text({
       id: id ? id : "generic_editor",
@@ -44,19 +46,21 @@ App = function() {
       rows: 10
     }),
 
-    form: (form, editable) => _edit.generic(form, "FORM", "Create/Edit Form ...", "form_editor", editable),
+    form: (form, editable) => FN.edit.generic(form, "FORM", "Create/Edit Form ...", "form_editor", editable),
 
-    scale: scale => _edit.generic(scale, "SCALE", "Create/Edit Scale ...", "scale_editor"),
+    scale: scale => FN.edit.generic(scale, "SCALE", "Create/Edit Scale ...", "scale_editor"),
 
   };
   /* <-- Edit Functions --> */
 
 
   /* <!-- Create Functions --> */
-  var _create = {
+  FN.create = {
 
-    display: (name, state, form, process, editable) => {
-      var _initial = form ? ರ‿ರ.forms.create(name, form, editable) : ರ‿ರ.forms.get(name, editable),
+    display: (name, state, form, process, actions) => {
+      var _initial = form ?
+        ರ‿ರ.forms.create(name, form, actions.editable, actions.signable) :
+        ರ‿ರ.forms.get(name, true, false),
         _return = _initial.form;
       ರ‿ರ.template = _initial.template;
       if (ರ‿ರ.template) ರ‿ರ.template.__name = name;
@@ -84,7 +88,7 @@ App = function() {
         ಠ_ಠ.Flags.error(`Opening Google Drive Folder: ${id}`, e) && resolve();
       })),
 
-    load: (form, process, editable) => _create.report(form.__name, editable, form, process),
+    load: (form, process, actions) => FN.create.report(form.__name, actions, form, process),
 
     generic: (edit, value, mime) => edit(value).then(result => {
       var _process = result => {
@@ -105,13 +109,13 @@ App = function() {
     }),
 
 
-    report: (name, editable, form, process) => _create.display(name, STATE_REPORT_OPENED, form, process, editable),
+    report: (name, actions, form, process) => FN.create.display(name, STATE_REPORT_OPENED, form, process, actions),
 
-    form: name => _create.generic(_edit.form, ರ‿ರ.forms.get(name).template, TYPE_FORM)
+    form: name => FN.create.generic(FN.edit.form, ರ‿ರ.forms.get(name).template, TYPE_FORM)
       .then(() => ಠ_ಠ.Display.state().enter(STATE_FORM_OPENED).protect("a.jump").on("JUMP"))
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Create Prompt", e) : false),
 
-    scale: name => _create.generic(_edit.scale, ರ‿ರ.forms.scale(name), TYPE_SCALE)
+    scale: name => FN.create.generic(FN.edit.scale, ರ‿ರ.forms.scale(name), TYPE_SCALE)
       .then(() => ಠ_ಠ.Display.state().enter(STATE_SCALE_OPENED).protect("a.jump").on("JUMP"))
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Create Prompt", e) : false),
 
@@ -123,7 +127,7 @@ App = function() {
 
 
   /* <!-- Prompt Functions --> */
-  var _prompt = {
+  FN.prompt = {
 
     choose: (options, title, instructions, multiple) => ಠ_ಠ.Display.choose({
         id: "select_chooser",
@@ -151,7 +155,7 @@ App = function() {
     }).then(result => {
       ಠ_ಠ.Flags.log("Create Action Selected:", result);
       return result.action.command ?
-        _create[result.action.command](result.option.value) : null;
+        FN.create[result.action.command](result.option.value) : null;
     }).catch(e => ಠ_ಠ.Flags.error(e ? "Displaying Create Prompt" : "Create Prompt Cancelled", e)),
 
     scales: () => ({
@@ -195,16 +199,72 @@ App = function() {
 
 
   /* <!-- Process Functions --> */
-  var _process = {
+  FN.process = {
 
-    report: (data, editable) => {
-      _create.load(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Report File: ${JSON.stringify(data, null, 2)}`)).form,
-        form => (ರ‿ರ.form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(form, data.report)), editable);
-      return true;
+    signatures: () => {
+      var _target = $(ರ‿ರ.form).find(".signatures").empty(),
+        _display = comments => {
+          ರ‿ರ.form.signatures = comments.length;
+          ಠ_ಠ.Display.template.show({
+            template: "count",
+            name: "Signatures",
+            count: comments.length,
+            clear: true,
+            target: _target.parents(".card").find(".card-header h5")
+          });
+          Promise.all(_.map(comments, comment => FN.sign.verify(comment.signature)
+              .then(valid => _.tap(valid, valid => _target.append(ಠ_ಠ.Display.template.get({
+                template: "signature",
+                valid: valid,
+                who: comment.author.me ? true : comment.author.displayName,
+                email: comment.author.emailAddress,
+                when: moment(comment.createdTime).fromNow(),
+                link: `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${ರ‿ರ.file.id}`
+              }))))))
+            .then(results => _target.parents(".card").find(".card-header .count")
+              .append(_.filter(results, result => result === false).length > 0 ?
+                ಠ_ಠ.Display.template.get({
+                  template: "valid",
+                  class: "ml-2 text-danger",
+                  valid: false,
+                  desc: "Some signatures are invalid / out of date!"
+                }) : ಠ_ಠ.Display.template.get({
+                  template: "valid",
+                  valid: true,
+                  class: "ml-2 text-success",
+                })));
+        },
+        _none = () => {
+          _target.html(ಠ_ಠ.Display.doc.get("NO_SIGNATURES"));
+        };
+
+      ಠ_ಠ.Google.files.comments(ರ‿ರ.file).list()
+        .then(comments => comments && (comments = _.filter(comments, comment => {
+            var _signature, _set = signature => {
+              comment.signature = JSON.parse(signature[0]);
+              return true;
+            };
+            return comment.content.indexOf(MARKER) === 0 &&
+              (_signature = comment.content.match(/{.+}/gi)) ?
+              _set(_signature) : false;
+          })).length > 0 ?
+          _display(comments) : _none())
+        .catch(e => ಠ_ಠ.Flags.error("Loading Comments", e));
     },
 
-    form: (data, editable) => {
-      _edit.form(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Form File: ${data}`)), editable);
+    report: (data, actions) => {
+      FN.create.load(_.tap(data, data =>
+          ಠ_ಠ.Flags.log(`Loaded Report File: ${JSON.stringify(data, null, 2)}`)).form,
+        form => (ರ‿ರ.form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(form, data.report)), actions);
+
+      return (actions.signable && actions.revisions ? ಠ_ಠ.Google.files.revisions(ರ‿ರ.file).latest()
+          .then(revision => ಠ_ಠ.Flags.log("Most Recent Revision", ರ‿ರ.revision = revision)) :
+          Promise.resolve(true))
+        .then(() => FN.process.signatures());
+    },
+
+    form: (data, actions) => {
+      FN.edit.form(_.tap(data, data => ಠ_ಠ.Flags.log(`Loaded Form File: ${data}`)), actions);
       return true;
     },
 
@@ -219,7 +279,7 @@ App = function() {
 
 
   /* <!-- Action Functions --> */
-  var _action = {
+  FN.action = {
 
     screenshot: element => (window.html2canvas ?
         html2canvas(element, {
@@ -236,7 +296,7 @@ App = function() {
             .replace(/=+$/, "")
         }
       }))
-      .catch(e => ಠ_ಠ.Flags.error("Screenshot Error", e ? e : "No Inner Error"))
+      .catch(e => ಠ_ಠ.Flags.error("Screenshot Error", e))
       .then(result => result && result.thumbnail ? result : false),
 
     dehydrate: () => {
@@ -260,44 +320,55 @@ App = function() {
       .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
       .then(content => ({
         content: JSON.parse(content),
-        editable: file.capabilities && file.capabilities.canEdit
+        actions: {
+          editable: file.capabilities && file.capabilities.canEdit,
+          signable: file.capabilities && file.capabilities.canComment,
+          revisions: file.capabilities && file.capabilities.canReadRevisions
+        }
       }))
       .then(value =>
-        ಠ_ಠ.Google.files.is(TYPE_REPORT)(file) ? _process.report(value.content, value.editable) :
-        ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ? _process.form(value.content, value.editable) :
+        ಠ_ಠ.Google.files.is(TYPE_REPORT)(file) ? FN.process.report(value.content, value.actions) :
+        ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ? FN.process.form(value.content, value.actions) :
         Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id}`)),
 
-    save: force => {
-      _action.screenshot($("form[role='form'][data-name]")[0])
-        .then(result => {
-          var _saving = _action.dehydrate(),
-            _meta = {
-              name: _saving.name,
-              parents: (ರ‿ರ.folder ? ರ‿ರ.folder.id : null),
-              appProperties: {
-                FORM: _saving.data.form,
-              }
-            },
-            _data = JSON.stringify(_saving.data),
-            _mime = TYPE_REPORT;
-          if (result) _meta.contentHints = result;
-
-          return ಠ_ಠ.Google.files.upload.apply(this, [_meta, _data, _mime].concat(!ರ‿ರ.file || force ? [] : [null, ರ‿ರ.file.id]));
+    save: force => (!ರ‿ರ.form.signatures ? Promise.resolve(true) : ಠ_ಠ.Display.confirm({
+          id: "confirm_Save",
+          target: ಠ_ಠ.container,
+          message: ಠ_ಠ.Display.doc.get("SIGNED_REPORT_SAVE_WARNING"),
+          action: "Save",
+          close: "Cancel"
         })
-        .then(uploaded => ಠ_ಠ.Recent.add((ರ‿ರ.file = uploaded).id,
-          uploaded.name.replace(/.REFLECT$/i, ""), "#google,load." + uploaded.id))
-        .then(() => ಠ_ಠ.Flags.log("Saved:", ರ‿ರ.file))
-        .catch(e => ಠ_ಠ.Flags.error("Saving Error", e ? e : "No Inner Error"))
-        .then(ಠ_ಠ.Display.busy({
-          target: $("body"),
-          status: "Saving Report",
-          fn: true
-        }));
+        .catch(e => e ? ಠ_ಠ.Flags.error("Save Error", e) : ಠ_ಠ.Flags.log("Save Cancelled")))
+      .then(result => {
+        if (result === true) FN.action.screenshot($("form[role='form'][data-name]")[0])
+          .then(result => {
+            var _saving = FN.action.dehydrate(),
+              _meta = {
+                name: _saving.name,
+                parents: (ರ‿ರ.folder ? ರ‿ರ.folder.id : null),
+                appProperties: {
+                  FORM: _saving.data.form,
+                }
+              },
+              _data = JSON.stringify(_saving.data),
+              _mime = TYPE_REPORT;
+            if (result) _meta.contentHints = result;
 
-    },
+            return ಠ_ಠ.Google.files.upload.apply(this, [_meta, _data, _mime].concat(!ರ‿ರ.file || force ? [] : [null, ರ‿ರ.file.id]));
+          })
+          .then(uploaded => ಠ_ಠ.Recent.add((ರ‿ರ.file = uploaded).id,
+            uploaded.name.replace(/.REFLECT$/i, ""), "#google,load." + uploaded.id))
+          .then(() => ಠ_ಠ.Flags.log("Saved:", ರ‿ರ.file))
+          .catch(e => ಠ_ಠ.Flags.error("Saving Error", e))
+          .then(ಠ_ಠ.Display.busy({
+            target: $("body"),
+            status: "Saving Report",
+            fn: true
+          }));
+      }),
 
     export: () => {
-      var _exporting = _action.dehydrate();
+      var _exporting = FN.action.dehydrate();
       try {
         saveAs(new Blob([JSON.stringify(_exporting.data)], {
           type: "application/octet-stream"
@@ -309,6 +380,74 @@ App = function() {
 
   };
   /* <!-- Action Functions --> */
+
+
+  /* <!-- Sign Functions --> */
+  FN.sign = {
+
+    supported: () => window.crypto &&
+      window.crypto.getRandomValues &&
+      window.crypto.subtle &&
+      window.crypto.subtle.generateKey &&
+      window.crypto.subtle.sign &&
+      window.crypto.subtle.verify &&
+      window.TextEncoder &&
+      window.TextDecoder,
+
+    crypto: window.crypto.subtle,
+
+    encode: value => ಠ_ಠ.Strings().hex.encode(value),
+
+    decode: value => ಠ_ಠ.Strings().hex.decode(value),
+
+    raw: () => new TextEncoder().encode(JSON.stringify(FN.action.dehydrate()).trim()),
+
+    key: () => ({
+      name: "ECDSA",
+      namedCurve: "P-256",
+    }),
+
+    algorithm: () => ({
+      name: "ECDSA",
+      hash: {
+        name: "SHA-256"
+      },
+    }),
+
+    verify: signature => FN.sign.crypto.importKey("raw",
+        FN.sign.encode(signature.key), FN.sign.key(), false, ["verify"])
+      .then(key => FN.sign.crypto.verify(FN.sign.algorithm(), key,
+        FN.sign.encode(signature.signature), FN.sign.raw()))
+      .then(result => _.tap(result,
+        result => ಠ_ಠ.Flags.log(`Verification Result: ${result}`, signature)))
+      .catch(e => ಠ_ಠ.Flags.error("Verifying Error", e)),
+
+    report: () => FN.sign.supported() ? FN.sign.crypto.generateKey(
+        FN.sign.key(), true, ["sign", "verify"]
+      ).then(key => FN.sign.crypto.sign(FN.sign.algorithm(), key.privateKey, FN.sign.raw())
+        .then(signature => {
+          return FN.sign.crypto.exportKey("raw", key.publicKey)
+            .then(value => _.tap({
+              signature: FN.sign.decode(signature),
+              key: FN.sign.decode(value)
+            }, signature => ಠ_ಠ.Flags.log("Signature:", signature)));
+        }))
+      .then(signature => ಠ_ಠ.Google.files.comments(ರ‿ರ.file)
+        .create(`${MARKER}\n\n${JSON.stringify(signature)}`, {
+          r: ರ‿ರ.revision ? ರ‿ರ.revision.id : "head",
+          a: [{
+            rect: {
+              mw: 1,
+              mh: 1,
+            }
+          }],
+        }))
+      .catch(e => ಠ_ಠ.Flags.error("Signing Error", e))
+      .then(ಠ_ಠ.Main.busy("Signing Report")) : false,
+
+  };
+  /* <!-- Sign Functions --> */
+
 
   /* <!-- Internal Functions --> */
 
@@ -355,7 +494,7 @@ App = function() {
               view: "DOCS",
               mime: TYPES.join(","),
             },
-            success: value => _action.load(value.result)
+            success: value => FN.action.load(value.result)
               .then(() => ಠ_ಠ.Recent.add(value.result.id,
                 value.result.name.replace(/.REFLECT$/i, ""),
                 `#google,load.${value.result.id}`))
@@ -367,24 +506,36 @@ App = function() {
             success: value => ಠ_ಠ.Google.reader().promiseAsText(value.result)
               .then(content => JSON.parse(content))
               .then(value => value.form && value.report ?
-                _process.report(value, true) :
-                _process.form(value, true))
+                FN.process.report(value, true) :
+                FN.process.form(value, true))
               .then(ಠ_ಠ.Main.busy("Importing Report")),
           },
 
           load: {
-            success: value => _action.load(value.result).then(ಠ_ಠ.Main.busy("Loading")),
+            success: value => FN.action.load(value.result).then(ಠ_ಠ.Main.busy("Loading")),
           },
 
-          export: () => ರ‿ರ.form ? _action.export() : false,
+          export: () => ರ‿ರ.form ? FN.action.export() : false,
 
-          clone: () => ರ‿ರ.form ? _action.save(true) : false,
+          clone: () => ರ‿ರ.form ? FN.action.save(true) : false,
 
           analyse: {
             matches: /ANALYSE/i,
-            fn: () => _prompt.choose(
+            fn: () => FN.prompt.choose(
                 ರ‿ರ.forms.selection("forms", "Report"), "Select a Form ...", "ANALYSE", true)
               .then(result => result) /* <!-- TODO: Display Analysis --> */
+          },
+
+          sign: {
+            matches: /SIGN/i,
+            routes: {
+              report: {
+                length: 0,
+                matches: /REPORT/i,
+                state: STATE_REPORT_OPENED,
+                fn: () => FN.sign.report().then(() => FN.process.signatures())
+              }
+            }
           },
 
           scales: {
@@ -395,7 +546,7 @@ App = function() {
           save: {
             matches: /SAVE/i,
             length: 0,
-            fn: _action.save,
+            fn: () => FN.action.save().then(() => FN.process.signatures()),
             routes: {
               report: {
                 state: STATE_REPORT_OPENED,
@@ -420,19 +571,19 @@ App = function() {
           create: {
             matches: /CREATE/i,
             length: 0,
-            fn: () => _prompt.create(
-                [_prompt.scales(), _prompt.forms(), _prompt.reports(), _prompt.trackers()])
+            fn: () => FN.prompt.create(
+                [FN.prompt.scales(), FN.prompt.forms(), FN.prompt.reports(), FN.prompt.trackers()])
               .then(form => ರ‿ರ.form = form),
             routes: {
               form: {
                 matches: /FORM/i,
                 routes: {
-                  drive: () => _prompt.create([_prompt.forms()])
+                  drive: () => FN.prompt.create([FN.prompt.forms()])
                     .then(form => ರ‿ರ.form = form),
                   folder: {
                     length: 1,
-                    fn: command => _create.parent(command)
-                      .then(folder => _prompt.create([_prompt.forms()], folder))
+                    fn: command => FN.create.parent(command)
+                      .then(folder => FN.prompt.create([FN.prompt.forms()], folder))
                       .then(form => ರ‿ರ.form = form)
                   },
                 }
@@ -440,21 +591,21 @@ App = function() {
               report: {
                 matches: /REPORT/i,
                 routes: {
-                  prompt: () => _prompt.create([_prompt.reports()])
+                  prompt: () => FN.prompt.create([FN.prompt.reports()])
                     .then(form => ರ‿ರ.form = form),
                   named: {
                     length: 1,
                     fn: command => (ರ‿ರ.forms.has(command) ?
-                        Promise.resolve(_create.report(command, true)) :
-                        _prompt.create([_prompt.reports()]))
+                        Promise.resolve(FN.create.report(command, true)) :
+                        FN.prompt.create([FN.prompt.reports()]))
                       .then(form => ರ‿ರ.form = form)
                   },
                   folder: {
                     length: 2,
-                    fn: command => _create.parent(command[0])
+                    fn: command => FN.create.parent(command[0])
                       .then(folder => ರ‿ರ.forms.has(command[1]) ?
-                        Promise.resolve(_create.report(command[1], true)) :
-                        _prompt.create([_prompt.reports()], folder))
+                        Promise.resolve(FN.create.report(command[1], true)) :
+                        FN.prompt.create([FN.prompt.reports()], folder))
                       .then(form => ರ‿ರ.form = form)
                   },
                 },
@@ -462,12 +613,12 @@ App = function() {
               tracker: {
                 matches: /TRACKER/i,
                 routes: {
-                  prompt: () => _prompt.create([_prompt.trackers()])
+                  prompt: () => FN.prompt.create([FN.prompt.trackers()])
                     .then(tracker => ರ‿ರ.tracker = tracker),
                   folder: {
                     length: 1,
-                    fn: command => _create.parent(command)
-                      .then(folder => _prompt.create([_prompt.trackers()], folder))
+                    fn: command => FN.create.parent(command)
+                      .then(folder => FN.prompt.create([FN.prompt.trackers()], folder))
                       .then(tracker => ರ‿ರ.tracker = tracker)
                   },
                 },
@@ -475,21 +626,21 @@ App = function() {
               scale: {
                 matches: /SCALE/i,
                 routes: {
-                  drive: () => _prompt.create([_prompt.scales()])
+                  drive: () => FN.prompt.create([FN.prompt.scales()])
                     .then(scale => ರ‿ರ.scale = scale),
                   folder: {
                     length: 1,
-                    fn: command => _create.parent(command)
-                      .then(folder => _prompt.create([_prompt.scales()], folder))
+                    fn: command => FN.create.parent(command)
+                      .then(folder => FN.prompt.create([FN.prompt.scales()], folder))
                       .then(scale => ರ‿ರ.scale = scale)
                   },
                 }
               },
               folder: {
                 length: 1,
-                fn: command => _create.parent(command)
+                fn: command => FN.create.parent(command)
                   .then(folder =>
-                    _prompt.create([_prompt.scales(), _prompt.forms(), _prompt.reports()], folder))
+                    FN.prompt.create([FN.prompt.scales(), FN.prompt.forms(), FN.prompt.reports()], folder))
                   .then(form => ರ‿ರ.form = form)
               }
             },

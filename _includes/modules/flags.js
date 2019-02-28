@@ -1,229 +1,234 @@
 Flags = function() {
 
-	/* <!-- DEPENDS on WINDOW, JQUERY & PURL to work, and initialise --> */
+  /* <!-- DEPENDS on WINDOW, JQUERY & PURL to work, and initialise --> */
 
-	/* <!-- Returns an instance of Flags if required --> */
-	if (this && this._isF && this._isF(this.Flags)) {
-		/* <!-- Set Container Reference to this --> */
-		this.Flags = new this.Flags();
-		return this.Flags;
-	}
+  /* <!-- Returns an instance of Flags if required --> */
+  if (this && this._isF && this._isF(this.Flags)) {
+    /* <!-- Set Container Reference to this --> */
+    this.Flags = new this.Flags();
+    return this.Flags;
+  }
 
-	/* <!-- Internal Variables --> */
-	var _alert = false,
-		_debug = false,
-		_development = false,
-		_page = false,
-		_option = false,
-		_highlight = false,
-		_key = false,
-		_oauth = false,
-		_performance = false,
-		_base, _dir,
+  /* <!-- Internal Variables --> */
+  var _alert = false,
+    _debug = false,
+    _development = false,
+    _page = false,
+    _option = false,
+    _highlight = false,
+    _key = false,
+    _oauth = false,
+    _performance = false,
+    _base, _dir,
     _default = v => v,
     _context = (window && window.console ? window.console : {}),
     _err = (window && window.console ? window.console.error : _default),
     _log = (window && window.console ? window.console.log : _default),
     _start = (window && window.console ? window.console.time : _default),
     _end = (window && window.console ? window.console.timeEnd : _default);
-      
-  
-	/* <!-- Internal Functions --> */
-	var _parse = function() {
 
-		/* <!-- Parse Url --> */
-		var _url = $.url();
 
-		/* <!-- Set Variables --> */
-		_alert = (_url.param("alert") === "" || _url.fparam("alert") === "");
-		if (_alert) window.onerror = function(m, u, l, c, o) {
-			alert("Error: " + m + " Script: " + u + " Line: " + l + " Column: " + c + " Trace: " + o);
-		};
+  /* <!-- Internal Functions --> */
+  var _parse = function() {
 
-		_debug = _alert ? _alert : (_url.param("debug") === "" || _url.fparam("debug") === "");
-		if (_debug) window.onerror = function(m, u, l, c, o) {
-			_err(`Error: ${m} Script: ${u} Line: ${l} Column: ${c} Trace: ${o}`);
-		};
+    /* <!-- Parse Url --> */
+    var _url = $.url();
 
-		_development = (_url.attr("host").split(".")[0] == "dev" || _url.param("dev") === "" || _url.fparam("dev") === "");
+    /* <!-- Set Variables --> */
+    _alert = (_url.param("alert") === "" || _url.fparam("alert") === "");
+    if (_alert) window.onerror = function(m, u, l, c, o) {
+      alert("Error: " + m + " Script: " + u + " Line: " + l + " Column: " + c + " Trace: " + o);
+    };
 
-		_key = (_url.param("key") || _url.fparam("key"));
+    _debug = _alert ? _alert : (_url.param("debug") === "" || _url.fparam("debug") === "");
+    if (_debug) window.onerror = function(m, u, l, c, o) {
+      _err(`Error: ${m} Script: ${u} Line: ${l} Column: ${c} Trace: ${o}`);
+    };
 
-		_oauth = (_url.param("oauth") || _url.fparam("oauth"));
+    _development = (_url.attr("host").split(".")[0] == "dev" || _url.param("dev") === "" || _url.fparam("dev") === "");
 
-		_option = (_url.param("option") === "" || _url.fparam("option") === "");
+    _key = (_url.param("key") || _url.fparam("key"));
 
-		_highlight = (_url.param("highlight") || _url.fparam("highlight"));
+    _oauth = (_url.param("oauth") || _url.fparam("oauth"));
 
-		_performance = (_url.param("performance") === "" || _url.fparam("performance") === "");
-		
-		_page = (_url.param("page") === "" || _url.fparam("page") === "");
+    _option = (_url.param("option") === "" || _url.fparam("option") === "");
 
-		_base = _url.attr("protocol") + "://" + _url.attr("host") +
-			(_url.attr("port") && _url.attr("port") != 80 && _url.attr("port") != 443 ? ":" + _url.attr("port") : "") + "/";
+    _highlight = (_url.param("highlight") || _url.fparam("highlight"));
 
-		_dir = _url.attr("directory").replace(new RegExp("\\/", "g"), "");
+    _performance = (_url.param("performance") === "" || _url.fparam("performance") === "");
 
-		/* <!-- Load Remote Console Script Function --> */
-		var _load = function(id) {
-			return new Promise((resolve, reject) => {
-				var script = document.createElement("script");
-				script.onload = resolve;
-				script.onerror = reject;
-				script.src = "https://jsconsole.com/js/remote.js?" + id;
-				document.getElementsByTagName("head")[0].appendChild(script);
-			});
-		};
+    _page = (_url.param("page") === "" || _url.fparam("page") === "");
 
-		/* <!-- Return Promise --> */
-		if (_url.param("remote") && _url.param("remote").length > 0) {
-			return _load(_url.param("remote"));
-		} else if (_url.fparam("remote") && _url.fparam("remote").length > 0) {
-			return _load(_url.fparam("remote"));
-		} else {
-			return Promise.resolve();
-		}
+    _base = _url.attr("protocol") + "://" + _url.attr("host") +
+      (_url.attr("port") && _url.attr("port") != 80 && _url.attr("port") != 443 ? ":" + _url.attr("port") : "") + "/";
 
-	};
+    _dir = _url.attr("directory").replace(new RegExp("\\/", "g"), "");
 
-	var _route = function(command, router) {
+    /* <!-- Load Remote Console Script Function --> */
+    var _load = function(id) {
+      return new Promise((resolve, reject) => {
+        var script = document.createElement("script");
+        script.onload = resolve;
+        script.onerror = reject;
+        script.src = "https://jsconsole.com/js/remote.js?" + id;
+        document.getElementsByTagName("head")[0].appendChild(script);
+      });
+    };
 
-		var directive;
+    /* <!-- Return Promise --> */
+    if (_url.param("remote") && _url.param("remote").length > 0) {
+      return _load(_url.param("remote"));
+    } else if (_url.fparam("remote") && _url.fparam("remote").length > 0) {
+      return _load(_url.fparam("remote"));
+    } else {
+      return Promise.resolve();
+    }
 
-		if (command.indexOf(",") >= 1) {
-			command = command.split(",");
-			directive = command[0];
-			command = command[1];
-		}
+  };
 
-		if (command.indexOf(".") >= 1) {
-			router(directive, command.split("."));
-		} else {
-			router(directive, command);
-		}
+  var _route = function(command, router) {
 
-	};
+    var directive;
 
-	/* <!-- External Visibility --> */
-	return {
+    if (command.indexOf(",") >= 1) {
+      command = command.split(",");
+      directive = command[0];
+      command = command[1];
+    }
 
-		/* <!-- External Functions --> */
-		initialise: function() {
+    if (command.indexOf(".") >= 1) {
+      router(directive, command.split("."));
+    } else {
+      router(directive, command);
+    }
 
-			/* <!-- Call Parse Method internally --> */
-			return _parse().then(function() {
+  };
 
-				var _return = {
+  /* <!-- External Visibility --> */
+  return {
+
+    /* <!-- External Functions --> */
+    initialise: function() {
+
+      /* <!-- Call Parse Method internally --> */
+      return _parse().then(function() {
+
+        var _return = {
 
           reflect: value => value,
-          
+
           negative: () => false,
-          
+
           positive: () => true,
-          
-					alert: function() {
-						return _alert;
-					},
 
-					full: function(path) {
-						return _base + (path ? path : "");
-					},
+          alert: function() {
+            return _alert;
+          },
 
-					debug: function() {
-						return _debug;
-					},
+          full: function(path) {
+            return _base + (path ? path : "");
+          },
 
-					development: function() {
-						return _development;
-					},
+          debug: function() {
+            return _debug;
+          },
 
-					dir: function() {
-						return _dir;
-					},
+          development: function() {
+            return _development;
+          },
 
-					error: function(message, exception) {
-						_alert && window && window.alert ?
-              window.alert(`ERROR - ${message} : ${JSON.stringify(exception)}`) : (exception ? _log(`ERROR - ${message}`, exception) : _log(`ERROR - ${message}`));
-						return this;
-					},
+          dir: function() {
+            return _dir;
+          },
 
-					log: function() {
-						if (_debug) _log.apply(_context, arguments);
-						return this;
-					},
+          error: function(message, exception) {
+            _alert && window && window.alert ?
+              window.alert(`ERROR - ${message} : ${JSON.stringify(exception)}`) :
+              (exception ?
+                _log(`ERROR - ${message}`, exception) :
+                exception === null ?
+                _log(`ERROR - ${message}`, "No Inner Exception") :
+                _log(`ERROR - ${message}`));
+            return this;
+          },
 
-					time: function(name, end) {
-						if (_debug || _performance) end ? _end.apply(_context, [name]) : _start.apply(_context, [name]);
-						return this;
-					},
+          log: function() {
+            if (_debug) _log.apply(_context, arguments);
+            return this;
+          },
 
-					oauth: function() {
-						return _oauth;
-					},
+          time: function(name, end) {
+            if (_debug || _performance) end ? _end.apply(_context, [name]) : _start.apply(_context, [name]);
+            return this;
+          },
 
-					key: function() {
-						return _key;
-					},
+          oauth: function() {
+            return _oauth;
+          },
 
-					highlight: function() {
-						return _highlight;
-					},
+          key: function() {
+            return _key;
+          },
 
-					option: function() {
-						return _option;
-					},
+          highlight: function() {
+            return _highlight;
+          },
 
-					page: function() {
-						return _page;
-					},
+          option: function() {
+            return _option;
+          },
 
-					route: function(command, router) {
+          page: function() {
+            return _page;
+          },
 
-						_route(command, router);
+          route: function(command, router) {
 
-					},
+            _route(command, router);
 
-					change: function(router) {
+          },
 
-						var command = window.location.hash;
+          change: function(router) {
 
-						if (command) {
+            var command = window.location.hash;
 
-							if (command.indexOf("#") === 0) command = command.substring(1);
+            if (command) {
 
-							if (command !== "!") {
+              if (command.indexOf("#") === 0) command = command.substring(1);
 
-								var _ignore = false;
-								if (command.indexOf("!") === 0) {
-									_ignore = true;
-									command = command.substring(1);
-								}
+              if (command !== "!") {
 
-								if (!_ignore && window.history) {
-									window.history.replaceState({
-										command: command
-									}, "", "#!");
-								} else {
-									window.location.hash = "!";
-								}
+                var _ignore = false;
+                if (command.indexOf("!") === 0) {
+                  _ignore = true;
+                  command = command.substring(1);
+                }
 
-								_route(command, router);
+                if (!_ignore && window.history) {
+                  window.history.replaceState({
+                    command: command
+                  }, "", "#!");
+                } else {
+                  window.location.hash = "!";
+                }
 
-							}
+                _route(command, router);
 
-						}
+              }
 
-					},
+            }
 
-				};
+          },
 
-				return Promise.resolve(_return);
+        };
 
-			});
+        return Promise.resolve(_return);
 
-		},
+      });
 
-	};
-	/* <!-- External Visibility --> */
+    },
+
+  };
+  /* <!-- External Visibility --> */
 
 };

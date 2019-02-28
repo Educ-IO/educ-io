@@ -1256,3 +1256,24 @@ chance:
       crossorigin: anonymous
       map: true
       id: __chance
+      
+base64:
+  name: Base64.js
+  desc: Base64 encoding/decoding in pure JS
+  url: https://cdnjs.com/libraries/Base64
+  project: https://github.com/beatgammit/base64-js
+  version: 1.0.2
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/Base64/1.0.2/base64.min.js
+      integrity: sha256-e/oUiyyIuCPWGLoA5X/iJ+WbwaI5LN9P+lP/od21QQ4=
+      crossorigin: anonymous
+      map: true
+      id: __base64
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/Base64/1.0.2/base64.js
+      integrity: sha256-JvcgXx+RnoYKxoz5F+iHG1GTFTDHScw0LN8ZCIq64zo=
+      crossorigin: anonymous
+      map: true
+      id: __base64

@@ -279,7 +279,7 @@ Page = function() {
       failure: {
         icon: "priority_high",
         class: "text-warning",
-        message: "Unfortunately, your browser doesn't currently support native Text Encoding / Decoding. This is only used for some cryptographically secure features, so most apps (apart from the Accounts App) will still work."
+        message: "Unfortunately, your browser doesn't currently support native Text Encoding / Decoding. This is only used for some cryptographically secure features, so most apps (apart from the Accounts App, and report signing in Reflect) will still work."
       },
       type: {
         name: "feature",

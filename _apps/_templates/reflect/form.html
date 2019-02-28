@@ -1,5 +1,5 @@
 {% raw %}
-<div class="row justify-content-md-center">
+<div class="d-flex justify-content-md-center">
 
 	<div class="mt-2 mt-lg-4 pb-4 col-12 col-md-10 col-lg-9 col-xl-8">
 		
@@ -23,74 +23,92 @@
 			<!-- Submission / Save / Progress Area -->
 			<div class="card mx-1 my-1 mx-md-0">
 
-				<div id="heading_{{id}}_Submission" class="card-header">
-					<h5 class="mb-0 d-inline">Submission</h5>
-					<a class="float-right" data-toggle="collapse" href="#collapse_{{id}}_Submission" aria-expanded="false" aria-controls="collapse_{{id}}_Submission">
-						<i style="display: none;" class="material-icons md-18" data-listen="#collapse_{{id}}_Submission" data-event="hidden.bs.collapse">expand_more</i>
-						<i class="material-icons md-18" data-listen="#collapse_{{id}}_Submission" data-event="shown.bs.collapse">expand_less</i>
-					</a>
-				</div>
+        {{#> heading target=(concat id "_Submission") name="Submission" }}
+        
+          <div class="form-group">
+            <div class="col-md-9 d-flex flex-column flex-md-row">
 
-				<div id="collapse_{{id}}_Submission" class="collapse show" role="tabpanel" aria-labelledby="heading_{{id}}_Submission">
-					<div class="card-body">
-						<div class="form-group">
-								<div class="col-md-9 d-flex flex-column flex-md-row">
-									
-									<!-- Save Button Group -->
-									<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
-										<a id="{{id}}_SAVE" href="#save.report" role="button" class="btn btn-info btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">save</i>Save</a>
-										<button type="button" class="btn btn-info btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-											<span class="sr-only">Toggle Dropdown</span>
-										</button>
-										<div class="dropdown-menu dropdown-menu-right">
-											<a class="dropdown-item" href="#save.clone">Clone</a>
-											<a class="dropdown-item" href="#save.export">Export</a>
-											<div class="dropdown-divider"></div>
-											<a class="dropdown-item" href="#instructions.save">About</a>
-										</div>
-									</div>
-									
-									<!-- Send Button Group -->
-									<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
-										<a id="{{id}}_SEND" href="#send" role="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">send</i>Send</a>
-										<button type="button" class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-											<span class="sr-only">Toggle Dropdown</span>
-										</button>
-										<div class="dropdown-menu dropdown-menu-right">
-											<a class="dropdown-item" href="#">Action</a>
-											<a class="dropdown-item" href="#">Another action</a>
-											<a class="dropdown-item" href="#">Something else here</a>
-											<div class="dropdown-divider"></div>
-											<a class="dropdown-item" href="#instructions.send">About</a>
-										</div>
-									</div>
-									
-									<!-- Complete Button Group -->
-									<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
-										<a id="{{id}}_COMPLETE" href="#complete" role="button" class="btn btn-success btn-lg d-flex"><i class="mr-4 material-icons md-light md-24 align-self-center">cloud_done</i>Complete</a>
-										<button type="button" class="btn btn-success btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-											<span class="sr-only">Toggle Dropdown</span>
-										</button>
-										<div class="dropdown-menu dropdown-menu-right">
-											<a class="dropdown-item" href="#">Action</a>
-											<a class="dropdown-item" href="#">Another action</a>
-											<a class="dropdown-item" href="#">Something else here</a>
-											<div class="dropdown-divider"></div>
-											<a class="dropdown-item" href="#instructions.complete">About</a>
-										</div>
-									</div>
-									
-									{{#if help}}<div class="form-text text-muted">{{{help}}}</div>{{/if}}
-								</div>
-						</div>
-					</div>
-				</div>
+              <!-- Save Button Group -->
+              {{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
+              <a id="{{id}}_SAVE" href="#save.report" role="button" class="btn btn-info btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">save</i>Save</a>
+              <button type="button" class="btn btn-info btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#save.clone">Clone</a>
+                <a class="dropdown-item" href="#save.export">Export</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#instructions.save">About</a>
+              </div>
+              </div>{{/if}}
+
+              <!-- Sign Button Group -->
+              {{#if signable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
+              <a id="{{id}}_SIGN" href="#sign.report" role="button" class="btn btn-dark btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">vpn_key</i>Sign</a>
+              <button type="button" class="btn btn-dark btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#sign.report">Sign</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#instructions.sign">About</a>
+              </div>
+              </div>{{/if}}
+
+              <!-- Send Button Group -->
+              <div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
+                <a id="{{id}}_SEND" href="#send" role="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">send</i>Send</a>
+                <button type="button" class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#instructions.send">About</a>
+                </div>
+              </div>
+
+              <!-- Complete Button Group -->
+              <div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
+                <a id="{{id}}_COMPLETE" href="#complete" role="button" class="btn btn-success btn-lg d-flex"><i class="mr-4 material-icons md-light md-24 align-self-center">cloud_done</i>Complete</a>
+                <button type="button" class="btn btn-success btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#instructions.complete">About</a>
+                </div>
+              </div>
+
+              {{#if help}}<div class="form-text text-muted">{{{help}}}</div>{{/if}}
+            </div>
+          </div>
+        
+        {{/heading}}
+        
 			</div>
 			
 		</form>
 		
 		{{#if footer}}{{{footer}}}{{/if}}
-		
+   
+    <div class="card mx-1 mt-3 mx-md-0">
+
+      {{#> heading target=(concat target "_Signatures") name="Signatures" hide=true }}
+  
+        <div class="d-flex flex-column flex-md-row">
+          <ul class="list-group list-group-flush signatures flex-fill"></ul>
+        </div>
+      
+			{{/heading}}
+
+    </div>
+
 	</div>
 	
 </div>

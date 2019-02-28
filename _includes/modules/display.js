@@ -92,7 +92,7 @@ Display = function() {
       });
 
       /* <!-- Look for partial templates to register/compile too --> */
-      var partial_names, partial_regex = /\s?{>\s?([a-zA-Z]{1}[^\r\n\t\f }]+)/gi;
+      var partial_names, partial_regex = /\s?{#?>\s?([a-zA-Z]{1}[^\r\n\t\f }]+)/gi;
       while ((partial_names = partial_regex.exec(_html)) !== null) {
         if (partial_names && partial_names[1]) {
           if (Handlebars.templates[partial_names[1]] === undefined) {
@@ -161,6 +161,8 @@ Display = function() {
 
         Handlebars.registerHelper("username", variable => _username(variable));
 
+        Handlebars.registerHelper("stringify", variable => variable ? JSON.stringify(variable) : "");
+
         Handlebars.registerHelper("string", variable => variable ? variable.toString ?
           variable.toString() : JSON.stringify(variable) : "");
 
@@ -215,7 +217,8 @@ Display = function() {
           if (options === undefined) {
             options = v2;
             v2 = operator;
-            operator = v2 && (v2.toLowerCase() == "odd" || v2.toLowerCase() == "even") ? "is" : "===";
+            operator = v2 && v2.toLowerCase && (v2.toLowerCase() == "odd" || v2.toLowerCase() == "even") ?
+              "is" : "===";
           }
 
           var operators = {
