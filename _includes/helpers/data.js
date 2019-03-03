@@ -29,7 +29,12 @@ Data = (options, factory) => {
     },
     DEBUG = factory.Flags && factory.Flags.debug(),
     LOG = DEBUG ? factory.Flags.log : () => false,
-    ERROR = factory.Flags.error;
+    ERROR = factory.Flags.error,
+    GET = (id, parent) => {
+      var ids = id.indexOf("||") > 0 ? id.split("||") : [id];
+      var selector = _.reduce(ids, (memo, id) => `${memo ? `${memo}, `: ""}#${id}, #${id} > input`, "");
+      return (parent ? parent : $)(selector);
+    };
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -190,7 +195,10 @@ Data = (options, factory) => {
 
       var simple = _el => {
         if (_el[0].type == "checkbox" || _el[0].type == "radio") {
-          if (val) _el.prop("checked", !!(val)).triggerHandler("change");
+          if (val) {
+            _el.prop("checked", !!(val)).triggerHandler("change");
+            if (_el.data("reveal")) GET(_el.data("reveal")).show();
+          }
         } else if (_el[0].nodeName == "BUTTON") { /* <!-- Handle Button Selectors --> */
           var _option = _el.closest("*[data-output-field]")
             .find(`*[data-value='${$.escapeSelector(val)}']`);

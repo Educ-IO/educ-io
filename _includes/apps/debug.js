@@ -47,7 +47,8 @@ App = function() {
       o: array => array[GENERATE.i(0, array.length - 1)],
     },
     SERIAL = promises => _.reduce(promises, (all, promise) => all.then(
-      result => promise().then(Array.prototype.concat.bind(result))
+      result => (_.isFunction(promise) ? promise() : promise)
+      .then(Array.prototype.concat.bind(result))
     ), Promise.resolve([])),
     ARRAYS = value => value === undefined || value === null ? [] : _.isArray(value) ? value : [value],
     SIMPLIFY = value => value && _.isArray(value) && value.length == 1 ? value[0] : value,

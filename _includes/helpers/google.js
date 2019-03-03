@@ -275,7 +275,7 @@ Google_API = (options, factory) => {
         views.forEach(function(view) {
           picker.addView((view = make(view)).setEnableTeamDrives ? view.setEnableTeamDrives(team) : view);
         });
-        if (views.length == 1) picker.enableFeature(google.picker.Feature.NAV_HIDDEN);
+        if (views.length == 1 && !views[0].navigation) picker.enableFeature(google.picker.Feature.NAV_HIDDEN);
       } else {
         picker.addView((views = make(views)).setEnableTeamDrives ? views.setEnableTeamDrives(team) : views);
         picker.enableFeature(google.picker.Feature.NAV_HIDDEN);

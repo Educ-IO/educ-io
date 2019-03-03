@@ -30,18 +30,25 @@ Router = function() {
     PICK = (picker => ({
       single: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
         options && options.title ?
-        options.title : "Select a File to Open", false, true, picker(options),
+        options.title : "Select a File to Open", false,
+        options.team !== undefined ? options.team : true, picker(options),
         HANDLE(options, resolve, reject), null, true)),
       multiple: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
-        options && options.title ? options.title : "Select a File/s to Open", true, true, picker(options),
+        options && options.title ? options.title : "Select a File/s to Open", true,
+        options.team !== undefined ? options.team : true, picker(options),
         HANDLE(options, resolve, reject), null, true)),
-    }))(options => () => [new google.picker
+    }))(options => () => [_.tap(new google.picker
         .DocsView(options ? google.picker.ViewId[options.view] : null)
         .setMimeTypes(options && options.mime ? options.mime : null)
-        .setIncludeFolders(true)
+        .setIncludeFolders(options && options.folders ?
+          true : options && options.include_folders !== undefined && options.include_folders !== null ?
+          options.include_folders : true)
+        .setOwnedByMe(options && options.mine !== undefined ? options.mine : null)
         .setSelectFolderEnabled(options && options.folders ? true : false)
-        .setParent(options && options.parent ? options.parent : "root")
-      ]
+        .setParent(options && options.mine !== undefined ? options.parent : "root"), view => {
+          if (options.query) view.setQuery(options.query);
+          if (options.navigation) view.navigation = options.navigation;
+        })]
       .concat(options.all ? [new google.picker
         .DocsView(options ? google.picker.ViewId[options.view] : null)
         .setMimeTypes(options && options.mime ? options.mime : null)
@@ -179,7 +186,7 @@ Router = function() {
         },
         open: {
           matches: /OPEN/i,
-          /* <!-- OPTIONS: Multiple | Single property dictates single or multiple files returned, all other options passed through to picker method -->  */
+          /* <!-- OPTIONS: Multiple | Single property dictates files returned, all others passed through to picker method -->  */
           fn: (command, options) => options && options.mutiple ?
             PICK.multiple(options) : PICK.single(options),
         },
@@ -413,7 +420,8 @@ Router = function() {
                   command: l_command,
                   result: result
                 }) : true)
-              .catch(route.failure ? route.failure : () => false) : l_result;
+              .catch(route.failure ? route.failure :
+                e => ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative()) : l_result;
           };
 
           /* <!-- Execute the route if available --> */

@@ -10,6 +10,7 @@ Data = function() {
     LONG_PAUSE = () => DELAY(RANDOM(1000, 3000)),
     GEN = FACTORY.App.generate,
     RUN = FACTORY.App.serial,
+    RACE = FACTORY.App.race(240000),
     GENERATE = fn => {
       var _return = {
           state: [],
@@ -41,10 +42,9 @@ Data = function() {
         templater: DISPLAY.template.get
       }, FACTORY).on(modal);
       dialog.handlers.keyboard.enter(modal);
-      if (populate) populate(modal);
-      (debug ? LONG_PAUSE : PAUSE)().then(
-        () => modal.find(".modal-footer > .btn.btn-primary").click()
-      );
+      Promise.resolve(populate ? populate(modal) : true)
+        .then(debug ? LONG_PAUSE : PAUSE)
+        .then(() => modal.find(".modal-footer > .btn.btn-primary")[0].click());
     })
     .then(values => check ? check(values) : values)
     .then(result => {
@@ -179,7 +179,7 @@ Data = function() {
           });
           _return._value = (value => value)(FACTORY.me.full_name());
           _return._populate = (id => modal => {
-            modal.find(`[data-id='${id}'] [data-action='me']`).first().click();
+            modal.find(`[data-id='${id}'] [data-action='me']`)[0].click();
           })(_return.id);
           return _return;
         },
@@ -246,7 +246,7 @@ Data = function() {
             values.to.have.deep.nested.property(`${name}.Values.Value`, String(value));
           })(_number);
           _return._populate = (id => modal => {
-            modal.find(`[data-id='${id}'] button.btn-primary`).first().click();
+            modal.find(`[data-id='${id}'] button.btn-primary`)[0].click();
           })(_return.id);
           return _return;
         },
@@ -269,9 +269,9 @@ Data = function() {
             values.to.have.deep.nested.property(`${name}.Values.Details`, details);
           })(_value ? _number : 0, _return.suffix, _return.details);
           _return._populate = ((id, value, details) => modal => {
-            modal.find(`[data-id='${id}'] button.btn-primary`).first().click();
+            modal.find(`[data-id='${id}'] button.btn-primary`)[0].click();
             modal.find(`[data-id='${id}'] textarea`).val(details);
-            if (!value) modal.find(`[data-id='${id}'] button.btn-info`).first().click();
+            if (!value) modal.find(`[data-id='${id}'] button.btn-info`)[0].click();
           })(_return.id, _value, _return.details);
           return _return;
         },
@@ -303,8 +303,7 @@ Data = function() {
               start.clone().add(1, span.span).add(-1, "d").format("YYYY-MM-DD"));
           })(_blocks.spans[_span], moment(new Date()));
           _return._populate = ((id, span) => modal => {
-            modal.find(`[data-id='${id}'] a.dropdown-item[data-value='${$.escapeSelector(span.value)}']`)
-              .first().click();
+            modal.find(`[data-id='${id}'] a.dropdown-item[data-value='${$.escapeSelector(span.value)}']`)[0].click();
           })(_return.id, _blocks.spans[_span]);
           return _return;
         },
@@ -353,7 +352,7 @@ Data = function() {
           })(_option);
           _return._populate = ((id, option) => modal => {
             modal.find(`[data-id='${id}'] input[data-value='${$.escapeSelector(option.value)}']`).first()
-              .parent("label").click();
+              .parent("label")[0].click();
           })(_return.id, _option);
           return _return;
         },
@@ -373,7 +372,7 @@ Data = function() {
           })(_option, _details);
           _return._populate = ((id, option, details) => modal => {
             modal.find(`[data-id='${id}'] input[data-value='${$.escapeSelector(option.value)}']`).first()
-              .parent("label").click();
+              .parent("label")[0].click();
             modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(details);
           })(_return.id, _option, _details);
           return _return;
@@ -492,7 +491,7 @@ Data = function() {
             _.each(additions, addition => {
               if (addition.details)
                 modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(addition.details);
-              modal.find(`[data-id='${id}'] button.btn-success`).first().delay(100).click();
+              modal.find(`[data-id='${id}'] button.btn-success`).delay(100)[0].click();
             });
           })(_return.id, _additions);
           return _return;
@@ -520,10 +519,10 @@ Data = function() {
           _return._populate = ((id, additions) => modal => {
             _.each(additions, addition => {
               modal.find(`[data-id='${id}'] > div > div`).first()
-                .find(`[data-value='${addition.option.value}']`).click();
+                .find(`[data-value='${addition.option.value}']`)[0].click();
               if (addition.details)
                 modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(addition.details);
-              modal.find(`[data-id='${id}'] button.btn-success`).first().delay(100).click();
+              modal.find(`[data-id='${id}'] button.btn-success`).first().delay(100)[0].click();
             });
           })(_return.id, _additions);
           return _return;
@@ -571,11 +570,11 @@ Data = function() {
             _.each(additions, addition => {
               modal.find(`[data-id='${id}'] input#${id}_DATE`).val(addition.date.format("YYYY-MM-DD"));
               _.times(addition.total, () =>
-                modal.find(`[data-id='${id}'] button.alter-numerical.btn-primary`).first().click());
+                modal.find(`[data-id='${id}'] button.alter-numerical.btn-primary`)[0].click());
               if (addition.details)
                 modal.find(`[data-id='${id}'] textarea#${id}_DETAILS`).val(addition.details);
-              modal.find(`[data-id='${id}'] button.btn-success`).first().delay(100).click();
-              modal.find(`[data-id='${id}'] button.eraser`).first().click();
+              modal.find(`[data-id='${id}'] button.btn-success`).delay(100)[0].click();
+              modal.find(`[data-id='${id}'] button.eraser`)[0].click();
             });
           })(_return.id, _additions);
           return _return;
@@ -587,7 +586,7 @@ Data = function() {
               template: "field_scale",
               type: GEN.t(GEN.i(5, 10)),
               items_details: GEN.t(GEN.i(10, 50)),
-              list_field: "Evidence",
+              list_field: GEN.b() ? GEN.a(GEN.i(5, 20)) : null,
               scale: _scale,
               markers: _scale.scale,
               options: _options,
@@ -639,17 +638,16 @@ Data = function() {
 
                   _.each(_data.options, (option, index, list) => {
 
-                    values.to.have.deep.nested.property(
-                      `${_path}.${list_field}.Items${list.length > 1 ? `[${index}]`: ""}.Icon`,
-                      "local_printshop");
+                    var _prefix = `${_path}${list_field ? `.${list_field}` : ""}.Items`;
 
                     values.to.have.deep.nested.property(
-                      `${_path}.${list_field}.Items${list.length > 1 ? `[${index}]`: ""}.Value`,
-                      option.class.endsWith("paper") ? "Paper" : "Offline");
+                      `${_prefix}${list.length > 1 ? `[${index}]`: ""}.Icon`, "local_printshop");
 
                     values.to.have.deep.nested.property(
-                      `${_path}.${list_field}.Items${list.length > 1 ? `[${index}]`: ""}.Type`,
-                      type);
+                      `${_prefix}${list.length > 1 ? `[${index}]`: ""}.Value`, option.class.endsWith("paper") ? "Paper" : "Offline");
+
+                    values.to.have.deep.nested.property(
+                      `${_prefix}${list.length > 1 ? `[${index}]`: ""}.Type`, type);
 
                   });
                 }
@@ -662,7 +660,7 @@ Data = function() {
 
             _.each(scale.scale, _check([], []));
 
-          } : null)(_return.scale, _return.type.trim(), _return.list_field.trim(), _value, _test);
+          } : null)(_return.scale, _return.type.trim(), _return.list_field ? _return.list_field.trim() : "", _value, _test);
 
           _return._populate = ((id, scale, test) => modal => {
 
@@ -676,7 +674,7 @@ Data = function() {
                 .find(`[data-id='${id}'] li[data-output-name='${$.escapeSelector(_output)}']`);
 
               if (marker.evidence || marker.children && _.reduce(marker.children, test, false)) {
-                _el.find("> div > label.material-switch").delay(100).click();
+                _el.find("> div > label.material-switch").delay(100)[0].click();
                 if (marker.children) {
                   _.each(marker.children, _marker(_name));
                 } else if (marker._data) {
@@ -684,7 +682,7 @@ Data = function() {
                   _.each(marker._data.options, option => {
                     var __el = _el.find("div.dropdown-menu")
                       .find(`.dropdown-item[data-value='${$.escapeSelector(option.value)}']`);
-                    __el.delay(100).click();
+                    __el.delay(100)[0].click();
                   });
                 }
               }
@@ -694,6 +692,51 @@ Data = function() {
             _.each(scale.scale, _marker());
 
           })(_return.id, _return.scale, _test);
+
+          _return._interact = (field, modal, state) => {
+
+            var _test = (value, marker) => value === true ?
+              value : marker.evidence ? true : marker.children ?
+              _.reduce(marker.children, _test, value) : false;
+
+            var _marker = parent => marker => {
+
+              var _name = `${parent ? 
+                  `${parent}.` : ""}${marker.number ? marker.number : marker.value}`,
+                _output = `${_name}${marker.name ? ` ${marker.name}`: ""}`;
+              var _el = field.find(`li[data-output-name='${$.escapeSelector(_output)}']`);
+
+              if (marker.evidence || marker.children && _.reduce(marker.children, _test, false)) {
+
+                expect(_el.find("> div.float-right > input").prop("checked")).to.be.true;
+
+                var _child = _el.children("ul, div.list-holder");
+                expect(_child.css("display") === "none").to.be.false;
+
+                if (marker.children) {
+                  _.each(marker.children, _marker(_name));
+                } else if (marker._data) {
+                  var _items = _child.find("div.list-data").children("div.list-item");
+                  expect(_items.length).to.equal(marker._data.options.length);
+                  _.each(marker._data.options, (option, index) => {
+                    var _item = $(_items[index]);
+                    expect(_item.find("span[data-output-name='Value']").text())
+                      .to.be.a("string")
+                      .that.equals(option.class.endsWith("paper") ? "Paper" : "Offline");
+                    expect(_item.find("span[data-output-name='Type']").text())
+                      .to.be.a("string")
+                      .that.equals(state.type);
+                  });
+                }
+
+              }
+
+            };
+
+            _.each(state.markers, _marker());
+
+          };
+
           return _return;
 
         },
@@ -770,7 +813,7 @@ Data = function() {
 
     },
 
-    dialogs: () => new Promise(resolve => {
+    dialogs: () => RACE(new Promise(resolve => {
 
       PAUSE().then(() => {
 
@@ -922,9 +965,9 @@ Data = function() {
 
       });
 
-    }),
+    })),
 
-    forms: () => new Promise(resolve => {
+    forms: () => RACE(new Promise(resolve => {
 
       PAUSE().then(() => {
 
@@ -961,9 +1004,9 @@ Data = function() {
 
       });
 
-    }),
+    })),
 
-    interactions: () => new Promise(resolve => {
+    interactions: () => RACE(new Promise(resolve => {
 
       PAUSE().then(() => {
 
@@ -979,7 +1022,7 @@ Data = function() {
               FACTORY.Flags.log("Set Field Value to:", value);
               expect(input.val()).to.be.a("string").that.equals(value);
               if (clear && clear.length > 0) {
-                clear.click();
+                clear[0].click();
                 FACTORY.Flags.log("Cleared Field");
               } else {
                 input.val("");
@@ -1025,7 +1068,7 @@ Data = function() {
                   clear = field.find("button.eraser").first(),
                   _cleared = () => {
                     /* <!-- Clear Inputs --> */
-                    clear.click();
+                    clear[0].click();
                     expect(value.val()).to.be.empty;
                     expect(display.val()).to.be.empty;
                   };
@@ -1034,7 +1077,7 @@ Data = function() {
 
                   /* <!-- Test Increases (Up to / Above Potential Maximum) --> */
                   _.times(GEN.i(1, Math.round((state.max * 2) / state.increment)), index => {
-                    increase.click();
+                    increase[0].click();
                     var _value = Math.min((index + 1) * state.increment, state.max);
                     expect(Number(value.val())).to.be.a("number")
                       .that.equals(_value);
@@ -1046,13 +1089,13 @@ Data = function() {
                   _cleared();
 
                   /* <!-- Test Max Value --> */
-                  _.times(Math.round((state.max / state.increment) + 1), () => increase.click());
+                  _.times(Math.round((state.max / state.increment) + 1), () => increase[0].click());
                   expect(Number(value.val())).to.be.a("number")
                     .that.equals(state.max);
 
                   /* <!-- Test Decreases (Down to / Below Minimum) --> */
                   _.times(GEN.i(1, Math.round((state.max * 2) / state.increment)), index => {
-                    decrease.click();
+                    decrease[0].click();
                     var _value = Math.max(state.max - ((index + 1) * state.increment), state.min);
                     expect(Number(value.val())).to.be.a("number")
                       .that.equals(_value);
@@ -1100,14 +1143,14 @@ Data = function() {
                   .that.equals(_end.format(format));
 
                 /* <!-- Check increase/decrease date --> */
-                increase.first().click();
+                increase[0].click();
                 _start.add(7, "d");
                 _end.add(7, "d");
                 expect(start.val()).to.be.a("string")
                   .that.equals(_start.format(format));
                 expect(end.val()).to.be.a("string")
                   .that.equals(_end.format(format));
-                decrease.first().click();
+                decrease[0].click();
                 _start.add(-7, "d");
                 _end.add(-7, "d");
                 expect(start.val()).to.be.a("string")
@@ -1116,15 +1159,14 @@ Data = function() {
                   .that.equals(_end.format(format));
 
                 /* <!-- Check clear --> */
-                clear.first().click();
+                clear[0].click();
                 expect(start.val()).to.be.empty;
                 expect(end.val()).to.be.empty;
 
                 /* <!-- Test Each Option --> */
                 start.val(_start.format(format)).change();
                 _.each(_blocks.spans, span => {
-                  field.find(`a.dropdown-item[data-value='${$.escapeSelector(span.value)}']`)
-                    .first().click();
+                  field.find(`a.dropdown-item[data-value='${$.escapeSelector(span.value)}']`)[0].click();
                   expect(start.val()).to.be.a("string")
                     .that.equals(_start.format(format));
                   span.value == "Custom" ?
@@ -1150,14 +1192,14 @@ Data = function() {
                 /* <!-- Check each option --> */
                 _.each(state.options, option => {
                   field.find(`input[type='radio'][data-value='${$.escapeSelector(option.value)}']`)
-                    .first().parent("label").click();
+                    .first().parent("label")[0].click();
                   expect(display.val()).to.be.a("string")
                     .that.equals(option.value);
                 });
 
                 /* <!-- Check clear option --> */
                 field.find("input[type='radio']:not([data-value])")
-                  .first().parent("label").click();
+                  .first().parent("label")[0].click();
                 expect(display.val()).to.be.empty;
 
                 /* <!-- Check details textarea --> */
@@ -1208,13 +1250,13 @@ Data = function() {
                   .that.equals(state.prefix.trim());
 
                 /* <!-- Check missing details --> */
-                add.first().click();
+                add[0].click();
                 expect(details.hasClass("invalid")).to.equal(true);
 
                 /* <!-- Add Basic Item --> */
                 var _details = GEN.t(GEN.i(10, 50));
                 details.val(_details);
-                add.first().click();
+                add[0].click();
                 var _item = list.find(".list-item").last();
                 expect(_item.find("span[data-output-name='Value']").text())
                   .to.be.a("string")
@@ -1231,12 +1273,12 @@ Data = function() {
                     .find(`a.dropdown-item[data-value='${$.escapeSelector(addition.option.value)}']`);
                   expect(_option.first().text().trim()).to.be.a("string")
                     .that.equals(addition.option.name.trim());
-                  _option.first().click();
+                  _option[0].click();
                   expect(button.first().text().trim()).to.be.a("string")
                     .that.equals(addition.option.value.trim());
 
                   details.val(addition.details);
-                  add.first().click();
+                  add[0].click();
 
                   var _item = list.find(".list-item").last();
                   expect(_item.find("span[data-output-name='Value']").text())
@@ -1249,9 +1291,10 @@ Data = function() {
                 });
 
                 /* <!-- Remove all List Items --> */
-                list.find(".list-item").each(function() {
+                var _items = list.find(".list-item");
+                _.each(_items, item => {
                   var _count = list.find(".list-item").length;
-                  $(this).find("a.delete").click();
+                  $(item).find("a.delete")[0].click();
                   expect(list.find(".list-item").length)
                     .to.be.a("number")
                     .that.equals(_count - 1);
@@ -1285,7 +1328,7 @@ Data = function() {
                     .find(`a.dropdown-item[data-value='${$.escapeSelector(addition.value)}']`);
                   expect(_option.first().text().trim()).to.be.a("string")
                     .that.equals(addition.name.trim());
-                  _option.first().click();
+                  _option[0].click();
 
                   var _item = list.find(".list-item").last();
                   expect(_item.find("span[data-output-name='Value']").text())
@@ -1298,9 +1341,10 @@ Data = function() {
                 });
 
                 /* <!-- Remove all List Items --> */
-                list.find(".list-item").each(function() {
+                var _items = list.find(".list-item");
+                _.each(_items, item => {
                   var _count = list.find(".list-item").length;
-                  $(this).find("a.delete").click();
+                  $(item).find("a.delete")[0].click();
                   expect(list.find(".list-item").length)
                     .to.be.a("number")
                     .that.equals(_count - 1);
@@ -1342,7 +1386,7 @@ Data = function() {
                 /* <!-- Test Increases --> */
                 var _total = GEN.i(1, 10);
                 _.times(_total, index => {
-                  increase.click();
+                  increase[0].click();
                   var _value = (index + 1) * state.increment;
                   expect(Number(value.val())).to.be.a("number")
                     .that.equals(_value);
@@ -1356,7 +1400,7 @@ Data = function() {
                 date.val(start.format(format));
                 _total = _total * state.increment;
 
-                add.first().click();
+                add[0].click();
 
                 var _check = (dt, d, t) => {
                   var _item = list.find(".list-item").last();
@@ -1377,7 +1421,7 @@ Data = function() {
                 _check(start, _details, _total);
 
                 /* <!-- Check clear --> */
-                clear.first().click();
+                clear[0].click();
                 expect(date.val()).to.be.empty;
                 expect(duration.val()).to.be.empty;
 
@@ -1390,7 +1434,7 @@ Data = function() {
                   .that.equals(`${_total} ${state.suffix}`);
 
                 /* <!-- Remove Item --> */
-                list.find(".list-item").last().find("a.delete").click();
+                list.find(".list-item").last().find("a.delete")[0].click();
 
                 /* <!-- Check Totals --> */
                 expect(Number(total.val()))
@@ -1404,8 +1448,8 @@ Data = function() {
 
                   details.val(addition.details);
                   date.val(addition.date.format(format));
-                  _.times(addition.total, () => increase.click());
-                  add.first().click();
+                  _.times(addition.total, () => increase[0].click());
+                  add[0].click();
 
                   var _total = addition.total * state.increment;
                   _check(addition.date, addition.details, _total);
@@ -1415,40 +1459,102 @@ Data = function() {
                     .that.equals(_running += _total);
 
                   /* <!-- Clear Inputs --> */
-                  clear.first().click();
+                  clear[0].click();
 
                 });
 
                 /* <!-- Remove all List Items --> */
-                list.find(".list-item").each(function() {
+                var _items = list.find(".list-item");
+                _.each(_items, item => {
                   var _count = list.find(".list-item").length;
-                  $(this).find("a.delete").click();
+                  $(item).find("a.delete")[0].click();
                   expect(list.find(".list-item").length)
                     .to.be.a("number")
                     .that.equals(_count - 1);
                   expect(Number(total.val()))
                     .to.be.a("number")
-                    .that.equals(_running -= Number($(this).find("span[data-output-name='Number']").text()));
+                    .that.equals(_running -= Number($(item).find("span[data-output-name='Number']").text()));
                 });
 
               },
             }),
+            evidence: () => {
+              var _options = _blocks.lists(),
+                _scale = _blocks.scale(_options, true);
+              return _.extend(_blocks.basic("Evidence Scale"), {
+                template: "field_scale",
+                type: GEN.t(GEN.i(5, 10)),
+                items_details: GEN.t(GEN.i(10, 50)),
+                list_field: GEN.b() ? "Evidence" : null,
+                scale: _scale,
+                markers: _scale.scale,
+                options: _options,
+                _interact: (field, modal, state) => {
+
+                  var _test = (value, marker) => value === true ?
+                    value : marker.evidence ? true : marker.children ?
+                    _.reduce(marker.children, _test, value) : false;
+
+                  var _marker = parent => marker => {
+
+                    var _name = `${parent ? 
+                        `${parent}.` : ""}${marker.number ? marker.number : marker.value}`,
+                      _output = `${_name}${marker.name ? ` ${marker.name}`: ""}`;
+                    var _el = field.find(`li[data-output-name='${$.escapeSelector(_output)}']`);
+
+                    return marker.evidence || marker.children && _.reduce(marker.children, _test, false) ?
+                      new Promise((resolve, reject) => {
+
+                        try {
+
+                          var _child = _el.children("ul, div.list-holder");
+                          expect(_child.css("display") === "none").to.be.true;
+                          _el.find("> div > label.material-switch")[0].click();
+
+                          PAUSE().then(() => {
+
+                            expect(_child.css("display") === "none").to.be.false;
+
+                            if (marker.children) {
+                              return RUN(_.map(marker.children, _marker(_name)));
+                            } else if (marker._data) {
+                              return RUN(_.map(marker._data.options, (option, index) => {
+                                var __el = _el.find("div.dropdown-menu")
+                                  .find(`.dropdown-item[data-value='${$.escapeSelector(option.value)}']`);
+                                __el[0].click();
+                                var _items = _child.find("div.list-data").children("div.list-item");
+                                expect(_items.length).to.equal(index + 1);
+                                expect(_items.last().find("span[data-output-name='Value']").text())
+                                  .to.be.a("string")
+                                  .that.equals(option.class.endsWith("paper") ? "Paper" : "Offline");
+                                expect(_items.last().find("span[data-output-name='Type']").text())
+                                  .to.be.a("string")
+                                  .that.equals(state.type);
+                                return Promise.resolve();
+                              }));
+                            }
+
+                          }).then(resolve).catch(e => reject(e));
+
+                        } catch (e) {
+                          reject(e);
+                        }
+
+                      }) : Promise.resolve();
+
+                  };
+
+                  return RUN(_.map(state.markers, _marker()));
+
+                },
+              });
+            },
           },
           _test = type => {
             var _data = GENERATE(type);
-            return _form(_data.fields.join("\n").trim(), modal => {
-                try {
-                  _.each(_data.state, f => {
-                    if (f._interact) {
-                      var _field = modal.find(`[data-id='${f.id}']`);
-                      FACTORY.Flags.log("Interacting with Field:", _field);
-                      f._interact(_field, modal, f);
-                    }
-                  });
-                } catch (err) {
-                  _fail(err);
-                }
-              },
+            return _form(_data.fields.join("\n").trim(), modal => RUN(_.map(_data.state,
+                f => Promise.resolve(f._interact && _.isFunction(f._interact) ?
+                  f._interact(modal.find(`[data-id='${f.id}']`), modal, f) : true).catch(_fail))),
               _data.state.length === 1 && _data.state[0]._title ? _data.state[0]._title : false);
           };
 
@@ -1465,9 +1571,9 @@ Data = function() {
 
       });
 
-    }),
+    })),
 
-    persistence: () => new Promise(resolve => {
+    persistence: () => RACE(new Promise(resolve => {
 
       PAUSE().then(() => {
 
@@ -1494,8 +1600,11 @@ Data = function() {
                   modal => {
                     try {
                       data.rehydrate(modal.find("form"), values);
+                      return RUN(_.map(_data.state,
+                        f => Promise.resolve(f._interact && _.isFunction(f._interact) ?
+                          f._interact(modal.find(`[data-id='${f.id}']`), modal, f) : true).catch(_fail)));
                     } catch (e) {
-                      return _fail(e);
+                      _fail(e);
                     }
                   },
                   _check(_data.state, _fail)
@@ -1536,7 +1645,7 @@ Data = function() {
 
       });
 
-    }),
+    })),
 
     finish: () => FACTORY.Flags.log("FINISH Called").reflect(true),
     /* <!-- External Functions --> */

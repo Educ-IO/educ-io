@@ -107,13 +107,13 @@ Fields = (options, factory) => {
     });
 
   };
-  
+
   var _updates = form => {
 
     /* <!-- Wire up select fields --> */
     form.find("select[data-updates], input[data-updates]").change(e => {
       var _this = $(e.currentTarget),
-          _val = val => val == _this.data("default") ? "" : val;
+        _val = val => val == _this.data("default") ? "" : val;
       $(`#${_this.data("updates")}`).val(_val(_this.val()));
     });
 
@@ -372,7 +372,11 @@ Fields = (options, factory) => {
 
     /* <!-- Wire up event / visibility listeners --> */
     form.find("[data-reveal]").off("change.reveal").on("change.reveal", e => {
-      $($(e.currentTarget).data("reveal")).slideToggle();
+      var _revealer = $(e.currentTarget),
+        _target = _get(_revealer.data("reveal"));
+      _revealer.is("input[type=checkbox]") ?
+        _target[_revealer.prop("checked") === true ? "slideDown" : "slideUp"]() :
+        _target.slideToggle();
     });
 
   };

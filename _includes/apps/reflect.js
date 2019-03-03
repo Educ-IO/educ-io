@@ -489,11 +489,15 @@ App = function() {
         routes: {
 
           open: {
-            options: {
+            options: command => ({
               title: "Select a Reflect File to Open",
               view: "DOCS",
-              mime: TYPES.join(","),
-            },
+              mime: /FORM/i.test(command) ? TYPE_FORM : /REPORT/i.test(command) ? TYPE_REPORT : /REVIEW/i.test(command) ? TYPE_REVIEW : /TRACKER/i.test(command) ? TYPE_TRACKER : TYPES.join(","),
+              mine: null,
+              parent: null,
+              include_folders: false,
+              team: false,
+            }),
             success: value => FN.action.load(value.result)
               .then(() => ಠ_ಠ.Recent.add(value.result.id,
                 value.result.name.replace(/.REFLECT$/i, ""),
