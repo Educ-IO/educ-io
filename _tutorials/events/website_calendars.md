@@ -3,7 +3,7 @@ layout: tutorial
 title: Displaying Events on the Web
 permalink: /tutorials/event/website-calendars
 lead: Use __javascript code__ to display __google calendar events__ on your website
-app: events
+for: events
 ---
 
 #### Introduction

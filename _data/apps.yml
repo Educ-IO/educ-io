@@ -412,6 +412,7 @@ reflect:
     - google
     - strings
     - fields
+    - dialog
   modules:
     - flags
     - controller
@@ -425,7 +426,7 @@ reflect:
     - reflect/forms
     - reflect/templates/form_master
     - reflect/templates/uk_teachers_reflection
-    - reflect/templates/students_volunteering
+    - reflect/templates/volunteering
     - reflect/scales/uk_teachers_standards
   scripts: 
     - extends/regex
@@ -465,6 +466,9 @@ reflect:
     - reflect/tracker
     - reflect/count
     - reflect/valid
+    - reflect/send
+    - reflect/recipients
+    - reflect/pill
   docs:
     - shared/JUMP
     - shared/HELP
@@ -492,7 +496,9 @@ reflect:
     - reflect/ANALYSE
     - reflect/SCALE
     - reflect/NO_SIGNATURES
+    - reflect/REMOVE_SIGNATURES
     - reflect/SIGNED_REPORT_SAVE_WARNING
+    - reflect/CLONE_NAME
   scopes:
     google:
       - scope: email
@@ -547,32 +553,44 @@ reflect:
               hash: import.report
             - name: Save
               desc: Save this Report
-              hash: save
-              id: _cmd_Report_Save
+              hash: save.report
               imports:
                 - html2canvas
               disabled_until:
                 - opened-report
               auth: google
-            - name: Clone
-              desc: Clone this as a New Report
-              hash: clone
-              id: _cmd_Report_Clone
+            - name: Save As
+              desc: Save this as a New (named) Report
+              hash: save.report.clone
               imports:
                 - html2canvas
               disabled_until:
                 - opened-report
               auth: google
               visibility: debug
+            - name: Send
+              desc: Send this Report for Signing
+              hash: send.report
+              imports:
+                - html2canvas
+              disabled_until:
+                - opened-report
+              auth: google
+            - name: Share
+              desc: Share this Report
+              hash: share.report
+              imports:
+                - html2canvas
+              disabled_until:
+                - opened-report
+              auth: google
             - name: Export
               desc: Export this Report by downloading the data
-              hash: export
-              id: _cmd_Report_Export
+              hash: save.report.export
               disabled_until:
                 - opened-report
               auth: google
               imports:
-                - xlsx
                 - filesaver
               visibility: debug
             - name: Close
@@ -3395,7 +3413,15 @@ isams:
   info: true
   colour: 38761d
   action: Find out more
-
+  versions:
+    1.0.7 :
+      name : Markdown Support in URL Parsing
+      desc : Clickable Links now support Markdown format
+      type : minor
+    1.0.6 :
+      name : URL Parsing
+      desc : Displays clickable links for urls in Daily Bulletin
+      type : minor
 
 
 #   .o88b. db       .d88b.  db    db d8888b. db    db .d8888. db   dD db    db

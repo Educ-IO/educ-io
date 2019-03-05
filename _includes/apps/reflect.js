@@ -20,9 +20,15 @@ App = function() {
     STATE_TRACKER_OPENED = "opened-tracker",
     STATE_SCALE_OPENED = "opened-tracker",
     STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED, STATE_TRACKER_OPENED, STATE_SCALE_OPENED];
-  const EMAIL = /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi;
-  const MARKER = "=== SIGNED ===";
-  const FN = {};
+  const EMAIL = /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi,
+    MARKER = "=== SIGNED ===",
+    META = "__meta",
+    INDEX = "index",
+    SIGNATORY = "signatory",
+    DESTINATION = "destination",
+    EXTENSION = ".reflect",
+    EXTENSION_REGEX = /.REFLECT$/i,
+    FN = {};
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -31,6 +37,36 @@ App = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  /* <-- Helper Functions --> */
+  FN.helper = {
+
+    values: (form, report, filter, use, initial) => _.reduce(form.groups, (memo, group) =>
+      _.reduce(_.filter(group.fields, field => field[META] && filter(field[META])),
+        (memo, field) => {
+          var _field = report[field.field];
+          if (_field && (_field.Value || _field.Values))
+            use(_field.Value || _field.Values, field.field, memo);
+          return memo;
+        }, memo), initial),
+
+    addresses: type => {
+      var _value = FN.action.dehydrate(),
+        _values = FN.helper.values(_value.data.form, _value.data.report,
+          meta => meta[type], (value, field, memo) => memo.push(value), []);
+      return _.reduce(_values, (memo, value) => memo.concat(value ? value.match(EMAIL) : []), []);
+    },
+
+    emails: options => ಠ_ಠ.Display.modal("send", _.defaults(options, {
+        id: "emails",
+      }), dialog => {
+        ಠ_ಠ.Fields().on(dialog);
+        ಠ_ಠ.Dialog({}, ಠ_ಠ).handlers.list(dialog, EMAIL);
+      })
+      .catch(e => e ? ಠ_ಠ.Flags.error("Send Error", e) : ಠ_ಠ.Flags.log("Send Cancelled")),
+
+  };
+  /* <-- Helper Functions --> */
+
 
   /* <-- Edit Functions --> */
   FN.edit = {
@@ -102,7 +138,7 @@ App = function() {
             simple: true
           });
         return _title.then(title => ಠ_ಠ.Google.files.upload({
-          name: `${title}.reflect`
+          name: `${title}${EXTENSION}`
         }, JSON.stringify(result), mime));
       };
       result ? _process(JSON.parse(result)) : Promise.reject();
@@ -218,7 +254,7 @@ App = function() {
                 valid: valid,
                 who: comment.author.me ? true : comment.author.displayName,
                 email: comment.author.emailAddress,
-                when: moment(comment.createdTime).fromNow(),
+                when: moment(comment.modifiedTime).fromNow(),
                 link: `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${ರ‿ರ.file.id}`
               }))))))
             .then(results => _target.parents(".card").find(".card-header .count")
@@ -236,6 +272,7 @@ App = function() {
         },
         _none = () => {
           _target.html(ಠ_ಠ.Display.doc.get("NO_SIGNATURES"));
+          _target.parents(".card").find(".card-header h5").html("Signatures");
         };
 
       ಠ_ಠ.Google.files.comments(ರ‿ರ.file).list()
@@ -256,11 +293,7 @@ App = function() {
       FN.create.load(_.tap(data, data =>
           ಠ_ಠ.Flags.log(`Loaded Report File: ${JSON.stringify(data, null, 2)}`)).form,
         form => (ರ‿ರ.form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(form, data.report)), actions);
-
-      return (actions.signable && actions.revisions ? ಠ_ಠ.Google.files.revisions(ರ‿ರ.file).latest()
-          .then(revision => ಠ_ಠ.Flags.log("Most Recent Revision", ರ‿ರ.revision = revision)) :
-          Promise.resolve(true))
-        .then(() => FN.process.signatures());
+      return FN.process.signatures();
     },
 
     form: (data, actions) => {
@@ -282,8 +315,8 @@ App = function() {
   FN.action = {
 
     screenshot: element => (window.html2canvas ?
-        html2canvas(element, {
-          logging: window.scrollTo(0, 0)
+        html2canvas(_.tap(element, () => window.scrollTo(0, 0)), {
+          logging: ಠ_ಠ.Flags.debug()
         }) :
         Promise.reject(new Error(`HTML2Canvas Object Evalulates to ${html2canvas}`)))
       .then(canvas => ({
@@ -304,10 +337,10 @@ App = function() {
       var _title = ರ‿ರ.template && ರ‿ರ.template.title ?
         ರ‿ರ.template.title : ರ‿ರ.template && ರ‿ರ.template.name ?
         ರ‿ರ.template.name : "Report",
-        _date = new Date().toLocaleDateString();
+        _date = new moment().format("YYYY-MM-DD");
 
       return {
-        name: `${_title} [${_date}].reflect`,
+        name: `${ಠ_ಠ.me ? `${ಠ_ಠ.me.display_name()} | ` : ""}${_title} | ${_date}${EXTENSION}`,
         data: {
           form: ರ‿ರ.template,
           report: ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(ರ‿ರ.form)
@@ -332,40 +365,71 @@ App = function() {
         Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id}`)),
 
     save: force => (!ರ‿ರ.form.signatures ? Promise.resolve(true) : ಠ_ಠ.Display.confirm({
-          id: "confirm_Save",
-          target: ಠ_ಠ.container,
-          message: ಠ_ಠ.Display.doc.get("SIGNED_REPORT_SAVE_WARNING"),
-          action: "Save",
-          close: "Cancel"
-        })
-        .catch(e => e ? ಠ_ಠ.Flags.error("Save Error", e) : ಠ_ಠ.Flags.log("Save Cancelled")))
+        id: "confirm_Save",
+        target: ಠ_ಠ.container,
+        message: ಠ_ಠ.Display.doc.get("SIGNED_REPORT_SAVE_WARNING"),
+        action: "Save",
+        close: "Cancel"
+      }))
       .then(result => {
-        if (result === true) FN.action.screenshot($("form[role='form'][data-name]")[0])
+        return result !== true ? false :
+          FN.action.screenshot($("form[role='form'][data-name]")[0])
           .then(result => {
-            var _saving = FN.action.dehydrate(),
-              _meta = {
-                name: _saving.name,
-                parents: (ರ‿ರ.folder ? ರ‿ರ.folder.id : null),
-                appProperties: {
-                  FORM: _saving.data.form,
-                }
+            var _saving = FN.action.dehydrate();
+            return (force ? ಠ_ಠ.Display.text({
+              id: "file_name",
+              title: "File Name",
+              message: ಠ_ಠ.Display.doc.get("CLONE_NAME"),
+              state: {
+                value: _saving.name.replace(EXTENSION_REGEX, "")
               },
-              _data = JSON.stringify(_saving.data),
-              _mime = TYPE_REPORT;
-            if (result) _meta.contentHints = result;
+              simple: true
+            }) : Promise.resolve(_saving.name)).then(name => {
+              var _meta = {
+                  name: !name.endsWith(EXTENSION) ? `${name}${EXTENSION}` : name,
+                  parents: (ರ‿ರ.folder ? ರ‿ರ.folder.id : null),
+                  appProperties: FN.helper.values(_saving.data.form, _saving.data.report,
+                    meta => meta[INDEX],
+                    (value, field, memo) => memo[field] = JSON.stringify(value), {
+                      FORM: _saving.data.form.name
+                    }),
+                },
+                _data = JSON.stringify(_saving.data),
+                _mime = TYPE_REPORT;
+              if (result) _meta.contentHints = result;
 
-            return ಠ_ಠ.Google.files.upload.apply(this, [_meta, _data, _mime].concat(!ರ‿ರ.file || force ? [] : [null, ರ‿ರ.file.id]));
+              return ಠ_ಠ.Google.files.upload.apply(this, [_meta, _data, _mime].concat(!ರ‿ರ.file || force ? [] : [null, ರ‿ರ.file.id]));
+            });
           })
-          .then(uploaded => ಠ_ಠ.Recent.add((ರ‿ರ.file = uploaded).id,
-            uploaded.name.replace(/.REFLECT$/i, ""), "#google,load." + uploaded.id))
-          .then(() => ಠ_ಠ.Flags.log("Saved:", ರ‿ರ.file))
-          .catch(e => ಠ_ಠ.Flags.error("Saving Error", e))
-          .then(ಠ_ಠ.Display.busy({
-            target: $("body"),
-            status: "Saving Report",
-            fn: true
-          }));
+          .then(uploaded => _.tap(uploaded, uploaded => ಠ_ಠ.Recent.add((ರ‿ರ.file = uploaded).id,
+            uploaded.name.replace(EXTENSION_REGEX, ""), "#google,load." + uploaded.id)))
+          .then(uploaded => ಠ_ಠ.Flags.log("Saved:", uploaded).reflect(uploaded))
+          .catch(e => (e ? ಠ_ಠ.Flags.error("Save Error", e) : ಠ_ಠ.Flags.log("Save Cancelled")).negative())
+          .then(ಠ_ಠ.Main.busy("Saving Report"));
       }),
+
+    send: () => FN.helper.emails({
+      id: "send_Report",
+      title: "Send Report for Approval / Signature",
+      instructions: ಠ_ಠ.Display.doc.get("SEND_INSTRUCTIONS"),
+      emails: FN.helper.addresses(SIGNATORY),
+    }).then(values => {
+      if (values) ಠ_ಠ.Flags.log("TODO: SEND", values);
+    }),
+
+    share: () => {
+      ಠ_ಠ.Flags.log("TODO:", "SHARE");
+      return true;
+    },
+
+    complete: () => FN.helper.emails({
+      id: "complete_Report",
+      title: "Complete Report",
+      instructions: ಠ_ಠ.Display.doc.get("COMPLETE_INSTRUCTIONS"),
+      emails: FN.helper.addresses(DESTINATION),
+    }).then(values => {
+      if (values) ಠ_ಠ.Flags.log("TODO: COMPLETE", values);
+    }),
 
     export: () => {
       var _exporting = FN.action.dehydrate();
@@ -422,6 +486,21 @@ App = function() {
         result => ಠ_ಠ.Flags.log(`Verification Result: ${result}`, signature)))
       .catch(e => ಠ_ಠ.Flags.error("Verifying Error", e)),
 
+    remove: () => ಠ_ಠ.Google.files.comments(ರ‿ರ.file).list()
+      .then(comments => _.filter(comments, comment =>
+        comment.content.indexOf(MARKER) === 0 && comment.author && comment.author.me === true))
+      .then(comments => comments.length > 0 ? ಠ_ಠ.Display.confirm({
+        id: "confirm_Remove",
+        message: ಠ_ಠ.Display.doc.get({
+          name: "REMOVE_SIGNATURES",
+          content: comments.length,
+        }),
+        action: "Remove",
+        close: "Cancel"
+      }).then(result => result === true ? Promise.all(_.map(comments, comment =>
+        ಠ_ಠ.Google.files.comments(ರ‿ರ.file).delete(comment.id))) : false) : false)
+      .catch(e => ಠ_ಠ.Flags.error("Loading Comments", e)),
+
     report: () => FN.sign.supported() ? FN.sign.crypto.generateKey(
         FN.sign.key(), true, ["sign", "verify"]
       ).then(key => FN.sign.crypto.sign(FN.sign.algorithm(), key.privateKey, FN.sign.raw())
@@ -432,16 +511,24 @@ App = function() {
               key: FN.sign.decode(value)
             }, signature => ಠ_ಠ.Flags.log("Signature:", signature)));
         }))
-      .then(signature => ಠ_ಠ.Google.files.comments(ರ‿ರ.file)
-        .create(`${MARKER}\n\n${JSON.stringify(signature)}`, {
-          r: ರ‿ರ.revision ? ರ‿ರ.revision.id : "head",
-          a: [{
-            rect: {
-              mw: 1,
-              mh: 1,
-            }
-          }],
-        }))
+      .then(signature => `${MARKER}\n\n${JSON.stringify(signature)}`)
+      .then(signature => ಠ_ಠ.Google.files.comments(ರ‿ರ.file).list()
+        .then(comments => _.filter(comments, comment =>
+          comment.content.indexOf(MARKER) === 0 && comment.author && comment.author.me === true))
+        .then(comments => comments.length > 0 ?
+          ಠ_ಠ.Google.files.comments(ರ‿ರ.file).update(comments[0].id, signature) :
+          ಠ_ಠ.Google.files.comments(ರ‿ರ.file)
+          .create(signature, {
+            r: "head",
+            a: [{
+              rect: {
+                mw: 1,
+                mh: 1,
+              }
+            }],
+          })
+        )
+      )
       .catch(e => ಠ_ಠ.Flags.error("Signing Error", e))
       .then(ಠ_ಠ.Main.busy("Signing Report")) : false,
 
@@ -473,17 +560,22 @@ App = function() {
         instructions: [{
             match: /SAVE/i,
             show: "SAVE_INSTRUCTIONS",
-            title: "How to save your Form ..."
+            title: "Saving your Report ..."
+          },
+          {
+            match: /SIGN/i,
+            show: "SIGN_INSTRUCTIONS",
+            title: "Signing this Report ..."
           },
           {
             match: /SEND/i,
             show: "SEND_INSTRUCTIONS",
-            title: "How to send your Form ..."
+            title: "Sending & Sharing your Report ..."
           },
           {
             match: /COMPLETE/i,
             show: "COMPLETE_INSTRUCTIONS",
-            title: "How to complete your Form ..."
+            title: "How to Complete & Submit ..."
           }
         ],
         routes: {
@@ -500,7 +592,7 @@ App = function() {
             }),
             success: value => FN.action.load(value.result)
               .then(() => ಠ_ಠ.Recent.add(value.result.id,
-                value.result.name.replace(/.REFLECT$/i, ""),
+                value.result.name.replace(EXTENSION_REGEX, ""),
                 `#google,load.${value.result.id}`))
               .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e))
               .then(ಠ_ಠ.Main.busy("Opening Report")),
@@ -519,10 +611,6 @@ App = function() {
             success: value => FN.action.load(value.result).then(ಠ_ಠ.Main.busy("Loading")),
           },
 
-          export: () => ರ‿ರ.form ? FN.action.export() : false,
-
-          clone: () => ರ‿ರ.form ? FN.action.save(true) : false,
-
           analyse: {
             matches: /ANALYSE/i,
             fn: () => FN.prompt.choose(
@@ -534,10 +622,21 @@ App = function() {
             matches: /SIGN/i,
             routes: {
               report: {
-                length: 0,
                 matches: /REPORT/i,
                 state: STATE_REPORT_OPENED,
-                fn: () => FN.sign.report().then(() => FN.process.signatures())
+                routes: {
+                  export: {
+                    matches: /REMOVE/i,
+                    length: 0,
+                    fn: () => FN.sign.remove()
+                      .then(result => result ? FN.process.signatures() : false)
+                  },
+                  sign: {
+                    length: 0,
+                    fn: () => FN.sign.report().then(() => FN.process.signatures())
+                  },
+                }
+
               }
             }
           },
@@ -549,23 +648,56 @@ App = function() {
 
           save: {
             matches: /SAVE/i,
-            length: 0,
-            fn: () => FN.action.save().then(() => FN.process.signatures()),
             routes: {
               report: {
+                matches: /REPORT/i,
                 state: STATE_REPORT_OPENED,
                 routes: {
                   clone: {
                     matches: /CLONE/i,
-                    fn: () => $("#_cmd_Report_Clone").click()
+                    fn: () => FN.action.save(true)
+                      .then(result => result ? FN.process.signatures() : false)
                   },
                   export: {
                     matches: /EXPORT/i,
-                    fn: () => $("#_cmd_Report_Export").click()
+                    fn: () => FN.action.export()
                   },
-                  report_save: {
-                    matches: /REPORT/i,
-                    fn: () => $("#_cmd_Report_Save").click()
+                  save: {
+                    length: 0,
+                    fn: () => FN.action.save()
+                      .then(result => result ? FN.process.signatures() : false)
+                  },
+                }
+              }
+            }
+          },
+
+          send: {
+            matches: /SEND/i,
+            routes: {
+              report: {
+                matches: /REPORT/i,
+                state: STATE_REPORT_OPENED,
+                routes: {
+                  send: {
+                    length: 0,
+                    fn: () => FN.action.send(),
+                  },
+                }
+              }
+            }
+          },
+
+          share: {
+            matches: /SHARE/i,
+            routes: {
+              report: {
+                matches: /REPORT/i,
+                state: STATE_REPORT_OPENED,
+                routes: {
+                  send: {
+                    length: 0,
+                    fn: () => FN.action.share(),
                   },
                 }
               }

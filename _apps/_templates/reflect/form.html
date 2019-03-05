@@ -23,20 +23,20 @@
 			<!-- Submission / Save / Progress Area -->
 			<div class="card mx-1 my-1 mx-md-0">
 
-        {{#> heading target=(concat id "_Submission") name="Submission" }}
+        {{#> heading target=(concat id "_Actions") name="Actions" }}
         
           <div class="form-group">
             <div class="col-md-9 d-flex flex-column flex-md-row">
 
               <!-- Save Button Group -->
               {{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
-              <a id="{{id}}_SAVE" href="#save.report" role="button" class="btn btn-info btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">save</i>Save</a>
+              <a id="{{id}}_SAVE" data-route="save.report" href="#" role="button" class="btn btn-info btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">save</i>Save</a>
               <button type="button" class="btn btn-info btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="sr-only">Toggle Dropdown</span>
               </button>
               <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="#save.clone">Clone</a>
-                <a class="dropdown-item" href="#save.export">Export</a>
+                <a class="dropdown-item" data-route="save.report.clone" href="#">Save As</a>
+                <a class="dropdown-item" data-route="save.report.export" href="#">Export</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#instructions.save">About</a>
               </div>
@@ -44,12 +44,13 @@
 
               <!-- Sign Button Group -->
               {{#if signable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
-              <a id="{{id}}_SIGN" href="#sign.report" role="button" class="btn btn-dark btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">vpn_key</i>Sign</a>
+              <a id="{{id}}_SIGN" href="#google,sign.report" role="button" class="btn btn-dark btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">vpn_key</i>Sign</a>
               <button type="button" class="btn btn-dark btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="sr-only">Toggle Dropdown</span>
               </button>
               <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="#sign.report">Sign</a>
+                <a class="dropdown-item" href="#google,sign.report">Sign</a>
+                <a class="dropdown-item" href="#google,sign.report.remove">Remove Signature</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#instructions.sign">About</a>
               </div>
@@ -57,14 +58,13 @@
 
               <!-- Send Button Group -->
               <div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
-                <a id="{{id}}_SEND" href="#send" role="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">send</i>Send</a>
+                <a id="{{id}}_SEND" data-route="send.report" href="#" role="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">send</i>Send</a>
                 <button type="button" class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <a class="dropdown-item" href="#">Something else here</a>
+                  <a class="dropdown-item" data-route="send.report" href="#">Send</a>
+                  <a class="dropdown-item" data-route="share.report" href="#">Share</a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#instructions.send">About</a>
                 </div>

@@ -3,7 +3,7 @@ layout: tutorial
 title: Analysing your Tasks
 permalink: /tutorials/docket/spreadsheet-query
 lead: __Querying__ and __analysing__ your `Docket` data inside Google Sheets.
-app: docket
+for: docket
 ---
 
 #### Introduction

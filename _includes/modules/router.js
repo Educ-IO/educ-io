@@ -45,9 +45,12 @@ Router = function() {
           options.include_folders : true)
         .setOwnedByMe(options && options.mine !== undefined ? options.mine : null)
         .setSelectFolderEnabled(options && options.folders ? true : false)
-        .setParent(options && options.mine !== undefined ? options.parent : "root"), view => {
-          if (options.query) view.setQuery(options.query);
-          if (options.navigation) view.navigation = options.navigation;
+        .setParent(options && options.parent !== undefined ?
+          options.parent : (options.parent = "root")),
+        view => {
+          if (options.query !== undefined && options.query !== null) view.setQuery(options.query);
+          if (options.navigation !== undefined) view.navigation = options.navigation;
+          if (options.parent) view.team = false;
         })]
       .concat(options.all ? [new google.picker
         .DocsView(options ? google.picker.ViewId[options.view] : null)
@@ -298,8 +301,8 @@ Router = function() {
 
             /* <!-- Process Specific App Instructions --> */
             var _shown = false;
-            if (options.instructions && command[1] && command.length > 1) {
-              var _match = _.find(options.instructions, value => value.match.test(command[1]));
+            if (options.instructions && command) {
+              var _match = _.find(options.instructions, value => value.match.test(command));
               if (_match) _shown = true && show(_match.show, _match.title);
             }
 

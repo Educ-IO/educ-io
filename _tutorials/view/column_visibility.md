@@ -3,7 +3,7 @@ layout: tutorial
 title: Adjusting Column Visibility
 permalink: /tutorials/view/column-visibility
 lead: __Showing__ and __hiding__ columns with `View`.
-app: view
+for: view
 ---
 
 #### Introduction

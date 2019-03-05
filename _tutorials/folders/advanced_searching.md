@@ -3,7 +3,7 @@ layout: tutorial
 title: Advanced Searching
 permalink: /tutorials/folders/advanced-searching
 lead: Audit __permissions__ with `Folders`, to help ensure your __data confidentiality__ meets your __sharing requirements__.
-app: folders
+for: folders
 ---
 
 #### Introduction

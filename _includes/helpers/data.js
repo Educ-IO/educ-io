@@ -34,7 +34,8 @@ Data = (options, factory) => {
       var ids = id.indexOf("||") > 0 ? id.split("||") : [id];
       var selector = _.reduce(ids, (memo, id) => `${memo ? `${memo}, `: ""}#${id}, #${id} > input`, "");
       return (parent ? parent : $)(selector);
-    };
+    },
+    MAGIC = "*";
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -166,7 +167,7 @@ Data = (options, factory) => {
         Order: values[_name].Order === false ? _order : values[_name].Order,
         __type: values[_name].Type === false ? _type : values[_name].Type
       } : (_.isObject(_field) && !_field._isAMomentObject) ? {
-        Values: _field,
+        Values: _field[MAGIC] ? _field[MAGIC] : _field,
         Order: _order,
         __type: _type
       } : {

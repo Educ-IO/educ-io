@@ -5,8 +5,9 @@ Dialog = (options, factory) => {
   /* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
   /* <!-- @factory.Fields: Function to create a fields helper object --> */
   /* <!-- @factory.Google: Function to access the Google helper object --> */
+  /* <!-- @factory.Display: Function to access the Display module object --> */
   /* <!-- REQUIRES: Global Scope: jQuery, Underscore --> */
-  /* <!-- REQUIRES: Factory Scope: Fields, Google --> */
+  /* <!-- REQUIRES: Factory Scope: Fields, Google, Display --> */
 
   /* === Internal Visibility === */
 
@@ -140,6 +141,41 @@ Dialog = (options, factory) => {
         }
       }
     },
+    
+    list: (dialog, match) => {
+      
+      /* <!-- Handle Click to Remove --> */
+      var _handler = target => target.find("a[data-action='remove']")
+      .on("click.remove", e => {
+        e.preventDefault();
+        $(e.currentTarget).parent().remove();
+      });
+      _handler(dialog.find("form"));
+
+      /* <!-- Handle Click to Add --> */
+      dialog.find("button[data-action='add']").on("click.add", e => {
+        e.preventDefault();
+        var _$ = $(e.currentTarget),
+            _input = dialog.find(`#${_$.data("target")}`),
+            _value = _input.val() || _input.text();
+        
+        if (_value && (!match || (_value = _value.match(match)))) {
+          if (_input.is("input")) _input.val("") && _input.focus();
+          var _output = dialog.find(`#${_input.data("target")}`),
+              _template = _input.data("template");
+          _handler(factory.Display.template.show({
+            template: _template,
+            value: _.isArray(_value) ? _value[0] : _value,
+            target: _output,
+          }));
+        }
+      });
+
+      /* <!-- Handle Enter on textbox to Add --> */
+      dialog.find("input[data-action='add']")
+        .keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? e.preventDefault() || $(e.currentTarget).siblings("button[data-action='add']").click() : null).focus();
+      
+    }
 
   };
   /* <!-- Internal Functions --> */

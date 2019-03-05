@@ -3,7 +3,7 @@ layout: tutorial
 title: Bulk Converting Files
 permalink: /tutorials/folders/bulk-convert
 lead: Converting __large numbers__ of files to _native formats_ with `Folders`
-app: folders
+for: folders
 ---
 
 #### Introduction

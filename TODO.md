@@ -122,6 +122,8 @@ Folders
 
 Reflect
 -------
+* ** IMPORTANT ** Escape EMAIL Regex for forms... ????
+
 * Thumbnail / Content Hint for Form (render?)
 
 * ** NEW FIELD ** Range Field - https://getbootstrap.com/docs/4.3/components/forms/#range
@@ -131,13 +133,13 @@ Reflect
 * Lesson Observation Form
 
 * ** IMPORTANT ** Feedback on successful save?
-* ** IMPORTANT ** Save, Send & Complete Instructions / About
 * ** IMPORTANT ** Optional Gradings against standards
 
 * Change UI Buttons (Save, Complete etc) for Report / Form
-* Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL
-* Email group from above.
 
+* Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL
+
+* Email group from above.
 
 Publish
 -------
@@ -149,6 +151,7 @@ Survey
 
 Complete
 --------
+* ** IMPORTANT ** Save, Send & Complete Instructions / About <-- DONE
 * ** IMPORTANT ** Including Save buttons at the end of Reflect Forms by cloning menu items from NAV (with imports etc) <-- DONE
 * ** BUG ** Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS <-- DONE
 * ** IMPORTANT ** Enable Auto-Prefixer for CSS Build <-- DONE
@@ -623,4 +626,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2019-02-22
+ᕕ( ᐛ )ᕗ JD - 2019-03-05

@@ -17,7 +17,12 @@ __Σ__UK_Teachers_Reflection =  {
           button: "Me!",
           action: "me",
           large: true,
-          required: true
+          required: true,
+          __meta: {
+            analyse: {
+              type: "row"
+            }
+          },
         },
         span : {
           template: "field_span",
@@ -33,6 +38,12 @@ __Σ__UK_Teachers_Reflection =  {
             {span: "M", value: "Monthly", name: "Monthly"},
             {span: "y", value: "Yearly", name: "Yearly"}
           ],
+          __meta: {
+             index: true,
+            analyse: {
+              type: "column"
+            }
+          },
         },
         absences : {
           template: "field_numeric",
@@ -53,7 +64,10 @@ __Σ__UK_Teachers_Reflection =  {
           field: "Mentor",
           icon: "school",
           help: "",
-          required: true
+          required: true,
+          __meta: {
+            signatory: true,
+          }
         },
       }
     },

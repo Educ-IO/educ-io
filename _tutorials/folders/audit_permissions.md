@@ -3,7 +3,7 @@ layout: tutorial
 title: Auditing Sharing Permissions
 permalink: /tutorials/folders/audit-permissions
 lead: Audit __permissions__ with `Folders`, to help ensure your __data confidentiality__ meets your __sharing requirements__.
-app: folders
+for: folders
 ---
 
 #### Introduction

@@ -3,7 +3,7 @@ layout: tutorial
 title: Hyperlinking to an email in Gmail
 permalink: /tutorials/docket/hyperlinking-gmail
 lead: How to __hyperlink__ to an email from a __Docket__ task.
-app: docket
+for: docket
 ---
 
 #### Introduction

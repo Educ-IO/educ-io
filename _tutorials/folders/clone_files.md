@@ -3,7 +3,7 @@ layout: tutorial
 title: Cloning Files
 permalink: /tutorials/folders/clone-files
 lead: Cloning __Files__ and __Folder Structures__ in Google Drive with `Folders`
-app: folders
+for: folders
 ---
 
 #### Introduction

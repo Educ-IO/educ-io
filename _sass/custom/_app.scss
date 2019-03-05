@@ -281,6 +281,7 @@ a.disabled, input.disabled, .btn-disabled {
 		margin-left: .25rem;
 		color: inherit;
 		font-size: 100%;
+    &.d-inline-flex {font-size: 1.3rem;}
 		text-shadow: 0 1px 0 rgba(#000, .5);
 	}
 	.material-icons {

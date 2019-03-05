@@ -239,7 +239,10 @@ Google_API = (options, factory) => {
   var _pick = (title, multiple, team, views, callback, context, get) => {
 
     if (window.google && google.picker) {
-
+      const PICKER = google.picker,
+        RESPONSE = PICKER.Response,
+        ACTION = PICKER.Action,
+        FEATURE = PICKER.Feature;
       var origin = `${window.location.protocol}//${window.location.host}`,
         picker = new google.picker.PickerBuilder()
         .setTitle(title)
@@ -247,38 +250,40 @@ Google_API = (options, factory) => {
         .setOAuthToken(_token())
         .setOrigin(origin)
         .setCallback(((callback, context) => data => {
-          if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+          if (data[RESPONSE.ACTION] == ACTION.PICKED) {
             /* <!-- TODO: TeamDrive Items picked from Recent don't have teamDriveId ... --> */
-            var _files = data[google.picker.Response.DOCUMENTS];
+            var _files = data[RESPONSE.DOCUMENTS];
             multiple ?
               (get ? Promise.all(_.map(_files, file => _get(file.id, file.teamDriveId))) :
                 Promise.resolve(_files)).then(files => callback(files, context)) :
               (get ? _get(_files[0].id, _files[0].teamDriveId) : Promise.resolve(_files[0]))
               .then(file => callback(file, context));
-          } else if (data[google.picker.Response.ACTION] == google.picker.Action.CANCEL) {
+          } else if (data[RESPONSE.ACTION] == ACTION.CANCEL) {
             callback(false, context);
           }
         })(callback, context));
 
-      if (multiple) picker.enableFeature(google.picker.Feature.MULTISELECT_ENABLED);
+      if (multiple) picker.enableFeature(FEATURE.MULTISELECT_ENABLED);
       /* <!-- This doesn't currently work in Google Loader v1, but does in GAPI --> */
-      if (team) picker.enableFeature(google.picker.Feature.SUPPORT_TEAM_DRIVES);
+      if (team) picker.enableFeature(FEATURE.SUPPORT_TEAM_DRIVES);
       if (views && typeof views === "function") views = views();
       var make = view => _.isString(view) ? view = new google.picker.View(view) : view;
       if (!views || (Array.isArray(views) && views.length === 0)) {
-        var view = new google.picker.DocsView()
+        var view = new PICKER.DocsView()
           .setIncludeFolders(true)
           .setSelectFolderEnabled(true)
           .setParent("root");
         picker.addView(view.setEnableTeamDrives ? view.setEnableTeamDrives(team) : view);
       } else if (Array.isArray(views)) {
         views.forEach(function(view) {
-          picker.addView((view = make(view)).setEnableTeamDrives ? view.setEnableTeamDrives(team) : view);
+          picker.addView((view = make(view)).setEnableTeamDrives ?
+            view.setEnableTeamDrives(view.team !== undefined ? view.team : team) : view);
         });
-        if (views.length == 1 && !views[0].navigation) picker.enableFeature(google.picker.Feature.NAV_HIDDEN);
+        if (views.length == 1 && !views[0].navigation) picker.enableFeature(FEATURE.NAV_HIDDEN);
       } else {
-        picker.addView((views = make(views)).setEnableTeamDrives ? views.setEnableTeamDrives(team) : views);
-        picker.enableFeature(google.picker.Feature.NAV_HIDDEN);
+        picker.addView((views = make(views)).setEnableTeamDrives ?
+          views.setEnableTeamDrives(views.team !== undefined ? views.team : team) : views);
+        picker.enableFeature(FEATURE.NAV_HIDDEN);
       }
 
       picker.build().setVisible(true);
@@ -661,11 +666,13 @@ Google_API = (options, factory) => {
               anchor: anchor,
             })),
 
-
           update: (id, content) => _call(NETWORKS.general.patch,
             `drive/v3/files/${file && file.id ? file.id : file}/comments/${id}?fields=${FIELDS}`, STRIP_NULLS({
               content: content,
             })),
+
+          delete: id => _call(NETWORKS.general.delete,
+            `drive/v3/files/${file && file.id ? file.id : file}/comments/${id}`),
 
           list: () => _list(NETWORKS.general.get,
             `drive/v3/files/${file && file.id ? file.id : file}/comments`, "comments", [], STRIP_NULLS({

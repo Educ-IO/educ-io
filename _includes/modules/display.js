@@ -69,6 +69,17 @@ Display = function() {
     placement: _placement
   }));
 
+  var _routes = targets => targets.off("click.route").on("click.route", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    var _this = $(e.currentTarget),
+      _route = _this.data("route");
+    if (_route)
+      $(`nav a[href='#${_route}']:not(.disabled), nav a[href^='#'][href$=',${_route}']:not(.disabled)`)
+      .first().click();
+
+  });
+
   var _target = options => {
 
     /* <!-- Ensure we have a target _element, and that it is wrapped in JQuery --> */
@@ -400,6 +411,7 @@ Display = function() {
 
         _popovers(_return.find("[data-toggle='popover']"));
         _tooltips(_return.find("[data-toggle='tooltip']"));
+        _routes(_return.find("a[data-route], button[data-route]"));
 
         return options.prepend === true ? _return.prependTo(_element) : _return.appendTo(_element);
 
@@ -809,7 +821,7 @@ Display = function() {
 
       return new Promise((resolve, reject) => {
 
-        if (!options || !options.message) return reject();
+        if (!options || (!options.simple && !options.message)) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
         var dialog = $(_template("text")(options));

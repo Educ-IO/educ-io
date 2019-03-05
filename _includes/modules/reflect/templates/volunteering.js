@@ -1,7 +1,7 @@
-__Σ__Students_Volunteering = {
- 	/* <!-- FORM: Student Volunteering --> */
-  name : "Student Volunteering",
-  title : "Student Volunteering Report",
+__Σ__Volunteering = {
+ 	/* <!-- FORM: Volunteering --> */
+  name : "Volunteering",
+  title : "Volunteering Report",
   type : "Report",
   groups : {
     you : {
@@ -18,8 +18,10 @@ __Σ__Students_Volunteering = {
           large: true,
           required: true,
           readonly: true,
-          analyse: {
-            type: "row"
+          __meta: {
+            analyse: {
+              type: "row"
+            }
           },
         },
         form_group : {
@@ -50,6 +52,12 @@ __Σ__Students_Volunteering = {
             {span: "M", value: "Monthly", name: "Monthly"},
             {span: "y", value: "Yearly", name: "Yearly"}
           ],
+          __meta: {
+             index: true,
+            analyse: {
+              type: "column"
+            }
+          },
         },
         periods : {
           template: "field_durations",
@@ -96,7 +104,10 @@ __Σ__Students_Volunteering = {
           icon: "how_to_reg",
           large: true,
           required: true,
-          pattern: /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi
+          pattern: /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi,
+          __meta: {
+            signatory: true,
+          }
         },
       }
     },

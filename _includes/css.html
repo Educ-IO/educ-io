@@ -6,6 +6,8 @@
 	{% assign imports = layout.imports %}
 {% elsif page.app and page.app != "" and site.data.apps[page.app].imports %}
 	{% assign imports = site.data.apps[page.app].imports %}
+{% elsif page.for and page.for != "" and site.data.apps[page.for].imports %}
+	{% assign imports = site.data.apps[page.for].imports %}
 {% endif %}
 
 {% if imports %}

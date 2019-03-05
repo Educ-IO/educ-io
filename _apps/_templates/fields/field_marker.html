@@ -40,7 +40,7 @@
            hidden="hidden" type="checkbox" 
            for="{{id}}_{{which children 'CHILDREN' 'ITEMS'}}"
            data-reveal="{{id}}_{{which children 'CHILDREN' 'ITEMS'}}"
-           {{#if readonly}} readonly="readonly"{{/if}}>
+           {{#if readonly}} readonly="readonly" disabled{{/if}}>
 		<label class="material-switch{{#if readonly}} disabled{{/if}}" for="{{id}}"></label>
 	</div>
 	{{#if children}}

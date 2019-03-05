@@ -3,7 +3,7 @@ layout: tutorial
 title: Exporting Data
 permalink: /tutorials/view/exporting-data
 lead: __Exporting__ sheets data to __other spreadsheet formats__ using `View`.
-app: view
+for: view
 ---
 
 #### Introduction

@@ -3,7 +3,7 @@ layout: tutorial
 title: Easy Data Filtering
 permalink: /tutorials/view/easy-filtering
 lead: __Selecting__, __filtering__ and __sharing__ your sheets data with `View`.
-app: view
+for: view
 ---
 
 #### Introduction

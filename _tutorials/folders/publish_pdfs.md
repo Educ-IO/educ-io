@@ -3,7 +3,7 @@ layout: tutorial
 title: Publishing PDFs
 permalink: /tutorials/folders/publish-pdfs
 lead: Easily publish __Google Docs__ to __PDFs__ with `Folders` to help maintain a website or archive.
-app: folders
+for: folders
 ---
 
 #### Introduction

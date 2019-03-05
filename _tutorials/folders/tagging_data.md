@@ -3,7 +3,7 @@ layout: tutorial
 title: Better Management with Tags
 permalink: /tutorials/folders/tagging-data
 lead: Improving File __Management__, __Confidentiality__ and __Review Processes__ using `Folders` and Tags
-app: folders
+for: folders
 ---
 
 #### Introduction

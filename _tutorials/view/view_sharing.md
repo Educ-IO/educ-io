@@ -3,7 +3,7 @@ layout: tutorial
 title: Sharing a View
 permalink: /tutorials/view/view-sharing
 lead: __Selecting__, __filtering__ and __sharing__ your sheets data with `View`.
-app: view
+for: view
 ---
 
 #### Introduction
