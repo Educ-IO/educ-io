@@ -398,6 +398,12 @@ reflect:
       load: last
     - name: waves-js
       load: last
+    - name: jshashes
+      load: last
+    - name: deepExtend
+      load: last
+    - name: quotedPrintable
+      load: last
     - name: xlsx
       load: lazy
     - name: filesaver
@@ -457,6 +463,7 @@ reflect:
     - fields/field_textual
     - fields/field_durations
     - fields/field_files
+    - emails/email_standard
     - reflect/heading
     - reflect/group
     - reflect/form
@@ -483,6 +490,7 @@ reflect:
     - reflect/SAVE_INSTRUCTIONS
     - reflect/SEND_INSTRUCTIONS
     - reflect/SIGN_INSTRUCTIONS
+    - reflect/SHARE_INSTRUCTIONS
     - reflect/URL
     - reflect/FILE
     - reflect/CREATE
@@ -499,6 +507,7 @@ reflect:
     - reflect/REMOVE_SIGNATURES
     - reflect/SIGNED_REPORT_SAVE_WARNING
     - reflect/CLONE_NAME
+    - reflect/EMAIL_REPORT_SEND
   scopes:
     google:
       - scope: email
@@ -524,6 +533,10 @@ reflect:
       - scope: https://www.googleapis.com/auth/spreadsheets
         name: View / Edit your Google Spreadsheets
         reason: This app needs to write data to your spreadsheets in order to record periodic progress from your reflections.
+        request: lazy
+      - scope: https://www.googleapis.com/auth/drive
+        name: View and manage the files in your Google Drive
+        reason: To sign files that you have opened directly from a link, this permission is needed.
         request: lazy
       - scope: https://www.googleapis.com/auth/gmail.send
         name: Send Emails
@@ -575,6 +588,7 @@ reflect:
                 - html2canvas
               disabled_until:
                 - opened-report
+              scope: https://www.googleapis.com/auth/gmail.send
               auth: google
             - name: Share
               desc: Share this Report

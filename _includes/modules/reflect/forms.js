@@ -73,17 +73,17 @@ Forms = function() {
           }
           try {
             fields.push(ಠ_ಠ.Display.template.get(field));
-          } catch(e) {
+          } catch (e) {
             ಠ_ಠ.Flags.error(`Error rendering template for field: ${field.id} | ${field.template}`, e);
           }
         }
         group.fields = fields.join("").trim();
         try {
           groups.push(ಠ_ಠ.Display.template.get(group));
-        } catch(e) {
+        } catch (e) {
           ಠ_ಠ.Flags.error(`Error rendering template for group: ${group.id} | ${group.template}`, e);
         }
-        
+
       }
 
       return {
@@ -144,7 +144,20 @@ Forms = function() {
         .then(files => _.each(files, file => {
           ಠ_ಠ.Google.files.download(file.id)
             .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
-            .then(content => ರ‿ರ.cache[type.name][file.id] = JSON.parse(content))
+            .then(content => {
+              var _object, _extend = (parent, object) => _.deepExtend(DEEPCLONE(parent), object);
+              try {
+                _object = JSON.parse(content);
+              } catch (e) {
+                ಠ_ಠ.Flags.error(`Error Parsing: ${file.id}`, e);
+              }
+              return _object && _object.__extends ?
+                ರ‿ರ.cache[type.name][_object.__extends] ?
+                _extend(ರ‿ರ.cache[type.name][_object.__extends], _object) :
+                ಠ_ಠ.Flags.log(`No ${type.name} named ${_object.__extends} for ${file.id} to extend`)
+                .reflect(_object) : _object;
+            })
+            .then(object => object ? ರ‿ರ.cache[type.name][file.id] = object : object)
             .then(() => file.teamDriveId ? ಠ_ಠ.Google.teamDrives.get(file.teamDriveId)
               .then(drive => {
                 file.owners = [{

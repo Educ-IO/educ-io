@@ -463,6 +463,8 @@ Fields = (options, factory) => {
               view: options.list_picker_view
             })
             .then(files => _.each(files, (file, i) => _handlers.add({
+              kind: file.kind,
+              mime: file[google.picker.Document.MIME_TYPE],
               id: file[google.picker.Document.ID],
               url: file[google.picker.Document.URL] ?
                 file[google.picker.Document.URL] : file.webViewLink,
@@ -500,6 +502,8 @@ Fields = (options, factory) => {
               }, source, source.type)
               .then(uploaded => factory.Google.files.get(uploaded.id).then(file => {
                 _handlers.add({
+                  kind: file.kind,
+                  mime: file.mimeType,
                   id: file.id,
                   url: file.webViewLink,
                   details: file.name,

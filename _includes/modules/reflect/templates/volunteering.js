@@ -24,13 +24,10 @@ __Σ__Volunteering = {
             }
           },
         },
-        form_group : {
-          template: "field_select",
-          title: "Your form group / div",
-          field: "Form Group",
-          default: "Please select ...",
-          options: ["Please select ...", "6B1","6B2", "6B3", "6D1", "6D2", "6D3", "6N1", 
-                    "6N2", "6N3", "6R1", "6R2", "6R3", "6S1", "6S2", "6S3", "6V1", "6V2", "6V3"], 
+        group : {
+          template: "field_textual",
+          title: "Your group",
+          field: "Group",
         },
       }
     },
@@ -104,7 +101,7 @@ __Σ__Volunteering = {
           icon: "how_to_reg",
           large: true,
           required: true,
-          pattern: /\w+@[\w.-]+|\{(?:\w+, *)+\w+\}@[\w.-]+/gi,
+          pattern: /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi,
           __meta: {
             signatory: true,
           }

@@ -151,6 +151,9 @@ Survey
 
 Complete
 --------
+* ** BUG ** Import doesn't clear state (e.g. FILE / COMMENTS) properly. <-- DONE
+* Import doesn't then have option to save to Google Drive (editable?) <-- DONE
+* ** BUG ** Cancel from form editing dialog -> Exception <-- DONE
 * ** IMPORTANT ** Save, Send & Complete Instructions / About <-- DONE
 * ** IMPORTANT ** Including Save buttons at the end of Reflect Forms by cloning menu items from NAV (with imports etc) <-- DONE
 * ** BUG ** Button Sizes inconsistent (Text vs Icon buttons) on Mobile / IOS & Picker problems on IOS <-- DONE

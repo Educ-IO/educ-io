@@ -5,13 +5,14 @@ Main = function() {
 
   /* <!-- Internal Constants --> */
   const LOGIN_RACE = 5000,
+    REFRESH_RACE = 60000,
     STATE_AUTH = "authenticated";
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
   var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "App"];
   /* <!-- Internal Variables --> */
-  
+
   /* <!-- Plumbing Functions --> */
   const BUSY = status => _.wrap(ಠ_ಠ.Display.busy({
     target: ಠ_ಠ.container,
@@ -66,19 +67,19 @@ Main = function() {
     });
   };
 
-  var google_Login = scopes => (display, force) => {
+  var google_Login = scopes => (display, force, timeout) => {
 
     var _id, _timeout = new Promise((resolve, reject) => {
       _id = setTimeout(() => {
         var __id;
         Promise.race([
           hello_Login(force, display, scopes), /* <!-- Try normal login --> */
-          new Promise((resolve, reject) => __id = setTimeout(() => reject("Login Promise Timed Out"), LOGIN_RACE))
+          new Promise((resolve, reject) => __id = setTimeout(() => reject("Login Promise Timed Out"), timeout ? timeout : LOGIN_RACE))
         ]).then(r => {
           clearTimeout(__id);
           resolve(r);
         }).catch(e => reject(e));
-      }, LOGIN_RACE / 3);
+      }, LOGIN_RACE / 5);
     });
 
     return Promise.race([
@@ -103,7 +104,8 @@ Main = function() {
 
   var google_Initialise = auth => {
     return ಠ_ಠ.Google_API({}, {
-      Network: ಠ_ಠ.Network
+      Network: ಠ_ಠ.Network,
+      Strings: ಠ_ಠ.Strings
     }).initialise(auth.access_token, auth.token_type, auth.expires,
       (refresher => {
         return force => new Promise((resolve, reject) => {
@@ -133,6 +135,22 @@ Main = function() {
     }, google_Failure("Signed out of Google"));
   };
 
+  var google_Authorise = scopes => {
+
+    /* <!-- Extra Scope Authorisation --> */
+    var _login = google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.concat(scopes).join(" "))),
+      _action = "Signed into additional Google Scopes",
+      _success = a => {
+        google_Success(_action)(a);
+        if (!a.unchanged) ಠ_ಠ.Google = google_Initialise(a.authResponse);
+        return true;
+      },
+      _failure = google_Failure(_action),
+      _retry = google_Retry(_login, _success, _failure);
+    return _login(_default, false, REFRESH_RACE).then(_success, _retry);
+
+  };
+
   var _routeIn = () => {
       if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(true);
     },
@@ -160,17 +178,9 @@ Main = function() {
       } else if ((/\|/i).test(directive)) {
 
         /* <!-- Extra Scope Authorisation --> */
-        var scopes = directive.split("|")[1].split(";"),
-          _login = google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.concat(scopes).join(" "))),
-          _action = "Signed into additional Google Scopes",
-          _success = a => {
-            google_Success(_action)(a);
-            if (!a.unchanged) ಠ_ಠ.Google = google_Initialise(a.authResponse);
-            if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
-          },
-          _failure = google_Failure(_action),
-          _retry = google_Retry(_login, _success, _failure);
-        _login(_default, false).then(_success, _retry);
+        google_Authorise(directive.split("|")[1].split(";")).then(result => {
+          if (result === true && ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
+        });
 
       } else {
 
@@ -232,6 +242,9 @@ Main = function() {
 
     /* <!-- Register authenticated state --> */
     ಠ_ಠ.Display.state().enter(STATE_AUTH);
+
+    /* <!-- Call Ready: Google is loaded and we are authenticated --> */
+    if (ಠ_ಠ.App.ready) ಠ_ಠ.App.ready();
 
     /* <!-- Route Authenticated --> */
     setupRouter(_routeIn);
@@ -437,8 +450,11 @@ Main = function() {
       );
 
     }),
-    
+
     busy: BUSY,
+
+    /* <!-- Extra Scope Authorisation --> */
+    authorise: google_Authorise,
     /* <!-- External Functions --> */
 
   };

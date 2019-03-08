@@ -1277,3 +1277,41 @@ base64:
       crossorigin: anonymous
       map: true
       id: __base64
+      
+deepExtend:
+  name: Underscore Deep-Extend
+  desc: Deep Extend Mixin for Underscore.js
+  url: https://www.jsdelivr.com/package/npm/underscore-deep-extend
+  project: https://github.com/kurtmilam/underscoreDeepExtend
+  version: 1.1.5
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdn.jsdelivr.net/npm/underscore-deep-extend@1.1.5/index.js
+      integrity: sha256-SGcXZ6pJZCVAzqHxMVQs230ScXpFXYESsP5bNRrC9Go=
+      crossorigin: anonymous
+      id: __deepExtend
+  dev:
+    - url: https://cdn.jsdelivr.net/npm/underscore-deep-extend@1.1.5/index.js
+      integrity: sha256-SGcXZ6pJZCVAzqHxMVQs230ScXpFXYESsP5bNRrC9Go=
+      crossorigin: anonymous
+      id: __deepExtend
+      
+quotedPrintable:
+  name: Quoted Printable
+  desc: A robust & character encoding–agnostic JavaScript implementation of the `Quoted-Printable` content transfer encoding as defined by RFC 2045
+  url: https://www.jsdelivr.com/package/npm/quoted-printable
+  project: https://github.com/mathiasbynens/quoted-printable
+  version: 1.0.1
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdn.jsdelivr.net/npm/quoted-printable@1.0.1/quoted-printable.js
+      integrity: sha256-BDAPS/xbxgAgQreuis13p1Vg2Jl/tj/3WopIptlorXM=
+      crossorigin: anonymous
+      id: __quotedPrintable
+  dev:
+    - url: https://cdn.jsdelivr.net/npm/quoted-printable@1.0.1/quoted-printable.js
+      integrity: sha256-BDAPS/xbxgAgQreuis13p1Vg2Jl/tj/3WopIptlorXM=
+      crossorigin: anonymous
+      id: __quotedPrintable

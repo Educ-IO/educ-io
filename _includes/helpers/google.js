@@ -5,7 +5,7 @@ Google_API = (options, factory) => {
   /* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
   /* <!-- @options.timeout: Custom timeout for each network/API domain base --> */
   /* <!-- @factory.Network: Function to create a network helper object --> */
-  /* <!-- REQUIRES: Global Scope: Underscore --> */
+  /* <!-- REQUIRES: Global Scope: Underscore, quotedPrintable (for emails) --> */
   /* <!-- REQUIRES: Factory Scope: Network helper --> */
 
   /* === Internal Visibility === */
@@ -54,7 +54,7 @@ Google_API = (options, factory) => {
   };
 
   const TEAM = (id, team, start) =>
-    team ? `${id !== team ? `${start ? "?" : "&"}teamDriveId=${team}&`:""}supportsTeamDrives=true` : "";
+    team ? `${start ? "?" : "&"}${id !== team ? `teamDriveId=${team}&`:""}supportsTeamDrives=true` : "";
   /* <!-- Internal Constants --> */
 
   /* <!-- Network Constants --> */
@@ -102,13 +102,16 @@ Google_API = (options, factory) => {
   const APP_DATA = "appDataFolder";
 
   const SKELETON = "id,name,size,parents,mimeType";
-  const FIELDS = "id,name,description,mimeType,version,parents,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId,ownedByMe,capabilities";
+  const FIELDS = "kind,id,name,description,mimeType,version,parents,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId,ownedByMe,capabilities";
 
   const EVENTS = {
     SEARCH: {
       PROGRESS: "google-search-progress",
     },
   };
+
+  const BOUNDARY = value => `**********%${value ? value : ""}%**********`;
+  const CHARSET = "UTF-8";
 
   const STRIP_NULLS = data => _.chain(data).omit(_.isUndefined).omit(_.isNull).value();
   /* <!-- Internal Constants --> */
@@ -246,7 +249,7 @@ Google_API = (options, factory) => {
       var origin = `${window.location.protocol}//${window.location.host}`,
         picker = new google.picker.PickerBuilder()
         .setTitle(title)
-        .setAppId(CLIENT_ID)
+        .setAppId(CLIENT_ID ? CLIENT_ID.split("-")[0] : CLIENT_ID)
         .setOAuthToken(_token())
         .setOrigin(origin)
         .setCallback(((callback, context) => data => {
@@ -468,19 +471,17 @@ Google_API = (options, factory) => {
 
   var _upload = (metadata, binary, mimeType, team, id, fields) => {
 
-    var _boundary = "**********%%**********";
-
     var _payload = new Blob([
-      "--" + _boundary + "\r\n" + "Content-Type: application/json; charset=UTF-8" + "\r\n\r\n" + JSON.stringify(metadata) + "\r\n\r\n" + "--" + _boundary + "\r\n" + "Content-Type: " + mimeType + "\r\n\r\n",
-      binary, "\r\n" + "--" + _boundary + "--" + "\r\n"
+      "--" + BOUNDARY() + "\r\n" + "Content-Type: application/json; charset=UTF-8" + "\r\n\r\n" + (metadata ? JSON.stringify(metadata) : "") + "\r\n\r\n" + "--" + BOUNDARY() + "\r\n" + "Content-Type: " + mimeType + "\r\n\r\n",
+      binary, "\r\n" + "--" + BOUNDARY() + "--" + "\r\n"
     ], {
-      type: "multipart/related; boundary=" + _boundary,
+      type: "multipart/related; boundary=" + BOUNDARY(),
       endings: "native"
     });
 
     return _call(
       id ? NETWORKS.general.patch : NETWORKS.general.post,
-      `upload/drive/v3/files/${id?`${id}?newRevision=true&`:"?"}uploadType=multipart${TEAM(id, team, true)}${fields ? `&fields=${fields === true ? FIELDS : fields}`:""}`, _payload, "multipart/related; boundary=" + _boundary, null, "application/binary");
+      `upload/drive/v3/files/${id?`${id}?newRevision=true&`:"?"}uploadType=multipart${TEAM(id, team, true)}${fields ? `&fields=${fields === true ? FIELDS : fields}`:""}`, _payload, "multipart/related; boundary=" + BOUNDARY(), null, "application/binary");
 
   };
   /* <!-- Internal Functions --> */
@@ -524,8 +525,10 @@ Google_API = (options, factory) => {
 
     permissions: {
 
-      get: (id, team, admin) => {
-        var _url = `drive/v3/files/${id}/permissions${TEAM(id, team, true)}`,
+      get: (file, team, admin) => {
+
+        var _id = file && file.id ? file.id : file,
+          _url = `drive/v3/files/${_id}/permissions${TEAM(_id, team, true)}`,
           _fields = "id,type,emailAddress,domain,role,allowFileDiscovery,displayName,photoLink,expirationTime,deleted";
         return _list(NETWORKS.general.get, _url, "permissions", [], {
           fields: `kind,nextPageToken,permissions(${_fields}${team ? ",teamDrivePermissionDetails" : ""})`,
@@ -534,10 +537,11 @@ Google_API = (options, factory) => {
       },
 
       /* <!-- Roles = owner | organizer | fileOrganizer | writer | commenter | reader --> */
-      share: (id, team) => {
+      share: (file, team, message) => {
 
-        var _parameters = `?sendNotificationEmail=false${TEAM(id, team, false)}`,
-          _url = `drive/v3/files/${id}/permissions${_parameters}`;
+        var _id = file && file.id ? file.id : file,
+          _parameters = `?sendNotificationEmail=${message ? `true${message === true ? "" : `&emailMessage=${encodeURIComponent(message)}`}` : "false"}${TEAM(_id, team, false)}`,
+          _url = `drive/v3/files/${_id}/permissions${_parameters}`;
 
         return {
 
@@ -582,6 +586,64 @@ Google_API = (options, factory) => {
       }, metadata) : metadata = {
         parents: [APP_DATA]
       }, binary, mimeType, null, id),
+
+    },
+
+    mail: {
+
+      send: (to, subject, message, plain_message, user) => {
+
+        var _makePlain = message => [
+            `Content-Type: multipart/alternative; boundary="${BOUNDARY()}"`,
+            "",
+            `--${BOUNDARY()}`,
+            `Content-Type: text/plain;charset="${CHARSET}"`,
+            "Content-Transfer-Encoding: quoted-printable",
+            "",
+            message && _.isString(message) ? message : "",
+            "",
+            `--${BOUNDARY()}--`,
+          ],
+          _makeHtml = (message, plain) => [
+            `Content-Type: multipart/mixed; boundary="${BOUNDARY("MIXED")}"`,
+            "",
+            `--${BOUNDARY("MIXED")}`,
+            `Content-Type: multipart/related; boundary="${BOUNDARY("RELATED")}"`,
+            "",
+            `--${BOUNDARY("RELATED")}`,
+            `Content-Type: multipart/alternative; boundary="${BOUNDARY()}"`,
+            "",
+            `--${BOUNDARY()}`,
+            `Content-Type: text/plain;charset="${CHARSET}"`,
+            "Content-Transfer-Encoding: quoted-printable",
+            "",
+            plain && _.isString(plain) ?
+            window.quotedPrintable ? quotedPrintable.encode(plain) : plain : "",
+            "",
+            `--${BOUNDARY()}`,
+            `Content-Type: text/html; charset="${CHARSET}"`,
+            "Content-Transfer-Encoding: quoted-printable",
+            "",
+            message && _.isString(message) ?
+            window.quotedPrintable ?
+            quotedPrintable.encode(message) : message : "",
+            "",
+            `--${BOUNDARY()}--`,
+            "",
+            `--${BOUNDARY("RELATED")}--`,
+            "",
+            `--${BOUNDARY("MIXED")}--`,
+          ].join("\r\n"),
+          _message = `To: ${to}\r\nSubject: ${subject}\r\nMIME-Version: 1.0\r\n${plain_message ? 
+            _makeHtml(message, plain_message) : _makePlain(message)}`;
+
+        return _call(
+          NETWORKS.general.post, `gmail/v1/users/${user ? user : "me"}/messages/send?alt=json`, {
+            raw: factory.Strings().base64.encode(_message)
+              .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
+          });
+
+      },
 
     },
 

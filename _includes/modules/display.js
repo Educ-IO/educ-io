@@ -367,12 +367,19 @@ Display = function() {
       	}
       */
       get: function(options) {
-        options = _.isString(options) ? {
+
+        options = _.isString(options) || _.isArray(options) ? {
           name: options
         } : options;
-        var _doc = $("#__doc__" + options.name)[0].innerText;
+
+        var _get = name => $("#__doc__" + name)[0].innerText;
+        var _doc = _.isArray(options.name) ?
+          _.reduce(options.name, (doc, name) => `${doc}\n\n${_get(name)}`, "") :
+          _get(options.name);
+
         return options.wrapper ? this.wrap(options.wrapper, _doc, options) : options.content !== undefined ?
           _doc.replace(/\{\{+\s*content\s*}}/gi, options.content) : _doc;
+
       },
 
       /*

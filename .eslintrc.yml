@@ -18,6 +18,7 @@ rules:
     - always
   no-cond-assign: [1, except-parens]
   no-const-assign: 1
+  no-useless-escape: 0
 globals:
   $: false
   jQuery: false
@@ -46,6 +47,8 @@ globals:
   chrome: false
   chai: false
   chance: false
+  underscoreDeepExtend: false
+  quotedPrintable: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -104,4 +107,4 @@ globals:
   __Σ__Evidence_Tracker: true
   __Σ__Form_Master: true
   __Σ__UK_Teachers_Reflection: true
-  __Σ__Students_Volunteering: true
+  __Σ__Volunteering: true

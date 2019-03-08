@@ -30,7 +30,7 @@ Controller = function() {
     else if (o == "script") a.setAttribute("aria-hidden", "true");
     var t = g.text;
     if (g.map === true) {
-      var map_regex = /[/*|//]#[\s]*sourceMappingURL=(\S+)[\s]*[*/]?/gi,
+      var map_regex = /[\/*|\/\/]#[\s]*sourceMappingURL=(\S+)[\s]*[*\/]?/gi,
         map_urls;
       while ((map_urls = map_regex.exec(t)) !== null) {
         if (map_urls && map_urls[1]) {

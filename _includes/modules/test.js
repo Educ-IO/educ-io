@@ -13,7 +13,7 @@ Page = function() {
       return false;
     }
   }
-  
+
   var _existsCrypto = function() {
     return window.crypto &&
       window.crypto.getRandomValues &&
@@ -25,43 +25,40 @@ Page = function() {
       window.crypto.subtle.decrypt;
   };
 
-  var _testCrypto = function(algorithm, key_size) {
+  var _testCrypto = function(algorithm, uses, import_uses) {
     if (!_existsCrypto()) {
       return false;
     } else {
-      var USES = ["encrypt", "decrypt", "wrapKey", "unwrapKey"],
-        FORMAT = "jwk",
+      var USES = uses ? uses : ["encrypt", "decrypt", "wrapKey", "unwrapKey"],
+        FORMAT = "raw",
         IV = window.crypto.getRandomValues(new Uint8Array(12)),
         TEXT = "Educ.IO Cryptography Test";
       return new Promise((resolve, reject) => {
-        window.crypto.subtle.generateKey({
-            name: algorithm,
-            length: key_size,
-          }, true, USES)
-          .then(key => {
-            key ? window.crypto.subtle.exportKey(FORMAT, key)
-              .then(data => {
-                data ? window.crypto.subtle.importKey(FORMAT, data, {
-                  name: algorithm
-                }, false, USES).then(key => {
-                  key ? window.crypto.subtle.encrypt({
-                      name: algorithm,
-                      iv: IV
-                    }, key, new TextEncoder().encode(TEXT))
-                    .then(encrypted => {
-                      encrypted ? window.crypto.subtle.decrypt({
-                        name: algorithm,
+        try {
+          window.crypto.subtle.generateKey(algorithm, true, USES)
+            .then(key => {
+              key ? window.crypto.subtle.exportKey(FORMAT, key.publicKey ? key.publicKey : key)
+                .then(data => {
+                  data ? window.crypto.subtle.importKey(FORMAT, data, algorithm,
+                    false, import_uses ? import_uses : USES).then(key => {
+                    key ? USES.indexOf("encrypt") >= 0 ? window.crypto.subtle.encrypt({
+                        name: algorithm.name,
                         iv: IV
-                      }, key, encrypted).then(decrypted => {
-                        resolve(new TextDecoder().decode(decrypted) == TEXT);
-                      }) : resolve(false);
-                    }) : resolve(false);
-                }) : resolve(false);
-              }) : resolve(false);
-          })
-          .catch(e => {
-            reject(e);
-          });
+                      }, key, new TextEncoder().encode(TEXT))
+                      .then(encrypted => {
+                        encrypted ? USES.indexOf("decrypt") >= 0 ? window.crypto.subtle.decrypt({
+                          name: algorithm.name,
+                          iv: IV
+                        }, key, encrypted).then(decrypted => {
+                          resolve(new TextDecoder().decode(decrypted) == TEXT);
+                        }).catch(reject) : resolve(true) : resolve(false);
+                      }).catch(reject) : resolve(true) : resolve(false);
+                  }).catch(reject) : resolve(false);
+                }).catch(reject) : resolve(false);
+            }).catch(reject);
+        } catch (e) {
+          reject(e);
+        }
       });
     }
   };
@@ -436,7 +433,35 @@ Page = function() {
       desc: "Checks Browser-based Cryptography Encryption Algorithm",
       required: false,
       test: function() {
-        return _testCrypto("AES-GCM", 256);
+        return _testCrypto({
+          name: "AES-GCM",
+          length: 256
+        });
+      },
+      success: {
+        icon: "check",
+        class: "text-success",
+        message: ""
+      },
+      failure: {
+        icon: "priority_high",
+        class: "text-warning",
+        message: "Unfortunately, your browser doesn't currently support native Browser Cryptography. This is only used for some secure features, so most apps (apart from the Accounts App) will still work."
+      },
+      type: {
+        name: "crypto",
+        class: "badge-success"
+      },
+    },
+    {
+      name: "WebCrypto API Encryption - ECDSA (ECC) Algorithm",
+      desc: "Checks Browser-based Cryptography Encryption Algorithm",
+      required: false,
+      test: function() {
+        return _testCrypto({
+          name: "ECDSA",
+          namedCurve: "P-256"
+        }, ["sign", "verify"], ["verify"]);
       },
       success: {
         icon: "check",
@@ -554,6 +579,7 @@ Page = function() {
                 if (++count == FEATURES.length) complete(FEATURES);
               }).catch(function(e) {
                 feature.result = false;
+                /* <!-- BREAK: Caught Error Breakpoint --> */
                 if (e) feature.error = e;
                 if (++count == FEATURES.length) complete(FEATURES);
               });
@@ -564,6 +590,7 @@ Page = function() {
           }
         } catch (e) {
           FEATURES[i].result = false;
+          /* <!-- BREAK: Caught Error Breakpoint --> */
           if (e) FEATURES[i].error = e;
           if (++count == FEATURES.length) complete(FEATURES);
         }

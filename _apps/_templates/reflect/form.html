@@ -57,7 +57,7 @@
               </div>{{/if}}
 
               <!-- Send Button Group -->
-              <div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
+              {{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
                 <a id="{{id}}_SEND" data-route="send.report" href="#" role="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">send</i>Send</a>
                 <button type="button" class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
@@ -68,10 +68,10 @@
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#instructions.send">About</a>
                 </div>
-              </div>
+              </div>{{/if}}
 
               <!-- Complete Button Group -->
-              <div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
+              {{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
                 <a id="{{id}}_COMPLETE" href="#complete" role="button" class="btn btn-success btn-lg d-flex"><i class="mr-4 material-icons md-light md-24 align-self-center">cloud_done</i>Complete</a>
                 <button type="button" class="btn btn-success btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
@@ -83,7 +83,7 @@
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#instructions.complete">About</a>
                 </div>
-              </div>
+              </div>{{/if}}
 
               {{#if help}}<div class="form-text text-muted">{{{help}}}</div>{{/if}}
             </div>

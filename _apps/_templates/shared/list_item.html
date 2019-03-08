@@ -8,6 +8,8 @@
 	</a>
 	<p{{#if template}} data-template="{{template}}"{{/if}}data-output-name="{{either field 'Items'}}"
      class="align-self-center d-flex align-items-center px-0 py-0 mx-0 my-0">
+    {{#present (either kind Kind)}}<span data-output-name="Kind" class="d-none">{{either kind Kind}}</span>{{/present}}
+    {{#present (either mime Mime)}}<span data-output-name="Mime" class="d-none">{{either mime Mime}}</span>{{/present}}
 		{{#present (either icon_url Icon_Url)}}<img data-output-name="Icon_Url"
     	class="ml-1 mr-2{{#if class}} {{class}}{{/if}}" src="{{#with Icon_Url}}{{either Url this}}{{else}}{{icon_url}}{{/with}}"/>{{else}}<i data-output-name="Icon" class="align-self-center mr-2 material-icons{{#if class}} {{class}}{{/if}}">{{either icon Icon}}</i>{{/present}}
     {{#present (either date Date)}}<span data-output-name="Date" class="text-muted badge badge-light mr-1 align-self-center">{{val "" date Date}}</span>{{/present}}

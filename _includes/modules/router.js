@@ -6,7 +6,7 @@ Router = function() {
   }
 
   /* <!-- Internal Variables --> */
-  var ಠ_ಠ, _options, _last;
+  var ಠ_ಠ, _options, _last, _debug, _setup;
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Constants --> */
@@ -51,6 +51,7 @@ Router = function() {
           if (options.query !== undefined && options.query !== null) view.setQuery(options.query);
           if (options.navigation !== undefined) view.navigation = options.navigation;
           if (options.parent) view.team = false;
+          if (options.label) view.setLabel(options.label);
         })]
       .concat(options.all ? [new google.picker
         .DocsView(options ? google.picker.ViewId[options.view] : null)
@@ -173,6 +174,7 @@ Router = function() {
           // All routes can have a length (will check array length after initial regex match), which can be a number or a min|max object
           // All routes can have a next regex that is tested after initial regex match
           // All promise returning routes can have a success({command, result}) and failure(e) methods attached
+          // All routes can have a clean property which, if truthy, will call a state clean upon success
           // Extra configuration options for default routes are shown in methods below.
         },
 				instructions : App-Specific Instructions
@@ -291,6 +293,7 @@ Router = function() {
           matches: /INSTRUCTIONS/i,
           keys: ["i", "I"],
           fn: command => {
+
             /* <!-- Load the Instructions --> */
             var show = (name, title) => ಠ_ಠ.Display.doc.show({
               name: name,
@@ -357,14 +360,28 @@ Router = function() {
           _start = (deadend, state) => _enter(_options.recent === undefined ? 5 : _options.recent, deadend ? null : _options.start, _options.simple, state);
         _end = () => _exit(_options.test, _options.states ? _options.states : [], _options.clear);
 
+        /* <!-- Self-Removing Setup Function --> */
+        _setup = () => {
+
+          /* <!-- Debug Flag: For future logging --> */
+          _debug = ಠ_ಠ.Flags && ಠ_ಠ.Flags.debug();
+
+          /* <!-- Run App Setup --> */
+          if (_options.setup) _options.setup();
+
+          _shortcuts(_debug);
+
+          return (_setup = null);
+
+        };
+
       })(options);
 
       return command => {
 
-        if (!_options) SETUP();
+        var _handled = true;
 
-        var _handled = true,
-          _debug;
+        if (!_options) SETUP();
 
         if (!command || command === false || command[0] === false || (/PUBLIC/i).test(command)) {
 
@@ -382,13 +399,16 @@ Router = function() {
 
         } else if (command === true || /AUTH/i.test(command) || (command && command[0] === true && command.length == 2)) {
 
-          /* <!-- Debug Flag: For future logging --> */
-          _debug = ಠ_ಠ.Flags && ಠ_ಠ.Flags.debug();
+          /* <!-- Check the setup --> */
+          _setup = _setup ? _setup() : _setup;
 
           /* <!-- Kick off the App Start Process --> */
-          _shortcuts(_debug) && (command[0] === true ? _start(false, command[1]) : _start());
+          (command[0] === true ? _start(false, command[1]) : _start());
 
         } else {
+
+          /* <!-- Check the setup --> */
+          _setup = _setup ? _setup() : _setup;
 
           /* <!-- Try to handle the command with a route we know about --> */
           var _match = (route, command) => route.matches ?
@@ -417,14 +437,21 @@ Router = function() {
               l_options = PREPARE(route.options, l_command),
               l_result = route.fn(_.isArray(l_command) ? l_command.length === 0 ? null : l_command.length == 1 ? l_command[0] : l_command : l_command, l_options);
             return l_result && l_result.then ? l_result
-              .then(result => route.success ? route.success(
-                _.isObject(result) && _.has(result, "command") && _.has(result, "result") ?
-                result : {
-                  command: l_command,
-                  result: result
-                }) : true)
+              .then(result => {
+                /* <!-- Clean up the state if required! --> */
+                if (route.clean) _clean(false);
+
+                /* <!-- Run the success function if available --> */
+                return route.success ? route.success(
+                  _.isObject(result) && _.has(result, "command") && _.has(result, "result") ?
+                  result : {
+                    command: l_command,
+                    result: result
+                  }) : true;
+              })
               .catch(route.failure ? route.failure :
-                e => ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative()) : l_result;
+                e => e ?
+                ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative() : false) : l_result;
           };
 
           /* <!-- Execute the route if available --> */
