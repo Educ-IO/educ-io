@@ -12,7 +12,8 @@ Fields = (options, factory) => {
   /* <!-- Internal Constants --> */
   const DATE_FORMAT = "yyyy-mm-dd",
     DATE_FORMAT_M = DATE_FORMAT.toUpperCase();
-  const EVENT_CHANGE_DT = "change.datetime";
+  const EVENT_CHANGE_DT = "change.datetime",
+    EVENT_CHANGE_AUTOSIZE = "change.autosize";
   const DEFAULTS = {
     me: () => "",
     list_holder: ".list-holder",
@@ -199,15 +200,34 @@ Fields = (options, factory) => {
 
   };
 
+  var _range = form => {
+
+    /* <!-- Wire up numerical fields --> */
+    form.find("input[type='range'].show-numerical").change(e => {
+      var _this = $(e.currentTarget);
+      if (_this.data("targets")) {
+        var _target = _get(_this.data("targets")),
+          _suffix = _target.data("suffix"),
+          _range = _target.data("range"),
+          _value = _this.val();
+        if (_range) {
+          _range = _range.split(";");
+          _value = _range[Number(_value)];
+        }
+        _target.val(`${_value}${_suffix ? `${_suffix}` : ""}`);
+      }
+    });
+  };
+
   var _numerical = form => {
 
     /* <!-- Wire up numerical fields --> */
     form.find(".alter-numerical").click(e => {
       var _this = $(e.currentTarget);
-      if (_this.data("targets") && _this.data("value")) {
+      if (_this.data("targets") && (_this.data("value") || _this.is("input[type='range']"))) {
 
         var _target = $(`#${_this.data("targets")}`),
-          _value = Number(_this.data("value"));
+          _value = Number(_this.data("value") || _this.val());
         var _min = _target.data("min") ? Number(_target.data("min")) : 0,
           _max = _target.data("max") ? Number(_target.data("max")) : null;
 
@@ -364,7 +384,10 @@ Fields = (options, factory) => {
 
   var _autosize = form => {
 
-    form.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
+    form.find("textarea.resizable").on("focus.autosize", e => {
+      autosize(e.currentTarget);
+      $(e.currentTarget).trigger(EVENT_CHANGE_AUTOSIZE);
+    });
 
   };
 
@@ -618,7 +641,7 @@ Fields = (options, factory) => {
     _steps = [
       _listen, _numerical, _erase, _radio, _menus,
       _complex, _reveal, _dim, _autosize, _me, _datetime,
-      _spans, _list, _doc, _deletes, _updates
+      _spans, _list, _doc, _deletes, _updates, _range
     ];
   };
   /* <!-- Internal Functions --> */

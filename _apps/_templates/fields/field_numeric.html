@@ -28,43 +28,40 @@
 {{!-- Values.Details = entered details text value --}}
 {{!-- ======================================================= --}}
 
-{{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row"{{#if field}} data-output-field="{{field}}"{{/if}}{{#if order}} data-output-order="{{order}}"{{/if}}{{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
-	<label class="col-md-3 col-form-label" for="{{id}}">{{val "" title field}}</label>
-	<div class="col-md-9">
-    <div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
-			{{> control_button b_small="true" b_class="btn-secondary eraser no-active"
-      	b_title="Clear / Reset" b_target=(concat id "||" id "_NUMERIC") b_icon="refresh" disabled=readonly }}
-    	{{> control_button b_small="true" b_class="btn-info alter-numerical"
-      	b_title="Decrease" b_target=id b_icon="remove" b_value=(concat "-" (either increment 1)) disabled=readonly }}
-    	{{> control_button b_small="true" b_class="btn-primary alter-numerical"
-      	b_title="Increase" b_target=id b_icon="add" b_value=(either increment 1) disabled=readonly }}
-		</div>
-		<div class="input-group{{#if large}} input-group-lg{{/if}}" data-for="{{id}}">
-			{{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
-			<input id="{{id}}_NUMERIC" name="{{id}}" type="number" class="d-none" data-output-name="Number"{{#if value}} value="{{value}}"{{/if}} />
-			<input id="{{id}}" name="{{id}}" type="text" data-output-name="Value"
-             class="pl-2 form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly"
-             aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"
-             {{#if suffix}} data-suffix="{{suffix}}"{{/if}} data-targets="{{id}}_NUMERIC"
-             data-min="{{#if min}}{{min}}{{else}}0{{/if}}" data-max="{{#if max}}{{max}}{{/if}}"
-             {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
-             {{#if value}} value="{{value}}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}}
-             {{#if required}} required="required"{{/if}}
-             {{#if readonly}} readonly="readonly"{{/if}}/>
-			<span class="input-group-append d-none d-lg-flex">
-				{{> control_button b_class="btn-secondary eraser no-active"
-        	b_title="Clear / Reset" b_target=(concat id "||" id "_NUMERIC") b_icon="refresh" disabled=readonly }}
-        {{> control_button b_class="btn-info alter-numerical"
-        	b_title="Decrement" b_target=id b_icon="remove" b_value=(concat "-" (either increment 1)) disabled=readonly }}
-    		{{> control_button b_class="btn-primary alter-numerical"
-        	b_title="Increment" b_target=id b_icon="add" b_value=(either increment 1) disabled=readonly }}
-			</span>
-		</div>
-		{{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS"  data-name="value" name="{{id}}_DETAILS"
-                             class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2" rows="1"
-                             aria-label="{{details}}" placeholder="{{details}}"{{#if readonly}} readonly="readonly"{{/if}}></textarea>{{/if}}
-		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}
-	</div>
-</div>
+{{#> field_general}}
+  <div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
+    {{> control_button b_small="true" b_class="btn-secondary eraser no-active" b_icon="refresh"
+    	b_title="Clear / Reset" b_target=(concat id "||" id "_NUMERIC") disabled=readonly }}
+    {{> control_button b_small="true" b_class="btn-info alter-numerical" disabled=readonly
+    	b_title="Decrease" b_target=id b_icon="remove" b_value=(concat "-" (either increment 1)) }}
+    {{> control_button b_small="true" b_class="btn-primary alter-numerical" disabled=readonly
+    	b_title="Increase" b_target=id b_icon="add" b_value=(either increment 1) }}
+  </div>
+  <div class="input-group{{#if large}} input-group-lg{{/if}}" data-for="{{id}}">
+    {{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
+    <input id="{{id}}_NUMERIC" name="{{id}}" type="number" class="d-none" data-output-name="Number"{{#if value}} value="{{value}}"{{/if}} />
+    <input id="{{id}}" name="{{id}}" type="text" data-output-name="Value"
+           class="pl-2 form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly"
+           aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"
+           {{#if suffix}} data-suffix="{{suffix}}"{{/if}} data-targets="{{id}}_NUMERIC"
+           data-min="{{#if min}}{{min}}{{else}}0{{/if}}" data-max="{{#if max}}{{max}}{{/if}}"
+           {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+           {{#if value}} value="{{value}}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}}
+           {{#if required}} required="required"{{/if}}
+           {{#if readonly}} readonly="readonly"{{/if}}/>
+    <span class="input-group-append d-none d-lg-flex">
+      {{> control_button b_class="btn-secondary eraser no-active" b_icon="refresh"
+      	b_title="Clear / Reset" b_target=(concat id "||" id "_NUMERIC") disabled=readonly }}
+      {{> control_button b_class="btn-info alter-numerical" b_target=id b_icon="remove"
+      	b_title="Decrement" b_value=(concat "-" (either increment 1)) disabled=readonly }}
+      {{> control_button b_class="btn-primary alter-numerical" b_target=id b_icon="add"
+      	b_title="Increment" b_value=(either increment 1) disabled=readonly }}
+    </span>
+  </div>
+  {{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS"
+                 	data-name="value" name="{{id}}_DETAILS" rows="1"
+                  class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2" 
+                  aria-label="{{details}}" placeholder="{{details}}"
+                  {{#if readonly}} readonly="readonly"{{/if}}></textarea>{{/if}}
+{{/field_general}}
 {% endraw %}

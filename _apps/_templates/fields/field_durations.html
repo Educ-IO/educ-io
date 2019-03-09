@@ -29,110 +29,98 @@
 {{!-- Values.Items[].Type = Item Type from input, or Item if none supplied --}}
 {{!-- ======================================================= --}}
 
-{{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}{{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
-	<label class="col-md-3 col-form-label" for="{{id}}">{{val "" title field}}</label>
-	
-  <div class="col-md-9">
-    
-    <div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
-      {{> control_button b_icon_large="true" b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
-        	b_target=(concat id "_DURATION" "||" id "_DETAILS" "||" id "_NUMERIC" "||" id "_DATE")
-        	b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly }}
-      {{> control_button b_icon_large="true" b_class="btn-info alter-numerical"
-      	b_title="Decrease" b_target=(concat id "_DURATION") b_icon="remove"
-      	b_value=(concat "-" (either increment 1)) disabled=readonly }}
-    	{{> control_button b_icon_large="true" b_class="btn-primary alter-numerical"
-      	b_title="Increase" b_target=(concat id "_DURATION") b_icon="add"
-      	b_value=(either increment 1) disabled=readonly }}
-      {{> control_button b_icon_large="true" b_class="btn-success complex-list-add"
-      	b_title=(concat "Add " type " to List") b_item=(either type "Item") 
-      	b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
-      	b_target=(concat id "_LIST") b_icon="add_circle_outline"
-      	b_icon_type="light" disabled=readonly }}
-    </div>
-    
-		<div class="input-group">
-			{{#if icon_date}}{{> control_icon large=large icon=icon_date }}{{/if}}
-      <input id="{{id}}_DATE" type="text" data-output-type="Date"
-             class="form-control{{#if large}} form-control-lg{{/if}}{{#unless readonly}} dt-picker{{/unless}}" name="{{id}}_start"
-             aria-label="{{val "" title field}}"
-             {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
-             {{#if required}} required="required"{{/if}} data-item="Date"{{#if readonly}} readonly="readonly"{{/if}} />
-      {{#if icon_number}}{{> control_icon prepend="true" append="true"
-      	large=large icon=icon_number }}{{/if}}
-      <input id="{{id}}_NUMERIC" name="{{id}}_NUMERIC" type="number" hidden="hidden" class="d-none" data-item="Number"
-             data-targets="{{id}}_DISPLAY" {{#if value}} value="{{value}}"{{/if}}{{#if readonly}} readonly="readonly"{{/if}} />
-      <input id="{{id}}_DURATION" name="{{id}}_DURATION" type="text"
-             class="pl-2 form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly"
-             aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"
-             {{#if suffix}} data-suffix="{{suffix}}"{{/if}} data-targets="{{id}}_NUMERIC"
-             data-min="{{#if min}}{{min}}{{else}}0{{/if}}" data-max="{{#if max}}{{max}}{{/if}}"
-             {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
-             {{#if value}} value="{{value}}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}}
-             {{#if required}} required="required"{{/if}}
-             {{#if readonly}} readonly="readonly"{{/if}} />
-      
-			<span class="input-group-append d-none d-lg-flex">
-				{{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
-        	b_target=(concat id "_DURATION" "||" id "_DETAILS" "||" id "_NUMERIC" "||" id "_DATE")
-        	b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly }}
-      </span>
-      
-      <span class="input-group-append d-none d-lg-flex">
-        {{> control_button b_class="btn-info alter-numerical"
-        	b_title="Decrement" b_target=(concat id "_DURATION") b_icon="remove"
-        	b_value=(concat "-" (either increment 1)) disabled=readonly }}
-    		{{> control_button b_class="btn-primary alter-numerical"
-        	b_title="Increment" b_target=(concat id "_DURATION") b_icon="add"
-        	b_value=(either increment 1) disabled=readonly }}
-			</span>
-      
-      <span class="input-group-append d-none d-lg-flex">
-        {{> control_button b_class="btn-success complex-list-add" b_title=(concat "Add " type " to List")
-        	b_item=(either type "Item") b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
-        	b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" disabled=readonly }}
-			</span>
-      
-		</div>
-    
-    <input id="{{id}}" name="{{id}}_VALUE" data-output-name="Value" hidden="hidden" class="d-none" type="checkbox">
-    
-    {{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS"
-			data-name="value" name="{{id}}_DETAILS"
-      class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2"
-      rows="1" aria-label="{{either details 'Details'}}"
-     	placeholder="{{either details 'Details'}}"
-      {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
-      {{#if readonly}} readonly="readonly"{{/if}}></textarea>{{/if}}
-    
-		<div id="{{id}}_LIST" data-holder-field="{{either items 'Items'}}"
-         class="list-data list-group list-group-light d-flex flex-column my-1 my-md-2"
-         data-controls="{{id}}"{{#if list_field}} data-output-name="{{list_field}}"{{/if}}
-         {{#if readonly}} data-readonly="true"{{/if}}></div>
-    
-    <div class="row">
-      <label class="col-md-3 col-lg-6 col-xl-8 col-form-label text-md-right font-weight-bold text-muted" 
-             for="{{id}}_DISPLAY">{{either total_Title "Total"}}:</label>
-      
-    	<div class="col-md-9 col-lg-6 col-xl-4">
-        <input id="{{id}}_TOTAL" name="{{id}}_TOTAL" data-output-name="Total" hidden="hidden" type="number"
-           {{#if total}} value="{{total}}"{{/if}}>
-    		<input id="{{id}}_DISPLAY" name="{{id}}_DISPLAY" type="text"
+{{#> field_general}}
+  <div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
+    {{> control_button b_icon_large="true" b_class="btn-secondary eraser no-active"
+      b_title="Clear / Reset" b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly
+      b_target=(concat id "_DURATION" "||" id "_DETAILS" "||" id "_NUMERIC" "||" id "_DATE") }}
+    {{> control_button b_icon_large="true" b_class="btn-info alter-numerical"
+      b_title="Decrease" b_target=(concat id "_DURATION") b_icon="remove"
+      b_value=(concat "-" (either increment 1)) disabled=readonly }}
+    {{> control_button b_icon_large="true" b_class="btn-primary alter-numerical"
+      b_title="Increase" b_target=(concat id "_DURATION") b_icon="add"
+      b_value=(either increment 1) disabled=readonly }}
+    {{> control_button b_icon_large="true" b_class="btn-success complex-list-add"
+      b_title=(concat "Add " type " to List") b_item=(either type "Item") 
+      b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
+      b_target=(concat id "_LIST") b_icon="add_circle_outline"
+      b_icon_type="light" disabled=readonly }}
+  </div>
+
+  <div class="input-group">
+    {{#if icon_date}}{{> control_icon large=large icon=icon_date }}{{/if}}
+    <input id="{{id}}_DATE" type="text" data-output-type="Date"
+           class="form-control{{#if large}} form-control-lg{{/if}}{{#unless readonly}} dt-picker{{/unless}}" name="{{id}}_start"
+           aria-label="{{val "" title field}}"
+           {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+           {{#if required}} required="required"{{/if}} data-item="Date"{{#if readonly}} readonly="readonly"{{/if}} />
+    {{#if icon_number}}{{> control_icon prepend="true" append="true"
+    large=large icon=icon_number }}{{/if}}
+    <input id="{{id}}_NUMERIC" name="{{id}}_NUMERIC" type="number" hidden="hidden" class="d-none" data-item="Number"
+           data-targets="{{id}}_DISPLAY" {{#if value}} value="{{value}}"{{/if}}{{#if readonly}} readonly="readonly"{{/if}} />
+    <input id="{{id}}_DURATION" name="{{id}}_DURATION" type="text"
+           class="pl-2 form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly"
+           aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"
+           {{#if suffix}} data-suffix="{{suffix}}"{{/if}} data-targets="{{id}}_NUMERIC"
+           data-min="{{#if min}}{{min}}{{else}}0{{/if}}" data-max="{{#if max}}{{max}}{{/if}}"
+           {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+           {{#if value}} value="{{value}}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}}
+           {{#if required}} required="required"{{/if}}
+           {{#if readonly}} readonly="readonly"{{/if}} />
+
+    <span class="input-group-append d-none d-lg-flex">
+      {{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
+        b_target=(concat id "_DURATION" "||" id "_DETAILS" "||" id "_NUMERIC" "||" id "_DATE")
+        b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly }}
+    </span>
+
+    <span class="input-group-append d-none d-lg-flex">
+      {{> control_button b_class="btn-info alter-numerical"
+        b_title="Decrement" b_target=(concat id "_DURATION") b_icon="remove"
+        b_value=(concat "-" (either increment 1)) disabled=readonly }}
+      {{> control_button b_class="btn-primary alter-numerical"
+        b_title="Increment" b_target=(concat id "_DURATION") b_icon="add"
+        b_value=(either increment 1) disabled=readonly }}
+    </span>
+
+    <span class="input-group-append d-none d-lg-flex">
+      {{> control_button b_class="btn-success complex-list-add" b_title=(concat "Add " type " to List")
+        b_item=(either type "Item") b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
+        b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" disabled=readonly }}
+    </span>
+
+  </div>
+
+  <input id="{{id}}" name="{{id}}_VALUE" data-output-name="Value" hidden="hidden" class="d-none" type="checkbox">
+
+  {{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS"
+                           data-name="value" name="{{id}}_DETAILS"
+                           class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2"
+                           rows="1" aria-label="{{either details 'Details'}}"
+                           placeholder="{{either details 'Details'}}"
+                           {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+                           {{#if readonly}} readonly="readonly"{{/if}}></textarea>{{/if}}
+
+  <div id="{{id}}_LIST" data-holder-field="{{either items 'Items'}}"
+       class="list-data list-group list-group-light d-flex flex-column my-1 my-md-2"
+       data-controls="{{id}}"{{#if list_field}} data-output-name="{{list_field}}"{{/if}}
+       {{#if readonly}} data-readonly="true"{{/if}}></div>
+
+  <div class="row">
+    <label class="col-md-3 col-lg-6 col-xl-8 col-form-label text-md-right font-weight-bold text-muted" 
+           for="{{id}}_DISPLAY">{{either total_Title "Total"}}:</label>
+
+    <div class="col-md-9 col-lg-6 col-xl-4">
+      <input id="{{id}}_TOTAL" name="{{id}}_TOTAL" data-output-name="Total" hidden="hidden" type="number"
+             {{#if total}} value="{{total}}"{{/if}}>
+      <input id="{{id}}_DISPLAY" name="{{id}}_DISPLAY" type="text"
              data-output-name="Display" data-targets="{{id}}_TOTAL"
              class="form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly"
              aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"
              {{#if suffix}} data-suffix="{{suffix}}"{{/if}}
              {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
-             {{#if total}} value="{{total}}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}}
-             {{#if required}} required="required"{{/if}}
-             {{#if readonly}} readonly="readonly"{{/if}} />
-			</div>
+             {{#if total}} value="{{total}}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}} />
     </div>
-    
-		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-right">{{{help}}}</div>{{/if}}
-    
   </div>
-  
-</div>
+{{/field_general}}
 {% endraw %}

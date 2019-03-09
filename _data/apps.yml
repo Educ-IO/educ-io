@@ -113,6 +113,7 @@ view:
     - shared/datatable
     - shared/headers
     - shared/link
+    - fields/field_general
     - fields/field_numeric
     - view/uploaded
   docs:
@@ -433,8 +434,9 @@ reflect:
     - reflect/templates/form_master
     - reflect/templates/uk_teachers_reflection
     - reflect/templates/volunteering
+    - reflect/templates/progress
     - reflect/scales/uk_teachers_standards
-  scripts: 
+  scripts:
     - extends/regex
     - extends/array
   templates:
@@ -452,6 +454,7 @@ reflect:
     - shared/control_icon
     - shared/control_button
     - shared/list_item
+    - fields/field_general
     - fields/field_complex
     - fields/field_items
     - fields/field_numeric
@@ -463,6 +466,7 @@ reflect:
     - fields/field_textual
     - fields/field_durations
     - fields/field_files
+    - fields/field_range
     - emails/email_standard
     - reflect/heading
     - reflect/group
@@ -542,6 +546,9 @@ reflect:
         name: Send Emails
         reason: This app can send emails on your behalf to allow for reports to be validated.
         request: lazy
+      - scope: https://www.googleapis.com/auth/drive.install
+        name: Special scope used to let users approve installation of an app.
+        reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
   keys:
     google:
         general: AIzaSyDCjK2aSKu9CAb3lCXxegwy-G9VTdNBAak
@@ -1697,6 +1704,7 @@ merge:
     - shared/rows
     - shared/datatable
     - shared/headers
+    - fields/field_general
     - fields/field_numeric
     - shared/split
     - merge/meta_rows
@@ -3243,6 +3251,7 @@ debug:
     - shared/control_icon
     - shared/control_button
     - shared/list_item
+    - fields/field_general
     - fields/field_complex
     - fields/field_items
     - fields/field_numeric

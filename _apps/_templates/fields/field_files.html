@@ -27,13 +27,9 @@
 {{!-- [List].Items = Array of Icon, Type and Value (value determined by action) --}}
 {{!-- ======================================================= --}}
 
-{{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}{{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
-	<label class="col-md-3 col-form-label" for="{{id}}">{{val "" title field}}</label>
-	<div class="col-md-9">
-		<input id="{{id}}" name="{{id}}_VALUE" data-output-name="Value" hidden="hidden" type="checkbox">
-    {{> field_items id=(concat id "_FILES") details=items_details controls=id
-  			class="mt-1 mt-md-2" type=type list=list_field }}
-	</div>
-</div>
+{{#> field_general}}
+  <input id="{{id}}" name="{{id}}_VALUE" data-output-name="Value" hidden="hidden" type="checkbox">
+  {{> field_items id=(concat id "_FILES") details=items_details controls=id
+  class="mt-1 mt-md-2" type=type list=list_field }}
+{{/field_general}}
 {% endraw %}

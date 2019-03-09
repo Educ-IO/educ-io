@@ -30,10 +30,7 @@
 {{!-- Values.Items[].Type = Item Type from input, or Item if none supplied --}}
 {{!-- ======================================================= --}}
 
-{{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row" data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}{{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
-	<label class="col-md-3 col-form-label" for="{{id}}">{{val "" title field}}</label>
-	<div class="col-md-9">
+{{#> field_general}}
     <div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
 			{{> control_button b_small="true" b_icon_large="true" b_class="btn-secondary eraser no-active"
       	b_title="Clear / Reset" b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly }}
@@ -85,7 +82,5 @@
          class="list-data list-group list-group-light d-flex flex-column my-1 my-md-2"
          data-controls="{{id}}"{{#if list_field}} data-output-name="{{list_field}}"{{/if}}
          {{#if readonly}} data-readonly="true"{{/if}}></div>
-		{{#if help}}<div id="{{id}}_HELP" class="form-text text-muted text-justify">{{{help}}}</div>{{/if}}
-	</div>
-</div>
+{{/field_general}}
 {% endraw %}

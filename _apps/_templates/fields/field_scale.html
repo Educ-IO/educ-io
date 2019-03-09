@@ -25,20 +25,14 @@
 {{!-- Values = Tree Collection of Markers (with values/items) --}}
 {{!-- ======================================================= --}}
 
-{{#if description}}<!-- {{description}} -->{{/if}}
-<div class="form-group{{#if large}} form-group-lg{{/if}} row"
-     data-output-field="{{field}}"{{#if order}} data-output-order="{{order}}"{{/if}}
-     {{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
-	<label class="col-md-3 col-form-label" for="{{id}}">{{val "" title field}}</label>
-	<div class="col-md-9">
-		<ul class="list-group" id="{{id}}" name="{{val '' name id}}">
-			{{#each markers}}
-			{{!-- Call Partial Template, concatenating the ID with this parent ID and the Index, and also passing an incremented index for display --}}
-			{{> field_marker id=(concat ../id "_" @index) options=../options type=../type items_details=../items_details list_field=../list_field number=(inc @index) readonly=../readonly}}
-			{{/each}}
-		</ul>
-		{{#if help}}<div id="{{id}}_HELP" 
-                     class="form-text text-muted mt-1 mt-md-2 text-justify">{{{help}}}</div>{{/if}}
-	</div>
-</div>
+{{#> field_general help_class="mt-1 mt-md-2"}}
+  <ul class="list-group" id="{{id}}" name="{{val '' name id}}">
+    {{#each markers}}
+    {{!-- Call Partial Template, concatenating the ID with this parent ID and the Index, and also passing an incremented index for display --}}
+    {{> field_marker id=(concat ../id "_" @index) options=../options
+    	type=../type items_details=../items_details list_field=../list_field number=(inc @index) 
+    	readonly=../readonly}}
+    {{/each}}
+  </ul>
+{{/field_general}}
 {% endraw %}
