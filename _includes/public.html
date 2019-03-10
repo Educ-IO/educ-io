@@ -11,7 +11,7 @@
 				<a href="/support/" class="btn btn-lg btn-outline-success mt-2 waves-effect">Support</a>
 			</div>
 			{% unless include.simple %}<p class="text-muted mb-0">{% assign _app = app.name | downcase %}
-				{% if site.data.versions[_app] %}Current app version is <a href="{{site.baseurl}}changes/?highlight={{ app.name | downcase }}">{% assign _app = app.name | downcase %}{{ site.data.versions[_app].first[0] }}</a>. {% endif %}To find out more about the <strong>permissions</strong> this app requires, and how they are used, have a look at its <a href="{{site.baseurl}}scopes/?highlight={{ app.name | downcase }}">scopes</a>.
+				{% if site.data.versions[_app] %}Current app version is <a href="{{site.baseurl}}changes/?highlight={{ app.name | downcase }}">{% assign _app = app.name | downcase %}{{ site.data.versions[_app].first[0] }}</a>. {% endif %}To find out more about the <strong>permissions</strong> this app requires, and how they are used, have a look at its <a href="{{site.baseurl}}scopes/?highlight={{ app.name | downcase }}">scopes</a> and our <a href="{{site.baseurl}}about/?highlight=privacy">privacy policy</a>.
 			</p>{% endunless %}
 		</div>
 	</div>

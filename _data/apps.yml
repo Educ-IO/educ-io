@@ -324,6 +324,9 @@ view:
               url: /changes?highlight=view
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
@@ -683,6 +686,9 @@ reflect:
               url: /changes?highlight=reflect
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
@@ -1038,6 +1044,9 @@ folders:
               url: /changes?highlight=folders
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
@@ -1199,6 +1208,9 @@ grades:
               url: /changes?highlight=grades
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
@@ -1341,6 +1353,9 @@ cover:
               url: /changes?highlight=cover
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
@@ -1587,6 +1602,9 @@ events:
               url: /changes?highlight=events
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
@@ -1867,6 +1885,9 @@ merge:
               url: /changes?highlight=merge
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
@@ -2046,6 +2067,9 @@ tiles:
               url: /changes?highlight=tiles
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
@@ -2270,6 +2294,9 @@ survey:
               url: /changes?highlight=survey
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
@@ -2503,6 +2530,9 @@ publish:
               url: /changes?highlight=publish
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
@@ -2824,6 +2854,9 @@ docket:
               url: /changes?highlight=docket
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
@@ -3120,6 +3153,9 @@ accounts:
               url: /changes?highlight=accounts
               desc: Find out about the most recent changes and features of this app
               divider: true
+            - name: Privacy
+              url: /about?highlight=privacy
+              desc: We are passionate about protecting your privacy and security
             - name: About
               url: /about
               desc: Find out about our platform, technology and approach
