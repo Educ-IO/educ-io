@@ -63,7 +63,8 @@ Data = (options, factory) => {
       value = el => {
         var simple = el => {
           var _type = el.data("output-type") || el.prop("type") || "string",
-            _val = (el[0].type == "checkbox" && el.is("input:indeterminate")) ? "all" :
+            _val = (el[0].type == "range" && el.data("value") === false) ? null :
+            (el[0].type == "checkbox" && el.is("input:indeterminate")) ? "all" :
             (el[0].type == "checkbox" || el[0].type == "radio") ? el.prop("checked") :
             (el[0].nodeName == "P" || el[0].nodeName == "DIV" ||
               el[0].nodeName == "SPAN" || el[0].nodeName == "I") ?
@@ -195,6 +196,7 @@ Data = (options, factory) => {
     var value = (el, val) => {
 
       var simple = _el => {
+        if (el[0].type == "range" && el.data("value") === false) el.data("value", true);
         if (_el[0].type == "checkbox" || _el[0].type == "radio") {
           if (val) {
             _el.prop("checked", !!(val)).triggerHandler("change");

@@ -275,6 +275,46 @@ Data = function() {
           })(_return.id, _value, _return.details);
           return _return;
         },
+        range_Empty: () => _.extend(_blocks.basic("Empty Range"), {
+          template: "field_range",
+          details: true,
+          _value: null,
+        }),
+        range_Numeric: () => {
+          var _number = GEN.i(1, 100),
+            _return = _.extend(_blocks.basic("Numeric Range"), {
+              template: "field_range",
+              details: true,
+            });
+          _return._value = (value => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Values.Details`, String(value));
+            values.to.have.deep.nested.property(`${name}.Values.Value`, String(value));
+          })(_number);
+          _return._populate = (id => modal => {
+            modal.find(`[data-id='${id}'] input[type='range']`).val(_number)[0].click();
+          })(_return.id);
+          return _return;
+        },
+        range_Stepped: () => {
+          var _number = GEN.i(0, 10),
+              _range = ["A","B","C","D","E","F","G","H","I","J","K"],
+            _return = _.extend(_blocks.basic("Stepped Range"), {
+              template: "field_range",
+              min: 0,
+              max: 10,
+              step: 1,
+              range: _range.join(";"),
+              details: true,
+            });
+          _return._value = ((value, details) => (name, values) => {
+            values.to.have.deep.nested.property(`${name}.Values.Details`, details);
+            values.to.have.deep.nested.property(`${name}.Values.Value`, String(value));
+          })(_number, _range[_number]);
+          _return._populate = (id => modal => {
+            modal.find(`[data-id='${id}'] input[type='range']`).val(_number).trigger("click");
+          })(_return.id);
+          return _return;
+        },
         span_Empty: () => {
           var _default = "Custom",
             _return = _.extend(_blocks.basic("Empty Date Span"), {
@@ -1222,6 +1262,25 @@ Data = function() {
                     expect(selector.val()).to.be.a("string")
                       .that.equals(option);
                   });
+                },
+              });
+            },
+            range: () => {
+              var _suffix = GEN.t(GEN.i(5, 10));
+              return _.extend(_blocks.basic("Numeric Range"), {
+                template: "field_range",
+                details: true,
+                suffix: _suffix,
+                _interact: (field, modal, state) => {
+                  var selector = field.find(`input#${state.id}`),
+                    details = field.find(`input#${state.id}_DETAILS`);
+                  selector.val(60);
+                  expect(details.val()).to.be.empty;
+                  selector[0].click();
+                  expect(selector.val()).to.be.a("string")
+                    .that.equals("60");
+                  expect(details.val()).to.be.a("string")
+                    .that.equals(`60 ${_suffix}`);
                 },
               });
             },

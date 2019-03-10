@@ -3263,6 +3263,7 @@ debug:
     - fields/field_textual
     - fields/field_durations
     - fields/field_files
+    - fields/field_range
     - debug/host
     - debug/data/dialog
     - debug/data/form

@@ -2,6 +2,8 @@ TODO LIST
 =========
 General
 -------
+* ** BUG ** Interactions Data test can fail with exception without triggering a test failure!
+
 * ** IMPORTANT ** Headless Tests -> Write new permission request handing!!!
 
 * ** IMPORTANT ** Recent Items -> Multiple accounts!!!

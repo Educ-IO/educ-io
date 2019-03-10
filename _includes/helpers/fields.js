@@ -202,8 +202,7 @@ Fields = (options, factory) => {
 
   var _range = form => {
 
-    /* <!-- Wire up numerical fields --> */
-    form.find("input[type='range'].show-numerical").change(e => {
+    var _change = e => {
       var _this = $(e.currentTarget);
       if (_this.data("targets")) {
         var _target = _get(_this.data("targets")),
@@ -214,9 +213,16 @@ Fields = (options, factory) => {
           _range = _range.split(";");
           _value = _range[Number(_value)];
         }
-        _target.val(`${_value}${_suffix ? `${_suffix}` : ""}`);
+        _target.val(`${_value}${_suffix ? `${_suffix.length > 1 ? " " : ""}${_suffix}` : ""}`);
       }
+    };
+    
+    /* <!-- Wire up numerical fields --> */
+    form.find("input[type='range'].show-numerical").click(e => {
+      $(e.currentTarget).data("value", true);
+      _change(e);
     });
+    form.find("input[type='range'].show-numerical").change(_change);
   };
 
   var _numerical = form => {

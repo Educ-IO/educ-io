@@ -30,7 +30,8 @@
          {{#exists min}} min="{{min}}"{{/exists}}
          {{#exists max}} max="{{max}}"{{/exists}}
          {{#exists step}} step="{{step}}"{{/exists}}
-         {{#if details}} data-targets="{{id}}_DETAILS"{{/if}}>
+         {{#if details}} data-targets="{{id}}_DETAILS"{{/if}}
+         data-value="false">
   {{#if details}}<div class="row">
     <label 
 			class="col-md-3 col-lg-6 col-xl-8 col-form-label text-md-right font-weight-bold text-muted" 

@@ -1,14 +1,14 @@
 __Σ__Volunteering = {
- 	/* <!-- FORM: Volunteering --> */
-  name : "Volunteering",
-  title : "Volunteering Report",
-  type : "Report",
-  groups : {
-    you : {
-      template : "group",
-      name : "About You",
-      fields : {
-        name : {
+  /* <!-- FORM: Volunteering --> */
+  name: "Volunteering",
+  title: "Volunteering Report",
+  type: "Report",
+  groups: {
+    you: {
+      template: "group",
+      name: "About You",
+      fields: {
+        name: {
           template: "field_textual",
           title: "Your Name",
           field: "Name",
@@ -24,18 +24,18 @@ __Σ__Volunteering = {
             }
           },
         },
-        group : {
+        group: {
           template: "field_textual",
           title: "Your group",
           field: "Group",
         },
       }
     },
-    volunteering : {
-      template : "group",
-      name : "Volunteering",
-     	fields : {
-        span : {
+    volunteering: {
+      template: "group",
+      name: "Volunteering",
+      fields: {
+        span: {
           template: "field_span",
           title: "Volunteering Period",
           field: "Span",
@@ -43,20 +43,34 @@ __Σ__Volunteering = {
           __help__: "Over which period did you undertake this volunteering work?",
           required: true,
           type: "Custom",
-          options: [
-            {value: "Custom", name: "Custom"},
-            {span: "w", value: "Weekly", name: "Weekly"},
-            {span: "M", value: "Monthly", name: "Monthly"},
-            {span: "y", value: "Yearly", name: "Yearly"}
+          options: [{
+              value: "Custom",
+              name: "Custom"
+            },
+            {
+              span: "w",
+              value: "Weekly",
+              name: "Weekly"
+            },
+            {
+              span: "M",
+              value: "Monthly",
+              name: "Monthly"
+            },
+            {
+              span: "y",
+              value: "Yearly",
+              name: "Yearly"
+            }
           ],
           __meta: {
-             index: true,
+            index: true,
             analyse: {
               type: "column"
             }
           },
         },
-        periods : {
+        periods: {
           template: "field_durations",
           title: "Hours Undertaken",
           field: "Hours",
@@ -73,27 +87,38 @@ __Σ__Volunteering = {
         },
       }
     },
-    evidence : {
+    evidence: {
       template: "group",
       name: "Evidence",
       __help__: "",
-      fields : {
-        volunteering_evidence : {
-          template : "field_files",
-          title : "Evidence",
-          field : "Volunteering Evidence",
-          icon : "assessment",
-          type : "Evidence",
-          list_field : "Evidence",
-          items_details : "Further details about the evidence you are submitting",
-          options: [
-            {name : "From Google Drive", value: "drive", class: "g-picker"},
-            {name : "From File", value: "file", class: "g-file"},
-            {name : "From Web", value: "web", class: "web"},
+      fields: {
+        volunteering_evidence: {
+          template: "field_files",
+          title: "Evidence",
+          field: "Volunteering Evidence",
+          icon: "assessment",
+          type: "Evidence",
+          list_field: "Evidence",
+          items_details: "Further details about the evidence you are submitting",
+          options: [{
+              name: "From Google Drive",
+              value: "drive",
+              class: "g-picker"
+            },
+            {
+              name: "From File",
+              value: "file",
+              class: "g-file"
+            },
+            {
+              name: "From Web",
+              value: "web",
+              class: "web"
+            },
           ],
-          __help__ : "",
+          __help__: "",
         },
-        supervisor : {
+        supervisor: {
           template: "field_textual",
           title: "Supervisor",
           field: "Volunteering Supervisor",
@@ -108,20 +133,19 @@ __Σ__Volunteering = {
         },
       }
     },
-    details : {
+    details: {
       template: "group",
       name: "Details",
       __help__: "",
-      fields : {
-        overall_assessment : {
+      fields: {
+        overall_assessment: {
           template: "field_radio",
           title: "Overall Assessment",
           field: "Overall Assessment",
           icon: "gavel",
           help: "How would you rate your overall experience over this period.",
           large: true,
-          options: [
-            {
+          options: [{
               class: "btn-success",
               value: "Wonderful",
               icon: "sentiment_very_satisfied"
@@ -131,7 +155,7 @@ __Σ__Volunteering = {
               value: "Ok",
               icon: "sentiment_satisfied"
             },
-            
+
             {
               class: "btn-warning",
               value: "Not great",
@@ -144,7 +168,7 @@ __Σ__Volunteering = {
             }
           ]
         },
-        further_reflections : {
+        further_reflections: {
           template: "field_textual",
           title: "Any further reflections on this period",
           field: "Further Reflections",
