@@ -69,7 +69,7 @@ css:
 	<body class="container">
 		{% include nav.html type="sticky-top" %}
 		<div class="container pb-4 px-0">
-			<div class="jumbotron pt-4 pb-2">
+			<div class="jumbotron pt-4 pb-1 mb-1">
   			{% if page.for and site.data.apps[page.for].link and site.data.apps[page.for].ext != "true" %}<a class="btn btn-primary btn-lg float-md-right d-none d-md-inline-block" href="{{ site.data.apps[page.for].link }}" role="button">Open {{ site.data.apps[page.for].name }}</a>{% endif %}{% if page.layout == 'tutorial' %}<a class="btn btn-info btn-lg float-lg-right d-none d-lg-inline-block mr-2" href="/guides/{{ page.for}}">Guide</a>{% endif %}
 				<h1 class="font-sensitive{% if page.layout != 'tutorial' %} display-4{% endif %}">{% if page.layout == 'guide' or page.layout == 'tutorial' %}{% if site.data.apps[page.for].logo %}{% assign app = site.data.apps[page.for] %}{% include {{ app.logo }} %}{% endif %}{% endif %}{% if page.short_title %}{{ page.short_title }}{% else %}{{ page.title }}{% endif %}</h1>
   			{% if page.lead %}<p class="lead">{{ page.lead | markdownify | remove: "<p>" | remove: "</p>" }}</p>{% endif %}

@@ -211,9 +211,8 @@ App = function() {
       .then(value => value ? ಠ_ಠ.Display.state().enter(STATE_SCALE_OPENED).protect("a.jump").on("JUMP") : null)
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Scale Create Prompt", e) : false),
 
-    tracker: name => name,
     /* <!-- TODO: Tracker Creation --> */
-
+    tracker: name => name,
   };
   /* <!-- Create Functions --> */
 
@@ -364,6 +363,11 @@ App = function() {
       editable: editable
     }),
     /* <!-- TODO: Process Tracker Loading --> */
+
+    /* <!-- TODO: Analysis --> */
+    analysis: forms => {
+      return forms;
+    },
 
   };
   /* <!-- Process Functions --> */
@@ -734,7 +738,13 @@ App = function() {
             matches: /ANALYSE/i,
             fn: () => FN.prompt.choose(
                 ಱ.forms.selection("forms", "Report"), "Select a Form ...", "ANALYSE", true)
-              .then(result => result) /* <!-- TODO: Display Analysis --> */
+              .then(results => {
+                if (results && results.length > 0) {
+                  ಠ_ಠ.Flags.log(`${results.length} form${results.length > 1 ? "s" : ""} selected for Analysis`, results);
+                  FN.create.analysis(_.map(results, result => result.value));
+                }
+
+              })
           },
 
           sign: {

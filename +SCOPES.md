@@ -12,20 +12,22 @@ Here are __all the scopes__ we use, broken down by app, with a short description
 {::options parse_block_html="true" /}
 <div class="d-flex flex-column p-2">
 {% for app in apps %}
-{% if app.scopes %}
+{% if app.scopes %}{% if app.published or app.scoped %}
 <div class="highlight_all highlight_{{ app.name | downcase }} mb-3">
+<div class="alert alert-success">
 ##### {{ app.name | capitalize }}
 {% if app.desc %}{{ app.desc }}
-{:.small}{% endif %}
+{:.small .mb-0}{% endif %}
+</div>
 {% for service in app.scopes %}
-+ {{ service[0] | capitalize }}
++ ###### {{ service[0] | capitalize }}
 {% for scope in service[1] %}
-	- __{{ scope.scope }}__{:.wrap-break}{% if scope.name %} - {{ scope.name }}{% endif %} {% if scope.request == 'lazy' %}__OPTIONAL__{:.badge .badge-dark}{% endif %}
+	- __{{ scope.scope }}__{:.wrap-break}{% if scope.name %} - {{ scope.name }}{% endif %} {% if scope.request == 'lazy' %}__OPTIONAL__{:.badge .badge-primary}{% endif %}
 	{% if scope.reason %}- __Why?__ _{{ scope.reason }}_{:.text-muted}{% endif %}
 {% endfor %}
 {% endfor %}
 </div>
-{% endif %}
+{% endif %}{% endif %}
 {% endfor %}
 </div>
 {% include copyright.md %}
