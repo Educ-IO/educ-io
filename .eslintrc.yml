@@ -49,6 +49,7 @@ globals:
   chance: false
   underscoreDeepExtend: false
   quotedPrintable: false
+  jsyaml: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -87,6 +88,7 @@ globals:
   Master: true
   Records: true
   Tasks: true
+  Analysis: true
   Google_Sheets_Grid: true
   Google_Sheets_Metadata: true
   Google_Sheets_Notation: true

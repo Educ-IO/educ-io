@@ -1,8 +1,8 @@
 site :
-  0.1.3e :
-    name : Reflect v0.0.6-beta
+  0.1.3f :
+    name : Reflect v0.0.6a-beta
     desc : Reflect Report Sending Feature
-    numeric : 0.1.1.23
+    numeric : 0.1.1.24
   0.1.2j :
     name : Reflect v0.0.5a-alpha
     desc : Reflect Digital Signatures
@@ -804,7 +804,7 @@ folders :
     name : Early testing version
     type : minor
 reflect :
-  0.0.6-beta :
+  0.0.6a-beta :
     name : Report Sending Feature
     type : minor
   0.0.5a-alpha :

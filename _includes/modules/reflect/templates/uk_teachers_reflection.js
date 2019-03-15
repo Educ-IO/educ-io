@@ -19,6 +19,7 @@ __Σ__UK_Teachers_Reflection =  {
           large: true,
           required: true,
           __meta: {
+            index: true,
             analyse: {
               type: "row"
             }

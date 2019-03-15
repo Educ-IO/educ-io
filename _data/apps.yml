@@ -408,6 +408,8 @@ reflect:
       load: last
     - name: quotedPrintable
       load: last
+    - name: yaml
+      load: last
     - name: xlsx
       load: lazy
     - name: filesaver
@@ -423,6 +425,9 @@ reflect:
     - strings
     - fields
     - dialog
+    - filters
+    - table
+    - css
   modules:
     - flags
     - controller
@@ -433,6 +438,10 @@ reflect:
     - help
     - service
     - main
+    - datatable
+    - grid
+    - headers
+    - reflect/analysis
     - reflect/forms
     - reflect/templates/form_master
     - reflect/templates/uk_teachers_reflection
@@ -457,6 +466,11 @@ reflect:
     - shared/control_icon
     - shared/control_button
     - shared/list_item
+    - shared/filters
+    - shared/table
+    - shared/datatable
+    - shared/rows
+    - shared/hyperlink
     - fields/field_general
     - fields/field_complex
     - fields/field_items
@@ -476,19 +490,21 @@ reflect:
     - reflect/form
     - reflect/signature
     - reflect/recovery
-    - reflect/analyse
     - reflect/tracker
     - reflect/count
     - reflect/valid
     - reflect/send
     - reflect/recipients
     - reflect/pill
+    - reflect/analyse_header
   docs:
     - shared/JUMP
     - shared/HELP
     - shared/HELP_AVAILABLE
     - shared/HELP_INDETERMINATE
     - shared/HELP_UNAVAILABLE
+    - shared/FILTERS
+    - shared/HEADERS
     - reflect/PUBLIC
     - reflect/FEATURES
     - reflect/README
@@ -640,7 +656,38 @@ reflect:
               desc: Anaylse submitted Form Reports
               hash: analyse
               auth: google
-    - name: Trackers
+    - name: Analysis
+      disabled_until:
+        - analysis
+      groups:
+        all:
+          commands:
+            - name: Summary
+              desc: View Report Summary
+              hash: analyse.summary
+              toggle:
+                - analysis-summary
+            - name: Detail
+              desc: View Report Details
+              hash: analyse.detail
+              toggle:
+                - analysis-detail
+            - name: Show All
+              desc: View All Reports
+              hash: analyse.all
+              toggle:
+                - analysis-reports-all
+            - name: Show Mine
+              desc: View My Reports
+              hash: analyse.mine
+              toggle:
+                - analysis-reports-mine
+            - name: Show Shared
+              desc: View Reports Shared with Me
+              hash: analyse.shared
+              toggle:
+                - analysis-reports-shared
+    - name: Tracker
       groups:
         all:
           commands:
@@ -3554,13 +3601,35 @@ cloudysky:
 
 tagadoc:
   name: Tag-a-Doc
-  desc: View tags in Google Docs
+  desc: View tags in Google Docs and Calendars
   link: /extensions/tag-a-doc
   published: true
   info: true
   colour: cc0
   action: Find out more
+  scopes:
+    google:
+      - scope: email
+        name: View your email address
+        reason: In order to display the address of your logged in account on the extension pop-up, once you have signed in.
+        request: login
+      - scope: profile
+        name: View your basic profile info
+        reason: In order to display your name on the extension pop-up, once you have signed in.
+        request: login
+      - scope: https://www.googleapis.com/auth/drive.readonly
+        name: View the files in your Google Drive
+        reason: In order to read metadata tags, file paths and team drive names; this 'readonly' permission is required.
+        request: login
+      - scope: https://www.googleapis.com/auth/calendar.events.readonly
+        name: View the files in your Google Drive
+        reason: In order to read metadata tags for events, this 'readonly' permissions is required.
+        request: login
   versions:
+    1.2.6 :
+      name : Bug Fix
+      desc : Improved handling of extension installing or updating events
+      type : minor
     1.2.4 :
       name : Bug Fix
       desc : Updated for recent Google Calendar design refresh

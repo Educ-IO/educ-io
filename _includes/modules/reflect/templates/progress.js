@@ -42,7 +42,7 @@ __Σ__Progress = {
       fields: {
         span: {
           template: "field_span",
-          title: "Volunteering Period",
+          title: "Assessment Period",
           field: "Span",
           icon: "date_range",
           help: "Over which period are you assessing progress?",

@@ -194,6 +194,8 @@ Forms = function() {
 
     has: name => !!(_get(name, ರ‿ರ.cache.forms)),
 
+    template: name => _get(name, ರ‿ರ.cache.forms),
+    
     get: (name, editable, signable) => {
       var _form = _get(name, ರ‿ರ.cache.forms);
       return {

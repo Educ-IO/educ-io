@@ -19,6 +19,7 @@ __Σ__Volunteering = {
           required: true,
           readonly: true,
           __meta: {
+            index: true,
             analyse: {
               type: "row"
             }
@@ -77,13 +78,17 @@ __Σ__Volunteering = {
           icon_date: "calendar_today",
           icon_number: "alarm_add",
           help: "Please add the hours of volunteering undertaken during this period",
-          increment: 0.5,
+          increment: 0.25,
           min: 0,
           required: true,
           type: "Hours",
           suffix: "hours/s",
           items: "Periods",
           details: "Further details, if applicable",
+          __meta: {
+            index: true,
+            path: "Display",
+          },
         },
       }
     },

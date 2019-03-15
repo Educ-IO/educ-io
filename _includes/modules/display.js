@@ -138,6 +138,37 @@ Display = function() {
   var _breakpoint = size => $(`div.bs-breakpoints span.${size}`).css("display") == "block";
 
   var _username = name => name && name.length == 3 ? name.split(" ").join("") : name;
+
+  var _dialog = (dialog, options) => {
+
+    if ((options.actions || options.handlers) &&
+      dialog.find("button[data-action], a[data-action]").length > 0) {
+      _.each(dialog.find("button[data-action], a[data-action]"), el => {
+        $(el).on("click.action", e => {
+          var _target = $(e.currentTarget),
+            _action = _target.data("action");
+          if (_action.indexOf("actions_") === 0) {
+            _action = $(e.target).data("action").split("_");
+            if (_action[0] == "actions") options.actions[_action[1]].handler(dialog.find("form").serializeArray());
+          } else if (options.handlers && options.handlers[_action]) {
+            options.handlers[_action](_target, dialog, options);
+          }
+        });
+      });
+    }
+
+    if ((options.updates) &&
+      dialog.find("input[data-action], textarea[data-action]").length > 0) {
+      _.each(dialog.find("input[data-action], textarea[data-action]"), el => {
+        $(el).on("input.action", e => {
+          var _target = $(e.currentTarget),
+            _action = _target.data("action");
+          if (options.updates[_action]) options.updates[_action](_target, dialog, options);
+        });
+      });
+    }
+
+  };
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -178,18 +209,26 @@ Display = function() {
           variable.toString() : JSON.stringify(variable) : "");
 
         Handlebars.registerHelper("isDate", function(variable, options) {
-          if (variable && variable instanceof Date) {
-            return options.fn(this);
+          if (variable && (variable instanceof Date || variable._isAMomentObject)) {
+            return options.fn ? options.fn(this) : true;
           } else {
-            return options.inverse(this);
+            return options.inverse ? options.inverse(this) : false;
           }
         });
 
         Handlebars.registerHelper("isArray", function(variable, options) {
           if (variable && variable.constructor === Array) {
-            return options.fn(this);
+            return options.fn ? options.fn(this) : true;
           } else {
-            return options.inverse(this);
+            return options.inverse ? options.inverse(this) : false;
+          }
+        });
+
+        Handlebars.registerHelper("isObject", function(variable, options) {
+          if (variable && variable.constructor === Object) {
+            return options.fn ? options.fn(this) : true;
+          } else {
+            return options.inverse ? options.inverse(this) : false;
           }
         });
 
@@ -203,11 +242,16 @@ Display = function() {
           if (variable && !isNaN(variable) && variable > 0) return _bytes(variable, 2);
         });
 
+        Handlebars.registerHelper("formatYaml", variable => {
+          if (variable !== null && variable !== undefined && window.jsyaml)
+            return jsyaml.safeDump(variable);
+        });
+
         Handlebars.registerHelper("exists", function(variable, options) {
           if (typeof variable !== "undefined") {
-            return options.fn(this);
+            return options.fn ? options.fn(this) : true;
           } else {
-            return options.inverse(this);
+            return options.inverse ? options.inverse(this) : false;
           }
         });
 
@@ -216,9 +260,9 @@ Display = function() {
             variable !== null &&
             !(variable.constructor === Object && Object.keys(variable).length === 0) &&
             !(variable.constructor === Array && variable.length === 0)) {
-            return options.fn(this);
+            return options.fn ? options.fn(this) : true;
           } else {
-            return options.inverse(this);
+            return options.inverse ? options.inverse(this) : false;
           }
         });
 
@@ -263,7 +307,9 @@ Display = function() {
           };
 
           if (!operators[operator]) throw new Error(`IS doesn't understand the operator ${operator}`);
-          return operators[operator](v1, v2) ? options.fn(this) : options.inverse(this);
+          return operators[operator](v1, v2) ?
+            options.fn ? options.fn(this) : true :
+            options.inverse ? options.inverse(this) : false;
 
         });
 
@@ -624,30 +670,9 @@ Display = function() {
 
           }
 
-          if ((options.actions || options.handlers) && dialog.find("button[data-action], a[data-action]").length > 0) {
-            _.each(dialog.find("button[data-action], a[data-action]"), el => {
-              $(el).on("click.action", e => {
-                var _target = $(e.currentTarget),
-                  _action = _target.data("action");
-                if (_action.indexOf("actions_") === 0) {
-                  _action = $(e.target).data("action").split("_");
-                  if (_action[0] == "actions") options.actions[_action[1]].handler(dialog.find("form").serializeArray());
-                } else if (options.handlers && options.handlers[_action]) {
-                  options.handlers[_action](_target, dialog, options);
-                }
-              });
-            });
-          }
+          /* <!-- Wire Up Action and Update Handlers --> */
+          _dialog(dialog, options);
 
-          if ((options.updates) && dialog.find("input[data-action], textarea[data-action]").length > 0) {
-            _.each(dialog.find("input[data-action], textarea[data-action]"), el => {
-              $(el).on("input.action", e => {
-                var _target = $(e.currentTarget),
-                  _action = _target.data("action");
-                if (options.updates[_action]) options.updates[_action](_target, dialog, options);
-              });
-            });
-          }
         }
 
         /* <!-- Modal Dismissing Clicks --> */
@@ -856,6 +881,9 @@ Display = function() {
           }
         });
 
+        /* <!-- Wire Up Action and Update Handlers --> */
+        _dialog(dialog, options);
+
         /* <!-- Handle Clicked Submit --> */
         dialog.find(".modal-footer button.btn-primary").click(() => {
           _submitted = true;
@@ -1061,9 +1089,17 @@ Display = function() {
         return _parent;
       };
 
+      var _change = (exit, enter) => {
+        _exit(exit);
+        _enter(enter);
+        return _parent;
+      };
+
       return {
 
         all: _all,
+
+        change: _change,
 
         enter: _enter,
 

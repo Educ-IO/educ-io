@@ -1,3 +1,3 @@
 {% raw %}
-{{#each rows}}<tr>{{#each this}}<td>{{#isDate this}}{{localeDate this}}{{else}}{{#present this}}{{this}}{{/present}}{{/isDate}}{{#if @last}}{{#if ../../removable}}<a role="button" class="close float-right" aria-label="Close" href="#" title="Remove from List"><span aria-hidden="true">&times;</span></a>{{/if}}{{/if}}</td>{{/each}}</tr>{{/each}}
+{{#each rows}}<tr>{{#each this}}{{#isDate this}}<td>{{localeDate this}}{{else}}{{#isObject this}}<td style="white-space: pre;">{{formatYaml this}}{{else}}{{#present this}}<td>{{{this}}}{{/present}}{{/isObject}}{{/isDate}}{{#if @last}}{{#if ../../removable}}<a role="button" class="close float-right" aria-label="Close" href="#" title="Remove from List"><span aria-hidden="true">&times;</span></a>{{/if}}{{/if}}</td>{{/each}}</tr>{{/each}}
 {% endraw %}

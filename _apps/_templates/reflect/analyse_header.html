@@ -1,0 +1,12 @@
+{% raw %}
+<div class="row justify-content-between w-100 mt-1 mt-lg-2">
+  <h4{{#if id}} id="{{id}}"{{/if}} class="d-inline-flex align-self-start col-12{{#if subtitle}} col-md-6 col-xl-4{{/if}} display-4{{#if classes}}{{#each classes}} {{this}}{{/each}}{{/if}}">
+  	<span class="ml-2 text-muted font-weight-bold small">{{title}}</span>
+  </h4>
+  {{#if subtitle}}<div class="d-inline-flex flex-column align-self-centercol-12 col-md-6 col-xl-8 ml-3 ml-md-0">
+  	{{#each subtitle}}<h5 class="d-flex m-0 p-1">
+  		<span class="font-weight-light">{{this}}</span>
+  	</h5>{{/each}}
+  </div>{{/if}}
+</div>
+{% endraw %}

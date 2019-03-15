@@ -41,6 +41,12 @@ a.navbar-brand.logo, .navbar-brand a.logo {
 }
 // -- Menu Branding -- //
 
+// -- Menu Hiding -- //
+.navbar-nav > .nav-item.disabled {
+  display: none;
+}
+// -- Menu Hiding -- //
+
 // -- Outline App Logo -- //
 .dropdown-item svg, .app-logo svg, .jumbotron h1 svg, svg.logo {
 	path, use {

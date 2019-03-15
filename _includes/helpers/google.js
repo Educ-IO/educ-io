@@ -102,7 +102,8 @@ Google_API = (options, factory) => {
   const APP_DATA = "appDataFolder";
 
   const SKELETON = "id,name,size,parents,mimeType";
-  const FIELDS = "kind,id,name,description,mimeType,version,parents,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId,ownedByMe,capabilities";
+  const FIELDS = `kind,${SKELETON},description,version,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId,ownedByMe,capabilities,isAppAuthorized`;
+  const FULL = `${FIELDS},createdTime,modifiedTime,sharingUser,owners`;
 
   const EVENTS = {
     SEARCH: {
@@ -307,7 +308,7 @@ Google_API = (options, factory) => {
 
   };
 
-  var _contents = (ids, names, mimeTypes, excludeMimeTypes, properties, visibilities, shared, skeleton, team, overrideType, propertyModifier, spaces) => {
+  var _contents = (ids, names, mimeTypes, excludeMimeTypes, properties, visibilities, shared, skeleton, team, overrideType, propertyModifier, spaces, fields, owner) => {
 
     /* <!-- Build the ID portion of the query --> */
     var _i = ids && ids.length > 0 ?
@@ -338,13 +339,18 @@ Google_API = (options, factory) => {
       _.reduce(visibilities, (q, v, i) => q + (i > 0 ? " or visibility = '" : "visibility = '") + v + "'", " and (") + ")" : "";
 
     /* <!-- Build SHARED portion of the query --> */
-    var _s = shared ? " and (sharedWithMe = true)" : "";
+    var _s = shared || owner === false ? " and (sharedWithMe = true)" : "";
+
+    /* <!-- Build OWNER portion of the query --> */
+    var _o = owner !== null && owner !== undefined ?
+      `and${owner === false ? " not" : ""} ('${_.isString(owner) ? owner : "me"}' in owners)` :
+      "";
 
     var _data = {
       pageSize: PAGE_SIZE,
-      q: "trashed = false" + _i + _n + _m + _e + _p + _v + _s,
+      q: "trashed = false" + _i + _n + _m + _e + _p + _v + _s + _o,
       orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-      fields: `kind,nextPageToken,incompleteSearch,files(${skeleton ? SKELETON : FIELDS}${skeleton && team ? ",teamDriveId" : ""})`,
+      fields: `kind,nextPageToken,incompleteSearch,files(${fields ? fields : skeleton ? SKELETON : FIELDS}${skeleton && team ? ",teamDriveId" : ""})`,
     };
 
     if (team) {
@@ -769,6 +775,10 @@ Google_API = (options, factory) => {
 
         return fn;
       },
+
+      search: (mimeTypes, properties, mine, full) => _contents(null, null, _arrayize(mimeTypes, _.isString),
+        null, _arrayize(properties, _.isString),
+        null, null, false, false, null, null, null, full ? FULL : null, mine),
 
     },
 

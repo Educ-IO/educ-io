@@ -18,12 +18,22 @@ App = function() {
   const STATE_FORM_OPENED = "opened-form",
     STATE_REPORT_OPENED = "opened-report",
     STATE_TRACKER_OPENED = "opened-tracker",
-    STATE_SCALE_OPENED = "opened-tracker",
-    STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED, STATE_TRACKER_OPENED, STATE_SCALE_OPENED];
+    STATE_SCALE_OPENED = "opened-scale",
+    STATE_ANALYSIS = "analysis",
+    STATE_ANALYSIS_SUMMARY = "analysis-summary",
+    STATE_ANALYSIS_DETAIL = "analysis-detail",
+    STATE_ANALYSIS_ALL = "analysis-reports-all",
+    STATE_ANALYSIS_MINE = "analysis-reports-mine",
+    STATE_ANALYSIS_SHARED = "analysis-reports-shared",
+    STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED, STATE_TRACKER_OPENED,
+      STATE_SCALE_OPENED, STATE_ANALYSIS, STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL,
+      STATE_ANALYSIS_ALL, STATE_ANALYSIS_MINE, STATE_ANALYSIS_SHARED
+    ];
   const EMAIL = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi,
     MARKER = "=== SIGNED ===",
     META = "__meta",
     INDEX = "index",
+    PATH = "path",
     SIGNATORY = "signatory",
     DESTINATION = "destination",
     EXTENSION = ".reflect",
@@ -67,7 +77,7 @@ App = function() {
         (memo, field) => {
           var _field = report[field.field];
           if (_field && (_field.Value || _field.Values))
-            use(_field.Value || _field.Values, field.field, memo);
+            use(_field.Value || _field.Values, field.field, field[META], memo);
           return memo;
         }, memo), initial),
 
@@ -87,7 +97,7 @@ App = function() {
     addresses: (type, dehyrated) => {
       var _values = FN.helper.values((dehyrated ? dehyrated : (dehyrated = FN.action.dehydrate()))
         .data.form, dehyrated.data.report,
-        meta => meta[type], (value, field, memo) => memo.push(value), []);
+        meta => meta[type], (value, field, meta, memo) => memo.push(value), []);
       return _.reduce(_values, (memo, value) => memo.concat(value ?
         value.match(EMAIL) : []), []);
     },
@@ -120,14 +130,29 @@ App = function() {
   /* <-- Edit Functions --> */
   FN.edit = {
 
-    generic: (value, help, title, id) => ಠ_ಠ.Display.text({
+    generic: (value, help, title, id, mimeType, editable) => ಠ_ಠ.Display.text({
         id: id ? id : "generic_editor",
         title: title ? title : "Create / Edit ...",
         message: help ? ಠ_ಠ.Display.doc.get(help) : "",
         state: {
           value: value && _.isObject(value) ? JSON.stringify(value, REPLACER, 2) : value
         },
-        action: "Save",
+        action: editable === false ? false : "Save",
+        actions: [{
+          text: "Download",
+          handler: values => {
+            if (values && values.length === 1) {
+              try {
+                saveAs(new Blob([values[0].value], {
+                    type: mimeType
+                  }),
+                  `${value && value.title ? value.title : "download"}${EXTENSION}`);
+              } catch (e) {
+                ಠ_ಠ.Flags.error("Download", e);
+              }
+            }
+          }
+        }],
         rows: 10
       })
       .then(values => value && ರ‿ರ.file ?
@@ -137,9 +162,11 @@ App = function() {
       .then(() => ಱ.forms = ಠ_ಠ.Forms())
       .catch(e => (e ? ಠ_ಠ.Flags.error("Edit Error", e) : ಠ_ಠ.Flags.log("Edit Cancelled")).negative()),
 
-    form: (form, editable) => FN.edit.generic(form, "FORM", "Create / Edit Form ...", "form_editor", editable),
+    form: (form, editable) => FN.edit.generic(form, "FORM", "Create / Edit Form ...",
+      "form_editor", TYPE_FORM, editable),
 
-    scale: scale => FN.edit.generic(scale, "SCALE", "Create / Edit Scale ...", "scale_editor"),
+    scale: scale => FN.edit.generic(scale, "SCALE", "Create / Edit Scale ...",
+      "scale_editor", TYPE_SCALE),
 
   };
   /* <-- Edit Functions --> */
@@ -220,6 +247,21 @@ App = function() {
   /* <!-- Prompt Functions --> */
   FN.prompt = {
 
+    analysis: mine => FN.prompt.choose(
+        ಱ.forms.selection("forms", "Report"), "Select a Form ...", "ANALYSE", true)
+      .then(results => {
+        var _process = () => {
+          results = _.isArray(results) ? results : [results];
+          var _ln = results.length;
+          ಠ_ಠ.Flags.log(`${_ln} form${_ln > 1 ? "s" : ""} selected for Analysis`, results);
+          return FN.process.analysis(_.map(results, result => ({
+            id: result.value,
+            name: `${result.name}${result.title ? ` [${result.title}]` : ""}`
+          })), mine, false).then(ಠ_ಠ.Main.busy("Finding Reports"));
+        };
+        return results ? _process() : false;
+      }),
+
     choose: (options, title, instructions, multiple) => ಠ_ಠ.Display.choose({
         id: "select_chooser",
         title: title,
@@ -228,8 +270,8 @@ App = function() {
         multiple: multiple,
         action: "Select",
       })
-      .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Select Prompt", e) :
-        ಠ_ಠ.Flags.log("Select Prompt Cancelled"))
+      .catch(e => (e ? ಠ_ಠ.Flags.error("Displaying Select Prompt", e) :
+        ಠ_ಠ.Flags.log("Select Prompt Cancelled")).negative())
       .then(result => {
         ಠ_ಠ.Flags.log("Selected:", result);
         return result;
@@ -364,10 +406,45 @@ App = function() {
     }),
     /* <!-- TODO: Process Tracker Loading --> */
 
-    /* <!-- TODO: Analysis --> */
-    analysis: forms => {
-      return forms;
-    },
+    analysis: (forms, mine, full) => Promise.resolve(_.map(forms, form => ({
+      id: form.id,
+      value: form.value,
+      template: ಱ.forms.template(form.id)
+    }))).then(
+      forms => {
+        return Promise.all(_.map(forms,
+            form => ಠ_ಠ.Google.files.search(TYPE_REPORT, `FORM=${form.id}`, mine, true)))
+          .then(reports => {
+            return _.reduce(reports, (memo, reports) => memo.concat(reports), []);
+          })
+          .then(reports => full ?
+            Promise.all(_.map(reports, report => ಠ_ಠ.Google.files.download(report.id)
+              .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
+              .then(content => ({
+                file: report,
+                content: JSON.parse(content)
+              })))) :
+            _.map(reports, report => ({
+              file: report
+            })))
+          .then(reports => _.each(reports, report => {
+            if (report.file.appProperties.FORM) {
+              var _form = _.find(forms, {
+                id: report.file.appProperties.FORM
+              });
+              report.title = _form ? _form.template.title ? _form.template.title : _form.template.name :
+                report.file.appProperties.FORM;
+            }
+          }))
+          .then(reports => {
+            ರ‿ರ.analysis = ಠ_ಠ.Analysis(ಠ_ಠ, forms, reports);
+            ಠ_ಠ.Display.state()
+              .change(STATES, STATE_ANALYSIS)
+              .protect("a.jump").on("JUMP");
+            return reports;
+          });
+      }
+    ),
 
   };
   /* <!-- Process Functions --> */
@@ -431,7 +508,7 @@ App = function() {
       .then(value =>
         ಠ_ಠ.Google.files.is(TYPE_REPORT)(file) ? FN.process.report(value.content, value.actions) :
         ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ? FN.process.form(value.content, value.actions) :
-        Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id}`)),
+        Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id} | ${file.mimeType}`)),
 
     save: (force, dehydrated) => FN.action.get(dehydrated, true)
       .then(saving => (!ರ‿ರ.form.signatures || !FN.helper.dirty(saving.data.report) ?
@@ -460,7 +537,9 @@ App = function() {
                     parents: (ರ‿ರ.folder ? ರ‿ರ.folder.id : null),
                     appProperties: FN.helper.values(saving.data.form, saving.data.report,
                       meta => meta[INDEX],
-                      (value, field, memo) => memo[field] = JSON.stringify(value), {
+                      (value, field, meta, memo) =>
+                      memo[`FIELD.${field}`] = JSON.stringify(meta[PATH] ?
+                        value[meta[PATH]] : value), {
                         FORM: saving.data.form.name
                       }),
                   },
@@ -552,7 +631,7 @@ App = function() {
       var _exporting = FN.action.dehydrate();
       try {
         saveAs(new Blob([JSON.stringify(_exporting.data, null, 2)], {
-          type: "application/octet-stream"
+          type: TYPE_REPORT
         }), _exporting.name);
       } catch (e) {
         ಠ_ಠ.Flags.error("Report Export", e);
@@ -731,20 +810,61 @@ App = function() {
           },
 
           load: {
-            success: value => FN.action.load(value.result).then(ಠ_ಠ.Main.busy("Loading")),
+            success: value => FN.action.load(value.result)
+              .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e))
+              .then(ಠ_ಠ.Main.busy("Loading")),
           },
-
           analyse: {
             matches: /ANALYSE/i,
-            fn: () => FN.prompt.choose(
-                ಱ.forms.selection("forms", "Report"), "Select a Form ...", "ANALYSE", true)
-              .then(results => {
-                if (results && results.length > 0) {
-                  ಠ_ಠ.Flags.log(`${results.length} form${results.length > 1 ? "s" : ""} selected for Analysis`, results);
-                  FN.create.analysis(_.map(results, result => result.value));
-                }
-
-              })
+            routes: {
+              summary: {
+                matches: /SUMMARY/i,
+                length: 0,
+                fn: () => ಠ_ಠ.Display.state()
+                  .change(STATE_ANALYSIS_DETAIL, STATE_ANALYSIS_SUMMARY)
+              },
+              detail: {
+                matches: /DETAIL/i,
+                length: 0,
+                fn: () => ಠ_ಠ.Display.state()
+                  .change(STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL)
+              },
+              all: {
+                matches: /ALL/i,
+                length: 0,
+                fn: () => FN.prompt.analysis()
+                  .then(result => ಠ_ಠ.Display.state().enter(result ? [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL] : null))
+              },
+              mine: {
+                matches: /MINE/i,
+                length: 0,
+                fn: () => FN.prompt.analysis(true)
+                  .then(result => ಠ_ಠ.Display.state().enter(result ? [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_MINE] : null))
+              },
+              shared: {
+                matches: /SHARED/i,
+                length: 0,
+                fn: () => FN.prompt.analysis(false)
+                  .then(result => ಠ_ಠ.Display.state().enter(result ? [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_SHARED] : null))
+              },
+              form: {
+                length: 1,
+                fn: command => {
+                  var _form = ಱ.forms.get(command);
+                  return _form ? FN.process.analysis([{
+                      id: _form.id,
+                      name: `${_form.name}${_form.title ? ` [${_form.title}]` : ""}`
+                    }])
+                    .catch(e => ಠ_ಠ.Flags.error(`Analysing Form: ${_form.id}`, e))
+                    .then(ಠ_ಠ.Main.busy("Finding Reports")) : false;
+                },
+              },
+              default: {
+                length: 0,
+                fn: () => FN.prompt.analysis()
+                  .then(result => ಠ_ಠ.Display.state().enter(result ? [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL] : null))
+              }
+            },
           },
 
           sign: {
