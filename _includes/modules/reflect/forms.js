@@ -198,10 +198,10 @@ Forms = function() {
     
     get: (name, editable, signable) => {
       var _form = _get(name, ರ‿ರ.cache.forms);
-      return {
+      return _form ? {
         template: _form,
         form: _create(name, _form, editable, signable)
-      };
+      } : null;
     },
 
     create: (id, template, editable, signable) => ({

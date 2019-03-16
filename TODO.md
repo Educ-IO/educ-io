@@ -46,9 +46,6 @@ Apps
 ----
 * ** IMPORTANT ** Router and subsequent anchor routes -> how do we handle duplicates?
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
-* ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?)
-  -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
-  -> Re-submit form apparently!
 
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
 
@@ -60,6 +57,7 @@ Apps
 Mobile
 ------
 * ** IMPORTANT ** Full Page Lazy Scope Load may break app flow (need state object to pass back to app?) - also should test for scope before initiating flow?
+
 * ** IMPORTANT ** Incognito Mode on IOS fails on sign-in (issue with LocalForage again?) -> Issue on IOS 10.3 but not on 11? 11 seems to fix the Local Storage problem. Cookie problems on IOS?
 
 * Command clicks in header menu must close menu. Thought this was the case so perhaps a bug rather than a lack of functionality. This also screws up height measuring for scrolls.
@@ -128,8 +126,6 @@ Reflect
 
 * Thumbnail / Content Hint for Form (render?)
 
-* ** NEW FIELD ** Range Field - https://getbootstrap.com/docs/4.3/components/forms/#range
-
 * ** IMPORTANT ** Should have anchor links using smooth scroll to different parts of the forms, to make navigation of the form easier!
 
 * Lesson Observation Form
@@ -137,7 +133,7 @@ Reflect
 * ** IMPORTANT ** Feedback on successful save?
 * ** IMPORTANT ** Optional Gradings against standards
 
-* Change UI Buttons (Save, Complete etc) for Report / Form
+
 
 * Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL
 
@@ -153,6 +149,12 @@ Survey
 
 Complete
 --------
+* ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) <-- DONE
+  -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
+  -> Re-submit form apparently!
+* Change UI Buttons (Save, Complete etc) for Report / Form <-- DONE
+* ** NEW FIELD ** Range Field - https://getbootstrap.com/docs/4.3/components/forms/#range <-- DONE
+* ** BUG ** Sorting on an initially hidden column re-hides it! <== DONE
 * ** BUG ** Import doesn't clear state (e.g. FILE / COMMENTS) properly. <-- DONE
 * Import doesn't then have option to save to Google Drive (editable?) <-- DONE
 * ** BUG ** Cancel from form editing dialog -> Exception <-- DONE
@@ -631,4 +633,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2019-03-05
+ᕕ( ᐛ )ᕗ JD - 2019-03-16

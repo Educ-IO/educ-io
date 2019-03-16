@@ -590,6 +590,7 @@ reflect:
             - name: Import
               desc: Import a saved Report from a file
               hash: import.report
+              divider: true
             - name: Save
               desc: Save this Report
               hash: save.report
@@ -624,6 +625,7 @@ reflect:
               disabled_until:
                 - opened-report
               auth: google
+              divider: true
             - name: Export
               desc: Export this Report by downloading the data
               hash: save.report.export
@@ -633,6 +635,15 @@ reflect:
               imports:
                 - filesaver
               visibility: debug
+            - name: Complete
+              desc: Complete this Report
+              hash: complete.report
+              imports:
+                - html2canvas
+              disabled_until:
+                - opened-report
+              auth: google
+              divider: true
             - name: Close
               desc: Close this Report
               hash: close
@@ -672,21 +683,30 @@ reflect:
               hash: analyse.detail
               toggle:
                 - analysis-detail
+            - name: Grid
+              desc: View Reports Grid
+              hash: analyse.grid
+              toggle:
+                - analysis-grid
+              divider: true
             - name: Show All
               desc: View All Reports
-              hash: analyse.all
+              hash: analyse.reports.all
               toggle:
                 - analysis-reports-all
             - name: Show Mine
               desc: View My Reports
-              hash: analyse.mine
+              hash: analyse.reports.mine
               toggle:
                 - analysis-reports-mine
             - name: Show Shared
               desc: View Reports Shared with Me
-              hash: analyse.shared
+              hash: analyse.reports.shared
               toggle:
                 - analysis-reports-shared
+            - name: Close
+              desc: Close this Analysis
+              hash: close
     - name: Tracker
       groups:
         all:

@@ -326,7 +326,7 @@ Router = function() {
         _options = _.defaults(options, {
           routes: {},
           test: () => ಠ_ಠ.Display.state().in(_options.states, true),
-          clear: () => _.each(_options.state, (value, key, list) => list[key] = null),
+          clear: () => _.each(_options.state, (value, key, list) => delete list[key]),
         });
 
         /* <!-- Recursively Expand Child Routes --> */

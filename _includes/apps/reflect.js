@@ -22,12 +22,13 @@ App = function() {
     STATE_ANALYSIS = "analysis",
     STATE_ANALYSIS_SUMMARY = "analysis-summary",
     STATE_ANALYSIS_DETAIL = "analysis-detail",
+    STATE_ANALYSIS_GRID = "analysis-grid",
     STATE_ANALYSIS_ALL = "analysis-reports-all",
     STATE_ANALYSIS_MINE = "analysis-reports-mine",
     STATE_ANALYSIS_SHARED = "analysis-reports-shared",
     STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED, STATE_TRACKER_OPENED,
       STATE_SCALE_OPENED, STATE_ANALYSIS, STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL,
-      STATE_ANALYSIS_ALL, STATE_ANALYSIS_MINE, STATE_ANALYSIS_SHARED
+      STATE_ANALYSIS_GRID, STATE_ANALYSIS_ALL, STATE_ANALYSIS_MINE, STATE_ANALYSIS_SHARED
     ];
   const EMAIL = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi,
     MARKER = "=== SIGNED ===",
@@ -183,7 +184,7 @@ App = function() {
       ರ‿ರ.template = _initial.template;
       if (ರ‿ರ.template) ರ‿ರ.template.$name = name;
       _return.target = ಠ_ಠ.container.empty();
-      ಠ_ಠ.Display.state().enter(state).protect("a.jump").on("JUMP");
+      ಠ_ಠ.Display.state().change(STATES, state).protect("a.jump").on("JUMP");
 
       var _shown = ಠ_ಠ.Display.template.show(_return);
 
@@ -288,6 +289,7 @@ App = function() {
       large: true
     }).then(result => {
       ಠ_ಠ.Flags.log("Create Action Selected:", result);
+      ಠ_ಠ.Router.clean(false); /* <!-- Clear any existing file --> */
       return result.action.command ?
         FN.create[result.action.command](result.option.value) : null;
     }).catch(e => e ? ಠ_ಠ.Flags.error("Create Select Prompt", e) :
@@ -540,7 +542,7 @@ App = function() {
                       (value, field, meta, memo) =>
                       memo[`FIELD.${field}`] = JSON.stringify(meta[PATH] ?
                         value[meta[PATH]] : value), {
-                        FORM: saving.data.form.name
+                        FORM: saving.data.form.$name ? saving.data.form.$name : saving.data.form.name
                       }),
                   },
                   _data = JSON.stringify(saving.data),
@@ -625,7 +627,8 @@ App = function() {
 
     /* <!-- TODO: Validate Form via Submission --> */
     complete: () => FN.action.convey("complete_Report", "Complete Report",
-      "COMPLETE_INSTRUCTIONS", DESTINATION, "Submitting Report", "Submit"),
+        "COMPLETE_INSTRUCTIONS", DESTINATION, "Submitting Report", "Submit")
+      .then(value => value ? Promise.all(_.map(value.emails, email => ಠ_ಠ.Google.permissions.share(ರ‿ರ.file, null, value.message).user(email, "reader"))) : value),
 
     export: () => {
       var _exporting = FN.action.dehydrate();
@@ -814,41 +817,64 @@ App = function() {
               .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e))
               .then(ಠ_ಠ.Main.busy("Loading")),
           },
+
           analyse: {
             matches: /ANALYSE/i,
             routes: {
               summary: {
                 matches: /SUMMARY/i,
+                state: [STATE_ANALYSIS_DETAIL, STATE_ANALYSIS_GRID],
                 length: 0,
-                fn: () => ಠ_ಠ.Display.state()
-                  .change(STATE_ANALYSIS_DETAIL, STATE_ANALYSIS_SUMMARY)
+                fn: () => ರ‿ರ.analysis.summary()
+                  .then(() => ಠ_ಠ.Display.state()
+                    .change([STATE_ANALYSIS_DETAIL, STATE_ANALYSIS_GRID], STATE_ANALYSIS_SUMMARY))
               },
               detail: {
                 matches: /DETAIL/i,
+                state: [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_GRID],
                 length: 0,
-                fn: () => ಠ_ಠ.Display.state()
-                  .change(STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL)
+                fn: () => ರ‿ರ.analysis.detail()
+                  .then(() => ಠ_ಠ.Display.state()
+                    .change([STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_GRID], STATE_ANALYSIS_DETAIL))
               },
-              all: {
-                matches: /ALL/i,
+              grid: {
+                matches: /GRID/i,
+                state: [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL],
                 length: 0,
-                fn: () => FN.prompt.analysis()
-                  .then(result => ಠ_ಠ.Display.state().enter(result ? [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL] : null))
+                fn: () => ರ‿ರ.analysis.grid()
+                  .then(() => ಠ_ಠ.Display.state()
+                    .change([STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL], STATE_ANALYSIS_GRID))
               },
-              mine: {
-                matches: /MINE/i,
-                length: 0,
-                fn: () => FN.prompt.analysis(true)
-                  .then(result => ಠ_ಠ.Display.state().enter(result ? [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_MINE] : null))
-              },
-              shared: {
-                matches: /SHARED/i,
-                length: 0,
-                fn: () => FN.prompt.analysis(false)
-                  .then(result => ಠ_ಠ.Display.state().enter(result ? [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_SHARED] : null))
+              reports: {
+                matches: /REPORTS/i,
+                state: STATE_ANALYSIS,
+                routes: {
+                  all: {
+                    matches: /ALL/i,
+                    length: 0,
+                    fn: () => (ರ‿ರ.analysis ? ರ‿ರ.analysis.all() : FN.prompt.analysis())
+                      .then(() => ಠ_ಠ.Display.state()
+                        .change([STATE_ANALYSIS_MINE, STATE_ANALYSIS_SHARED], STATE_ANALYSIS_ALL)),
+                  },
+                  mine: {
+                    matches: /MINE/i,
+                    length: 0,
+                    fn: () => (ರ‿ರ.analysis ? ರ‿ರ.analysis.mine() : FN.prompt.analysis(true))
+                      .then(() => ಠ_ಠ.Display.state()
+                        .change([STATE_ANALYSIS_ALL, STATE_ANALYSIS_SHARED], STATE_ANALYSIS_MINE)),
+                  },
+                  shared: {
+                    matches: /SHARED/i,
+                    length: 0,
+                    fn: () => (ರ‿ರ.analysis ? ರ‿ರ.analysis.shared() : FN.prompt.analysis(false))
+                      .then(() => ಠ_ಠ.Display.state()
+                        .change([STATE_ANALYSIS_ALL, STATE_ANALYSIS_MINE], STATE_ANALYSIS_SHARED)),
+                  },
+                }
               },
               form: {
                 length: 1,
+                matches: /FORM/i,
                 fn: command => {
                   var _form = ಱ.forms.get(command);
                   return _form ? FN.process.analysis([{
@@ -862,7 +888,8 @@ App = function() {
               default: {
                 length: 0,
                 fn: () => FN.prompt.analysis()
-                  .then(result => ಠ_ಠ.Display.state().enter(result ? [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL] : null))
+                  .then(result => ಠ_ಠ.Display.state()
+                    .enter(result ? [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL] : null))
               }
             },
           },
@@ -949,6 +976,18 @@ App = function() {
                     fn: () => FN.action.share(),
                   },
                 }
+              }
+            }
+          },
+
+          complete: {
+            matches: /COMPLETE/i,
+            routes: {
+              report: {
+                matches: /REPORT/i,
+                state: STATE_REPORT_OPENED,
+                length: 0,
+                fn: () => FN.action.complete(),
               }
             }
           },

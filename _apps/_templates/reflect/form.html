@@ -72,14 +72,12 @@
 
               <!-- Complete Button Group -->
               {{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
-                <a id="{{id}}_COMPLETE" href="#complete" role="button" class="btn btn-success btn-lg d-flex"><i class="mr-4 material-icons md-light md-24 align-self-center">cloud_done</i>Complete</a>
+                <a id="{{id}}_COMPLETE" data-route="complete.report" href="#" role="button" class="btn btn-success btn-lg d-flex"><i class="mr-4 material-icons md-light md-24 align-self-center">cloud_done</i>Complete</a>
                 <button type="button" class="btn btn-success btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <a class="dropdown-item" href="#">Something else here</a>
+                  <a class="dropdown-item" data-route="complete.report" href="#">Complete</a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#instructions.complete">About</a>
                 </div>

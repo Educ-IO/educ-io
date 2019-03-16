@@ -105,7 +105,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		}
 	};
 	
-	var _updateHeaders = (container, defaults) => {
+	var _updateHeaders = (container, defaults, slight) => {
 
 		var query = ".table-header[data-index]";
 		var _headers = (container ? container.find(query) : target.find(query)).sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index));
@@ -118,25 +118,29 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 				_i = parseInt(_t.data("index")),
 				_f = _t.data("field");
 
-			if (table.headers[_i].hide(defaults) && _t.parent().is("tr")) {
-				var _p = _t.parent().parent();
-				if (_t.hasClass("to-hide-prefix")) _t.prev().addClass("to-hide-prefix");
-				_t.detach().appendTo(_p);
-			} else if (!table.headers[_i].hide(defaults) && _t.parent().hasClass("table-headers")) {
-				var _q = _i === 0 ? _t.parents(".table-headers").find("tr")[0] : _t.parents(".table-headers").find("tr .table-header[data-index=" + (_i + 1) + "]")[0];
-				_i === 0 ? _t.detach().prependTo(_q) : _t.detach().insertBefore(_q);
-				_t.prev().hasClass("to-hide-prefix") ? _t.prev().removeClass("to-hide-prefix") : _t.removeClass("to-hide-prefix");
-			}
+      if (!slight) {
+        
+        if (table.headers[_i].hide(defaults) && _t.parent().is("tr")) {
+          var _p = _t.parent().parent();
+          if (_t.hasClass("to-hide-prefix")) _t.prev().addClass("to-hide-prefix");
+          _t.detach().appendTo(_p);
+        } else if (!table.headers[_i].hide(defaults) && _t.parent().hasClass("table-headers")) {
+          var _q = _i === 0 ? _t.parents(".table-headers").find("tr")[0] : _t.parents(".table-headers").find("tr .table-header[data-index=" + (_i + 1) + "]")[0];
+          _i === 0 ? _t.detach().prependTo(_q) : _t.detach().insertBefore(_q);
+          _t.prev().hasClass("to-hide-prefix") ? _t.prev().removeClass("to-hide-prefix") : _t.removeClass("to-hide-prefix");
+        }
 
-			/* <!-- Set Visibility --> */
-			_t.toggleClass("d-none", table.headers[i].hide(defaults)).toggleClass("to-hide", !!table.headers[i].hide_initially);
+        /* <!-- Set Visibility --> */
+        _t.toggleClass("d-none", table.headers[i].hide(defaults)).toggleClass("to-hide", !!table.headers[i].hide_initially);
 
-			/* <!-- Set Similar Style Rules for Rows --> */
-			var _selector = "#" + _name + " tbody tr td:nth-child(" + table.headers.slice(0, _i).reduce((t, h) => h.hide() ? t : t + 1, 1) + ")";
-			table.headers[_i].hide_initially ?
-				_css.removeRule(_style, _selector).addRule(_style, _selector, "background-color: " + _t.css("background-color") + "; color: " + _t.css("color")) :
-				_css.removeRule(_style, _selector);
-
+        /* <!-- Set Similar Style Rules for Rows --> */
+        var _selector = "#" + _name + " tbody tr td:nth-child(" + table.headers.slice(0, _i).reduce((t, h) => h.hide() ? t : t + 1, 1) + ")";
+        table.headers[_i].hide_initially ?
+          _css.removeRule(_style, _selector).addRule(_style, _selector, "background-color: " + _t.css("background-color") + "; color: " + _t.css("color")) :
+          _css.removeRule(_style, _selector);
+        
+      }
+      
 			/* <!-- Set Sorts --> */
 			_t.toggleClass("sort", !!_sorts[_f]).toggleClass("desc", !!(_sorts[_f] && _sorts[_f].is_desc)).toggleClass("asc", !!(_sorts[_f] && !_sorts[_f].is_desc));
 
@@ -147,21 +151,25 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
 		});
 		
-		/* <!-- Clear Visibilities (make all toggles visible again) as we're inconsistent with indexing --> */
-		_clearVisibilities();
-		
-		/* <!-- Collapse by default --> */
-		if (options.collapsed) {
-			query = ".table-header[data-index].to-hide";
-			_.each(container ? container.find(query) : target.find(query), el => {
-				if (!el.nextElementSibling || !$(el.nextElementSibling).hasClass("to-hide")) {
-					var _target = $(el),
-					_last = (_target.hasClass("to-hide") && !_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0),
-					_result = _toggleColumn(_target, el => el.prev());
-					if (_last) _result.addClass("to-hide-prefix");
-				}
-			});
-		}
+    if (!slight) {
+      
+      /* <!-- Clear Visibilities (make all toggles visible again) as we're inconsistent with indexing --> */
+      _clearVisibilities();
+
+      /* <!-- Collapse by default --> */
+      if (options.collapsed) {
+        query = ".table-header[data-index].to-hide";
+        _.each(container ? container.find(query) : target.find(query), el => {
+          if (!el.nextElementSibling || !$(el.nextElementSibling).hasClass("to-hide")) {
+            var _target = $(el),
+            _last = (_target.hasClass("to-hide") && !_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0),
+            _result = _toggleColumn(_target, el => el.prev());
+            if (_last) _result.addClass("to-hide-prefix");
+          }
+        });
+      }
+    
+    }
 
 		return container;
 	};
@@ -182,9 +190,9 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		if (after_update) after_update(target);
 	};
 
-	var _update = (rows, headers, container, defaults) => {
+	var _update = (rows, headers, container, defaults, slight) => {
 		if (rows) _updateRows();
-		if (headers) _updateHeaders(container, defaults);
+		if (headers) _updateHeaders(container, defaults, slight);
 		return true;
 	};
 
@@ -193,7 +201,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		_target.parents("div.input-group").find("input[type='text']").val("");
 		_filters.remove(_target.data("field"));
 		_target.parents("div.form").fadeOut(FADE_DELAY);
-		_update(true, true, target);
+		_update(true, true, target, null, true);
 	};
 
 	var _createRows = rows => ಠ_ಠ.Display.template.get(options.template)({
@@ -247,7 +255,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
   var _updateFilter = (field, value, target) => {
     value ? _filters.add(field, value) : _filters.remove(field);
-		_update(true, true, target);
+		_update(true, true, target, null, true);
   };
 
 	var _showValues = () => {
@@ -310,7 +318,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 					is_desc: false
 				};
 			}
-			_update(true, true, target);
+			_update(true, true, target, null, true);
 		});
 
 		/* <!-- Update Column Visibility --> */
@@ -427,6 +435,8 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		columns: {
 			visibility: () => _columnVisibility()
 		},
+    
+    close: () => _css ? _css.deleteAll() : false,
 		
 		defaults: () => {
 
@@ -438,6 +448,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 			target.find("div.form.column-settings").hide();
 
 			_update(true, true, target, true);
+      
 		},
 
     filter: (field, value) => _updateFilter(field, value),
