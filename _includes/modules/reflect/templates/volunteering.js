@@ -66,6 +66,7 @@ __Σ__Volunteering = {
           ],
           __meta: {
             index: true,
+            transform: "{{Start}} -> {{End}}{{#if Type}} ({{Type}}){{/if}}",
             analyse: {
               type: "column"
             }
@@ -131,7 +132,9 @@ __Σ__Volunteering = {
           icon: "how_to_reg",
           large: true,
           required: true,
-          pattern: /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi,
+          pattern: /.?([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+).?/gi,
+          valid: "Looks good!",
+          invalid: "Please enter a valid email address",
           __meta: {
             signatory: true,
           }

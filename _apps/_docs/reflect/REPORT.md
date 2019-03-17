@@ -1,0 +1,1 @@
+For troubleshooting purposes, you can __edit__ a report file as native JSON.

@@ -32,6 +32,7 @@
          {{#exists step}} step="{{step}}"{{/exists}}
          {{#if details}} data-targets="{{id}}_DETAILS"{{/if}}
          data-value="false">
+	{{> field_validation}}
   {{#if details}}<div class="row">
     <label 
 			class="col-md-3 col-lg-6 col-xl-8 col-form-label text-md-right font-weight-bold text-muted" 

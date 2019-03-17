@@ -65,7 +65,6 @@ Display = function() {
   }));
 
   var _tooltips = (targets, options) => targets.tooltip(_.defaults(options ? options : {}, {
-    trigger: "hover",
     placement: _placement
   }));
 
@@ -77,7 +76,6 @@ Display = function() {
     if (_route)
       $(`nav a[href='#${_route}']:not(.disabled), nav a[href^='#'][href$=',${_route}']:not(.disabled)`)
       .first().click();
-
   });
 
   var _target = options => {
@@ -89,39 +87,54 @@ Display = function() {
 
   };
 
-  var _compile = name => {
+  var _compile = (name, raw) => {
 
-    var _template = $("#__template__" + name);
-    if (_template.length == 1) {
-      if (Handlebars.templates === undefined) Handlebars.templates = {};
+    var __compile = html => {
 
-      var _html = _template.html();
+        if (Handlebars.templates === undefined) Handlebars.templates = {};
 
-      /* <!-- Compile and add compiled template to Handlebars Template object --> */
-      Handlebars.templates[name] = Handlebars.compile(_html, {
-        strict: _debug
-      });
+        /* <!-- Compile and add compiled template to Handlebars Template object --> */
+        Handlebars.templates[name] = Handlebars.compile(html, {
+          strict: _debug
+        });
 
-      /* <!-- Look for partial templates to register/compile too --> */
-      var partial_names, partial_regex = /\s?{#?>\s?([a-zA-Z]{1}[^\r\n\t\f }]+)/gi;
-      while ((partial_names = partial_regex.exec(_html)) !== null) {
-        if (partial_names && partial_names[1]) {
-          if (Handlebars.templates[partial_names[1]] === undefined) {
-            Handlebars.registerPartial(partial_names[1], _compile(partial_names[1]));
-          } else {
-            Handlebars.registerPartial(partial_names[1], Handlebars.templates[partial_names[1]]);
+        /* <!-- Look for partial templates to register/compile too --> */
+        var partial_names, partial_regex = /\s?{#?>\s?([a-zA-Z]{1}[^\r\n\t\f }]+)/gi;
+        while ((partial_names = partial_regex.exec(html)) !== null) {
+          if (partial_names && partial_names[1]) {
+            if (Handlebars.templates[partial_names[1]] === undefined) {
+              Handlebars.registerPartial(partial_names[1], _compile(partial_names[1]));
+            } else {
+              Handlebars.registerPartial(partial_names[1], Handlebars.templates[partial_names[1]]);
+            }
           }
         }
-      }
 
-      return Handlebars.templates[name];
-    }
+        return Handlebars.templates[name];
+
+      },
+      __fetch = () => {
+
+        var _template = $("#__template__" + name);
+
+        if (_template.length == 1) {
+
+          var _html = _template.html();
+
+          return __compile(_html);
+
+        }
+
+      };
+
+    return raw ? __compile(raw) : __fetch();
+
   };
 
-  var _template = name => {
+  var _template = (name, raw) => {
 
     return Handlebars.templates === undefined || Handlebars.templates[name] === undefined ?
-      _compile(name) : Handlebars.templates[name];
+      _compile(name, raw) : Handlebars.templates[name];
 
   };
 
@@ -203,10 +216,27 @@ Display = function() {
 
         Handlebars.registerHelper("username", variable => _username(variable));
 
-        Handlebars.registerHelper("stringify", variable => variable ? JSON.stringify(variable) : "");
+        Handlebars.registerHelper("stringify", variable => variable ?
+          JSON.stringify(variable) : "");
 
         Handlebars.registerHelper("string", variable => variable ? variable.toString ?
           variable.toString() : JSON.stringify(variable) : "");
+
+        Handlebars.registerHelper("isString", function(variable, options) {
+          if (typeof variable === "string" || variable instanceof String) {
+            return options.fn ? options.fn(this) : true;
+          } else {
+            return options.inverse ? options.inverse(this) : false;
+          }
+        });
+
+        Handlebars.registerHelper("isRegex", function(variable, options) {
+          if (variable && typeof variable === "object" && variable.constructor === RegExp) {
+            return options.fn ? options.fn(this) : true;
+          } else {
+            return options.inverse ? options.inverse(this) : false;
+          }
+        });
 
         Handlebars.registerHelper("isDate", function(variable, options) {
           if (variable && (variable instanceof Date || variable._isAMomentObject)) {
@@ -217,7 +247,7 @@ Display = function() {
         });
 
         Handlebars.registerHelper("isArray", function(variable, options) {
-          if (variable && variable.constructor === Array) {
+          if (variable && typeof variable === "object" && variable.constructor === Array) {
             return options.fn ? options.fn(this) : true;
           } else {
             return options.inverse ? options.inverse(this) : false;
@@ -225,7 +255,7 @@ Display = function() {
         });
 
         Handlebars.registerHelper("isObject", function(variable, options) {
-          if (variable && variable.constructor === Object) {
+          if (variable && typeof variable === "object" && variable.constructor === Object) {
             return options.fn ? options.fn(this) : true;
           } else {
             return options.inverse ? options.inverse(this) : false;
@@ -450,6 +480,8 @@ Display = function() {
 
     template: {
 
+      compile: _template,
+
       get: options => {
 
         return (_ && _.isString(options)) ? _template(options) : _template(options.template ? options.template : options.name)(options);
@@ -464,7 +496,7 @@ Display = function() {
 
         _popovers(_return.find("[data-toggle='popover']"));
         _tooltips(_return.find("[data-toggle='tooltip']"));
-        _routes(_return.find("a[data-route], button[data-route]"));
+        _routes(_return.find("a[data-route], button[data-route], input[data-route]"));
 
         return options.prepend === true ? _return.prependTo(_element) : _return.appendTo(_element);
 
@@ -865,7 +897,13 @@ Display = function() {
             var _name = dialog.find("textarea[name='name'], input[type='text'][name='name']").val();
             var _value = dialog.find("textarea[name='value'], input[type='text'][name='value'], input[type='password'][name='value']").val();
             _clean();
-            if (_value && (!options.validate || options.validate.test(_value)))
+            if (_value && (!options.validate ||
+                ((
+                  _.isFunction(options.validate) && options.validate(_value)
+                ) || (
+                  _.isRegExp(options.validate) && options.validate.test(_value)
+                ))
+              ))
               resolve(_name ? {
                 name: _name,
                 value: _value

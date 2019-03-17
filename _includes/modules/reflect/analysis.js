@@ -22,12 +22,10 @@ Analysis = (ಠ_ಠ, forms, reports) => {
   /* <-- Helper Functions --> */
   FN.helper = {
 
-    field: (template, value) => {
-      var _parse = () => {
-        return value;
-      };
-      return _.isObject(value) ? _parse() : value;
-    }
+    owner: file => file.ownedByMe ? "Me" : file.owners && file.owners.length > 0 ?
+        `${file.owners[0].displayName}${file.owners[0].emailAddress ? ` (${file.owners[0].emailAddress})` : ""}` : "",
+    
+    url: file => `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${file.id}`,
 
   };
   /* <-- Helper Functions --> */
@@ -38,12 +36,11 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
     standard: report => ({
       "id": ಠ_ಠ.Display.template.get("hyperlink")({
-        url: `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${report.file.id}`,
+        url: FN.helper.url(report.file),
         text: report.file.id,
         blank: true
       }).trim(),
-      "owner": report.file.ownedByMe ? "Me" : report.file.owners && report.file.owners.length > 0 ?
-        `${report.file.owners[0].displayName}${report.file.owners[0].emailAddress ? ` (${report.file.owners[0].emailAddress})` : ""}` : "",
+      "owner": FN.helper.owner(report.file),
       "form": report.title,
       "when": {
         Created: moment(report.file.createdTime).format("llll"),
@@ -152,15 +149,22 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
         var _all = [_row, _column].concat(_values),
           _reports = _.reduce(_.map(reports,
-            report => FN.generate.values(_all, report.file)), (memo, report) => {
-            var _key = report[_row.title.toLowerCase()];
+            report => _.extend(FN.generate.values(_all, report.file), {
+            __created: moment(report.file.createdTime).format("MMM D, YYYY HH:mm"),
+            __modified: moment(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
+            __owner: FN.helper.owner(report.file),
+            __link: FN.helper.url(report.file)
+          })), (memo, data) => {
+            var _key = data[_row.title.toLowerCase()];
             if (!memo[_key]) memo[_key] = {
               name: _key,
               details: []
             };
             _.each(_values, value => memo[_key].details.push({
-              key: FN.helper.field(_column.template, report[_column.title.toLowerCase()]),
-              value: FN.helper.field(value.template, report[value.title.toLowerCase()])
+              key: data[_column.title.toLowerCase()],
+              value: data[value.title.toLowerCase()],
+              title: `<b>Owner</b> ${data.__owner}<br/><b>Created</b> ${data.__created}<br/><b>Modified</b> ${data.__modified}<br/><em><a href='${data.__link}' target='_blank' class='text-info'>Open Report</a></em>`,
+              badge: "dark"
             }));
             return memo;
           }, {}),
@@ -239,7 +243,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
     filter: (filter, view) => {
       if (view !== null && view !== undefined) _view = view;
-      if (_table) _table.close();
+      if (_table && _table.close) _table.close();
       return Promise.resolve(_table = FN.display.analysis(_.filter(reports, filter)));
     },
 

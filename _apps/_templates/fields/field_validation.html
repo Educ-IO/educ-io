@@ -1,0 +1,11 @@
+{% raw %}
+{{!-- ================= GENERAL PARAMETERS ================== --}}
+{{!-- [required] = Field Input is required --}}
+{{!-- [valid] = Message shown for valid fields after validation --}}
+{{!-- [invalid] = Message shown for invalid fields after validation --}}
+{{!-- ======================================================= --}}
+{{#if required}}
+{{#if valid}}<div class="valid-feedback">{{{valid}}}</div>{{/if}}
+{{#if invalid}}<div class="invalid-feedback">{{{invalid}}}</div>{{/if}}
+{{/if}}
+{% endraw %}

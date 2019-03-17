@@ -70,6 +70,7 @@ __Σ__Progress = {
           ],
           __meta: {
             index: true,
+            transform: "{{Start}} -> {{End}}{{#if Type}} ({{Type}}){{/if}}",
             analyse: {
               type: "column"
             }

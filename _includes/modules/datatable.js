@@ -436,7 +436,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 			visibility: () => _columnVisibility()
 		},
     
-    close: () => _css ? _css.deleteAll() : false,
+    close: () => $("style[data-type='generated']").remove(),
 		
 		defaults: () => {
 

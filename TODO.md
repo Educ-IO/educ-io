@@ -122,6 +122,8 @@ Folders
 
 Reflect
 -------
+* ** BUG ** Span field doesn't correctly wire up period duration after load
+
 * ** IMPORTANT ** Escape EMAIL Regex for forms... ????
 
 * Thumbnail / Content Hint for Form (render?)

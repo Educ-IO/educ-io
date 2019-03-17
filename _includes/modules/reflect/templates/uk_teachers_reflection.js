@@ -41,6 +41,7 @@ __Σ__UK_Teachers_Reflection =  {
           ],
           __meta: {
              index: true,
+            transform: "{{Start}} -> {{End}}{{#if Type}} ({{Type}}){{/if}}",
             analyse: {
               type: "column"
             }

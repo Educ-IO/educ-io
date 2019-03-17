@@ -53,11 +53,13 @@
            class="form-control{{#if large}} form-control-lg{{/if}}{{#unless readonly}} dt-picker{{/unless}}" name="{{id}}_start"
            aria-label="{{val "" title field}}"
            {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
-           {{#if required}} required="required"{{/if}} data-item="Date"{{#if readonly}} readonly="readonly"{{/if}} />
+           data-item="Date"{{#if readonly}} readonly="readonly"{{/if}} />
     {{#if icon_number}}{{> control_icon prepend="true" append="true"
     large=large icon=icon_number }}{{/if}}
-    <input id="{{id}}_NUMERIC" name="{{id}}_NUMERIC" type="number" hidden="hidden" class="d-none" data-item="Number"
-           data-targets="{{id}}_DISPLAY" {{#if value}} value="{{value}}"{{/if}}{{#if readonly}} readonly="readonly"{{/if}} />
+    <input id="{{id}}_NUMERIC" name="{{id}}_NUMERIC" type="number" hidden="hidden" class="d-none"
+           data-item="Number" data-targets="{{id}}_DISPLAY"
+           {{#if value}} value="{{value}}"{{/if}}
+           {{#if readonly}} readonly="readonly"{{/if}}/>
     <input id="{{id}}_DURATION" name="{{id}}_DURATION" type="text"
            class="pl-2 form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly"
            aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"
@@ -65,7 +67,6 @@
            data-min="{{#if min}}{{min}}{{else}}0{{/if}}" data-max="{{#if max}}{{max}}{{/if}}"
            {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
            {{#if value}} value="{{value}}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}}
-           {{#if required}} required="required"{{/if}}
            {{#if readonly}} readonly="readonly"{{/if}} />
 
     <span class="input-group-append d-none d-lg-flex">
@@ -111,8 +112,11 @@
            for="{{id}}_DISPLAY">{{either total_Title "Total"}}:</label>
 
     <div class="col-md-9 col-lg-6 col-xl-4">
-      <input id="{{id}}_TOTAL" name="{{id}}_TOTAL" data-output-name="Total" hidden="hidden" type="number"
-             {{#if total}} value="{{total}}"{{/if}}>
+      <input id="{{id}}_TOTAL" name="{{id}}_TOTAL" data-output-name="Total" hidden="hidden"
+             type="number"
+             step="{{either increment 1}}"
+             {{#if total}} value="{{total}}"{{/if}}
+             {{#if required}} required="required"{{/if}}>
       <input id="{{id}}_DISPLAY" name="{{id}}_DISPLAY" type="text"
              data-output-name="Display" data-targets="{{id}}_TOTAL"
              class="form-control{{#if large}} form-control-lg{{/if}}" readonly="readonly"
@@ -120,6 +124,7 @@
              {{#if suffix}} data-suffix="{{suffix}}"{{/if}}
              {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
              {{#if total}} value="{{total}}{{#if suffix}} {{ suffix }}{{/if}}"{{/if}} />
+      {{> field_validation}}
     </div>
   </div>
 {{/field_general}}
