@@ -122,24 +122,13 @@ Folders
 
 Reflect
 -------
-* ** BUG ** Span field doesn't correctly wire up period duration after load
-
-* ** IMPORTANT ** Escape EMAIL Regex for forms... ????
-
 * Thumbnail / Content Hint for Form (render?)
-
-* ** IMPORTANT ** Should have anchor links using smooth scroll to different parts of the forms, to make navigation of the form easier!
 
 * Lesson Observation Form
 
 * ** IMPORTANT ** Feedback on successful save?
+
 * ** IMPORTANT ** Optional Gradings against standards
-
-
-
-* Assign 'form' to people for emailing (e.g. list of NQTs or staff for PDRs) -> Create folders / match folders for them? Permission them properly. Create data store for form if not supplied in URL
-
-* Email group from above.
 
 Publish
 -------
@@ -151,6 +140,9 @@ Survey
 
 Complete
 --------
+* ** IMPORTANT ** Should have anchor links using smooth scroll to different parts of the forms, to make navigation of the form easier! <-- DONE
+* ** IMPORTANT ** Escape EMAIL Regex for forms... ???? / Issue with capture groups... <-- DONE
+* ** BUG ** Span field doesn't correctly wire up period duration after load <-- DONE
 * ** IMPORTANT ** Logo for Verified OAuth Apps (awaiting Google?) <-- DONE
   -> https://stackoverflow.com/questions/44138213/google-oauth-consent-screen-not-showing-app-logo-and-name/44167549#44167549
   -> Re-submit form apparently!

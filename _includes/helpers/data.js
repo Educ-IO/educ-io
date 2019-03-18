@@ -48,7 +48,15 @@ Data = (options, factory) => {
 
   /* <!-- Internal Functions --> */
   var _descendants = (el, holders) => el.find(`[data-output-name]${holders ? ", [data-holder-field]" : "" }`)
-    .filter((i, val) => $(val).parentsUntil(el, "[data-output-name]").length === 0),
+    .filter((i, val) => {
+      return $(val).parentsUntil(el, "[data-output-name]").length === 0 &&
+        $(val).parentsUntil(el.is("[data-output-field]") ?
+          el : el.closest("[data-output-field]"))
+        .filter((i, parent) => {
+          var _parent = $(parent);
+          return _parent.css("display") == "none" && _parent.is("[class*='-none'][class*='d-']");
+        }).length === 0;
+    }),
     _valid = (value, positives) =>
     value === true || (options.always || !positives) && value === false || _.isNumber(value) || !_.isEmpty(value);
 
@@ -204,9 +212,9 @@ Data = (options, factory) => {
           }
         } else if (_el[0].nodeName == "BUTTON") { /* <!-- Handle Button Selectors --> */
           var _option = _el.closest("*[data-output-field]")
-            .find(`*[data-value='${$.escapeSelector(val)}']`);
+            .find(`*[data-value='${$.escapeSelector(val)}'][data-targets='${$.escapeSelector(_el[0].id)}']`);
           /* <!-- Defer to click handler if available --> */
-          _option.length == 1 ? _option.click() : _el.text(val);
+          _option.length == 1 ? _el.text(val) && _option[0].click() : _el.text(val);
         } else {
           var _holder = ((_holder = _el.data("holder-field")) ? _holder : false);
           if (_holder) {

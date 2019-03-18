@@ -62,7 +62,7 @@ html, body {
 }
 // -- Ellipsis Waiting -- //
 
-// -- Action Button -- //
+// -- Action Buttons -- //
 #sign_in .btn, #sign_out .btn {
 	border-radius: 2px;
 }
@@ -108,7 +108,52 @@ html, body {
     box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 20%), 0.5);
 	}
 }
-// -- Action Button -- //
+
+.btn-action-dark {
+  color: $colour-background !important;
+  border-color: darken($colour-highlight, 10%);
+	background-color: darken($colour-highlight, 10%);
+	&:hover {
+		border-color: darken($colour-highlight, 20%);
+		background-color: darken($colour-highlight, 20%) !important;;
+	}
+	&:focus {
+		-webkit-box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 25%), 0.5);
+    box-shadow: 0 0 0 2px rgba(darken($colour-emphasis, 25%), 0.5);
+	}
+}
+// -- Action Buttons -- //
+
+// -- Action Badge -- //
+.badge-action {
+  color: $colour-background !important;
+	background-color: $colour-highlight;
+}
+
+.badge-action-light {
+  color: $colour-foreground !important;
+	background-color: lighten($colour-highlight, 45%);
+}
+
+.badge-action-dark {
+  color: $colour-background !important;
+	background-color: darken($colour-highlight, 15%);
+}
+// -- Action Badge -- //
+
+// -- Action Backgrounds -- //
+.bg-action {
+	background-color: $colour-highlight !important;
+}
+
+.bg-action-light {
+	background-color: lighten($colour-highlight, 50%) !important;
+}
+
+.bg-action-dark {
+	background-color: darken($colour-highlight, 10%) !important;
+}
+// -- Action Backgrounds -- //
 
 // -- Other Buttons -- //
 .btn-bright {

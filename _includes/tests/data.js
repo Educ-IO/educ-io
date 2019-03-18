@@ -297,7 +297,7 @@ Data = function() {
         },
         range_Stepped: () => {
           var _number = GEN.i(0, 10),
-              _range = ["A","B","C","D","E","F","G","H","I","J","K"],
+            _range = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"],
             _return = _.extend(_blocks.basic("Stepped Range"), {
               template: "field_range",
               min: 0,
@@ -343,7 +343,7 @@ Data = function() {
               start.clone().add(1, span.span).add(-1, "d").format("YYYY-MM-DD"));
           })(_blocks.spans[_span], moment(new Date()));
           _return._populate = ((id, span) => modal => {
-            modal.find(`[data-id='${id}'] a.dropdown-item[data-value='${$.escapeSelector(span.value)}']`)[0].click();
+            modal.find(`[data-id='${id}'] a.dropdown-item[data-value='${$.escapeSelector(span.value)}']`).click();
           })(_return.id, _blocks.spans[_span]);
           return _return;
         },

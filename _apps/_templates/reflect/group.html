@@ -3,7 +3,9 @@
 <div class="card mx-1 mx-md-0 my-1 my-lg-2 my-xl-3">
   {{#> heading target=id }}
  		{{#if help}}<div class="form-text text-muted">{{{help}}}</div>{{/if}}
-		{{{fields}}}
+  	<fieldset>
+			{{{fields}}}
+  	</fieldset>
   {{/heading}}
 </div>
 {% endraw %}

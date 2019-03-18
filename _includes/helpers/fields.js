@@ -35,10 +35,10 @@ Fields = (options, factory) => {
     doc_picker_title: "Select a Document to Load Text From",
     doc_picker_view: "DOCUMENTS"
   };
+  const STEPS = {};
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  var _steps;
   options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Variables --> */
 
@@ -644,12 +644,22 @@ Fields = (options, factory) => {
   };
 
   var _start = () => {
-    _steps = [
+    STEPS.first = [
       _listen, _numerical, _erase, _radio, _menus,
-      _complex, _reveal, _dim, _autosize, _me, _datetime,
-      _spans, _list, _doc, _deletes, _updates, _range
+      _complex, _reveal, _dim, _me, _datetime,
+      _spans, _list, _doc, _updates, _range
     ];
+    STEPS.last = [_deletes, _autosize];
   };
+  
+  var _first = form => _.tap(form, form => _.each(STEPS.first, step => step(form)));
+  
+  var _last = form => _.tap(form, form => _.each(STEPS.last, step => step(form)));
+  
+  var _on = form => _.tap(form, form => {
+    _.each(STEPS.first, step => step(form));
+    _.each(STEPS.last, step => step(form));
+  });
   /* <!-- Internal Functions --> */
 
   _start();
@@ -658,10 +668,11 @@ Fields = (options, factory) => {
   return {
 
     /* <!-- External Functions --> */
-    on: form => {
-      _.each(_steps, step => step(form));
-      return form;
-    },
+    first: _first,
+    
+    on: _on,
+    
+    last: _last,
 
   };
   /* <!-- External Visibility --> */

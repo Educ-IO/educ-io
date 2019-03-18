@@ -430,6 +430,7 @@ reflect:
     - filters
     - table
     - css
+    - scroll
   modules:
     - flags
     - controller
@@ -596,11 +597,18 @@ reflect:
               desc: Import a saved Report from a file
               hash: import.report
               divider: true
+              
+            - name: Sign
+              desc: Sign this Report
+              hash: sign.report
+              disabled_until:
+                - signable-report
+              auth: google
             - name: Edit
               desc: Edit this Report
               hash: edit.report
               disabled_until:
-                - opened-report
+                - editable-report
               auth: google
               visibility: debug
             - name: Save
@@ -609,7 +617,7 @@ reflect:
               imports:
                 - html2canvas
               disabled_until:
-                - opened-report
+                - editable-report
               auth: google
             - name: Save As
               desc: Save this as a New (named) Report
@@ -617,7 +625,7 @@ reflect:
               imports:
                 - html2canvas
               disabled_until:
-                - opened-report
+                - editable-report
               auth: google
               visibility: debug
             - name: Send
@@ -626,7 +634,7 @@ reflect:
               imports:
                 - html2canvas
               disabled_until:
-                - opened-report
+                - editable-report
               scope: https://www.googleapis.com/auth/gmail.send
               auth: google
             - name: Share
@@ -635,9 +643,10 @@ reflect:
               imports:
                 - html2canvas
               disabled_until:
-                - opened-report
+                - editable-report
               auth: google
               divider: true
+              
             - name: Export
               desc: Export this Report by downloading the data
               hash: save.report.export
@@ -646,16 +655,16 @@ reflect:
               auth: google
               imports:
                 - filesaver
-              visibility: debug
             - name: Complete
               desc: Complete this Report
               hash: complete.report
               imports:
                 - html2canvas
               disabled_until:
-                - opened-report
+                - editable-report
               auth: google
               divider: true
+              
             - name: Close
               desc: Close this Report
               hash: close

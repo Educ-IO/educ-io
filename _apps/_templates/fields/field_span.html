@@ -33,16 +33,16 @@
   <div class="btn-group float-right mb-1 d-xl-none" role="group" id="{{id}}_BUTTONS">
     {{#if options}}{{> control_button b_small="true" 
     	b_class="btn-info alter-numerical" b_title="Decrease" b_target=id disabled=readonly
-    	b_modifier=(concat id "_PERIOD") b_icon="remove" b_value=(concat "-" (either increment 1)) }}
+    	b_modifier=(concat id "_PERIOD_SM") b_icon="remove" b_value=(concat "-" (either increment 1)) }}
     {{> control_button b_small="true" b_class="btn-primary alter-numerical"
-    	b_title="Increase" b_target=id b_modifier=(concat id "_PERIOD") b_icon="add"
+    	b_title="Increase" b_target=id b_modifier=(concat id "_PERIOD_SM") b_icon="add"
     	b_value=(either increment 1) disabled=readonly }}
-    {{> control_button b_id=(concat id "_PERIOD") b_class="btn-dark complex-list-type dropdown-toggle" 
+    {{> control_button b_id=(concat id "_PERIOD_SM") b_class="btn-dark complex-list-type dropdown-toggle" 
     	b_targets=id b_default=type b_text=type b_span=(either span "") 
     	b_output_type="String" b_output_name="Type" b_toggle="dropdown" disabled=readonly }}
-    <div class="dropdown-menu" aria-labelledby="{{id}}_PERIOD">
+    <div class="dropdown-menu" aria-labelledby="{{id}}_PERIOD_SM">
       {{#each options}}
-      <a class="dropdown-item alter-span" href="#" data-targets="{{../id}}_PERIOD"
+      <a class="dropdown-item alter-span" href="#" data-targets="{{../id}}_PERIOD_SM"
          data-value="{{val "" value this}}"
          {{#exists span}}{{#if span}} data-span="{{span}}"{{/if}}{{/exists}}>{{val "" name this}}</a>
       {{/each}}
@@ -70,18 +70,18 @@
       	b_target=id b_icon="refresh" disabled=readonly }}
       {{#if options}}{{> control_button b_small="true"
       	b_class="btn-info alter-numerical" b_title="Decrease" b_target=id disabled=readonly
-      	b_modifier=(concat id "_PERIOD") b_icon="remove" b_value=(concat "-" (either increment 1)) }}
+      	b_modifier=(concat id "_PERIOD_LG") b_icon="remove" b_value=(concat "-" (either increment 1)) }}
       {{> control_button b_small="true" b_class="btn-primary alter-numerical"
-      	b_title="Increase" b_target=id b_modifier=(concat id "_PERIOD") b_icon="add"
+      	b_title="Increase" b_target=id b_modifier=(concat id "_PERIOD_LG") b_icon="add"
       	b_value=(either increment 1) disabled=readonly }}
-      {{> control_button b_id=(concat id "_PERIOD")
+      {{> control_button b_id=(concat id "_PERIOD_LG")
       	b_class="btn-dark complex-list-type dropdown-toggle" b_targets=id b_default=type
       	b_text=type b_span=(either span "") b_output_type="String" b_output_name="Type"
       	b_toggle="dropdown" disabled=readonly }}
-      <div class="dropdown-menu" aria-labelledby="{{id}}_PERIOD">
+      <div class="dropdown-menu" aria-labelledby="{{id}}_PERIOD_LG">
         {{#each options}}
         <a class="dropdown-item alter-span{{#if readonly}} disabled{{/if}}" href="#"
-           data-targets="{{../id}}_PERIOD" data-value="{{val "" value this}}"
+           data-targets="{{../id}}_PERIOD_LG" data-value="{{val "" value this}}"
            {{#exists span}}{{#if span}} data-span="{{span}}"{{/if}}{{/exists}}>{{val "" name this}}</a>
         {{/each}}
       </div>{{/if}}

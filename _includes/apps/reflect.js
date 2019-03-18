@@ -17,6 +17,8 @@ App = function() {
     TYPES = [TYPE_SCALE, TYPE_FORM, TYPE_REPORT, TYPE_REVIEW, TYPE_TRACKER];
   const STATE_FORM_OPENED = "opened-form",
     STATE_REPORT_OPENED = "opened-report",
+    STATE_REPORT_SIGNABLE = "signable-report",
+    STATE_REPORT_EDITABLE = "editable-report",
     STATE_TRACKER_OPENED = "opened-tracker",
     STATE_SCALE_OPENED = "opened-scale",
     STATE_ANALYSIS = "analysis",
@@ -26,7 +28,8 @@ App = function() {
     STATE_ANALYSIS_ALL = "analysis-reports-all",
     STATE_ANALYSIS_MINE = "analysis-reports-mine",
     STATE_ANALYSIS_SHARED = "analysis-reports-shared",
-    STATES = [STATE_FORM_OPENED, STATE_REPORT_OPENED, STATE_TRACKER_OPENED,
+    STATES = [STATE_FORM_OPENED, STATE_TRACKER_OPENED,
+      STATE_REPORT_OPENED, STATE_REPORT_SIGNABLE, STATE_REPORT_EDITABLE,
       STATE_SCALE_OPENED, STATE_ANALYSIS, STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL,
       STATE_ANALYSIS_GRID, STATE_ANALYSIS_ALL, STATE_ANALYSIS_MINE, STATE_ANALYSIS_SHARED
     ];
@@ -196,15 +199,23 @@ App = function() {
 
       var _shown = ಠ_ಠ.Display.template.show(_return);
 
+      var _form = ಠ_ಠ.Fields({
+        me: ಠ_ಠ.me ? ಠ_ಠ.me.full_name : undefined,
+        templater: ಠ_ಠ.Display.template.get,
+        list_upload_content: "Evidence",
+        list_web_content: "Evidence"
+      }, ಠ_ಠ);
+
+      _form.first(_shown);
+
       if (process) process(_shown);
 
-      return ಠ_ಠ.Fields({
-          me: ಠ_ಠ.me ? ಠ_ಠ.me.full_name : undefined,
-          templater: ಠ_ಠ.Display.template.get,
-          list_upload_content: "Evidence",
-          list_web_content: "Evidence"
-        }, ಠ_ಠ)
-        .on(_shown);
+      /* <!-- Smooth Scroll Anchors --> */
+      if (ಠ_ಠ.Scroll) ಠ_ಠ.Scroll({
+        class: "smooth-scroll"
+      }).start();
+
+      return _form.last(_shown);
     },
 
     parent: id => new Promise(resolve => ಠ_ಠ.Google.files.get(id, true)
@@ -236,8 +247,10 @@ App = function() {
         result ? _process(JSON.parse(result)) : Promise.resolve(false);
       }),
 
-
-    report: (name, actions, form, process) => FN.create.display(name, STATE_REPORT_OPENED, form, process, actions),
+    report: (name, actions, form, process) => FN.create.display(name, [STATE_REPORT_OPENED]
+      .concat(!actions || actions.editable ? [STATE_REPORT_EDITABLE] : [])
+      .concat(actions && actions.signable ? [STATE_REPORT_SIGNABLE] : []),
+      form, process, actions),
 
     form: name => FN.create.generic(FN.edit.form, ಱ.forms.get(name).template, TYPE_FORM)
       .then(value => value ? ಠ_ಠ.Display.state().enter(STATE_FORM_OPENED).protect("a.jump").on("JUMP") : null)

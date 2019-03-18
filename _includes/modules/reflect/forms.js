@@ -54,6 +54,7 @@ Forms = function() {
     if (id && template) {
 
       var groups = [],
+        _headers = [],
         _order = 0,
         _file = ರ‿ರ.files[id];
 
@@ -61,6 +62,7 @@ Forms = function() {
 
         var group = PROCESS(template.groups[group_Id]);
         group.id = group_Id;
+        _headers.push(group.id);
         var fields = [];
         for (var field_Id in group.fields) {
           var field = _.clone(group.fields[field_Id]);
@@ -91,6 +93,8 @@ Forms = function() {
         id: id,
         name: template.name,
         title: template.title,
+        headers: _headers,
+        footers: ["_Actions_", "_Signatures_"],
         fields: groups.join("\n").trim(),
         owner: _file ? _owner(_file) : "",
         editable: editable,

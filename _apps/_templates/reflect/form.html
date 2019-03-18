@@ -11,6 +11,20 @@
 		
     {{#if owner}}<h6 class="mb-0 text-muted">Form owned by: <span class="text-primary">{{owner}}</span></h6>{{/if}}
     
+    {{#if headers}}
+    <div id="header__headings"
+         class="d-flex flex-row flex-wrap justify-content-start bg-action-light py-1 pl-2 mt-2 rounded">
+      {{#each headers}}<span class="badge badge-action p-1 p-lg-2 px-lg-3 mr-2 my-1">
+      	<a class="text-uppercase lead font-weight-light smooth-scroll"
+        	href="#header_{{this}}">{{replace this "_" ""}}</a>
+      </span>{{/each}}
+      {{#each footers}}<span class="badge badge-action-dark p-1 p-lg-2 px-lg-3 mr-2 my-1">
+      	<a class="text-uppercase lead font-weight-light smooth-scroll"
+        	href="#header_{{this}}">{{replace this "_" ""}}</a>
+      </span>{{/each}}
+    </div>
+    {{/if}}
+    
 		<form id="{{id}}" class="form-horizontal needs-validation" role="form"
           {{#if name}} data-name="{{name}}"{{/if}}
           {{#if title}} aria-labelledby="{{id}}_title"{{/if}} novalidate>
@@ -24,7 +38,7 @@
 			<!-- Submission / Save / Progress Area -->
 			<div class="card mx-1 my-1 mx-md-0">
 
-        {{#> heading target=(concat id "_Actions") name="Actions" }}
+        {{#> heading target=(concat target "_Actions_") name="Actions" }}
         
           <div class="form-group">
             <div class="col-md-9 d-flex flex-column flex-md-row">
@@ -36,7 +50,6 @@
                 <span class="sr-only">Toggle Dropdown</span>
               </button>
               <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" data-route="save.report.clone" href="#">Save As</a>
                 <a class="dropdown-item" data-route="save.report.export" href="#">Export</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#instructions.save">About</a>
@@ -45,12 +58,11 @@
 
               <!-- Sign Button Group -->
               {{#if signable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2">
-              <a id="{{id}}_SIGN" href="#google,sign.report" role="button" class="btn btn-dark btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">vpn_key</i>Sign</a>
-              <button type="button" class="btn btn-dark btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <a id="{{id}}_SIGN" href="#google,sign.report" role="button" class="btn btn-action-dark btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">vpn_key</i>Sign</a>
+              <button type="button" class="btn btn-action-dark btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="sr-only">Toggle Dropdown</span>
               </button>
               <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="#google,sign.report">Sign</a>
                 <a class="dropdown-item" href="#google,sign.report.remove">Remove Signature</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#instructions.sign">About</a>
@@ -64,7 +76,6 @@
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                  <a class="dropdown-item" data-route="send.report" href="#">Send</a>
                   <a class="dropdown-item" data-route="share.report" href="#">Share</a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#instructions.send">About</a>
@@ -96,7 +107,7 @@
    
     <div class="card mx-1 mt-3 mx-md-0">
 
-      {{#> heading target=(concat target "_Signatures") name="Signatures" hide=true }}
+      {{#> heading target=(concat target "_Signatures_") name="Signatures" hide=true }}
   
         <div class="d-flex flex-column flex-md-row">
           <ul class="list-group list-group-flush signatures flex-fill"></ul>

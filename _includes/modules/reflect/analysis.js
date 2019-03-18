@@ -164,7 +164,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
               key: data[_column.title.toLowerCase()],
               value: data[value.title.toLowerCase()],
               title: `<b>Owner</b> ${data.__owner}<br/><b>Created</b> ${data.__created}<br/><b>Modified</b> ${data.__modified}<br/><em><a href='${data.__link}' target='_blank' class='text-info'>Open Report</a></em>`,
-              badge: "dark"
+              badge: "action-dark"
             }));
             return memo;
           }, {}),

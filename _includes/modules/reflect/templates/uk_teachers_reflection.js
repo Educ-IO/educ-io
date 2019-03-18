@@ -67,6 +67,7 @@ __Σ__UK_Teachers_Reflection =  {
           icon: "school",
           help: "",
           required: true,
+          pattern: /.*([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+).*/gi,
           __meta: {
             signatory: true,
           }
