@@ -12,6 +12,8 @@
 {{!-- [rows] = Number of Rows of Text to Expect (decides between text input and textbox) --}}
 {{!-- [default] = Default Action to display (me = current user) --}}
 {{!-- [value] = Default Text to display --}}
+{{!-- [type] = Native HTML Input type (e.g. number or date) --}}
+{{!-- [class] = Extra CSS Class to add --}}
 {{!-- [required] = Input is required --}}
 {{!-- [readonly] = Input is disabled / readonly --}}
 {{!-- [help] = Help information (html) to display --}}
@@ -30,28 +32,28 @@
 {{!-- ======================================================= --}}
 
 {{#> field_general }}
-  {{#if (any button clear)}}<div role="group"
-  	class="btn-group float-right mb-1{{#unless readonly}} d-flex d-lg-none{{else}} d-none{{/unless}}">
-    {{> control_button b_small="true" b_icon_large="true" 
-    b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" disabled=readonly }}
-    {{#if button}}{{> control_button b_small="true" b_id=(concat id "_BUTTON")
-    b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button disabled=readonly }}{{/if}}
-  </div>{{/if}}
   <div class="input-group{{#if large}} input-group-lg{{/if}}">
     {{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
     {{#if (all rows (none pattern))}}
     <textarea id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} class="form-control{{#if large}} form-control-lg{{/if}} resizable optional"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}} rows="{{rows}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>{{either value ""}}</textarea>
     {{else}}
-    <input id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} type="text" class="form-control{{#if large}} form-control-lg{{/if}} resizable"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}}{{#if value}} value="{{value}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}{{#if pattern}} pattern="{{#isRegex pattern}}{{pattern.source}}{{else}}{{string pattern}}{{/isRegex}}"{{/if}}/>
+    <input id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} type="{{val 'text' type}}" class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#if class}} {{class}}{{/if}}"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}}{{#if value}} value="{{value}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}{{#if pattern}} pattern="{{#isRegex pattern}}{{pattern.source}}{{else}}{{string pattern}}{{/isRegex}}"{{/if}}/>
     {{/if}}
     {{#if (any button clear)}}<span class="input-group-append d-none{{#unless readonly}} d-lg-flex{{/unless}}">
     {{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
     	b_target=id b_icon="refresh" disabled=readonly }}
-    {{#if button}}{{> control_button b_id=(concat id "_BUTTON") b_icon=""
+    {{#if button}}{{> control_button b_id=(concat id "_BUTTON_LG") b_icon=""
     	b_class="btn-primary textual-input-button"
     	b_target=id b_action=action b_text=button disabled=readonly }}{{/if}}
     </span>{{/if}}
     {{> field_validation}}
   </div>
+	{{#if (any button clear)}}<div class="d-flex"><div role="group"
+  	class="btn-group float-right my-1{{#unless readonly}} d-inline-flex ml-auto d-lg-none{{else}} d-none{{/unless}}">
+    {{> control_button b_small="true" b_icon_large="true" 
+    b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" disabled=readonly }}
+    {{#if button}}{{> control_button b_small="true" b_id=(concat id "_BUTTON_SM")
+    b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button disabled=readonly }}{{/if}}
+  </div></div>{{/if}}
 {{/field_general}}
 {% endraw %}

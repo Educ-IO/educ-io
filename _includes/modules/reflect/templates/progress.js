@@ -174,7 +174,10 @@ __Σ__Progress = {
               value: "Poor",
               icon: "sentiment_very_dissatisfied"
             }
-          ]
+          ],
+          __meta: {
+            index: true,
+          }
         },
       }
     },

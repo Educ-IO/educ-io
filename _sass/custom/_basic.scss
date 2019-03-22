@@ -59,6 +59,12 @@ a {color: $colour-contrasting-link;}
   overflow-wrap: break-word;
 }
 
+.btn-wrap {
+  white-space: normal !important;
+  word-wrap: break-word;
+  word-break: normal;
+}
+
 a.no-underline {
 	&:hover {text-decoration: none;}
 }

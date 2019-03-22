@@ -29,7 +29,12 @@
 
 {{#> field_general}}
   <input id="{{id}}" name="{{id}}_VALUE" data-output-name="Value" hidden="hidden" type="checkbox">
-  {{> field_items id=(concat id "_FILES") details=items_details controls=id
-  class="mt-1 mt-md-2" type=type list=list_field }}
+	<div id="{{concat id '_FILES'}}" data-id="{{concat id '_FILES'}}" data-template="field_items"
+     class="list-holder evidence-holder mt-1 mt-md-2"
+     {{#if field}}data-field="{{field}}"{{/if}}
+     {{#if order}} data-order="{{order}}"{{/if}}>
+  	{{> field_items id=(concat id "_FILES") details=items_details
+    		controls=id type=type list=list_field }}
+	</div>
 {{/field_general}}
 {% endraw %}

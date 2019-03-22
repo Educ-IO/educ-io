@@ -85,6 +85,7 @@ __Σ__UK_Teachers_Reflection =  {
           field : "TS Evidence",
           scale : "uk_teachers_standards",
           type : "Evidence",
+          list_template : "field_items",
           list_field : "Evidence",
           items_details : "Further details about how this was met",
           options: [
@@ -160,8 +161,9 @@ __Σ__UK_Teachers_Reflection =  {
           prefix: "Evidence Type",
           icon: "gps_fixed",
           list_field: "Targets",
+          rows : 3,
           required: true,
-          __help__: "Enter details of the targets you are setting yourself this week, together with the type of evidence that will confirm you have met the target. Then save them to the list below.",
+          __help__: "Enter details of the targets you are setting yourself this week, together with the type of evidence that will confirm you have met the target.  \n\nThen save them to the list below using the __green__ add button.",
           options: [
             "Lesson Plan",
             "Lesson Observation",

@@ -48,7 +48,9 @@
       {{/each}}
     </div>{{/if}}
   </div>
-  <div id="{{id}}" class="input-group{{#if large}} input-group-lg{{/if}} input-daterange{{#unless readonly}} dt-picker{{/unless}}">
+  <div id="{{id}}"
+       {{#if default}} data-input-default="{{default}}"{{/if}}
+       class="input-group{{#if large}} input-group-lg{{/if}} input-daterange{{#unless readonly}} dt-picker{{#if time}}-time{{/if}}{{/unless}}">
     {{#if icon}}{{> control_icon visible_at="xl" large=large icon=icon }}{{/if}}
     <input id="{{id}}_START" type="text" data-output-type="Date" data-output-name="Start"
            class="form-control" name="{{id}}_start" aria-label="{{val "" title field}}"

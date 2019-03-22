@@ -35,7 +35,8 @@ Data = (options, factory) => {
       var selector = _.reduce(ids, (memo, id) => `${memo ? `${memo}, `: ""}#${id}, #${id} > input`, "");
       return (parent ? parent : $)(selector);
     },
-    MAGIC = "*";
+    MAGIC = "*",
+    HIDDEN = "__hidden";
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -47,14 +48,19 @@ Data = (options, factory) => {
   /* <!-- Internal Set-Up --> */
 
   /* <!-- Internal Functions --> */
-  var _descendants = (el, holders) => el.find(`[data-output-name]${holders ? ", [data-holder-field]" : "" }`)
+  var _descendants = (el, holders, include_hidden) => el.find(`[data-output-name]${holders ? ", [data-holder-field]" : "" }`)
     .filter((i, val) => {
-      return $(val).parentsUntil(el, "[data-output-name]").length === 0 &&
-        $(val).parentsUntil(el.is("[data-output-field]") ?
+      var _val = $(val);
+      return _val.parentsUntil(el, "[data-output-name]").length === 0 &&
+        _val.parentsUntil(el.is("[data-output-field]") ?
           el : el.closest("[data-output-field]"))
         .filter((i, parent) => {
           var _parent = $(parent);
-          return _parent.css("display") == "none" && _parent.is("[class*='-none'][class*='d-']");
+          var _hidden = _parent.css("display") == "none" && _parent.is("[class*='-none'][class*='d-']");
+          if (_hidden) {
+            _val.data(HIDDEN, true);
+          }
+          return include_hidden === true ? false : _hidden;
         }).length === 0;
     }),
     _valid = (value, positives) =>
@@ -173,15 +179,15 @@ Data = (options, factory) => {
 
       if (_name && _valid(_field)) values[_name] = (_.has(values, _name) ? {
         Values: _.extend(_field, values[_name].Values),
-        Order: values[_name].Order === false ? _order : values[_name].Order,
+        __order: values[_name].Order === false ? _order : values[_name].Order,
         __type: values[_name].Type === false ? _type : values[_name].Type
       } : (_.isObject(_field) && !_field._isAMomentObject) ? {
         Values: _field[MAGIC] ? _field[MAGIC] : _field,
-        Order: _order,
+        __order: _order,
         __type: _type
       } : {
         Value: _field,
-        Order: _order,
+        __order: _order,
         __type: _type
       });
 
@@ -211,10 +217,16 @@ Data = (options, factory) => {
             if (_el.data("reveal")) GET(_el.data("reveal")).show();
           }
         } else if (_el[0].nodeName == "BUTTON") { /* <!-- Handle Button Selectors --> */
-          var _option = _el.closest("*[data-output-field]")
-            .find(`*[data-value='${$.escapeSelector(val)}'][data-targets='${$.escapeSelector(_el[0].id)}']`);
-          /* <!-- Defer to click handler if available --> */
-          _option.length == 1 ? _el.text(val) && _option[0].click() : _el.text(val);
+          var __field = _el.closest("*[data-output-field]"),
+            _option = __field.find(`*[data-value='${$.escapeSelector(val)}'][data-targets='${$.escapeSelector(_el[0].id)}']`);
+
+          var _hidden = _option.data(HIDDEN) || _el.data(HIDDEN) ||
+            _option.parentsUntil(__field)
+            .filter((i, parent) => $(parent).data(HIDDEN) === true).length !== 0;
+
+          /* <!-- Set text in all cases but also use click handler if available --> */
+          !_hidden && _option.length == 1 ? _el.text(val) && _option[0].click() : _el.text(val);
+
         } else {
           var _holder = ((_holder = _el.data("holder-field")) ? _holder : false);
           if (_holder) {
@@ -236,8 +248,19 @@ Data = (options, factory) => {
               }
             });
           } else {
+
             _el.val(val) && (_el.is("textarea.resizable")) ?
               autosize.update(_el[0]) : true; /* <!-- Fire autosize if required --> */
+
+            /* <!-- Highlight Active Button --> */
+            el.parent()
+              .closest("*[data-output-name], *[data-output-field]")
+              .find(`*[data-value='${$.escapeSelector(val)}']`)
+              .closest(".btn")
+              .addClass("active")
+              .attr("aria-pressed", "true")
+              .find(".md-inactive")
+              .removeClass("md-inactive");
           }
         }
       };
@@ -249,7 +272,7 @@ Data = (options, factory) => {
       });
 
       /* <!-- Only Process Direct Descendents --> */
-      var descendants = _descendants(el, true);
+      var descendants = _descendants(el, true, true);
       return (descendants.length === 0) ? simple(el) : complex(descendants);
 
     };
@@ -264,21 +287,13 @@ Data = (options, factory) => {
         var _values = ((_values = data[_name].Values) ? _values : {
             "Value": data[_name].Value
           }),
-          _targets = _descendants(_$, true);
+          _targets = _descendants(_$, true, true);
 
         /* <!-- Iterate through all the field parts --> */
         _.each(_targets, el => {
           var __$ = $(el),
             __name = (__name = __$.data("output-name")) || __$.data("holder-field");
-          if (__name && _valid(_values[__name], true)) {
-            _$.find(`*[data-value='${$.escapeSelector(_values[__name])}']`)
-              .closest(".btn")
-              .addClass("active")
-              .attr("aria-pressed", "true")
-              .find(".md-inactive")
-              .removeClass("md-inactive"); /* <!-- Highlight Active Button --> */
-            value(__$, _values[__name]);
-          }
+          if (__name && _valid(_values[__name], true)) value(__$, _values[__name]);
         });
 
       }

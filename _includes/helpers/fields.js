@@ -11,7 +11,8 @@ Fields = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DATE_FORMAT = "yyyy-mm-dd",
-    DATE_FORMAT_M = DATE_FORMAT.toUpperCase();
+    DATE_FORMAT_M = DATE_FORMAT.toUpperCase(),
+    TIME_FORMAT = "HH:mm";
   const EVENT_CHANGE_DT = "change.datetime",
     EVENT_CHANGE_AUTOSIZE = "change.autosize";
   const DEFAULTS = {
@@ -216,7 +217,7 @@ Fields = (options, factory) => {
         _target.val(`${_value}${_suffix ? `${_suffix.length > 1 ? " " : ""}${_suffix}` : ""}`);
       }
     };
-    
+
     /* <!-- Wire up numerical fields --> */
     form.find("input[type='range'].show-numerical").click(e => {
       $(e.currentTarget).data("value", true);
@@ -305,10 +306,13 @@ Fields = (options, factory) => {
   var _menus = form => {
 
     form.find("button.dropdown-item, a.dropdown-item").click(e => {
-      var _this = $(e.currentTarget);
+      var _this = $(e.currentTarget),
+        _targets = _this.data("targets"),
+        _value = _this.data("value");
       if (_this.data("targets") && _this.data("value")) {
         e.preventDefault();
-        form.find(`#${_this.data("targets")}, #${_this.data("targets")}:first-child`).text(_this.data("value"));
+        var _elements = form.find(`#${_targets}, #${_targets}:first-child`);
+        _elements.html(_elements.html().replace(_elements.text(), _value));
       }
     });
 
@@ -346,7 +350,7 @@ Fields = (options, factory) => {
         var _item = _this.data("item");
         var _template = {
           template: "list_item",
-          details: `${_details}${(_details && _type) ? " " : ""}${_type ? `[${_default}: ${_type}]` : ""}`,
+          details: `${_details}${(_details && _type) ? " | " : ""}${_type ? `${_default}: ${_type}` : ""}`,
           type: _item
         };
         if (_list.data("holder-field")) _template.field = _list.data("holder-field");
@@ -435,13 +439,16 @@ Fields = (options, factory) => {
   var _datetime = form => {
 
     if ($.fn.datepicker) {
+
       form.find("div.dt-picker, input.dt-picker").datepicker({
         format: DATE_FORMAT,
         todayBtn: "linked",
         todayHighlight: true,
         autoclose: true
       });
+
     } else if ($.fn.bootstrapMaterialDatePicker) {
+
       form.find("div.dt-picker > input, input.dt-picker").bootstrapMaterialDatePicker({
         format: DATE_FORMAT_M,
         clearButton: true,
@@ -449,18 +456,30 @@ Fields = (options, factory) => {
         time: false,
         switchOnClick: true,
       });
+
+      form.find("div.dt-picker-time > input, input.dt-picker-time").bootstrapMaterialDatePicker({
+        format: TIME_FORMAT,
+        clearButton: true,
+        nowButton: true,
+        date: false,
+        switchOnClick: true,
+      });
+
+      /* <!-- Time Default to now --> */
+      form.find("div.dt-picker-time[data-input-default='now'] > input, input.dt-picker-time[data-input-default='now']")
+        .val((index, value) => value ? value : moment().startOf("hour").add(index, "hours").format(TIME_FORMAT));
+
     }
+
+    /* <!-- General Default NOW --> */
+    form.find("input[data-input-default='now'], textarea[data-input-default='now']")
+      .val((index, value) => value ? value : moment().format(DATE_FORMAT_M));
 
   };
 
   var _list = form => {
 
     var _handlers = {
-
-      delete: e => {
-        e.preventDefault();
-
-      },
 
       default: e => $(_.tap(e, e => e.preventDefault()).currentTarget).parents(options.list_holder),
 
@@ -599,8 +618,6 @@ Fields = (options, factory) => {
     form.find("button.offline, a.offline")
       .off("click.offline").on("click.offline", _handlers.simple(options.list_offline_title));
 
-    /* <!-- TODO: Handle existing list items from Hydration (e.g. Delete Button)! --> */
-
   };
 
   var _doc = form => {
@@ -651,11 +668,11 @@ Fields = (options, factory) => {
     ];
     STEPS.last = [_deletes, _autosize];
   };
-  
+
   var _first = form => _.tap(form, form => _.each(STEPS.first, step => step(form)));
-  
+
   var _last = form => _.tap(form, form => _.each(STEPS.last, step => step(form)));
-  
+
   var _on = form => _.tap(form, form => {
     _.each(STEPS.first, step => step(form));
     _.each(STEPS.last, step => step(form));
@@ -669,9 +686,9 @@ Fields = (options, factory) => {
 
     /* <!-- External Functions --> */
     first: _first,
-    
+
     on: _on,
-    
+
     last: _last,
 
   };

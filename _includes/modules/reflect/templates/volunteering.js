@@ -88,7 +88,7 @@ __Σ__Volunteering = {
           details: "Further details, if applicable",
           __meta: {
             index: true,
-            path: "Display",
+            transform: "{{Display}}",
           },
         },
       }

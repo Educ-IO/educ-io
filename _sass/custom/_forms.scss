@@ -70,4 +70,24 @@ form {
   input:checked + .material-switch:active::before {
     box-shadow: 0 4px 8px rgba(0,0,0,0.28), 0 0 0 20px rgba(0,150,136,0.2);
   }
+  
+  .input-group {
+    .mw-20 {max-width: 20pc !important;}
+    .mw-25 {max-width: 25pc !important;}
+    .mw-30 {max-width: 30pc !important;}
+    .mw-40 {max-width: 40pc !important;}
+    .mw-50 {max-width: 50pc !important;}
+    .mw-60 {max-width: 60pc !important;}
+    .mw-75 {max-width: 75pc !important;}
+    .mw-80 {max-width: 80pc !important;}
+    .mw-90 {max-width: 90pc !important;}
+    .mw-100p {max-width: 100px !important;}
+    .mw-150p {max-width: 150px !important;}
+    .mw-200p {max-width: 200px !important;}
+    .mw-250p {max-width: 250px !important;}
+    .mw-400p {max-width: 400px !important;}
+    .mw-600p {max-width: 600px !important;}
+    .mw-800p {max-width: 800px !important;}
+    .mw-1000p {max-width: 1000px !important;}
+  }
 }

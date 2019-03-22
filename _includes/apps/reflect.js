@@ -43,10 +43,13 @@ App = function() {
     DESTINATION = "destination",
     EXTENSION = ".reflect",
     EXTENSION_REGEX = /.REFLECT$/i,
-    REGEX_REPLACER = (key, value) => value && typeof value === "object" && value.constructor === RegExp ?
-    value.source : value,
-    REPLACER = (key, value) => key && key.indexOf("$") === 0 ?
+    REGEX_REPLACER = (key, value) => value && typeof value === "object" &&
+    value.constructor === RegExp ? value.source : value,
+    SAVING_REPLACER = (key, value) => key && key.indexOf("$") === 0 ?
     undefined : REGEX_REPLACER(key, value),
+    SIGNING_REPLACER = (key, value) => key &&
+    (key === "__order" || key === "__type" || key === "__meta") ?
+    undefined : SAVING_REPLACER(key, value),
     FN = {};
   /* <!-- Internal Constants --> */
 
@@ -60,6 +63,40 @@ App = function() {
   /* <!-- Internal Functions --> */
   /* <-- Helper Functions --> */
   FN.helper = {
+
+    /* <-- Deterministic Version of Stringify --> */
+    stringify: (value, replacer, space, key) => {
+
+      var _type = Object.prototype.toString.call(value),
+        _object = () => {
+          var pairs = [];
+          for (var key in value) {
+            if (value.hasOwnProperty(key)) pairs.push([
+              key, FN.helper.stringify(value[key], replacer, space, key)
+            ]);
+          }
+          pairs.sort((a, b) => a[0] < b[0] ? -1 : 1);
+          pairs = _.chain(pairs)
+            .reject(v => v[1] === undefined)
+            .map(v => `"${v[0]}":${v[1]}`)
+            .value();
+          return pairs && pairs.length > 0 ? `{${pairs.join(",")}}` : null;
+        },
+        _array = () => `[${_.chain(value)
+													.map((v, i) => 
+                               FN.helper.stringify(v, replacer, space, String(i)))
+													.reject(v => v === undefined || v === null)
+													.value().join(",")}]`,
+        _value = () => {
+          var _return = replacer ? replacer(key, value) : value;
+          return _return === undefined ? _return : JSON.stringify(_return, null, space);
+        };
+
+      return _type === "[object Object]" ?
+        _object() : _type === "[object Array]" ?
+        _array() : _value();
+
+    },
 
     elevate: fn => {
 
@@ -129,65 +166,17 @@ App = function() {
       })
       .catch(e => e ? ಠ_ಠ.Flags.error("Send Error", e) : ಠ_ಠ.Flags.log("Send Cancelled")),
 
-    dirty: report => !ರ‿ರ.hash || ರ‿ರ.hash != new Hashes.MD5().hex(JSON.stringify(report)),
+    dirty: report => !ರ‿ರ.hash ||
+      ರ‿ರ.hash !== new Hashes.MD5().hex(FN.helper.stringify(report, SIGNING_REPLACER)),
 
   };
   /* <-- Helper Functions --> */
 
 
-  /* <-- Edit Functions --> */
-  FN.edit = {
+  /* <!-- Display Functions --> */
+  FN.display = {
 
-    generic: (value, help, title, id, mimeType, replacer, editable) => ಠ_ಠ.Display.text({
-        id: id ? id : "generic_editor",
-        title: title ? title : "Create / Edit ...",
-        message: help ? ಠ_ಠ.Display.doc.get(help) : "",
-        validate: value => JSON.parse(value),
-        state: {
-          value: value && _.isObject(value) ? JSON.stringify(value, replacer, 2) : value
-        },
-        action: editable === false ? false : "Save",
-        actions: [{
-          text: "Download",
-          handler: values => {
-            if (values && values.length === 1) {
-              try {
-                saveAs(new Blob([values[0].value], {
-                    type: mimeType
-                  }),
-                  `${value && value.title ? value.title : "download"}${EXTENSION}`);
-              } catch (e) {
-                ಠ_ಠ.Flags.error("Download", e);
-              }
-            }
-          }
-        }],
-        rows: 10
-      })
-      .then(values => value && ರ‿ರ.file ?
-        ಠ_ಠ.Google.files.upload(null, values, ರ‿ರ.file.mimeType, null, ರ‿ರ.file.id, true)
-        .then(ಠ_ಠ.Main.busy("Updating"))
-        .then(uploaded => ರ‿ರ.file = uploaded) : false)
-      .then(() => ಱ.forms = ಠ_ಠ.Forms())
-      .catch(e => (e ? ಠ_ಠ.Flags.error("Edit Error", e) : ಠ_ಠ.Flags.log("Edit Cancelled")).negative()),
-
-    report: report => FN.edit.generic(report.data, "REPORT", "Create / Edit Report ...",
-      "form_report", TYPE_FORM, REGEX_REPLACER),
-
-    form: (form, editable) => FN.edit.generic(form, "FORM", "Create / Edit Form ...",
-      "form_editor", TYPE_FORM, REPLACER, editable),
-
-    scale: (scale, editable) => FN.edit.generic(scale, "SCALE", "Create / Edit Scale ...",
-      "scale_editor", TYPE_SCALE, REPLACER, editable),
-
-  };
-  /* <-- Edit Functions --> */
-
-
-  /* <!-- Create Functions --> */
-  FN.create = {
-
-    display: (name, state, form, process, actions) => {
+    report: (name, state, form, process, actions) => {
       var _initial = form ?
         ಱ.forms.create(name, form, actions.editable, actions.signable) :
         ಱ.forms.get(name, true, false),
@@ -218,6 +207,84 @@ App = function() {
       return _form.last(_shown);
     },
 
+    form: value => {
+      if (value) {
+        ರ‿ರ.preview = value;
+        var _form = ಱ.forms.create("preview_Form", JSON.parse(value), false, false, true);
+        _form.target = ಠ_ಠ.container.empty();
+        ಠ_ಠ.Display
+          .state().change(STATES, STATE_FORM_OPENED)
+          .protect("a.jump").on("JUMP")
+          .template.show(_form.form);
+      }
+    },
+
+  };
+  /* <!-- Display Functions --> */
+
+
+  /* <-- Edit Functions --> */
+  FN.edit = {
+
+    generic: (value, help, title, id, mimeType, replacer, editable) => ಠ_ಠ.Display.text({
+        id: id ? id : "generic_editor",
+        title: title ? title : "Create / Edit ...",
+        message: help ? ಠ_ಠ.Display.doc.get(help) : "",
+        validate: value => {
+          try {
+            JSON.parse(value);
+            if (value) return true;
+          } catch (e) {
+            ಠ_ಠ.Flags.error("JSON Parsing", e);
+            return false;
+          }
+        },
+        state: {
+          value: value && _.isObject(value) ? JSON.stringify(value, replacer, 2) : value
+        },
+        action: ರ‿ರ.file && mimeType == TYPE_FORM ? "Show" : editable === false ? false : "Save",
+        actions: [{
+          text: "Download",
+          handler: values => {
+            if (values && values.length === 1) {
+              try {
+                saveAs(new Blob([values[0].value], {
+                  type: mimeType
+                }), `${value && value.title ? value.title : "download"}${EXTENSION}`);
+              } catch (e) {
+                ಠ_ಠ.Flags.error("Download", e);
+              }
+            }
+          }
+        }],
+        rows: 10
+      })
+      .then(values => values && ರ‿ರ.file ?
+        mimeType == TYPE_FORM ?
+        FN.display.form(values) :
+        ಠ_ಠ.Google.files.upload(null, values, ರ‿ರ.file.mimeType, null, ರ‿ರ.file.id, true)
+        .then(ಠ_ಠ.Main.busy("Updating"))
+        .then(uploaded => ರ‿ರ.file = uploaded) : false)
+      .then(() => ಱ.forms = ಠ_ಠ.Forms())
+      .catch(e => (e ? ಠ_ಠ.Flags.error("Edit Error", e) :
+        ಠ_ಠ.Flags.log("Edit Cancelled")).negative()),
+
+    report: report => FN.edit.generic(report.data, "REPORT", "Create / Edit Report ...",
+      "form_report", TYPE_FORM, REGEX_REPLACER),
+
+    form: (form, editable) => FN.edit.generic(form, "FORM", "Create / Edit Form ...",
+      "form_editor", TYPE_FORM, SAVING_REPLACER, editable),
+
+    scale: (scale, editable) => FN.edit.generic(scale, "SCALE", "Create / Edit Scale ...",
+      "scale_editor", TYPE_SCALE, SAVING_REPLACER, editable),
+
+  };
+  /* <-- Edit Functions --> */
+
+
+  /* <!-- Create Functions --> */
+  FN.create = {
+
     parent: id => new Promise(resolve => ಠ_ಠ.Google.files.get(id, true)
       .then(f => {
         ಠ_ಠ.Google.folders.is(true)(f) ?
@@ -247,16 +314,17 @@ App = function() {
         result ? _process(JSON.parse(result)) : Promise.resolve(false);
       }),
 
-    report: (name, actions, form, process) => FN.create.display(name, [STATE_REPORT_OPENED]
+    report: (name, actions, form, process) => FN.display.report(name, [STATE_REPORT_OPENED]
       .concat(!actions || actions.editable ? [STATE_REPORT_EDITABLE] : [])
       .concat(actions && actions.signable ? [STATE_REPORT_SIGNABLE] : []),
       form, process, actions),
 
-    form: name => FN.create.generic(FN.edit.form, ಱ.forms.get(name).template, TYPE_FORM)
-      .then(value => value ? ಠ_ಠ.Display.state().enter(STATE_FORM_OPENED).protect("a.jump").on("JUMP") : null)
+    form: name => FN.create.generic(FN.edit.form, name ?
+        ಱ.forms.get(name).template : "", TYPE_FORM)
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Form Create Prompt", e) : false),
 
-    scale: name => FN.create.generic(FN.edit.scale, ಱ.forms.scale(name), TYPE_SCALE)
+    scale: name => FN.create.generic(FN.edit.scale, name ?
+        ಱ.forms.scale(name) : "", TYPE_SCALE)
       .then(value => value ? ಠ_ಠ.Display.state().enter(STATE_SCALE_OPENED).protect("a.jump").on("JUMP") : null)
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Scale Create Prompt", e) : false),
 
@@ -478,7 +546,8 @@ App = function() {
 
     screenshot: element => (window.html2canvas ?
         html2canvas(_.tap(element, () => window.scrollTo(0, 0)), {
-          logging: ಠ_ಠ.Flags.debug()
+          logging: ಠ_ಠ.Flags.debug(),
+          ignoreElements: element => element.nodeName === "IFRAME"
         }) :
         Promise.reject(new Error(`HTML2Canvas Object Evalulates to ${html2canvas}`)))
       .then(canvas => ({
@@ -515,13 +584,14 @@ App = function() {
     get: (value, force) => Promise.resolve(value ? value : FN.action.dehydrate())
       .then(ಠ_ಠ.Main.busy("Getting Report"))
       .then(dehydrated => !force && FN.helper.dirty(dehydrated.data.report) ?
-        FN.action.save(false, dehydrated).then(() => dehydrated) : dehydrated),
+        FN.action.save.report(false, dehydrated).then(() => dehydrated) : dehydrated),
 
     load: file => ಠ_ಠ.Google.files.download((ರ‿ರ.file = file).id)
       .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
       .then(content => ({
         content: file.mimeType === TYPE_REPORT ? _.tap(JSON.parse(content),
-          data => ರ‿ರ.hash = new Hashes.MD5().hex(JSON.stringify(data.report))) : content,
+          data => ರ‿ರ.hash = new Hashes.MD5().hex(FN.helper.stringify(data.report,
+            SIGNING_REPLACER))) : content,
         actions: {
           editable: file.capabilities && file.capabilities.canEdit,
           signable: file.capabilities && file.capabilities.canComment,
@@ -539,61 +609,74 @@ App = function() {
       .then(value => value === false || !ರ‿ರ.file ? false :
         FN.action.load(ರ‿ರ.file).then(ಠ_ಠ.Main.busy("Refreshing Report"))),
 
-    save: (force, dehydrated) => FN.action.get(dehydrated, true)
-      .then(saving => (!ರ‿ರ.form.signatures || !FN.helper.dirty(saving.data.report) ?
-          Promise.resolve(true) : ಠ_ಠ.Display.confirm({
-            id: "confirm_Save",
-            target: ಠ_ಠ.container,
-            message: ಠ_ಠ.Display.doc.get("SIGNED_REPORT_SAVE_WARNING"),
-            action: "Save",
-            close: "Cancel"
-          }))
-        .then(result => {
-          return result !== true ? false :
-            FN.action.screenshot($("form[role='form'][data-name]")[0])
-            .then(result => {
-              return (force ? ಠ_ಠ.Display.text({
-                id: "file_name",
-                title: "File Name",
-                message: ಠ_ಠ.Display.doc.get("CLONE_NAME"),
-                state: {
-                  value: saving.name.replace(EXTENSION_REGEX, "")
-                },
-                simple: true
-              }) : Promise.resolve(saving.name)).then(name => {
-                var _meta = {
-                    name: !name.endsWith(EXTENSION) ? `${name}${EXTENSION}` : name,
-                    parents: (ರ‿ರ.folder ? ರ‿ರ.folder.id : null),
-                    appProperties: FN.helper.values(saving.data.form, saving.data.report,
-                      meta => meta[INDEX],
-                      (value, field, meta, memo) => memo[`FIELD.${field}`] = JSON.stringify(
-                        meta[TRANSFORM] ?
-                        ಠ_ಠ.Display.template.compile(`REFLECT.FIELD.${memo.FORM}.${field}`,
-                          meta[TRANSFORM])(value) :
-                        meta[PATH] ?
-                        value[meta[PATH]] :
-                        value
-                      ), {
-                        FORM: saving.data.form.$name ? saving.data.form.$name : saving.data.form.name
-                      }),
-                  },
-                  _data = JSON.stringify(saving.data, REGEX_REPLACER),
-                  _mime = TYPE_REPORT;
-                if (result) _meta.contentHints = result;
+    save: {
 
-                return ಠ_ಠ.Google.files.upload.apply(this, [_meta, _data, _mime].concat(!ರ‿ರ.file || force ? [] : [null, ರ‿ರ.file.id, true])).then(uploaded => {
-                  if (uploaded)
-                    ರ‿ರ.hash = new Hashes.MD5().hex(JSON.stringify(saving.data.report));
-                  return uploaded;
+      form: value => FN.action.screenshot($("form[role='form'][data-name]")[0])
+        .then(result => ಠ_ಠ.Google.files.upload(result ? {
+              contentHints: result
+            } : null,
+            value, TYPE_FORM, null, ರ‿ರ.file ? ರ‿ರ.file.id : null, true)
+          .then(ಠ_ಠ.Main.busy("Updating"))
+          .then(uploaded => ರ‿ರ.file = uploaded)),
+
+      report: (force, dehydrated) => FN.action.get(dehydrated, true)
+        .then(saving => (!ರ‿ರ.form.signatures || !FN.helper.dirty(saving.data.report) ?
+            Promise.resolve(true) : ಠ_ಠ.Display.confirm({
+              id: "confirm_Save",
+              target: ಠ_ಠ.container,
+              message: ಠ_ಠ.Display.doc.get("SIGNED_REPORT_SAVE_WARNING"),
+              action: "Save",
+              close: "Cancel"
+            }))
+          .then(result => {
+            return result !== true ? false :
+              FN.action.screenshot($("form[role='form'][data-name]")[0])
+              .then(result => {
+                return (force ? ಠ_ಠ.Display.text({
+                  id: "file_name",
+                  title: "File Name",
+                  message: ಠ_ಠ.Display.doc.get("CLONE_NAME"),
+                  state: {
+                    value: saving.name.replace(EXTENSION_REGEX, "")
+                  },
+                  simple: true
+                }) : Promise.resolve(saving.name)).then(name => {
+                  var _meta = {
+                      name: !name.endsWith(EXTENSION) ? `${name}${EXTENSION}` : name,
+                      parents: (ರ‿ರ.folder ? ರ‿ರ.folder.id : null),
+                      appProperties: FN.helper.values(saving.data.form, saving.data.report,
+                        meta => meta[INDEX],
+                        (value, field, meta, memo) => memo[`FIELD.${field}`] = JSON.stringify(
+                          meta[TRANSFORM] ?
+                          ಠ_ಠ.Display.template.compile(`REFLECT.FIELD.${memo.FORM}.${field}`,
+                            meta[TRANSFORM])(value) :
+                          meta[PATH] ?
+                          value[meta[PATH]] :
+                          value
+                        ), {
+                          FORM: saving.data.form.$name ? saving.data.form.$name : saving.data.form.name
+                        }),
+                    },
+                    _data = JSON.stringify(saving.data, REGEX_REPLACER),
+                    _mime = TYPE_REPORT;
+                  if (result) _meta.contentHints = result;
+
+                  return ಠ_ಠ.Google.files.upload.apply(this, [_meta, _data, _mime].concat(!ರ‿ರ.file || force ? [] : [null, ರ‿ರ.file.id, true])).then(uploaded => {
+                    if (uploaded)
+                      ರ‿ರ.hash = new Hashes.MD5()
+                      .hex(FN.helper.stringify(saving.data.report, SIGNING_REPLACER));
+                    return uploaded;
+                  });
                 });
-              });
-            })
-            .then(uploaded => _.tap(uploaded, uploaded => ಠ_ಠ.Recent.add((ರ‿ರ.file = uploaded).id,
-              uploaded.name.replace(EXTENSION_REGEX, ""), "#google,load." + uploaded.id)))
-            .then(uploaded => ಠ_ಠ.Flags.log("Saved:", uploaded).reflect(uploaded))
-            .catch(e => ಠ_ಠ.Flags.error("Save Error", e))
-            .then(ಠ_ಠ.Main.busy("Saving Report"));
-        }).catch(() => ಠ_ಠ.Flags.log("Save Cancelled").negative())),
+              })
+              .then(uploaded => _.tap(uploaded, uploaded => ಠ_ಠ.Recent.add((ರ‿ರ.file = uploaded).id,
+                uploaded.name.replace(EXTENSION_REGEX, ""), "#google,load." + uploaded.id)))
+              .then(uploaded => ಠ_ಠ.Flags.log("Saved:", uploaded).reflect(uploaded))
+              .catch(e => ಠ_ಠ.Flags.error("Save Error", e))
+              .then(ಠ_ಠ.Main.busy("Saving Report"));
+          }).catch(() => ಠ_ಠ.Flags.log("Save Cancelled").negative())),
+
+    },
 
     convey: (id, title, instructions_doc, type, message, action) => FN.action.get()
       .then(dehydrated => FN.helper.emails({
@@ -672,7 +755,7 @@ App = function() {
     export: () => {
       var _exporting = FN.action.dehydrate();
       try {
-        saveAs(new Blob([JSON.stringify(_exporting.data, null, 2)], {
+        saveAs(new Blob([JSON.stringify(_exporting.data, REGEX_REPLACER, 2)], {
           type: TYPE_REPORT
         }), _exporting.name);
       } catch (e) {
@@ -704,7 +787,7 @@ App = function() {
 
     /* <!-- Raw Data for Signing/Verifying [data property to avoid signing with file name] --> */
     raw: () => new TextEncoder().encode(
-      _.tap(JSON.stringify(FN.action.dehydrate().data, REPLACER).trim(),
+      _.tap(FN.helper.stringify(FN.action.dehydrate().data, SIGNING_REPLACER).trim(),
         raw => ಠ_ಠ.Flags.log("RAW DATA for Signing/Verifying:", raw))),
 
     key: () => ({
@@ -815,6 +898,11 @@ App = function() {
             match: /COMPLETE/i,
             show: "COMPLETE_INSTRUCTIONS",
             title: "How to Complete & Submit ..."
+          },
+          {
+            match: /EXPORT/i,
+            show: "EXPORT_INSTRUCTIONS",
+            title: "How to Export Reports and Analysis ..."
           }
         ],
         routes: {
@@ -911,6 +999,27 @@ App = function() {
                   },
                 }
               },
+              export: {
+                matches: /EXPORT/i,
+                state: STATE_ANALYSIS,
+                routes: {
+                  csv: {
+                    matches: /CSV/i,
+                    length: 0,
+                    fn: () => ಠ_ಠ.Flags.log("EXPORT to CSV"),
+                  },
+                  excel: {
+                    matches: /EXCEL/i,
+                    length: 0,
+                    fn: () => ಠ_ಠ.Flags.log("EXPORT to Excel"),
+                  },
+                  sheets: {
+                    matches: /SHEETS/i,
+                    length: 0,
+                    fn: () => ಠ_ಠ.Flags.log("EXPORT to Sheets"),
+                  },
+                }
+              },
               form: {
                 length: 1,
                 matches: /FORM/i,
@@ -982,7 +1091,7 @@ App = function() {
                 routes: {
                   clone: {
                     matches: /CLONE/i,
-                    fn: () => FN.action.save(true)
+                    fn: () => FN.action.save.report(true)
                       .then(result => result ? FN.process.signatures() : false)
                   },
                   export: {
@@ -991,10 +1100,15 @@ App = function() {
                   },
                   save: {
                     length: 0,
-                    fn: () => FN.action.save()
+                    fn: () => FN.action.save.report()
                       .then(result => result ? FN.process.signatures() : false)
                   },
                 }
+              },
+              form: {
+                matches: /FORM/i,
+                state: STATE_FORM_OPENED,
+                fn: () => FN.action.save.form(ರ‿ರ.preview)
               }
             }
           },

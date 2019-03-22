@@ -23,8 +23,8 @@ Analysis = (ಠ_ಠ, forms, reports) => {
   FN.helper = {
 
     owner: file => file.ownedByMe ? "Me" : file.owners && file.owners.length > 0 ?
-        `${file.owners[0].displayName}${file.owners[0].emailAddress ? ` (${file.owners[0].emailAddress})` : ""}` : "",
-    
+      `${file.owners[0].displayName}${file.owners[0].emailAddress ? ` (${file.owners[0].emailAddress})` : ""}` : "",
+
     url: file => `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${file.id}`,
 
   };
@@ -60,7 +60,8 @@ Analysis = (ಠ_ಠ, forms, reports) => {
     names: () => _.map(forms, form => form.template.title),
 
     values: (fields, report) => _.reduce(fields, (memo, field) => {
-      memo[field.title.toLowerCase()] = JSON.parse(report.appProperties[`FIELD.${field.id}`]);
+      var _val = report.appProperties[`FIELD.${field.id}`];
+      if (_val) memo[(field.title || field.id).toLowerCase()] = JSON.parse(_val);
       return memo;
     }, {}),
 
@@ -76,6 +77,11 @@ Analysis = (ಠ_ಠ, forms, reports) => {
             title: field.title,
             type: field[META].analyse ? field[META].analyse.type : null,
             template: field.template,
+            badges: field.template == "field_radio" && field.options ?
+              _.map(field.options, option => ({
+                value: option.value,
+                badge: option.class && option.class.indexOf("-") >= 0 ? option.class.split("-")[1] : ""
+              })) : null
           }), memo), memo);
     }, []),
 
@@ -100,7 +106,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
       var _data = DB.addCollection(id, {
         unique: ["id"],
-        indices: _.map((columns ? columns : []).concat(_.map(fields, field => field.title)),
+        indices: _.map((columns ? columns : []).concat(_.map(fields, field => field.title || field.id)),
           index => index.toLowerCase())
       });
 
@@ -150,26 +156,34 @@ Analysis = (ಠ_ಠ, forms, reports) => {
         var _all = [_row, _column].concat(_values),
           _reports = _.reduce(_.map(reports,
             report => _.extend(FN.generate.values(_all, report.file), {
-            __created: moment(report.file.createdTime).format("MMM D, YYYY HH:mm"),
-            __modified: moment(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
-            __owner: FN.helper.owner(report.file),
-            __link: FN.helper.url(report.file)
-          })), (memo, data) => {
-            var _key = data[_row.title.toLowerCase()];
+              __created: moment(report.file.createdTime).format("MMM D, YYYY HH:mm"),
+              __modified: moment(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
+              __owner: FN.helper.owner(report.file),
+              __link: FN.helper.url(report.file)
+            })), (memo, data) => {
+            var _key = data[(_row.title || _row.id).toLowerCase()];
             if (!memo[_key]) memo[_key] = {
               name: _key,
               details: []
             };
-            _.each(_values, value => memo[_key].details.push({
-              key: data[_column.title.toLowerCase()],
-              value: data[value.title.toLowerCase()],
-              title: `<b>Owner</b> ${data.__owner}<br/><b>Created</b> ${data.__created}<br/><b>Modified</b> ${data.__modified}<br/><em><a href='${data.__link}' target='_blank' class='text-info'>Open Report</a></em>`,
-              badge: "action-dark"
-            }));
+            _.each(_values, value => {
+              var _value = data[(value.title || value.id).toLowerCase()],
+                _badge = value.badges ? _.find(value.badges, badge => badge.value == _value) : null;
+              if (_badge) _badge = _badge.badge;
+              memo[_key].details.push({
+                key: data[(_column.title || _column.id).toLowerCase()],
+                value: _value,
+                title: `<b>Owner</b> ${data.__owner}<br/><b>Created</b> ${data.__created}<br/><b>Modified</b> ${data.__modified}<br/><em><a href='${data.__link}' target='_blank' class='text-info'>Open Report</a></em>`,
+                badge: _badge || "action-dark"
+              });
+            });
             return memo;
           }, {}),
           _columns = ["Name", "Details"],
           _headers = FN.generate.headers(_columns);
+
+        _.each(_reports, value => value.details =
+          _.sortBy(value.details, value => value.key + "_" + value.value));
 
         var _data = DB.addCollection(id, {
           unique: [_columns[0].toLowerCase()],
@@ -200,7 +214,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
       var _columns = ["ID", "Owner", "Form", "When"],
         _fields = FN.generate.fields(),
-        _headers = FN.generate.headers(_columns.concat(_.map(_fields, "title"))),
+        _headers = FN.generate.headers(_columns.concat(_.map(_fields, field => field.title || field.id))),
         _data = FN.generate.data(id, _columns, _fields, reports, FN.query.standard);
 
       return ಠ_ಠ.Datatable(ಠ_ಠ, {

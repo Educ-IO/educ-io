@@ -5,15 +5,16 @@
   </a>
   <h5 class="mb-0 d-inline">{{name}}</h5>
   <a class="d-inline-flex text-decoration-none ml-auto" data-toggle="collapse"
-     href="#collapse_{{target}}" aria-expanded="false" aria-controls="collapse_{{target}}">
-    <i{{#unless hide}} style="display: none;"{{/unless}} class="material-icons md-18"
+     href="#collapse_{{target}}" aria-expanded="false" aria-controls="collapse_{{target}}"
+     title="Show / Hide this block">
+    <i {{#unless hide}}style="display: none;" {{/unless}} class="material-icons md-18"
                 data-listen="#collapse_{{target}}" data-event="hidden.bs.collapse">expand_more</i>
-    <i{{#if hide}} style="display: none;"{{/if}} class="material-icons md-18"
+    <i {{#if hide}}style="display: none;" {{/if}} class="material-icons md-18"
             data-listen="#collapse_{{target}}" data-event="shown.bs.collapse">expand_less</i>
   </a>
 </div>
 
-<div id="collapse_{{target}}" class="collapse{{#unless hide}} show{{/unless}}" role="tabpanel"
+<div id="collapse_{{target}}" class="collapse{{#unless hide}} group-collapse show{{/unless}}" role="tabpanel"
      aria-labelledby="header_{{target}}">
   <div class="card-body">
 		{{> @partial-block }}

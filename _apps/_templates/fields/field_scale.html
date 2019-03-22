@@ -30,8 +30,9 @@
     {{#each markers}}
     {{!-- Call Partial Template, concatenating the ID with this parent ID and the Index, and also passing an incremented index for display --}}
     {{> field_marker id=(concat ../id "_" @index) options=../options
-    	type=../type items_details=../items_details list_field=../list_field number=(inc @index) 
-    	readonly=../readonly}}
+    	type=../type items_details=../items_details list_field=../list_field 
+    	list_template=../list_template number=(inc @index) 
+    	readonly=../readonly complex=../complex prefix=../prefix rows=../rows }}
     {{/each}}
   </ul>
 {{/field_general}}

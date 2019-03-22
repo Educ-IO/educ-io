@@ -27,7 +27,8 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 			},
 			now: null,
 			always : null
-		}
+		},
+    process : false,
   };
 	options = _.defaults(options, defaults);
 	/* <!-- Internal Consts --> */
@@ -241,11 +242,13 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		rows: _createRows(_getRows()),
 	}));
 
-	var _createDisplayDataset = (filters, table) => $(ಠ_ಠ.Display.template.get("datatable")(_.defaults(
+	var _showDisplayDataset = (filters, table) => ಠ_ಠ.Display.template.show(_.defaults(
     options.wrapper ? options.wrapper : {}, {
+    name: "datatable",
 		filters: options.readonly ? "" : filters ? filters : _createDisplayFilters(),
-		table: table ? table : _createDisplayTable()
-	})));
+		table: table ? table : _createDisplayTable(),
+    target: target,
+	}));
 	
 	var _virtualScroll = () => {
 		_advanced = _advanced ? _advanced : ಠ_ಠ.Table({table: target.find("table"), outside: target}, ಠ_ಠ);
@@ -262,11 +265,12 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
 		/* <!-- Get Table to Display (Updating the Headers at the same time) --> */
 		/* <!-- NEED TO APPEND LATER TO STOP VISUAL FLASH OF SCROLLBARS ?? --> */
-		target.append(_createDisplayDataset());
+    
+    var _table = _showDisplayDataset();
 
 		/* <!-- Set Filter Handlers --> */
 		var _filter_Timeout = 0;
-		target.find("input.table-search").off("keyup").on("keyup", e => {
+		_table.find("input.table-search").off("keyup").on("keyup", e => {
 			var _target, keycode = ((typeof e.keyCode != "undefined" && e.keyCode) ? e.keyCode : e.which);
 			if (keycode === 27) { /* <!-- Escape Key Pressed --> */
 				e.preventDefault();
@@ -289,12 +293,8 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 			}, FILTER_DELAY);
 		});
 
-		/* <!-- Enable Pop-Overs and Tool-Tips --> */
-    ಠ_ಠ.Display.popovers(target.find("[data-toggle='popover']"));
-		ಠ_ಠ.Display.tooltips(target.find("[data-toggle='tooltip']"));
-
 		/* <!-- Show/Hide Column (expandable table) --> */
-		target.find(".table-headers").on("click", e => {
+		_table.find(".table-headers").on("click", e => {
 			if (e.target.classList.contains("table-header")) {
 				var _target = $(e.target),
 					_last = (_target.hasClass("to-hide") && !_target.hasClass("to-hide-prefix") && _target.nextAll(":not(.to-hide)").length === 0);
@@ -305,10 +305,10 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		});
 
 		/* <!-- Clear Column Filter --> */
-		target.find("button[data-command='clear']").on("click", e => _clearFilter(e.target));
+		_table.find("button[data-command='clear']").on("click", e => _clearFilter(e.target));
 
 		/* <!-- Apply Table Sort --> */
-		target.find("a[data-command='sort'], button[data-command='sort']").on("click", e => {
+		_table.find("a[data-command='sort'], button[data-command='sort']").on("click", e => {
 			var _target = $(e.target);
 			var _field = _target.data("field");
 			if (_sorts[_field]) {
@@ -322,7 +322,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 		});
 
 		/* <!-- Update Column Visibility --> */
-		target.find("a[data-command='hide']").on("click", e => {
+		_table.find("a[data-command='hide']").on("click", e => {
 			var _target = $(e.target);
 			var _action = _target.data("action");
 			var _field = _target.parent().data("index");

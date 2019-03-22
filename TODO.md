@@ -122,13 +122,8 @@ Folders
 
 Reflect
 -------
-* Thumbnail / Content Hint for Form (render?)
-
-* Lesson Observation Form
-
-* ** IMPORTANT ** Feedback on successful save?
-
-* ** IMPORTANT ** Optional Gradings against standards
+* ** BUG ** Analysis of empty forms? E.g. Lesson Observation
+* ** IMPORTANT ** Feedback on successful save? Or failure.
 
 Publish
 -------
@@ -140,6 +135,14 @@ Survey
 
 Complete
 --------
+* Lesson Observation Form <-- DONE
+* ** IMPORTANT ** Optional Gradings against standards <-- DONE
+* Accordian ALL on Form <-- DONE
+* ** BUG ** Residual Picker iFrame (should it be removed?) - causes exception in HTML2Canvas <-- DONE
+* Thumbnail / Content Hint for Form (render?) <-- DONE
+* **BUG** Visual Bug with Action Buttons as window width is reduced (don't wrap properly) <-- DONE
+* **BUG** Field Order for responsive form fields (e.g. span) can change, breaking signing! <-- DONE
+* **BUG** Button Clicks / Button text on responsive form fields (e.g. span) <-- DONE
 * ** IMPORTANT ** Should have anchor links using smooth scroll to different parts of the forms, to make navigation of the form easier! <-- DONE
 * ** IMPORTANT ** Escape EMAIL Regex for forms... ???? / Issue with capture groups... <-- DONE
 * ** BUG ** Span field doesn't correctly wire up period duration after load <-- DONE
@@ -627,4 +630,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2019-03-16
+ᕕ( ᐛ )ᕗ JD - 2019-03-22

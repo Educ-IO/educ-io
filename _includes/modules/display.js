@@ -73,9 +73,13 @@ Display = function() {
     e.stopPropagation();
     var _this = $(e.currentTarget),
       _route = _this.data("route");
-    if (_route)
-      $(`nav a[href='#${_route}']:not(.disabled), nav a[href^='#'][href$=',${_route}']:not(.disabled)`)
-      .first().click();
+    if (_route) {
+      var _command = $(`nav a[href='#${_route}']:not(.disabled), nav a[href^='#'][href$=',${_route}']:not(.disabled)`);
+      _command && _command.prop("onclick") ?
+        _command.first().click() :
+        _command ?
+        _command[0].click() : window.location.hash = `#${_route}`;
+    }
   });
 
   var _target = options => {
@@ -136,6 +140,13 @@ Display = function() {
     return Handlebars.templates === undefined || Handlebars.templates[name] === undefined ?
       _compile(name, raw) : Handlebars.templates[name];
 
+  };
+
+  var _process = value => {
+    _popovers(value.find("[data-toggle='popover']"));
+    _tooltips(value.find("[data-toggle='tooltip']"));
+    _routes(value.find("a[data-route], button[data-route], input[data-route]"));
+    return value;
   };
 
   var _clean = () => $(".modal-backdrop").remove() && $(".modal-open").removeClass("modal-open"); /* <!-- Weird Modal Not Hiding Bug --> */
@@ -492,15 +503,13 @@ Display = function() {
 
         /* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
         var _element = options.clear === true ? _target(options).empty() : _target(options);
-        var _return = $(this.get(options));
-
-        _popovers(_return.find("[data-toggle='popover']"));
-        _tooltips(_return.find("[data-toggle='tooltip']"));
-        _routes(_return.find("a[data-route], button[data-route], input[data-route]"));
+        var _return = _process($(this.get(options)));
 
         return options.prepend === true ? _return.prependTo(_element) : _return.appendTo(_element);
 
       },
+
+      process: _process,
 
     },
 

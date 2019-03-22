@@ -39,7 +39,6 @@ Forms = function() {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Functions --> */
-
   var _get = (name, value) => _.find(value,
     (value, key) => key.localeCompare(name, undefined, {
       sensitivity: "accent"
@@ -49,9 +48,25 @@ Forms = function() {
     `${file.owners[0].displayName}${file.owners[0].emailAddress ? 
               ` (${file.owners[0].emailAddress})` : ""}` : "";
 
-  var _create = (id, template, editable, signable) => {
+  var _process = (value, type, id) => {
+    var _extend = (parent, object) => _.deepExtend(DEEPCLONE(parent), object),
+      _action = () => {
+        var _return = _extend(ರ‿ರ.cache[type.name][value.__extends], value);
+        delete _return.__extends;
+        return _return;
+      };
+    return value && value.__extends ?
+      ರ‿ರ.cache[type.name][value.__extends] ?
+      _action() :
+      ಠ_ಠ.Flags.log(`No ${type.name} named ${value.__extends}${id ? ` for ${id} to extend` : ""}`).reflect(value) :
+      value;
+  };
+
+  var _create = (id, template, editable, signable, preview) => {
 
     if (id && template) {
+
+      if (template.__extends) template = _process(template, TYPES[1]);
 
       var groups = [],
         _headers = [],
@@ -94,11 +109,14 @@ Forms = function() {
         name: template.name,
         title: template.title,
         headers: _headers,
-        footers: ["_Actions_", "_Signatures_"],
+        footers: []
+          .concat(editable || signable ? ["_Actions_"] : [])
+          .concat(preview ? [] : ["_Signatures_"]),
         fields: groups.join("\n").trim(),
         owner: _file ? _owner(_file) : "",
         editable: editable,
         signable: signable,
+        preview: preview,
       };
 
     }
@@ -134,12 +152,13 @@ Forms = function() {
       ರ‿ರ.files = {};
       ರ‿ರ.cache = _.reduce(TYPES, (cache, type) => {
         var _prefix = `__${type.prefix}__`;
-        cache[type.name] = _.reduce(
-          _.filter(_.keys(ಠ_ಠ), key => key.indexOf(_prefix) === 0),
-          (value, key) => {
+        cache[type.name] = _.chain(_.keys(ಠ_ಠ))
+          .filter(key => key.indexOf(_prefix) === 0)
+          .reduce((value, key) => {
             value[key.substring(_prefix.length)] = ಠ_ಠ[key];
             return value;
-          }, {});
+          }, {})
+          .value();
         return cache;
       }, {});
 
@@ -149,17 +168,13 @@ Forms = function() {
           ಠ_ಠ.Google.files.download(file.id)
             .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
             .then(content => {
-              var _object, _extend = (parent, object) => _.deepExtend(DEEPCLONE(parent), object);
+              var _object;
               try {
                 _object = JSON.parse(content);
               } catch (e) {
                 ಠ_ಠ.Flags.error(`Error Parsing: ${file.id}`, e);
               }
-              return _object && _object.__extends ?
-                ರ‿ರ.cache[type.name][_object.__extends] ?
-                _extend(ರ‿ರ.cache[type.name][_object.__extends], _object) :
-                ಠ_ಠ.Flags.log(`No ${type.name} named ${_object.__extends} for ${file.id} to extend`)
-                .reflect(_object) : _object;
+              return _process(_object, type, file.id);
             })
             .then(object => object ? ರ‿ರ.cache[type.name][file.id] = object : object)
             .then(() => file.teamDriveId ? ಠ_ಠ.Google.teamDrives.get(file.teamDriveId)
@@ -184,22 +199,26 @@ Forms = function() {
 
     all: _all,
 
-    selection: (type, subtype) => _.map(_.filter(_all(type), {
-      type: subtype ? subtype : "Report"
-    }), item => {
-      var _file = ರ‿ರ.files[item.key];
-      return {
-        value: item.key,
-        name: item.title,
-        class: _file ? "" : "text-body trusted",
-        title: _file ? `Owned by: ${_owner(_file)}` : ""
-      };
-    }),
+    selection: (type, subtype) => _.chain(_all(type))
+      .filter({
+        type: subtype ? subtype : "Report"
+      })
+      .map(item => {
+        var _file = ರ‿ರ.files[item.key];
+        return {
+          value: item.key,
+          name: item.title,
+          class: _file ? "" : "text-body trusted",
+          title: _file ? `Owned by: ${_owner(_file)}` : ""
+        };
+      })
+      .sortBy("name")
+      .value(),
 
     has: name => !!(_get(name, ರ‿ರ.cache.forms)),
 
     template: name => _get(name, ರ‿ರ.cache.forms),
-    
+
     get: (name, editable, signable) => {
       var _form = _get(name, ರ‿ರ.cache.forms);
       return _form ? {
@@ -208,9 +227,9 @@ Forms = function() {
       } : null;
     },
 
-    create: (id, template, editable, signable) => ({
+    create: (id, template, editable, signable, preview) => ({
       template: template,
-      form: _create(id, template, editable, signable)
+      form: _create(id, template, editable, signable, preview)
     }),
 
     scale: name => _get(name, ರ‿ರ.cache.scales)

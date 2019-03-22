@@ -450,6 +450,8 @@ reflect:
     - reflect/templates/uk_teachers_reflection
     - reflect/templates/volunteering
     - reflect/templates/progress
+    - reflect/templates/uk_teachers_lesson_observation
+    - reflect/templates/uk_teachers_grading
     - reflect/scales/uk_teachers_standards
   scripts:
     - extends/regex
@@ -477,10 +479,12 @@ reflect:
     - shared/hyperlink
     - fields/field_validation
     - fields/field_general
+    - fields/field_additions
     - fields/field_complex
     - fields/field_items
     - fields/field_numeric
     - fields/field_marker
+    - fields/field_buttons
     - fields/field_radio
     - fields/field_scale
     - fields/field_select
@@ -519,6 +523,7 @@ reflect:
     - reflect/SEND_INSTRUCTIONS
     - reflect/SIGN_INSTRUCTIONS
     - reflect/SHARE_INSTRUCTIONS
+    - reflect/EXPORT_INSTRUCTIONS
     - reflect/URL
     - reflect/FILE
     - reflect/CREATE
@@ -674,6 +679,11 @@ reflect:
       groups:
         all:
           commands:
+            - name: Analyse
+              desc: Anaylse submitted Form Reports
+              hash: analyse
+              auth: google
+              divider: true
             - name: Create
               desc: Create a new Form
               hash: create.form
@@ -684,10 +694,21 @@ reflect:
               imports:
                 - google
               auth: google
-            - name: Analyse
-              desc: Anaylse submitted Form Reports
-              hash: analyse
+            - name: Save
+              desc: Save this Form
+              hash: save.form
+              imports:
+                - html2canvas
+              disabled_until:
+                - opened-form
               auth: google
+              divider: true
+              
+            - name: Close
+              desc: Close this Report
+              hash: close
+              disabled_until:
+                - opened-form
     - name: Analysis
       disabled_until:
         - analysis
@@ -727,6 +748,17 @@ reflect:
               hash: analyse.reports.shared
               toggle:
                 - analysis-reports-shared
+              divider: true
+            - name: Export to Sheets
+              desc: Export Analysis Data to Google Sheets
+              hash: analyse.export.sheets
+            - name: Download as CSV
+              desc: Download Current Analysis Data as a Comma Separated Values (CSV) File
+              hash: analyse.export.csv
+            - name: Download as Excel
+              desc: Download Analysis Data as a Microsoft Excel File
+              hash: analyse.export.excel
+              divider: true
             - name: Close
               desc: Close this Analysis
               hash: close
@@ -3382,10 +3414,12 @@ debug:
     - shared/list_item
     - fields/field_validation
     - fields/field_general
+    - fields/field_additions
     - fields/field_complex
     - fields/field_items
     - fields/field_numeric
     - fields/field_marker
+    - fields/field_buttons
     - fields/field_radio
     - fields/field_scale
     - fields/field_select

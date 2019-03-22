@@ -552,7 +552,7 @@ Data = function() {
             });
           _return._value = ((additions, prefix, field) => additions && additions.length > 0 ?
             _checks.list(additions, item => ({
-              Value: (`${item.details} [${prefix.trim()}: ${item.option.value}]`).trim(),
+              Value: (`${item.details} | ${prefix.trim()}: ${item.option.value}`).trim(),
               Type: "Item",
               __type: "list_item",
             }), field) : null)(_.filter(_additions, "details"), _return.prefix, _return.list_field);
@@ -626,6 +626,7 @@ Data = function() {
               template: "field_scale",
               type: GEN.t(GEN.i(5, 10)),
               items_details: GEN.t(GEN.i(10, 50)),
+              list_template : "field_items",
               list_field: GEN.b() ? GEN.a(GEN.i(5, 20)) : null,
               scale: _scale,
               markers: _scale.scale,
@@ -810,7 +811,7 @@ Data = function() {
 
             /* <!-- Test Order --> */
             var _order = value.order ? value.order : false;
-            _expect.to.have.deep.nested.property(`${_name}.Order`, _order);
+            _expect.to.have.deep.nested.property(`${_name}.__order`, _order);
 
             /* <!-- Test Value/s --> */
             value._value !== undefined ? _.isFunction(value._value) ?
@@ -933,7 +934,7 @@ Data = function() {
               var _state = _.pick(_values(), value => value.default !== undefined);
               _.each(_state, (value, key) => {
                 values.to.have.deep.nested.property(`${key}.Value`, value.default);
-                values.to.have.deep.nested.property(`${key}.Order`, false);
+                values.to.have.deep.nested.property(`${key}.__order`, false);
               });
 
               return true;
@@ -965,7 +966,7 @@ Data = function() {
                       _order = value.order ? value.order : false;
 
                     values.to.have.deep.nested.property(`${_name}.Value`, value.value);
-                    values.to.have.deep.nested.property(`${_name}.Order`, _order);
+                    values.to.have.deep.nested.property(`${_name}.__order`, _order);
 
                   });
 
@@ -1297,7 +1298,7 @@ Data = function() {
                     details: GEN.t(GEN.i(10, 50)),
                   })),
                   details = field.find(`textarea#${state.id}_DETAILS`),
-                  button = field.find(`button#${state.id}_TYPE`),
+                  button = field.find(`button#${state.id}_TYPE_LG`),
                   list = field.find(`div#${state.id}_LIST`),
                   add = field.find("button.btn-success");
 
@@ -1342,7 +1343,7 @@ Data = function() {
                   var _item = list.find(".list-item").last();
                   expect(_item.find("span[data-output-name='Value']").text())
                     .to.be.a("string")
-                    .that.equals(`${addition.details} [${state.prefix.trim()}: ${addition.option.value}]`);
+                    .that.equals(`${addition.details} | ${state.prefix.trim()}: ${addition.option.value}`);
                   expect(_item.find("span[data-output-name='Type']").text())
                     .to.be.a("string")
                     .that.equals(state.type);
@@ -1544,6 +1545,7 @@ Data = function() {
                 template: "field_scale",
                 type: GEN.t(GEN.i(5, 10)),
                 items_details: GEN.t(GEN.i(10, 50)),
+                list_template : "field_items",
                 list_field: GEN.b() ? "Evidence" : null,
                 scale: _scale,
                 markers: _scale.scale,

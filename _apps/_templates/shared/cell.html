@@ -18,7 +18,7 @@
   </span>
 </span>
 	{{else}}
-		<div style="white-space: pre;">{{formatYaml this}}</div>
+		<div style="white-space: pre;">{{#if this}}{{formatYaml this}}{{/if}}</div>
 	{{/if}}
 {{else}}
 	{{this}}
