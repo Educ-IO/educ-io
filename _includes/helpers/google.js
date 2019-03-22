@@ -698,7 +698,10 @@ Google_API = (options, factory) => {
         files: files
       }, "application/json"),
 
-      update: (id, file, team) => _call(NETWORKS.general.patch, `drive/v3/files/${id}${TEAM(id, team, true)}`, file, "application/json"),
+      update: (id, file, team, fields) => {
+        var _team = TEAM(id, team, true);
+        return _call(NETWORKS.general.patch, `drive/v3/files/${id}${_team}${fields ? `${_team ? "&" : "?"}fields=${fields === true ? FIELDS : fields}` : ""}`, file, "application/json");
+      },
 
       move: (id, source, destination, team) => _call(NETWORKS.general.patch,
         `drive/v3/files/${id}?addParents=${_arrayize(destination, _.isString).join(",")}&removeParents=${_arrayize(source, _.isString).join(",")}${TEAM(id, team, false)}`),

@@ -8,22 +8,28 @@ Analysis = (ಠ_ಠ, forms, reports) => {
   const DB = new loki("reflect-analysis.db"),
     META = "__meta",
     ID = "analysis",
+    MISSING = "NO DATA",
+    EMPTY = "",
     FN = {};
   /* <!-- Internal Constants --> */
 
-  /* <!-- Internal Variables --> */
-  var _table,
-    _filter = () => true,
-    _view = false;
-  /* <!-- Internal Variables --> */
+  /* <!-- Internal State Variable --> */
+  var ರ‿ರ = {
+    filter: () => true,
+    stage: () => true,
+    view: false,
+  };
+  /* <!-- Internal State Variable --> */
 
   /* <!-- Internal Functions --> */
 
   /* <-- Helper Functions --> */
   FN.helper = {
 
+    complete: file => file.appProperties.COMPLETE,
+
     owner: file => file.ownedByMe ? "Me" : file.owners && file.owners.length > 0 ?
-      `${file.owners[0].displayName}${file.owners[0].emailAddress ? ` (${file.owners[0].emailAddress})` : ""}` : "",
+      `${file.owners[0].displayName}${file.owners[0].emailAddress ? ` (${file.owners[0].emailAddress})` : EMPTY}` : EMPTY,
 
     url: file => `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${file.id}`,
 
@@ -41,6 +47,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
         blank: true
       }).trim(),
       "owner": FN.helper.owner(report.file),
+      "complete": FN.helper.complete(report.file),
       "form": report.title,
       "when": {
         Created: moment(report.file.createdTime).format("llll"),
@@ -61,7 +68,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
     values: (fields, report) => _.reduce(fields, (memo, field) => {
       var _val = report.appProperties[`FIELD.${field.id}`];
-      if (_val) memo[(field.title || field.id).toLowerCase()] = JSON.parse(_val);
+      memo[(field.title || field.id).toLowerCase()] = _val ? JSON.parse(_val) : EMPTY;
       return memo;
     }, {}),
 
@@ -80,12 +87,11 @@ Analysis = (ಠ_ಠ, forms, reports) => {
             badges: field.template == "field_radio" && field.options ?
               _.map(field.options, option => ({
                 value: option.value,
-                badge: option.class && option.class.indexOf("-") >= 0 ? option.class.split("-")[1] : ""
+                badge: option.class && option.class.indexOf("-") >= 0 ?
+                  option.class.split("-")[1] : EMPTY
               })) : null
           }), memo), memo);
     }, []),
-
-    categories: (column, values) => _.map(values, value => JSON.stringify(value)),
 
     headers: fields => _.map(fields, v => ({
       name: v,
@@ -97,7 +103,8 @@ Analysis = (ಠ_ಠ, forms, reports) => {
       },
       hide_always: false,
       hide_now: false,
-      hide_initially: v === "ID" || v === "Owner" || v === "When" ? true : false,
+      hide_initially: v === "ID" || v === "Owner" || v === "Completed" || v === "When" ?
+        true : false,
       field: v.toLowerCase(),
       icons: v === "When" ? ["access_time"] : null
     })),
@@ -129,8 +136,17 @@ Analysis = (ಠ_ಠ, forms, reports) => {
   /* <-- Display Functions --> */
   FN.display = {
 
-    analysis: (reports, process) => (_view ?
-      FN.display[_view] : FN.display.summary)(FN.generate.id(), ಠ_ಠ.container.empty(), {
+    update: (filter, stage, view) => {
+      if (view !== null && view !== undefined) ರ‿ರ.view = view;
+      if (ರ‿ರ.table && ರ‿ರ.table.close) ರ‿ರ.table.close();
+      return Promise.resolve(ರ‿ರ.table = FN.display.analysis(_.chain(reports)
+        .filter(filter)
+        .filter(stage)
+        .value()));
+    },
+
+    analysis: (reports, process) => (ರ‿ರ.view ?
+      FN.display[ರ‿ರ.view] : FN.display.summary)(FN.generate.id(), ಠ_ಠ.container.empty(), {
       classes: ["pt-1"],
       id: ID,
       header: ಠ_ಠ.Display.template.get("analyse_header")({
@@ -159,21 +175,27 @@ Analysis = (ಠ_ಠ, forms, reports) => {
               __created: moment(report.file.createdTime).format("MMM D, YYYY HH:mm"),
               __modified: moment(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
               __owner: FN.helper.owner(report.file),
-              __link: FN.helper.url(report.file)
+              __link: FN.helper.url(report.file),
+              __complete: FN.helper.complete(report.file),
             })), (memo, data) => {
             var _key = data[(_row.title || _row.id).toLowerCase()];
+            if (!_key) _key = MISSING;
             if (!memo[_key]) memo[_key] = {
               name: _key,
               details: []
             };
             _.each(_values, value => {
-              var _value = data[(value.title || value.id).toLowerCase()],
-                _badge = value.badges ? _.find(value.badges, badge => badge.value == _value) : null;
+              var _data = [
+                  data[(_column.title || _column.id).toLowerCase()],
+                  data[(value.title || value.id).toLowerCase()]
+                ],
+                _badge = value.badges && _data[1] !== MISSING ?
+                _.find(value.badges, badge => badge.value == _data[1]) : null;
               if (_badge) _badge = _badge.badge;
               memo[_key].details.push({
-                key: data[(_column.title || _column.id).toLowerCase()],
-                value: _value,
-                title: `<b>Owner</b> ${data.__owner}<br/><b>Created</b> ${data.__created}<br/><b>Modified</b> ${data.__modified}<br/><em><a href='${data.__link}' target='_blank' class='text-info'>Open Report</a></em>`,
+                key: _data[0] ? _data[0] : MISSING,
+                value: _data[1] ? _data[1] : MISSING,
+                title: `<b>Owner</b> ${data.__owner}<br/><b>Created</b> ${data.__created}<br/><b>Modified</b> ${data.__modified}<br/>${data.__complete ? "<b>COMPLETE</b><br/>" : ""}<em><a href='${data.__link}' target='_blank' class='text-info'>Open Report</a></em>`,
                 badge: _badge || "action-dark"
               });
             });
@@ -197,7 +219,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
         _data.insert(_.map(_reports, report => report));
 
         return ಠ_ಠ.Datatable(ಠ_ಠ, {
-          id: `${ID}_TABLE`,
+          id: `${ID}_SUMMARY_TABLE`,
           name: id,
           data: _data,
           headers: _headers,
@@ -212,13 +234,13 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
     detail: (id, target, wrapper, reports, after) => {
 
-      var _columns = ["ID", "Owner", "Form", "When"],
+      var _columns = ["ID", "Owner", "Completed", "Form", "When"],
         _fields = FN.generate.fields(),
         _headers = FN.generate.headers(_columns.concat(_.map(_fields, field => field.title || field.id))),
         _data = FN.generate.data(id, _columns, _fields, reports, FN.query.standard);
 
       return ಠ_ಠ.Datatable(ಠ_ಠ, {
-        id: `${ID}_TABLE`,
+        id: `${ID}_DETAIL_TABLE`,
         name: id,
         data: _data,
         headers: _headers,
@@ -230,24 +252,6 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
     },
 
-    grid: (id, target, wrapper, reports, after) => {
-
-      var _fields = FN.generate.fields(),
-        _row = _.find(_fields, {
-          "type": "row"
-        }),
-        _column = _.find(_fields, {
-          "type": "column"
-        }),
-        _values = _.reject(_fields, "type");
-
-      var _categories = FN.generate.categories(_column,
-        _.map(reports, report => FN.generate.values([_column], report.file)));
-
-      return [_row, _values, _categories, after];
-
-    },
-
   };
   /* <-- Display Functions --> */
 
@@ -255,31 +259,37 @@ Analysis = (ಠ_ಠ, forms, reports) => {
   /* <-- Filter Functions --> */
   FN.filter = {
 
-    filter: (filter, view) => {
-      if (view !== null && view !== undefined) _view = view;
-      if (_table && _table.close) _table.close();
-      return Promise.resolve(_table = FN.display.analysis(_.filter(reports, filter)));
-    },
+    all: () => FN.display.update(ರ‿ರ.filter = () => true, ರ‿ರ.stage),
 
-    all: () => FN.filter.filter(_filter = () => true),
+    mine: () => FN.display.update(ರ‿ರ.filter = report => report.file.ownedByMe === true),
 
-    mine: () => FN.filter.filter(_filter = report => report.file.ownedByMe === true),
-
-    shared: () => FN.filter.filter(_filter = report => report.file.ownedByMe === false),
+    shared: () => FN.display.update(ರ‿ರ.filter = report => report.file.ownedByMe === false),
 
   };
   /* <-- Filter Functions --> */
 
 
+  /* <-- Stage Functions --> */
+  FN.stage = {
+
+    any: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage = () => true),
+
+    complete: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage = report =>
+      FN.helper.complete(report.file)),
+
+  };
+  /* <-- Stage Functions --> */
+
+
   /* <-- Initial Run --> */
-  _table = FN.display.analysis(reports);
+  ರ‿ರ.table = FN.display.analysis(reports);
   /* <-- Initial Run --> */
 
 
   /* <!-- External Visibility --> */
   return {
 
-    table: () => _table,
+    table: () => ರ‿ರ.table,
 
     all: FN.filter.all,
 
@@ -287,11 +297,13 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
     shared: FN.filter.shared,
 
-    summary: () => FN.filter.filter(_filter, false),
+    any: FN.stage.any,
 
-    detail: () => FN.filter.filter(_filter, "detail"),
+    complete: FN.stage.complete,
 
-    grid: () => FN.filter.filter(_filter, "grid"),
+    summary: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage, false),
+
+    detail: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage, "detail"),
 
   };
   /* <!-- External Visibility --> */

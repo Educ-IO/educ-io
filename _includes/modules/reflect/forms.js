@@ -62,7 +62,7 @@ Forms = function() {
       value;
   };
 
-  var _create = (id, template, editable, signable, preview) => {
+  var _create = (id, template, editable, signable, completed, preview) => {
 
     if (id && template) {
 
@@ -82,7 +82,7 @@ Forms = function() {
         for (var field_Id in group.fields) {
           var field = _.clone(group.fields[field_Id]);
           field.id = field_Id;
-          if (editable === false) field.readonly = true;
+          if (editable === false || completed === true) field.readonly = true;
           if (field.order === undefined) field.order = ++_order;
           if (field.scale) {
             var _scale = _get(field.scale, ರ‿ರ.cache.scales);
@@ -116,6 +116,7 @@ Forms = function() {
         owner: _file ? _owner(_file) : "",
         editable: editable,
         signable: signable,
+        completed: completed,
         preview: preview,
       };
 
@@ -227,9 +228,9 @@ Forms = function() {
       } : null;
     },
 
-    create: (id, template, editable, signable, preview) => ({
+    create: (id, template, editable, signable, completed, preview) => ({
       template: template,
-      form: _create(id, template, editable, signable, preview)
+      form: _create(id, template, editable, signable, completed, preview)
     }),
 
     scale: name => _get(name, ರ‿ರ.cache.scales)

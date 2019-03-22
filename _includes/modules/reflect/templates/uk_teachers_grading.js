@@ -27,7 +27,7 @@ __Σ__UK_Teachers_Grading =  {
           icon: "account_box",
           large: true,
           required: true,
-          pattern: /.*([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+).*/gi,
+          pattern: /(.*\s|^)([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)(\s.*|$)/gi,
           __meta: {
             analyse: {
               type: "row"

@@ -122,7 +122,6 @@ Folders
 
 Reflect
 -------
-* ** BUG ** Analysis of empty forms? E.g. Lesson Observation
 * ** IMPORTANT ** Feedback on successful save? Or failure.
 
 Publish
@@ -135,6 +134,7 @@ Survey
 
 Complete
 --------
+* ** BUG ** Analysis of empty forms? E.g. Lesson Observation <-- DONE
 * Lesson Observation Form <-- DONE
 * ** IMPORTANT ** Optional Gradings against standards <-- DONE
 * Accordian ALL on Form <-- DONE

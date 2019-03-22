@@ -27,7 +27,7 @@ __Σ__UK_Teachers_Lesson_Observation =  {
           icon: "account_box",
           large: true,
           required: true,
-          pattern: /.*([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+).*/gi,
+          pattern: /(.*\s|^)([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)(\s.*|$)/gi,
           __meta: {
             analyse: {
               type: "row"
@@ -103,53 +103,6 @@ __Σ__UK_Teachers_Lesson_Observation =  {
           options: [
             "Area of Strength",
             "Improvement Required",
-          ],
-          __help__ : "__Click__ on the switches of the _Teachers' Standards_ to record your observations against them.",
-        },
-      },
-    },
-    
-    gradings : {
-      template: "group",
-      name: "Areas of Strength / Weakness",
-      __help__: "You can list areas of particular __strength__ or in __need of improvement__ below. These should be recorded against the relevant Teachers' Standard / Sub-Standard",
-      fields : {
-        ts_gradings : {
-          template : "field_scale",
-          title : "Graded Standards",
-          field : "TS Graded Standards",
-          scale : "uk_teachers_standards",
-          prefix: "Observation",
-          type : "Observation",
-          list_template : "field_buttons",
-          list_field : "Gradings",
-          items_details : "Further details",
-          options: [
-            {
-              class: "btn-primary",
-              value: "1: Outstanding",
-              icon: ""
-            },
-            {
-              class: "btn-success",
-              value: "2: Good",
-              icon: ""
-            },
-            {
-              class: "btn-warning",
-              value: "3: Requires Improvement",
-              icon: ""
-            },
-            {
-              class: "btn-danger",
-              value: "4: Inadequate",
-              icon: ""
-            },
-            {
-              class: "btn-dark",
-              value: "No grade given/required",
-              icon: "visibility_off"
-            }
           ],
           __help__ : "__Click__ on the switches of the _Teachers' Standards_ to record your observations against them.",
         },

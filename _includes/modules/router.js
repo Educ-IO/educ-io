@@ -10,7 +10,11 @@ Router = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Constants --> */
-  const STR = JSON.stringify,
+  const REPLACER = (key, value) => value && (typeof value === "object" &&
+      value.constructor === RegExp) || typeof value === "function" ? value.toString() : value,
+
+    STR = value => JSON.stringify(value, REPLACER, 2),
+
     STRIP = (command, number) => _.isArray(command) ? _.rest(command, number ? number : 1) : _.isString(command) ? [] : command,
 
     PREPARE = (options, command) => options ?
@@ -138,10 +142,6 @@ Router = function() {
 
       /* <!-- Set Container Reference to this --> */
       ಠ_ಠ.Router = this;
-
-      /* <!-- For Logging Purposes --> */
-      RegExp.prototype.toJSON = RegExp.prototype.toString;
-      Function.prototype.toJSON = Function.prototype.toString;
 
       /* <!-- Return for Chaining --> */
       return this;

@@ -7,12 +7,16 @@
 		
 		{{#if description}}<!-- {{description}} -->{{/if}}
     
-    {{#if title}}<div class="d-flex">
-    	<h4 id="{{id}}_title" class="mx-2 mx-lg-0">{{title}}</h4>
+    {{#if title}}<div class="d-flex mb-2 mb-xl-3">
+    	{{#if (any editable completed)}}<div class="d-inline-flex mr-1">
+      	<i class="material-icons md-24 text-primary align-self-center"
+           {{#if completed}} title="Report is completed and locked against editing"{{/if}}>{{#if completed}}lock{{else}}lock_open{{/if}}</i>
+      </div>{{/if}}
+    	<h4 id="{{id}}_title" class="p-0 m-0">{{title}}</h4>
     	<a href="#" class="d-inline-flex text-decoration-none ml-auto" data-toggle="collapse"
          data-target=".group-collapse" aria-expanded="false" aria-controls=".group-collapse"
          title="Show / Hide all Form Groups below">
-        <i class="material-icons md-24">vertical_align_center</i>
+        <i class="material-icons md-24 align-self-center">vertical_align_center</i>
       </a>
     </div>{{/if}}
 		
@@ -52,7 +56,7 @@
             <div class="col-9 col-md-11 d-flex flex-column flex-md-row flex-wrap justify-content-start py-1 pl-2">
 
               <!-- Save Button Group -->
-              {{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
+              {{#unless completed}}{{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
               <a id="{{id}}_SAVE" data-route="save.report" href="#" role="button" class="btn btn-info btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">save</i>Save</a>
               <button type="button" class="btn btn-info btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="sr-only">Toggle Dropdown</span>
@@ -62,7 +66,7 @@
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#instructions.save">About</a>
               </div>
-              </div>{{/if}}
+              </div>{{/if}}{{/unless}}
 
               <!-- Sign Button Group -->
               {{#if signable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
@@ -78,7 +82,7 @@
               </div>{{/if}}
 
               <!-- Send Button Group -->
-              {{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
+              {{#unless completed}}{{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
                 <a id="{{id}}_SEND" data-route="send.report" href="#" role="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">send</i>Send</a>
                 <button type="button" class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
@@ -88,10 +92,10 @@
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#instructions.send">About</a>
                 </div>
-              </div>{{/if}}
+              </div>{{/if}}{{/unless}}
 
               <!-- Complete Button Group -->
-              {{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
+              {{#unless completed}}{{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
                 <button type="submit" id="{{id}}_COMPLETE" data-route="complete.report" href="#" class="btn btn-success btn-lg d-flex"><i class="mr-4 material-icons md-light md-24 align-self-center">cloud_done</i>Complete</button>
                 <button type="button" class="btn btn-success btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
@@ -99,7 +103,7 @@
                 <div class="dropdown-menu dropdown-menu-right">
                   <a class="dropdown-item" href="#instructions.complete">About</a>
                 </div>
-              </div>{{/if}}
+              </div>{{/if}}{{/unless}}
 
               {{#if help}}<div class="form-text text-muted">{{{help}}}</div>{{/if}}
             </div>

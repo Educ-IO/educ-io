@@ -285,7 +285,7 @@ Display = function() {
 
         Handlebars.registerHelper("formatYaml", variable => {
           if (variable !== null && variable !== undefined && window.jsyaml)
-            return jsyaml.safeDump(variable);
+            return jsyaml.safeDump(variable, {skipInvalid: true});
         });
 
         Handlebars.registerHelper("exists", function(variable, options) {

@@ -132,7 +132,7 @@ __Σ__Volunteering = {
           icon: "how_to_reg",
           large: true,
           required: true,
-          pattern: /.*([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+).*/gi,
+          pattern: /(.*\s|^)([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)(\s.*|$)/gi,
           valid: "Looks good!",
           invalid: "Please enter a valid email address",
           __meta: {

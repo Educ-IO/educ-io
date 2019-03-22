@@ -15,23 +15,27 @@ App = function() {
     TYPE_REVIEW = "application/x.educ-io.reflect-review",
     TYPE_TRACKER = "application/x.educ-io.reflect-tracker",
     TYPES = [TYPE_SCALE, TYPE_FORM, TYPE_REPORT, TYPE_REVIEW, TYPE_TRACKER];
-  const STATE_FORM_OPENED = "opened-form",
+  const STATE_FILE_LOADED = "loaded-file",
+    STATE_FORM_OPENED = "opened-form",
     STATE_REPORT_OPENED = "opened-report",
     STATE_REPORT_SIGNABLE = "signable-report",
     STATE_REPORT_EDITABLE = "editable-report",
     STATE_TRACKER_OPENED = "opened-tracker",
     STATE_SCALE_OPENED = "opened-scale",
+    STATE_REPORT_COMPLETE = "report-complete",
     STATE_ANALYSIS = "analysis",
     STATE_ANALYSIS_SUMMARY = "analysis-summary",
     STATE_ANALYSIS_DETAIL = "analysis-detail",
-    STATE_ANALYSIS_GRID = "analysis-grid",
     STATE_ANALYSIS_ALL = "analysis-reports-all",
     STATE_ANALYSIS_MINE = "analysis-reports-mine",
     STATE_ANALYSIS_SHARED = "analysis-reports-shared",
-    STATES = [STATE_FORM_OPENED, STATE_TRACKER_OPENED,
+    STATE_ANALYSIS_ANY = "analysis-stage-any",
+    STATE_ANALYSIS_COMPLETE = "analysis-stage-complete",
+    STATES = [STATE_FILE_LOADED, STATE_FORM_OPENED, STATE_TRACKER_OPENED, STATE_REPORT_COMPLETE,
       STATE_REPORT_OPENED, STATE_REPORT_SIGNABLE, STATE_REPORT_EDITABLE,
       STATE_SCALE_OPENED, STATE_ANALYSIS, STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL,
-      STATE_ANALYSIS_GRID, STATE_ANALYSIS_ALL, STATE_ANALYSIS_MINE, STATE_ANALYSIS_SHARED
+      STATE_ANALYSIS_ALL, STATE_ANALYSIS_MINE, STATE_ANALYSIS_SHARED,
+      STATE_ANALYSIS_ANY, STATE_ANALYSIS_COMPLETE,
     ];
   const EMAIL = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi,
     MARKER = "=== SIGNED ===",
@@ -96,6 +100,17 @@ App = function() {
         _object() : _type === "[object Array]" ?
         _array() : _value();
 
+    },
+
+    prefix: mime => mime == TYPE_FORM ?
+      "FORM" : mime == TYPE_SCALE ?
+      "SCALE" : mime == TYPE_REVIEW ?
+      "REVIEW" : mime == TYPE_TRACKER ?
+      "TRACKER" : "",
+
+    title: (title, mime) => {
+      var _prefix = FN.helper.prefix(mime);
+      return `${_prefix ? `${_prefix} | ` : ""}${title}`;
     },
 
     elevate: fn => {
@@ -178,7 +193,7 @@ App = function() {
 
     report: (name, state, form, process, actions) => {
       var _initial = form ?
-        ಱ.forms.create(name, form, actions.editable, actions.signable) :
+        ಱ.forms.create(name, form, actions.editable, actions.signable, actions.completed) :
         ಱ.forms.get(name, true, false),
         _return = _initial.form;
       ರ‿ರ.template = _initial.template;
@@ -210,7 +225,7 @@ App = function() {
     form: value => {
       if (value) {
         ರ‿ರ.preview = value;
-        var _form = ಱ.forms.create("preview_Form", JSON.parse(value), false, false, true);
+        var _form = ಱ.forms.create("preview_Form", JSON.parse(value), false, false, false, true);
         _form.target = ಠ_ಠ.container.empty();
         ಠ_ಠ.Display
           .state().change(STATES, STATE_FORM_OPENED)
@@ -226,7 +241,7 @@ App = function() {
   /* <-- Edit Functions --> */
   FN.edit = {
 
-    generic: (value, help, title, id, mimeType, replacer, editable) => ಠ_ಠ.Display.text({
+    generic: (value, help, title, id, mimeType, replacer, editable, clean) => ಠ_ಠ.Display.text({
         id: id ? id : "generic_editor",
         title: title ? title : "Create / Edit ...",
         message: help ? ಠ_ಠ.Display.doc.get(help) : "",
@@ -250,7 +265,8 @@ App = function() {
               try {
                 saveAs(new Blob([values[0].value], {
                   type: mimeType
-                }), `${value && value.title ? value.title : "download"}${EXTENSION}`);
+                }), `${FN.helper.title(value && value.title ? 
+                                       value.title : "download", mimeType)}${EXTENSION}`);
               } catch (e) {
                 ಠ_ಠ.Flags.error("Download", e);
               }
@@ -266,17 +282,20 @@ App = function() {
         .then(ಠ_ಠ.Main.busy("Updating"))
         .then(uploaded => ರ‿ರ.file = uploaded) : false)
       .then(() => ಱ.forms = ಠ_ಠ.Forms())
-      .catch(e => (e ? ಠ_ಠ.Flags.error("Edit Error", e) :
-        ಠ_ಠ.Flags.log("Edit Cancelled")).negative()),
+      .catch(e => {
+        if (clean) ಠ_ಠ.Router.clean(true);
+        return (e ? ಠ_ಠ.Flags.error("Edit Error", e) :
+          ಠ_ಠ.Flags.log("Edit Cancelled")).negative();
+      }),
 
     report: report => FN.edit.generic(report.data, "REPORT", "Create / Edit Report ...",
-      "form_report", TYPE_FORM, REGEX_REPLACER),
+      "form_report", TYPE_REPORT, REGEX_REPLACER),
 
     form: (form, editable) => FN.edit.generic(form, "FORM", "Create / Edit Form ...",
-      "form_editor", TYPE_FORM, SAVING_REPLACER, editable),
+      "form_editor", TYPE_FORM, SAVING_REPLACER, editable, true),
 
     scale: (scale, editable) => FN.edit.generic(scale, "SCALE", "Create / Edit Scale ...",
-      "scale_editor", TYPE_SCALE, SAVING_REPLACER, editable),
+      "scale_editor", TYPE_SCALE, SAVING_REPLACER, editable, true),
 
   };
   /* <-- Edit Functions --> */
@@ -308,15 +327,16 @@ App = function() {
               simple: true
             });
           return _title.then(title => ಠ_ಠ.Google.files.upload({
-            name: `${title}${EXTENSION}`
+            name: `${FN.helper.title(title, mime)}${EXTENSION}`
           }, JSON.stringify(result, REGEX_REPLACER), mime), null, null, true);
         };
         result ? _process(JSON.parse(result)) : Promise.resolve(false);
       }),
 
     report: (name, actions, form, process) => FN.display.report(name, [STATE_REPORT_OPENED]
-      .concat(!actions || actions.editable ? [STATE_REPORT_EDITABLE] : [])
-      .concat(actions && actions.signable ? [STATE_REPORT_SIGNABLE] : []),
+      .concat(!actions || (actions.editable && !actions.completed) ? [STATE_REPORT_EDITABLE] : [])
+      .concat(actions && actions.signable ? [STATE_REPORT_SIGNABLE] : [])
+      .concat(actions && actions.completed ? [STATE_REPORT_COMPLETE] : []),
       form, process, actions),
 
     form: name => FN.create.generic(FN.edit.form, name ?
@@ -340,16 +360,17 @@ App = function() {
     analysis: mine => FN.prompt.choose(
         ಱ.forms.selection("forms", "Report"), "Select a Form ...", "ANALYSE", true)
       .then(results => {
-        var _process = () => {
-          results = _.isArray(results) ? results : [results];
-          var _ln = results.length;
-          ಠ_ಠ.Flags.log(`${_ln} form${_ln > 1 ? "s" : ""} selected for Analysis`, results);
-          return FN.process.analysis(_.map(results, result => ({
-            id: result.value,
-            name: `${result.name}${result.title ? ` [${result.title}]` : ""}`
-          })), mine, false).then(ಠ_ಠ.Main.busy("Finding Reports"));
-        };
-        return results ? _process() : false;
+        return results ?
+          (() => {
+            ಠ_ಠ.Router.clean(false); /* <!-- Clear any existing file/state --> */
+            results = _.isArray(results) ? results : [results];
+            var _ln = results.length;
+            ಠ_ಠ.Flags.log(`${_ln} form${_ln > 1 ? "s" : ""} selected for Analysis`, results);
+            return FN.process.analysis(_.map(results, result => ({
+              id: result.value,
+              name: `${result.name}${result.title ? ` [${result.title}]` : ""}`
+            })), mine, false).then(ಠ_ಠ.Main.busy("Finding Reports"));
+          })() : false;
       }),
 
     choose: (options, title, instructions, multiple) => ಠ_ಠ.Display.choose({
@@ -377,10 +398,12 @@ App = function() {
       actions: actions,
       large: true
     }).then(result => {
-      ಠ_ಠ.Flags.log("Create Action Selected:", result);
-      ಠ_ಠ.Router.clean(false); /* <!-- Clear any existing file --> */
       return result.action.command ?
-        FN.create[result.action.command](result.option.value) : null;
+        (() => {
+          ಠ_ಠ.Flags.log("Create Action Selected:", result);
+          ಠ_ಠ.Router.clean(false); /* <!-- Clear any existing file/state --> */
+          FN.create[result.action.command](result.option.value);
+        })() : null;
     }).catch(e => e ? ಠ_ಠ.Flags.error("Create Select Prompt", e) :
       ಠ_ಠ.Flags.log("Create Prompt Cancelled")),
 
@@ -544,6 +567,22 @@ App = function() {
   /* <!-- Action Functions --> */
   FN.action = {
 
+    revoke: () => ಠ_ಠ.Display.confirm({
+        id: "confirm_Revoke",
+        target: ಠ_ಠ.container,
+        message: ಠ_ಠ.Display.doc.get("REVOKE_COMPLETION"),
+        action: "Revoke",
+        close: "Cancel"
+      })
+      .then(result => result !== true ?
+        false : ಠ_ಠ.Google.files.update(ರ‿ರ.file.id, {
+          appProperties: {
+            COMPLETE: null
+          }
+        }, null, true)
+        .then(ಠ_ಠ.Main.busy("Revoking"))
+        .then(uploaded => uploaded ? FN.action.load(uploaded) : false)),
+
     screenshot: element => (window.html2canvas ?
         html2canvas(_.tap(element, () => window.scrollTo(0, 0)), {
           logging: ಠ_ಠ.Flags.debug(),
@@ -572,7 +611,7 @@ App = function() {
 
       return {
         name: ರ‿ರ.file ?
-          ರ‿ರ.file.name : `${ಠ_ಠ.me ? `${ಠ_ಠ.me.display_name()} | ` : ""}${_title} | ${_date}${EXTENSION}`,
+          ರ‿ರ.file.name : `${FN.helper.title(`${ಠ_ಠ.me ? `${ಠ_ಠ.me.display_name()} | ` : ""}${_title} | ${_date}`, TYPE_REPORT)}${EXTENSION}`,
         data: {
           form: ರ‿ರ.template,
           report: ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(ರ‿ರ.form)
@@ -593,11 +632,13 @@ App = function() {
           data => ರ‿ರ.hash = new Hashes.MD5().hex(FN.helper.stringify(data.report,
             SIGNING_REPLACER))) : content,
         actions: {
-          editable: file.capabilities && file.capabilities.canEdit,
+          editable: (file.capabilities && file.capabilities.canEdit),
           signable: file.capabilities && file.capabilities.canComment,
+          completed: !!(file.appProperties.COMPLETE),
           revisions: file.capabilities && file.capabilities.canReadRevisions
         }
       }))
+      .then(value => _.tap(value, () => ಠ_ಠ.Display.state().enter(STATE_FILE_LOADED)))
       .then(value =>
         ಠ_ಠ.Google.files.is(TYPE_REPORT)(file) ? FN.process.report(value.content, value.actions) :
         ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ? FN.process.form(value.content, value.actions) :
@@ -654,7 +695,8 @@ App = function() {
                           value[meta[PATH]] :
                           value
                         ), {
-                          FORM: saving.data.form.$name ? saving.data.form.$name : saving.data.form.name
+                          FORM: saving.data.form.$name ?
+                            saving.data.form.$name : saving.data.form.name
                         }),
                     },
                     _data = JSON.stringify(saving.data, REGEX_REPLACER),
@@ -750,7 +792,14 @@ App = function() {
     complete: () => FN.action.validate() ?
       FN.action.convey("complete_Report", "Complete Report",
         "COMPLETE_INSTRUCTIONS", DESTINATION, "Submitting Report", "Submit")
-      .then(value => value ? Promise.all(_.map(value.emails, email => ಠ_ಠ.Google.permissions.share(ರ‿ರ.file, null, value.message).user(email, "reader"))) : value) : false,
+      .then(value => value ? Promise.all(_.map(value.emails, email => ಠ_ಠ.Google.permissions.share(ರ‿ರ.file, null, value.message).user(email, "reader"))) : value)
+      .then(() => ಠ_ಠ.Google.files.update(ರ‿ರ.file.id, {
+          appProperties: {
+            COMPLETE: true
+          }
+        }, null, true)
+        .then(ಠ_ಠ.Main.busy("Completing"))
+        .then(uploaded => uploaded ? FN.action.load(uploaded) : false)) : false,
 
     export: () => {
       var _exporting = FN.action.dehydrate();
@@ -950,27 +999,41 @@ App = function() {
             routes: {
               summary: {
                 matches: /SUMMARY/i,
-                state: [STATE_ANALYSIS_DETAIL, STATE_ANALYSIS_GRID],
+                state: STATE_ANALYSIS_DETAIL,
                 length: 0,
                 fn: () => ರ‿ರ.analysis.summary()
                   .then(() => ಠ_ಠ.Display.state()
-                    .change([STATE_ANALYSIS_DETAIL, STATE_ANALYSIS_GRID], STATE_ANALYSIS_SUMMARY))
+                    .change(STATE_ANALYSIS_DETAIL, STATE_ANALYSIS_SUMMARY))
               },
               detail: {
                 matches: /DETAIL/i,
-                state: [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_GRID],
+                state: STATE_ANALYSIS_SUMMARY,
                 length: 0,
                 fn: () => ರ‿ರ.analysis.detail()
                   .then(() => ಠ_ಠ.Display.state()
-                    .change([STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_GRID], STATE_ANALYSIS_DETAIL))
+                    .change(STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL))
               },
-              grid: {
-                matches: /GRID/i,
-                state: [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL],
-                length: 0,
-                fn: () => ರ‿ರ.analysis.grid()
-                  .then(() => ಠ_ಠ.Display.state()
-                    .change([STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL], STATE_ANALYSIS_GRID))
+              stage: {
+                matches: /STAGE/i,
+                state: STATE_ANALYSIS,
+                routes: {
+                  any: {
+                    matches: /ANY/i,
+                    state: STATE_ANALYSIS_COMPLETE,
+                    length: 0,
+                    fn: () => ರ‿ರ.analysis.any()
+                      .then(() => ಠ_ಠ.Display.state()
+                        .change(STATE_ANALYSIS_COMPLETE, STATE_ANALYSIS_ANY)),
+                  },
+                  complete: {
+                    matches: /COMPLETE/i,
+                    state: STATE_ANALYSIS_ANY,
+                    length: 0,
+                    fn: () => ರ‿ರ.analysis.complete()
+                      .then(() => ಠ_ಠ.Display.state()
+                        .change(STATE_ANALYSIS_ANY, STATE_ANALYSIS_COMPLETE)),
+                  },
+                }
               },
               reports: {
                 matches: /REPORTS/i,
@@ -1037,7 +1100,8 @@ App = function() {
                 length: 0,
                 fn: () => FN.prompt.analysis()
                   .then(result => ಠ_ಠ.Display.state()
-                    .enter(result ? [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL] : null))
+                    .enter(result ? [STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL, STATE_ANALYSIS_ANY] :
+                      null))
               }
             },
           },
@@ -1070,6 +1134,12 @@ App = function() {
             fn: () => EMAIL ? false : false
           },
 
+          revoke: {
+            matches: /REVOKE/i,
+            state: STATE_REPORT_COMPLETE,
+            fn: () => FN.action.revoke()
+          },
+
           edit: {
             matches: /EDIT/i,
             routes: {
@@ -1099,6 +1169,7 @@ App = function() {
                     fn: () => FN.action.export()
                   },
                   save: {
+                    state: STATE_REPORT_EDITABLE,
                     length: 0,
                     fn: () => FN.action.save.report()
                       .then(result => result ? FN.process.signatures() : false)

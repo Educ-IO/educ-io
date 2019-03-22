@@ -542,6 +542,7 @@ reflect:
     - reflect/CLONE_NAME
     - reflect/EMAIL_REPORT_SEND
     - reflect/REPORT
+    - reflect/REVOKE_COMPLETION
   scopes:
     google:
       - scope: email
@@ -660,6 +661,13 @@ reflect:
               auth: google
               imports:
                 - filesaver
+
+            - name: Revoke
+              desc: Revoke Report Completion
+              hash: revoke
+              disabled_until:
+                - report-complete
+              auth: google
             - name: Complete
               desc: Complete this Report
               hash: complete.report
@@ -726,12 +734,17 @@ reflect:
               toggle:
                 - analysis-detail
               divider: true
-            - name: Grid
-              desc: View Reports Grid
-              hash: analyse.grid
+            - name: Complete Only
+              desc: View Reports that have been completed
+              hash: analyse.stage.complete
               toggle:
-                - analysis-grid
+                - analysis-stage-complete
               visibility: debug
+            - name: All Stages
+              desc: View Reports at any stage
+              hash: analyse.stage.any
+              toggle:
+                - analysis-stage-any
               divider: true
             - name: Show All
               desc: View All Reports
