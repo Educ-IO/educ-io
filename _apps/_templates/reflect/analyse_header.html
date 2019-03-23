@@ -1,6 +1,6 @@
 {% raw %}
 <div class="row justify-content-between w-100 mt-1 mt-lg-2">
-  <h4{{#if id}} id="{{id}}"{{/if}} class="d-inline-flex align-self-start col-12{{#if subtitle}} col-md-6 col-xl-4{{/if}} display-4{{#if classes}}{{#each classes}} {{this}}{{/each}}{{/if}}">
+  <h4 {{#if id}}id="{{id}}" {{/if}}class="d-inline-flex align-self-start col-12{{#if subtitle}} col-md-6 col-xl-4{{/if}} display-4{{#if classes}}{{#each classes}} {{this}}{{/each}}{{/if}}">
   	<span class="ml-2 text-muted font-weight-bold small">{{title}}</span>
   </h4>
   {{#if subtitle}}<div class="d-inline-flex flex-column align-self-center col-12 col-md-6 col-xl-4 ml-3 ml-md-0">
@@ -18,6 +18,7 @@
         <div class="dropdown-menu dropdown-menu-right">
           <a class="dropdown-item" data-route="analyse.export.csv" href="#">CSV</a>
           <a class="dropdown-item" data-route="analyse.export.excel" href="#">Excel</a>
+          <a class="dropdown-item" data-route="analyse.export.markdown" href="#">Markdown</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#instructions.export">About</a>
         </div>

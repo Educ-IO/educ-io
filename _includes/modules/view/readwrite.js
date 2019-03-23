@@ -6,15 +6,15 @@ ReadWrite = (ಠ_ಠ, sheet) => {
   /* <!-- REQUIRES: Global Scope: Loki, JQuery, Underscore | App Scope: Flags, Display, Grid, Datatable, Google, Headers --> */
 
   /* <!-- Internal Constants --> */
-  const DB = new loki("view.db");
-const SAFE_NAMES = {
-    "\\": "",
-    "/": " ",
-    "?": "",
-    "*": "",
-    "[": "",
-    "]": ""
-  };
+  const DB = new loki("view.db"),
+        SAFE_NAMES = {
+          "\\": "",
+          "/": " ",
+          "?": "",
+          "*": "",
+          "[": "",
+          "]": ""
+        };
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */

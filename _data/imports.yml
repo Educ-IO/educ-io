@@ -910,6 +910,9 @@ html2canvas:
     - url: https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-alpha.12/dist/html2canvas.js
       integrity: sha256-jJp82hCKtiTXdpQDgZ93po4Ow73O0TZum2t3/Hg+wYM=
       crossorigin: anonymous
+      overrides:
+        - replace: if (true && isNaN(parsedValue))
+          with: if (true && isNaN(parsedValue) && value != "auto")
       id: __html2canvas
 
 fetchjsonp:

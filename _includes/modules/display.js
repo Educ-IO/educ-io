@@ -570,6 +570,32 @@ Display = function() {
 
     /* <!--
     	Options are : {
+    	}
+    --> */
+    notify: function(options) {
+      
+      return new Promise((resolve, reject) => {
+
+        if (!options) return reject();
+        options = _.isString(options) ? 
+          {title: ಠ_ಠ.Flags.dir().toUpperCase(), content: options} : options;
+        
+        var notification = $(_template("notify")(options));
+        _target(options).append(notification);
+
+        /* <!-- Set Basic Event Handlers --> */
+        notification.on("shown.bs.toast", () => resolve());
+        notification.on("hidden.bs.toast", () => notification.remove());
+
+        /* <!-- Show the Modal Dialog --> */
+        notification.toast("show");
+        
+      });
+      
+    },
+    
+    /* <!--
+    	Options are : {
     		target : element to append the loader to,
     		clear : optional boolean to force clearing,
     	}

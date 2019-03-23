@@ -8,15 +8,7 @@
 	{{localeDate this}}
 {{else if (isObject this)}}
 	{{#if (all (exists key) (exists value) (any key value))}}
-<span class="badge badge-{{either badge 'light'}} mr-2 d-inline-flex align-items-center">
-  <span class="d-inline-flex p-1 my-0">
-    {{#if key}}<span class="font-weight-light">{{key}}</span>{{/if}}
-    {{#if (all key value)}}<span style="white-space: pre;"> | </span>{{/if}}
-    {{#if value}}<span class="font-weight-bold"{{#if title}} data-toggle="tooltip" data-html="true"
-          data-trigger="focus" title="{{{title}}}" tabindex="0" 
-          style="cursor: pointer;"{{/if}}>{{value}}</span>{{/if}}
-  </span>
-</span>
+<span class="badge badge-{{either badge 'light'}} mr-2 d-inline-flex align-items-center"><span class="d-inline-flex p-1 my-0">{{#if key}}<span class="font-weight-light">{{key}}</span>{{/if}}{{#if (all key value)}}<span style="white-space: pre;"> | </span>{{/if}}{{#if value}}<span class="font-weight-bold"{{#if title}} data-toggle="tooltip" data-html="true" data-trigger="focus" title="{{{title}}}" tabindex="0" style="cursor: pointer;"{{/if}}>{{value}}</span>{{/if}}</span></span>
 	{{else}}
 		<div style="white-space: pre;">{{#if this}}{{formatYaml this}}{{/if}}</div>
 	{{/if}}

@@ -1,0 +1,19 @@
+// -- Notifications Holder -- //
+.notifications {
+ 	position: fixed;
+  top: 6em;
+  right: 2em;
+  
+  z-index: 999;
+  .holder {
+    position: absolute;
+    top: 0;
+    right: 0;
+    .toast {
+      min-width: 200px;
+  		max-width: 500px;
+  		min-height: 100px;
+    }
+  }
+}
+// -- Notifications Holder -- //

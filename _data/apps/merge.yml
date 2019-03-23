@@ -1,0 +1,292 @@
+##################################################
+#                                                #
+#   .88b  d88. d88888b d8888b.  d888b  d88888b   #
+#   88'YbdP`88 88'     88  `8D 88' Y8b 88'       #
+#   88  88  88 88ooooo 88oobY' 88      88ooooo   #
+#   88  88  88 88~~~~~ 88`8b   88  ooo 88~~~~~   #
+#   88  88  88 88.     88 `88. 88. ~8~ 88.       #
+#   YP  YP  YP Y88888P 88   YD  Y888P  Y88888P   #
+#                                                #
+##################################################
+
+name: Merge
+desc: _Produce_ __merged__ documents from your sheets __data__
+link: /merge/
+colour: 818109
+logo: images/merge_logo.svg
+learn: /guides/merge
+css:
+  primary:
+  secondary:
+    - custom/variables
+    - custom/tabs
+imports:
+  - name: underscore
+    load: first
+  - name: jquery
+    load: first
+  - name: popper
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: urlparser
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: loki
+    load: last
+  - name: localforage
+    load: last
+  - name: autosize
+    load: last
+  - name: moment_all
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: google
+    load: lazy
+helpers:
+  - network
+  - google
+  - table
+  - css
+  - query
+  - fields
+  - data
+  - filters
+modules:
+  - flags
+  - controller
+  - display
+  - help
+  - service
+  - main
+  - items
+  - recent
+  - router
+  - datatable
+  - grid
+  - headers
+  - merge/master
+  - merge/records
+scripts: 
+  - extends/regex
+  - extends/array
+templates:
+  - options
+  - choose
+  - confirm
+  - alert
+  - loader
+  - recent
+  - help
+  - shared/filters
+  - shared/control_icon
+  - shared/control_button
+  - shared/populate_buttons
+  - shared/tab-links
+  - shared/tab-list
+  - shared/tab-tabs
+  - shared/filters
+  - shared/table
+  - shared/rows
+  - shared/cell
+  - shared/datatable
+  - shared/headers
+  - fields/field_validation
+  - fields/field_general
+  - fields/field_numeric
+  - shared/split
+  - merge/meta_rows
+docs:
+  - shared/FILTERS
+  - shared/JUMP
+  - shared/HELP
+  - shared/HELP_AVAILABLE
+  - shared/HELP_INDETERMINATE
+  - shared/HELP_UNAVAILABLE
+  - shared/HEADERS
+  - merge/PUBLIC
+  - merge/FEATURES
+  - merge/README
+  - merge/INSTRUCTIONS
+  - merge/TUTORIALS
+  - merge/IMPORT_CHOOSE_SHEET
+  - merge/DATA_DETAILS
+  - merge/TEMPLATE_DETAILS
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive
+      name: View and manage the files in your Google Drive
+      reason: In order to search, manage and convert your Drive files.
+      request: login
+    - scope: https://www.googleapis.com/auth/documents
+      name: View and manage the documents in your Google Drive 
+      reason: In order to perform a Document Merge.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/drive.install
+      name: Special scope used to let users approve installation of an app.
+      reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
+      request: lazy
+keys:
+  google:
+      general: AIzaSyACPqbocW3AgV_wP4wCkhzmU7S_ASQtcNs
+      oauth: 51509082175-cjimvgm2eo78evoqu2fokfmm3amai5sg.apps.googleusercontent.com
+menus:
+  - name: Merges
+    groups:
+      all:
+        commands:
+          - name: Create
+            desc: Create a new Merge
+            hash: create
+            auth: google
+          - name: Open
+            desc: Open an existing Merge
+            hash: open
+            auth: google
+            imports:
+              - google
+          - name: Save
+            desc: Save the current Merge Details
+            hash: save
+            disabled_until:
+              - opened
+            auth: google
+          - name: Merge
+            desc: Execute Merge in Google Drive
+            hash: merge.doc
+            auth: google
+            disabled_until:
+            - loaded-template
+            - loaded-data
+            scope: https://www.googleapis.com/auth/documents
+          - name: Upload Document
+            desc: Upload Document back to Google Drive
+            hash: upload.doc
+            auth: google
+            disabled_until:
+            - loaded-template
+          - name: Upload PDF
+            desc: Export PDF back to Google Drive
+            hash: upload.pdf
+            auth: google
+            disabled_until:
+            - loaded-template
+            imports:
+            - html2canvas
+            - jspdf
+          - name: Save PDF
+            desc: Download PDF
+            hash: save.pdf
+            disabled_until:
+            - loaded-template
+            imports:
+            - html2canvas
+            - jspdf
+          - name: Close
+            desc: Close the current Merge
+            hash: close
+            disabled_until:
+              - opened
+  - name: Data
+    groups:
+        all:
+          commands:
+            - name: Open Sheet
+              desc: Load data (to merge) from a Google Sheet
+              hash: open.data.sheet
+              auth: google
+              imports:
+              - google
+            - name: Open Form
+              desc: Load data (to merge) from a Google Form
+              hash: open.data.form
+              auth: google
+              imports:
+              - google
+  - name: Template
+    groups:
+        all:
+          commands:
+            - name: Load Doc
+              desc: Load a template (to merge into) from a Google Doc
+              hash: open.template.doc
+              auth: google
+              imports:
+              - google
+            - name: Load Sheet
+              desc: Load a template (to merge into) from a Google Sheet
+              hash: open.template.sheet
+              auth: google
+              imports:
+              - google         
+  - name: Settings
+  - name: About
+    short_name: Help
+    groups:
+      all:
+        commands:
+          - name: Instructions
+            hash: instructions
+            desc: More details about how to use this app
+          - name: Tutorials
+            hash: tutorials
+            desc: Ways in which you can use this app
+          - name: Guide
+            url: /guides/merge
+            desc: A guide to using this app
+            divider: true
+          - name: Install
+            desc: Install this app into your Google Drive
+            hash: install
+            auth: google
+            scope: https://www.googleapis.com/auth/drive.install
+          - name: Permissions
+            url: /scopes/?highlight=merge
+            desc: Find out about the permissions and scopes that this app uses
+          - name: Changes
+            url: /changes?highlight=merge
+            desc: Find out about the most recent changes and features of this app
+            divider: true
+          - name: Privacy
+            url: /about?highlight=privacy
+            desc: We are passionate about protecting your privacy and security
+          - name: About
+            url: /about
+            desc: Find out about our platform, technology and approach
+            divider: true
+          - name: Get Help
+            hash: help
+            desc: Get help or request a feature
+            class: font-weight-bold
+            imports:
+              - jshashes
+              - fetchjsonp
+            auth: google
+buttons:
+- name: Create a Merge
+  desc: Create a new Merge
+  hash: create
+  auth: google
+- name: Open Existing
+  desc: Open an existing Merge
+  hash: open
+  auth: google
+  imports:
+    - google
+published: false
+config:
+  api: "MN_prIAeoOzt-NF-8uwlGE9Wlbr8Kyl43"

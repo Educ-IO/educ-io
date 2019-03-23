@@ -219,6 +219,16 @@ div.alert:first-child {
 }
 // -- Bright Background -- //
 
+// -- Other Backgrounds -- //
+.bg-success-light {
+	background-color: $colour-light-success !important;
+}
+
+.bg-danger-light {
+	background-color: $colour-light-danger !important;
+}
+// -- Other Backgrounds -- //
+
 // -- Site Navigation Bar -- //
 #site_nav {
 	z-index: 10;

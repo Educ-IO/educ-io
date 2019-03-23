@@ -1,0 +1,92 @@
+#####################################################################
+#                                                                   #
+#   d888888b  .d8b.   d888b     .d8b.    d8888b.  .d88b.   .o88b.   #
+#   `~~88~~' d8' `8b 88' Y8b   d8' `8b   88  `8D .8P  Y8. d8P  Y8   #
+#      88    88ooo88 88        88ooo88   88   88 88    88 8P        #
+#      88    88~~~88 88  ooo   88~~~88   88   88 88    88 8b        #
+#      88    88   88 88. ~8~   88   88   88  .8D `8b  d8' Y8b  d8   #
+#      YP    YP   YP  Y888P    YP   YP   Y8888D'  `Y88P'   `Y88P'   #
+#                                                                   #
+#####################################################################
+
+name: Tag-a-Doc
+desc: View tags in Google Docs and Calendars
+link: /extensions/tag-a-doc
+published: true
+info: true
+colour: cc0
+action: Find out more
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the extension pop-up, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the extension pop-up, once you have signed in.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.readonly
+      name: View the files in your Google Drive
+      reason: In order to read metadata tags, file paths and team drive names; this 'readonly' permission is required.
+      request: login
+    - scope: https://www.googleapis.com/auth/calendar.events.readonly
+      name: View the files in your Google Drive
+      reason: In order to read metadata tags for events, this 'readonly' permissions is required.
+      request: login
+versions:
+  1.2.6 :
+    name : Bug Fix
+    desc : Improved handling of extension installing or updating events
+    type : minor
+  1.2.4 :
+    name : Bug Fix
+    desc : Updated for recent Google Calendar design refresh
+    type : minor
+  1.2.3 :
+    name : Search Shortcuts
+    desc : Tags now display search shortcuts, which link back to Folders and Events Apps
+    type : minor
+  1.2.2 :
+    name : Added Paths
+    desc : Paths are now shown in open Documents
+    type : minor
+  1.2.0 :
+    name : Live Updates
+    desc : Edited Tags are immediately displayed in open Documents and Calendar Events
+    type : minor
+  1.1.0 :
+    name : Removed Edit Icon for read-only Documents
+    desc : Edit icon is only displayed for Documents where tags can be edited
+    type : minor
+  1.0.9 :
+    name : Updated Route URLs for Events
+    desc : Route URLs match new version of Events App
+    type : minor
+  1.0.8 :
+    name : Added Edit Link
+    desc : Edit link visible on Documents and Calendar Events
+    type : minor
+  1.0.6 :
+    name : Added Calendar Display
+    desc : Tags now visible on Calendar Events
+    type : minor
+  1.0.5 :
+    name : Added Folders App Link
+    desc : Add link (visible after sign in) to Folders App for managing tags
+    type : minor
+  1.0.3 :
+    name : Bug Fixes
+    desc : Correctly shows Highlight tag
+    type : minor
+  1.0.1 :
+    name : Minor Tweaks
+    desc : Spinners and updates after sign in/out
+    type : minor
+  1.0.0 :
+    name : Initial Version
+    desc : Initial version published online
+    type : major
+    changes :
+      - details: Initial Code Commit
+        url : https://github.com/thiscouldbejd/tagadoc-extension

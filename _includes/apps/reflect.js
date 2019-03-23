@@ -65,8 +65,31 @@ App = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+
   /* <-- Helper Functions --> */
   FN.helper = {
+
+    notify: {
+
+      save: (message, delay) => result => ಠ_ಠ.Display.notify(
+        _.extend({
+          delay: delay || 10000,
+          target: $("#reflect_Notify .holder")
+        }, result === false ? {
+          title: "Save FAILED",
+          content: ಠ_ಠ.Display.doc.get("NOTIFY_SAVE_FAILED"),
+          class: "text-danger",
+          header_class: "bg-danger-light"
+        } : {
+          title: "Successful Save",
+          content: ಠ_ಠ.Display.doc.get({
+            name: message,
+            content: result.webViewLink,
+          }),
+          header_class: "bg-success-light"
+        })),
+
+    },
 
     /* <-- Deterministic Version of Stringify --> */
     stringify: (value, replacer, space, key) => {
@@ -402,7 +425,7 @@ App = function() {
         (() => {
           ಠ_ಠ.Flags.log("Create Action Selected:", result);
           ಠ_ಠ.Router.clean(false); /* <!-- Clear any existing file/state --> */
-          FN.create[result.action.command](result.option.value);
+          return FN.create[result.action.command](result.option.value);
         })() : null;
     }).catch(e => e ? ಠ_ಠ.Flags.error("Create Select Prompt", e) :
       ಠ_ಠ.Flags.log("Create Prompt Cancelled")),
@@ -650,6 +673,26 @@ App = function() {
       .then(value => value === false || !ರ‿ರ.file ? false :
         FN.action.load(ರ‿ರ.file).then(ಠ_ಠ.Main.busy("Refreshing Report"))),
 
+    export: {
+      
+      analysis: type => {
+        var _values = ರ‿ರ.analysis.table().values();
+        ಠ_ಠ.Flags.log(`EXPORT to ${type}`);
+        ಠ_ಠ.Flags.log(_values);
+      },
+      
+      report: () => {
+        var _exporting = FN.action.dehydrate();
+        try {
+          saveAs(new Blob([JSON.stringify(_exporting.data, REGEX_REPLACER, 2)], {
+            type: TYPE_REPORT
+          }), _exporting.name);
+        } catch (e) {
+          ಠ_ಠ.Flags.error("Report Export", e);
+        }
+      },
+      
+    },
     save: {
 
       form: value => FN.action.screenshot($("form[role='form'][data-name]")[0])
@@ -658,7 +701,8 @@ App = function() {
             } : null,
             value, TYPE_FORM, null, ರ‿ರ.file ? ರ‿ರ.file.id : null, true)
           .then(ಠ_ಠ.Main.busy("Updating"))
-          .then(uploaded => ರ‿ರ.file = uploaded)),
+          .then(uploaded => ರ‿ರ.file = uploaded)
+          .then(FN.helper.notify.save("NOTIFY_SAVE_FORM_SUCCESS"))),
 
       report: (force, dehydrated) => FN.action.get(dehydrated, true)
         .then(saving => (!ರ‿ರ.form.signatures || !FN.helper.dirty(saving.data.report) ?
@@ -711,11 +755,14 @@ App = function() {
                   });
                 });
               })
-              .then(uploaded => _.tap(uploaded, uploaded => ಠ_ಠ.Recent.add((ರ‿ರ.file = uploaded).id,
-                uploaded.name.replace(EXTENSION_REGEX, ""), "#google,load." + uploaded.id)))
+              .then(uploaded => _.tap(uploaded,
+                uploaded => ಠ_ಠ.Recent.add((ರ‿ರ.file = uploaded).id,
+                  uploaded.name.replace(EXTENSION_REGEX, ""),
+                  "#google,load." + uploaded.id)))
               .then(uploaded => ಠ_ಠ.Flags.log("Saved:", uploaded).reflect(uploaded))
-              .catch(e => ಠ_ಠ.Flags.error("Save Error", e))
-              .then(ಠ_ಠ.Main.busy("Saving Report"));
+              .catch(e => ಠ_ಠ.Flags.error("Save Error", e).negative())
+              .then(ಠ_ಠ.Main.busy("Saving Report"))
+              .then(FN.helper.notify.save("NOTIFY_SAVE_REPORT_SUCCESS"));
           }).catch(() => ಠ_ಠ.Flags.log("Save Cancelled").negative())),
 
     },
@@ -800,17 +847,6 @@ App = function() {
         }, null, true)
         .then(ಠ_ಠ.Main.busy("Completing"))
         .then(uploaded => uploaded ? FN.action.load(uploaded) : false)) : false,
-
-    export: () => {
-      var _exporting = FN.action.dehydrate();
-      try {
-        saveAs(new Blob([JSON.stringify(_exporting.data, REGEX_REPLACER, 2)], {
-          type: TYPE_REPORT
-        }), _exporting.name);
-      } catch (e) {
-        ಠ_ಠ.Flags.error("Report Export", e);
-      }
-    },
 
   };
   /* <!-- Action Functions --> */
@@ -1069,17 +1105,22 @@ App = function() {
                   csv: {
                     matches: /CSV/i,
                     length: 0,
-                    fn: () => ಠ_ಠ.Flags.log("EXPORT to CSV"),
+                    fn: () => FN.action.export.analysis("csv"),
                   },
                   excel: {
                     matches: /EXCEL/i,
                     length: 0,
-                    fn: () => ಠ_ಠ.Flags.log("EXPORT to Excel"),
+                    fn: () => FN.action.export.analysis("xslx"),
+                  },
+                  markdown: {
+                    matches: /MARKDOWN/i,
+                    length: 0,
+                    fn: () => FN.action.export.analysis("md"),
                   },
                   sheets: {
                     matches: /SHEETS/i,
                     length: 0,
-                    fn: () => ಠ_ಠ.Flags.log("EXPORT to Sheets"),
+                    fn: () => FN.action.export.analysis("sheets"),
                   },
                 }
               },
@@ -1166,7 +1207,7 @@ App = function() {
                   },
                   export: {
                     matches: /EXPORT/i,
-                    fn: () => FN.action.export()
+                    fn: () => FN.action.export.report()
                   },
                   save: {
                     state: STATE_REPORT_EDITABLE,

@@ -626,7 +626,7 @@ Data = function() {
               template: "field_scale",
               type: GEN.t(GEN.i(5, 10)),
               items_details: GEN.t(GEN.i(10, 50)),
-              list_template : "field_items",
+              list_template: "field_items",
               list_field: GEN.b() ? GEN.a(GEN.i(5, 20)) : null,
               scale: _scale,
               markers: _scale.scale,
@@ -1545,7 +1545,7 @@ Data = function() {
                 template: "field_scale",
                 type: GEN.t(GEN.i(5, 10)),
                 items_details: GEN.t(GEN.i(10, 50)),
-                list_template : "field_items",
+                list_template: "field_items",
                 list_field: GEN.b() ? "Evidence" : null,
                 scale: _scale,
                 markers: _scale.scale,
@@ -1612,10 +1612,18 @@ Data = function() {
             },
           },
           _test = type => {
+            var _run = (f, modal) => {
+              try {
+                var _return = f._interact && _.isFunction(f._interact) ?
+                  f._interact(modal.find(`[data-id='${f.id}']`), modal, f) : true;
+                return Promise.resolve(_return);
+              } catch (e) {
+                return Promise.reject(e);
+              }
+            };
             var _data = GENERATE(type);
             return _form(_data.fields.join("\n").trim(), modal => RUN(_.map(_data.state,
-                f => Promise.resolve(f._interact && _.isFunction(f._interact) ?
-                  f._interact(modal.find(`[data-id='${f.id}']`), modal, f) : true).catch(_fail))),
+                f => _run(f, modal).catch(_fail))),
               _data.state.length === 1 && _data.state[0]._title ? _data.state[0]._title : false);
           };
 

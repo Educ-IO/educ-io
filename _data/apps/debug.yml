@@ -1,0 +1,170 @@
+################################################
+#                                              #
+#   d8888b. d88888b d8888b. db    db  d888b    #
+#   88  `8D 88'     88  `8D 88    88 88' Y8b   #
+#   88   88 88ooooo 88oooY' 88    88 88        #
+#   88   88 88~~~~~ 88~~~b. 88    88 88  ooo   #
+#   88  .8D 88.     88   8D 88b  d88 88. ~8~   #
+#   Y8888D' Y88888P Y8888P' ~Y8888P'  Y888P    #
+#                                              #
+################################################
+
+name: Debug
+desc: __Development__ Tests, __code__ verification, process acceptance and tools.
+link: /debug/
+colour: ff0000
+logo: images/debug_logo.svg
+css:
+  primary:
+  secondary:
+    - material/menu
+    - material/general
+    - custom/mixins/transitions
+    - custom/mixins/gradients
+    - custom/variables
+    - custom/highlight
+imports:
+  - name: underscore
+    load: first
+  - name: jquery
+    load: first
+  - name: popper
+    load: first
+  - name: chai
+    load: first
+  - name: chance
+    load: first
+  - name: moment
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: urlparser
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: showdown
+    load: last
+  - name: mousetrap
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: loki
+    load: last
+  - name: localforage
+    load: last
+  - name: objectHash
+    load: last
+  - name: autosize
+    load: last
+  - name: showdown
+    load: last
+  - name: google
+    load: lazy
+helpers:
+  - network
+  - google/sheets/notation
+  - google/sheets/metadata
+  - google/sheets/grid
+  - google/sheets/format
+  - google/sheets/properties
+  - google
+  - data
+  - css
+  - fields
+  - dialog
+  - saad
+  - colours
+modules:
+  - flags
+  - controller
+  - display
+  - help
+  - service
+  - router
+  - main
+scripts: 
+  - extends/regex
+  - extends/array
+templates:
+  - options
+  - choose
+  - confirm
+  - alert
+  - loader
+  - recent
+  - help
+  - inform
+  - text
+  - shared/control_icon
+  - shared/control_button
+  - shared/list_item
+  - fields/field_validation
+  - fields/field_general
+  - fields/field_additions
+  - fields/field_complex
+  - fields/field_items
+  - fields/field_numeric
+  - fields/field_marker
+  - fields/field_buttons
+  - fields/field_radio
+  - fields/field_scale
+  - fields/field_select
+  - fields/field_span
+  - fields/field_textual
+  - fields/field_durations
+  - fields/field_files
+  - fields/field_range
+  - debug/host
+  - debug/data/dialog
+  - debug/data/form
+docs:
+  - shared/FILTERS
+  - shared/JUMP
+  - shared/HELP
+  - shared/HELP_AVAILABLE
+  - shared/HELP_INDETERMINATE
+  - shared/HELP_UNAVAILABLE
+  - debug/PUBLIC
+  - debug/INSTRUCTIONS
+  - debug/FEATURES
+  - debug/TESTS
+  - debug/RUN_ALL
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.appdata
+      name: View and manage its own configuration data in your Google Drive
+      reason: In order to record your settings in Google Drive.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/drive.file
+      name: View and manage Google Drive files and folders that you have opened or created with this app
+      reason: In order to create, and read/write data from a Docket Google Sheet, we need access to it.
+      request: lazy
+keys:
+  google:
+      general: AIzaSyCjzmLYLXdUlRsSkvVb7BSv1638qmFERvk
+      oauth: 685325083823-ht0iv9sa3d09op75e46r3bag1io447vl.apps.googleusercontent.com
+menus:
+  - name: Options
+    groups:
+      all:
+        commands:
+          - name: Leave Traces
+            desc: Do not delete files used while running tests
+            hash: loud
+            toggle:
+              - traces
+tests:
+published: true
+hidden: true

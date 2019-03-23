@@ -1,0 +1,352 @@
+###############################################
+#                                             #
+#   db    db d888888b d88888b db   d8b   db   #
+#   88    88   `88'   88'     88   I8I   88   #
+#   Y8    8P    88    88ooooo 88   I8I   88   #
+#   `8b  d8'    88    88~~~~~ Y8   I8I   88   #
+#    `8bd8'    .88.   88.     `8b d8'8b d8'   #
+#      YP    Y888888P Y88888P  `8b8' `8d8'    #
+#                                             #
+###############################################
+
+name: View
+desc: Producing __customised__ _views_ of your Google Sheets, with easy __filtering__ and __sharing__
+link: /view/
+colour: af0ad9
+logo: images/view_logo.svg
+learn: /guides/view
+css:
+  primary:
+  secondary:
+    - custom/variables
+    - custom/tabs
+imports:
+  - name: underscore
+    load: first
+  - name: jquery
+    load: first
+  - name: popper
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: urlparser
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: loki
+    load: last
+  - name: localforage
+    load: last
+  - name: moment_all
+    load: last
+  - name: mousetrap
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: google
+    load: lazy
+  - name: xlsx
+    load: lazy
+  - name: xlsxpopulate
+    load: lazy
+  - name: base64
+    load: lazy
+  - name: filesaver
+    load: lazy
+  - name: dropzone
+    load: lazy
+  - name: clipboard
+    load: lazy
+helpers:
+  - network
+  - data
+  - google
+  - table
+  - css
+  - fields
+  - strings
+  - saver
+  - filters
+  - link
+modules:
+  - flags
+  - controller
+  - display
+  - help
+  - service
+  - main
+  - items
+  - recent
+  - router
+  - datatable
+  - grid
+  - headers
+  - view/readwrite
+  - view/readonly
+scripts: 
+  - extends/regex
+  - extends/array
+templates:
+  - options
+  - choose
+  - confirm
+  - alert
+  - loader
+  - recent
+  - text
+  - files
+  - upload
+  - help
+  - inform
+  - shared/control_icon
+  - shared/control_button
+  - shared/populate_buttons
+  - shared/tab-links
+  - shared/tab-list
+  - shared/tab-tabs
+  - shared/filters
+  - shared/table
+  - shared/rows
+  - shared/cell
+  - shared/datatable
+  - shared/headers
+  - shared/link
+  - fields/field_validation
+  - fields/field_general
+  - fields/field_numeric
+  - view/uploaded
+docs:
+  - shared/FILTERS
+  - shared/JUMP
+  - shared/HELP
+  - shared/HELP_AVAILABLE
+  - shared/HELP_INDETERMINATE
+  - shared/HELP_UNAVAILABLE
+  - shared/HEADERS
+  - shared/LINK_INSTRUCTIONS
+  - view/PUBLIC
+  - view/FEATURES
+  - view/README
+  - view/INSTRUCTIONS
+  - view/EXPORT_FORMATS
+  - view/EXPORT_SIZE
+  - view/EXPORT_DESTINATION
+  - view/TUTORIALS
+  - view/IMPORT
+  - view/PASSWORD_INSTRUCTIONS
+  - view/UPLOADED_DETAILS
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.file
+      name: View and manage Google Drive files and folders that you have opened or created with this app
+      reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.
+      request: login
+    - scope: https://www.googleapis.com/auth/spreadsheets.readonly
+      name: View your Google Spreadsheets
+      reason: This app needs to load data from your spreadsheets in order to display it, but not to write to them.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.readonly
+      name: View the files in your Google Drive
+      reason: In order to read previously saved view files, this 'readonly' permissions is required.
+      request: login
+    - scope: https://www.googleapis.com/auth/urlshortener
+      name: Manage your goo.gl short URLs
+      reason: Once you have created a link to share in this app, you have the option of using the Google Link Shortener to 'compress' it. This scope allows access to that feature.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/drive.install
+      name: Special scope used to let users approve installation of an app.
+      reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
+      request: lazy
+keys:
+  google:
+      general: AIzaSyAnA6HobNGSG5BheqjmH8-ltY483OiFZWA
+      oauth: 413873384033-o7ip66i3qhm5q80cksnce0v0vi4qij6l.apps.googleusercontent.com
+menus:
+  - name: Sheet
+    groups:
+      all:
+        commands:
+          - name: Open
+            desc: Open a Sheet from your Drive (lazily, one tab at a time)
+            hash: open.lazy
+            imports:
+              - google
+            auth: google
+          - name: Open & Load Fully
+            desc: Open a Sheet from your Drive (load all tabs up front)
+            hash: open.full
+            imports:
+              - google
+            auth: google
+          - name: Import
+            desc: Import an existing Spreadsheet to Google Sheets
+            hash: import
+            imports:
+              - dropzone
+            auth: google
+            visibility: debug
+          - name: Save View
+            desc: Save your current view to Google Drive
+            hash: save
+            auth: google
+            scope: https://www.googleapis.com/auth/drive.readonly
+            disabled_until:
+              - opened
+            imports:
+              - google
+          - name: Close
+            desc: Close the current Sheet
+            hash: close
+            shortcut: "c"
+            disabled_until:
+              - opened
+  - name: Share
+    groups:
+      link:
+        name: Link
+        commands:
+          - name: Create
+            desc: Create a link to this View
+            hash: link
+            shortcut: "l"
+            auth: google
+            scope: https://www.googleapis.com/auth/urlshortener
+            imports:
+              - clipboard
+            disabled_until:
+              - opened
+      export:
+        name: Export
+        commands:
+          - name: Original Sheet
+            desc: Export the original sheet to Legacy Formats
+            hash: export.full
+            disabled_until:
+              - opened
+            imports:
+              - xlsx
+              - xlsxpopulate
+              - filesaver
+              - base64
+              - clipboard
+          - name: Filtered View
+            desc: Export the filtered view/s to Legacy Formats
+            hash: export
+            shortcut: "e"
+            disabled_until:
+              - opened
+            imports:
+              - xlsx
+              - xlsxpopulate
+              - filesave
+              - base64
+              - clipboard
+  - name: Settings
+    groups:
+      all:
+        commands:
+          - name: Show / Hide Columns
+            desc: Select which columns should remain visible
+            hash: visibility.columns
+            disabled_until:
+              - opened
+          - name: Refresh
+            desc: Refresh the current data (clears filters, sorts & visibilities)
+            hash: refresh
+            shortcut: "r"
+            disabled_until:
+              - opened
+          - name: Virtual Scroll
+            desc: Uses Virtual Scrolling for current table view
+            hash: virtual-scroll
+            disabled_until:
+              - opened
+            toggle:
+              - virtual-scroll
+          - name: Fit
+            desc: Fits the data into the width of your screen
+            hash: fit
+            disabled_until:
+              - experimental
+          - name: Lock Headers
+            desc: Locks the position of Headers Rows
+            hash: freeze.rows
+            disabled_until:
+              - opened
+            toggle:
+              - frozen-rows
+          - name: Freeze
+            desc: Locks the position of both Frozen Columns and Rows
+            hash: freeze
+            disabled_until:
+              - opened
+            toggle:
+              - frozen
+          - name: Restore Defaults
+            desc: Remove all filters, sorts & restore all columns to visible
+            hash: defaults
+            disabled_until:
+              - opened
+  - name: About
+    short_name: Help
+    groups:
+      all:
+        commands:
+          - name: Instructions
+            hash: instructions
+            desc: More details about how to use this app
+            shortcut: "i"
+          - name: Tutorials
+            hash: tutorials
+            desc: Ways in which you can use this app
+          - name: Guide
+            url: /guides/view
+            desc: A guide to using this app
+            divider: true
+          - name: Install
+            desc: Install this app into your Google Drive
+            hash: install
+            auth: google
+            scope: https://www.googleapis.com/auth/drive.install
+          - name: Permissions
+            url: /scopes/?highlight=view
+            desc: Find out about the permissions and scopes that this app uses
+          - name: Changes
+            url: /changes?highlight=view
+            desc: Find out about the most recent changes and features of this app
+            divider: true
+          - name: Privacy
+            url: /about?highlight=privacy
+            desc: We are passionate about protecting your privacy and security
+          - name: About
+            url: /about
+            desc: Find out about our platform, technology and approach
+            divider: true
+          - name: Get Help
+            hash: help
+            desc: Get help or request a feature
+            class: font-weight-bold
+            imports:
+              - jshashes
+              - fetchjsonp
+            auth: google
+buttons:
+  - name: Open a Sheet
+    desc: Open a Sheet from your Drive (lazily, one tab at a time)
+    hash: open.lazy
+    imports:
+      - google
+    auth: google
+published: true

@@ -60,6 +60,9 @@ css:
 	{% include head.html %}
 	<body>
 		{% include nav.html %}
+    {% if page.app and site.data.apps[page.app].templates contains 'notify' %}<div
+    	aria-live="polite" aria-atomic="true"
+      id="{{page.app}}_Notify" class="notifications"><div class="holder"></div></div>{% endif %}
 		<div id="{{ site.app.content }}" class="content">{{ content }}</div>
 		{% include footer.html type="app" %}
     {% include breakpoints.html %}

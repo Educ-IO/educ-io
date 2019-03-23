@@ -1,0 +1,48 @@
+##################################################
+#                                                #
+#   .d8888. db   db d888888b d8b   db db    db   #
+#   88'  YP 88   88   `88'   888o  88 `8b  d8'   #
+#   `8bo.   88ooo88    88    88V8o 88  `8bd8'    #
+#     `Y8b. 88~~~88    88    88 V8o88    88      #
+#   db   8D 88   88   .88.   88  V888    88      #
+#   `8888Y' YP   YP Y888888P VP   V8P    YP      #
+#                                                #
+##################################################
+
+name: Shiny! Shiny!
+desc: __Simple__ and __secure__ text editing for Chrome
+link: /extensions/shiny
+published: true
+info: true
+colour: 000080
+action: Find out more
+versions:
+  0.5.6:
+    name : Minor Updates
+    desc : Bug Fix
+    type : beta | production | minor
+    changes :
+      - details: Lines indented with 4 spaces / a	tab are handled as code blocks in Markdown. For longer sentences, this can cause issues with wider pages and text not being wrapped properly. This version removes these before Markdown parsing to avoid this behaviour. Code blocks can still be used by 'fencing' code blocks by including ``` or ~~~ before and after the block.
+  0.5.5:
+    name : Minor Updates
+    desc : Added checks/removal for un-intended numerical lists
+    type : beta | production | minor
+    changes :
+      - details: When starting a line with a number, followed by a period (.) and then a space, this is parsed as a numerical list. This version removes them unless you press CTRL-ALT-P to print.
+  0.5 :
+    name : Minor Updates
+    desc : Added Per-Printed Page Headers
+    type : minor
+    changes :
+      - details: Using the _CTRL-T_{:.kb-shortcut} shortcut, a header is inserted which will be printed on each page.
+  0.4 :
+    name : Minor Updates
+    desc : Updated Library Dependencies and Print Styling
+    type : minor
+    changes :
+      - details: Default printed output is now rendered in **12pt** with **double-line** spacing
+        url:
+      - details: Updated JQuery to v3.3.1, Ace to v1.3.1
+        url:
+      - details: Swapped to Showdown (v1.8.6) for Markdown Parsing
+        url : https://github.com/thiscouldbejd/Shiny-Shiny

@@ -1,0 +1,17 @@
+########################################################################
+#                                                                      #
+#   .d8888. db   db d88888b db      d88888b d8888b.  .d88b.   d888b    #
+#   88'  YP 88   88 88'     88      88'     88  `8D .8P  Y8. 88' Y8b   #
+#   `8bo.   88ooo88 88ooooo 88      88ooo   88   88 88    88 88        #
+#     `Y8b. 88~~~88 88~~~~~ 88      88~~~   88   88 88    88 88  ooo   #
+#   db   8D 88   88 88.     88booo. 88      88  .8D `8b  d8' 88. ~8~   #
+#   `8888Y' YP   YP Y88888P Y88888P YP      Y8888D'  `Y88P'   Y888P    #
+#                                                                      #
+########################################################################
+
+name: Shelf Dog
+desc: Your _library_, __everywhere__, in Google Drive
+link: https://shelf.dog
+published: false
+ext: true
+colour: 758e96

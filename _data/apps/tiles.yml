@@ -1,0 +1,168 @@
+#################################################
+#                                               #
+#   d888888b d888888b db      d88888b .d8888.   #
+#   `~~88~~'   `88'   88      88'     88'  YP   #
+#      88       88    88      88ooooo `8bo.     #
+#      88       88    88      88~~~~~   `Y8b.   #
+#      88      .88.   88booo. 88.     db   8D   #
+#      YP    Y888888P Y88888P Y88888P `8888Y'   #
+#                                               #
+#################################################
+
+name: Tiles
+desc: Share __links__ and create your own simple dashboard-style __intranet__ page
+link: /tiles/
+colour: 6d635a
+logo: images/tiles_logo.svg
+learn: /guides/tiles
+imports:
+  - name: underscore
+    load: first
+  - name: jquery
+    load: first
+  - name: popper
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: urlparser
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: loki
+    load: last
+  - name: localforage
+    load: last
+  - name: autosize
+    load: last
+  - name: moment
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: google
+    load: lazy
+helpers:
+  - network
+  - google
+  - css
+modules:
+  - flags
+  - controller
+  - display
+  - help
+  - service
+  - main
+  - items
+  - recent
+  - router
+scripts: 
+  - extends/regex
+  - extends/array
+templates:
+  - options
+  - choose
+  - confirm
+  - alert
+  - loader
+  - recent
+  - help
+  - shared/control_icon
+  - shared/control_button
+docs:
+  - shared/FILTERS
+  - shared/JUMP
+  - shared/HELP
+  - shared/HELP_AVAILABLE
+  - shared/HELP_INDETERMINATE
+  - shared/HELP_UNAVAILABLE
+  - tiles/PUBLIC
+  - tiles/FEATURES
+  - tiles/README
+  - tiles/INSTRUCTIONS
+  - tiles/TUTORIALS
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.file
+      name: View and manage Google Drive files and folders that you have opened or created with this app
+      reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.
+      request: login
+    - scope: https://www.googleapis.com/auth/spreadsheets.readonly
+      name: View your Google Spreadsheets
+      reason: This app needs to load data from spreadsheets in order to display it, but not to write to them.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.readonly
+      name: View the files in your Google Drive
+      reason: In order to read previously saved view files, this 'readonly' permissions is required.
+      request: login
+    - scope: https://www.googleapis.com/auth/spreadsheets
+      name: Edit your Google Spreadsheets
+      reason: This app needs to save data to your spreadsheets in order to share your tiles.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/urlshortener
+      name: Manage your goo.gl short URLs
+      reason: Once you have created a link to share in this app, you have the option of using the Google Link Shortener to 'compress' it. This scope allows access to that feature.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/drive.install
+      name: Special scope used to let users approve installation of an app.
+      reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
+      request: lazy
+keys:
+  google:
+      general: AIzaSyATcTyy5atrw6hl2iUtt1EA-o_xVOGfXVA
+      oauth: 894090436889-a4kond8cjov44miilvm2gs7q4bboarup.apps.googleusercontent.com
+menus:
+  - name: Settings
+  - name: About
+    short_name: Help
+    groups:
+      all:
+        commands:
+          - name: Instructions
+            hash: instructions
+            desc: More details about how to use this app
+          - name: Tutorials
+            hash: tutorials
+            desc: Ways in which you can use this app
+          - name: Guide
+            url: /guides/tiles
+            desc: A guide to using this app
+            divider: true
+          - name: Install
+            desc: Install this app into your Google Drive
+            hash: install
+            auth: google
+            scope: https://www.googleapis.com/auth/drive.install
+          - name: Permissions
+            url: /scopes/?highlight=tiles
+            desc: Find out about the permissions and scopes that this app uses
+          - name: Changes
+            url: /changes?highlight=tiles
+            desc: Find out about the most recent changes and features of this app
+            divider: true
+          - name: Privacy
+            url: /about?highlight=privacy
+            desc: We are passionate about protecting your privacy and security
+          - name: About
+            url: /about
+            desc: Find out about our platform, technology and approach
+            divider: true
+          - name: Get Help
+            hash: help
+            desc: Get help or request a feature
+            class: font-weight-bold
+            imports:
+              - jshashes
+              - fetchjsonp
+            auth: google
+published: false

@@ -1,0 +1,524 @@
+################################################################
+#                                                              #
+#   d8888b. d88888b d88888b db      d88888b  .o88b. d888888b   #
+#   88  `8D 88'     88'     88      88'     d8P  Y8 `~~88~~'   #
+#   88oobY' 88ooooo 88ooo   88      88ooooo 8P         88      #
+#   88`8b   88~~~~~ 88~~~   88      88~~~~~ 8b         88      #
+#   88 `88. 88.     88      88booo. 88.     Y8b  d8    88      #
+#   88   YD Y88888P YP      Y88888P Y88888P  `Y88P'    YP      #
+#                                                              #
+################################################################
+
+name: Reflect
+desc: _Produce_ and _share_ __reflective reports__, tracking _evidence_ and your _progress_
+link: /reflect/
+colour: 36936d
+logo: images/reflect_logo.svg
+learn: /guides/reflect
+css:
+  primary:
+  secondary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/toasts
+    - custom/variables
+    - custom/notifications
+imports:
+  - name: underscore
+    load: first
+  - name: jquery
+    load: first
+  - name: popper
+    load: first
+  - name: transducers
+    load: first
+  - name: moment
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: urlparser
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: loki
+    load: last
+  - name: localforage
+    load: last
+  - name: autosize
+    load: last
+  - name: showdown
+    load: last
+  - name: mousetrap
+    load: last
+  - name: bootstrap-material-datepicker-js
+    load: last
+  - name: google
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: jshashes
+    load: last
+  - name: deepExtend
+    load: last
+  - name: quotedPrintable
+    load: last
+  - name: yaml
+    load: last
+  - name: xlsx
+    load: lazy
+  - name: filesaver
+    load: lazy
+  - name: clipboard
+    load: lazy
+  - name: html2canvas
+    load: lazy
+helpers:
+  - data
+  - network
+  - google
+  - strings
+  - fields
+  - dialog
+  - filters
+  - table
+  - css
+  - scroll
+modules:
+  - flags
+  - controller
+  - display
+  - items
+  - recent
+  - router
+  - help
+  - service
+  - main
+  - datatable
+  - grid
+  - headers
+  - reflect/analysis
+  - reflect/forms
+  - reflect/templates/form_master
+  - reflect/templates/uk_teachers_reflection
+  - reflect/templates/volunteering
+  - reflect/templates/progress
+  - reflect/templates/uk_teachers_lesson_observation
+  - reflect/templates/uk_teachers_grading
+  - reflect/scales/uk_teachers_standards
+scripts:
+  - extends/regex
+  - extends/array
+templates:
+  - options
+  - choose
+  - confirm
+  - alert
+  - loader
+  - recent
+  - text
+  - files
+  - upload
+  - action
+  - help
+  - notify
+  - shared/control_icon
+  - shared/control_button
+  - shared/list_item
+  - shared/filters
+  - shared/table
+  - shared/datatable
+  - shared/rows
+  - shared/cell
+  - shared/hyperlink
+  - fields/field_validation
+  - fields/field_general
+  - fields/field_additions
+  - fields/field_complex
+  - fields/field_items
+  - fields/field_numeric
+  - fields/field_marker
+  - fields/field_buttons
+  - fields/field_radio
+  - fields/field_scale
+  - fields/field_select
+  - fields/field_span
+  - fields/field_textual
+  - fields/field_durations
+  - fields/field_files
+  - fields/field_range
+  - emails/email_standard
+  - reflect/heading
+  - reflect/group
+  - reflect/form
+  - reflect/signature
+  - reflect/recovery
+  - reflect/tracker
+  - reflect/count
+  - reflect/valid
+  - reflect/send
+  - reflect/recipients
+  - reflect/pill
+  - reflect/analyse_header
+docs:
+  - shared/JUMP
+  - shared/HELP
+  - shared/HELP_AVAILABLE
+  - shared/HELP_INDETERMINATE
+  - shared/HELP_UNAVAILABLE
+  - shared/FILTERS
+  - shared/HEADERS
+  - reflect/PUBLIC
+  - reflect/FEATURES
+  - reflect/README
+  - reflect/INSTRUCTIONS
+  - reflect/COMPLETE_INSTRUCTIONS
+  - reflect/SAVE_INSTRUCTIONS
+  - reflect/SEND_INSTRUCTIONS
+  - reflect/SIGN_INSTRUCTIONS
+  - reflect/SHARE_INSTRUCTIONS
+  - reflect/EXPORT_INSTRUCTIONS
+  - reflect/URL
+  - reflect/FILE
+  - reflect/CREATE
+  - reflect/CREATE_FORM
+  - reflect/CREATE_REPORT
+  - reflect/CREATE_SCALE
+  - reflect/CREATE_TRACKER
+  - reflect/IMPORT
+  - reflect/TUTORIALS
+  - reflect/FORM
+  - reflect/ANALYSE
+  - reflect/SCALE
+  - reflect/NO_SIGNATURES
+  - reflect/REMOVE_SIGNATURES
+  - reflect/SIGNED_REPORT_SAVE_WARNING
+  - reflect/CLONE_NAME
+  - reflect/EMAIL_REPORT_SEND
+  - reflect/REPORT
+  - reflect/REVOKE_COMPLETION
+  - reflect/NOTIFY_SAVE_FORM_SUCCESS
+  - reflect/NOTIFY_SAVE_REPORT_SUCCESS
+  - reflect/NOTIFY_SAVE_SCALE_SUCCESS
+  - reflect/NOTIFY_SAVE_FAILED
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.appdata
+      name: View and manage its own configuration data in your Google Drive
+      reason: In order to record your settings in Google Drive.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.file
+      name: View and manage Google Drive files and folders that you have opened or created with this app
+      reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.readonly
+      name: View the files in your Google Drive
+      reason: In order to read forms, scales and reports that have been sent to you, this 'readonly' permissions is required.
+      request: login
+    - scope: https://www.googleapis.com/auth/spreadsheets
+      name: View / Edit your Google Spreadsheets
+      reason: This app needs to write data to your spreadsheets in order to record periodic progress from your reflections.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/drive
+      name: View and manage the files in your Google Drive
+      reason: To sign files that you have opened directly from a link, this permission is needed.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/gmail.send
+      name: Send Emails
+      reason: This app can send emails on your behalf to allow for reports to be validated.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/drive.install
+      name: Special scope used to let users approve installation of an app.
+      reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
+keys:
+  google:
+      general: AIzaSyDCjK2aSKu9CAb3lCXxegwy-G9VTdNBAak
+      oauth: 969160887251-lnkpkhpet6ojgtkposr49f0uuubbbpq2.apps.googleusercontent.com
+menus:
+  - name: Report
+    groups:
+      all:
+        commands:
+          - name: Create
+            desc: Create a new Report
+            hash: create.report
+            auth: google
+          - name: Open
+            desc: Open a saved Report from your Drive
+            hash: open.report
+            imports:
+              - google
+            auth: google
+          - name: Import
+            desc: Import a saved Report from a file
+            hash: import.report
+            divider: true
+
+          - name: Sign
+            desc: Sign this Report
+            hash: sign.report
+            disabled_until:
+              - signable-report
+            auth: google
+          - name: Edit
+            desc: Edit this Report
+            hash: edit.report
+            disabled_until:
+              - editable-report
+            auth: google
+            visibility: debug
+          - name: Save
+            desc: Save this Report
+            hash: save.report
+            imports:
+              - html2canvas
+            disabled_until:
+              - editable-report
+            auth: google
+          - name: Save As
+            desc: Save this as a New (named) Report
+            hash: save.report.clone
+            imports:
+              - html2canvas
+            disabled_until:
+              - editable-report
+            auth: google
+            visibility: debug
+          - name: Send
+            desc: Send this Report for Signing
+            hash: send.report
+            imports:
+              - html2canvas
+            disabled_until:
+              - editable-report
+            scope: https://www.googleapis.com/auth/gmail.send
+            auth: google
+          - name: Share
+            desc: Share this Report
+            hash: share.report
+            imports:
+              - html2canvas
+            disabled_until:
+              - editable-report
+            auth: google
+            divider: true
+
+          - name: Export
+            desc: Export this Report by downloading the data
+            hash: save.report.export
+            disabled_until:
+              - opened-report
+            auth: google
+            imports:
+              - filesaver
+
+          - name: Revoke
+            desc: Revoke Report Completion
+            hash: revoke
+            disabled_until:
+              - report-complete
+            auth: google
+          - name: Complete
+            desc: Complete this Report
+            hash: complete.report
+            imports:
+              - html2canvas
+            disabled_until:
+              - editable-report
+            auth: google
+            divider: true
+
+          - name: Close
+            desc: Close this Report
+            hash: close
+            disabled_until:
+              - opened-report
+  - name: Forms
+    groups:
+      all:
+        commands:
+          - name: Analyse
+            desc: Anaylse submitted Form Reports
+            hash: analyse
+            auth: google
+            divider: true
+          - name: Create
+            desc: Create a new Form
+            hash: create.form
+            auth: google
+          - name: Open
+            desc: Open a saved Form from your Drive
+            hash: open.form
+            imports:
+              - google
+            auth: google
+          - name: Save
+            desc: Save this Form
+            hash: save.form
+            imports:
+              - html2canvas
+            disabled_until:
+              - opened-form
+            auth: google
+            divider: true
+
+          - name: Close
+            desc: Close this Report
+            hash: close
+            disabled_until:
+              - opened-form
+  - name: Analysis
+    disabled_until:
+      - analysis
+    groups:
+      all:
+        commands:
+          - name: Summary
+            desc: View Report Summary
+            hash: analyse.summary
+            toggle:
+              - analysis-summary
+          - name: Detail
+            desc: View Report Details
+            hash: analyse.detail
+            toggle:
+              - analysis-detail
+            divider: true
+          - name: Complete Only
+            desc: View Reports that have been completed
+            hash: analyse.stage.complete
+            toggle:
+              - analysis-stage-complete
+            visibility: debug
+          - name: All Stages
+            desc: View Reports at any stage
+            hash: analyse.stage.any
+            toggle:
+              - analysis-stage-any
+            divider: true
+          - name: Show All
+            desc: View All Reports
+            hash: analyse.reports.all
+            toggle:
+              - analysis-reports-all
+          - name: Show Mine
+            desc: View My Reports
+            hash: analyse.reports.mine
+            toggle:
+              - analysis-reports-mine
+          - name: Show Shared
+            desc: View Reports Shared with Me
+            hash: analyse.reports.shared
+            toggle:
+              - analysis-reports-shared
+            divider: true
+          - name: Export to Sheets
+            desc: Export Analysis Data to Google Sheets
+            hash: analyse.export.sheets
+          - name: Download as CSV
+            desc: Download Current Analysis Data as a Comma Separated Values (CSV) File
+            hash: analyse.export.csv
+          - name: Download as Excel
+            desc: Download Analysis Data as a Microsoft Excel File
+            hash: analyse.export.excel
+          - name: Download as Markdown
+            desc: Download Analysis Data as a Markdown Table
+            hash: analyse.export.markdown
+            divider: true
+          - name: Close
+            desc: Close this Analysis
+            hash: close
+  - name: Tracker
+    groups:
+      all:
+        commands:
+          - name: Create
+            desc: Create a new Tracker
+            hash: create.tracker
+            auth: google
+            visibility: debug
+          - name: Open
+            desc: Open a saved Tracker from your Drive
+            hash: open.tracker
+            imports:
+              - google
+            auth: google
+            visibility: debug
+          - name: Create Scale
+            hash: create.scale
+            auth: google
+  - name: About
+    short_name: Help
+    groups:
+      all:
+        commands:
+          - name: Instructions
+            hash: instructions
+            desc: More details about how to use this app
+          - name: Tutorials
+            hash: tutorials
+            desc: Ways in which you can use this app
+          - name: Guide
+            url: /guides/reflect
+            desc: A guide to using this app
+            divider: true
+          - name: Install
+            desc: Install this app into your Google Drive
+            hash: install
+            auth: google
+            scope: https://www.googleapis.com/auth/drive.install
+          - name: Permissions
+            url: /scopes/?highlight=reflect
+            desc: Find out about the permissions and scopes that this app uses
+          - name: Changes
+            url: /changes?highlight=reflect
+            desc: Find out about the most recent changes and features of this app
+            divider: true
+          - name: Privacy
+            url: /about?highlight=privacy
+            desc: We are passionate about protecting your privacy and security
+          - name: About
+            url: /about
+            desc: Find out about our platform, technology and approach
+            divider: true
+          - name: Get Help
+            hash: help
+            desc: Get help or request a feature
+            class: font-weight-bold
+            imports:
+              - jshashes
+              - fetchjsonp
+            auth: google
+buttons:
+- name: Reflective Report
+  desc: Create a new Reflective Report
+  hash: create.report
+  auth: google
+  buttons:
+  - name: Create
+    desc: Create a new Reflective Report
+    hash: create.report
+    auth: google
+  - name: Open
+    desc: Open a saved Report from your Drive
+    hash: open.report
+    imports:
+      - google
+    auth: google
+  - name: Import
+    desc: Import a saved Report from a file
+    hash: import.report
+published: false
+scoped: true

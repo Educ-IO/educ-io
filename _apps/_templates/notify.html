@@ -1,0 +1,17 @@
+{% raw %}
+<div class="toast{{#if class}} {{class}}{{/if}}" role="alert" aria-live="assertive" aria-atomic="true"
+     data-delay="{{#if delay}}{{delay}}{{else}}3000{{/if}}"
+     {{#exists autohide}}data-autohide="{{autohide}}"{{/exists}}
+     {{#exists animation}}data-animation="{{animation}}"{{/exists}}>
+  <div class="toast-header{{#if header_class}} {{header_class}}{{/if}}">
+    <strong class="mr-auto">{{title}}</strong>
+    {{#if when}}<small>{{when}}</small>{{/if}}
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    {{{content}}}
+  </div>
+</div>
+{% endraw %}

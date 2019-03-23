@@ -1,0 +1,58 @@
+###################################################################################
+#                                                                                 #
+#    .o88b. db       .d88b.  db    db d8888b. db    db .d8888. db   dD db    db   #
+#   d8P  Y8 88      .8P  Y8. 88    88 88  `8D `8b  d8' 88'  YP 88 ,8P' `8b  d8'   #
+#   8P      88      88    88 88    88 88   88  `8bd8'  `8bo.   88,8P    `8bd8'    #
+#   8b      88      88    88 88    88 88   88    88      `Y8b. 88`8b      88      #
+#   Y8b  d8 88booo. `8b  d8' 88b  d88 88  .8D    88    db   8D 88 `88.    88      #
+#    `Y88P' Y88888P  `Y88P'  ~Y8888P' Y8888D'    YP    `8888Y' YP   YD    YP      #
+#                                                                                 #
+###################################################################################
+
+name: Cloudy Sky
+desc: Produce __better spreadsheet__ reports from the _BlueSky_ platform, directly in your browser
+link: /extensions/cloudy-sky
+published: true
+info: true
+colour: 4a86e8
+action: Find out more
+versions:
+  1.0.9 :
+    name : Updated Page Match
+    desc : Match new Observations Report Page
+    type : minor
+  1.0.8 :
+    name : New Feature
+    desc : Check Evidence Button on Review Page
+    type : minor
+  1.0.7 :
+    name : Bug Fix
+    desc : Fixes Hyperlink Formula Bug
+    type : minor
+  1.0.6 :
+    name : New Features
+    desc : Reviews metadata export
+    type : minor
+  1.0.5 :
+    name : New Features
+    desc : Evidence Tracker and full-text Shared Journal exports
+    type : minor
+  1.0.3 :
+    name : Functionality Improvements
+    desc : Ability to output Personal Journals to Spreadsheet
+    type : minor
+  1.0.2 :
+    name : Minor Improvements
+    desc : Busy Spinners and Percentage Progress Feedback
+    type : minor
+  1.0.1-beta :
+    name : Minor Tweaks
+    desc : Improved performance handling
+    type : minor
+  1.0.0 :
+    name : Initial Version
+    desc : Initial version published online
+    type : major
+    changes :
+      - details: Initial Code Commit
+        url : https://github.com/thiscouldbejd/cloudysky-extension

@@ -2,8 +2,6 @@ TODO LIST
 =========
 General
 -------
-* ** BUG ** Interactions Data test can fail with exception without triggering a test failure!
-
 * ** IMPORTANT ** Headless Tests -> Write new permission request handing!!!
 
 * ** IMPORTANT ** Recent Items -> Multiple accounts!!!
@@ -122,7 +120,7 @@ Folders
 
 Reflect
 -------
-* ** IMPORTANT ** Feedback on successful save? Or failure.
+
 
 Publish
 -------
@@ -134,6 +132,8 @@ Survey
 
 Complete
 --------
+* ** BUG ** Interactions Data test can fail with exception without triggering a test failure! <-- DONE
+* ** IMPORTANT ** Feedback on successful save? Or failure. <-- DONE
 * ** BUG ** Analysis of empty forms? E.g. Lesson Observation <-- DONE
 * Lesson Observation Form <-- DONE
 * ** IMPORTANT ** Optional Gradings against standards <-- DONE

@@ -1,0 +1,27 @@
+###################################################
+#                                                 #
+#   d888888b .d8888.  .d8b.  .88b  d88. .d8888.   #
+#     `88'   88'  YP d8' `8b 88'YbdP`88 88'  YP   #
+#      88    `8bo.   88ooo88 88  88  88 `8bo.     #
+#      88      `Y8b. 88~~~88 88  88  88   `Y8b.   #
+#     .88.   db   8D 88   88 88  88  88 db   8D   #
+#   Y888888P `8888Y' YP   YP YP  YP  YP `8888Y'   #
+#                                                 #
+###################################################
+
+name: Sheets for iSAMS
+desc: Avoid __downloading__ lists in iSAMS, open __directly__ in a _new tab_
+link: /extensions/isams
+published: true
+info: true
+colour: 38761d
+action: Find out more
+versions:
+  1.0.7 :
+    name : Markdown Support in URL Parsing
+    desc : Clickable Links now support Markdown format
+    type : minor
+  1.0.6 :
+    name : URL Parsing
+    desc : Displays clickable links for urls in Daily Bulletin
+    type : minor
