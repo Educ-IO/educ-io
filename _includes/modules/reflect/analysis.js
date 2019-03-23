@@ -304,6 +304,8 @@ Analysis = (ಠ_ಠ, forms, reports) => {
     summary: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage, false),
 
     detail: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage, "detail"),
+    
+    title: () => `Analysis - ${FN.generate.names().join(" | ")}`,
 
   };
   /* <!-- External Visibility --> */

@@ -84,7 +84,9 @@ App = function() {
           title: "Successful Save",
           content: ಠ_ಠ.Display.doc.get({
             name: message,
-            content: result.webViewLink,
+            content: result.webViewLink ?
+              result.webViewLink : result.spreadsheetId ?
+              `https://docs.google.com/spreadsheets/d/${result.spreadsheetId}/edit` : "https://drive.google.com",
           }),
           header_class: "bg-success-light"
         })),
@@ -674,13 +676,43 @@ App = function() {
         FN.action.load(ರ‿ರ.file).then(ಠ_ಠ.Main.busy("Refreshing Report"))),
 
     export: {
-      
-      analysis: type => {
-        var _values = ರ‿ರ.analysis.table().values();
-        ಠ_ಠ.Flags.log(`EXPORT to ${type}`);
-        ಠ_ಠ.Flags.log(_values);
-      },
-      
+
+      analysis: type => Promise.resolve(ರ‿ರ.analysis.table().values())
+        .then(values => _.map(values, row =>
+          _.flatten(_.map(row, cell => cell ? cell.split("\n") : ""))))
+        .then(values => _.tap(values,
+          values => ಠ_ಠ.Flags.log(`EXPORTING to ${type}`, values)))
+        .then(values => type == "sheets" ?
+          ಠ_ಠ.Google.sheets.create(ರ‿ರ.analysis.title(), "Analysis").then(sheet => {
+            const length = values.length,
+              width = _.reduce(values,
+                (ln, row) => Math.max(ln, _.isArray(row) ? row.length : 1), 0);
+            return ಠ_ಠ.Google.sheets.update(sheet.spreadsheetId,
+                ಠ_ಠ.Google_Sheets_Notation().grid(0, length, 0, width, true), values)
+              .catch(e => ಠ_ಠ.Flags.error("Exporting", e).negative())
+              .then(FN.helper.notify.save("NOTIFY_SAVE_ANALYSIS_SUCCESS"));
+          }) :
+          (type == "md" ?
+            Promise.resolve(ರ‿ರ.analysis.table().markdown(values)) :
+            type == "csv" ?
+            Promise.resolve(ರ‿ರ.analysis.table().csv(values)) :
+            XlsxPopulate.fromBlankAsync().then(book => {
+              const rows = values.length,
+                columns = _.reduce(values,
+                  (ln, row) => Math.max(ln, _.isArray(row) ? row.length : 1), 0);
+              book.sheets()[0]
+                .name("Analysis")
+                .range(1, 1, rows + 1, columns + 1)
+                .value(values);
+              return book.outputAsync("blob");
+            }))
+          .then(data => ಠ_ಠ.Saver({}, ಠ_ಠ).save(data, `${ರ‿ರ.analysis.title()}.${type}`,
+            type == "xlsx" ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :
+            type == "md" ? "text/markdown" :
+            type == "csv" ? "text/csv" : "application/octet-stream")))
+        .catch(e => ಠ_ಠ.Flags.error("Exporting", e))
+        .then(ಠ_ಠ.Main.busy("Exporting")),
+
       report: () => {
         var _exporting = FN.action.dehydrate();
         try {
@@ -691,7 +723,7 @@ App = function() {
           ಠ_ಠ.Flags.error("Report Export", e);
         }
       },
-      
+
     },
     save: {
 
@@ -1110,7 +1142,7 @@ App = function() {
                   excel: {
                     matches: /EXCEL/i,
                     length: 0,
-                    fn: () => FN.action.export.analysis("xslx"),
+                    fn: () => FN.action.export.analysis("xlsx"),
                   },
                   markdown: {
                     matches: /MARKDOWN/i,

@@ -61,6 +61,11 @@ Google_Sheets_Notation = () => {
       }
       return reference;
     };
+  
+  var _grid = (start_Row, end_Row, start_Col, end_Col, zero) => {
+    var i = zero ? 1 : 0;
+    return _range(`R${start_Row + i}C${start_Col + i}:R${end_Row + i}C${end_Col + i}`, _convertR1C1);
+  };
   /* <!-- Internal Functions --> */
 
   /* === Internal Visibility === */
@@ -68,6 +73,8 @@ Google_Sheets_Notation = () => {
   /* === External Visibility === */
   return {
 
+    grid: _grid,
+    
     range: _range,
     
     rangeA1: reference => _range(reference, _convertA1),

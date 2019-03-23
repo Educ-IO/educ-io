@@ -422,6 +422,18 @@ Sheets = function() {
           expect(_notation.range("A1:Z101"))
             .to.be.a("string")
             .and.to.equal("R1C1:R101C26");
+          
+          expect(_notation.grid(0, 9, 0, 9, true))
+            .to.be.a("string")
+            .and.to.equal("A1:J10");
+          
+          expect(_notation.grid(1, 10, 1, 10))
+            .to.be.a("string")
+            .and.to.equal("A1:J10");
+          
+          expect(_notation.grid(1, 10, 1, 27))
+            .to.be.a("string")
+            .and.to.equal("A1:AA10");
 
           resolve(FACTORY.Flags.log("Notation Test SUCCEEDED").reflect(true));
 

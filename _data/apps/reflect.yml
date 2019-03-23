@@ -69,7 +69,7 @@ imports:
     load: last
   - name: yaml
     load: last
-  - name: xlsx
+  - name: xlsxpopulate
     load: lazy
   - name: filesaver
     load: lazy
@@ -88,6 +88,8 @@ helpers:
   - table
   - css
   - scroll
+  - saver
+  - google/sheets/notation
 modules:
   - flags
   - controller
@@ -205,6 +207,7 @@ docs:
   - reflect/NOTIFY_SAVE_REPORT_SUCCESS
   - reflect/NOTIFY_SAVE_SCALE_SUCCESS
   - reflect/NOTIFY_SAVE_FAILED
+  - reflect/NOTIFY_SAVE_ANALYSIS_SUCCESS
 scopes:
   google:
     - scope: email
@@ -430,12 +433,19 @@ menus:
           - name: Download as CSV
             desc: Download Current Analysis Data as a Comma Separated Values (CSV) File
             hash: analyse.export.csv
+            imports:
+              - filesaver
           - name: Download as Excel
             desc: Download Analysis Data as a Microsoft Excel File
             hash: analyse.export.excel
+            imports:
+              - xlsxpopulate
+              - filesaver
           - name: Download as Markdown
             desc: Download Analysis Data as a Markdown Table
             hash: analyse.export.markdown
+            imports:
+              - filesaver
             divider: true
           - name: Close
             desc: Close this Analysis
