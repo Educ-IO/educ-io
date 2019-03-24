@@ -163,7 +163,7 @@ Display = function() {
 
   var _username = name => name && name.length == 3 ? name.split(" ").join("") : name;
 
-  var _dialog = (dialog, options) => {
+  var _dialog = (dialog, options, handler) => {
 
     if ((options.actions || options.handlers) &&
       dialog.find("button[data-action], a[data-action]").length > 0) {
@@ -173,7 +173,8 @@ Display = function() {
             _action = _target.data("action");
           if (_action.indexOf("actions_") === 0) {
             _action = $(e.target).data("action").split("_");
-            if (_action[0] == "actions") options.actions[_action[1]].handler(dialog.find("form").serializeArray());
+            if (_action[0] == "actions") options.actions[_action[1]].handler(handler ?
+              handler() : dialog.find("form").serializeArray());
           } else if (options.handlers && options.handlers[_action]) {
             options.handlers[_action](_target, dialog, options);
           }
@@ -285,7 +286,9 @@ Display = function() {
 
         Handlebars.registerHelper("formatYaml", variable => {
           if (variable !== null && variable !== undefined && window.jsyaml)
-            return jsyaml.safeDump(variable, {skipInvalid: true});
+            return jsyaml.safeDump(variable, {
+              skipInvalid: true
+            });
         });
 
         Handlebars.registerHelper("exists", function(variable, options) {
@@ -573,13 +576,15 @@ Display = function() {
     	}
     --> */
     notify: function(options) {
-      
+
       return new Promise((resolve, reject) => {
 
         if (!options) return reject();
-        options = _.isString(options) ? 
-          {title: ಠ_ಠ.Flags.dir().toUpperCase(), content: options} : options;
-        
+        options = _.isString(options) ? {
+          title: ಠ_ಠ.Flags.dir().toUpperCase(),
+          content: options
+        } : options;
+
         var notification = $(_template("notify")(options));
         _target(options).append(notification);
 
@@ -589,11 +594,11 @@ Display = function() {
 
         /* <!-- Show the Modal Dialog --> */
         notification.toast("show");
-        
+
       });
-      
+
     },
-    
+
     /* <!--
     	Options are : {
     		target : element to append the loader to,
@@ -836,8 +841,8 @@ Display = function() {
         var dialog = $(_template("choose")(options));
         _target(options).append(dialog);
 
-        /* <!-- Set Event Handlers --> */
-        dialog.find(".modal-footer button.btn-primary").click(() => {
+        /* <!-- Parsing Method --> */
+        var parsed, parse = complete => {
           var _value = dialog.find(
             ["input[name='choices']:checked", "select[name='choices'] option:selected"].join(", ")
           );
@@ -845,10 +850,17 @@ Display = function() {
             options.choices[_value.val()] :
             _.map(_value, value => options.choices[$(value).val()]);
           _clean();
-          if (_value) resolve(_value);
-        });
+          return complete ? _value : parsed = _value;
+        };
 
-        dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
+        /* <!-- Wire Up Action and Update Handlers --> */
+        _dialog(dialog, options, parse);
+
+        /* <!-- Set Event Handlers --> */
+        dialog.find(".modal-footer button.btn-primary").click(() =>
+          _.tap(parse(true), value => value ? resolve(value) : false));
+
+        dialog.on("hidden.bs.modal", () => dialog.remove() && (parsed ? resolve(parsed) : reject()));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");

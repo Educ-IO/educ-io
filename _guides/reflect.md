@@ -4,7 +4,7 @@ title: A Guide to Reflect
 permalink: /guides/reflect/
 short_title: A Guide
 support: true
-app: reflect
+for: reflect
 ---
 
 #### Introduction

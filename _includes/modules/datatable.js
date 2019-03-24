@@ -436,6 +436,16 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     }, e => e ? ಠ_ಠ.Flags.error("Select Column Visibility", e) : false);
 
   };
+
+  /* <!-- Maximum width of table values / jagged array --> */
+  var _width = values => _.reduce(values, (ln, row) => Math.max(ln, _.isArray(row) ?
+    row.length : 1), 0);
+
+  /* <!-- Expands the array by moving new line break *last* cell values to new column --> */
+  var _expand = values => _.map(values, row =>
+    _.flatten(_.map(row, (cell, index, row) => cell ?
+      index == (row.length - 1) ?
+      cell.replace(/\n\n/g, "\n").split("\n") : cell : "")));
   /* <!-- Internal Functions --> */
 
   /* <!-- Initial Calls --> */
@@ -507,15 +517,27 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
     update: () => _update(true, true),
 
-
     csv: values => {
 
       const escape = value => value ? value.replace(/"/g, "\"\"") : "",
         process = (row, value, index) => `${row}${index > 0 ? `,"${escape(value)}"` : `"${escape(value)}"`}`;
 
-      return _.map(values, values => _.reduce(values, process, "")).join("\n");
+      return Promise.resolve(_.map(values, values => _.reduce(values, process, "")).join("\n"));
 
     },
+
+    excel: (values, title, password) => XlsxPopulate.fromBlankAsync().then(book => {
+      const rows = values.length,
+        columns = _width(values);
+      book.sheets()[0]
+        .name(title || "Data")
+        .range(1, 1, rows + 1, columns + 1)
+        .value(values);
+      return book.outputAsync(password ? {
+        type: "blob",
+        password: password
+      } : "blob");
+    }),
 
     markdown: values => {
 
@@ -524,7 +546,8 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
       if (values && values.length > 0) {
 
         /* <!-- Basic Constants --> */
-        const max = _.reduce(values, (ln, row) => Math.max(ln, _.isArray(row) ? row.length : 1), 0),
+
+        const max = _width(values),
           escape = value => value ? value.replace(/\|/g, "\\|") : "",
           process = (row, value, index) => `${row}${index > 0 ? ` | ${escape(value)}` : escape(value)}`;
 
@@ -543,9 +566,13 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
       }
 
-      return output;
+      return Promise.resolve(output);
 
     },
+
+    width: _width,
+
+    expand: _expand,
 
   };
   /* <!-- External Visibility --> */

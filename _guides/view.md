@@ -4,7 +4,7 @@ title: A Guide to View
 permalink: /guides/view/
 short_title: A Guide
 support: true
-app: view
+for: view
 lead: How to use our `View` app to better __share__ and __export__ data from sheets!
 ---
 

@@ -120,26 +120,31 @@ __Σ__UK_Teachers_Grading =  {
             {
               class: "btn-primary",
               value: "A: Excellent",
+              numeric: 5,
               icon: ""
             },
             {
               class: "btn-info",
               value: "B: Secure",
+              numeric: 4,
               icon: ""
             },
             {
               class: "btn-success",
               value: "C: Developing (Standards Met)",
+              numeric: 3,
               icon: ""
             },
             {
               class: "btn-warning",
               value: "D: Emerging",
+              numeric: 2,
               icon: ""
             },
             {
               class: "btn-danger",
               value: "E: Weak",
+              numeric: 1,
               icon: ""
             },
             {

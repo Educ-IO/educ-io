@@ -4,7 +4,7 @@ title: A Guide to Folders
 short_title: A Guide
 permalink: /guides/folders/
 support: true
-app: folders
+for: folders
 lead: How to use our `Folders` app to help you manage your Google Drive __more effectively__!
 ---
 

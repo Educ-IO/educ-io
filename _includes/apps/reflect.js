@@ -49,11 +49,13 @@ App = function() {
     EXTENSION_REGEX = /.REFLECT$/i,
     REGEX_REPLACER = (key, value) => value && typeof value === "object" &&
     value.constructor === RegExp ? value.source : value,
-    SAVING_REPLACER = (key, value) => key && key.indexOf("$") === 0 ?
+    SAVING_REPLACER = (key, value) => key && key === "__extends" ?
+    undefined : REGEX_REPLACER(key, value),
+    EDITING_REPLACER = (key, value) => key && key.indexOf("$") === 0 ?
     undefined : REGEX_REPLACER(key, value),
     SIGNING_REPLACER = (key, value) => key &&
     (key === "__order" || key === "__type" || key === "__meta") ?
-    undefined : SAVING_REPLACER(key, value),
+    undefined : EDITING_REPLACER(key, value),
     FN = {};
   /* <!-- Internal Constants --> */
 
@@ -317,10 +319,10 @@ App = function() {
       "form_report", TYPE_REPORT, REGEX_REPLACER),
 
     form: (form, editable) => FN.edit.generic(form, "FORM", "Create / Edit Form ...",
-      "form_editor", TYPE_FORM, SAVING_REPLACER, editable, true),
+      "form_editor", TYPE_FORM, EDITING_REPLACER, editable, true),
 
     scale: (scale, editable) => FN.edit.generic(scale, "SCALE", "Create / Edit Scale ...",
-      "scale_editor", TYPE_SCALE, SAVING_REPLACER, editable, true),
+      "scale_editor", TYPE_SCALE, EDITING_REPLACER, editable, true),
 
   };
   /* <-- Edit Functions --> */
@@ -373,8 +375,8 @@ App = function() {
       .then(value => value ? ಠ_ಠ.Display.state().enter(STATE_SCALE_OPENED).protect("a.jump").on("JUMP") : null)
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Scale Create Prompt", e) : false),
 
-    /* <!-- TODO: Tracker Creation --> */
     tracker: name => name,
+    /* <!-- TODO: Tracker Creation --> */
   };
   /* <!-- Create Functions --> */
 
@@ -382,34 +384,80 @@ App = function() {
   /* <!-- Prompt Functions --> */
   FN.prompt = {
 
-    analysis: mine => FN.prompt.choose(
-        ಱ.forms.selection("forms", "Report"), "Select a Form ...", "ANALYSE", true)
-      .then(results => {
-        return results ?
-          (() => {
-            ಠ_ಠ.Router.clean(false); /* <!-- Clear any existing file/state --> */
-            results = _.isArray(results) ? results : [results];
-            var _ln = results.length;
-            ಠ_ಠ.Flags.log(`${_ln} form${_ln > 1 ? "s" : ""} selected for Analysis`, results);
-            return FN.process.analysis(_.map(results, result => ({
-              id: result.value,
-              name: `${result.name}${result.title ? ` [${result.title}]` : ""}`
-            })), mine, false).then(ಠ_ಠ.Main.busy("Finding Reports"));
-          })() : false;
-      }),
+    /* <!-- TODO: Prompt for Filter Dates --> */
+    dates: () => ಠ_ಠ.Display.modal("dates", {
+      id: "dates",
+      instructions: ಠ_ಠ.Display.doc.get("ANALYSE_DATES"),
+      validate: values => values && values.Range && values.Range.Values &&
+        (values.Range.Values.Start || values.Range.Values.End),
+      title: "Filter Date Range",
+      field: "Range",
+      icon: "query_builder",
+      type: "Custom",
+      options: [{
+          value: "Custom",
+          name: "Custom"
+        },
+        {
+          span: "w",
+          value: "Week",
+          name: "Week"
+        },
+        {
+          span: "M",
+          value: "Month",
+          name: "Month"
+        },
+        {
+          span: "y",
+          value: "Year",
+          name: "Year"
+        }
+      ],
+    }, dialog => {
+      ಠ_ಠ.Fields().on(dialog);
+      ಠ_ಠ.Dialog({}, ಠ_ಠ).handlers.list(dialog, EMAIL);
+      dialog.find("textarea").focus();
+    }).then(values => values ? {
+      from: values.Range.Values.Start ? moment(values.Range.Values.Start) : null,
+      to: values.Range.Values.End ? moment(values.Range.Values.End).endOf("day") : null
+    } : false),
 
-    choose: (options, title, instructions, multiple) => ಠ_ಠ.Display.choose({
+    analysis: mine => {
+      var _analyse = (results, dates) => {
+          ಠ_ಠ.Router.clean(false); /* <!-- Clear any existing file/state --> */
+          results = _.isArray(results) ? results : [results];
+          var _ln = results.length;
+          ಠ_ಠ.Flags.log(`${_ln} form${_ln > 1 ? "s" : ""} selected for Analysis`, results);
+          return FN.process.analysis(_.map(results, result => ({
+            id: result.value,
+            name: `${result.name}${result.title ? ` [${result.title}]` : ""}`
+          })), mine, false, dates).then(ಠ_ಠ.Main.busy("Finding Reports"));
+        },
+        _filter;
+      return FN.prompt.choose(
+          ಱ.forms.selection("forms", "Report"), "Select a Form ...", "ANALYSE", true, [{
+            text: "Filter",
+            handler: () => _filter = true
+          }])
+        .then(results => results ? _filter ?
+          FN.prompt.dates().then(dates => dates ? _analyse(results, dates) : false) :
+          _analyse(results) : false);
+    },
+
+    choose: (options, title, instructions, multiple, actions) => ಠ_ಠ.Display.choose({
         id: "select_chooser",
         title: title,
         instructions: ಠ_ಠ.Display.doc.get(instructions),
         choices: options,
         multiple: multiple,
         action: "Select",
+        actions: actions,
       })
       .catch(e => (e ? ಠ_ಠ.Flags.error("Displaying Select Prompt", e) :
         ಠ_ಠ.Flags.log("Select Prompt Cancelled")).negative())
       .then(result => {
-        ಠ_ಠ.Flags.log("Selected:", result);
+        if (result) ಠ_ಠ.Flags.log("Selected:", result);
         return result;
       }),
 
@@ -545,14 +593,14 @@ App = function() {
     }),
     /* <!-- TODO: Process Tracker Loading --> */
 
-    analysis: (forms, mine, full) => Promise.resolve(_.map(forms, form => ({
+    analysis: (forms, mine, full, dates) => Promise.resolve(_.map(forms, form => ({
       id: form.id,
       value: form.value,
       template: ಱ.forms.template(form.id)
     }))).then(
       forms => {
         return Promise.all(_.map(forms,
-            form => ಠ_ಠ.Google.files.search(TYPE_REPORT, `FORM=${form.id}`, mine, true)))
+            form => ಠ_ಠ.Google.files.search(TYPE_REPORT, `FORM=${form.id}`, mine, dates, true)))
           .then(reports => {
             return _.reduce(reports, (memo, reports) => memo.concat(reports), []);
           })
@@ -678,34 +726,22 @@ App = function() {
     export: {
 
       analysis: type => Promise.resolve(ರ‿ರ.analysis.table().values())
-        .then(values => _.map(values, row =>
-          _.flatten(_.map(row, cell => cell ? cell.split("\n") : ""))))
-        .then(values => _.tap(values,
-          values => ಠ_ಠ.Flags.log(`EXPORTING to ${type}`, values)))
+        .then(values => ರ‿ರ.analysis.table().expand(values))
+        .then(values => _.tap(values, values => ಠ_ಠ.Flags.log(`EXPORTING to ${type}`, values)))
         .then(values => type == "sheets" ?
           ಠ_ಠ.Google.sheets.create(ರ‿ರ.analysis.title(), "Analysis").then(sheet => {
             const length = values.length,
-              width = _.reduce(values,
-                (ln, row) => Math.max(ln, _.isArray(row) ? row.length : 1), 0);
+              width = ರ‿ರ.analysis.table().width(values);
             return ಠ_ಠ.Google.sheets.update(sheet.spreadsheetId,
                 ಠ_ಠ.Google_Sheets_Notation().grid(0, length, 0, width, true), values)
               .catch(e => ಠ_ಠ.Flags.error("Exporting", e).negative())
               .then(FN.helper.notify.save("NOTIFY_SAVE_ANALYSIS_SUCCESS"));
           }) :
           (type == "md" ?
-            Promise.resolve(ರ‿ರ.analysis.table().markdown(values)) :
+            ರ‿ರ.analysis.table().markdown(values) :
             type == "csv" ?
-            Promise.resolve(ರ‿ರ.analysis.table().csv(values)) :
-            XlsxPopulate.fromBlankAsync().then(book => {
-              const rows = values.length,
-                columns = _.reduce(values,
-                  (ln, row) => Math.max(ln, _.isArray(row) ? row.length : 1), 0);
-              book.sheets()[0]
-                .name("Analysis")
-                .range(1, 1, rows + 1, columns + 1)
-                .value(values);
-              return book.outputAsync("blob");
-            }))
+            ರ‿ರ.analysis.table().csv(values) :
+            ರ‿ರ.analysis.table().excel(values, "Analysis"))
           .then(data => ಠ_ಠ.Saver({}, ಠ_ಠ).save(data, `${ರ‿ರ.analysis.title()}.${type}`,
             type == "xlsx" ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :
             type == "md" ? "text/markdown" :
@@ -775,7 +811,7 @@ App = function() {
                             saving.data.form.$name : saving.data.form.name
                         }),
                     },
-                    _data = JSON.stringify(saving.data, REGEX_REPLACER),
+                    _data = JSON.stringify(saving.data, SAVING_REPLACER),
                     _mime = TYPE_REPORT;
                   if (result) _meta.contentHints = result;
 

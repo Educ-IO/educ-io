@@ -140,17 +140,25 @@ Fields = (options, factory) => {
           _target = $("#" + _target.data("targets"));
 
           var _start = _target.find(`input[name='${_target.attr("id")}_start']`),
-            _end = _target.find(`input[name='${_target.attr("id")}_end']`);
-          var _start_Date = _start.val() ? moment(_start.val(), DATE_FORMAT_M) : moment(),
-            _end_Date;
+            _end = _target.find(`input[name='${_target.attr("id")}_end']`),
+            _historical = _target.data("historical"),
+            _initial = _historical ? _end : _start,
+            _derived = _historical ? _start : _end;
+
+          var _initial_Date = _initial.val() ?
+            moment(_initial.val(), DATE_FORMAT_M) : moment(),
+            _dervied_Date;
 
           if (_span) {
 
-            if (_start_Date.isValid()) {
+            if (_initial_Date.isValid()) {
 
-              _end_Date = _start_Date.clone().add(1, _span).subtract(1, "d");
-              _start.val(_start_Date.format(DATE_FORMAT_M));
-              _end.val(_end_Date.format(DATE_FORMAT_M));
+              _dervied_Date = _historical ?
+                _initial_Date.clone().add(-1, _span).add(1, "d") :
+                _initial_Date.clone().add(1, _span).subtract(1, "d");
+
+              _initial.val(_initial_Date.format(DATE_FORMAT_M));
+              _derived.val(_dervied_Date.format(DATE_FORMAT_M));
 
               ((start, span, end) => {
                 start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, e => {

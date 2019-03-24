@@ -43,6 +43,7 @@ __Σ__Volunteering = {
           icon: "date_range",
           __help__: "Over which period did you undertake this volunteering work?",
           required: true,
+          historical: true,
           type: "Custom",
           options: [{
               value: "Custom",
@@ -66,7 +67,7 @@ __Σ__Volunteering = {
           ],
           __meta: {
             index: true,
-            transform: "{{Start}} -> {{End}}{{#if Type}} ({{Type}}){{/if}}",
+            transform: "{% raw %}{{Start}} -> {{End}}{{#if Type}} ({{Type}}){{/if}}{% endraw %}",
             analyse: {
               type: "column"
             }
@@ -88,7 +89,7 @@ __Σ__Volunteering = {
           details: "Further details, if applicable",
           __meta: {
             index: true,
-            transform: "{{Display}}",
+            transform: "{% raw %}{{Display}}{% endraw %}",
           },
         },
       }

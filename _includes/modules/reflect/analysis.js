@@ -10,6 +10,8 @@ Analysis = (ಠ_ಠ, forms, reports) => {
     ID = "analysis",
     MISSING = "NO DATA",
     EMPTY = "",
+    HIDDEN = ["ID", "Owner", "Completed", "When", "Total", "Count", "Average"],
+    NUMERIC = /\d*\.?\d+/,
     FN = {};
   /* <!-- Internal Constants --> */
 
@@ -89,6 +91,12 @@ Analysis = (ಠ_ಠ, forms, reports) => {
                 value: option.value,
                 badge: option.class && option.class.indexOf("-") >= 0 ?
                   option.class.split("-")[1] : EMPTY
+              })) : null,
+            numerics: field.template == "field_radio" && field.options ?
+              _.map(field.options, option => ({
+                value: option.value,
+                numeric: option.numeric === null || option.numeric === undefined ?
+                  null : option.numeric
               })) : null
           }), memo), memo);
     }, []),
@@ -103,8 +111,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
       },
       hide_always: false,
       hide_now: false,
-      hide_initially: v === "ID" || v === "Owner" || v === "Completed" || v === "When" ?
-        true : false,
+      hide_initially: HIDDEN.indexOf(v) >= 0 ? true : false,
       field: v.toLowerCase(),
       icons: v === "When" ? ["access_time"] : null
     })),
@@ -113,7 +120,8 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
       var _data = DB.addCollection(id, {
         unique: ["id"],
-        indices: _.map((columns ? columns : []).concat(_.map(fields, field => field.title || field.id)),
+        indices: _.map((columns ? columns : [])
+          .concat(_.map(fields, field => field.title || field.id)),
           index => index.toLowerCase())
       });
 
@@ -182,30 +190,54 @@ Analysis = (ಠ_ಠ, forms, reports) => {
             if (!_key) _key = MISSING;
             if (!memo[_key]) memo[_key] = {
               name: _key,
-              details: []
+              total: null,
+              count: 0,
+              __count: 0,
+              average: null,
+              details: [],
             };
             _.each(_values, value => {
+
+              /* <-- Parse Data --> */
               var _data = [
                   data[(_column.title || _column.id).toLowerCase()],
                   data[(value.title || value.id).toLowerCase()]
                 ],
                 _badge = value.badges && _data[1] !== MISSING ?
-                _.find(value.badges, badge => badge.value == _data[1]) : null;
-              if (_badge) _badge = _badge.badge;
+                _.property("badge")(_.find(value.badges, badge => badge.value == _data[1])) : null,
+                _numeric = _data[1] === MISSING ?
+                null : value.numerics ?
+                _.property("numeric")(_.find(value.numerics,
+                  numeric => numeric.value == _data[1])) :
+                NUMERIC.test(_data[1]) ? parseFloat(_data[1].match(NUMERIC)[0]) : null;
+
+              /* <-- Log Numerics --> */
+              if (_numeric !== null && _numeric !== undefined) {
+                memo[_key].total += _numeric;
+                memo[_key].__count += 1;
+              }
+              memo[_key].count += 1;
+
+              /* <-- Push Data to Details --> */
               memo[_key].details.push({
                 key: _data[0] ? _data[0] : MISSING,
                 value: _data[1] ? _data[1] : MISSING,
                 title: `<b>Owner</b> ${data.__owner}<br/><b>Created</b> ${data.__created}<br/><b>Modified</b> ${data.__modified}<br/>${data.__complete ? "<b>COMPLETE</b><br/>" : ""}<em><a href='${data.__link}' target='_blank' class='text-info'>Open Report</a></em>`,
-                badge: _badge || "action-dark"
+                badge: _badge || "action-dark",
               });
+
             });
             return memo;
           }, {}),
-          _columns = ["Name", "Details"],
+          _columns = ["Name", "Total", "Count", "Average", "Details"],
           _headers = FN.generate.headers(_columns);
 
-        _.each(_reports, value => value.details =
-          _.sortBy(value.details, value => value.key + "_" + value.value));
+        /* <-- Clean Up Analysis Objects --> */
+        _.each(_reports, value => {
+          value.details = _.sortBy(value.details, value => value.key + "_" + value.value);
+          if (value.total) value.average = (value.total / value.__count);
+          delete value.__count;
+        });
 
         var _data = DB.addCollection(id, {
           unique: [_columns[0].toLowerCase()],
@@ -225,6 +257,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
           headers: _headers,
         }, {
           classes: ["table-hover"],
+          collapsed: true,
           wrapper: wrapper,
         }, target, after);
 
@@ -304,7 +337,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
     summary: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage, false),
 
     detail: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage, "detail"),
-    
+
     title: () => `Analysis - ${FN.generate.names().join(" | ")}`,
 
   };

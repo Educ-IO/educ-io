@@ -166,6 +166,7 @@ templates:
   - reflect/recipients
   - reflect/pill
   - reflect/analyse_header
+  - reflect/dates
 docs:
   - shared/JUMP
   - shared/HELP
@@ -195,6 +196,7 @@ docs:
   - reflect/TUTORIALS
   - reflect/FORM
   - reflect/ANALYSE
+  - reflect/ANALYSE_DATES
   - reflect/SCALE
   - reflect/NO_SIGNATURES
   - reflect/REMOVE_SIGNATURES
@@ -251,6 +253,8 @@ keys:
       oauth: 969160887251-lnkpkhpet6ojgtkposr49f0uuubbbpq2.apps.googleusercontent.com
 menus:
   - name: Report
+    disabled_until:
+      - authenticated
     groups:
       all:
         commands:
@@ -349,6 +353,8 @@ menus:
             disabled_until:
               - opened-report
   - name: Forms
+    disabled_until:
+      - authenticated
     groups:
       all:
         commands:
@@ -451,6 +457,8 @@ menus:
             desc: Close this Analysis
             hash: close
   - name: Tracker
+    disabled_until:
+      - authenticated
     groups:
       all:
         commands:
@@ -489,6 +497,8 @@ menus:
             hash: install
             auth: google
             scope: https://www.googleapis.com/auth/drive.install
+            disabled_until:
+              - authenticated
           - name: Permissions
             url: /scopes/?highlight=reflect
             desc: Find out about the permissions and scopes that this app uses

@@ -154,21 +154,25 @@ __Σ__UK_Teachers_Lesson_Observation =  {
             {
               class: "btn-primary",
               value: "1: Outstanding",
+              numeric: 4,
               icon: ""
             },
             {
               class: "btn-success",
               value: "2: Good",
+              numeric: 3,
               icon: ""
             },
             {
               class: "btn-warning",
               value: "3: Requires Improvement",
+              numeric: 2,
               icon: ""
             },
             {
               class: "btn-danger",
               value: "4: Inadequate",
+              numeric: 1,
               icon: ""
             },
             {

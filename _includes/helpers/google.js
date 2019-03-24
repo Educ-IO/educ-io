@@ -308,7 +308,7 @@ Google_API = (options, factory) => {
 
   };
 
-  var _contents = (ids, names, mimeTypes, excludeMimeTypes, properties, visibilities, shared, skeleton, team, overrideType, propertyModifier, spaces, fields, owner) => {
+  var _contents = (ids, names, mimeTypes, excludeMimeTypes, properties, visibilities, shared, skeleton, team, overrideType, propertyModifier, spaces, fields, owner, dates) => {
 
     /* <!-- Build the ID portion of the query --> */
     var _i = ids && ids.length > 0 ?
@@ -346,9 +346,20 @@ Google_API = (options, factory) => {
       `and${owner === false ? " not" : ""} ('${_.isString(owner) ? owner : "me"}' in owners)` :
       "";
 
+    /* <!-- Build DATES portion of the query --> */
+    var _formatDate = value => value ?
+      _.isString(value) ? value :
+      _.isDate(value) ? value.toISOString() :
+      value._isAMomentObject ? value.toISOString() :
+      new Date().toISOString() :
+      new Date().toISOString();
+
+    var _d = dates !== null && dates !== undefined ?
+      `and (${dates.from ? `modifiedTime >= '${_formatDate(dates.from)}'` : ""}${dates.from && dates.to ? " and " : ""}${dates.to ? `modifiedTime <= '${_formatDate(dates.to)}'` : ""})` : "";
+
     var _data = {
       pageSize: PAGE_SIZE,
-      q: "trashed = false" + _i + _n + _m + _e + _p + _v + _s + _o,
+      q: "trashed = false" + _i + _n + _m + _e + _p + _v + _s + _o + _d,
       orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
       fields: `kind,nextPageToken,incompleteSearch,files(${fields ? fields : skeleton ? SKELETON : FIELDS}${skeleton && team ? ",teamDriveId" : ""})`,
     };
@@ -779,9 +790,9 @@ Google_API = (options, factory) => {
         return fn;
       },
 
-      search: (mimeTypes, properties, mine, full) => _contents(null, null, _arrayize(mimeTypes, _.isString),
-        null, _arrayize(properties, _.isString),
-        null, null, false, false, null, null, null, full ? FULL : null, mine),
+      search: (mimeTypes, properties, mine, dates, full) => _contents(null, null,
+        _arrayize(mimeTypes, _.isString), null, _arrayize(properties, _.isString),
+        null, null, false, false, null, null, null, full ? FULL : null, mine, dates),
 
     },
 

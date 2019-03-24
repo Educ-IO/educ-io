@@ -29,6 +29,7 @@ General
 
 Datatable
 ---------
+* Filter Date / Dates in columns -> Use a range as well? Earliest to latest with filter xxx days/months/years each side of selected value?
 
 Auth
 ----
@@ -42,6 +43,7 @@ Router
 
 Apps
 ----
+
 * ** IMPORTANT ** Router and subsequent anchor routes -> how do we handle duplicates?
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 
@@ -121,7 +123,6 @@ Folders
 Reflect
 -------
 
-
 Publish
 -------
 
@@ -132,6 +133,12 @@ Survey
 
 Complete
 --------
+* Have total / average columns on Analysis summary, informed by field type (numeric values on radio/scale fields) and __meta tag <-- DONE
+* ** BUG ** Should __extends be promulagated through to saved report (thought not...) <-- DONE
+* Optional **Modal** to filter Analysis by date after picking the form/s - would inform the Drive Search query before passing data to Analysis module. <-- DONE
+* ** BUG ** Extend breaks Analysis Detail View -> should only expand on final cell? <-- DONE
+* ** BUG ** Completed shows up as empty object on Analysis Detail (should be blank) <-- DONE
+* Move XLSX generation to DataTable? + parameterised data split as separate function (useful for other apps) <-- DONE
 * ** BUG ** Interactions Data test can fail with exception without triggering a test failure! <-- DONE
 * ** IMPORTANT ** Feedback on successful save? Or failure. <-- DONE
 * ** BUG ** Analysis of empty forms? E.g. Lesson Observation <-- DONE
@@ -630,4 +637,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2019-03-22
+ᕕ( ᐛ )ᕗ JD - 2019-03-24

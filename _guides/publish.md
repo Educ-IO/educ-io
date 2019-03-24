@@ -4,7 +4,7 @@ title: A Guide to Publish
 permalink: /guides/publish/
 short_title: A Guide
 support: true
-app: publish
+for: publish
 ---
 
 #### Introduction
