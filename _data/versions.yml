@@ -1,8 +1,8 @@
 site :
-  0.1.3n :
-    name : Reflect v0.0.6i-beta
+  0.1.3o :
+    name : Reflect v0.0.6j-beta
     desc : Alpha Analysis Tools for Reflect
-    numeric : 0.1.1.32
+    numeric : 0.1.1.33
   0.1.3f :
     name : Reflect v0.0.6a-beta
     desc : Reflect Report Sending Feature
@@ -808,7 +808,7 @@ folders :
     name : Early testing version
     type : minor
 reflect :
-  0.0.6i-beta :
+  0.0.6j-beta :
     name : Bug Fixes, Forms and Display Improvements
     type : minor
   0.0.6c-beta :

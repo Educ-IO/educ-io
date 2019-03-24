@@ -35,7 +35,7 @@ imports:
     load: first
   - name: moment
     load: first
-  - name: handlebars
+  - name: handlebars_full
     load: last
   - name: hello
     load: last
@@ -298,6 +298,7 @@ menus:
             desc: Save this as a New (named) Report
             hash: save.report.clone
             imports:
+              - handlebars_full
               - html2canvas
             disabled_until:
               - editable-report

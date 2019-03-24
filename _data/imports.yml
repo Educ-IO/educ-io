@@ -492,6 +492,26 @@ handlebars:
       crossorigin: anonymous
       id: __handlebars
 
+handlebars_full:
+  name: Handlebars JS
+  desc: Used for HTML Templating in the browser.
+  url: https://cdnjs.com/libraries/handlebars.js
+  project: http://handlebarsjs.com/
+  version: 4.1.1
+  last: 4.1.0
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.1/handlebars.min.js
+      integrity: sha256-Mki72593zH3nxiQrW1mskmSOAXOep8FVIK0ozKFISyY=
+      crossorigin: anonymous
+      id: __handlebars
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.1/handlebars.js
+      integrity: sha256-lPhhmwtSxA3u1H+yq9GHYh69JvO/cOqSpwvPiFLTMgE=
+      crossorigin: anonymous
+      id: __handlebars
+
 fontface:
   name: Font Face Observer
   desc: Web Font Loader
