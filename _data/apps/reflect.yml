@@ -441,6 +441,8 @@ menus:
           - name: Export to Sheets
             desc: Export Analysis Data to Google Sheets
             hash: analyse.export.sheets
+            scope: https://www.googleapis.com/auth/spreadsheets
+            auth: google
           - name: Download as CSV
             desc: Download Current Analysis Data as a Comma Separated Values (CSV) File
             hash: analyse.export.csv
