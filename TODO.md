@@ -123,6 +123,7 @@ Folders
 Reflect
 -------
 
+
 Publish
 -------
 
@@ -133,6 +134,8 @@ Survey
 
 Complete
 --------
+* Neaten up Google Sheet Analysis output <-- DONE
+* Handle similar but different names on summary analysis <-- DONE
 * Have total / average columns on Analysis summary, informed by field type (numeric values on radio/scale fields) and __meta tag <-- DONE
 * ** BUG ** Should __extends be promulagated through to saved report (thought not...) <-- DONE
 * Optional **Modal** to filter Analysis by date after picking the form/s - would inform the Drive Search query before passing data to Analysis module. <-- DONE

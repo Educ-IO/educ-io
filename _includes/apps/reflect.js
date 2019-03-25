@@ -73,25 +73,28 @@ App = function() {
 
     notify: {
 
-      save: (message, delay) => result => ಠ_ಠ.Display.notify(
-        _.extend({
-          delay: delay || 10000,
-          target: $("#reflect_Notify .holder")
-        }, result === false ? {
-          title: "Save FAILED",
-          content: ಠ_ಠ.Display.doc.get("NOTIFY_SAVE_FAILED"),
-          class: "text-danger",
-          header_class: "bg-danger-light"
-        } : {
-          title: "Successful Save",
-          content: ಠ_ಠ.Display.doc.get({
-            name: message,
-            content: result.webViewLink ?
-              result.webViewLink : result.spreadsheetId ?
-              `https://docs.google.com/spreadsheets/d/${result.spreadsheetId}/edit` : "https://drive.google.com",
-          }),
-          header_class: "bg-success-light"
-        })),
+      save: (message, delay) => result => {
+        ಠ_ಠ.Display.notify(
+          _.extend({
+            delay: delay || 10000,
+            target: $("#reflect_Notify .holder")
+          }, result === false ? {
+            title: "Save FAILED",
+            content: ಠ_ಠ.Display.doc.get("NOTIFY_SAVE_FAILED"),
+            class: "text-danger",
+            header_class: "bg-danger-light"
+          } : {
+            title: "Successful Save",
+            content: ಠ_ಠ.Display.doc.get({
+              name: message,
+              content: result.webViewLink ?
+                result.webViewLink : result.spreadsheetId ?
+                `https://docs.google.com/spreadsheets/d/${result.spreadsheetId}/edit` : "https://drive.google.com",
+            }),
+            header_class: "bg-success-light"
+          }));
+        return result;
+      },
 
     },
 
@@ -732,8 +735,38 @@ App = function() {
           ಠ_ಠ.Google.sheets.create(ರ‿ರ.analysis.title(), "Analysis").then(sheet => {
             const length = values.length,
               width = ರ‿ರ.analysis.table().width(values);
+            var notation = ಠ_ಠ.Google_Sheets_Notation(),
+              grid = ಠ_ಠ.Google_Sheets_Grid({
+                sheet: sheet.sheets[0].properties.sheetId
+              }),
+              format = ಠ_ಠ.Google_Sheets_Format({
+                sheet: sheet.sheets[0].properties.sheetId
+              }, ಠ_ಠ),
+              properties = ಠ_ಠ.Google_Sheets_Properties({
+                sheet: sheet.sheets[0].properties.sheetId
+              });
+
             return ಠ_ಠ.Google.sheets.update(sheet.spreadsheetId,
-                ಠ_ಠ.Google_Sheets_Notation().grid(0, length, 0, width, true), values)
+                notation.grid(0, length, 0, width, true), values)
+              .then(sheet => ಠ_ಠ.Google.sheets.batch(
+                sheet.spreadsheetId, [
+                  format.cells(grid.rows(0, 1).range(), [
+                    format.background("BLACK"),
+                    format.align.horizontal("CENTER"),
+                    format.text("white", 12, true)
+                  ]),
+                  format.cells(grid.columns(0, width).range(), [
+                    format.wrap("WRAP"),
+                    format.align.vertical("MIDDLE")
+                  ]),
+                  properties.update([
+                    properties.grid.frozen.rows(1),
+                  ]),
+                  {
+                    "updateDimensionProperties": grid.columns(0, width)
+                      .dimension(140)
+                  }
+                ]))
               .catch(e => ಠ_ಠ.Flags.error("Exporting", e).negative())
               .then(FN.helper.notify.save("NOTIFY_SAVE_ANALYSIS_SUCCESS"));
           }) :
@@ -1430,6 +1463,8 @@ App = function() {
     clean: () => ಠ_ಠ.Router.clean(false),
 
     state: ರ‿ರ,
+
+    email: EMAIL,
 
   };
 

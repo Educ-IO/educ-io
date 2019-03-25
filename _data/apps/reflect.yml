@@ -80,6 +80,10 @@ imports:
 helpers:
   - data
   - network
+  - google/sheets/notation
+  - google/sheets/grid
+  - google/sheets/format
+  - google/sheets/properties
   - google
   - strings
   - fields
@@ -89,7 +93,7 @@ helpers:
   - css
   - scroll
   - saver
-  - google/sheets/notation
+  - colours
 modules:
   - flags
   - controller

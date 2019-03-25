@@ -179,62 +179,77 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
         var _all = [_row, _column].concat(_values),
           _reports = _.reduce(_.map(reports,
-            report => _.extend(FN.generate.values(_all, report.file), {
-              __created: moment(report.file.createdTime).format("MMM D, YYYY HH:mm"),
-              __modified: moment(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
-              __owner: FN.helper.owner(report.file),
-              __link: FN.helper.url(report.file),
-              __complete: FN.helper.complete(report.file),
-            })), (memo, data) => {
-            var _key = data[(_row.title || _row.id).toLowerCase()];
-            if (!_key) _key = MISSING;
-            if (!memo[_key]) memo[_key] = {
-              name: _key,
-              total: null,
-              count: 0,
-              __count: 0,
-              average: null,
-              details: [],
-            };
-            _.each(_values, value => {
-
-              /* <-- Parse Data --> */
-              var _data = [
-                  data[(_column.title || _column.id).toLowerCase()],
-                  data[(value.title || value.id).toLowerCase()]
-                ],
-                _badge = value.badges && _data[1] !== MISSING ?
-                _.property("badge")(_.find(value.badges, badge => badge.value == _data[1])) : null,
-                _numeric = _data[1] === MISSING ?
-                null : value.numerics ?
-                _.property("numeric")(_.find(value.numerics,
-                  numeric => numeric.value == _data[1])) :
-                NUMERIC.test(_data[1]) ? parseFloat(_data[1].match(NUMERIC)[0]) : null;
-
-              /* <-- Log Numerics --> */
-              if (_numeric !== null && _numeric !== undefined) {
-                memo[_key].total += _numeric;
-                memo[_key].__count += 1;
+              report => _.extend(FN.generate.values(_all, report.file), {
+                __created: moment(report.file.createdTime).format("MMM D, YYYY HH:mm"),
+                __modified: moment(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
+                __owner: FN.helper.owner(report.file),
+                __link: FN.helper.url(report.file),
+                __complete: FN.helper.complete(report.file),
+              })),
+            (memo, data) => {
+              var _key = data[(_row.title || _row.id).toLowerCase()],
+                _name = _key;
+              if (!_key) {
+                _key = MISSING;
+              } else if (ಠ_ಠ.App.email.test(_key)) {
+                _key = _key.match(ಠ_ಠ.App.email)[0];
               }
-              memo[_key].count += 1;
+              if (!memo[_key = _key.toLowerCase()]) {
+                memo[_key] = {
+                  name: _name,
+                  total: null,
+                  count: 0,
+                  __count: 0,
+                  average: null,
+                  details: [],
+                };
+              } else if (_.isString(memo[_key].name) && memo[_key].name != _name) {
+                memo[_key].name = [memo[_key].name, _name];
+              } else if (_.isArray(memo[_key].name) && memo[_key].name.indexOf(_name) < 0) {
+                memo[_key].name = memo[_key].name.concat(_name);
+              }
+              _.each(_values, value => {
 
-              /* <-- Push Data to Details --> */
-              memo[_key].details.push({
-                key: _data[0] ? _data[0] : MISSING,
-                value: _data[1] ? _data[1] : MISSING,
-                title: `<b>Owner</b> ${data.__owner}<br/><b>Created</b> ${data.__created}<br/><b>Modified</b> ${data.__modified}<br/>${data.__complete ? "<b>COMPLETE</b><br/>" : ""}<em><a href='${data.__link}' target='_blank' class='text-info'>Open Report</a></em>`,
-                badge: _badge || "action-dark",
+                /* <-- Parse Data --> */
+                var _data = [
+                    data[(_column.title || _column.id).toLowerCase()],
+                    data[(value.title || value.id).toLowerCase()]
+                  ],
+                  _badge = value.badges && _data[1] !== MISSING ?
+                  _.property("badge")(_.find(value.badges, badge => badge.value == _data[1])) : null,
+                  _numeric = _data[1] === MISSING ?
+                  null : value.numerics ?
+                  _.property("numeric")(_.find(value.numerics,
+                    numeric => numeric.value == _data[1])) :
+                  NUMERIC.test(_data[1]) ? parseFloat(_data[1].match(NUMERIC)[0]) : null;
+
+                /* <-- Log Numerics --> */
+                if (_numeric !== null && _numeric !== undefined) {
+                  memo[_key].total += _numeric;
+                  memo[_key].__count += 1;
+                }
+                memo[_key].count += 1;
+
+                /* <-- Push Data to Details --> */
+                memo[_key].details.push({
+                  key: _data[0] ? _data[0] : MISSING,
+                  value: _data[1] ? _data[1] : MISSING,
+                  title: `<b>Owner</b> ${data.__owner}<br/><b>Created</b> ${data.__created}<br/><b>Modified</b> ${data.__modified}<br/>${data.__complete ? "<b>COMPLETE</b><br/>" : ""}<em><a href='${data.__link}' target='_blank' class='text-info'>Open Report</a></em>`,
+                  badge: _badge || "action-dark",
+                });
+
               });
-
-            });
-            return memo;
-          }, {}),
+              return memo;
+            }, {}),
           _columns = ["Name", "Total", "Count", "Average", "Details"],
           _headers = FN.generate.headers(_columns);
 
         /* <-- Clean Up Analysis Objects --> */
         _.each(_reports, value => {
           value.details = _.sortBy(value.details, value => value.key + "_" + value.value);
+          if (_.isArray(value.name)) value.name = {
+            name: value.name.sort()
+          };
           if (value.total) value.average = (value.total / value.__count);
           delete value.__count;
         });

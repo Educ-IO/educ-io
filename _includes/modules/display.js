@@ -284,9 +284,9 @@ Display = function() {
           if (variable && !isNaN(variable) && variable > 0) return _bytes(variable, 2);
         });
 
-        Handlebars.registerHelper("formatYaml", variable => {
+        Handlebars.registerHelper("formatYaml", (variable, field) => {
           if (variable !== null && variable !== undefined && window.jsyaml)
-            return jsyaml.safeDump(variable, {
+            return jsyaml.safeDump(variable[field] || variable, {
               skipInvalid: true
             });
         });
