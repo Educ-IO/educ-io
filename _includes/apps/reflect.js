@@ -1445,10 +1445,12 @@ App = function() {
                     .then(form => ರ‿ರ.form = form),
                   named: {
                     length: 1,
-                    fn: command => (ಱ.forms.has(command) ?
-                        Promise.resolve(FN.create.report(command, true)) :
-                        FN.prompt.create([FN.prompt.reports()]))
-                      .then(form => ರ‿ರ.form = form)
+                    fn: command => ಱ.forms.persistent().loaded
+                      .then(forms => (forms.has(command) ?
+                          Promise.resolve(FN.create.report(command, true)) :
+                          FN.prompt.create([FN.prompt.reports()]))
+                        .then(form => ರ‿ರ.form = form))
+                      .then(ಠ_ಠ.Main.busy("Loading Form"))
                   },
                   folder: {
                     length: 2,

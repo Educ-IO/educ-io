@@ -612,7 +612,8 @@ Display = function() {
         _status;
       var _clear = (options && options.clear === true) || _element.find(".loader").length > 0,
         _loader = _clear ?
-        options.clear = true && _element.find(".loader").remove() : _element.prepend(_template("loader")(options ? options : {})),
+        options.clear = true && _element.find(".loader").remove() :
+        _element.prepend(_template("loader")(options ? options : {})),
         _handler;
 
       if (options && options.status) {

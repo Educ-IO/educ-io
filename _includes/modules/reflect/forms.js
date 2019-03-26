@@ -38,6 +38,12 @@ Forms = function() {
     PROCESS = _.compose(MARKDOWN, DEEPCLONE);
   /* <!-- Internal Constants --> */
 
+
+  /* <!-- Internal Variables --> */
+  var ಱ = {}; /* <!-- Persistant --> */
+  /* <!-- Internal Variables --> */
+
+
   /* <!-- Internal Functions --> */
   var _get = (name, value) => _.find(value,
     (value, key) => key.localeCompare(name, undefined, {
@@ -152,8 +158,8 @@ Forms = function() {
           regex: /\[((?:\[[^\]]*]|[^\[\]])*)]\([ \t]*<?(.*?(?:\(.*?\).*?)?)>?[ \t]*((['"])(.*?)\4[ \t]*)?\)\{\:target=(["'])(.*)\6}/g,
           replace: (wholematch, linkText, url, a, b, title, c, target) => {
             var value = value => typeof value != "undefined" && value !== "" && value !== null,
-                replace = value => showdown.helper.escapeCharacters(value.replace(/"/g, "&quot;"), "*_", false);
-            
+              replace = value => showdown.helper.escapeCharacters(value.replace(/"/g, "&quot;"), "*_", false);
+
             return `<a href="${url}"${value(title) ? ` title="${replace(title)}"` : ""}${value(target) ? ` target="${target}"` : ""}>${linkText}</a>`;
           }
         }];
@@ -178,9 +184,8 @@ Forms = function() {
       }, {});
 
       /* <!-- Get Scales & Forms from Google Drive --> */
-      _.each(TYPES, type => ಠ_ಠ.Google.files.type(type.mime)
-        .then(files => _.each(files, file => {
-          ಠ_ಠ.Google.files.download(file.id)
+      ಱ.loaded = Promise.all(_.map(TYPES, type => ಠ_ಠ.Google.files.type(type.mime)
+          .then(files => Promise.all(_.map(files, file => ಠ_ಠ.Google.files.download(file.id)
             .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
             .then(content => {
               var _object;
@@ -200,9 +205,9 @@ Forms = function() {
                 }];
                 return file;
               }) : Promise.resolve(file))
-            .then(file => ರ‿ರ.files[file.id] = file);
-        }))
-        .catch(e => ಠ_ಠ.Flags.error(`Error Searching for File Type: ${type.mime}`, e)));
+            .then(file => ರ‿ರ.files[file.id] = file))))
+          .catch(e => ಠ_ಠ.Flags.error(`Error Searching for File Type: ${type.mime}`, e))))
+        .then(() => this);
 
       /* <!-- Log Cached Values --> */
       ಠ_ಠ.Flags.log("Cache:", ರ‿ರ.cache);
@@ -247,7 +252,9 @@ Forms = function() {
       form: _create(id, template, editable, signable, completed, preview)
     }),
 
-    scale: name => _get(name, ರ‿ರ.cache.scales)
+    scale: name => _get(name, ರ‿ರ.cache.scales),
+
+    persistent: () => ಱ,
 
   };
   /* <!-- External Visibility --> */

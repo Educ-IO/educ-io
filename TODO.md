@@ -122,10 +122,10 @@ Folders
 
 Reflect
 -------
-* ** BUG ** When sending a url to create a report on a specific form - falls back to create dialog because forms are not completely loaded. Needs a promise resolution to fix!
-* Analysis - upload list of expected users? Save analysis query together with expected list?
-* Fields / Data - check toggle button rehydrates properly (doesn't for false values)
-* Fields / Data - write test for toggle button on textual input
+* ** FEATURE ** Analysis - upload list of expected users? Save analysis query together with expected list?
+
+* ** TESTING ** Fields / Data - write test for toggle button on textual input (both interaction and persistence)
+
 * Finish all instructions, write guide and tutorials
 
 Publish
@@ -138,6 +138,8 @@ Survey
 
 Complete
 --------
+* ** BUG ** When sending a url to create a report on a specific form - falls back to create dialog because forms are not completely loaded. Needs a promise resolution to fix! Maybe await promise resolution? <-- DONE
+* Fields / Data - check toggle button rehydrates properly (doesn't for false values) <-- DONE
 * Alternative Lesson Obvs Form (new field types? link to document in text field / help) <-- DONE
 * Link group field to destination email? - could do just with an email address and a regex extraction? <-- DONE
 * **Gracefully handle** send/share error when user does not have a Google account <-- DONE
@@ -648,4 +650,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2019-03-24
+ᕕ( ᐛ )ᕗ JD - 2019-03-26
