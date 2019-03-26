@@ -214,8 +214,10 @@ Data = (options, factory) => {
       var simple = _el => {
         if (el[0].type == "range" && el.data("value") === false) el.data("value", true);
         if (_el[0].type == "checkbox" || _el[0].type == "radio") {
-          if (val) {
-            _el.prop("checked", !!(val)).triggerHandler("change");
+          if (val || el.data("output-always")) {
+            _el.prop("checked", !!(val))
+              .prop("indeterminate", false)
+              .triggerHandler("change");
             if (_el.data("reveal")) GET(_el.data("reveal")).show();
           }
         } else if (_el[0].nodeName == "BUTTON") { /* <!-- Handle Button Selectors --> */
@@ -270,7 +272,7 @@ Data = (options, factory) => {
       var complex = descendants => _.each(descendants, el => {
         var _el = $(el),
           _data = (_data = _el.data("output-name")) || _el.data("holder-field");
-        if (_valid(val[_data], true)) value(_el, val[_data]);
+        if (_valid(val[_data], !_el.data("output-always"))) value(_el, val[_data]);
       });
 
       /* <!-- Only Process Direct Descendents --> */
@@ -295,7 +297,7 @@ Data = (options, factory) => {
         _.each(_targets, el => {
           var __$ = $(el),
             __name = (__name = __$.data("output-name")) || __$.data("holder-field");
-          if (__name && _valid(_values[__name], true)) value(__$, _values[__name]);
+          if (__name && _valid(_values[__name], !__$.data("output-always"))) value(__$, _values[__name]);
         });
 
       }

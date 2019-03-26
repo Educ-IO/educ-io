@@ -122,6 +122,7 @@ Folders
 
 Reflect
 -------
+* ** BUG ** When sending a url to create a report on a specific form - falls back to create dialog because forms are not completely loaded. Needs a promise resolution to fix!
 * Analysis - upload list of expected users? Save analysis query together with expected list?
 * Fields / Data - check toggle button rehydrates properly (doesn't for false values)
 * Fields / Data - write test for toggle button on textual input

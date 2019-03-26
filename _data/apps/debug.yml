@@ -101,6 +101,7 @@ templates:
   - text
   - shared/control_icon
   - shared/control_button
+  - shared/toggle_button
   - shared/list_item
   - fields/field_validation
   - fields/field_general
