@@ -145,7 +145,21 @@ Forms = function() {
       ಠ_ಠ = container;
 
       /* <!-- Initialise Default Scales and Forms --> */
+      showdown.setFlavor("github");
+      showdown.extension("targetlink", function() {
+        return [{
+          type: "lang",
+          regex: /\[((?:\[[^\]]*]|[^\[\]])*)]\([ \t]*<?(.*?(?:\(.*?\).*?)?)>?[ \t]*((['"])(.*?)\4[ \t]*)?\)\{\:target=(["'])(.*)\6}/g,
+          replace: (wholematch, linkText, url, a, b, title, c, target) => {
+            var value = value => typeof value != "undefined" && value !== "" && value !== null,
+                replace = value => showdown.helper.escapeCharacters(value.replace(/"/g, "&quot;"), "*_", false);
+            
+            return `<a href="${url}"${value(title) ? ` title="${replace(title)}"` : ""}${value(target) ? ` target="${target}"` : ""}>${linkText}</a>`;
+          }
+        }];
+      });
       ರ‿ರ.showdown = new showdown.Converter({
+        extensions: ["targetlink"],
         tables: true
       });
 

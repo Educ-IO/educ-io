@@ -940,29 +940,33 @@ Display = function() {
 
         /* <!-- Set Event Handlers --> */
         var _submitted = false,
-          _submit = () => {
-            var _name = dialog.find("textarea[name='name'], input[type='text'][name='name']").val();
-            var _value = dialog.find("textarea[name='value'], input[type='text'][name='value'], input[type='password'][name='value']").val();
-            _clean();
-            if (_value && (!options.validate ||
+          _submit = e => {
+            var _name = dialog.find("textarea[name='name'], input[type='text'][name='name']").val(),
+              _value = dialog.find("textarea[name='value'], input[type='text'][name='value'], input[type='password'][name='value']").val(),
+              _valid = ((_value || options.allowblank) && (!options.validate ||
                 ((
                   _.isFunction(options.validate) && options.validate(_value)
                 ) || (
                   _.isRegExp(options.validate) && options.validate.test(_value)
                 ))
-              ))
+              ));
+            if (_valid) {
+              _clean();
               resolve(_name ? {
                 name: _name,
                 value: _value
               } : _value);
+            } else if (e) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
           };
 
         /* <!-- Handle Enter Key (if simple) --> */
         if (options.simple || options.password) dialog.keypress(e => {
           if (e.which == 13) {
-            event.preventDefault();
-            _submitted = true;
-            dialog.modal("hide");
+            e.preventDefault();
+            dialog.find(".modal-footer button.btn-primary").click();
           }
         });
 
@@ -970,9 +974,7 @@ Display = function() {
         _dialog(dialog, options);
 
         /* <!-- Handle Clicked Submit --> */
-        dialog.find(".modal-footer button.btn-primary").click(() => {
-          _submitted = true;
-        });
+        dialog.find(".modal-footer button.btn-primary").click(_submit);
         dialog.on("hidden.bs.modal", () => dialog.remove() && (_submitted ? _submit() : reject()));
 
         /* <!-- Show the Modal Dialog --> */

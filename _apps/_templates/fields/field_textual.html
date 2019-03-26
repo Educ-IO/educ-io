@@ -35,25 +35,51 @@
   <div class="input-group{{#if large}} input-group-lg{{/if}}">
     {{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
     {{#if (all rows (none pattern))}}
-    <textarea id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} class="form-control{{#if large}} form-control-lg{{/if}} resizable optional"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}} rows="{{rows}}"{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>{{either value ""}}</textarea>
+    <textarea id="{{which toggle (concat id '_DETAILS') id}}" 
+              name="{{which toggle (concat id '_DETAILS') id}}" 
+              data-output-name="{{which toggle 'Details' 'Value'}}"
+              {{#if default}} data-input-default="{{default}}"{{/if}}
+              class="form-control{{#if large}} form-control-lg{{/if}} resizable optional"
+              {{#if required}} required="required"{{/if}}
+              {{#if readonly}} readonly="readonly"{{/if}} rows="{{rows}}"
+              {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>{{either value ""}}</textarea>
     {{else}}
-    <input id="{{id}}" name="{{id}}" data-output-name="Value"{{#if default}} data-input-default="{{default}}"{{/if}} type="{{val 'text' type}}" class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#if class}} {{class}}{{/if}}"{{#if required}} required="required"{{/if}}{{#if readonly}} readonly="readonly"{{/if}}{{#if value}} value="{{value}}"{{/if}}{{#if help}} aria-describedby="{{id}}_HELP"{{/if}}{{#if pattern}} pattern="{{#isRegex pattern}}{{pattern.source}}{{else}}{{string pattern}}{{/isRegex}}"{{/if}}/>
+    <input id="{{which toggle (concat id '_DETAILS') id}}"
+           name="{{which toggle (concat id '_DETAILS') id}}"
+           data-output-name="{{which toggle 'Details' 'Value'}}"
+           {{#if default}} data-input-default="{{default}}"{{/if}}
+           type="{{val 'text' type}}"
+           class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#if class}} {{class}}{{/if}}"
+           {{#if required}} required="required"{{/if}}
+           {{#if readonly}} readonly="readonly"{{/if}}
+           {{#if value}} value="{{value}}"{{/if}}
+           {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+           {{#if pattern}} pattern="{{#isRegex pattern}}{{pattern.source}}{{else}}{{string pattern}}{{/isRegex}}"{{/if}}/>
     {{/if}}
-    {{#if (any button clear)}}<span class="input-group-append d-none{{#unless readonly}} d-lg-flex{{/unless}}">
-    {{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
-    	b_target=id b_icon="refresh" disabled=readonly }}
+    {{#if (any button clear toggle)}}<span class="input-group-append d-none{{#unless readonly}} d-lg-flex{{/unless}}">
+     {{#if (any button clear)}}{{> control_button b_class="btn-secondary eraser no-active"
+    	b_title="Clear / Reset" b_target=(which toggle (concat id '||' id '_DETAILS') id) 
+    	b_icon="refresh" disabled=readonly }}{{/if}}
     {{#if button}}{{> control_button b_id=(concat id "_BUTTON_LG") b_icon=""
     	b_class="btn-primary textual-input-button"
     	b_target=id b_action=action b_text=button disabled=readonly }}{{/if}}
+    {{#if toggle}}{{> toggle_button b_id=(concat id "_TOGGLE_LG") b_targets=id
+    	b_title="Yes / No" b_class=toggle_class disabled=readonly }}{{/if}}
     </span>{{/if}}
     {{> field_validation}}
   </div>
-	{{#if (any button clear)}}<div class="d-flex"><div role="group"
+	{{#if (any button clear toggle)}}<div class="d-flex"><div role="group"
   	class="btn-group float-right my-1{{#unless readonly}} d-inline-flex ml-auto d-lg-none{{else}} d-none{{/unless}}">
-    {{> control_button b_small="true" b_icon_large="true" 
-    b_class="btn-secondary eraser no-active" b_title="Clear / Reset" b_target=id b_icon="refresh" disabled=readonly }}
+    {{#if (any button clear)}}{{> control_button b_small="true" b_icon_large="true" 
+    	b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
+    	b_target=(which toggle (concat id '||' id '_DETAILS') id) b_icon="refresh" disabled=readonly }}{{/if}}
     {{#if button}}{{> control_button b_small="true" b_id=(concat id "_BUTTON_SM")
-    b_class="btn-primary textual-input-button" b_target=id b_action=action b_text=button disabled=readonly }}{{/if}}
+    	b_class="btn-primary textual-input-button" b_target=id b_action=action
+    	b_text=button disabled=readonly }}{{/if}}
+    {{#if toggle}}{{> toggle_button b_small="true" b_id=(concat id "_TOGGLE_SM") 
+    	 b_title="Yes / No" b_class=toggle_class b_targets=id disabled=readonly }}{{/if}}
   </div></div>{{/if}}
+	{{#if toggle}}<input id="{{id}}" data-output-name="Value" data-output-always="true"
+                       type="checkbox" class="d-none">{{/if}}
 {{/field_general}}
 {% endraw %}

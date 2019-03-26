@@ -1,8 +1,8 @@
 site :
-  0.1.3r :
+  0.1.3s :
     name : Reflect v0.0.6j-beta
     desc : Alpha Analysis Tools for Reflect
-    numeric : 0.1.1.35
+    numeric : 0.1.1.36
   0.1.3f :
     name : Reflect v0.0.6a-beta
     desc : Reflect Report Sending Feature

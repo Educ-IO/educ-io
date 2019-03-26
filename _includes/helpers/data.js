@@ -64,7 +64,8 @@ Data = (options, factory) => {
         }).length === 0;
     }),
     _valid = (value, positives) =>
-    value === true || (options.always || !positives) && value === false || _.isNumber(value) || !_.isEmpty(value);
+    value === true || (options.always || !positives) && value === false ||
+    _.isNumber(value) || !_.isEmpty(value);
 
   var _dehydrate = form => {
 
@@ -78,7 +79,8 @@ Data = (options, factory) => {
         var simple = el => {
           var _type = el.data("output-type") || el.prop("type") || "string",
             _val = (el[0].type == "range" && el.data("value") === false) ? null :
-            (el[0].type == "checkbox" && el.is("input:indeterminate")) ? "all" :
+            (el[0].type == "checkbox" && el.is("input:indeterminate")) ?
+            el.data("output-always") ? "" : "all" :
             (el[0].type == "checkbox" || el[0].type == "radio") ? el.prop("checked") :
             (el[0].nodeName == "P" || el[0].nodeName == "DIV" ||
               el[0].nodeName == "SPAN" || el[0].nodeName == "I") ?

@@ -122,7 +122,10 @@ Folders
 
 Reflect
 -------
-
+* Analysis - upload list of expected users? Save analysis query together with expected list?
+* Fields / Data - check toggle button rehydrates properly (doesn't for false values)
+* Fields / Data - write test for toggle button on textual input
+* Finish all instructions, write guide and tutorials
 
 Publish
 -------
@@ -134,6 +137,10 @@ Survey
 
 Complete
 --------
+* Alternative Lesson Obvs Form (new field types? link to document in text field / help) <-- DONE
+* Link group field to destination email? - could do just with an email address and a regex extraction? <-- DONE
+* **Gracefully handle** send/share error when user does not have a Google account <-- DONE
+* Send success (and failure) toast notification, including link to email if possible? <-- DONE
 * Neaten up Google Sheet Analysis output <-- DONE
 * Handle similar but different names on summary analysis <-- DONE
 * Have total / average columns on Analysis summary, informed by field type (numeric values on radio/scale fields) and __meta tag <-- DONE

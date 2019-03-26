@@ -26,7 +26,7 @@
      {{#if order}} data-output-order="{{order}}"{{/if}}
      {{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
   <label class="{{which wide 'col-12' 'col-md-3'}} col-form-label"
-         for="{{id}}">{{val "" title field}}</label>
+         for="{{id}}">{{{val "" title field}}}</label>
   <div class="{{which wide 'col-12' 'col-md-9'}}">
     {{> @partial-block }}
   	{{#if help}}

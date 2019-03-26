@@ -31,8 +31,8 @@ App = function() {
     STATE_ANALYSIS_SHARED = "analysis-reports-shared",
     STATE_ANALYSIS_ANY = "analysis-stage-any",
     STATE_ANALYSIS_COMPLETE = "analysis-stage-complete",
-    STATES = [STATE_FILE_LOADED, STATE_FORM_OPENED, STATE_TRACKER_OPENED, STATE_REPORT_COMPLETE,
-      STATE_REPORT_OPENED, STATE_REPORT_SIGNABLE, STATE_REPORT_EDITABLE,
+    STATES = [STATE_FILE_LOADED, STATE_FORM_OPENED, STATE_TRACKER_OPENED,
+      STATE_REPORT_COMPLETE, STATE_REPORT_OPENED, STATE_REPORT_SIGNABLE, STATE_REPORT_EDITABLE,
       STATE_SCALE_OPENED, STATE_ANALYSIS, STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL,
       STATE_ANALYSIS_ALL, STATE_ANALYSIS_MINE, STATE_ANALYSIS_SHARED,
       STATE_ANALYSIS_ANY, STATE_ANALYSIS_COMPLETE,
@@ -86,7 +86,7 @@ App = function() {
           } : {
             title: "Successful Save",
             content: ಠ_ಠ.Display.doc.get({
-              name: message,
+              name: _.isFunction(message) ? message() : message,
               content: result.webViewLink ?
                 result.webViewLink : result.spreadsheetId ?
                 `https://docs.google.com/spreadsheets/d/${result.spreadsheetId}/edit` : "https://drive.google.com",
@@ -94,6 +94,27 @@ App = function() {
             header_class: "bg-success-light"
           }));
         return result;
+      },
+
+      success: (title, message, delay) => {
+        ಠ_ಠ.Display.notify({
+          title: _.isFunction(title) ? title() : title,
+          content: _.isFunction(message) ? message() : message,
+          header_class: "bg-success-light",
+          delay: delay || 10000,
+          target: $("#reflect_Notify .holder")
+        });
+      },
+
+      error: (title, message) => () => {
+        ಠ_ಠ.Display.notify({
+          title: _.isFunction(title) ? title() : title,
+          content: _.isFunction(message) ? message() : message,
+          class: "text-danger",
+          header_class: "bg-danger-light",
+          autohide: false,
+          target: $("#reflect_Notify .holder")
+        });
       },
 
     },
@@ -271,7 +292,8 @@ App = function() {
   /* <-- Edit Functions --> */
   FN.edit = {
 
-    generic: (value, help, title, id, mimeType, replacer, editable, clean) => ಠ_ಠ.Display.text({
+    generic: (value, help, title, id, mimeType, replacer, editable, clean) =>
+      ಠ_ಠ.Display.text({
         id: id ? id : "generic_editor",
         title: title ? title : "Create / Edit ...",
         message: help ? ಠ_ಠ.Display.doc.get(help) : "",
@@ -310,8 +332,8 @@ App = function() {
         FN.display.form(values) :
         ಠ_ಠ.Google.files.upload(null, values, ರ‿ರ.file.mimeType, null, ರ‿ರ.file.id, true)
         .then(ಠ_ಠ.Main.busy("Updating"))
-        .then(uploaded => ರ‿ರ.file = uploaded) : false)
-      .then(() => ಱ.forms = ಠ_ಠ.Forms())
+        .then(uploaded => ರ‿ರ.file = uploaded) :
+        values)
       .catch(e => {
         if (clean) ಠ_ಠ.Router.clean(true);
         return (e ? ಠ_ಠ.Flags.error("Edit Error", e) :
@@ -358,9 +380,9 @@ App = function() {
             });
           return _title.then(title => ಠ_ಠ.Google.files.upload({
             name: `${FN.helper.title(title, mime)}${EXTENSION}`
-          }, JSON.stringify(result, REGEX_REPLACER), mime), null, null, true);
+          }, JSON.stringify(result, REGEX_REPLACER, 2), mime), null, null, true);
         };
-        result ? _process(JSON.parse(result)) : Promise.resolve(false);
+        return result ? _process(JSON.parse(result)) : Promise.resolve(false);
       }),
 
     report: (name, actions, form, process) => FN.display.report(name, [STATE_REPORT_OPENED]
@@ -371,6 +393,7 @@ App = function() {
 
     form: name => FN.create.generic(FN.edit.form, name ?
         ಱ.forms.get(name).template : "", TYPE_FORM)
+      .then(FN.helper.notify.save("NOTIFY_SAVE_FORM_SUCCESS"))
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Form Create Prompt", e) : false),
 
     scale: name => FN.create.generic(FN.edit.scale, name ?
@@ -710,7 +733,7 @@ App = function() {
         actions: {
           editable: (file.capabilities && file.capabilities.canEdit),
           signable: file.capabilities && file.capabilities.canComment,
-          completed: !!(file.appProperties.COMPLETE),
+          completed: !!(file.appProperties && file.appProperties.COMPLETE),
           revisions: file.capabilities && file.capabilities.canReadRevisions
         }
       }))
@@ -794,6 +817,7 @@ App = function() {
       },
 
     },
+
     save: {
 
       form: value => FN.action.screenshot($("form[role='form'][data-name]")[0])
@@ -802,7 +826,10 @@ App = function() {
             } : null,
             value, TYPE_FORM, null, ರ‿ರ.file ? ರ‿ರ.file.id : null, true)
           .then(ಠ_ಠ.Main.busy("Updating"))
-          .then(uploaded => ರ‿ರ.file = uploaded)
+          .then(uploaded => {
+            ಱ.forms = ಠ_ಠ.Forms();
+            return (ರ‿ರ.file = uploaded);
+          })
           .then(FN.helper.notify.save("NOTIFY_SAVE_FORM_SUCCESS"))),
 
       report: (force, dehydrated) => FN.action.get(dehydrated, true)
@@ -899,15 +926,24 @@ App = function() {
                       sensitivity: "accent"
                     }) === 0) ?
                 Promise.resolve(true) :
-                ಠ_ಠ.Google.permissions.share(file.id).user(email, "reader");
+                ಠ_ಠ.Google.permissions.share(file.id).user(email, "reader")
+                .catch(FN.helper.notify.error("Share FAILED", () => ಠ_ಠ.Display.doc.get({
+                  name: "NOTIFY_SHARE_FILE_FAILED",
+                  content: email
+                })));
             }))))).then(() => value))
         .then(value => _.tap(value, value => ಠ_ಠ.Flags.log("TO CONVEY:", value)))
         .then(ಠ_ಠ.Main.busy(message)) : false)),
 
     send: () => FN.action.convey("send_Report", "Send Report for Approval / Signature",
         "SEND_INSTRUCTIONS", SIGNATORY, "Sending Report", "Send")
-      .then(value => value ? Promise.all(_.map(value.emails, email =>
-        ಠ_ಠ.Google.permissions.share(ರ‿ರ.file).user(email, "commenter")
+      .then(value => value ? Promise.all(_.map(value.emails,
+        email => ಠ_ಠ.Google.permissions.share(ರ‿ರ.file)
+        .user(email, "commenter")
+        .catch(FN.helper.notify.error("Share FAILED", () => ಠ_ಠ.Display.doc.get({
+          name: "NOTIFY_SHARE_REPORT_FAILED",
+          content: email
+        })))
         .then(result => {
           var _subject = "Reflect Report - For Review",
             _email = ಠ_ಠ.Display.template.get({
@@ -923,12 +959,32 @@ App = function() {
                 target: `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${ರ‿ರ.file.id}`
               },
             });
-          if (result) return ಠ_ಠ.Google.mail.send(email, _subject, _email, "Plain text version");
-        }))).then(() => value) : value),
+          if (result)
+            return ಠ_ಠ.Google.mail.send(email, _subject, _email, "Plain text version")
+              .then(result => result ? _.tap(result, result => result.to = email) : result);
+        }))).then(emails => {
+        if (emails && _.filter(emails, email => email).length > 0 && value)
+          FN.helper.notify.success("Successful Send",
+            ಠ_ಠ.Display.doc.get({
+              name: "NOTIFY_SEND_SUCCESS",
+              delay: 20000,
+              content: _.map(emails, email => email ? ಠ_ಠ.Display.doc.get({
+                name: "NOTIFY_SENT_EMAIL",
+                content: `<a href="https://mail.google.com/mail/u/0/#${email.labelIds[0].toLowerCase()}/${email.id}" target="_blank">${email.to || "Email"}</a>`
+              }) : email).join()
+            }));
+        return value;
+      }) : value),
 
     share: () => FN.action.convey("share_Report", "Share Report for Approval / Signature",
         "SHARE_INSTRUCTIONS", SIGNATORY, "Sharing Report", "Share")
-      .then(value => value ? Promise.all(_.map(value.emails, email => ಠ_ಠ.Google.permissions.share(ರ‿ರ.file, null, value.message).user(email, "commenter"))) : value),
+      .then(value => value ? Promise.all(_.map(value.emails,
+        email => ಠ_ಠ.Google.permissions.share(ರ‿ರ.file, null, value.message)
+        .user(email, "commenter")
+        .catch(FN.helper.notify.error("Share FAILED", () => ಠ_ಠ.Display.doc.get({
+          name: "NOTIFY_SHARE_REPORT_FAILED",
+          content: email
+        }))))) : value),
 
     validate: () => {
       var _form = ರ‿ರ.form.find("form.needs-validation"),
@@ -1436,7 +1492,7 @@ App = function() {
                   .then(folder =>
                     FN.prompt.create([FN.prompt.scales(), FN.prompt.forms(), FN.prompt.reports()], folder))
                   .then(form => ರ‿ರ.form = form)
-              }
+              },
             },
           },
 
@@ -1463,6 +1519,8 @@ App = function() {
     clean: () => ಠ_ಠ.Router.clean(false),
 
     state: ರ‿ರ,
+
+    persistent: ಱ,
 
     email: EMAIL,
 

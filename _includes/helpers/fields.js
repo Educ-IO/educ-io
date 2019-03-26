@@ -275,17 +275,24 @@ Fields = (options, factory) => {
         _clear = _get(_this.data("targets")),
         _reset = _get(_this.data("reset"));
 
-      if (_clear) _clear.each(function() {
-        $(this).val("")
+      if (_clear) _clear.each((i, element) => {
+        var _this = $(element);
+        _this.is(":checkbox") ?
+          _this.prop("checked", false)
+          .prop("indeterminate", true)
+          .change() :
+          _this.val("")
           .change()
           .removeClass("invalid")
           .filter("textarea.resizable").map((i, el) => autosize.update(el));
       });
-      if (_reset) _reset.each(function() {
-        var _$ = $(this),
+
+      if (_reset) _reset.each((i, element) => {
+        var _$ = $(element),
           _default = _$.data("default");
         if (_default) _$.text(_default);
       });
+
     });
 
   };
@@ -668,11 +675,67 @@ Fields = (options, factory) => {
 
   };
 
+  var _toggles = form => {
+
+    var _buttons = ["btn-primary", "btn-secondary", "btn-success", "btn-danger",
+        "btn-warning", "btn-info", "btn-light", "btn-dark", "btn-action",
+        "btn-highlight", "btn-outline-primary", "btn-outline-secondary",
+        "btn-outline-success", "btn-outline-danger", "btn-outline-warning",
+        "btn-outline-info", "btn-outline-light", "btn-outline-dark",
+        "btn-outline-action", "btn-outline-highlight"
+      ],
+      _all = _buttons.join(" "),
+      _on = "btn-success",
+      _off = "btn-danger";
+
+    var _update = (element, value, icon) => {
+
+      var _colour = name => element.removeClass(_all).addClass(name);
+
+      element.find("[class^='toggle-']")
+        .addClass("d-none")
+        .filter(`[class^='toggle-${icon}']`)
+        .removeClass("d-none");
+
+      value === true ?
+        _colour(_on) :
+        value === false ?
+        _colour(_off) :
+        _colour(element.data("initial"));
+
+    };
+
+    /* <!-- Wire up Toggle Buttons --> */
+    form.find(".btn-toggle[data-targets]")
+      .click(e => {
+
+        var _this = $(e.currentTarget),
+          _target = _get(_this.data("targets"));
+
+        _target.prop("checked", !_target.prop("checked")).prop("indeterminate", false).change();
+
+      }).each((index, element) => {
+
+        var _this = $(element),
+          _target = _get(_this.data("targets"));
+        _target.prop("indeterminate", true);
+        _target.on(`change.${element.id}`, (target => e => {
+          var _this = $(e.currentTarget),
+            _value = _this.prop("checked") === true ?
+            true : _this.prop("indeterminate") === true ? null : false;
+          _update(target, _value, _value === true ? "true" : _value === false ? "false" : "indeterminate");
+        })(_this));
+
+      });
+
+  };
+
   var _start = () => {
     STEPS.first = [
       _listen, _numerical, _erase, _radio, _menus,
       _complex, _reveal, _dim, _me, _datetime,
-      _spans, _list, _doc, _updates, _range
+      _spans, _list, _doc, _updates, _range,
+      _toggles
     ];
     STEPS.last = [_deletes, _autosize];
   };
