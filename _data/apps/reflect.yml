@@ -10,7 +10,7 @@
 ################################################################
 
 name: Reflect
-desc: _Produce_ and _share_ __reflective reports__, tracking _evidence_ and your _progress_
+desc: Produce __reflective reports__, tracking your _progress_ with __evidence__
 link: /reflect/
 colour: 36936d
 logo: images/reflect_logo.svg
@@ -446,7 +446,6 @@ menus:
           - name: Export to Sheets
             desc: Export Analysis Data to Google Sheets
             hash: analyse.export.sheets
-            scope: https://www.googleapis.com/auth/spreadsheets
             auth: google
           - name: Download as CSV
             desc: Download Current Analysis Data as a Comma Separated Values (CSV) File

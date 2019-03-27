@@ -719,11 +719,18 @@ Fields = (options, factory) => {
         var _this = $(element),
           _target = _get(_this.data("targets"));
         _target.prop("indeterminate", true);
+        _this.addClass("indeterminate");
         _target.on(`change.${element.id}`, (target => e => {
+
           var _this = $(e.currentTarget),
             _value = _this.prop("checked") === true ?
             true : _this.prop("indeterminate") === true ? null : false;
-          _update(target, _value, _value === true ? "true" : _value === false ? "false" : "indeterminate");
+
+          _update(target, _value, _value === true ?
+            "true" : _value === false ? "false" : "indeterminate");
+
+          if (_value === true || _value === false) target.removeClass("indeterminate");
+
         })(_this));
 
       });

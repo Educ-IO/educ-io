@@ -43,8 +43,10 @@ Router
 
 Apps
 ----
+* ** IMPORTANT ** Cached called to userinfo to improve time-to-work?
 
 * ** IMPORTANT ** Router and subsequent anchor routes -> how do we handle duplicates?
+
 * ** IMPORTANT ** Debug Feedback on Failed Template Compiles - which one is being compiled at point of failure?
 
 * Clean Up Filters HTML to just go up to parent > .data-identifier <-- IMPORTANT
@@ -123,6 +125,8 @@ Folders
 Reflect
 -------
 * ** FEATURE ** Analysis - upload list of expected users? Save analysis query together with expected list?
+
+* ** FEATURE ** Targets - need field / control for marking targets as being done - also interface for loading from previous reports of the same form (drop-down select, reverse selected with all previous reports?)
 
 * ** TESTING ** Fields / Data - write test for toggle button on textual input (both interaction and persistence)
 
@@ -650,4 +654,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2019-03-26
+ᕕ( ᐛ )ᕗ JD - 2019-03-27

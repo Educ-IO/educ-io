@@ -3,6 +3,7 @@
 }
 
 form {
+  
   .dim {
     opacity: 0.25;
   }
@@ -90,4 +91,9 @@ form {
     .mw-800p {max-width: 800px !important;}
     .mw-1000p {max-width: 1000px !important;}
   }
+  
+  .btn.btn-toggle.disabled.indeterminate {
+    display: none !important;
+  }
+  
 }

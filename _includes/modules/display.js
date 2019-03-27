@@ -368,6 +368,8 @@ Display = function() {
         });
 
         Handlebars.registerHelper("which", (which, a, b) => which ? a : b);
+        
+        Handlebars.registerHelper("add", (add, a, b) => add ? a + b : a);
 
         Handlebars.registerHelper("concat", function() {
           return _.reduce(Array.prototype.slice.call(arguments, 0, arguments.length - 1),

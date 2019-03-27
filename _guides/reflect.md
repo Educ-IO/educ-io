@@ -5,6 +5,7 @@ permalink: /guides/reflect/
 short_title: A Guide
 support: true
 for: reflect
+lead: How to use our `Reflect` app to better __share__ and __export__ data from sheets!
 ---
 
 #### Introduction

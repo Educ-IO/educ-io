@@ -996,14 +996,15 @@ App = function() {
     complete: () => FN.action.validate() ?
       FN.action.convey("complete_Report", "Complete Report",
         "COMPLETE_INSTRUCTIONS", DESTINATION, "Submitting Report", "Submit")
-      .then(value => value ? Promise.all(_.map(value.emails, email => ಠ_ಠ.Google.permissions.share(ರ‿ರ.file, null, value.message).user(email, "reader"))) : value)
-      .then(() => ಠ_ಠ.Google.files.update(ರ‿ರ.file.id, {
+      .then(value => value ?
+        Promise.all(_.map(value.emails, email => ಠ_ಠ.Google.permissions.share(ರ‿ರ.file, null, value.message).user(email, "reader"))).then(value => value ? Promise.all(_.map(value.emails, email => ಠ_ಠ.Google.permissions.share(ರ‿ರ.file, null, value.message).user(email, "reader"))) : value)
+        .then(() => ಠ_ಠ.Google.files.update(ರ‿ರ.file.id, {
           appProperties: {
             COMPLETE: true
           }
-        }, null, true)
+        }, null, true))
         .then(ಠ_ಠ.Main.busy("Completing"))
-        .then(uploaded => uploaded ? FN.action.load(uploaded) : false)) : false,
+        .then(uploaded => uploaded ? FN.action.load(uploaded) : false) : false) : false,
 
   };
   /* <!-- Action Functions --> */
