@@ -6,7 +6,9 @@ Forms = function() {
 
   /* <!-- Internal Variables --> */
   var ಠ_ಠ, /* <!-- Context --> */
-    ರ‿ರ = {}; /* <!-- State --> */
+    ರ‿ರ = {},
+    /* <!-- State --> */
+    ಱ = {}; /* <!-- Persistant --> */
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Constants --> */
@@ -37,11 +39,6 @@ Forms = function() {
     },
     PROCESS = _.compose(MARKDOWN, DEEPCLONE);
   /* <!-- Internal Constants --> */
-
-
-  /* <!-- Internal Variables --> */
-  var ಱ = {}; /* <!-- Persistant --> */
-  /* <!-- Internal Variables --> */
 
 
   /* <!-- Internal Functions --> */

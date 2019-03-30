@@ -34,16 +34,6 @@ Add and edit tags for your calendar events:
 * * *
 {:.pb-2}
 
-{% include {{ site.data.apps.tiles.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
-
-#### Tiles
-
-{{site.data.apps.tiles.desc}}
-{:.alert .alert-secondary}
-
-* * *
-{:.pb-2}
-
 {% include {{ site.data.apps.docket.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
 
 #### Docket __[Released!](/docket){:.text-light}__{:.float-right .badge .badge-primary .ml-2}
@@ -65,7 +55,7 @@ A different way to organise your time, focussed on what needs to __get done__.
 
 {% include {{ site.data.apps.reflect.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
 
-#### Reflect
+#### Reflect __[Released!](/docket){:.text-light}__{:.float-right .badge .badge-primary .ml-2}
 
 {{site.data.apps.reflect.desc}}
 {:.alert .alert-secondary}
@@ -95,3 +85,13 @@ Another merging tool for Google Docs, but a little _better_ and with a few __dis
 + Merge to Google __sheets__ as well as docs
 + Easily __filter__ and __select data__ for merging
 + Save merge details to your Drive for fast re-use
+
+{% include {{ site.data.apps.accounts.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
+
+#### Accounts
+
+{{site.data.apps.accounts.desc}}
+{:.alert .alert-secondary}
+
+* * *
+{:.pb-2}

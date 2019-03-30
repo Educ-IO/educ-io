@@ -74,7 +74,7 @@ App = function() {
     notify: {
 
       save: (message, delay) => result => {
-        ಠ_ಠ.Display.notify(
+        if (result !== null) ಠ_ಠ.Display.notify(
           _.extend({
             delay: delay || 10000,
             target: $("#reflect_Notify .holder")
@@ -336,8 +336,8 @@ App = function() {
         values)
       .catch(e => {
         if (clean) ಠ_ಠ.Router.clean(true);
-        return (e ? ಠ_ಠ.Flags.error("Edit Error", e) :
-          ಠ_ಠ.Flags.log("Edit Cancelled")).negative();
+        return e ? ಠ_ಠ.Flags.error("Edit Error", e).negative() :
+          ಠ_ಠ.Flags.log("Edit Cancelled").reflect(null);
       }),
 
     report: report => FN.edit.generic(report.data, "REPORT", "Create / Edit Report ...",
@@ -382,7 +382,7 @@ App = function() {
             name: `${FN.helper.title(title, mime)}${EXTENSION}`
           }, JSON.stringify(result, REGEX_REPLACER, 2), mime), null, null, true);
         };
-        return result ? _process(JSON.parse(result)) : Promise.resolve(false);
+        return result ? _process(JSON.parse(result)) : Promise.resolve(result);
       }),
 
     report: (name, actions, form, process) => FN.display.report(name, [STATE_REPORT_OPENED]
@@ -398,7 +398,8 @@ App = function() {
 
     scale: name => FN.create.generic(FN.edit.scale, name ?
         ಱ.forms.scale(name) : "", TYPE_SCALE)
-      .then(value => value ? ಠ_ಠ.Display.state().enter(STATE_SCALE_OPENED).protect("a.jump").on("JUMP") : null)
+      .then(value => value ?
+        ಠ_ಠ.Display.state().enter(STATE_SCALE_OPENED).protect("a.jump").on("JUMP") : null)
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Scale Create Prompt", e) : false),
 
     tracker: name => name,
@@ -946,6 +947,7 @@ App = function() {
         })))
         .then(result => {
           var _subject = "Reflect Report - For Review",
+            _url = `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${ರ‿ರ.file.id}`,
             _email = ಠ_ಠ.Display.template.get({
               name: "email_standard",
               subject: _subject,
@@ -956,11 +958,28 @@ App = function() {
               }] : "",
               action: {
                 display: "View Report",
-                target: `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${ರ‿ರ.file.id}`
+                target: _url,
+                description: ಠ_ಠ.Display.doc.get({
+                  name: "EMAIL_ACTION_OPEN_REPORT",
+                  content: "",
+                  plain: true
+                }).trim()
               },
+            }),
+            _plain = ಠ_ಠ.Display.doc.get({
+              name: "EMAIL_STANDARD",
+              content: $([ಠ_ಠ.Display.doc.get("EMAIL_REPORT_SEND")]
+                .concat(value.message && _.isString(value.message) ? [encodeURIComponent(value.message)] : [])
+                .concat(ಠ_ಠ.Display.doc.get({
+                  name: "EMAIL_ACTION_OPEN_REPORT",
+                  content: _url
+                }))
+                .join("\n")).text(),
+              plain: true
             });
           if (result)
-            return ಠ_ಠ.Google.mail.send(email, _subject, _email, "Plain text version")
+            return ಠ_ಠ.Google.mail.send(email, _subject, _email, _plain,
+                `${ಠ_ಠ.me.display_name()} | via Reflect <${ಠ_ಠ.me.email}>`)
               .then(result => result ? _.tap(result, result => result.to = email) : result);
         }))).then(emails => {
         if (emails && _.filter(emails, email => email).length > 0 && value)

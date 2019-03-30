@@ -1,6 +1,6 @@
-__Σ__UK_Teachers_Reflection =  {
+__Σ__UK_Teachers_Reflective =  {
 	/* <!-- FORM: UK Teachers Reflection --> */
-  name : "Reflective Report",
+  name : "Reflective",
   title : "Teachers' Reflective Report",
   type : "Report",
   groups : {
@@ -77,7 +77,7 @@ __Σ__UK_Teachers_Reflection =  {
     progress : {
       template: "group",
       name: "Evaluate your Progress",
-      __help__: "During the week, you should have targeted between __3__ and __6__ sub-standards, focussing upon them in your teaching and approach. Please gather material to support this, and link it here using the 'Evidence' buttons. Once you have begun teaching, and after having met with your mentor, you should also supply your __agreed__ overall assessment.",
+      __help__: "During the period covered by this report, you should have targeted a number of sub-standards, focussing upon them in your teaching and approach. Please gather material to support this, and link it here using the 'Evidence' buttons. You can also (optionally) supply a few sentences to describe the evidence and give it some further context.\n\nRemember that this evidence will be __shared with those people__ you choose to share this report with, so please remember to __respect data protection__ conventions and student __privacy__.",
       fields : {
         ts_evidence : {
           template : "field_scale",
@@ -151,7 +151,7 @@ __Σ__UK_Teachers_Reflection =  {
     forward : {
       template: "group",
       name: "Looking Forward",
-      __help__: "Please identify between __2__ and __5__ targets that you feel would be appropriate for the week ahead, thinking about the types of evidence you might gather to show you have meet them. You will be asked in the following week to identify those you have met, and supply relevant supporting evidence.",
+      __help__: "Please identify a number of targets that you feel would be appropriate for the period ahead, thinking about the types of evidence you might gather to show you have meet them. You will be asked in the next report to identify those you have met, and supply relevant supporting evidence.",
       fields : {
         future_targets : {
           template: "field_complex",

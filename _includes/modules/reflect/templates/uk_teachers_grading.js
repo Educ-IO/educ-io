@@ -1,7 +1,7 @@
 __Σ__UK_Teachers_Grading =  {
-	/* <!-- FORM: UK Teachers Grading --> */
+	/* <!-- FORM: UK Teacher Grading --> */
   name : "Grading",
-  title : "Teachers Grading",
+  title : "Teacher Grading",
   type : "Report",
   groups : {
     
@@ -104,10 +104,47 @@ __Σ__UK_Teachers_Grading =  {
       },
     },
     
+    progress : {
+      template : "group",
+      name : "Progress",
+      __help__: "Please confirm that the person being graded has __demonstrated__ the following, in order to __confirm__ that they are __on track__ to meet expectations. You may also include comments if you wish, but these are not required.",
+      fields : {
+        approach: {
+          template: "field_textual",
+          __title__: "Exhibits satisfactory __approach__ to meet standards/outcomes?",
+          field: "Approach",
+          clear: true,
+          toggle: true,
+          toggle_class: "btn-light",
+          rows: 2,
+          wide: true,
+        },
+        professionalism: {
+          template: "field_textual",
+          __title__: "Exhibits satisfactory __professionalism__ to meet standards/outcomes?",
+          field: "Professionalism",
+          clear: true,
+          toggle: true,
+          toggle_class: "btn-light",
+          rows: 2,
+          wide: true,
+        },
+        on_track: {
+          template: "field_textual",
+          __title__: "__On Track__ to meet standards/outcomes?",
+          field: "On Track",
+          clear: true,
+          toggle: true,
+          toggle_class: "btn-light",
+          rows: 2,
+          wide: true,
+        },
+      }
+    },
+    
     judgement : {
       template: "group",
       name: "Overall Judgement",
-      __help__: "",
       fields : {
         overall_assessment : {
           template: "field_radio",

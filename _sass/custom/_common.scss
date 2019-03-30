@@ -126,3 +126,37 @@ em.kb-shortcut {
   @include arrayed_Gradient(darken(rgba(0,255,0,0.9), 10%) rgba(255,0,0,0.9) rgba(0,0,255,0.9), 74%);
 }
 // -- Badges -- //
+
+// -- Backgrounds -- //
+
+// -- Bright Background -- //
+.bg-bright {
+	background-color: $colour-bright-background;
+}
+// -- Bright Background -- //
+
+// -- Action Backgrounds -- //
+.bg-action, .bg-highlight {
+	background-color: $colour-highlight !important;
+}
+
+.bg-action-light, .bg-highlight-light {
+	background-color: lighten($colour-highlight, 50%) !important;
+}
+
+.bg-action-dark, .bg-highlight-dark {
+	background-color: darken($colour-highlight, 10%) !important;
+}
+// -- Action Backgrounds -- //
+
+// -- Other Backgrounds -- //
+.bg-success-light {
+	background-color: $colour-light-success !important;
+}
+
+.bg-danger-light {
+	background-color: $colour-light-danger !important;
+}
+// -- Other Backgrounds -- //
+
+// -- Backgrounds -- //

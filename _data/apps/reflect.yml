@@ -110,7 +110,7 @@ modules:
   - reflect/analysis
   - reflect/forms
   - reflect/templates/form_master
-  - reflect/templates/uk_teachers_reflection
+  - reflect/templates/uk_teachers_reflective
   - reflect/templates/volunteering
   - reflect/templates/progress
   - reflect/templates/uk_teachers_lesson_observation
@@ -163,7 +163,6 @@ templates:
   - reflect/group
   - reflect/form
   - reflect/signature
-  - reflect/recovery
   - reflect/tracker
   - reflect/count
   - reflect/valid
@@ -180,6 +179,7 @@ docs:
   - shared/HELP_UNAVAILABLE
   - shared/FILTERS
   - shared/HEADERS
+  - emails/EMAIL_STANDARD
   - reflect/PUBLIC
   - reflect/FEATURES
   - reflect/README
@@ -219,6 +219,7 @@ docs:
   - reflect/NOTIFY_SHARE_REPORT_FAILED
   - reflect/NOTIFY_SEND_SUCCESS
   - reflect/NOTIFY_SENT_EMAIL
+  - reflect/EMAIL_ACTION_OPEN_REPORT
 scopes:
   google:
     - scope: email
@@ -551,5 +552,5 @@ buttons:
   - name: Import
     desc: Import a saved Report from a file
     hash: import.report
-published: false
+published: true
 scoped: true

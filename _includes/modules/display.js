@@ -469,9 +469,11 @@ Display = function() {
           _.reduce(options.name, (doc, name) => `${doc}\n\n${_get(name)}`, "") :
           _get(options.name);
 
-        return options.wrapper ? this.wrap(options.wrapper, _doc, options) : options.content !== undefined ?
+        var _return = options.wrapper ? this.wrap(options.wrapper, _doc, options) : options.content !== undefined ?
           _doc.replace(/\{\{+\s*content\s*}}/gi, options.content) : _doc;
 
+        return options.plain ? $(_return).text() : _return;
+      
       },
 
       /*

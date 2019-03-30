@@ -608,7 +608,7 @@ Google_API = (options, factory) => {
 
     mail: {
 
-      send: (to, subject, message, plain_message, user) => {
+      send: (to, subject, message, plain_message, from, user) => {
 
         var _makePlain = message => [
             `Content-Type: multipart/alternative; boundary="${BOUNDARY()}"`,
@@ -651,7 +651,7 @@ Google_API = (options, factory) => {
             "",
             `--${BOUNDARY("MIXED")}--`,
           ].join("\r\n"),
-          _message = `To: ${to}\r\nSubject: ${subject}\r\nMIME-Version: 1.0\r\n${plain_message ? 
+          _message = `To: ${to}\r\n${from ? `From: ${from}\r\n` : ""}Subject: ${subject}\r\nMIME-Version: 1.0\r\n${plain_message ? 
             _makeHtml(message, plain_message) : _makePlain(message)}`;
 
         return _call(

@@ -8,9 +8,9 @@
      href="#collapse_{{target}}" aria-expanded="false" aria-controls="collapse_{{target}}"
      title="Show / Hide this block">
     <i {{#unless hide}}style="display: none;" {{/unless}} class="material-icons md-18"
-                data-listen="#collapse_{{target}}" data-event="hidden.bs.collapse">expand_more</i>
+                data-listen="#collapse_{{target}}" data-event="hide.bs.collapse">expand_more</i>
     <i {{#if hide}}style="display: none;" {{/if}} class="material-icons md-18"
-            data-listen="#collapse_{{target}}" data-event="shown.bs.collapse">expand_less</i>
+            data-listen="#collapse_{{target}}" data-event="show.bs.collapse">expand_less</i>
   </a>
 </div>
 

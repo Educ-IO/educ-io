@@ -104,7 +104,7 @@ Fields = (options, factory) => {
     _.each(form.find("[data-listen]"), input => {
       var _this = $(input);
       $(_this.data("listen")).off(_this.data("event")).on(_this.data("event"), () => {
-        _this.show().siblings("[data-listen]").hide();
+        _this.show(500).siblings("[data-listen]").hide(500);
       });
     });
 

@@ -30,10 +30,11 @@ compress_html:
 permalink:						pretty
 
 # Setup
-title:								"Educ.IO"
+title:								"EDUC.IO"
 byline:								""
   
 description:					"Web Apps & Tools built for Google Apps"
+lead: 								"A collection of free web apps that integrate with the Google platform"
 url:									https://educ.io
 baseurl:							/
 support:              "Get help, and support our work!"

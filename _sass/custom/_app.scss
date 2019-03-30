@@ -141,20 +141,6 @@ html, body {
 }
 // -- Action Badge -- //
 
-// -- Action Backgrounds -- //
-.bg-action {
-	background-color: $colour-highlight !important;
-}
-
-.bg-action-light {
-	background-color: lighten($colour-highlight, 50%) !important;
-}
-
-.bg-action-dark {
-	background-color: darken($colour-highlight, 10%) !important;
-}
-// -- Action Backgrounds -- //
-
 // -- Other Buttons -- //
 .btn-bright {
   color: $colour-bright-foreground !important;
@@ -212,22 +198,6 @@ div.alert:first-child {
   &.bottom-to-top {@include complex_LinearGradient(0grad,rgba($colour-bright-background, 0.15) rgba($colour-bright-background, 0.05) rgba($colour-bright-background, 0),0% 20% 100%);}
 }
 // -- Gradient Background -- //
-
-// -- Bright Background -- //
-.bg-bright {
-	background-color: $colour-bright-background;
-}
-// -- Bright Background -- //
-
-// -- Other Backgrounds -- //
-.bg-success-light {
-	background-color: $colour-light-success !important;
-}
-
-.bg-danger-light {
-	background-color: $colour-light-danger !important;
-}
-// -- Other Backgrounds -- //
 
 // -- Site Navigation Bar -- //
 #site_nav {

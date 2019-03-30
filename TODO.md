@@ -2,6 +2,8 @@ TODO LIST
 =========
 General
 -------
+* Can we put Liquid / Jekyll tags into templates and pre-process them? Maybe better to pull variables into centralised object passed to template....
+
 * ** IMPORTANT ** Headless Tests -> Write new permission request handing!!!
 
 * ** IMPORTANT ** Recent Items -> Multiple accounts!!!
@@ -124,13 +126,17 @@ Folders
 
 Reflect
 -------
-* ** FEATURE ** Analysis - upload list of expected users? Save analysis query together with expected list?
+* ** FEATURE ** Analysis - upload list of expected users? Save analysis query together with expected list? Maybe option to view via weekly, monthly, quarterly, yearly - on dropdown button at top (menus getting clogged) - email reminder option too!
 
-* ** FEATURE ** Targets - need field / control for marking targets as being done - also interface for loading from previous reports of the same form (drop-down select, reverse selected with all previous reports?)
+* ** FEATURE ** Target Analysis - for individual (e.g. me) and cohort. Look at target completion over time in a tabular format (sparklines?)
+
+* ** FEATURE ** Targets - need field / control for marking targets as being done - also interface for loading from previous reports of the same form (drop-down select, reverse selected with all previous reports?). Should load from last (meta to column/span) report of the same form type, that is completed. Then give option for changing to other report (picker?) and rolling over targets etc.
+
+* ** FEATURE ** Evidence tracker creation - should prompt for select form/s and then scale (obviously skip if form only contains one evidence/scale field!). Then load all evidence from there. Future form updates should automatically update tracker as it will be tagged with the form name/code.
+
+* ** IMPROVEMENT ** Create form -> Should lead to 'show form' pathway, with button for return to edit (same as edit but without state file)
 
 * ** TESTING ** Fields / Data - write test for toggle button on textual input (both interaction and persistence)
-
-* Finish all instructions, write guide and tutorials
 
 Publish
 -------
@@ -142,6 +148,11 @@ Survey
 
 Complete
 --------
+* ** DOCUMENTATION ** Finish all instructions, write guide and tutorials <-- DONE
+* ** DOCUMENTATION ** More clarity on send / complete instructions about how the report and associated evidence files will be shared. <-- DONE
+* ** BUG ** Cancel out of create form dialog gives error prompt <-- DONE
+* ** IMPROVEMENT ** Gmail 'badge action' for signing form <-- NOT GOING TO WORK :(
+* ** IMPROVEMENT ** Plain text email version - need a DOC template <-- DONE
 * ** BUG ** When sending a url to create a report on a specific form - falls back to create dialog because forms are not completely loaded. Needs a promise resolution to fix! Maybe await promise resolution? <-- DONE
 * Fields / Data - check toggle button rehydrates properly (doesn't for false values) <-- DONE
 * Alternative Lesson Obvs Form (new field types? link to document in text field / help) <-- DONE
@@ -654,4 +665,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2019-03-27
+ᕕ( ᐛ )ᕗ JD - 2019-03-29

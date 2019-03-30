@@ -88,6 +88,22 @@
     </style>
   </head>
   <body class="" style="background-color: {{#if background}}{{background}}{{else}}#f6f6f6{{/if}}; font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; line-height: 1.4; margin: 0; padding: 0; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+    
+    <!-- EMAIL MARKUP | ACTION -->
+    <div itemscope itemtype="http://schema.org/EmailMessage">
+      {{#if action.description}}<meta itemprop="description" content="{{action.description}}"/>{{/if}}
+      <div itemprop="potentialAction" itemscope itemtype="http://schema.org/ViewAction">
+        <link itemprop="target url" href="{{action.target}}"/>
+        <meta itemprop="name" content="{{action.display}}"/>
+      </div>
+      <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+        <meta itemprop="name" content="EDUC.IO"/>
+        <meta itemprop="description"
+              content="A collection of free web apps that integrate with the Google platform"/>
+        <link itemprop="url" href="https://educ.io"/>
+      </div>
+    </div>
+    
     <table border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background-color: {{#if background}}{{background}}{{else}}#f6f6f6{{/if}};">
       <tr>
         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">&nbsp;</td>
@@ -114,7 +130,7 @@
                                 <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
                                   <tbody>
                                     <tr>
-                                      <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: {{#if action.colour}}{{action.colour}}{{else}}#3498db{{/if}}; border-radius: 5px; text-align: center;"> <a href="{{action.target}}" target="_blank" style="display: inline-block; color: #ffffff; background-color: #3498db; border: solid 1px {{#if action.colour}}{{action.colour}}{{else}}#3498db{{/if}}; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-transform: capitalize; border-color: {{#if action.colour}}{{action.colour}}{{else}}#3498db{{/if}};">{{action.display}}</a> </td>
+                                      <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: {{#if action.colour}}{{action.colour}}{{else}}#3498db{{/if}}; border-radius: 5px; text-align: center;"> <a href="{{action.target}}" target="_blank" style="display: inline-block; color: #ffffff; background-color: #3498db; border: solid 1px {{#if action.colour}}{{action.colour}}{{else}}#3498db{{/if}}; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-transform: capitalize; border-color: {{#if action.colour}}{{action.colour}}{{else}}#3498db{{/if}};"{{#if action.description}} title="{{action.description}}"{{/if}}>{{action.display}}</a> </td>
                                     </tr>
                                   </tbody>
                                 </table>
