@@ -40,7 +40,7 @@ You can always jump straight to editing tags by clicking on the edit icon, which
 #### Licensing
 {:class="border border-left-0 border-right-0 border-top-0 mt-2 pb-1"}
 
-The code is fully open-source, and __copyright [JD](https://github.com/thiscouldbejd/), 2018__. This program is free software: you can redistribute it and modify it under the terms of the GNU General Public License (Version 3) as published by the Free Software Foundation. This program is distributed in the hope that it will be useful, but __WITHOUT ANY WARRANTY__; without even the implied warranty of __MERCHANTABILITY__ or __FITNESS FOR A PARTICULAR PURPOSE__. Please see the full [GNU General Public License](https://github.com/thiscouldbejd/cloudysky-extension/blob/master/LICENSE) for more details.
+The code is fully open-source, and __copyright [JD](https://github.com/thiscouldbejd/), 2018__. This program is free software: you can redistribute it and modify it under the terms of the GNU General Public License (Version 3) as published by the Free Software Foundation. This program is distributed in the hope that it will be useful, but __WITHOUT ANY WARRANTY__; without even the implied warranty of __MERCHANTABILITY__ or __FITNESS FOR A PARTICULAR PURPOSE__. Please see the full [GNU General Public License](https://github.com/thiscouldbejd/tagadoc-extension/blob/master/LICENSE) for more details.
 {:class="text-justify text-muted"}
 
 {% if site.data.apps.tagadoc.versions %}

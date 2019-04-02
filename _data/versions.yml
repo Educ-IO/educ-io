@@ -1,8 +1,8 @@
 site :
-  0.1.4 :
+  0.1.4a :
     name : Reflect v0.0.7-beta
     desc : Public Release for Reflect
-    numeric : 0.1.2.0
+    numeric : 0.1.2.1
   0.1.3v :
     name : Reflect v0.0.6j-beta
     desc : Alpha Analysis Tools for Reflect

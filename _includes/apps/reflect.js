@@ -688,7 +688,7 @@ App = function() {
           logging: ಠ_ಠ.Flags.debug(),
           ignoreElements: element => element.nodeName === "IFRAME"
         }) :
-        Promise.reject(new Error(`HTML2Canvas Object Evalulates to ${html2canvas}`)))
+        Promise.reject(new Error(`HTML2Canvas Object Evalulates to ${window.html2canvas}`)))
       .then(canvas => ({
         thumbnail: {
           mimeType: "image/png",

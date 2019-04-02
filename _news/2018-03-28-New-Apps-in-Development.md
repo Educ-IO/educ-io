@@ -7,19 +7,9 @@ lead: New __tool releases__ in the pipeline
 date: 2018-12-02
 ---
 
-{% include {{ site.data.apps.accounts.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
-
-#### Accounts
-
-{{site.data.apps.accounts.desc}}
-{:.alert .alert-secondary}
-
-* * *
-{:.pb-2}
-
 {% include {{ site.data.apps.events.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
 
-#### Events __[Released!](/docket){:.text-light}__{:.float-right .badge .badge-primary .ml-2}
+#### Events __[Released!](/events){:.text-light}__{:.float-right .badge .badge-primary .ml-2}
 
 {{site.data.apps.events.desc}}
 {:.alert .alert-secondary}
@@ -55,7 +45,7 @@ A different way to organise your time, focussed on what needs to __get done__.
 
 {% include {{ site.data.apps.reflect.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
 
-#### Reflect __[Released!](/docket){:.text-light}__{:.float-right .badge .badge-primary .ml-2}
+#### Reflect __[Released!](/reflect){:.text-light}__{:.float-right .badge .badge-primary .ml-2}
 
 {{site.data.apps.reflect.desc}}
 {:.alert .alert-secondary}
