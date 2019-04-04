@@ -8,7 +8,12 @@
   		<span class="font-weight-light">{{this}}</span>
   	</h5>{{/each}}
   </div>{{/if}}
-  <div class="d-inline-flex flex-column align-self-center d-inline-flex flex-column align-self-center align-items-xl-end align-items-start col-12 col-md-12 col-xl-4 ml-3 ml-xl-0">
+  <div class="d-inline-flex flex-column align-self-center align-items-xl-end align-items-start col-12 col-md-12 col-xl-4 ml-3 ml-xl-0">
+    <div class="d-inline-flex flex-row">
+    	{{> control_button b_large="true" b_icon_large="true"
+      	b_class="btn-success mr-1 state-analysis-summary"
+        b_title="Compare to expectations" b_icon="add_circle_outline"
+    		b_icon_type="light" b_command="analyse.add" b-route="analyse.export.sheets" }}
       <div class="btn-group btn-group-lg mb-2 mb-md-0">
         <a{{#if id}} id="{{id}}_EXPORT"{{/if}} data-route="analyse.export.sheets" href="#"
                 role="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">save_alt</i>Export</a>
@@ -22,6 +27,7 @@
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#instructions.export">About</a>
         </div>
+      </div>
     </div>
   </div>
 

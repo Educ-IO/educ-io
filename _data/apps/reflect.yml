@@ -202,6 +202,7 @@ docs:
   - reflect/FORM
   - reflect/ANALYSE
   - reflect/ANALYSE_DATES
+  - reflect/ANALYSE_EXPECTED
   - reflect/SCALE
   - reflect/NO_SIGNATURES
   - reflect/REMOVE_SIGNATURES

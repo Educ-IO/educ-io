@@ -20,6 +20,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
     filter: () => true,
     stage: () => true,
     view: false,
+    expected: [],
   };
   /* <!-- Internal State Variable --> */
 
@@ -253,7 +254,32 @@ Analysis = (ಠ_ಠ, forms, reports) => {
           if (value.total) value.average = (value.total / value.__count);
           delete value.__count;
         });
-
+        
+        /* <-- Add in Expectations --> */
+        if (ರ‿ರ.expected.length > 0) {
+          
+          /* <-- Filter for missing values only (case insensitive) --> */
+          var _missing = _.filter(
+            ರ‿ರ.expected.slice(),
+            value => {
+              var _regexp = new RegExp(`^${RegExp.escape(value)}$`, "i");
+              return _.every(_reports, (value, key) => key.search(_regexp) == -1);
+            });
+          
+          ಠ_ಠ.Flags.log("Missing from Analysis:", _missing);
+          /* <-- Filter for missing values only (case insensitive) --> */
+          _.each(_missing, missing => {
+            _reports[missing] = {
+              name: missing,
+              total: null,
+              count: null,
+              average: null,
+              details: null,
+            };
+          });
+          
+        }
+        
         var _data = DB.addCollection(id, {
           unique: [_columns[0].toLowerCase()],
           indices: [_columns[1].toLowerCase()]
@@ -263,8 +289,12 @@ Analysis = (ಠ_ಠ, forms, reports) => {
           removeIndices: true
         });
 
-        _data.insert(_.map(_reports, report => report));
-
+        /* <-- Map Reports from an object (key/value) to array --> */
+        var _rows = _.map(_.keys(_reports).sort(), key => _reports[key]);
+        
+        /* <-- Insert Rows into table --> */
+        _data.insert(_rows);
+        
         return ಠ_ಠ.Datatable(ಠ_ಠ, {
           id: `${ID}_SUMMARY_TABLE`,
           name: id,
@@ -355,6 +385,20 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
     title: () => `Analysis - ${FN.generate.names().join(" | ")}`,
 
+    expected: value => {
+      if (value) {
+        /* <!-- Parse incoming list, on new lines --> */
+        ರ‿ರ.expected = _.chain(value.split("\n"))
+          .flatten()
+          .map(val => val.trim(""))
+          .compact()
+          .value();
+        
+        FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage, false);
+      }
+      return ರ‿ರ.expected;
+    },
+    
   };
   /* <!-- External Visibility --> */
 };

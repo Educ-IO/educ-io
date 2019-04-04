@@ -17,6 +17,10 @@ info: true
 colour: d3861b
 action: Find out more
 versions:
+  1.0.1 :
+    name : Keyboard Shortcuts
+    desc : Added Keyboard shortcuts to make control even easier!
+    type : minor
   1.0.0 :
     name : Initial Version
     desc : Initial version published online

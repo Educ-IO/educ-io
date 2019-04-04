@@ -131,7 +131,7 @@ Filters = options => {
       }
     } else if (value == VALUED) {
       _filter = {
-        "$aeq": undefined
+        "$in" : [undefined, null, ""]
       };
     } else if (value) {
       _filter = (value.toLowerCase() == PAST || value.toLowerCase() == FUTURE || value.toLowerCase() == TODAY) ? {

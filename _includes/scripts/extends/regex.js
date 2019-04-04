@@ -1,6 +1,7 @@
 /* <!-- Regex Escape --> */
 RegExp.escape = function(value) {
-  return value.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+  /* <!-- Previously: /[-/\\^$*+?.()|[\]{}]/g --> */
+  return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 };
 /* <!-- Regex Escape --> */
 

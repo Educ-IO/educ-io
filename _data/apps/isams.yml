@@ -17,6 +17,10 @@ info: true
 colour: 38761d
 action: Find out more
 versions:
+  1.0.9 :
+    name : Bug Fix
+    desc : URL Download Encoding Format Change (Fix)
+    type : minor
   1.0.7 :
     name : Markdown Support in URL Parsing
     desc : Clickable Links now support Markdown format

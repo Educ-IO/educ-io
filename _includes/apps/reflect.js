@@ -752,7 +752,7 @@ App = function() {
 
     export: {
 
-      analysis: type => Promise.resolve(ರ‿ರ.analysis.table().values())
+      analysis: type => Promise.resolve(ರ‿ರ.analysis.table().values(true))
         .then(values => ರ‿ರ.analysis.table().expand(values))
         .then(values => _.tap(values, values => ಠ_ಠ.Flags.log(`EXPORTING to ${type}`, values)))
         .then(values => type == "sheets" ?
@@ -1210,6 +1210,24 @@ App = function() {
           analyse: {
             matches: /ANALYSE/i,
             routes: {
+              add: {
+                matches: /ADD/i,
+                state: STATE_ANALYSIS_SUMMARY,
+                length: 0,
+                fn: () => ಠ_ಠ.Display.text({
+                  id: "add_expected",
+                  title: "Add / Edit Expected ...",
+                  message: ಠ_ಠ.Display.doc.get("ANALYSE_EXPECTED"),
+                  validate: value => value,
+                  state: {
+                    value: ರ‿ರ.analysis.expected().join("\n")
+                  },
+                  action: "Analyse",
+                  rows: 8
+                }).then(value => {
+                  if (value) ರ‿ರ.analysis.expected(value);
+                })
+              },
               summary: {
                 matches: /SUMMARY/i,
                 state: STATE_ANALYSIS_DETAIL,
