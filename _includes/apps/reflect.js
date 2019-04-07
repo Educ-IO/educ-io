@@ -14,7 +14,8 @@ App = function() {
     TYPE_REPORT = "application/x.educ-io.reflect-report",
     TYPE_REVIEW = "application/x.educ-io.reflect-review",
     TYPE_TRACKER = "application/x.educ-io.reflect-tracker",
-    TYPES = [TYPE_SCALE, TYPE_FORM, TYPE_REPORT, TYPE_REVIEW, TYPE_TRACKER];
+    TYPE_ANALYSIS = "application/x.educ-io.reflect-analysis",
+    TYPES = [TYPE_SCALE, TYPE_FORM, TYPE_REPORT, TYPE_REVIEW, TYPE_TRACKER, TYPE_ANALYSIS];
   const STATE_FILE_LOADED = "loaded-file",
     STATE_FORM_OPENED = "opened-form",
     STATE_REPORT_OPENED = "opened-report",
@@ -157,7 +158,20 @@ App = function() {
       "FORM" : mime == TYPE_SCALE ?
       "SCALE" : mime == TYPE_REVIEW ?
       "REVIEW" : mime == TYPE_TRACKER ?
-      "TRACKER" : "",
+      "TRACKER" : mime == TYPE_ANALYSIS ?
+      "ANALYSIS" : "",
+
+    span: dates => {
+      var _today = moment(),
+        _past = dates.span == "AY" ?
+        _today.month() > 8 ?
+        _today.clone().month(8).startOf("month") :
+        _today.clone().subtract(1, "year").month(8).startOf("month") :
+        _today.clone().subtract(1, dates.span);
+      dates.from = _past.startOf("day");
+      dates.to = _today.endOf("day");
+      return dates;
+    },
 
     title: (title, mime) => {
       var _prefix = FN.helper.prefix(mime);
@@ -441,11 +455,49 @@ App = function() {
           name: "Year"
         }
       ],
+      periods: [{
+          span: "w",
+          value: "week",
+          name: "Last Week"
+        },
+        {
+          span: "M",
+          value: "month",
+          name: "Last Month"
+        },
+        {
+          span: "Y",
+          value: "year",
+          name: "Last Year"
+        },
+        {
+          span: "AY",
+          value: "academic",
+          name: "Academic Year"
+        },
+      ],
     }, dialog => {
       ಠ_ಠ.Fields().on(dialog);
-      ಠ_ಠ.Dialog({}, ಠ_ಠ).handlers.list(dialog, EMAIL);
-      dialog.find("textarea").focus();
+      dialog.find("input[type='radio'][name='period_Select']").change(e => {
+        var _$ = $(e.currentTarget),
+          _span = _$.data("span"),
+          _dates = dialog.find("fieldset[name='custom']");
+        if (_span) {
+          _dates.attr("disabled", "disabled");
+          var _start = dialog.find("input[type='text'][data-output-name='Start']"),
+            _end = dialog.find("input[type='text'][data-output-name='End']");
+          var _format = "YYYY-MM-DD",
+            _values = FN.helper.span({
+              span: _span
+            });
+          _start.val(_values.from.format(_format));
+          _end.val(_values.to.format(_format));
+        } else {
+          _dates.attr("disabled", null);
+        }
+      });
     }).then(values => values ? {
+      span: values.Period && values.Period.Values ? values.Period.Values.Span : null,
       from: values.Range.Values.Start ? moment(values.Range.Values.Start) : null,
       to: values.Range.Values.End ? moment(values.Range.Values.End).endOf("day") : null
     } : false),
@@ -463,16 +515,19 @@ App = function() {
         },
         _filter;
       return FN.prompt.choose(
-          ಱ.forms.selection("forms", "Report"), "Select a Form ...", "ANALYSE", true, [{
+          ಱ.forms.selection("forms", "Report"),
+          "Select a Form ...", "ANALYSE", true, [{
             text: "Filter",
             handler: () => _filter = true
-          }])
+          }],
+          value => _.isEmpty(value) === false)
         .then(results => results ? _filter ?
           FN.prompt.dates().then(dates => dates ? _analyse(results, dates) : false) :
           _analyse(results) : false);
     },
 
-    choose: (options, title, instructions, multiple, actions) => ಠ_ಠ.Display.choose({
+    choose: (options, title, instructions, multiple, actions, validate) =>
+      ಠ_ಠ.Display.choose({
         id: "select_chooser",
         title: title,
         instructions: ಠ_ಠ.Display.doc.get(instructions),
@@ -480,6 +535,7 @@ App = function() {
         multiple: multiple,
         action: "Select",
         actions: actions,
+        validate: validate
       })
       .catch(e => (e ? ಠ_ಠ.Flags.error("Displaying Select Prompt", e) :
         ಠ_ಠ.Flags.log("Select Prompt Cancelled")).negative())
@@ -620,12 +676,17 @@ App = function() {
     }),
     /* <!-- TODO: Process Tracker Loading --> */
 
-    analysis: (forms, mine, full, dates) => Promise.resolve(_.map(forms, form => ({
+    analysis: (forms, mine, full, dates, expected) => Promise.resolve(_.map(forms, form => ({
       id: form.id,
-      value: form.value,
-      template: ಱ.forms.template(form.id)
+      template: form.template || ಱ.forms.template(form.id)
     }))).then(
       forms => {
+        ರ‿ರ.definition = {
+          forms: forms,
+          mine: mine,
+          full: full,
+          dates: dates
+        };
         return Promise.all(_.map(forms,
             form => ಠ_ಠ.Google.files.search(TYPE_REPORT, `FORM=${form.id}`, mine, dates, true)))
           .then(reports => {
@@ -646,12 +707,14 @@ App = function() {
               var _form = _.find(forms, {
                 id: report.file.appProperties.FORM
               });
-              report.title = _form ? _form.template.title ? _form.template.title : _form.template.name :
+              report.title = _form ?
+                _form.template.title ?
+                _form.template.title : _form.template.name :
                 report.file.appProperties.FORM;
             }
           }))
           .then(reports => {
-            ರ‿ರ.analysis = ಠ_ಠ.Analysis(ಠ_ಠ, forms, reports);
+            ರ‿ರ.analysis = ಠ_ಠ.Analysis(ಠ_ಠ, forms, reports, expected);
             ಠ_ಠ.Display.state()
               .change(STATES, STATE_ANALYSIS)
               .protect("a.jump").on("JUMP");
@@ -666,6 +729,11 @@ App = function() {
 
   /* <!-- Action Functions --> */
   FN.action = {
+
+    recent: (file, silent) => _.tap(file,
+      file => ಠ_ಠ.Recent.add(silent ? file : (ರ‿ರ.file = file).id,
+        file.name.replace(EXTENSION_REGEX, ""),
+        "#google,load." + file.id)),
 
     revoke: () => ಠ_ಠ.Display.confirm({
         id: "confirm_Revoke",
@@ -728,9 +796,10 @@ App = function() {
     load: file => ಠ_ಠ.Google.files.download((ರ‿ರ.file = file).id)
       .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
       .then(content => ({
-        content: file.mimeType === TYPE_REPORT ? _.tap(JSON.parse(content),
-          data => ರ‿ರ.hash = new Hashes.MD5().hex(FN.helper.stringify(data.report,
-            SIGNING_REPLACER))) : content,
+        content: file.mimeType === TYPE_REPORT ?
+          _.tap(JSON.parse(content),
+            data => ರ‿ರ.hash = new Hashes.MD5().hex(FN.helper.stringify(data.report,
+              SIGNING_REPLACER))) : file.mimeType === TYPE_ANALYSIS ? JSON.parse(content) : content,
         actions: {
           editable: (file.capabilities && file.capabilities.canEdit),
           signable: file.capabilities && file.capabilities.canComment,
@@ -740,8 +809,17 @@ App = function() {
       }))
       .then(value => _.tap(value, () => ಠ_ಠ.Display.state().enter(STATE_FILE_LOADED)))
       .then(value =>
-        ಠ_ಠ.Google.files.is(TYPE_REPORT)(file) ? FN.process.report(value.content, value.actions) :
-        ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ? FN.process.form(value.content, value.actions) :
+        ಠ_ಠ.Google.files.is(TYPE_REPORT)(file) ?
+        FN.process.report(value.content, value.actions) :
+        ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ?
+        FN.process.form(value.content, value.actions) :
+        ಠ_ಠ.Google.files.is(TYPE_ANALYSIS)(file) ?
+        FN.process.analysis(value.content.forms, value.content.mine,
+          value.content.full,
+          _.tap(value.content.dates, FN.helper.span),
+          value.content.expected)
+        .then(() => ಠ_ಠ.Display.state()
+          .enter([STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL, STATE_ANALYSIS_ANY])) :
         Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id} | ${file.mimeType}`)),
 
     edit: () => Promise.resolve(FN.action.dehydrate())
@@ -821,6 +899,17 @@ App = function() {
 
     save: {
 
+      analysis: () => Promise.resolve(JSON.stringify(_.extend(ರ‿ರ.definition, {
+          expected: ರ‿ರ.analysis.expected(),
+        }), SAVING_REPLACER))
+        .then(value => ಠ_ಠ.Google.files.upload(ರ‿ರ.file ? null : {
+            name: `${FN.helper.title(ರ‿ರ.analysis.names(), TYPE_ANALYSIS)} | ${new moment().format("YYYY-MM-DD")}${EXTENSION}`
+          }, value, TYPE_ANALYSIS, null, ರ‿ರ.file ? ರ‿ರ.file.id : null, true)
+          .then(FN.action.recent)
+          .then(ಠ_ಠ.Main.busy("Saving"))
+          .then(uploaded => ರ‿ರ.file = uploaded)
+          .then(FN.helper.notify.save("NOTIFY_SAVE_ANALYSIS_SUCCESS"))),
+
       form: value => FN.action.screenshot($("form[role='form'][data-name]")[0])
         .then(result => ಠ_ಠ.Google.files.upload(result ? {
               contentHints: result
@@ -884,10 +973,7 @@ App = function() {
                   });
                 });
               })
-              .then(uploaded => _.tap(uploaded,
-                uploaded => ಠ_ಠ.Recent.add((ರ‿ರ.file = uploaded).id,
-                  uploaded.name.replace(EXTENSION_REGEX, ""),
-                  "#google,load." + uploaded.id)))
+              .then(FN.action.recent)
               .then(uploaded => ಠ_ಠ.Flags.log("Saved:", uploaded).reflect(uploaded))
               .catch(e => ಠ_ಠ.Flags.error("Save Error", e).negative())
               .then(ಠ_ಠ.Main.busy("Saving Report"))
@@ -1180,9 +1266,7 @@ App = function() {
               team: false,
             }),
             success: value => FN.action.load(value.result)
-              .then(() => ಠ_ಠ.Recent.add(value.result.id,
-                value.result.name.replace(EXTENSION_REGEX, ""),
-                `#google,load.${value.result.id}`))
+              .then(() => FN.action.recent(value.result, true))
               .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e))
               .then(ಠ_ಠ.Main.busy("Opening Report")),
           },
@@ -1210,6 +1294,12 @@ App = function() {
           analyse: {
             matches: /ANALYSE/i,
             routes: {
+              save: {
+                matches: /SAVE/i,
+                state: STATE_ANALYSIS,
+                length: 0,
+                fn: FN.action.save.analysis
+              },
               add: {
                 matches: /ADD/i,
                 state: STATE_ANALYSIS_SUMMARY,
@@ -1328,6 +1418,8 @@ App = function() {
                       id: _form.id,
                       name: `${_form.name}${_form.title ? ` [${_form.title}]` : ""}`
                     }])
+                    .then(() => ಠ_ಠ.Display.state()
+                      .enter([STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL, STATE_ANALYSIS_ANY]))
                     .catch(e => ಠ_ಠ.Flags.error(`Analysing Form: ${_form.id}`, e))
                     .then(ಠ_ಠ.Main.busy("Finding Reports")) : false;
                 },

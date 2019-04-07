@@ -11,7 +11,32 @@
       <div class="modal-body">
         {{#if instructions}}{{{instructions}}}{{/if}}
 				<form>
-          {{> field_span id=(concat id "_RANGE") historical=true}}
+          {{#if periods}}<fieldset id="{{concat id '_PERIOD'}}" name="period">
+            <div class="form-group" data-output-field="Period">
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="{{concat id '_PERIOD__DEFAULT'}}"
+                       name="period_Select" class="custom-control-input"
+                       data-targets="{{id}}_PERIOD__SPAN" data-value="" checked>
+                <label class="custom-control-label"
+                       for="{{concat id '_PERIOD__DEFAULT'}}">Custom Range</label>
+              </div>
+              {{#each periods}}
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="{{concat ../id '_PERIOD_' value}}"
+                       name="period_Select" class="custom-control-input"
+                       data-span="{{span}}" data-targets="{{../id}}_PERIOD__SPAN"
+                       data-value="{{span}}">
+                <label class="custom-control-label"
+                       for="{{concat ../id '_PERIOD_' value}}">{{name}}</label>
+              </div>
+              {{/each}}
+              <input type="text" data-output-name="Span" id="{{id}}_PERIOD__SPAN"
+                           name="{{id}}_PERIOD__SPAN" class="d-none" />
+            </div>
+          </fieldset>{{/if}}
+          <fieldset id="{{concat id '_CUSTOM'}}" name="custom">
+            {{> field_span id=(concat id "_RANGE") historical=true}}
+          </fieldset>
 				</form>
       </div>
       <div class="modal-footer">

@@ -1,4 +1,4 @@
-Analysis = (ಠ_ಠ, forms, reports) => {
+Analysis = (ಠ_ಠ, forms, reports, expected) => {
   "use strict";
   /* <!-- MODULE: Provides an analysis of a form/s reports --> */
   /* <!-- PARAMETERS: Receives the global app context, the forms being analysed and the report data submitted --> */
@@ -20,7 +20,7 @@ Analysis = (ಠ_ಠ, forms, reports) => {
     filter: () => true,
     stage: () => true,
     view: false,
-    expected: [],
+    expected: expected || [],
   };
   /* <!-- Internal State Variable --> */
 
@@ -383,6 +383,8 @@ Analysis = (ಠ_ಠ, forms, reports) => {
 
     detail: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage, "detail"),
 
+    names: () => FN.generate.names().join(" | "),
+    
     title: () => `Analysis - ${FN.generate.names().join(" | ")}`,
 
     expected: value => {

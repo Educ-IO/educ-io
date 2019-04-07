@@ -1,8 +1,8 @@
 site :
-  0.1.4b :
-    name : Reflect v0.0.7b-beta
+  0.1.4c :
+    name : Reflect v0.0.7c-beta
     desc : Public Release for Reflect
-    numeric : 0.1.2.2
+    numeric : 0.1.2.3
   0.1.3v :
     name : Reflect v0.0.6j-beta
     desc : Alpha Analysis Tools for Reflect
@@ -812,7 +812,7 @@ folders :
     name : Early testing version
     type : minor
 reflect :
-  0.0.7b-beta :
+  0.0.7c-beta :
     name : Public Release for Reflect App
     type : minor
   0.0.6j-beta :

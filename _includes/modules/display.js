@@ -368,7 +368,7 @@ Display = function() {
         });
 
         Handlebars.registerHelper("which", (which, a, b) => which ? a : b);
-        
+
         Handlebars.registerHelper("add", (add, a, b) => add ? a + b : a);
 
         Handlebars.registerHelper("concat", function() {
@@ -473,7 +473,7 @@ Display = function() {
           _doc.replace(/\{\{+\s*content\s*}}/gi, options.content) : _doc;
 
         return options.plain ? $(_return).text() : _return;
-      
+
       },
 
       /*
@@ -847,25 +847,40 @@ Display = function() {
         _target(options).append(dialog);
 
         /* <!-- Parsing Method --> */
-        var parsed, parse = complete => {
-          var _value = dialog.find(
-            ["input[name='choices']:checked", "select[name='choices'] option:selected"].join(", ")
-          );
-          _value = (!options.multiple || _value.length === 1) ?
-            options.choices[_value.val()] :
-            _.map(_value, value => options.choices[$(value).val()]);
-          _clean();
-          return complete ? _value : parsed = _value;
-        };
+        var parsed,
+          choice = () => {
+            var _value = dialog.find(
+              ["input[name='choices']:checked", "select[name='choices'] option:selected"]
+              .join(", ")
+            );
+            _value = (!options.multiple || _value.length === 1) ?
+              options.choices[_value.val()] :
+              _.map(_value, value => options.choices[$(value).val()]);
+            return _value;
+          },
+          parse = (complete, values) => {
+            var _values = values || choice();
+            if (values || !options.validate || options.validate(_values)) _clean();
+            return complete ? _values : parsed = _values;
+          };
 
         /* <!-- Wire Up Action and Update Handlers --> */
         _dialog(dialog, options, parse);
 
-        /* <!-- Set Event Handlers --> */
-        dialog.find(".modal-footer button.btn-primary").click(() =>
-          _.tap(parse(true), value => value ? resolve(value) : false));
+        /* <!-- Set Form / Return Event Handlers --> */
+        dialog.find(".modal-footer button.btn-primary, .modal-footer button[data-action]")
+          .on("click.submit", e => {
+            var _values = choice();
+            if (options.validate && !options.validate(_values)) {
+              e.preventDefault();
+              e.stopPropagation();
+            } else if ($(e.currentTarget).is(".btn-primary")) {
+              _.tap(parse(true, _values), value => value ? resolve(value) : false);
+            }
+          });
 
-        dialog.on("hidden.bs.modal", () => dialog.remove() && (parsed ? resolve(parsed) : reject()));
+        dialog.on("hidden.bs.modal",
+          () => dialog.remove() && (_.isEmpty(parsed) ? reject() : resolve(parsed)));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");

@@ -422,7 +422,6 @@ menus:
             hash: analyse.stage.complete
             toggle:
               - analysis-stage-complete
-            visibility: debug
           - name: All Stages
             desc: View Reports at any stage
             hash: analyse.stage.any
@@ -445,6 +444,10 @@ menus:
             toggle:
               - analysis-reports-shared
             divider: true
+          - name: Save
+            desc: Save Auto-Updating Analysis Details to your Drive
+            hash: analyse.save
+            auth: google
           - name: Export to Sheets
             desc: Export Analysis Data to Google Sheets
             hash: analyse.export.sheets
