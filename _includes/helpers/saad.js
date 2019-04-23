@@ -14,31 +14,82 @@ SaaD = (options, factory) => {
     EXTRACT_DATE = /\b(\d{4})-(\d{2})-(\d{2})|((0?[1-9]|[12]\d|30|31)[^\w\d\r\n:](0?[1-9]|1[0-2]|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[^\w\d\r\n:](\d{4}|\d{2}))\b/i;
 
   const defaults = {
-    db: {
+
+    db: { /* <!--  --> */
       name: "data",
+      /* <!--  --> */
       file: "data.db",
+      /* <!--  --> */
     },
-    names: {
+
+    names: { /* <!--  --> */
       spreadsheet: "Database",
-      sheet: "Data"
+      /* <!--  --> */
+      sheet: "Data" /* <!--  --> */
     },
-    property: {
+
+    property: { /* <!--  --> */
       name: "SAAD",
+      /* <!--  --> */
       value: "DATA",
+      /* <!--  --> */
     },
+
     schema: {
       version: 1,
+      /* <!-- Version number for this schema --> */
       colour: [0, 0, 0],
+      /* <!-- DB / Sheet Tab Colour --> */
     },
-    sheets: {},
+
+    options: { /* <!-- Options to control how SaaD works --> */
+      ingest: false,
+      /* <!-- Whether externally added data is ingested (e.g. ID added) --> */
+      always_hash: false,
+      /* <!-- Whether hashes are run on data retreival or just setting --> */
+      check: false /* <!-- Whether to check for changed values before writing --> */
+    },
+
+    sheets: {
+      /* <!-- sheet_name: { 																			--> */
+      /* <!--		key: "SHEET_NAME",		|		METADATA TAG Key				--> */
+      /* <!--   value: "NAME,					|		METADATA TAG Value			--> */
+      /* <!--   visibility: "DOCUMENT,|		METADATA TAG Visibility	--> */
+
+      /* <!-- },																							 		--> */
+    },
+
     process: item => item,
-    columns: {},
+    /* <!--  --> */
+
+    columns: { /* <!--  --> */
+      /* <!-- column_name { 																			--> */
+      /* <!--		key: "COLUMN_NAME",		|		METADATA TAG Key				--> */
+      /* <!--   value: "NAME,					|		METADATA TAG Value			--> */
+      /* <!--   visibility: "DOCUMENT,|		METADATA TAG Visibility	--> */
+      /* <!--   _meta: { 																					--> */
+      /* <!--   	group: "MAIN",			|		MERGE GROUP Name				--> */
+      /* <!--     colour: "AAAAAA",		|		COLOUR for Column				--> */
+      /* <!--     title: "Name",			|		TITLE for Column				--> */
+      /* <!--     width: 150,					|		WIDTH of Column					--> */
+      /* <!--     index: true,				|		LOKI Indexed?						--> */
+      /* <!--     hash: true,					|		HASHED for Changes? 		--> */
+      /* <!--     type: "markdown",		|		TYPE of Data						--> */
+      /* <!--   }																									--> */
+      /* <!-- } 																									--> */
+    },
+
     rows: {
-      row_headers: {
+      row_headers: { /* <!-- METADATA Tag for where Data Rows begin --> */
         key: "ROW_HEADERS",
         visibility: "DOCUMENT"
       },
+      row_id: { /* <!-- METADATA Tag for Data Row ID --> */
+        key: "ROW_ID",
+        visibility: "DOCUMENT"
+      },
     },
+
   };
   /* <!-- Internal Consts --> */
 
@@ -48,26 +99,25 @@ SaaD = (options, factory) => {
   /* <!-- Setup Variables --> */
 
   /* <!-- Internal Consts --> */
-  const DB = new loki(options.db.file);
+  const DB = new loki(options.db.file),
+    FN = {};
   /* <!-- Internal Consts --> */
 
   /* <!-- Internal Variables --> */
-  var state = {};
+  var ರ‿ರ = {};
   /* <!-- Internal Variables --> */
 
-  /* <!-- Initialisation Functions --> */
-  var _initialise = () => {
+  /* <!-- Internal Initialisation Functions --> */
+  FN.initialise = () => {
     /* <!-- Array of Columns to Hash --> */
-    state.hashes = _.reduce(options.columns, (array, column) => {
+    ರ‿ರ.hashes = _.reduce(options.columns, (array, column) => {
       if (column._meta && column._meta.hash) array.push(column);
       return array;
     }, []);
   };
-  _initialise(); /* <!-- Run initial variable initialisation --> */
-  /* <!-- Initialisation Functions --> */
 
-  /* <!-- Internal Functions --> */
-  var _helpers = sheetId => ({
+  /* <!-- Internal Helper Functions --> */
+  FN.helpers = sheetId => ({
     grid: factory.Google_Sheets_Grid({
       sheet: sheetId
     }),
@@ -83,9 +133,10 @@ SaaD = (options, factory) => {
     notation: factory.Google_Sheets_Notation(),
   });
 
-  var _utilities = {
+  /* <!-- Internal Utility Functions --> */
+  FN.utilities = {
 
-    convertToArray: item => _.reduce(state.data.columns.meta,
+    convertToArray: item => _.reduce(ರ‿ರ.data.columns.meta,
       (value, column) => {
         value[column.developerMetadata.location.dimensionRange.startIndex] =
           column.isDate && item[column.developerMetadata.metadataValue] && item[column.developerMetadata.metadataValue]._isAMomentObject ?
@@ -94,21 +145,86 @@ SaaD = (options, factory) => {
         return value;
       }, []),
 
-    hash: item => objectHash.sha1(_.reduce(state.hashes, (value, column) => {
+    hash: item => objectHash.sha1(_.reduce(ರ‿ರ.hashes, (value, column) => {
       if (item[column.value]) value[column.value] = item[column.value];
       return value;
     }, {})),
 
-    range: (row_start, column_start, row_end, column_end) => state.helpers.notation.rangeR1C1(
+    range: (row_start, column_start, row_end, column_end) => ರ‿ರ.helpers.notation.rangeR1C1(
       `${row_start === null ? "" : `R${row_start}`}${column_start === null ? "" : `C${column_start}`}:${row_end === null ? "" : `R${row_end}`}${column_end === null ? "" : `C${column_end}`}`),
 
   };
 
-  var _format = {
+  /* <!-- Internal Generation Functions --> */
+  FN.generate = {
+
+    cells: {
+
+      update: item => ({
+        updateCells: {
+          rows: [{
+            values: _.map(FN.utilities.convertToArray(item),
+              value => ({
+                userEnteredValue: {
+                  stringValue: value
+                }
+              }))
+          }],
+          range: ರ‿ರ.helpers.grid.range(ರ‿ರ.data.rows.end + item.__ROW,
+            ರ‿ರ.data.rows.end + item.__ROW + 1,
+            ರ‿ರ.data.columns.start - 1,
+            ರ‿ರ.data.columns.end),
+          fields: "userEnteredValue.stringValue"
+        }
+      }),
+
+      delete: item => ({
+        deleteDimension: {
+          range: ರ‿ರ.helpers.grid.dimension("ROWS",
+            ರ‿ರ.data.rows.end + item.__ROW, ರ‿ರ.data.rows.end + item.__ROW + 1)
+        }
+      })
+
+    },
+
+    rows: {
+
+      id: row => ({
+        "createDeveloperMetadata": ರ‿ರ.helpers.meta.rows(
+            ರ‿ರ.data.rows.end + row,
+            ರ‿ರ.data.rows.end + row + 1)
+          .tag(options.rows.row_id)
+      }),
+
+      delete: range => ({
+        deleteDimension: {
+          range: ರ‿ರ.helpers.grid.dimension.apply(null, ["ROWS"].concat(
+            ರ‿ರ.helpers.notation.gridA1(ರ‿ರ.helpers.notation.clean(range), true)))
+        }
+      })
+
+    },
+
+    ranges: {
+
+      delete: range => ({
+        "deleteRange": {
+          "range": ರ‿ರ.helpers.grid.range.apply(null, ರ‿ರ.helpers.notation.gridA1(
+            ರ‿ರ.helpers.notation.clean(range), true)),
+          "shiftDimension": "ROWS"
+        }
+      }),
+
+    }
+
+  };
+
+  /* <!-- Internal Format Functions --> */
+  FN.format = {
 
     sheet: (spreadsheetId, sheetId, columns, headerColour) => {
 
-      var helpers = _helpers(sheetId),
+      var helpers = FN.helpers(sheetId),
         _dimensions = _.map(columns, (column, index) => ({
           "updateDimensionProperties": helpers.grid.columns(index, index + 1)
             .dimension(column._meta && column._meta.width ? column._meta.width : 100)
@@ -181,14 +297,15 @@ SaaD = (options, factory) => {
 
   };
 
-  var _populate = {
+  /* <!-- Internal Populate Functions --> */
+  FN.populate = {
 
     sheet: (spreadsheetId, sheetId, sheetTitle, headerColour) => {
 
       var _columns = _.map(_.filter(options.columns, c => c._meta && c.key == "COLUMN_NAME"), c => c);
 
-      return _populate.headers(spreadsheetId, sheetTitle, _columns)
-        .then(() => _format.sheet(spreadsheetId, sheetId, _columns, headerColour));
+      return FN.populate.headers(spreadsheetId, sheetTitle, _columns)
+        .then(() => FN.format.sheet(spreadsheetId, sheetId, _columns, headerColour));
 
     },
 
@@ -205,64 +322,111 @@ SaaD = (options, factory) => {
 
     },
 
-    rows: rows => _.reduce(rows, (list, row, index) => {
+    rows: (rows, metadata, ingest, hash) => {
 
-      var _row = {};
-      _.each(state.data.columns.meta, column => {
-        var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
-        _row[column.developerMetadata.metadataValue] = _val && column.isDate ? moment(_val) : _val;
-      });
+      var _batches = [],
+        _rows = _.reduce(rows, (list, row, index) => {
 
-      /* <!-- Set ROW / Index Reference --> */
-      state.data.last = Math.max(state.data.last !== undefined ? state.data.last : 0, (_row.__ROW = index));
+          var _row = {};
+          _.each(ರ‿ರ.data.columns.meta, column => {
+            var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
+            _row[column.developerMetadata.metadataValue] = _val && column.isDate ? moment(_val) : _val;
+          });
 
-      /* <!-- Set on-the-fly Item Properties and Add to Return List --> */
-      if (_.compact(_row).length > 0) list.push(options.process ? options.process(_row) : row);
+          /* <!-- Set ROW / Index Reference --> */
+          ರ‿ರ.data.last = Math.max(ರ‿ರ.data.last !== undefined ?
+            ರ‿ರ.data.last : 0, (_row.__ROW = index));
 
-      return list;
+          /* <!-- Get ID from Metadata (if available) --> */
+          var _index = ರ‿ರ.data.rows.end + index,
+            _id = _.findIndex(metadata,
+              item => item.developerMetadata.location.dimensionRange.startIndex === _index);
 
-    }, []),
+          /* <!-- Set ID (if available) --> */
+          _row.__ID = _id >= 0 ? metadata.splice(_id, 1)[0].developerMetadata.metadataId : null;
+
+          /* <!-- Generate HASH --> */
+          if (hash || options.options.always_hash) _row.__HASH = FN.utilities.hash(_row);
+
+          /* <!-- Populate missing ID, if options.ingest --> */
+          if ((ingest || options.options.ingest) && _row.__ID === null)
+            _batches.push({
+              row: _row,
+              batch: FN.generate.rows.id(_row.__ROW)
+            });
+
+          /* <!-- Set on-the-fly Item Properties and Add to Return List --> */
+          if (_.compact(_row).length > 0) list.push(options.process ? options.process(_row) : row);
+
+          return list;
+
+        }, []);
+
+      return _batches.length > 0 ?
+        factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet, _.pluck(_batches, "batch"))
+        .then(results => {
+          if (results && results.replies) _.each(_batches, (batch, index) =>
+            batch.row.__ID = results.replies[index].createDeveloperMetadata.developerMetadata.metadataId);
+          return _rows;
+        }) : Promise.resolve(_rows);
+
+    },
 
   };
 
-  var _sheet = {
+  /* <!-- Internal Sheet Functions --> */
+  FN.sheet = {
 
     /* <!-- FUNCTION: Creates a new Database Spreadsheet --> */
     /* <!-- PARAMETERS: meta: Array of metadata to add to the newly created sheet --> */
-    create: meta => factory.Google.sheets.create(
-        options.names.spreadsheet, options.names.sheet,
-        factory.Google_Sheets_Format({}, factory).colour(options.schema.colour), meta)
+    create: meta => {
 
-      .then(sheet => {
-        var _properties = sheet.sheets[0].properties;
-        state.helpers = _helpers(_properties.sheetId);
-        return _populate.sheet(sheet.spreadsheetId, _properties.sheetId, _properties.title);
-      })
+      return factory.Google.sheets.create(
+          options.names.spreadsheet, options.names.sheet,
+          factory.Google_Sheets_Format({}, factory).colour(options.schema.colour), meta)
 
-      /* <!-- ID of Opened Spreadsheet --> */
-      .then(sheet => _.tap(sheet, sheet => state.id = sheet.spreadsheetId))
+        .then(sheet => {
+          var _properties = sheet.sheets[0].properties;
+          ರ‿ರ.helpers = FN.helpers(_properties.sheetId);
+          return FN.populate.sheet(sheet.spreadsheetId, _properties.sheetId, _properties.title);
+        })
 
-      .then(sheet => _.tap(sheet, sheet => factory.Google.files.update(
-        sheet.spreadsheetId, factory.Google.files.tag(options.property.name, options.property.value)))),
+        /* <!-- ID of Created Spreadsheet --> */
+        .then(sheet => _.tap(sheet, sheet => {
+          ರ‿ರ.data = {
+            spreadsheet: sheet.spreadsheetId,
+            sheet: sheet.sheets[0].properties.sheetId,
+            title: sheet.sheets[0].properties.title
+          };
+          ರ‿ರ.helpers = FN.helpers(ರ‿ರ.data.sheet);
+        }))
+
+        .then(sheet => _.tap(sheet, sheet => factory.Google.files.update(
+          sheet.spreadsheetId, factory.Google.files.tag(options.property.name, options.property.value))));
+
+    },
 
     /* <!-- FUNCTION: Opens a Database Spreadsheet --> */
     /* <!-- PARAMETERS: id: Spreadsheet / Google Drive ID --> */
     /* <!-- PARAMETERS: sheetMetadata: Metadata to retrieve the correct sheet --> */
-    open: (id, sheetMetadata) => {
+    /* <!-- PARAMETERS: ingest: Overrides schema ingest (if true) --> */
+    /* <!-- PARAMETERS: ingest: Overrides schema always hash (if true) --> */
+    open: (id, sheetMetadata, ingest, hash) => {
 
       factory.Flags.log(`Opening Data File: ${id}`);
 
-      return factory.Google.sheets.metadata.find(id, factory.Google_Sheets_Metadata({}, factory).filter()
+      return factory.Google.sheets.metadata.find(id,
+          factory.Google_Sheets_Metadata({}, factory).filter()
           .parse(sheetMetadata ? sheetMetadata : _.values(options.sheets)[0]).make())
         .then(value => {
           if (value && value.matchedDeveloperMetadata && value.matchedDeveloperMetadata.length == 1) {
             /* <!-- Representation of Sheet Data Structure --> */
-            state.data = {
+            ರ‿ರ.data = {
               spreadsheet: id,
-              sheet: value.matchedDeveloperMetadata[0].developerMetadata.location.sheetId
+              sheet: value.matchedDeveloperMetadata[0].developerMetadata.location.sheetId,
             };
             /* <!-- Various Sheet Helpers --> */
-            if (!state.helpers) state.helpers = _helpers(state.data.sheet);
+            if (!ರ‿ರ.helpers) ರ‿ರ.helpers = FN.helpers(ರ‿ರ.data.sheet);
             return factory.Google.sheets.get(id);
           } else {
             return false;
@@ -270,33 +434,33 @@ SaaD = (options, factory) => {
         })
         .then(value => {
           if (!value) return;
-          state.data.title = _.find(value.sheets,
-            sheet => sheet.properties.sheetId == state.data.sheet).properties.title;
-          return state.data;
+          ರ‿ರ.data.title = _.find(value.sheets,
+            sheet => sheet.properties.sheetId == ರ‿ರ.data.sheet).properties.title;
+          return ರ‿ರ.data;
         })
         .then(value => {
           if (!value) return;
-          var _location = state.helpers.meta.location.sheet(value.sheet),
+          var _location = ರ‿ರ.helpers.meta.location.sheet(value.sheet),
             _filters = [
-              state.helpers.meta.filter().location(_location).key(_.values(options.columns)[0].key).make(),
-              state.helpers.meta.filter().location(_location).key(options.rows.row_headers.key).make()
+              ರ‿ರ.helpers.meta.filter().location(_location).key(_.values(options.columns)[0].key).make(),
+              ರ‿ರ.helpers.meta.filter().location(_location).key(options.rows.row_headers.key).make()
             ];
           return factory.Google.sheets.metadata.find(value.spreadsheet, _filters);
         })
         .then(value => {
           if (!value || !value.matchedDeveloperMetadata) return;
 
-          state.data.rows = {
+          ರ‿ರ.data.rows = {
             meta: _.filter(value.matchedDeveloperMetadata, metadata => metadata.developerMetadata.metadataKey == options.rows.row_headers.key),
             start: 0,
             end: 0
           };
-          state.data.columns = {
+          ರ‿ರ.data.columns = {
             meta: _.filter(value.matchedDeveloperMetadata, metadata => metadata.developerMetadata.metadataKey == _.values(options.columns)[0].key),
             start: 1,
             end: 0
           };
-          _.each([state.data.rows, state.data.columns], dimension => {
+          _.each([ರ‿ರ.data.rows, ರ‿ರ.data.columns], dimension => {
             _.each(dimension.meta, metadata => {
               dimension.start = Math.min(dimension.start, metadata.developerMetadata.location.dimensionRange.startIndex >= dimension.start ?
                 metadata.developerMetadata.location.dimensionRange.startIndex : dimension.start);
@@ -304,191 +468,256 @@ SaaD = (options, factory) => {
             });
           });
 
-          factory.Flags.log("METADATA (Rows):", state.data.rows);
-          factory.Flags.log("METADATA (Columns):", state.data.columns);
+          factory.Flags.log("METADATA (Rows):", ರ‿ರ.data.rows);
+          factory.Flags.log("METADATA (Columns):", ರ‿ರ.data.columns);
 
-          state.data.range = _utilities.range(
-            state.data.rows.end + 1, state.data.columns.start, null, state.data.columns.end);
-          factory.Flags.log("Fetching Values for Range:", state.data.range);
+          ರ‿ರ.data.range = FN.utilities.range(
+            ರ‿ರ.data.rows.end + 1, ರ‿ರ.data.columns.start, null, ರ‿ರ.data.columns.end);
 
-          return factory.Google.sheets.values(
-            state.data.spreadsheet, `${state.data.title}!${state.data.range}`);
+          return factory.Google.sheets.metadata.find(ರ‿ರ.data.spreadsheet,
+            ರ‿ರ.helpers.meta.filter()
+            .location(ರ‿ರ.helpers.meta.location.sheet(value.sheet))
+            .key(options.rows.row_id.key).make());
 
         })
-        .then(value => {
-          if (!value) return;
+        .then(metadata => {
 
-          /* <!-- Map Date / Markdown Fields / Columns --> */
-          var _filter = type => column => column._meta && column._meta.type == type,
-            _value = column => column.value,
-            _types = {
-              date: _.map(_.filter(options.columns, _filter("date")), _value),
-              markdown: _.map(_.filter(options.columns, _filter("markdown")), _value),
-              integer: _.map(_.filter(options.columns, _filter("int")), _value),
-              time: _.map(_.filter(options.columns, _filter("time")), _value)
-            };
-          _.each(state.data.columns.meta, column => {
-            column.isDate = (_types.date.indexOf(column.developerMetadata.metadataValue) >= 0);
-            column.isMarkdown = (_types.markdown.indexOf(column.developerMetadata.metadataValue) >= 0);
-            column.isInteger = (_types.integer.indexOf(column.developerMetadata.metadataValue) >= 0);
-            column.isTime = (_types.time.indexOf(column.developerMetadata.metadataValue) >= 0);
+          if (!metadata) return;
+
+          factory.Flags.log("METADATA (Row IDs):", metadata);
+          factory.Flags.log("Fetching Values for Range:", ರ‿ರ.data.range);
+
+          return factory.Google.sheets.values(
+            ರ‿ರ.data.spreadsheet, `${ರ‿ರ.data.title}!${ರ‿ರ.data.range}`
+          ).then(value => {
+            if (!value) return;
+
+            /* <!-- Map Date / Markdown Fields / Columns --> */
+            var _filter = type => column => column._meta && column._meta.type == type,
+              _value = column => column.value,
+              _types = {
+                date: _.map(_.filter(options.columns, _filter("date")), _value),
+                markdown: _.map(_.filter(options.columns, _filter("markdown")), _value),
+                integer: _.map(_.filter(options.columns, _filter("int")), _value),
+                time: _.map(_.filter(options.columns, _filter("time")), _value)
+              };
+            _.each(ರ‿ರ.data.columns.meta, column => {
+              column.isDate = (_types.date.indexOf(column.developerMetadata.metadataValue) >= 0);
+              column.isMarkdown = (_types.markdown.indexOf(column.developerMetadata.metadataValue) >= 0);
+              column.isInteger = (_types.integer.indexOf(column.developerMetadata.metadataValue) >= 0);
+              column.isTime = (_types.time.indexOf(column.developerMetadata.metadataValue) >= 0);
+            });
+            /* <!-- Map Date / Markdown Fields / Columns --> */
+
+            /* <!-- Populate and Return --> */
+            return value.values ?
+              FN.populate.rows(value.values, metadata.matchedDeveloperMetadata, ingest, hash)
+              .then(rows => {
+                factory.Flags.log("Data Values:", rows);
+                return (ರ‿ರ.data.data = rows);
+              }) : ರ‿ರ.data.data = [];
+            /* <!-- Populate and Return --> */
+
           });
-          /* <!-- Map Date / Markdown Fields / Columns --> */
-
-          /* <!-- Populate and Return --> */
-          state.data.data = value.values ? _populate.rows(value.values) : [];
-          factory.Flags.log("Data Values:", state.data.data);
-          return state.data.data;
-          /* <!-- Populate and Return --> */
 
         })
         .then(data => {
-          state.db = DB.addCollection(options.db, {
-            indices: ["__ROW"].concat(_.map(_.filter(state.data.columns,
+
+          if (!data) return;
+
+          if (ರ‿ರ.db) DB.removeCollection(options.db.name);
+          ರ‿ರ.db = DB.addCollection(options.db.name, {
+            indices: ["__ID", "__ROW"].concat(_.map(_.filter(ರ‿ರ.data.columns,
               c => c._meta && c._meta.index), c => c.value))
           });
-          if (data && data.length > 0) state.db.insert(data);
-          return state.db;
+          if (data && data.length > 0) ರ‿ರ.db.insert(data);
+          return ರ‿ರ.db;
         });
     },
 
     close: () => {
       DB.removeCollection(options.db.name);
-      state = {};
+      ರ‿ರ = {};
     }
 
   };
 
-  var _rows = {
+  /* <!-- Internal Row Functions --> */
+  FN.rows = {
 
-    insert: item => {
+    check: (items, id) => factory.Google.sheets.values(ರ‿ರ.data.spreadsheet,
+        id ? _.pluck(items, "__ID") : _.map(items, item => `${ರ‿ರ.data.title}!${FN.utilities.range(
+        ರ‿ರ.data.rows.end + 1 + item.__ROW, ರ‿ರ.data.columns.start,
+        ರ‿ರ.data.rows.end + 1 + item.__ROW, ರ‿ರ.data.columns.end)}`), ರ‿ರ.data.sheet)
 
-      /* <!-- For new data sheets --> */
-      state.data.last = state.data.last ? state.data.last : -1;
+      .then(values => FN.populate.rows(_.chain(values.valueRanges)
+        .sortBy(value => {
+          var _range = value.valueRange.range.split(":");
+          return ರ‿ರ.helpers.notation.rowA1(_range[_range.length - 1]);
+        })
+        .map(value => value.valueRange.values[0])
+        .value(), null, false, true))
 
-      var _range = _utilities.range(
-        state.data.rows.end + 2 + state.data.last, state.data.columns.start, null, state.data.columns.end);
+      .then(all => {
+        for (var i = 0; i < all.length; i++) {
+          if (all[i].__HASH !== items[i].__HASH) return Promise.reject(
+            `Hash Mismatch for Range: ${FN.utilities.range(
+              ರ‿ರ.data.rows.end + 1 + all[i].__ROW, ರ‿ರ.data.columns.start,
+              ರ‿ರ.data.rows.end + 1 + all[i].__ROW, ರ‿ರ.data.columns.end)} [ITEM: ${items[i].__HASH}, STORED: ${all[i].__HASH}]`);
+        }
+      }),
 
-      var _value = _utilities.convertToArray(item);
+    insert: items => {
 
-      factory.Flags.log(`Writing Values [NEW] for Range: ${_range}`, _value);
+      var generate = item => {
 
-      return factory.Google.sheets.append(
-          state.data.spreadsheet, `${state.data.title}!${_range}`, [_value])
-        .then(result => {
-          if (result && result.updates) {
-            item.__ROW = (state.data.last += 1);
-            item.__hash = _utilities.hash(item);
-            return item;
-          } else {
-            return false;
-          }
-        });
+          /* <!-- Set the data entry row --> */
+          item.__ROW = (ರ‿ರ.data.last = ರ‿ರ.data.last === undefined || ರ‿ರ.data.last === null ?
+            0 : ರ‿ರ.data.last += 1); /* <!-- For new data sheets --> */
 
-    },
+          /* <!-- Log the data entry range --> */
+          if (factory.Flags.debug()) factory.Flags.log(
+            `Preparing to Write Values [NEW] for Range: ${FN.utilities.range(ರ‿ರ.data.rows.end + 1 + item.__ROW, ರ‿ರ.data.columns.start, null, ರ‿ರ.data.columns.end)}`, item);
 
-    delete: item => {
+          return [FN.generate.cells.update(item), FN.generate.rows.id(item.__ROW)];
 
-      if (item.__ROW === undefined || item.__ROW === null) return Promise.reject();
+        },
+        commit = batches => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet, batches);
 
-      var _row = state.data.rows.end + 1 + item.__ROW,
-        _dimension = state.helpers.grid.dimension("ROWS", _row - 1, _row),
-        _range = _utilities.range(
-          state.data.rows.end + 1 + item.__ROW, state.data.columns.start,
-          state.data.rows.end + 1 + item.__ROW, state.data.columns.end);
+      return commit(_.reduce((items = _.isArray(items) ? items : [items]),
+          (batches, item) => batches.concat(generate(item)), []))
+        .then(results => {
 
-      return factory.Google.sheets.values(state.data.spreadsheet, `${state.data.title}!${_range}`)
-        .then(value => {
-          var _existing = _populate(value.values)[0];
-          _existing.__hash = _utilities.hash(_existing);
-          if (_existing.__hash == item.__hash) {
-            factory.Flags.log(`Deleting Row : ${_row} / Dimension : ${JSON.stringify(_dimension)} for item:`, item);
-            return factory.Google.sheets.batch(state.data.spreadsheet, {
-              "deleteDimension": {
-                "range": _dimension
+          if (results && results.replies) {
+
+            _.each(items, (item, index) => {
+              var _index = (index * 2) + 1;
+              if (results.replies.length > _index) {
+
+                /* <!-- Set Metadata ID --> */
+                item.__ID = results.replies[_index]
+                  .createDeveloperMetadata.developerMetadata.metadataId;
+
+                /* <!-- Generate HASH --> */
+                item.__HASH = FN.utilities.hash(item);
+
+                /* <!-- Insert into DBs --> */
+                ರ‿ರ.data.data.push(item);
+                ರ‿ರ.db.insert(item);
               }
-            }).then(() => {
-              /* <!-- Reduce the relevant and last row to account for the removed row --> */
-              state.db.updateWhere(row => row.__ROW > item.__ROW, row => row.__ROW -= 1);
-              state.data.last -= 1;
-              return true;
             });
+            return items;
+
           } else {
-            return Promise.reject(`Hash Mismath for Range: ${_range} [Hash_ITEM: ${item.__hash}, Hash_EXISTING: ${_existing.__hash}]`);
+
+            /* <!-- Delete Metadata ROW as we didn't commit --> */
+            _.each(items, item => delete item.__ROW);
+            return false;
+
           }
 
         });
 
     },
 
-    remove: items => {
+    update: (items, check) => {
 
-      var _start = state.data.rows.end + 1 + _.min(items, item => item.__ROW).__ROW,
-        _end = state.data.rows.end + 1 + _.max(items, item => item.__ROW).__ROW,
-        _dimension = state.helpers.grid.dimension("ROWS", _start - 1, _end);
+      var id = _.every(items = _.isArray(items) ? items : [items], "__ID"),
+        range = () => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet,
+          _.map(items, FN.generate.cells.update)),
+        metadata = () => factory.Google.sheets.update(ರ‿ರ.data.spreadsheet,
+          _.pluck(items, "__ID"),
+          _.map(items, FN.utilities.convertToArray),
+          null, ರ‿ರ.data.sheet),
+        commit = () => (id ? metadata() : range())
+        .then(() => {
+          _.each(items, item => {
+            item.__HASH = FN.utilities.hash(item);
+            ರ‿ರ.db.update(item);
+          });
+          return items;
+        });
 
-      factory.Flags.log(`Removing Rows : ${_start}-${_end} / Dimension : ${JSON.stringify(_dimension)} for items:`, items);
-
-      return factory.Google.sheets.batch(state.data.spreadsheet, {
-        "deleteDimension": {
-          "range": _dimension
-        }
-      });
+      return check || options.options.check ? FN.rows.check(items, id).then(commit) : commit();
 
     },
 
-    update: item => {
+    delete: (items, check) => {
 
-      var _range = _utilities.range(
-          state.data.rows.end + 1 + item.__ROW, state.data.columns.start,
-          state.data.rows.end + 1 + item.__ROW, state.data.columns.end),
-        _value = _utilities.convertToArray(item);
+      var id = _.every(items = _.isArray(items) ? items : [items], "__ID"),
+        range = () => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet,
+          _.map(items, FN.generate.cells.delete)),
 
-      return factory.Google.sheets.values(state.data.spreadsheet, `${state.data.title}!${_range}`).then(value => {
-        var _existing = _populate(value.values)[0];
-        _existing.__hash = _utilities.hash(_existing);
-        if (_existing.__hash == item.__hash) {
-          factory.Flags.log(`Writing Values [UPDATED] for Range: ${_range}`, _value);
-          return factory.Google.sheets.update(
-            state.data.spreadsheet, `${state.data.title}!${_range}`, [_value]).then(() => {
-            item.__hash = _utilities.hash(item);
-            return item;
+        metadata = () => factory.Google.sheets.clear(ರ‿ರ.data.spreadsheet,
+          _.pluck(items, "__ID"),
+          ರ‿ರ.data.sheet)
+        .then(response => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet,
+          _.chain(response.clearedRanges)
+          .sortBy(value => ರ‿ರ.helpers.notation.rowA1(
+            ರ‿ರ.helpers.notation.clean(value).split(":")[0]
+          ))
+          .map(FN.generate.rows.delete)
+          .value().reverse())),
+        /* <!-- REVERSE Order: Delete from end to start --> */
+        commit = () => (id ? metadata() : range())
+        .then(() => {
+          ರ‿ರ.data.last -= items.length; /* <!-- Reduce the last row to account for removals --> */
+          _.each(items, item => {
+
+            /* <!-- Remove from the DBs too --> */
+            ರ‿ರ.data.data = _.reject(ರ‿ರ.data.data, element => element === item);
+            ರ‿ರ.db.remove(item);
+
+            /* <!-- Remove SaaD specific properties too --> */
+            delete item.__HASH;
+            delete item.__ROW;
+            delete item.__ID;
+
           });
-        } else {
-          return Promise.reject(`Hash Mismath for Range: ${_range} [Hash_ITEM: ${item.__hash}, Hash_EXISTING: ${_existing.__hash}]`);
-        }
-      });
+
+          /* <!-- Update ROWS for the remaining items --> */
+          _.each(ರ‿ರ.data.data, (item, index) => {
+            item.__ROW = index;
+            ರ‿ರ.db.update(item);
+          });
+
+          return items;
+        });
+
+      return (check || options.options.check ? FN.rows.check(items, id).then(commit) : commit());
 
     },
 
   };
-  /* <!-- Internal Functions --> */
 
   /* <!-- Initial Calls --> */
+  FN.initialise(); /* <!-- Run initial variable initialisation --> */
 
   /* <!-- External Visibility --> */
   return {
 
-    state: state,
+    state: ರ‿ರ,
 
-    create: sheetMetadata => _sheet.create(_.union([{
+    create: sheetMetadata => FN.sheet.create(_.union([{
       key: "SCHEMA_VERSION",
       value: options.schema.version
     }], [sheetMetadata ? sheetMetadata : _.values(options.sheets)[0]])),
 
-    hash: _utilities.hash,
+    hash: FN.utilities.hash,
 
-    open: _sheet.open,
+    arrayise: FN.utilities.convertToArray,
 
-    close: _sheet.close,
-    
-    insert: _rows.insert,
-    
-    delete: _rows.delete,
-    
-    remove: _rows.remove,
-    
-    update: _rows.update,
+    range: FN.utilities.range,
+
+    open: FN.sheet.open,
+
+    close: FN.sheet.close,
+
+    insert: FN.rows.insert,
+
+    delete: FN.rows.delete,
+
+    update: FN.rows.update,
 
     regexes: {
 

@@ -651,7 +651,7 @@ Google_API = (options, factory) => {
             "",
             `--${BOUNDARY("MIXED")}--`,
           ].join("\r\n"),
-          _message = `To: ${to}\r\n${from ? `From: ${from}\r\n` : ""}Subject: ${subject}\r\nMIME-Version: 1.0\r\n${plain_message ? 
+          _message = `To: ${to}\r\n${from ? `From: ${from}\r\n` : ""}Subject: ${subject}\r\nMIME-Version: 1.0\r\n${plain_message ?
             _makeHtml(message, plain_message) : _makePlain(message)}`;
 
         return _call(
@@ -900,7 +900,7 @@ Google_API = (options, factory) => {
 
     sheets: {
 
-      /* <!-- // Create a new Spreadsheet // --> */
+      /* <!-- Create a new Spreadsheet --> */
       create: (name, tab, colour, meta) => {
         var _data = {
           "properties": {
@@ -927,7 +927,7 @@ Google_API = (options, factory) => {
         return _call(NETWORKS.sheets.post, "v4/spreadsheets", _data, "application/json");
       },
 
-      get: (id, all, range) => _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}${all ? 
+      get: (id, all, range) => _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}${all ?
 																`?includeGridData=true${range ? `&ranges=${encodeURIComponent(range)}` : ""}` : ""}`),
 
       filtered: (id, filters, all) => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}:getByDataFilter`, {
@@ -935,7 +935,30 @@ Google_API = (options, factory) => {
         "includeGridData": all ? true : false
       }),
 
-      values: (id, range) => _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}/values/${encodeURIComponent(range)}`),
+      values: (id, ranges, sheet) => {
+
+        var _batch = _.isArray(ranges),
+          _metadata = _batch && _.every(ranges, _.isNumber);
+
+        return _metadata ?
+          _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}/values:batchGetByDataFilter`, {
+            "dataFilters": _.map(ranges, range => ({
+              "developerMetadataLookup": {
+                "locationMatchingStrategy": "INTERSECTING_LOCATION",
+                "metadataLocation": sheet !== null && sheet !== undefined ? {
+                  "sheetId": sheet
+                } : {
+                  "spreadsheet": true,
+                },
+                "metadataId": range,
+              },
+            })),
+            "majorDimension": "ROWS",
+          }, "application/json") :
+          _batch ?
+          _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}/values:batchGet?${_.reduce(ranges, (memo, range) => `${memo}${memo.length > 0 ? "&" : ""}ranges=${encodeURIComponent(range)}`, "")}`) :
+          _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}/values/${encodeURIComponent(ranges)}`);
+      },
 
       append: (id, range, values, input) => _call(NETWORKS.sheets.post, "v4/spreadsheets/" + id + "/values/" + encodeURIComponent(range) + ":append?valueInputOption=" + (input ? input : "RAW"), {
         "range": range,
@@ -943,11 +966,69 @@ Google_API = (options, factory) => {
         "values": values
       }, "application/json"),
 
-      update: (id, range, values, input) => _call(NETWORKS.sheets.put, "v4/spreadsheets/" + id + "/values/" + encodeURIComponent(range) + "?valueInputOption=" + (input ? input : "RAW"), {
-        "range": range,
-        "majorDimension": "ROWS",
-        "values": values
-      }, "application/json"),
+      clear: (id, ranges, sheet) => {
+
+        var _batch = _.isArray(ranges),
+          _metadata = _batch && _.every(ranges, _.isNumber);
+
+        return _metadata ?
+          _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}/values:batchClearByDataFilter`, {
+            "dataFilters": _.map(ranges, range => ({
+              "developerMetadataLookup": {
+                "locationMatchingStrategy": "INTERSECTING_LOCATION",
+                "metadataLocation": sheet !== null && sheet !== undefined ? {
+                  "sheetId": sheet
+                } : {
+                  "spreadsheet": true,
+                },
+                "metadataId": range,
+              },
+            })),
+          }, "application/json") :
+          _batch ?
+          _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}/values:batchClear`, {
+            "ranges": ranges
+          }, "application/json") :
+          _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}/values/${encodeURIComponent(ranges)}:clear`);
+
+      },
+
+      update: (id, ranges, values, input, sheet) => {
+
+        var _batch = _.isArray(ranges) && _.isArray(values) && ranges.length == values.length,
+          _metadata = _batch && _.every(ranges, _.isNumber);
+
+        return _batch ?
+          _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}/values:${_metadata ? "batchUpdateByDataFilter" : "batchUpdate"}`, {
+            "valueInputOption": input ? input : "RAW",
+            "data": _.map(ranges, (range, index) => _metadata ? {
+              "dataFilter": {
+                "developerMetadataLookup": {
+                  "locationMatchingStrategy": "INTERSECTING_LOCATION",
+                  "metadataLocation": sheet !== null && sheet !== undefined ? {
+                    "sheetId": sheet
+                  } : {
+                    "spreadsheet": true,
+                  },
+                  "metadataId": range,
+                },
+              },
+              "majorDimension": "ROWS",
+              "values": [values[index]]
+            } : {
+              "range": range,
+              "majorDimension": "ROWS",
+              "values": [values[index]]
+            }),
+            "includeValuesInResponse": true,
+          }, "application/json") :
+          _call(NETWORKS.sheets.put, `v4/spreadsheets/${id}/values/${encodeURIComponent(ranges)}?valueInputOption=${input ? input : "RAW"}`, {
+            "range": ranges,
+            "majorDimension": "ROWS",
+            "values": values
+          }, "application/json");
+
+      },
 
       batch: (id, updates, returnSheet, returnData) => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}:batchUpdate`, {
         "requests": _arrayize(updates, value => !_.isArray(value)),

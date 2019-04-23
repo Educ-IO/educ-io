@@ -1,4 +1,8 @@
 site :
+  0.1.5 :
+    name : Infrastructure Updates
+    desc : Updates to Debug Testing and Sheets-as-a-Database
+    numeric : 0.1.5
   0.1.4c :
     name : Reflect v0.0.7c-beta
     desc : Public Release for Reflect

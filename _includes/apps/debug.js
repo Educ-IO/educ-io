@@ -14,8 +14,7 @@ App = function() {
   var ಠ_ಠ,
     _total = 0,
     _succeeded = 0,
-    _running = 0,
-    _left = 0;
+    _running = 0;
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
@@ -38,12 +37,20 @@ App = function() {
       n: l => GENERATE.p(l, "0123456789"),
       an: l => GENERATE.p(l, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"),
       t: l => GENERATE.p(l, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 _-.,:;()!?'"),
+      f: (min, max, fixed) => min === undefined || max === undefined ?
+        chance.floating : chance.floating({
+          min: min,
+          max: max,
+          fixed: fixed !== undefined ? fixed : 2,
+        }),
       i: (min, max) => min === undefined || max === undefined ?
         chance.integer : chance.integer({
           min: min,
           max: max
         }),
       c: () => GENERATE.p(6, "0123456789abcdef"),
+      cn: (min, max) => `rgb(${GENERATE.i(min, max ? max : 255)},${GENERATE.i(min, max ? max : 255)},${GENERATE.i(min, max ? max : 255)})`,
+      ca: alpha => `rgba(${GENERATE.i(0, 255)},${GENERATE.i(0, 255)},${GENERATE.i(0, 255)},${alpha === undefined ? GENERATE.f(0, 1, 2) : alpha})`,
       o: array => array[GENERATE.i(0, array.length - 1)],
     },
     SERIAL = promises => _.reduce(promises, (all, promise) => all.then(
@@ -59,38 +66,67 @@ App = function() {
 
   var _update = (result, expected) => {
     _running -= 1;
-    _left -= 1;
-    _succeeded += (result === (expected ?
+    var _success = (result === (expected ?
       /^\s*(false|0)\s*$/i.test(expected) ?
       false : _.isString(expected) ?
-      expected.toLowerCase() : true : true)) ? 1 : 0;
-    $(`#${ID}_counter`)
+      expected.toLowerCase() : true : true));
+    _succeeded += _success ? 1 : 0;
+    $(`#${ID}_counter .content`)
       .html(`${_succeeded}/${_total}  <strong>${Math.round(_succeeded/_total*100)}%</strong>`)
       .toggleClass("text-success", _succeeded == _total);
+    return _success;
   };
 
-  var _all = (module, id, times) => {
-    var _check = (fn, left) => (left ? _left : _running) === 0 ?
-      fn() : _.delay(_check, RANDOM(100, 400), fn, left),
-      _go = tests => new Promise(resolve => {
-        _.each(tests,
-          (el, i, all) => _.delay(el => {
-            if (i === 0) _left = all.length;
-            _check(() => {
-              var _click = function(el) {
-                var _el = $(el);
-                if (!_el.hasClass("loader")) el.click();
-                if (!_el.hasClass("loader")) _.delay(_click, RANDOM(10, 100), el);
-              };
-              _click(el);
-              if (i === (all.length - 1)) _check(() => resolve(true), true);
-            });
-          }, i ? i * 1000 : 50, el));
+  var _click = buttons => SERIAL(_.map(buttons, button => () => new Promise((resolve, reject) => {
 
-      }),
-      _tests = $(`#${id}`).parent().siblings("a.btn").toArray();
-    times && times > 1 ?
-      SERIAL(_.map(_.range(0, times), () => () => _go(_tests))) : _go(_tests);
+    var running, observer = new MutationObserver((mutationsList, observer) => {
+      for (var mutation of mutationsList) {
+        if (mutation.type == "attributes" && mutation.attributeName == "class") {
+          if (button.classList.contains("loader")) {
+            running = true;
+          } else if (running) {
+            if (button.classList.contains("success")) {
+              observer.disconnect();
+              resolve();
+            } else if (button.classList.contains("failure")) {
+              observer.disconnect();
+              reject();
+            }
+          }
+        }
+      }
+    });
+
+    observer.observe(button, {
+      attributes: true
+    });
+    button.click();
+
+  })));
+
+  var _all = (module, id, times) => {
+
+    var _this = $(`#${id}`),
+      _buttons = _this.parent().siblings("a.btn").toArray();
+    ಠ_ಠ.Flags.log("TEST BUTTONS:", _buttons);
+
+    /* <!-- Clear the status and indicate busy status --> */
+    _this.removeClass("success failure").addClass("loader disabled").find("i.result").addClass("d-none");
+
+    return new Promise((resolve, reject) => {
+      (times && times > 1 ?
+        SERIAL(_.map(_.range(0, times), () => () => _click(_buttons))) : _click(_buttons))
+      .then(() => {
+          _this.removeClass("loader disabled").addClass("success")
+            .find("i.result-success").removeClass("d-none");
+          resolve();
+        })
+        .catch(() => {
+          _this.removeClass("loader disabled").addClass("failure")
+            .find("i.result-failure").removeClass("d-none");
+          reject();
+        });
+    });
 
   };
 
@@ -102,7 +138,7 @@ App = function() {
     if (!_module || _id.length === 0) return;
 
     /* <!-- Clear the status and indicate busy status --> */
-    _id.addClass("loader disabled").find("i.result").addClass("d-none");
+    _id.removeClass("success failure").addClass("loader disabled").find("i.result").addClass("d-none");
 
     /* <!-- Instatiate the Module if required, and call all relevant methods --> */
     _module = ಠ_ಠ._isF(_module) ? _module.call(ಠ_ಠ) : _module;
@@ -114,20 +150,24 @@ App = function() {
     /* <!-- Increment the total tests run counter --> */
     _total += 1;
 
+    /* <!-- Used to set overall success --> */
+    var _outcome;
+
     _promisify(_start)
       .then(value => _promisify(_command, value))
       .then(result => {
-        _update((_result = result), expected);
+        _outcome = _update((_result = result), expected);
         return _promisify(_finish, {
           test: test,
           result: _result
         });
       })
       .catch(e => {
-        _update("error", expected);
+        _outcome = _update("error", expected);
         ಠ_ಠ.Flags.error(`Module: ${module} | Test: ${test}`, e);
       })
       .then(() => _id.removeClass("loader disabled")
+        .addClass(_outcome ? "success" : "failure")
         .find(`i.result-${_result ? "success" : "failure"}`)
         .removeClass("d-none"));
   };
@@ -136,11 +176,22 @@ App = function() {
     _all(module, id, expected && NUMBER.test(expected) ? parseInt(expected, 10) : null) :
     (_running += 1) && _one(module, test, id, expected);
 
-  var _everything = () => _.each($(".btn.test-all").toArray(),
-    (el, i) => _.delay(el => {
-      var _check = () => _left === 0 ? el.click() : _.delay(_check, RANDOM(500, 1000), el);
-      _check();
-    }, i ? i * 5000 : 100, el));
+  var _everything = () => {
+
+    var _this = $("#____run_everything"),
+      _buttons = $(".btn.test-all").toArray();
+    ಠ_ಠ.Flags.log("ALL TEST BUTTONS:", _buttons);
+
+    /* <!-- Clear the status and indicate busy status --> */
+    _this.removeClass("success failure").addClass("loader disabled").find("i.result").addClass("d-none");
+
+    return _click(_buttons)
+      .then(() => _this.removeClass("loader disabled").addClass("success")
+        .find("i.result-success").removeClass("d-none"))
+      .catch(() => _this.removeClass("loader disabled").addClass("failure")
+        .find("i.result-failure").removeClass("d-none"));
+
+  };
   /* <!-- Internal Functions --> */
 
   /* <!-- Overridable Configuration --> */

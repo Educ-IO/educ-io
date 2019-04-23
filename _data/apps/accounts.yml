@@ -10,7 +10,7 @@
 ###########################################################################
 
 name: Accounts
-desc: Securely store account _passwords_ in a Google sheet, with __extra__ encryption
+desc: Securely store __account details__ in a Google sheet, with __added__ encryption
 link: /accounts/
 colour: 333333
 logo: images/accounts_logo.svg
@@ -130,106 +130,22 @@ keys:
       general: AIzaSyC87WAInVCLR1Filuy_bclGajFFGQlVJSQ
       oauth: 740623674895-qo8s1af5d5aufl6v1uqrfr38tulia1r5.apps.googleusercontent.com
 menus:
-  - name: Diary
+  - name: Accounts
     groups:
       all:
         commands:
-          - name: Add
-            desc: Create a new task / event
-            shortcut: "n" 
-            hash: new.task
+          - name: Create DB
+            desc: Create a new database
+            hash: create
             disabled_until:
               - opened
-          - name: Refresh
-            desc: Reload current data
-            shortcut: "r"
-            hash: refresh
-            disabled_until:
-              - opened
-          - name: Search
-            desc: Search for tasks / events
-            shortcut: "s" 
-            hash: search
-            disabled_until:
-              - opened
-  - name: Go
-    groups:
-      all:
-        commands:
-          - name: Forward
-            desc: Go forward a week
-            shortcut: "&gt;"
-            hash: forward
-            disabled_until:
-              - opened
-          - name: Backward
-            desc: Go backward a week
-            shortcut: "&lt;"
-            hash: backward
-            disabled_until:
-              - opened
-          - name: To Today
-            desc: Jump to today
-            shortcut: "t"
-            hash: today
-            disabled_until:
-              - opened
-          - name: Jump To
-            desc: Jump to arbitrary date
-            shortcut: "j"
-            hash: jump
-            disabled_until:
-              - opened
-  - name: Show
-    visibility: debug
-    groups:
-      all:
-        commands:
-          - name: Calendar
-            desc: Display Google Calendar Events
-            hash: calendar
-            disabled_until:
-              - opened
-            auth: google
-            toggle:
-              - calendar
-            scope: https://www.googleapis.com/auth/calendar.readonly
-          - name: Issues
-            desc: Display Github Project Issues
-            hash: issues
-            disabled_until:
-              - opened
-            toggle:
-              - issues
-            scope: https://www.googleapis.com/auth/calendar.readonly
-          - name: Deadlines
-            desc: Display Google Classroom Deadlines
-            hash: classes
-            disabled_until:
-              - opened
-            auth: google
-            toggle:
-              - classes
-            scopes:
-              - https://www.googleapis.com/auth/classroom.courses.readonly
-              - https://www.googleapis.com/auth/classroom.coursework.students.readonly
+          - name: Open DB
+            desc: Open an existing database
+            hash: open
   - name: Settings
     groups:
       all:
         commands:
-          - name: Open Data
-            desc: Open Sheets Data
-            url: #data.open
-            disabled_until:
-              - opened
-            ext: true
-            data:
-              link: sheet
-          - name: Archive Data
-            desc: Archive Older Data By Year
-            hash: archive
-            disabled_until:
-              - opened
           - name: Show Config
             desc: Show App Config
             hash: config.show

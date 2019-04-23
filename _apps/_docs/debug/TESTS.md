@@ -8,7 +8,7 @@
     
 {% if item.tests %}<div markdown="0">{% assign id = title | append: '__all' %}{% assign hash = 'run.' | append: item.title | append: '.__all' | append: '.' | append: id %}
 <div class="btn-group mr-1 mr-md-2 mr-lg-3 mt-2">
-  {% include command.html quiet="true" class="btn btn-lg btn-dark test-all waves-effect" name='All' command='' id=id hash=hash placement="bottom" %}
+  {% include command.html quiet=true class="btn btn-lg btn-dark test-all waves-effect" name='All' command='' id=id spinner=true hash=hash placement="bottom" %}
   <button type="button" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <span class="sr-only">Toggle Dropdown</span>
   </button>

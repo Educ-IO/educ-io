@@ -26,7 +26,7 @@ versions:
   0.5.5:
     name : Minor Updates
     desc : Added checks/removal for un-intended numerical lists
-    type : beta | production | minor
+    type : minor
     changes :
       - details: When starting a line with a number, followed by a period (.) and then a space, this is parsed as a numerical list. This version removes them unless you press CTRL-ALT-P to print.
   0.5 :

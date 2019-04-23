@@ -727,7 +727,6 @@ App = function() {
         }).then(values => {
           if (!values) return false;
           ಠ_ಠ.Flags.log("Values for Creation", values);
-
           _item = {
             FROM: values.From ? values.From.Value : null,
             TAGS: values.Tags ? values.Tags.Value : null,

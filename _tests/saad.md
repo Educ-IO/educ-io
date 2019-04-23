@@ -15,6 +15,36 @@ tests:
     auth: google
     scopes:
       - https://www.googleapis.com/auth/drive.file
+  - name: Insert
+    desc: Populates a DB with Records
+    function: insert
+    auth: google
+    scopes:
+      - https://www.googleapis.com/auth/drive.file
+  - name: Ingest
+    desc: Verifies that externally created records are ingested (marked with an ID) properly
+    function: ingest
+    auth: google
+    scopes:
+      - https://www.googleapis.com/auth/drive.file
+  - name: Update
+    desc: Updates DB Records
+    function: update
+    auth: google
+    scopes:
+      - https://www.googleapis.com/auth/drive.file
+  - name: Delete
+    desc: Deletes Records from a DB
+    function: delete
+    auth: google
+    scopes:
+      - https://www.googleapis.com/auth/drive.file
+  - name: Collision
+    desc: Simulates a collision, where a DB Record is updated externally
+    function: collision
+    auth: google
+    scopes:
+      - https://www.googleapis.com/auth/drive.file
   - name: Query
     desc: Queries a DB
     function: query

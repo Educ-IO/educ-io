@@ -11,7 +11,7 @@ Google_Sheets_Notation = () => {
     R1: /^R([1-9]\d*)$/,
     R1C1: /^R([1-9]\d*)C([1-9]\d*)$/,
     C1: /^C([1-9]\d*)$/
-  }, RANGE = ":";
+  }, RANGE = ":", SHEET = "!";
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -39,13 +39,14 @@ Google_Sheets_Notation = () => {
     return `${_column}${_row}`;
   };
 
-  var _convertA1 = reference => {
+  var _convertA1 = (reference, row, column) => {
     var _parts = _split(NOTATIONS.A1, reference),
       _col = _parts[0],
       _row = _parts[1],
       _column = 0;
     for (var i = 0; i < _col.length; i++) _column = 26 * _column + _col.charCodeAt(i) - 64;
-    return `R${_row}C${_column}`;
+    
+    return row ? parseInt(_row, 10) : column ? parseInt(_column, 10) : `R${_row}C${_column}`;
   };
 
   var _convert = reference => NOTATIONS.R1C1.test(reference) ?
@@ -66,6 +67,21 @@ Google_Sheets_Notation = () => {
     var i = zero ? 1 : 0;
     return _range(`R${start_Row + i}C${start_Col + i}:R${end_Row + i}C${end_Col + i}`, _convertR1C1);
   };
+  
+  var _gridA1 = (reference, zero) => {
+    var i = zero ? 1 : 0;
+    return reference && reference.indexOf(RANGE) > 0 ?
+      [
+        _convertA1(reference.split(RANGE)[0], true) - i,
+        _convertA1(reference.split(RANGE)[1], true) - i + 1,
+        _convertA1(reference.split(RANGE)[0], false, true) - i,
+        _convertA1(reference.split(RANGE)[1], false, true) - i + 1,
+      ] : reference;
+  };
+  
+  var _clean = reference => reference.indexOf(SHEET) >= 0 ?
+      reference.split(SHEET)[reference.split(SHEET).length - 1] : reference;
+  
   /* <!-- Internal Functions --> */
 
   /* === Internal Visibility === */
@@ -73,7 +89,11 @@ Google_Sheets_Notation = () => {
   /* === External Visibility === */
   return {
 
+    clean : _clean,
+    
     grid: _grid,
+    
+    gridA1 : _gridA1,
     
     range: _range,
     
@@ -85,6 +105,10 @@ Google_Sheets_Notation = () => {
 
     convertA1: reference => NOTATIONS.A1.test(reference) ? _convertA1(reference) : reference,
 
+    rowA1: reference => NOTATIONS.A1.test(reference) ? _convertA1(reference, true) : reference,
+    
+    columnA1: reference => NOTATIONS.A1.test(reference) ? _convertA1(reference, null, true) : reference,
+    
     convertR1C1: reference => NOTATIONS.R1C1.test(reference) || NOTATIONS.R1.test(reference) || NOTATIONS.C1.test(reference) ? _convertR1C1(reference) : reference
 
   };
