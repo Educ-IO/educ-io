@@ -35,11 +35,12 @@
   <div class="input-group{{#if large}} input-group-lg{{/if}}">
     {{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
     {{#if (all rows (none pattern))}}
-    <textarea id="{{which toggle (concat id '_DETAILS') id}}" 
+		<textarea id="{{which toggle (concat id '_DETAILS') id}}" 
               name="{{which toggle (concat id '_DETAILS') id}}" 
               data-output-name="{{which toggle 'Details' 'Value'}}"
               {{#if default}} data-input-default="{{default}}"{{/if}}
               class="form-control{{#if large}} form-control-lg{{/if}} resizable optional"
+              style="white-space: pre-line;"
               {{#if required}} required="required"{{/if}}
               {{#if readonly}} readonly="readonly"{{/if}} rows="{{rows}}"
               {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>{{either value ""}}</textarea>

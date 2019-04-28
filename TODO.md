@@ -148,6 +148,7 @@ Survey
 
 Complete
 --------
+* ** BUG ** Textarea auto-filling from Data helper (\n in field value seems to add a tab in as well as a line break...) <-- DONE
 * ** DOCUMENTATION ** Finish all instructions, write guide and tutorials <-- DONE
 * ** DOCUMENTATION ** More clarity on send / complete instructions about how the report and associated evidence files will be shared. <-- DONE
 * ** BUG ** Cancel out of create form dialog gives error prompt <-- DONE

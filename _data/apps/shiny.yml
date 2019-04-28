@@ -17,10 +17,20 @@ info: true
 colour: 000080
 action: Find out more
 versions:
+  0.6.0:
+    name : Visual and UI Updates
+    desc : New Features and Component Updates
+    type : beta
+    changes :
+      - details: __Options__ dialog to make changing settings easier without using keyboard shortcuts
+      - details: Updated Ace to v1.4.4
+        url: https://github.com/ajaxorg/ace/commit/2a0d9ab03d5ce263c0ae8a280b3a4dd898be9936
+      - details: Updated Showdown to v1.9.0
+        url: https://github.com/showdownjs/showdown/releases/tag/1.9.0
   0.5.6:
     name : Minor Updates
     desc : Bug Fix
-    type : beta | production | minor
+    type : production | minor
     changes :
       - details: Lines indented with 4 spaces / a	tab are handled as code blocks in Markdown. For longer sentences, this can cause issues with wider pages and text not being wrapped properly. This version removes these before Markdown parsing to avoid this behaviour. Code blocks can still be used by 'fencing' code blocks by including ``` or ~~~ before and after the block.
   0.5.5:
