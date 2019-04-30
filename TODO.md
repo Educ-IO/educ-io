@@ -126,6 +126,12 @@ Folders
 
 Reflect
 -------
+* ** BUG ** Email addresses for signing can get a little screwy on certain custom volunteering reports - need to check and resolve.
+
+* ** FEATURE ** Add further column (e.g. group) for volunteering reports
+
+* ** FEATURE ** On analysis page, need to have the option to go through in bulk and compute signature validity. Button in top command cluster?
+
 * ** FEATURE ** Analysis - upload list of expected users? Save analysis query together with expected list? Maybe option to view via weekly, monthly, quarterly, yearly - on dropdown button at top (menus getting clogged) - email reminder option too!
 
 * ** FEATURE ** Target Analysis - for individual (e.g. me) and cohort. Look at target completion over time in a tabular format (sparklines?)

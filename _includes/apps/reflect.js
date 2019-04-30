@@ -223,8 +223,8 @@ App = function() {
       var _values = FN.helper.values((dehyrated ? dehyrated : (dehyrated = FN.action.dehydrate()))
         .data.form, dehyrated.data.report,
         meta => meta[type], (value, field, meta, memo) => memo.push(value), []);
-      return _.reduce(_values, (memo, value) => memo.concat(value ?
-        value.match(EMAIL) : []), []);
+      return _.chain(_values).reduce((memo, value) => memo.concat(value ?
+        value.match(EMAIL) : []), []).filter(value => value).value();
     },
 
     emails: options => ಠ_ಠ.Display.modal("send", _.defaults(options, {

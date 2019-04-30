@@ -45,7 +45,7 @@ Using the __options__ dialog box (accessible by pressing the *esc*{:.kb-shortcut
 
 #### Display Options
 
-To help with visual impairements, you can choose between dark text on a light background, or bright text on a dark background.
+To help with visual impairements, you can choose between dark text on a light background, bright text on a dark background or bright on dark blue.
 
 Line spacing and text size can also be increased as required.
 

@@ -17,6 +17,12 @@ info: true
 colour: 000080
 action: Find out more
 versions:
+  0.6.1:
+    name : Visual Updates
+    desc : Dark Blue mode and Save Improvements
+    changes :
+      - details: Added Dark Blue mode for reducing screen fatigue over long periods
+      - details: Improved saving, added button and periodic saves
   0.6.0:
     name : Visual and UI Updates
     desc : New Features and Component Updates
