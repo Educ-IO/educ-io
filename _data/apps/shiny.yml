@@ -17,6 +17,13 @@ info: true
 colour: 000080
 action: Find out more
 versions:
+  0.6.2:
+    name : Functionality Improvements
+    desc : Word Counts and Autosave
+    type : beta
+    changes :
+      - details: Added Word Counts to the Option dialog, and the ability to embed printable word count in the document
+      - details: Added Autosave (for saved documents) with a 1-60 minute periodic save
   0.6.1:
     name : Visual Updates
     desc : Dark Blue mode and Save Improvements
@@ -26,7 +33,6 @@ versions:
   0.6.0:
     name : Visual and UI Updates
     desc : New Features and Component Updates
-    type : beta
     changes :
       - details: __Options__ dialog to make changing settings easier without using keyboard shortcuts
       - details: Updated Ace to v1.4.4
