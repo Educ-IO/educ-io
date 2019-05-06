@@ -17,10 +17,15 @@ info: true
 colour: 000080
 action: Find out more
 versions:
+  0.7.3:
+    name : Functionality Improvements
+    desc : Policy Configuration
+    type : beta | production | minor
+    changes :
+      - details: Added support for configuration of printing options and autosave behaviour via Google Admin Policy (for managed Chrome OS devices and users)
   0.6.2:
     name : Functionality Improvements
     desc : Word Counts and Autosave
-    type : beta
     changes :
       - details: Added Word Counts to the Option dialog, and the ability to embed printable word count in the document
       - details: Added Autosave (for saved documents) with a 1-60 minute periodic save
@@ -42,7 +47,7 @@ versions:
   0.5.6:
     name : Minor Updates
     desc : Bug Fix
-    type : production | minor
+    type : minor
     changes :
       - details: Lines indented with 4 spaces / a	tab are handled as code blocks in Markdown. For longer sentences, this can cause issues with wider pages and text not being wrapped properly. This version removes these before Markdown parsing to avoid this behaviour. Code blocks can still be used by 'fencing' code blocks by including ``` or ~~~ before and after the block.
   0.5.5:
