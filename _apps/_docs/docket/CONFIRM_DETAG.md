@@ -1,0 +1,1 @@
+Please confirm that you wish to remove the __{% raw %}{{content}}{% endraw %}__ tag from this item

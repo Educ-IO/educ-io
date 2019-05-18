@@ -8,6 +8,10 @@
       		{{#if date}}<span class="font-weight-light text-muted col-12 col-lg-6 text-lg-right">{{localeDate date}}</span>{{/if}}
         </div>
         <hr class="mt-2 mt-xl-3 mb-0" />
+        {{#if extras}}{{#each extras}}
+					{{!-- Call Partial Template --}}
+					{{> item editable=false wide=../wide}}
+        {{/each}}{{/if}}
         {{#if events}}{{#each events}}
 					{{!-- Call Partial Template --}}
 					{{> item editable=true wide=../wide}}

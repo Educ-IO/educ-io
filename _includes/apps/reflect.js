@@ -62,9 +62,8 @@ App = function() {
 
   /* <!-- Internal Variables --> */
   var ಠ_ಠ, /* <!-- Context --> */
-    ರ‿ರ = {},
-    /* <!-- State --> */
-    ಱ = {}; /* <!-- Persistant --> */
+    ರ‿ರ = {}, /* <!-- State --> */
+    ಱ = {}; /* <!-- Persistant State --> */
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */

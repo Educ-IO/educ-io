@@ -7,7 +7,7 @@ Tasks = ಠ_ಠ => {
 
   /* <!-- Internal Constants --> */
   const EXTRACT_ALLDAY = /(^|\s|\(|\{|\[)(all day|all morning|all afternoon|all evening|[ap]m)\b/i;
-  const EXTRACT_TIME = /\b((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))\b/i;
+  const EXTRACT_TIME = /(?:^|\s)((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))(?:[.!?]?)(?:\s|$)/i;
   const EXTRACT_DATE = /\b(\d{4})-(\d{2})-(\d{2})|((0?[1-9]|[12]\d|30|31)[^\w\d\r\n:](0?[1-9]|1[0-2]|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[^\w\d\r\n:](\d{4}|\d{2}))\b/i;
   const SPLIT_TAGS = /[^a-zA-Z0-9]/;
   const ZOMBIE = 60,
@@ -351,8 +351,15 @@ Tasks = ಠ_ಠ => {
     }))
     .then(response => response.id);
 
+  var _close = () => {
+    DB.removeCollection(NAMES.db);
+    _db = null;
+  };
+  
   var _open = id => {
 
+    if (_db) _close();
+    
     $("nav a[data-link='sheet']").prop("href", `https://docs.google.com/spreadsheets/d/${id}/edit`);
     ಠ_ಠ.Flags.log(`Opening Data File: ${id}`);
 
@@ -447,11 +454,6 @@ Tasks = ಠ_ಠ => {
         if (data && data.length > 0) _db.insert(data);
         return _db;
       });
-  };
-
-  var _close = () => {
-    DB.removeCollection(NAMES.db);
-    _db = null;
   };
 
   var _queries = {

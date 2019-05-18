@@ -89,6 +89,7 @@ modules:
 scripts: 
   - extends/regex
   - extends/array
+  - extends/promises
 templates:
   - options
   - choose

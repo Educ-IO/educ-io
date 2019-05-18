@@ -27,7 +27,7 @@ The code is fully open-source but does contain code (many thanks!) from the proj
 |File|From|Copyright|License|
 |---|---|---|---|
 |FileSaver.js|[Github Repo](https://github.com/eligrey/FileSaver.js)|Copyright © 2016 [Eli Grey](http://eligrey.com/).|[MIT License](https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md)|
-{:class="table table-hover table-responsive"}
+{:class="table table-hover table-responsive thead-dark"}
 
 {% if site.data.apps.isams.versions %}
 

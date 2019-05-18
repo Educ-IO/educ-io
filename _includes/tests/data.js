@@ -9,7 +9,6 @@ Data = function() {
     PAUSE = () => DELAY(RANDOM(200, 500)),
     LONG_PAUSE = () => DELAY(RANDOM(1000, 3000)),
     GEN = FACTORY.App.generate,
-    RUN = FACTORY.App.serial,
     RACE = FACTORY.App.race(240000),
     GENERATE = fn => {
       var _return = {
@@ -1034,7 +1033,7 @@ Data = function() {
 
         try {
 
-          RUN(_.map(_blocks.types, type => () => _test(type)))
+          Promise.each(_.map(_blocks.types, type => () => _test(type)))
             .then(() => _test(_blocks.types))
             .then(_succeed)
             .catch(_fail);
@@ -1577,9 +1576,9 @@ Data = function() {
                             expect(_child.css("display") === "none").to.be.false;
 
                             if (marker.children) {
-                              return RUN(_.map(marker.children, _marker(_name)));
+                              return Promise.each(_.map(marker.children, _marker(_name)));
                             } else if (marker._data) {
-                              return RUN(_.map(marker._data.options, (option, index) => {
+                              return Promise.each(_.map(marker._data.options, (option, index) => {
                                 var __el = _el.find("div.dropdown-menu")
                                   .find(`.dropdown-item[data-value='${$.escapeSelector(option.value)}']`);
                                 __el[0].click();
@@ -1605,7 +1604,7 @@ Data = function() {
 
                   };
 
-                  return RUN(_.map(state.markers, _marker()));
+                  return Promise.each(_.map(state.markers, _marker()));
 
                 },
               });
@@ -1622,14 +1621,14 @@ Data = function() {
               }
             };
             var _data = GENERATE(type);
-            return _form(_data.fields.join("\n").trim(), modal => RUN(_.map(_data.state,
+            return _form(_data.fields.join("\n").trim(), modal => Promise.each(_.map(_data.state,
                 f => _run(f, modal).catch(_fail))),
               _data.state.length === 1 && _data.state[0]._title ? _data.state[0]._title : false);
           };
 
         try {
 
-          RUN(_.map(_types, type => () => _test(type)))
+          Promise.each(_.map(_types, type => () => _test(type)))
             .then(() => _test(_types))
             .then(_succeed)
             .catch(_fail);
@@ -1669,7 +1668,7 @@ Data = function() {
                   modal => {
                     try {
                       data.rehydrate(modal.find("form"), values);
-                      return RUN(_.map(_data.state,
+                      return Promise.each(_.map(_data.state,
                         f => Promise.resolve(f._interact && _.isFunction(f._interact) ?
                           f._interact(modal.find(`[data-id='${f.id}']`), modal, f) : true).catch(_fail)));
                     } catch (e) {
@@ -1703,7 +1702,7 @@ Data = function() {
 
         try {
 
-          RUN(_.map(_types, type => () => _test(type)))
+          Promise.each(_.map(_types, type => () => _test(type)))
             .then(() => _test(_types))
             .then(_succeed)
             .catch(_fail);

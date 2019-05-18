@@ -44,6 +44,7 @@
 	div.item {
     will-change: padding-top, background-color;
     @include transition(padding-top 0.2s ease, background-color 0.6s linear);
+    &.text-complement {color: complement($colour-highlight) !important;}
     &.drop-target {padding-top: 1em !important;}
     &.due-soon > .display, &.overdue > .display {border-radius: 3px;}
     &.due-soon > .display {@include complex_LinearGradient(100grad,rgba($colour-warning, 0.2) rgba($colour-warning, 0.05) rgba($colour-warning, 0),0% 40% 100%);}
@@ -66,10 +67,20 @@
         	box-shadow: map-get($shadows, 1);
         }
       }
-    };
+    }
     padding-top: 0.1rem;
     &:not(:last-child) {border-bottom: 1px dashed $colour-emphasis};
     &:last-child {border-bottom: 1px solid transparent};
+    &.small {
+      border-bottom: none !important;
+      p {
+        margin: 1px 0 1px 0;
+      }
+      .material-icons.md-1 {
+  			font-size: 0.8rem;
+			}
+      span > i, a > i {margin-top: 0.175rem !important;}
+    }
     .text-faded {opacity: 0.5;}
     .text-very-faded {opacity: 0.25;}
     a.text-very-faded:hover {opacity: 0.75;}

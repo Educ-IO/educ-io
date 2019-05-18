@@ -14,11 +14,12 @@ Main = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Plumbing Functions --> */
+  /* <!-- TODO: Overlapping busy calls can cause issues, so we check that it is function --> */
   const BUSY = status => _.wrap(ಠ_ಠ.Display.busy({
     target: ಠ_ಠ.container,
     status: status,
     fn: true
-  }), (busy, value) => _.tap(value, () => busy()));
+  }), (busy, value) => _.tap(value, () => _.isFunction(busy) ? busy() : false));
   /* <!-- Plumbing Functions --> */
 
   /* <!-- Internal Functions --> */

@@ -87,7 +87,14 @@ Google_API = (options, factory) => {
     concurrent: 1,
     timeout: 30000,
   };
-  const URLS = [GENERAL_URL, SHEETS_URL, SCRIPTS_URL, ADMIN_URL];
+  const CLASSROOM_URL = {
+    name: "classroom",
+    url: "https://classroom.googleapis.com/",
+    rate: 1,
+    concurrent: 1,
+    timeout: 30000,
+  };
+  const URLS = [GENERAL_URL, SHEETS_URL, SCRIPTS_URL, ADMIN_URL, CLASSROOM_URL];
   /* <!-- Network Constants --> */
 
   /* <!-- Internal Constants --> */
@@ -841,7 +848,34 @@ Google_API = (options, factory) => {
         }),
 
     },
+    
+    classrooms: {
+      
+      list: state => _list(
+        NETWORKS.classroom.get, "/v1/courses", "courses", [], {
+          courseStates: state || "ACTIVE",
+          fields: "nextPageToken,courses(id,name,section,description,calendarId,teacherFolder)",
+        }),
+      
+			work: classroom => {
 
+        var _id = classroom && classroom.id ? classroom.id : classroom,
+          _url = `v1/courses/${_id}/courseWork`;
+        
+        return {
+
+          list: state => _list(
+            NETWORKS.classroom.get, _url, "courseWork", [], {
+              courseWorkStates: state || "PUBLISHED",
+              orderBy: "dueDate",
+              fields: "nextPageToken,courseWork(id,title,dueDate,dueTime,workType,alternateLink)",
+            }),
+
+        };
+
+      },
+    },
+    
     teamDrives: {
 
       get: id => _call(NETWORKS.general.get, `drive/v3/teamdrives/${id}`, {

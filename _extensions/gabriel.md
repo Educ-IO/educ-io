@@ -45,7 +45,7 @@ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRAN
 |Markdown.gs|[Github Repo](https://github.com/mangini/gdocs2md)|Copyright 2013 Google Inc.<br>All Rights Reserved.|[Apache License, Version 2.0](https://github.com/mangini/gdocs2md/blob/master/LICENSE)|
 |Underscore|[Website](http://underscorejs.org)|Copyright 2009-2015<br/>Jeremy Ashkenas, DocumentCloud and Investigative Reporters &amp; Editors|[MIT License](https://github.com/jashkenas/underscore/blob/master/LICENSE)|
 |js-yaml.min.gs|[Github Repo](https://github.com/nodeca/js-yaml)|Copyright (C) 2011-2015 by Vitaly Puzrin|[MIT License](https://github.com/nodeca/js-yaml/blob/master/LICENSE)|
-{:class="table table-hover table-responsive"}
+{:class="table table-hover table-responsive thead-dark"}
 
 The __logo__ incorporates the [Markdown Mark](https://github.com/dcurtis/markdown-mark) which is licensed under the Creative Commons License (CC0 UNIVERSAL PUBLIC DOMAIN DEDICATION LICENSE).
 

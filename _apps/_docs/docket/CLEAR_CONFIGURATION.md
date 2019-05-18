@@ -1,0 +1,1 @@
+Please confirm that you wish to __clear__ the configuration. This will __not delete__ your data.

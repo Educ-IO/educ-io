@@ -60,7 +60,7 @@ The code is fully open-source but does contain code (many thanks!) from the proj
 |__XLSX.js__|[Github Repo](https://github.com/SheetJS/js-xlsx)|Copyright © 2012-2017 [SheetJS LLC ](http://sheetjs.com/)|[Apache License 2.0](https://github.com/SheetJS/js-xlsx/blob/master/LICENSE)|
 |__FileSaver.js__|[Github Repo](https://github.com/eligrey/FileSaver.js)|Copyright © 2016 [Eli Grey](http://eligrey.com/)|[MIT License](https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md)|
 |__Spin.js__|[Github Repo](https://github.com/fgnass/spin.js)|Copyright © 2011-2015 [Felix Gnass](http://spin.js.org/)|[MIT License](https://github.com/fgnass/spin.js/blob/master/LICENSE.md)|
-{:class="table table-hover table-responsive"}
+{:class="table table-hover table-responsive thead-dark"}
 
 {% if site.data.apps.cloudysky.versions %}
 

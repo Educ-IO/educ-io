@@ -97,6 +97,17 @@ a.app-logo svg {
 }
 // -- Outline Letter Logo -- //
 
+// -- Tables -- //
+.table.thead-dark thead th {
+  color: $colour-background;
+  background-color: $colour-general-midlight;
+  border-color: $colour-general-lighter;
+  &+th {
+    border-left: 1px solid $colour-general-verylight;
+  }
+}
+// -- Tables -- //
+
 // -- Keyboard Shortcuts -- //
 em.kb-shortcut, strong.kb-shortcut {
 	white-space: nowrap !important;

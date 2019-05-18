@@ -53,10 +53,6 @@ App = function() {
       ca: alpha => `rgba(${GENERATE.i(0, 255)},${GENERATE.i(0, 255)},${GENERATE.i(0, 255)},${alpha === undefined ? GENERATE.f(0, 1, 2) : alpha})`,
       o: array => array[GENERATE.i(0, array.length - 1)],
     },
-    SERIAL = promises => _.reduce(promises, (all, promise) => all.then(
-      result => (_.isFunction(promise) ? promise() : promise)
-      .then(Array.prototype.concat.bind(result))
-    ), Promise.resolve([])),
     ARRAYS = value => value === undefined || value === null ? [] : _.isArray(value) ? value : [value],
     SIMPLIFY = value => value && _.isArray(value) && value.length == 1 ? value[0] : value,
     NUMBER = /^\+?[1-9][\d]*$/;
@@ -77,7 +73,7 @@ App = function() {
     return _success;
   };
 
-  var _click = buttons => SERIAL(_.map(buttons, button => () => new Promise((resolve, reject) => {
+  var _click = buttons => Promise.each(_.map(buttons, button => () => new Promise((resolve, reject) => {
 
     var running, observer = new MutationObserver((mutationsList, observer) => {
       for (var mutation of mutationsList) {
@@ -115,7 +111,7 @@ App = function() {
 
     return new Promise((resolve, reject) => {
       (times && times > 1 ?
-        SERIAL(_.map(_.range(0, times), () => () => _click(_buttons))) : _click(_buttons))
+        Promise.each(_.map(_.range(0, times), () => () => _click(_buttons))) : _click(_buttons))
       .then(() => {
           _this.removeClass("loader disabled").addClass("success")
             .find("i.result-success").removeClass("d-none");
@@ -316,8 +312,6 @@ App = function() {
     generate: GENERATE,
 
     random: RANDOM,
-
-    serial: SERIAL,
 
     simplify: SIMPLIFY,
     /* <!-- Helper Functions --> */

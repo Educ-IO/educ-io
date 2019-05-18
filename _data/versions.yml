@@ -1,4 +1,8 @@
 site :
+  0.1.5f :
+    name : Docket v0.0.5-beta
+    desc : Docket Integrations for Google Calendar and Classroom
+    numeric : 0.1.5.6
   0.1.5e :
     name : Infrastructure Updates
     desc : Updates to Debug Testing and Sheets-as-a-Database
@@ -905,6 +909,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  0.0.5-beta :
+    name : Integrations
+    desc : Google Calendar and Classroom Integrations
+    type : major
   0.0.4o-beta :
     name : Drag and Drop Bug fixes
     desc : Disabled Dragging an item whilst editing

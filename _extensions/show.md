@@ -63,7 +63,7 @@ The code is fully open-source but does contain code (many thanks!) from the proj
 |__rough.js__|[Github Repo](https://github.com/pshihn/rough)|Copyright © 2018 [Preet Shihn](https://twitter.com/preetster)|[MIT License](https://github.com/pshihn/rough/blob/master/LICENSE)|
 |__saveSvgAsPng.js__|[Github Repo](https://github.com/exupero/saveSvgAsPng)|Copyright © 2014 Eric Shull|[MIT License](https://github.com/exupero/saveSvgAsPng/blob/gh-pages/LICENSE)|
 |__mousetrap.js__|[Github Repo](https://github.com/ccampbell/mousetrap)|Copyright © 2012-2017 [Craig Campbell](https://craig.is/)|[Apache 2.0 License](https://github.com/ccampbell/mousetrap/blob/master/LICENSE)|
-{:class="table table-hover table-responsive"}
+{:class="table table-hover table-responsive thead-dark"}
 
 {% if site.data.apps.show.versions %}
 

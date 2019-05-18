@@ -71,17 +71,16 @@ Mobile
 
 Docket
 ------
-* ** BUG ** ? Delete item can lead to subsequent hash failures on changes.
-* Overlay events from Google Calendar - Need to do the OAuth Google Acceptance Form
-
-* Add tasks from Github Issues (maybe? - or is an extension a better route, with push adding to the Docket sheet?)
-
+* ** BUG ** Delete item can lead to subsequent hash failures on changes. <-- Bring in new SaaD version
 * Handle clash on updates / delete
-	-> User notification of issues <-- DONE
+	-> User notification of issues // Should be toast rather than banner <-- DONE / Not Done
   -> Need to roll-back UI updates
+  
+* ** FEATURE ** Google Classroom Deadline Overlay
+
+* Need to do the OAuth Google Acceptance Form for new scopes
 
 * Re-Ordering Items by touch...
-* Faster Add on Mobile Dialogs - perhaps pinch action to confirm, or buttons at the top too?
 
 Tiles
 -----
@@ -126,7 +125,7 @@ Folders
 
 Reflect
 -------
-* ** BUG ** Email addresses for signing can get a little screwy on certain custom volunteering reports - need to check and resolve.
+* ** FEATURE ** Complete Email from Signer for pre-shared reports
 
 * ** FEATURE ** Add further column (e.g. group) for volunteering reports
 
@@ -154,6 +153,10 @@ Survey
 
 Complete
 --------
+* Overlay events from Google Calendar <--DONE
+* Faster Add on Mobile Dialogs - perhaps pinch action to confirm, or buttons at the top too? <-- DONE
+* ** BUG ** Exclude IPv4 Addresses from Time regex to stop them being wrongly interpreted <-- DONE
+* ** BUG ** Email addresses for signing can get a little screwy on certain custom volunteering reports - need to check and resolve. <-- DONE
 * ** BUG ** Textarea auto-filling from Data helper (\n in field value seems to add a tab in as well as a line break...) <-- DONE
 * ** DOCUMENTATION ** Finish all instructions, write guide and tutorials <-- DONE
 * ** DOCUMENTATION ** More clarity on send / complete instructions about how the report and associated evidence files will be shared. <-- DONE

@@ -103,6 +103,7 @@ templates:
   - shared/control_button
   - docket/item
   - docket/weekly
+  - docket/daily
   - docket/new
   - docket/archive
   - docket/list
@@ -126,6 +127,8 @@ docs:
   - docket/TAG_INSTRUCTIONS
   - docket/FAILED_SAVE
   - docket/FAILED_UPDATE
+  - docket/CLEAR_CONFIGURATION
+  - docket/CONFIRM_DETAG
 scopes:
   google:
     - scope: email
@@ -151,6 +154,10 @@ scopes:
     - scope: https://www.googleapis.com/auth/classroom.courses.readonly
       name: View Classroom courses
       reason: In order to read your classes to choose which ones you would like to display deadlines for.
+      request: lazy
+    - scope: https://www.googleapis.com/auth/classroom.coursework.me.readonly
+      name: View assignments and questions and the work and grades for the courses that the current user participates in.
+      reason: In order to read your class assignments and deadlines to display.
       request: lazy
     - scope: https://www.googleapis.com/auth/classroom.coursework.students.readonly
       name: View assignments and questions and the work and grades for the courses that the current user teaches or administers.
@@ -190,19 +197,19 @@ menus:
           - name: Forward
             desc: Go forward a week
             shortcut: "&gt;"
-            hash: forward
+            hash: jump.forward
             disabled_until:
               - opened
           - name: Backward
             desc: Go backward a week
             shortcut: "&lt;"
-            hash: backward
+            hash: jump.backward
             disabled_until:
               - opened
           - name: To Today
             desc: Jump to today
             shortcut: "t"
-            hash: today
+            hash: jump.today
             disabled_until:
               - opened
           - name: Jump To
@@ -212,30 +219,21 @@ menus:
             disabled_until:
               - opened
   - name: Show
-    visibility: debug
     groups:
       all:
         commands:
-          - name: Calendar
+          - name: Calendar/s
             desc: Display Google Calendar Events
-            hash: calendar
+            hash: show.calendars
             disabled_until:
               - opened
             auth: google
             toggle:
-              - calendar
-            scope: https://www.googleapis.com/auth/calendar.readonly
-          - name: Issues
-            desc: Display Github Project Issues
-            hash: issues
-            disabled_until:
-              - opened
-            toggle:
-              - issues
+              - calendars
             scope: https://www.googleapis.com/auth/calendar.readonly
           - name: Deadlines
             desc: Display Google Classroom Deadlines
-            hash: classes
+            hash: show.classes
             disabled_until:
               - opened
             auth: google
@@ -243,7 +241,6 @@ menus:
               - classes
             scopes:
               - https://www.googleapis.com/auth/classroom.courses.readonly
-              - https://www.googleapis.com/auth/classroom.coursework.students.readonly
   - name: Settings
     groups:
       all:

@@ -17,17 +17,18 @@ info: true
 colour: 000080
 action: Find out more
 versions:
-  0.7.4:
+  0.7.7:
     name : Functionality Improvements
     desc : Open Insert/Overwrite
-    type : beta
+    type : production | beta
     changes :
       - details: Opening a file will trigger an __insert__ or __overwrite__ question (previously files were just inserted)
       - details: Added Print option to __always parse__ line breaks as new paragraphs (off by default)
+      - details: Left and Right gutters now specified as percentage of page width
   0.7.3:
     name : Functionality Improvements
     desc : Policy Configuration
-    type : production | minor
+    type : minor
     changes :
       - details: Added support for configuration of printing options and autosave behaviour via Google Admin Policy (for managed Chrome OS devices and users)
   0.6.2:
