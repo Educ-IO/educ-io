@@ -27,7 +27,7 @@
       {% assign _menus = false %}{% assign menus = site.array %}{% if page.menu %}{% assign _menus = page.menus %}{% elsif layout.menu %}{% assign _menus = layout.menus %}{% elsif page.app and page.app != "" and site.data.apps[page.app].menus and page.layout
       == "app" %}{% assign _menus = site.data.apps[page.app].menus %}{% endif %}{% for menu in _menus %}{% if menu.visibility %}{% if jekyll.environment == menu.visibility or menu.visibility == true %}{% assign menus = menus | push: menu %}{% endif %}{%
       else %}{% assign menus = menus | push: menu %}{% endif %}{% endfor %} {% if menus and menus.size > 0 %}{% for menu in menus %} {% if menu.groups and menu.groups.size > 0 %}
-      <li class="nav-item dropdown{% if menu.disabled_until and menu.disabled_until.size > 0%} disabled{% for until in menu.disabled_until %} state-{{until}}{% endfor %}{% endif %}" {%if menu.desc %} title="{{ menu.desc | replace: '_', '' }}" {% endif %}>
+      <li class="nav-item dropdown{% if menu.disabled_until and menu.disabled_until.size > 0%} disabled{% for until in menu.disabled_until %} state-{{until}}{% endfor %}{% endif %}{% if menu.disabled_while and menu.disabled_while.size > 0%}{% for while in menu.disabled_while %} disabled-state-{{while}}{% endfor %}{% endif %}" {%if menu.desc %} title="{{ menu.desc | replace: '_', '' }}" {% endif %}>
         <a class="nav-link dropdown-toggle" href="#" id="navMenu_{{ menu.name }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {% if menu.short_name %}<span class="d-inline d-lg-none">{{ menu.short_name }}</span><span class="d-none d-lg-inline">{{ menu.name }}</span>{% else %}{{ menu.name }}{% endif %}
           </a>

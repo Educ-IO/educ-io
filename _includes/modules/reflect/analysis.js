@@ -1,4 +1,4 @@
-Analysis = (ಠ_ಠ, forms, reports, expected) => {
+Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
   "use strict";
   /* <!-- MODULE: Provides an analysis of a form/s reports --> */
   /* <!-- PARAMETERS: Receives the global app context, the forms being analysed and the report data submitted --> */
@@ -10,7 +10,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
     ID = "analysis",
     MISSING = "NO DATA",
     EMPTY = "",
-    HIDDEN = ["ID", "Owner", "Completed", "When", "Total", "Count", "Average"],
+    HIDDEN = ["ID", "Owner", "Completed", "When", "Total", "Count", "Average", "Signatures"],
     NUMERIC = /\d*\.?\d+/,
     FN = {};
   /* <!-- Internal Constants --> */
@@ -21,6 +21,8 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
     stage: () => true,
     view: false,
     expected: expected || [],
+    signatures: false,
+    extras: [],
   };
   /* <!-- Internal State Variable --> */
 
@@ -36,6 +38,11 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
 
     url: file => `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${file.id}`,
 
+    headers: fields => _.map(fields, f => f.title ? {
+      name: f.title,
+      display: f.id
+    } : f.id),
+
   };
   /* <-- Helper Functions --> */
 
@@ -44,18 +51,24 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
   FN.query = {
 
     standard: report => ({
-      "id": ಠ_ಠ.Display.template.get("hyperlink")({
+      id: ಠ_ಠ.Display.template.get("hyperlink")({
         url: FN.helper.url(report.file),
         text: report.file.id,
         blank: true
       }).trim(),
-      "owner": FN.helper.owner(report.file),
-      "complete": FN.helper.complete(report.file),
-      "form": report.title,
-      "when": {
+      owner: FN.helper.owner(report.file),
+      complete: FN.helper.complete(report.file),
+      form: report.title,
+      when: {
         Created: moment(report.file.createdTime).format("llll"),
         Modified: moment(report.file.modifiedTime).format("llll")
-      }
+      },
+      signatures: report.signatures ? _.map(report.signatures, signature => ({
+        Valid: signature.valid ? true : undefined,
+        Invalid: signature.valid ? undefined : true,
+        By: `${signature.who === true ? "Me" : signature.who}${signature.email ? ` | ${signature.email}`: ""}`,
+        When: signature.when
+      })) : null,
     })
 
   };
@@ -103,7 +116,8 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
     }, []),
 
     headers: fields => _.map(fields, v => ({
-      name: v,
+      name: v.name || v,
+      display: v.display || null,
       hide: function(initial) {
         return !!(initial && this.hide_initially);
       },
@@ -112,9 +126,9 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
       },
       hide_always: false,
       hide_now: false,
-      hide_initially: HIDDEN.indexOf(v) >= 0 ? true : false,
-      field: v.toLowerCase(),
-      icons: v === "When" ? ["access_time"] : null
+      hide_initially: HIDDEN.indexOf(v.name || v) >= 0 ? true : false,
+      field: (v.name || v).toLowerCase(),
+      icons: (v.name || v) === "When" ? ["access_time"] : null
     })),
 
     data: (id, columns, fields, reports, query) => {
@@ -171,16 +185,22 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
         _row = _.find(_fields, {
           "type": "row"
         }),
+        _contexts = _.filter(_fields, {
+          "type": "context"
+        }),
         _column = _.find(_fields, {
           "type": "column"
         }),
         _values = _.reject(_fields, "type");
 
+      ರ‿ರ.extras = FN.helper.headers(_contexts);
+
       if (_row && _column && _values) {
 
-        var _all = [_row, _column].concat(_values),
+        var _all = [_row, _column].concat(_contexts).concat(_values),
           _reports = _.reduce(_.map(reports,
               report => _.extend(FN.generate.values(_all, report.file), {
+                __id: report.file.id,
                 __created: moment(report.file.createdTime).format("MMM D, YYYY HH:mm"),
                 __modified: moment(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
                 __owner: FN.helper.owner(report.file),
@@ -192,23 +212,40 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
                 _name = _key;
               if (!_key) {
                 _key = MISSING;
-              } else if (ಠ_ಠ.App.email.test(_key)) {
+              } else if (_key.search(ಠ_ಠ.App.email) >= 0) {
                 _key = _key.match(ಠ_ಠ.App.email)[0];
               }
               if (!memo[_key = _key.toLowerCase()]) {
+
+                /* <-- Add Basic --> */
                 memo[_key] = {
                   name: _name,
                   total: null,
                   count: 0,
                   __count: 0,
-                  average: null,
-                  details: [],
+                  average: null
                 };
+
+                /* <-- Add Context --> */
+                _.each(ರ‿ರ.extras, extra => memo[_key][extra.name.toLowerCase()] = []);
+
+                /* <-- Add Details --> */
+                memo[_key].details = [];
+
               } else if (_.isString(memo[_key].name) && memo[_key].name != _name) {
                 memo[_key].name = [memo[_key].name, _name];
               } else if (_.isArray(memo[_key].name) && memo[_key].name.indexOf(_name) < 0) {
                 memo[_key].name = memo[_key].name.concat(_name);
               }
+
+              /* <-- Add Context Values Functions --> */
+              _.each(_contexts, (context, index) => {
+                var _data = data[(context.title || context.id).toLowerCase()],
+                  _extra = ರ‿ರ.extras[index].name.toLowerCase();
+                if (_data && memo[_key][_extra].indexOf(_data) < 0) memo[_key][_extra].push(_data);
+              });
+
+              /* <-- Add Column / Values --> */
               _.each(_values, value => {
 
                 /* <-- Parse Data --> */
@@ -216,10 +253,9 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
                     data[(_column.title || _column.id).toLowerCase()],
                     data[(value.title || value.id).toLowerCase()]
                   ],
-                  _badge = value.badges && _data[1] !== MISSING ?
+                  _badge = _data[1] === EMPTY ? "attention" : value.badges ?
                   _.property("badge")(_.find(value.badges, badge => badge.value == _data[1])) : null,
-                  _numeric = _data[1] === MISSING ?
-                  null : value.numerics ?
+                  _numeric = _data[1] === EMPTY ? null : value.numerics ?
                   _.property("numeric")(_.find(value.numerics,
                     numeric => numeric.value == _data[1])) :
                   NUMERIC.test(_data[1]) ? parseFloat(_data[1].match(NUMERIC)[0]) : null;
@@ -233,16 +269,17 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
 
                 /* <-- Push Data to Details --> */
                 memo[_key].details.push({
+                  id: data.__id,
                   key: _data[0] ? _data[0] : MISSING,
                   value: _data[1] ? _data[1] : MISSING,
-                  title: `<b>Owner</b> ${data.__owner}<br/><b>Created</b> ${data.__created}<br/><b>Modified</b> ${data.__modified}<br/>${data.__complete ? "<b>COMPLETE</b><br/>" : ""}<em><a href='${data.__link}' target='_blank' class='text-info'>Open Report</a></em>`,
+                  title: ಠ_ಠ.Display.template.get("report_link")(data),
                   badge: _badge || "action-dark",
                 });
 
               });
               return memo;
             }, {}),
-          _columns = ["Name", "Total", "Count", "Average", "Details"],
+          _columns = ["Name", "Total", "Count", "Average"].concat(ರ‿ರ.extras).concat(["Details"]),
           _headers = FN.generate.headers(_columns);
 
         /* <-- Clean Up Analysis Objects --> */
@@ -254,10 +291,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
           if (value.total) value.average = (value.total / value.__count);
           delete value.__count;
         });
-        
+
         /* <-- Add in Expectations --> */
         if (ರ‿ರ.expected.length > 0) {
-          
+
           /* <-- Filter for missing values only (case insensitive) --> */
           var _missing = _.filter(
             ರ‿ರ.expected.slice(),
@@ -265,21 +302,35 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
               var _regexp = new RegExp(`^${RegExp.escape(value)}$`, "i");
               return _.every(_reports, (value, key) => key.search(_regexp) == -1);
             });
-          
+
           ಠ_ಠ.Flags.log("Missing from Analysis:", _missing);
-          /* <-- Filter for missing values only (case insensitive) --> */
+
+          /* <-- Add details for missing values --> */
           _.each(_missing, missing => {
+
             _reports[missing] = {
-              name: missing,
+              name: missing && missing.search(ಠ_ಠ.App.email) >= 0 ?
+                ಠ_ಠ.Display.template.get({
+                  template: "email",
+                  address: missing.match(ಠ_ಠ.App.email)[0],
+                  subject: "Missing Reflect Report Data",
+                  text: missing
+                }) : missing,
               total: null,
               count: null,
               average: null,
-              details: null,
             };
+
+            /* <-- Add Contexts --> */
+            _.each(ರ‿ರ.extras, extra => _reports[missing][extra.name.toLowerCase()] = null);
+
+            /* <-- Add Details --> */
+            _reports[missing].details = null;
+
           });
-          
+
         }
-        
+
         var _data = DB.addCollection(id, {
           unique: [_columns[0].toLowerCase()],
           indices: [_columns[1].toLowerCase()]
@@ -291,11 +342,11 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
 
         /* <-- Map Reports from an object (key/value) to array --> */
         var _rows = _.map(_.keys(_reports).sort(), key => _reports[key]);
-        
+
         /* <-- Insert Rows into table --> */
         _data.insert(_rows);
-        
-        return ಠ_ಠ.Datatable(ಠ_ಠ, {
+
+        var _return = ಠ_ಠ.Datatable(ಠ_ಠ, {
           id: `${ID}_SUMMARY_TABLE`,
           name: id,
           data: _data,
@@ -306,15 +357,27 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
           wrapper: wrapper,
         }, target, after);
 
+        if (ರ‿ರ.signatures) {
+          _.each(reports, report => {
+            var _target = $(`#${report.file.id}`);
+            _target.find(".signature").remove();
+            FN.append.signatures(_target, report.signatures);
+          });
+          FN.append.tooltips();
+        }
+
+        return _return;
+
       }
 
     },
 
     detail: (id, target, wrapper, reports, after) => {
 
-      var _columns = ["ID", "Owner", "Completed", "Form", "When"],
+      var _columns = ["ID", "Owner", "Completed", "Form", "When"]
+        .concat(ರ‿ರ.signatures ? ["Signatures"] : []),
         _fields = FN.generate.fields(),
-        _headers = FN.generate.headers(_columns.concat(_.map(_fields, field => field.title || field.id))),
+        _headers = FN.generate.headers(_columns.concat(FN.helper.headers(_fields))),
         _data = FN.generate.data(id, _columns, _fields, reports, FN.query.standard);
 
       return ಠ_ಠ.Datatable(ಠ_ಠ, {
@@ -359,6 +422,27 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
   /* <-- Stage Functions --> */
 
 
+  /* <-- Append Functions --> */
+  FN.append = {
+
+    signatures: (target, signatures) => _.each(signatures,
+      (signature, index) => target.append(ಠ_ಠ.Display.template.get({
+        template: "valid",
+        class: `${index === 0 ? "ml-1 " : ""}signature${signature.valid ? "" : " text-warning"}`,
+        valid: signature.valid,
+        html: true,
+        desc: ಠ_ಠ.Display.template.get("signature_summary")(signature),
+      }))),
+
+    tooltips: () => ಠ_ಠ.Display.tooltips($(`#${ID}`).find("[data-toggle='tooltip']"), {
+      container: "body"
+    })
+
+  };
+  /* <-- Append Functions --> */
+
+
+
   /* <-- Initial Run --> */
   ರ‿ರ.table = FN.display.analysis(reports);
   /* <-- Initial Run --> */
@@ -384,7 +468,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
     detail: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage, "detail"),
 
     names: () => FN.generate.names().join(" | "),
-    
+
     title: () => `Analysis - ${FN.generate.names().join(" | ")}`,
 
     expected: value => {
@@ -395,12 +479,31 @@ Analysis = (ಠ_ಠ, forms, reports, expected) => {
           .map(val => val.trim(""))
           .compact()
           .value();
-        
+
         FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage, false);
       }
       return ರ‿ರ.expected;
     },
-    
+
+    verify: () => Promise.all(_.map(reports, report => {
+        var _target = $(`#${report.file.id}`);
+        _target.find(".signature").remove();
+
+        return ಠ_ಠ.Google.files.download(report.file.id)
+          .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
+          .then(content => JSON.parse(content))
+          .then(data => signatures.list(report.file, data))
+          .then(signatures => FN.append.signatures(_target, report.signatures = signatures))
+          .catch(e => ಠ_ಠ.Flags.error("Signature Error", e).negative())
+          .then(ಠ_ಠ.Display.busy({
+            target: _target,
+            class: "loader-tiny",
+            fn: true
+          }));
+      }))
+      .then(() => ರ‿ರ.signatures = true)
+      .then(FN.append.tooltips),
+
   };
   /* <!-- External Visibility --> */
 };

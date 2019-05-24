@@ -15,6 +15,7 @@ General
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
 
 * Match slashed and unslashed urls to service worker cache (e.g. "https://educ.io/view/" and "https://educ.io/view") <-- Needs a re-work of the sw-cache
+
 * Animated Logo -- Via Javascript?
 
 * ** BUG ** -> Order of Dev / Multiple IMPORT Scripts is dependent on loading times - needs to be declarative? E.g. XLSX AND JSZIP on debug only
@@ -72,15 +73,12 @@ Mobile
 Docket
 ------
 * ** BUG ** Delete item can lead to subsequent hash failures on changes. <-- Bring in new SaaD version
-* Handle clash on updates / delete
+
+* ** IMPROVEMENT ** Handle clash on updates / delete
 	-> User notification of issues // Should be toast rather than banner <-- DONE / Not Done
   -> Need to roll-back UI updates
-  
-* ** FEATURE ** Google Classroom Deadline Overlay
 
-* Need to do the OAuth Google Acceptance Form for new scopes
-
-* Re-Ordering Items by touch...
+* ** MOBILE ** Re-Ordering Items by touch...
 
 Tiles
 -----
@@ -119,28 +117,30 @@ Merge
 Folders
 -------
 * ** FEATURE ** - Batch Clone to multiple folders: https://www.cloudconnectcommunity.com/ccc/ls/community/g-suite/post/4860149603500032
+
 * Use new format MODAL form returns (once Data is stable ... activate by including Data helper in App Build)
   + Update validate method on App callers to accept object, rather than value array
   + Update _return methods on App callers to accept object, rather than value array
 
 Reflect
 -------
+
+* ** IMPROVEMENT ** Replace DeepClone with our own version (better handling of Regexes) | With DEBUG tests
+
+* ** IMPROVEMENT ** Create form -> Should lead to 'show form' pathway, with button for return to edit (same as edit but without state file)
+
+
 * ** FEATURE ** Complete Email from Signer for pre-shared reports
 
-* ** FEATURE ** Add further column (e.g. group) for volunteering reports
-
-* ** FEATURE ** On analysis page, need to have the option to go through in bulk and compute signature validity. Button in top command cluster?
-
-* ** FEATURE ** Analysis - upload list of expected users? Save analysis query together with expected list? Maybe option to view via weekly, monthly, quarterly, yearly - on dropdown button at top (menus getting clogged) - email reminder option too!
+* ** FEATURE ** Icons on RECENT items (form / report etc)
 
 * ** FEATURE ** Target Analysis - for individual (e.g. me) and cohort. Look at target completion over time in a tabular format (sparklines?)
 
 * ** FEATURE ** Targets - need field / control for marking targets as being done - also interface for loading from previous reports of the same form (drop-down select, reverse selected with all previous reports?). Should load from last (meta to column/span) report of the same form type, that is completed. Then give option for changing to other report (picker?) and rolling over targets etc.
 
 * ** FEATURE ** Evidence tracker creation - should prompt for select form/s and then scale (obviously skip if form only contains one evidence/scale field!). Then load all evidence from there. Future form updates should automatically update tracker as it will be tagged with the form name/code.
-
-* ** IMPROVEMENT ** Create form -> Should lead to 'show form' pathway, with button for return to edit (same as edit but without state file)
-
+	
+  
 * ** TESTING ** Fields / Data - write test for toggle button on textual input (both interaction and persistence)
 
 Publish
@@ -153,6 +153,18 @@ Survey
 
 Complete
 --------
+* ** FEATURE ** Email link from 'missing' link on Analysis page <-- DONE
+* ** FEATURE ** Analysis - upload list of expected users? Save analysis query together with expected list? Maybe option to view via weekly, monthly, quarterly, yearly - on dropdown button at top (menus getting clogged) <-- DONE
+* ** FEATURE ** On analysis page, need to have the option to go through in bulk and compute signature validity. Button in top command cluster? <-- DONE
+* ** FEATURE ** Disable menus by state (e.g. Report menu disabled while working with a form) <-- DONE
+* ** BUG ** Table filter on production version returns inconsistent results <-- DONE
+* ** BUG ** Table filter doesn't work on context <-- DONE
+* ** BUG ** After table filter - popovers not triggered <-- DONE
+* ** FEATURE ** Add further column (e.g. group) for volunteering analysis reports <-- DONE
+* ** BUG ** Drive Link after save does not appear for report (first save only) <-- DONE
+* ** FEATURE ** Table header / title display <-- DONE
+* Need to do the OAuth Google Acceptance Form for new scopes <-- DONE
+* ** FEATURE ** Google Classroom Deadline Overlay <-- DONE
 * Overlay events from Google Calendar <--DONE
 * Faster Add on Mobile Dialogs - perhaps pinch action to confirm, or buttons at the top too? <-- DONE
 * ** BUG ** Exclude IPv4 Addresses from Time regex to stop them being wrongly interpreted <-- DONE

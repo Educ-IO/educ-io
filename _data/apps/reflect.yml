@@ -109,6 +109,7 @@ modules:
   - headers
   - reflect/analysis
   - reflect/forms
+  - reflect/signatures
   - reflect/templates/form_master
   - reflect/templates/uk_teachers_reflective
   - reflect/templates/volunteering
@@ -142,6 +143,7 @@ templates:
   - shared/rows
   - shared/cell
   - shared/hyperlink
+  - shared/email
   - fields/field_validation
   - fields/field_general
   - fields/field_additions
@@ -171,6 +173,8 @@ templates:
   - reflect/pill
   - reflect/analyse_header
   - reflect/dates
+  - reflect/report_link
+  - reflect/signature_summary
 docs:
   - shared/JUMP
   - shared/HELP
@@ -266,6 +270,10 @@ menus:
   - name: Report
     disabled_until:
       - authenticated
+    disabled_while:
+      - analysis
+      - opened-form
+      - opened-tracker
     groups:
       all:
         commands:
@@ -367,6 +375,10 @@ menus:
   - name: Forms
     disabled_until:
       - authenticated
+    disabled_while:
+      - analysis
+      - opened-report
+      - opened-tracker
     groups:
       all:
         commands:
@@ -375,6 +387,7 @@ menus:
             hash: analyse
             auth: google
             divider: true
+            
           - name: Create
             desc: Create a new Form
             hash: create.form
@@ -394,7 +407,7 @@ menus:
               - opened-form
             auth: google
             divider: true
-
+            
           - name: Close
             desc: Close this Report
             hash: close
@@ -417,6 +430,7 @@ menus:
             toggle:
               - analysis-detail
             divider: true
+            
           - name: Complete Only
             desc: View Reports that have been completed
             hash: analyse.stage.complete
@@ -428,6 +442,7 @@ menus:
             toggle:
               - analysis-stage-any
             divider: true
+            
           - name: Show All
             desc: View All Reports
             hash: analyse.reports.all
@@ -444,6 +459,16 @@ menus:
             toggle:
               - analysis-reports-shared
             divider: true
+            
+          - name: Verify Signatures
+            desc: List and Check Signatures for all Reports
+            hash: analyse.verify
+            toggle:
+              - analysis-verify
+            disabled_while:
+              - analysis-detail
+            divider: true
+            
           - name: Save
             desc: Save Auto-Updating Analysis Details to your Drive
             hash: analyse.save
@@ -469,12 +494,18 @@ menus:
             imports:
               - filesaver
             divider: true
+            
           - name: Close
             desc: Close this Analysis
             hash: close
   - name: Tracker
     disabled_until:
       - authenticated
+    disabled_while:
+      - analysis
+      - opened-form
+      - opened-report
+      - opened-tracker
     groups:
       all:
         commands:

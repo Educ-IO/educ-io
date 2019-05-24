@@ -139,6 +139,10 @@ html, body {
   color: $colour-background !important;
 	background-color: darken($colour-highlight, 15%);
 }
+
+.badge-attention {
+	background-color: $colour-attention;
+}
 // -- Action Badge -- //
 
 // -- Other Buttons -- //

@@ -21,7 +21,8 @@ sass:
 compress_html:
   comments:						all
   clippings:					all
-  endings:            all
+  startings:					[]
+  endings:            []
   artifacts:          ["/* */ ", "/* */", "/*jshint ignore:start*/", "/*jshint ignore:end*/"]
   ignore:
     envs:             [debug]

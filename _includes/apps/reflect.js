@@ -32,18 +32,19 @@ App = function() {
     STATE_ANALYSIS_SHARED = "analysis-reports-shared",
     STATE_ANALYSIS_ANY = "analysis-stage-any",
     STATE_ANALYSIS_COMPLETE = "analysis-stage-complete",
+    STATE_ANALYSIS_VERIFY = "analysis-verify",
     STATES = [STATE_FILE_LOADED, STATE_FORM_OPENED, STATE_TRACKER_OPENED,
       STATE_REPORT_COMPLETE, STATE_REPORT_OPENED, STATE_REPORT_SIGNABLE, STATE_REPORT_EDITABLE,
       STATE_SCALE_OPENED, STATE_ANALYSIS, STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL,
       STATE_ANALYSIS_ALL, STATE_ANALYSIS_MINE, STATE_ANALYSIS_SHARED,
-      STATE_ANALYSIS_ANY, STATE_ANALYSIS_COMPLETE,
+      STATE_ANALYSIS_ANY, STATE_ANALYSIS_COMPLETE, STATE_ANALYSIS_VERIFY
     ];
   const EMAIL = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi,
-    MARKER = "=== SIGNED ===",
     META = "__meta",
     INDEX = "index",
     PATH = "path",
     TRANSFORM = "transform",
+    EXTRACT = "extract",
     SIGNATORY = "signatory",
     DESTINATION = "destination",
     EXTENSION = ".reflect",
@@ -62,7 +63,8 @@ App = function() {
 
   /* <!-- Internal Variables --> */
   var ಠ_ಠ, /* <!-- Context --> */
-    ರ‿ರ = {}, /* <!-- State --> */
+    ರ‿ರ = {},
+    /* <!-- State --> */
     ಱ = {}; /* <!-- Persistant State --> */
   /* <!-- Internal Variables --> */
 
@@ -89,7 +91,7 @@ App = function() {
               name: _.isFunction(message) ? message() : message,
               content: result.webViewLink ?
                 result.webViewLink : result.spreadsheetId ?
-                `https://docs.google.com/spreadsheets/d/${result.spreadsheetId}/edit` : "https://drive.google.com",
+                `https://docs.google.com/spreadsheets/d/${result.spreadsheetId}/edit` : result.id ? `https://drive.google.com/file/d/${result.id}/view` : "https://drive.google.com",
             }),
             header_class: "bg-success-light"
           }));
@@ -606,55 +608,54 @@ App = function() {
   FN.process = {
 
     signatures: () => {
-      var _target = $(ರ‿ರ.form).find(".signatures").empty(),
-        _display = comments => {
-          ರ‿ರ.form.signatures = comments.length;
+
+      var _data = FN.action.dehydrate().data,
+        _target = $(ರ‿ರ.form).find(".signatures").empty(),
+        _none = () => {
+
+          _target.html(ಠ_ಠ.Display.doc.get("NO_SIGNATURES"));
+          _target.parents(".card").find(".card-header h5").html("Signatures");
+
+        },
+        _display = signatures => {
+
+          ರ‿ರ.form.signatures = signatures.length;
           ಠ_ಠ.Display.template.show({
             template: "count",
             name: "Signatures",
-            count: comments.length,
+            count: signatures.length,
             clear: true,
             target: _target.parents(".card").find(".card-header h5")
           });
-          Promise.all(_.map(comments, comment => FN.sign.verify(comment.signature)
-              .then(valid => _.tap(valid, valid => _target.append(ಠ_ಠ.Display.template.get({
-                template: "signature",
-                valid: valid,
-                who: comment.author.me ? true : comment.author.displayName,
-                email: comment.author.emailAddress,
-                when: moment(comment.modifiedTime).fromNow(),
-                link: `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${ರ‿ರ.file.id}`
-              }))))))
-            .then(results => _target.parents(".card").find(".card-header .count")
-              .append(_.filter(results, result => result === false).length > 0 ?
-                ಠ_ಠ.Display.template.get({
-                  template: "valid",
-                  class: "ml-2 text-danger",
-                  valid: false,
-                  desc: "Some signatures are invalid / out of date!"
-                }) : ಠ_ಠ.Display.template.get({
-                  template: "valid",
-                  valid: true,
-                  class: "ml-2 text-success",
-                })));
-        },
-        _none = () => {
-          _target.html(ಠ_ಠ.Display.doc.get("NO_SIGNATURES"));
-          _target.parents(".card").find(".card-header h5").html("Signatures");
+
+          _.each(signatures, signature => {
+            signature.template = "signature";
+            _target.append(ಠ_ಠ.Display.template.get(signature));
+          });
+
+          var _invalid = _.filter(signatures, signature => signature.valid === false).length > 0;
+          _target.parents(".card").find(".card-header .count")
+            .append(ಠ_ಠ.Display.template.get(_invalid == signatures.length ? {
+                template: "valid",
+                class: "ml-2 text-danger",
+                valid: false,
+                desc: "All signatures are invalid / out of date!"
+              } : _invalid > 0 ? {
+                template: "valid",
+                class: "ml-2 text-warning",
+                valid: false,
+                desc: "Some signatures are invalid / out of date!"
+              } : {
+                template: "valid",
+                valid: true,
+                class: "ml-2 text-success",
+              }));
+
         };
 
-      if (ರ‿ರ.file) ಠ_ಠ.Google.files.comments(ರ‿ರ.file).list()
-        .then(comments => comments && (comments = _.filter(comments, comment => {
-            var _signature, _set = signature => {
-              comment.signature = JSON.parse(signature[0]);
-              return true;
-            };
-            return comment.content.indexOf(MARKER) === 0 &&
-              (_signature = comment.content.match(/{.+}/gi)) ?
-              _set(_signature) : false;
-          })).length > 0 ?
-          _display(comments) : _none())
-        .catch(e => ಠ_ಠ.Flags.error("Loading Comments", e));
+      if (ರ‿ರ.file) ಱ.signatures.list(ರ‿ರ.file, _data)
+        .then(signatures => signatures && signatures.length > 0 ? _display(signatures) : _none());
+
     },
 
     report: (data, actions) => {
@@ -713,7 +714,7 @@ App = function() {
             }
           }))
           .then(reports => {
-            ರ‿ರ.analysis = ಠ_ಠ.Analysis(ಠ_ಠ, forms, reports, expected);
+            ರ‿ರ.analysis = ಠ_ಠ.Analysis(ಠ_ಠ, forms, reports, expected, ಱ.signatures);
             ಠ_ಠ.Display.state()
               .change(STATES, STATE_ANALYSIS)
               .protect("a.jump").on("JUMP");
@@ -766,7 +767,7 @@ App = function() {
             .replace(/=+$/, "")
         }
       }))
-      .catch(e => ಠ_ಠ.Flags.error("Screenshot Error", e))
+      .catch(e => ಠ_ಠ.Flags.error("Screenshot Error", e).negative())
       .then(result => result && result.thumbnail ? result : false),
 
     dehydrate: () => {
@@ -948,16 +949,20 @@ App = function() {
                       parents: (ರ‿ರ.folder ? ರ‿ರ.folder.id : null),
                       appProperties: FN.helper.values(saving.data.form, saving.data.report,
                         meta => meta[INDEX],
-                        (value, field, meta, memo) => memo[`FIELD.${field}`] = JSON.stringify(
-                          meta[TRANSFORM] ?
-                          ಠ_ಠ.Display.template.compile(`REFLECT.FIELD.${memo.FORM}.${field}`,
-                            meta[TRANSFORM])(value) :
-                          meta[PATH] ?
-                          value[meta[PATH]] :
-                          value
-                        ), {
-                          FORM: saving.data.form.$name ?
-                            saving.data.form.$name : saving.data.form.name
+                        (value, field, meta, memo) => {
+                          var _val = meta[TRANSFORM] ?
+                            ಠ_ಠ.Display.template.compile(`REFLECT.FIELD.${memo.FORM}.${field}`,
+                              meta[TRANSFORM])(value) :
+                            meta[PATH] ?
+                            value[meta[PATH]] :
+                            meta[EXTRACT] ?
+                            (_.isRegExp(meta[EXTRACT]) ?
+                              meta[EXTRACT] : new RegExp(meta[EXTRACT], "i")).exec(value) : value;
+
+                          memo[`FIELD.${field}`] = JSON.stringify(_.isArray(_val) && _val.length == 1 ?
+                            _val[0] : _val);
+                        }, {
+                          FORM: saving.data.form.$name ? saving.data.form.$name : saving.data.form.name
                         }),
                     },
                     _data = JSON.stringify(saving.data, SAVING_REPLACER),
@@ -1112,98 +1117,6 @@ App = function() {
 
   };
   /* <!-- Action Functions --> */
-
-
-  /* <!-- Sign Functions --> */
-  FN.sign = {
-
-    supported: () => window.crypto &&
-      window.crypto.getRandomValues &&
-      window.crypto.subtle &&
-      window.crypto.subtle.generateKey &&
-      window.crypto.subtle.sign &&
-      window.crypto.subtle.verify &&
-      window.TextEncoder &&
-      window.TextDecoder,
-
-    crypto: window.crypto.subtle,
-
-    encode: value => ಠ_ಠ.Strings().hex.encode(value),
-
-    decode: value => ಠ_ಠ.Strings().hex.decode(value),
-
-    /* <!-- Raw Data for Signing/Verifying [data property to avoid signing with file name] --> */
-    raw: () => new TextEncoder().encode(
-      _.tap(FN.helper.stringify(FN.action.dehydrate().data, SIGNING_REPLACER).trim(),
-        raw => ಠ_ಠ.Flags.log("RAW DATA for Signing/Verifying:", raw))),
-
-    key: () => ({
-      name: "ECDSA",
-      namedCurve: "P-256",
-    }),
-
-    algorithm: () => ({
-      name: "ECDSA",
-      hash: {
-        name: "SHA-256"
-      },
-    }),
-
-    verify: signature => FN.sign.crypto.importKey("raw",
-        FN.sign.encode(signature.key), FN.sign.key(), false, ["verify"])
-      .then(key => FN.sign.crypto.verify(FN.sign.algorithm(), key,
-        FN.sign.encode(signature.signature), FN.sign.raw()))
-      .then(result => _.tap(result,
-        result => ಠ_ಠ.Flags.log(`Verification Result: ${result}`, signature)))
-      .catch(e => ಠ_ಠ.Flags.error("Verifying Error", e)),
-
-    remove: () => ಠ_ಠ.Google.files.comments(ರ‿ರ.file).list()
-      .then(comments => _.filter(comments, comment =>
-        comment.content.indexOf(MARKER) === 0 && comment.author && comment.author.me === true))
-      .then(comments => comments.length > 0 ? ಠ_ಠ.Display.confirm({
-        id: "confirm_Remove",
-        message: ಠ_ಠ.Display.doc.get({
-          name: "REMOVE_SIGNATURES",
-          content: comments.length,
-        }),
-        action: "Remove",
-        close: "Cancel"
-      }).then(result => result === true ? Promise.all(_.map(comments, comment =>
-          FN.helper.elevate(() => ಠ_ಠ.Google.files.comments(ರ‿ರ.file).delete(comment.id)))) :
-        false) : false)
-      .catch(e => ಠ_ಠ.Flags.error("Loading Comments", e)),
-
-    report: () => FN.sign.supported() ? FN.sign.crypto.generateKey(
-        FN.sign.key(), true, ["sign", "verify"]
-      ).then(key => FN.sign.crypto.sign(FN.sign.algorithm(), key.privateKey, FN.sign.raw())
-        .then(signature => {
-          return FN.sign.crypto.exportKey("raw", key.publicKey)
-            .then(value => _.tap({
-              signature: FN.sign.decode(signature),
-              key: FN.sign.decode(value)
-            }, signature => ಠ_ಠ.Flags.log("Signature:", signature)));
-        }))
-      .then(signature => `${MARKER}\n\n${JSON.stringify(signature)}`)
-      .then(signature => ಠ_ಠ.Google.files.comments(ರ‿ರ.file).list()
-        .then(comments => _.filter(comments, comment =>
-          comment.content.indexOf(MARKER) === 0 && comment.author && comment.author.me === true))
-        .then(comments => FN.helper.elevate(comments.length > 0 ?
-          () => ಠ_ಠ.Google.files.comments(ರ‿ರ.file).update(comments[0].id, signature) :
-          () => ಠ_ಠ.Google.files.comments(ರ‿ರ.file).create(signature, {
-            r: "head",
-            a: [{
-              rect: {
-                mw: 1,
-                mh: 1,
-              }
-            }],
-          })))
-      )
-      .catch(e => ಠ_ಠ.Flags.error("Signing Error", e))
-      .then(ಠ_ಠ.Main.busy("Signing Report")) : false,
-
-  };
-  /* <!-- Sign Functions --> */
 
 
   /* <!-- Internal Functions --> */
@@ -1423,6 +1336,12 @@ App = function() {
                     .then(ಠ_ಠ.Main.busy("Finding Reports")) : false;
                 },
               },
+              verify: {
+                length: 0,
+                state: STATE_ANALYSIS,
+                matches: /VERIFY/i,
+                fn: () => ಠ_ಠ.Display.state().toggle(STATE_ANALYSIS_VERIFY) ? ರ‿ರ.analysis.verify() : false,
+              },
               default: {
                 length: 0,
                 fn: () => FN.prompt.analysis()
@@ -1443,12 +1362,13 @@ App = function() {
                   remove: {
                     matches: /REMOVE/i,
                     length: 0,
-                    fn: () => FN.sign.remove()
+                    fn: () => ಱ.signatures.remove(ರ‿ರ.file)
                       .then(result => result ? FN.process.signatures() : false)
                   },
                   sign: {
                     length: 0,
-                    fn: () => FN.sign.report().then(() => FN.process.signatures())
+                    fn: () => ಱ.signatures.sign.report(ರ‿ರ.file, FN.action.dehydrate().data)
+                      .then(() => FN.process.signatures())
                   },
                 }
 
@@ -1644,7 +1564,11 @@ App = function() {
       });
     },
 
-    ready: () => ಱ.forms = ಱ.forms ? ಱ.forms : ಠ_ಠ.Forms(),
+    ready: () => {
+      ಱ.forms = ಱ.forms || ಠ_ಠ.Forms();
+      ಱ.signatures = ಱ.signatures ||
+        ಠ_ಠ.Signatures(ಠ_ಠ, FN.helper.stringify, SIGNING_REPLACER, FN.helper.elevate);
+    },
 
     /* <!-- Clear the existing state --> */
     clean: () => ಠ_ಠ.Router.clean(false),

@@ -192,9 +192,10 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
       _advanced.scroll.update(_.map(_rows, e => e.outerHTML));
     } else {
       target.find(`#${_name} tbody`).empty().append(_rows);
-      target.find("[data-toggle='popover']").popover({
+      ಠ_ಠ.Display.popovers(target.find("[data-toggle='popover']"), {
         trigger: "focus"
       });
+      ಠ_ಠ.Display.tooltips(target.find("[data-toggle='tooltip']"));
     }
     if (after_update) after_update(target);
   };

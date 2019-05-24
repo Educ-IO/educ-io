@@ -5,9 +5,9 @@
       {{#each headers}}
       <th class="table-header align-middle border-top-0{{#if hide}} d-none no-export{{/if}}{{#if hide_default}} no-export-default{{/if}}{{#if hide_initially}} to-hide{{/if}}" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" {{#if ../widths}} style="width: {{#with (lookup ../widths @index)}}{{this}}{{/with}}px"{{/if}}>
         {{#if ../links}}
-          <a id="heading_{{../id}}_{{@index}}" href="#" data-targets="#collapse_{{../id}}_{{@index}}" aria-expanded="false" aria-controls="collapse_{{../id}}_{{@index}}">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
+          <a id="heading_{{../id}}_{{@index}}" href="#" data-targets="#collapse_{{../id}}_{{@index}}" aria-expanded="false" aria-controls="collapse_{{../id}}_{{@index}}"{{#if display}} data-toggle="tooltip" data-placement="bottom" title="{{name}}"{{/if}}>{{val this display name}}</a>
         {{else}}
-        <a id="heading_{{../id}}_{{@index}}" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" data-placement="top" title="Click to sort by this column">{{#if name}}{{name}}{{else}}{{this}}{{/if}}</a>
+        <a id="heading_{{../id}}_{{@index}}" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" data-placement="top" title="Click to sort by this column">{{val this display name}}</a>
         {{/if}}
         {{#if icons}}<div class="heading-icons">{{#each icons}}<i class="material-icons text-muted"{{#exists desc}} title="{{desc}}"{{/exists}}>{{#exists icon}}{{icon}}{{else}}{{this}}{{/exists}}</i>{{/each}}</div>{{/if}}
       </th>

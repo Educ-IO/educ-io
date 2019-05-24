@@ -1,0 +1,1 @@
+!function(){var a=Handlebars.template;(Handlebars.templates=Handlebars.templates||{}).signature_summary=a({compiler:[7,">= 4.0.0"],main:function(a,e,t,n,r){return""},useData:!0})}();

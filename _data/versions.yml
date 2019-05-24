@@ -1,4 +1,8 @@
 site :
+  0.1.5g :
+    name : Reflect v0.0.7e-beta
+    desc : Reflect Analysis Improvements
+    numeric : 0.1.5.7
   0.1.5f :
     name : Docket v0.0.5-beta
     desc : Docket Integrations for Google Calendar and Classroom
@@ -820,6 +824,9 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.7e-beta :
+    name : Reflect Analysis Improvements
+    type : minor
   0.0.7d-beta :
     name : Public Release for Reflect App
     type : minor

@@ -89,6 +89,7 @@ globals:
   Records: true
   Tasks: true
   Analysis: true
+  Signatures: true
   Google_Sheets_Grid: true
   Google_Sheets_Metadata: true
   Google_Sheets_Notation: true

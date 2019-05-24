@@ -153,6 +153,7 @@ Display = function() {
 
   var _toggle = (state, toggle, container) => {
     var _$ = (container ? container.find : $);
+    _$(".disabled-state-" + state).toggleClass("disabled", toggle);
     _$(".state-" + state).toggleClass("disabled", !toggle);
     _$(".hide-" + state).toggleClass("d-none", toggle);
     _$(".show-" + state).toggleClass("d-none", !toggle);
@@ -230,6 +231,9 @@ Display = function() {
 
         Handlebars.registerHelper("stringify", variable => variable ?
           JSON.stringify(variable) : "");
+        
+        Handlebars.registerHelper("encode", variable => variable ?
+          encodeURIComponent(variable) : "");
 
         Handlebars.registerHelper("string", variable => variable ? variable.toString ?
           variable.toString() : JSON.stringify(variable) : "");
@@ -879,6 +883,14 @@ Display = function() {
             }
           });
 
+        /* <!-- Handle Enter Key (if simple) --> */
+        dialog.keypress(e => {
+          if (e.which == 13) {
+            e.preventDefault();
+            dialog.find(".modal-footer button.btn-primary").click();
+          }
+        });
+
         dialog.on("hidden.bs.modal",
           () => dialog.remove() && (_.isEmpty(parsed) ? reject() : resolve(parsed)));
 
@@ -1191,7 +1203,11 @@ Display = function() {
       var _exit = names => {
         names = _arrayize(names, _.isString);
         _.each(names, name => {
-          if (_remove(name)) _toggle(name, false) && _all().forEach(v => $(".state-" + v).removeClass("disabled"));
+          var a;
+          if (_remove(name)) _toggle(name, false) &&
+            (a = _all()).forEach(v =>
+              $(`.state-${v}`).not(_.reduce(a, (q, n) => `${q}${(q ?",":"")}.disabled-state-${n}`, ""))
+              .removeClass("disabled"));
         });
         return _parent;
       };
@@ -1200,6 +1216,25 @@ Display = function() {
         _exit(exit);
         _enter(enter);
         return _parent;
+      };
+
+      var _swap = (exit, enter) => {
+        if (exit) _exit(exit);
+        if (enter) _enter(enter);
+        return _parent;
+      };
+
+      var _clear = () => {
+        $(".d-none[class^='.hide-']", ".d-none[class*=' .hide-']").removeClass("d-none");
+        $("[class^='.show-']", "[class*=' .show-']").addClass("d-none");
+        _all().forEach(v => _remove(v) ? $(".state-" + v).addClass("disabled") : null);
+        return _parent;
+      };
+
+      var _in = (names, or) => {
+        names = _arrayize(names, _.isString);
+        var all = _all();
+        return (or ? _.some : _.every)(names, name => all.indexOf(name) >= 0);
       };
 
       return {
@@ -1212,29 +1247,17 @@ Display = function() {
 
         exit: _exit,
 
-        swap: (exit, enter) => {
-          if (exit) _exit(exit);
-          if (enter) _enter(enter);
-          return _parent;
-        },
+        swap: _swap,
 
-        clear: () => {
-          $(".d-none[class^='.hide-']", ".d-none[class*=' .hide-']").removeClass("d-none");
-          $("[class^='.show-']", "[class*=' .show-']").addClass("d-none");
-          _all().forEach(v => _remove(v) ? $(".state-" + v).addClass("disabled") : null);
-          return _parent;
-        },
+        clear: _clear,
 
-        in: (names, or) => {
-          names = _arrayize(names, _.isString);
-          var all = _all();
-          return (or ? _.some : _.every)(names, name => all.indexOf(name) >= 0);
-        },
+        in: _in,
 
         toggle: names => {
           var all = _all();
           _arrayize(names, _.isString)
             .forEach(name => all.indexOf(name) >= 0 ? _exit(name) : _enter(name));
+          return _in(names);
         }
 
       };

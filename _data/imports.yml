@@ -477,18 +477,18 @@ handlebars:
   desc: Used for HTML Templating in the browser.
   url: https://cdnjs.com/libraries/handlebars.js
   project: http://handlebarsjs.com/
-  version: 4.1.1
-  last: 4.1.0
+  version: 4.1.2
+  last: 4.1.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.1/handlebars.runtime.min.js
-      integrity: sha256-VYWHumt/GR8DOhRudKO+vYNSsmHXz8IYMpxZSUmwNuA=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.runtime.min.js
+      integrity: sha256-ObnvD3N5cc5HhMJiNQkLI3gEdCnf/M9/62HM+oCctvs=
       crossorigin: anonymous
       id: __handlebars
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.1/handlebars.js
-      integrity: sha256-lPhhmwtSxA3u1H+yq9GHYh69JvO/cOqSpwvPiFLTMgE=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.js
+      integrity: sha256-/wU5o1HRMBu91AoM5TxLLP4aspWB+FH8dtrkJZGCPFg=
       crossorigin: anonymous
       id: __handlebars
 
@@ -497,18 +497,18 @@ handlebars_full:
   desc: Used for HTML Templating in the browser.
   url: https://cdnjs.com/libraries/handlebars.js
   project: http://handlebarsjs.com/
-  version: 4.1.1
-  last: 4.1.0
+  version: 4.1.2
+  last: 4.1.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.1/handlebars.min.js
-      integrity: sha256-Mki72593zH3nxiQrW1mskmSOAXOep8FVIK0ozKFISyY=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js
+      integrity: sha256-ngJY93C4H39YbmrWhnLzSyiepRuQDVKDNCWO2iyMzFw=
       crossorigin: anonymous
       id: __handlebars
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.1/handlebars.js
-      integrity: sha256-lPhhmwtSxA3u1H+yq9GHYh69JvO/cOqSpwvPiFLTMgE=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.js
+      integrity: sha256-/wU5o1HRMBu91AoM5TxLLP4aspWB+FH8dtrkJZGCPFg=
       crossorigin: anonymous
       id: __handlebars
 
@@ -1314,11 +1314,17 @@ deepExtend:
   prod:
     - url: https://cdn.jsdelivr.net/npm/underscore-deep-extend@1.1.5/index.js
       integrity: sha256-SGcXZ6pJZCVAzqHxMVQs230ScXpFXYESsP5bNRrC9Go=
+      overrides:
+        - replace: return ( _.isString(sProp) && parentRE.test(sProp) );
+          with: return ( _.isString(sProp) && _.isRegExp(oProp) );
       crossorigin: anonymous
       id: __deepExtend
   dev:
     - url: https://cdn.jsdelivr.net/npm/underscore-deep-extend@1.1.5/index.js
       integrity: sha256-SGcXZ6pJZCVAzqHxMVQs230ScXpFXYESsP5bNRrC9Go=
+      overrides:
+        - replace: return ( _.isString(sProp) && parentRE.test(sProp) );
+          with: return ( _.isString(sProp) && _.isRegExp(oProp) );
       crossorigin: anonymous
       id: __deepExtend
       

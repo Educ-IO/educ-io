@@ -3,6 +3,7 @@ $spinner-size-large: 100px;
 $spinner-size-medium: 60px;
 $spinner-size-button: 1.5em;
 $spinner-size-small: 22px;
+$spinner-size-tiny: 12px;
 $spinner-duration: 0.8s;
 
 // -- Loading Container -- //
@@ -65,15 +66,28 @@ div.loader {
 			}
 		}
 	}
+  &.loader-small, &.loader-tiny {
+    .loading {
+      position: relative;
+      transform: translate(-50%, 0%);
+    }
+  }
 	&.loader-small {
-		height: 0;
+    height: 0;
 		.loading {
-			position: relative;
 			width: $spinner-size-small;
 			height: $spinner-size-small;
-			transform: translate(-50%, 0%);
 			.spinner {
 				border: solid $spinner-size-small/10 rgba(0,0,0,0);
+			}
+		}
+	}
+  &.loader-tiny {
+		.loading {
+			width: $spinner-size-tiny;
+			height: $spinner-size-tiny;
+			.spinner {
+				border: solid $spinner-size-tiny/6 rgba(0,0,0,0);
 			}
 		}
 	}

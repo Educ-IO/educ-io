@@ -1,3 +1,12 @@
 {% raw %}
-{{#each rows}}<tr>{{#each this}}<td>{{#if this}}{{> cell}}{{/if}}{{#if @last}}{{#if ../../removable}}<a role="button" class="close float-right" aria-label="Close" href="#" title="Remove from List"><span aria-hidden="true">&times;</span></a>{{/if}}{{/if}}</td>{{/each}}</tr>{{/each}}
+{{#each rows}}
+<tr>
+  {{#each this}}
+  <td>
+    {{~#if this~}}{{> cell}}{{~/if~}}
+    {{~#if (all @last ../../removable)}}<a role="button" class="close float-right" aria-label="Close" href="#" title="Remove from List"><span aria-hidden="true">&times;</span></a>{{/if~}}
+  </td>
+  {{/each}}
+</tr>
+{{/each}}
 {% endraw %}
