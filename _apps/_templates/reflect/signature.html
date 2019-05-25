@@ -7,6 +7,6 @@
     <small class="ml-3">{{when}}</small>
   </div>
   <p class="mb-1">This report was signed by <strong class="text-body">{{#is who "===" true}}you{{else}}{{who}}{{/is}}</strong>{{#if email}} ({{email}}){{/if}}</p>
-  <small>{{#if valid}}{{else}}The data in this report has <strong>probably been changed</strong> since it was reviewed. Please {{#if email}}<a href="mailto:{{email}}?subject=Please re-sign my Reflect Report&body=I have recently changed this report, so could you please check and re-sign it?%0D%0A%0D%0A{{link}}" target="_blank">{{/if}}request{{#if email}}</a>{{/if}} that it is <strong>checked</strong> &amp; <strong>signed</strong> again.{{/if}}</small>
+  <small>{{#if valid}}{{else}}The data in this report has <strong>probably been changed</strong> since it was reviewed. Please {{#if email}}<a href="mailto:{{email}}?subject=Please re-sign my Reflect Report&body=I have recently changed this report, so could you please check and re-sign it?%0D%0A%0D%0A{{link}}">{{/if}}request{{#if email}}</a>{{/if}} that it is <strong>checked</strong> &amp; <strong>signed</strong> again.{{/if}}</small>
 </li>
 {% endraw %}

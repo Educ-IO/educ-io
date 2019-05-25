@@ -25,7 +25,7 @@ Recent = function() {
 		},
 
     /* <!-- External Functions --> */
-		add: (key, name, url, details) => _items.add(key, name, url, details),
+		add: (key, name, url, details, type, icon) => _items.add(key, name, url, details, type, icon),
 		
 		last : number => _items.last(number),
 		

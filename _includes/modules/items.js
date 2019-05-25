@@ -19,14 +19,16 @@ Items = (ಠ_ಠ, app) => {
   return {
 
     /* <!-- External Functions --> */
-		add: (key, name, url, details) => DB.setItem(_key(app, key), {
+		add: (key, name, url, details, type, icon) => DB.setItem(_key(app, key), {
 			app: _camel(app),
 			name: name,
 			url: url,
 			date: new Date(),
 			date_string: new Date().toDateString(),
 			details: details,
-			key: _key(app, key)
+			key: _key(app, key),
+      type: type,
+      icon: icon
 		}),
 		
 		last : number => new Promise((resolve, reject) => {

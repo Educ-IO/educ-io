@@ -9,13 +9,9 @@
     <div class="pt-1 flex-row flex-wrap d-flex d-md-none">
       <div class="mr-1 my-1"><button type="button" class="btn btn-secondary mb-0" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" title="Click to sort by this column">Sort</button></div>
       <div class="mr-1 my-1">
-        <button type="button" class="btn btn-secondary dropdown-toggle mb-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Visibility
-          </button>
+        <button type="button" class="btn btn-secondary dropdown-toggle mb-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Visibility</button>
         <div class="dropdown-menu dropdown-menu-bottom" aria-label="Menu for controlling the visibility of this column" data-heading="heading_{{../id}}_{{@index}}" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}">
-          <a class="dropdown-item" href="#" data-command="hide" data-action="now" data-toggle="tooltip" title="Hide this column">Hide now</a>
-          <a class="dropdown-item" href="#" data-command="hide" data-action="always" data-toggle="tooltip" title="Just hide this column on the view that you create">Hide always</a>
-          <a class="dropdown-item" href="#" data-command="hide" data-action="initially" data-toggle="tooltip" title="Just hide this column on the view, but allow it to be un-hidden">Hide initially</a>
+          {{#each ../choices}}{{#if this}}{{#if menu}}<a class="dropdown-item" href="#" data-command="hide" data-action="{{@key}}" data-toggle="tooltip" title="{{desc}}"><i class="material-icons md-24 float-right toggler d-none">check_box</i>{{name}}</a>{{/if}}{{/if}}{{/each}}
         </div>
       </div>
         <button type="button" class="close ml-2" aria-label="Close" onclick="event.preventDefault(); $('#collapse_{{../id}}_{{@index}}').fadeOut();" data-toggle="tooltip" title="Close this panel but retain the filter"><span aria-hidden="true">&times;</span></button>
@@ -28,11 +24,9 @@
       <input data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-action="filter" type="text" class="form-control table-search" placeholder="Filter {{#if name}}{{name}}{{else}}{{this}}{{/if}} ...">
       <span class="input-group-prepend"><button type="button" class="btn btn-secondary mb-0" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" title="Click to sort by this column">Sort</button></span>
       <div class="input-group-prepend">
-        <button type="button" class="btn btn-secondary dropdown-toggle mb-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Visibility
-          </button>
+        <button type="button" class="btn btn-secondary dropdown-toggle mb-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Visibility</button>
         <div class="dropdown-menu dropdown-menu-right" aria-label="Menu for controlling the visibility of this column" data-heading="heading_{{../id}}_{{@index}}" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}">
-          {{#each ../choices}}{{#if this}}{{#if menu}}<a class="dropdown-item" href="#" data-command="hide" data-action="{{@key}}" data-toggle="tooltip" title="{{desc}}">{{name}}</a>{{/if}}{{/if}}{{/each}}
+          {{#each ../choices}}{{#if this}}{{#if menu}}<a class="dropdown-item" href="#" data-command="hide" data-action="{{@key}}" data-toggle="tooltip" title="{{desc}}"><i class="material-icons md-24 float-right toggler d-none">check_box</i>{{name}}</a>{{/if}}{{/if}}{{/each}}
         </div>
       </div>
       <button type="button" class="close ml-2" aria-label="Close" onclick="event.preventDefault(); $('#collapse_{{../id}}_{{@index}}').fadeOut();" data-toggle="tooltip" title="Close this panel but retain the filter"><span aria-hidden="true">&times;</span></button>

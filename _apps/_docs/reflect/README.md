@@ -5,5 +5,5 @@ If you haven't used this app before, please take __a moment__ to read the [instr
 
 We also have a series of [tutorials](#tutorials) to help you with __specific tasks__.
 
-Finally, please visit our [about](/about/){:target="_blank"} page to find out more about this site, our [privacy safeguards](about/?highlight=privacy){:target="_blank"} and our technology.{% endcapture %}
+Finally, please visit our [about](/about/){:target="_blank"} page to find out more about this site, our [privacy safeguards](/about/?highlight=privacy){:target="_blank"} and our technology.{% endcapture %}
 {% include landing.html logo=app.logo buttons=app.buttons %}

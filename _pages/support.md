@@ -56,7 +56,7 @@ We welcome bug/issue reporting from all users. The best way to do this is throug
 - - -
 
 ### Bespoke Training & Development
-If you have particular requirements or require bespoke training and support for your organisation/users, then a variety of solutions are possible. These include __always-available remote support__ over [Slack](https://slack.com/features){:target="_blank"}, __on-site training__ and the customisation of these tools to fit __your own workflow__ requirements. Just get [in touch with us](mailto:hello@educ.io?subject=Customised Support Package){:target="_blank"} to kick off a conversation about how we might be able to help.
+If you have particular requirements or require bespoke training and support for your organisation/users, then a variety of solutions are possible. These include __always-available remote support__ over [Slack](https://slack.com/features){:target="_blank"}, __on-site training__ and the customisation of these tools to fit __your own workflow__ requirements. Just get [in touch with us](mailto:hello@educ.io?subject=Customised Support Package) to kick off a conversation about how we might be able to help.
 
 - - -
 

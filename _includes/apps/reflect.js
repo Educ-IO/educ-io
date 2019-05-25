@@ -59,6 +59,10 @@ App = function() {
     (key === "__order" || key === "__type" || key === "__meta") ?
     undefined : EDITING_REPLACER(key, value),
     FN = {};
+  
+  const LOADER = "loader",
+        BUTTON = "#createRelectiveReport",
+        LOADED = () => $(BUTTON).removeClass(LOADER);
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -731,9 +735,15 @@ App = function() {
   FN.action = {
 
     recent: (file, silent) => _.tap(file,
-      file => ಠ_ಠ.Recent.add(silent ? file : (ರ‿ರ.file = file).id,
+      file => ಠ_ಠ.Recent.add((silent ? file : ರ‿ರ.file = file).id,
         file.name.replace(EXTENSION_REGEX, ""),
-        "#google,load." + file.id)),
+        "#google,load." + file.id, null, null,
+        ಠ_ಠ.Google.files.is(TYPE_REPORT)(file) ? "assignment" :
+        ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ? "dashboard" :
+        ಠ_ಠ.Google.files.is(TYPE_ANALYSIS)(file) ? "assessment" :
+        ಠ_ಠ.Google.files.is(TYPE_REVIEW)(file) ? "search" :
+        ಠ_ಠ.Google.files.is(TYPE_TRACKER)(file) ? "timeline" :
+        ಠ_ಠ.Google.files.is(TYPE_SCALE)(file) ? "toc" : null)),
 
     revoke: () => ಠ_ಠ.Display.confirm({
         id: "confirm_Revoke",
@@ -917,7 +927,7 @@ App = function() {
             value, TYPE_FORM, null, ರ‿ರ.file ? ರ‿ರ.file.id : null, true)
           .then(ಠ_ಠ.Main.busy("Updating"))
           .then(uploaded => {
-            ಱ.forms = ಠ_ಠ.Forms();
+            ಱ.forms = ಠ_ಠ.Forms(LOADED);
             return (ರ‿ರ.file = uploaded);
           })
           .then(FN.helper.notify.save("NOTIFY_SAVE_FORM_SUCCESS"))),
@@ -1139,6 +1149,9 @@ App = function() {
         name: "Reflect",
         state: ರ‿ರ,
         states: STATES,
+        start: () => {
+          if (!ಱ.forms || !ಱ.forms.loaded()) $(BUTTON).addClass(LOADER);
+        },
         instructions: [{
             match: /SAVE/i,
             show: "SAVE_INSTRUCTIONS",
@@ -1565,7 +1578,7 @@ App = function() {
     },
 
     ready: () => {
-      ಱ.forms = ಱ.forms || ಠ_ಠ.Forms();
+      ಱ.forms = ಱ.forms || ಠ_ಠ.Forms(LOADED);
       ಱ.signatures = ಱ.signatures ||
         ಠ_ಠ.Signatures(ಠ_ಠ, FN.helper.stringify, SIGNING_REPLACER, FN.helper.elevate);
     },

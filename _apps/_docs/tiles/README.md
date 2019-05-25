@@ -1,3 +1,3 @@
 {% assign app = site.data.apps.tiles %}
-{% capture text %}Thanks for logging in, let's __get started__. Use the menus above, your __recently opened__ tiles, or the buttons below to jump straight in. If you haven't used this app before, it might be worth __pausing for a moment__ to read the [instructions](#instructions). Or read our [about](/about/) page to find out more about this site, our privacy safeguards and our technology.{% endcapture %}
+{% capture text %}Thanks for logging in, let's __get started__. Use the menus above, your __recently opened__ tiles, or the buttons below to jump straight in. If you haven't used this app before, it might be worth __pausing for a moment__ to read the [instructions](#instructions). Or read our [about](/about/) page to find out more about this site, our [privacy safeguards](/about/?highlight=privacy){:target="_blank"} and our technology.{% endcapture %}
 {% include landing.html logo=app.logo buttons=app.buttons %}

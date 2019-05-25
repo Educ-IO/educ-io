@@ -1,4 +1,8 @@
 site :
+  0.1.5j :
+    name : Bug Fixes
+    desc : Bug Fixes and Small Improvements
+    numeric : 0.1.5.9
   0.1.5i :
     name : Reflect v0.0.7e-beta
     desc : Reflect Analysis Improvements

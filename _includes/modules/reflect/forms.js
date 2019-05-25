@@ -1,12 +1,14 @@
-Forms = function() {
+Forms = function(loaded) {
   "use strict";
 
   /* <!-- Returns an instance of this if required --> */
-  if (this && this._isF && this._isF(this.Forms)) return new this.Forms().initialise(this);
+  if (this && this._isF && this._isF(this.Forms)) return new this.Forms().initialise(this, loaded);
 
   /* <!-- Internal Variables --> */
   var ಠ_ಠ, /* <!-- Context --> */
-    ರ‿ರ = {},
+    ರ‿ರ = {
+      loaded: false,
+    },
     /* <!-- State --> */
     ಱ = {}; /* <!-- Persistant --> */
   /* <!-- Internal Variables --> */
@@ -142,7 +144,7 @@ Forms = function() {
   return {
 
     /* <!-- External Functions --> */
-    initialise: function(container) {
+    initialise: function(container, loaded) {
 
       /* <!-- Get a reference to the Container --> */
       ಠ_ಠ = container;
@@ -204,7 +206,11 @@ Forms = function() {
               }) : Promise.resolve(file))
             .then(file => ರ‿ರ.files[file.id] = file))))
           .catch(e => ಠ_ಠ.Flags.error(`Error Searching for File Type: ${type.mime}`, e))))
-        .then(() => this);
+        .then(() => {
+          ರ‿ರ.loaded = true;
+          if (loaded && _.isFunction(loaded)) loaded();
+          return this;
+        });
 
       /* <!-- Log Cached Values --> */
       ಠ_ಠ.Flags.log("Cache:", ರ‿ರ.cache);
@@ -213,6 +219,8 @@ Forms = function() {
       return this;
 
     },
+
+    loaded: () => ರ‿ರ.loaded,
 
     all: _all,
 

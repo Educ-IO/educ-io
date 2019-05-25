@@ -572,6 +572,9 @@ buttons:
 - name: Reflective Report
   desc: Create a new Reflective Report
   hash: create.report
+  id: createRelectiveReport
+  spinner: true
+  loading: Loading Custom Forms from Google Drive
   auth: google
   buttons:
   - name: Create

@@ -25,7 +25,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
         },
         initially: {
           name: "Hide",
-          desc: "Hide this column, but allow it to be un-hidden",
+          desc: "Hide this column, but allow it to be shown",
           menu: true
         },
         now: null,
@@ -116,8 +116,13 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
   var _updateHeaders = (container, defaults, slight) => {
 
-    var query = ".table-header[data-index]";
-    var _headers = (container ? container.find(query) : target.find(query)).sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index));
+    var query = {
+      headers : ".table-header[data-index]",
+      filter_forms : ".filter-wrapper .form",
+      execute : query => (container ? container.find(query) : target.find(query)) 
+    };
+    var _headers = query.execute(query.headers).sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index)),
+        _filterForms = query.execute(query.filter_forms);
 
     var _style = _css.sheet("table-column-tohide");
 
@@ -141,7 +146,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
         /* <!-- Set Visibility --> */
         _t.toggleClass("d-none", table.headers[i].hide(defaults)).toggleClass("to-hide", !!table.headers[i].hide_initially);
-
+        
         /* <!-- Set Similar Style Rules for Rows --> */
         var _selector = "#" + _name + " tbody tr td:nth-child(" + table.headers.slice(0, _i).reduce((t, h) => h.hide() ? t : t + 1, 1) + ")";
         table.headers[_i].hide_initially ?
@@ -149,6 +154,11 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
           _css.removeRule(_style, _selector);
 
       }
+      
+      /* <!-- Display Relevant Tickbox Togglers on Menu --> */
+      var _filterForm = $(_filterForms[i]);
+      _.each(["now", "always", "initially"], 
+             prop => _filterForm.find(`.dropdown-item[data-action='${prop}'] i.toggler`)[table.headers[i][`hide_${prop}`] ? "removeClass" : "addClass"]("d-none"));
 
       /* <!-- Set Sorts --> */
       _t.toggleClass("sort", !!_sorts[_f]).toggleClass("desc", !!(_sorts[_f] && _sorts[_f].is_desc)).toggleClass("asc", !!(_sorts[_f] && !_sorts[_f].is_desc));
@@ -364,6 +374,13 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
           };
         }
       }
+      
+      /* <!-- Switch On/Off Togglers --> */
+      var _toggler = _target.find("i.toggler"),
+          _on = _toggler.hasClass("d-none");
+      _target.closest(".dropdown-menu").find("i.toggler").addClass("d-none");
+      if (_on) _target.find("i.toggler").removeClass("d-none");
+           
       _target.tooltip("hide").parents("div.form").fadeOut(FADE_DELAY);
       _update(true, true, target);
       if (_complete) _complete();

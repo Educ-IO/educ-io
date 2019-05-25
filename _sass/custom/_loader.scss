@@ -7,11 +7,15 @@ $spinner-size-tiny: 12px;
 $spinner-duration: 0.8s;
 
 // -- Loading Container -- //
-.loader {
+div.loader {
   z-index: 5; // -- Above Content, but below navigation -- //
   .loading {
-    will-change: transform;
     z-index: 101;
+  }
+}
+.loader {
+  .loading {
+    will-change: transform;
     // -- Actual Spinner -- //
     .spinner {
       width: 100%;

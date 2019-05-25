@@ -60,13 +60,17 @@ Display = function() {
 
   var _placement = (show, trigger) => $(trigger).data("placement") ? $(trigger).data("placement") : _calculate($(trigger));
 
-  var _popovers = (targets, options) => targets.popover(_.defaults(options ? options : {}, {
-    trigger: "focus"
-  }));
+  var _popovers = (targets, options) => {
+    if (targets && targets.popover) targets.popover(_.defaults(options ? options : {}, {
+      trigger: "focus"
+    }));
+  };
 
-  var _tooltips = (targets, options) => targets.tooltip(_.defaults(options ? options : {}, {
-    placement: _placement
-  }));
+  var _tooltips = (targets, options) => {
+    if (targets && targets.tooltip) targets.tooltip(_.defaults(options ? options : {}, {
+      placement: _placement
+    }));
+  };
 
   var _routes = targets => targets.off("click.route").on("click.route", e => {
     e.preventDefault();
@@ -142,10 +146,14 @@ Display = function() {
 
   };
 
-  var _process = value => {
+  var _visuals = value => {
     _popovers(value.find("[data-toggle='popover']"));
     _tooltips(value.find("[data-toggle='tooltip']"));
-    _routes(value.find("a[data-route], button[data-route], input[data-route]"));
+    return value;
+  };
+
+  var _process = value => {
+    _routes(_visuals(value).find("a[data-route], button[data-route], input[data-route]"));
     return value;
   };
 
@@ -231,7 +239,7 @@ Display = function() {
 
         Handlebars.registerHelper("stringify", variable => variable ?
           JSON.stringify(variable) : "");
-        
+
         Handlebars.registerHelper("encode", variable => variable ?
           encodeURIComponent(variable) : "");
 
@@ -491,10 +499,10 @@ Display = function() {
       show: function(options) {
 
         /* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
-        var _element = options.clear === true ? _target(options).empty() : _target(options);
-        var _return = $(this.get(options));
+        var _element = options.clear === true ? _target(options).empty() : _target(options),
+          _return = $(this.get(options))[options.prepend === true ? "prependTo" : "appendTo"](_element);
 
-        return options.prepend === true ? _return.prependTo(_element) : _return.appendTo(_element);
+        return _visuals(_return);
 
       },
 
@@ -618,9 +626,9 @@ Display = function() {
       options = options ? options : {};
       var _element = _target(options),
         _status;
-      var _clear = (options && options.clear === true) || _element.find(".loader").length > 0,
+      var _clear = (options && options.clear === true) || _element.find(".loader-large").length > 0,
         _loader = _clear ?
-        options.clear = true && _element.find(".loader").remove() :
+        options.clear = true && _element.find(".loader-large").remove() :
         _element.prepend(_template("loader")(options ? options : {})),
         _handler;
 

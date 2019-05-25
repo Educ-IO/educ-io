@@ -8,6 +8,9 @@ html, body {
 .text-select {
   user-select: text;
 }
+.text-background {
+  color: rgba($colour-highlight, 0.5) !important;
+}
 
 // -- General Buttons -- //
 .btn {

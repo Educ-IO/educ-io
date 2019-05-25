@@ -4,8 +4,10 @@
 	<li id="{{key}}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
 		<div class="d-flex justify-content-start align-items-center">
 			<a role="button" class="close float-none" aria-label="Close" href="#remove.{{key}}" title="Remove from Recent"><span aria-hidden="true">&times;</span></a>
-			<div class="ml-3 pr-2">
-				<a href="{{url}}">{{name}}</a>{{#if type}} <span class="badge badge-dark">{{type}}</span>{{/if}}
+			<div class="ml-3 pr-2 d-flex">
+        <a href="{{url}}">{{name}}</a>
+        {{~#if icon}}<i class="material-icons md-1 align-self-center ml-1 text-background">{{icon}}</i>{{/if~}}
+        {{~#if type}} <span class="badge badge-dark">{{type}}</span>{{/if~}}
 			</div>
 		</div>
 		<span class="badge badge-secondary">{{ date_string }}</span>

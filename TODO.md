@@ -8,8 +8,6 @@ General
 
 * ** IMPORTANT ** Recent Items -> Multiple accounts!!!
 
-* ** IMPORTANT ** Loader/Spinner contained within element
-
 * ** IMPORTANT ** Loading Spinner for 'Get Help' - can be slow sometimes!
 * ** IMPORTANT ** Clean up Service Worker Console Logs (e.g. Service Worker Registered)
 * ** IMPORTANT ** Handle State for each app, for full page redirects, callable from Main Module and rehydratable from there.
@@ -124,15 +122,13 @@ Folders
 
 Reflect
 -------
+* ** FEATURE ** Complete Email from Signer for pre-shared reports
+
 
 * ** IMPROVEMENT ** Replace DeepClone with our own version (better handling of Regexes) | With DEBUG tests
 
 * ** IMPROVEMENT ** Create form -> Should lead to 'show form' pathway, with button for return to edit (same as edit but without state file)
 
-
-* ** FEATURE ** Complete Email from Signer for pre-shared reports
-
-* ** FEATURE ** Icons on RECENT items (form / report etc)
 
 * ** FEATURE ** Target Analysis - for individual (e.g. me) and cohort. Look at target completion over time in a tabular format (sparklines?)
 
@@ -153,6 +149,10 @@ Survey
 
 Complete
 --------
+* ** IMPORTANT ** Loader/Spinner contained within element <-- DONE
+* ** FEATURE ** Icons on RECENT items (form / report etc) <-- DONE
+* ** IMPROVEMENT ** Indication that forms are still being loaded on app start <-- DONE
+* Filter - Contextual Show / Hide | Hook into Show/Hide Filters <-- DONE
 * ** FEATURE ** Email link from 'missing' link on Analysis page <-- DONE
 * ** FEATURE ** Analysis - upload list of expected users? Save analysis query together with expected list? Maybe option to view via weekly, monthly, quarterly, yearly - on dropdown button at top (menus getting clogged) <-- DONE
 * ** FEATURE ** On analysis page, need to have the option to go through in bulk and compute signature validity. Button in top command cluster? <-- DONE
