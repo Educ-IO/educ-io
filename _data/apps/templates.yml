@@ -1,24 +1,24 @@
-#################################################
-#                                               #
-#   d888888b d888888b db      d88888b .d8888.   #
-#   `~~88~~'   `88'   88      88'     88'  YP   #
-#      88       88    88      88ooooo `8bo.     #
-#      88       88    88      88~~~~~   `Y8b.   #
-#      88      .88.   88booo. 88.     db   8D   #
-#      YP    Y888888P Y88888P Y88888P `8888Y'   #
-#                                               #
-#################################################
+####################################################################################
+#                                                                                  #
+#   d888888b d88888b .88b  d88. d8888b. db       .d8b.  d888888b d88888b .d8888.   #
+#   `~~88~~' 88'     88'YbdP`88 88  `8D 88      d8' `8b `~~88~~' 88'     88'  YP   #
+#      88    88ooooo 88  88  88 88oodD' 88      88ooo88    88    88ooooo `8bo.     #
+#      88    88~~~~~ 88  88  88 88~~~   88      88~~~88    88    88~~~~~   `Y8b.   #
+#      88    88.     88  88  88 88      88booo. 88   88    88    88.     db   8D   #
+#      YP    Y88888P YP  YP  YP 88      Y88888P YP   YP    YP    Y88888P `8888Y'   #
+#                                                                                  #
+####################################################################################
 
-name: Tiles
+name: Templates
 desc: Share __links__ and create your own simple dashboard-style __intranet__ page
-link: /tiles/
+link: /templates/
 colour: 6d635a
-logo: images/tiles_logo.svg
-learn: /guides/tiles
+logo: images/templates_logo.svg
+learn: /guides/templates
 imports:
   - name: underscore
     load: first
-  - name: jquery
+  - name: jquery_slim
     load: first
   - name: popper
     load: first
@@ -35,8 +35,6 @@ imports:
   - name: localforage
     load: last
   - name: autosize
-    load: last
-  - name: moment
     load: last
   - name: waves-css
     load: last
@@ -78,11 +76,11 @@ docs:
   - shared/HELP_AVAILABLE
   - shared/HELP_INDETERMINATE
   - shared/HELP_UNAVAILABLE
-  - tiles/PUBLIC
-  - tiles/FEATURES
-  - tiles/README
-  - tiles/INSTRUCTIONS
-  - tiles/TUTORIALS
+  - templates/PUBLIC
+  - templates/FEATURES
+  - templates/README
+  - templates/INSTRUCTIONS
+  - templates/TUTORIALS
 scopes:
   google:
     - scope: email
@@ -97,30 +95,14 @@ scopes:
       name: View and manage Google Drive files and folders that you have opened or created with this app
       reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.
       request: login
-    - scope: https://www.googleapis.com/auth/spreadsheets.readonly
-      name: View your Google Spreadsheets
-      reason: This app needs to load data from spreadsheets in order to display it, but not to write to them.
-      request: login
-    - scope: https://www.googleapis.com/auth/drive.readonly
-      name: View the files in your Google Drive
-      reason: In order to read previously saved view files, this 'readonly' permissions is required.
-      request: login
     - scope: https://www.googleapis.com/auth/spreadsheets
       name: Edit your Google Spreadsheets
       reason: This app needs to save data to your spreadsheets in order to share your tiles.
-      request: lazy
-    - scope: https://www.googleapis.com/auth/urlshortener
-      name: Manage your goo.gl short URLs
-      reason: Once you have created a link to share in this app, you have the option of using the Google Link Shortener to 'compress' it. This scope allows access to that feature.
-      request: lazy
-    - scope: https://www.googleapis.com/auth/drive.install
-      name: Special scope used to let users approve installation of an app.
-      reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
-      request: lazy
+      request: login
 keys:
   google:
-      general: AIzaSyATcTyy5atrw6hl2iUtt1EA-o_xVOGfXVA
-      oauth: 894090436889-a4kond8cjov44miilvm2gs7q4bboarup.apps.googleusercontent.com
+      general: AIzaSyBHBiKwqf4yAdMnUZgxOCZSOuIS7_Y1RKw
+      oauth: 157665340338-6tq6c951cvj05b5mg46bbftahnmb0iqk.apps.googleusercontent.com
 menus:
   - name: Settings
   - name: About
@@ -135,19 +117,14 @@ menus:
             hash: tutorials
             desc: Ways in which you can use this app
           - name: Guide
-            url: /guides/tiles
+            url: /guides/templates
             desc: A guide to using this app
             divider: true
-          - name: Install
-            desc: Install this app into your Google Drive
-            hash: install
-            auth: google
-            scope: https://www.googleapis.com/auth/drive.install
           - name: Permissions
-            url: /scopes/?highlight=tiles
+            url: /scopes/?highlight=templates
             desc: Find out about the permissions and scopes that this app uses
           - name: Changes
-            url: /changes?highlight=tiles
+            url: /changes?highlight=templates
             desc: Find out about the most recent changes and features of this app
             divider: true
           - name: Privacy

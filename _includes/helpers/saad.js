@@ -3,7 +3,7 @@ SaaD = (options, factory) => {
 
   /* <!-- MODULE: Sheets as a Database - Provides DB Functionality for Google Sheets --> */
   /* <!-- PARAMETERS: Receives the global app context, options --> */
-  /* <!-- REQUIRES: Global Scope: Loki, Underscore | App Scope: Flags, Google, Google_Sheets_Grid, Google_Sheets_Metadata, Google_Sheets_Notation, Google_Sheets_Format; --> */
+  /* <!-- REQUIRES: Global Scope: Loki, Underscore, DayJS/Moment | App Scope: Flags, Dates, Google, Google_Sheets_Grid, Google_Sheets_Metadata, Google_Sheets_Notation, Google_Sheets_Format; --> */
   /* <!-- @options = {db, meta, names : {spreadsheet, sheet}, properties, process, colour} --> */
 
   /* <!-- Internal Consts --> */
@@ -138,10 +138,12 @@ SaaD = (options, factory) => {
 
     convertToArray: item => _.reduce(ರ‿ರ.data.columns.meta,
       (value, column) => {
-        value[column.developerMetadata.location.dimensionRange.startIndex] =
-          column.isDate && item[column.developerMetadata.metadataValue] && item[column.developerMetadata.metadataValue]._isAMomentObject ?
+        value[column.developerMetadata.location.dimensionRange.startIndex] = column.isDate &&
+          item[column.developerMetadata.metadataValue] &&
+          item[column.developerMetadata.metadataValue].format ?
           item[column.developerMetadata.metadataValue].format("YYYY-MM-DD") :
-          item[column.developerMetadata.metadataValue] ? item[column.developerMetadata.metadataValue] : "";
+          item[column.developerMetadata.metadataValue] ?
+          item[column.developerMetadata.metadataValue] : "";
         return value;
       }, []),
 
@@ -330,7 +332,8 @@ SaaD = (options, factory) => {
           var _row = {};
           _.each(ರ‿ರ.data.columns.meta, column => {
             var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
-            _row[column.developerMetadata.metadataValue] = _val && column.isDate ? moment(_val) : _val;
+            _row[column.developerMetadata.metadataValue] = _val && column.isDate ?
+              factory.Dates.parse(_val) : _val;
           });
 
           /* <!-- Set ROW / Index Reference --> */

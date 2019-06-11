@@ -2,8 +2,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
   /* <!-- Internal Constants --> */
   const BATCH_SIZE = 50,
-    CONCURRENT_SIZE = 2,
-    TRACK_TIME = 200;
+    CONCURRENT_SIZE = 2;
   const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms));
   const SEARCH_TRIGGER = 20;
 
@@ -326,27 +325,23 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
   };
 
   var locate = row => {
-      var _position = row.position().top - row.height();
-      ಠ_ಠ.Flags.log(`Setting scroll position for id=${row.attr("id")} to ${_position}`);
-      row.parents("div.tab-pane").animate({
-        scrollTop: _position
-      }, TRACK_TIME);
-      return row;
-    },
-    busy = (cell, row, css_class, track) => on => {
-      on ? ಠ_ಠ.Display.busy({
-          target: cell,
-          class: "loader-small w-100"
-        }) && (track ? locate(row) : true) && row.addClass(css_class ? css_class : "bg-active") :
-        ಠ_ಠ.Display.busy({
-          target: cell,
-          clear: true
-        }) && row.removeClass(css_class ? css_class : "bg-active");
-    };
+    if (Element.prototype.scrollIntoView && row[0] && row[0].scrollIntoView) row[0].scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+    return row;
+  },
+  busy = (cell, row, css_class, track) => on => {
+    on ? ಠ_ಠ.Display.busy({
+      target: cell,
+      class: "loader-small w-100"
+    }) && (track ? locate(row) : true) && row.addClass(css_class ? css_class : "bg-active") :
+    ಠ_ಠ.Display.busy({
+      target: cell,
+      clear: true
+    }) && row.removeClass(css_class ? css_class : "bg-active");
+  };
 
   var parseProperties = f => _.union(f.appProperties ? _.pairs(f.appProperties) : [], f.properties ? _.pairs(f.properties) : []),
     parseReview = (review, when) => {
-      var _m = when ? moment(when) : moment();
+      var _m = when ? ಠ_ಠ.Dates.parse(when) : ಠ_ಠ.Dates.now();
       switch (review) {
         case "Weekly":
           return _m.subtract(1, "weeks");
@@ -361,7 +356,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
   var needsReview = f => {
     var _props = parseProperties(f),
-      _test = (review, reviewed) => review && review[1] && (!reviewed || !reviewed[1] || moment(reviewed[1]).isBefore(parseReview(review[1])));
+      _test = (review, reviewed) => review && review[1] && (!reviewed || !reviewed[1] || ಠ_ಠ.Dates.parse(reviewed[1]).isBefore(parseReview(review[1])));
     return _test(_.find(_props, property => property[0] == "Review"), _.find(_props, property => property[0] == "Reviewed"));
   };
 
@@ -938,9 +933,9 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
           var value = test.split("=")[1],
             _predicate = value.toUpperCase() == "[NEEDED]" ?
-            (review, reviewed) => review && review[1] && (!reviewed || !reviewed[1] || moment(reviewed[1]).isBefore(parseReview(review[1]))) : value.toUpperCase() == "[DONE]" ?
-            (review, reviewed) => review && (reviewed && moment(reviewed[1]).isAfter(parseReview(review[1]))) :
-            (review, reviewed) => review && (!reviewed || moment(reviewed[1]).isBefore(parseReview(review[1], value)));
+            (review, reviewed) => review && review[1] && (!reviewed || !reviewed[1] || ಠ_ಠ.Dates.parse(reviewed[1]).isBefore(parseReview(review[1]))) : value.toUpperCase() == "[DONE]" ?
+            (review, reviewed) => review && (reviewed && ಠ_ಠ.Dates.parse(reviewed[1]).isAfter(parseReview(review[1]))) :
+            (review, reviewed) => review && (!reviewed || ಠ_ಠ.Dates.parse(reviewed[1]).isBefore(parseReview(review[1], value)));
 
           return f => {
             var _props = parseProperties(f);

@@ -1,11 +1,11 @@
-Filters = options => {
+Filters = (options, factory) => {
   "use strict";
 
   /* <!-- MODULE: Parse string Filters and Builds a Filter Query for Loki --> */
   /* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
   /* <!-- @options.normal: Normal Filters [Optional]  --> */
   /* <!-- @options.inverted: Inverted Filters [Optional]  --> */
-  /* <!-- REQUIRES: Global Scope: Underscore, Moment --> */
+  /* <!-- REQUIRES: Global Scope: JQuery, Underscore, Moment or Day.Js | App Scope: Dates --> */
 
   /* <!-- Internal Consts --> */
   const NEGATE = "!!",
@@ -45,7 +45,7 @@ Filters = options => {
         } : filters[field].$magic == FUTURE ? {
           "$gt": new Date()
         } : filters[field].$magic == TODAY ? {
-          "$between": [moment().startOf("day"), moment().endOf("day")]
+          "$between": [factory.Dates.now().startOf("day"), factory.Dates.now().endOf("day")]
         } : filters[field];
       } else {
         _condition[field] = filters[field];

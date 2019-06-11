@@ -2,6 +2,9 @@ TODO LIST
 =========
 General
 -------
+* ** PERFORMANCE ** Remove fadeToggle / fadeOut code from datatable.js and filters.html (template) - replace with CSS opacity animations or bootstrap collapse (then move all apps to JQUERY slim)
+
+
 * Can we put Liquid / Jekyll tags into templates and pre-process them? Maybe better to pull variables into centralised object passed to template....
 
 * ** IMPORTANT ** Headless Tests -> Write new permission request handing!!!
@@ -70,7 +73,10 @@ Mobile
 
 Docket
 ------
-* ** BUG ** Delete item can lead to subsequent hash failures on changes. <-- Bring in new SaaD version
+* ** FEATURE ** Task Stats / Aggregated 'Projects' using tags (hash?)
+* ** FEATURE ** KanBan style task management - using STATUS field?
+
+* ** BUG ** Delete item can lead to subsequent hash failures on changes. <-- Bring in new SaaD version / Likely to do with order, and removing an item first
 
 * ** IMPROVEMENT ** Handle clash on updates / delete
 	-> User notification of issues // Should be toast rather than banner <-- DONE / Not Done
@@ -89,6 +95,8 @@ Grades
 
 View
 ----
+* ** BUG ** Mechanism for detecting date columns currently not working - e.g. Pages
+
 * Turn off advanced table display for fewer filtered rows?
 	+ Important to help deal with flickers
 * Pass Date column information to readonly view
@@ -122,8 +130,11 @@ Folders
 
 Reflect
 -------
+
 * ** FEATURE ** Complete Email from Signer for pre-shared reports
 
+
+* ** IMPROVEMENT ** Verify in Analysis should also recalculate summary / meta field values.
 
 * ** IMPROVEMENT ** Replace DeepClone with our own version (better handling of Regexes) | With DEBUG tests
 
@@ -149,6 +160,12 @@ Survey
 
 Complete
 --------
+* ** BUGS ** Check saved analysis opens properly from Google Drive, and that create analysis DayJs error has gone! <-- DONE
+* ** FEATURE ** Move item to different day by drag <-- DONE
+	ITEM Hash function has to include reference to FROM (otherwise it won't know to save) <-- DONE
+  NEED to delineate between draggable elements (e.g. timed to another day!) and non-dropable elements (like timed) ... e.g. can't drop non-timed above timed <-- DONE
+* ** BUG ** Turn swipe to touch only? <-- DONE
+* ** FEATURE ** TBC tag should have special colouring! <-- DONE
 * ** IMPORTANT ** Loader/Spinner contained within element <-- DONE
 * ** FEATURE ** Icons on RECENT items (form / report etc) <-- DONE
 * ** IMPROVEMENT ** Indication that forms are still being loaded on app start <-- DONE

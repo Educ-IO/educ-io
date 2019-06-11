@@ -36,6 +36,7 @@ globals:
   Hashes: false
   fetchJsonp: false
   moment: false
+  dayjs: false
   autosize: false
   html2canvas: false
   jsPDF: false
@@ -55,13 +56,13 @@ globals:
   GOOGLE_KEY: false
   Google_API: true
   Github_API: true
-  global: true
   Interact: true
   Display: true
   App: true
   Flags: true
   Controller: true
   Css: true
+  Dates: true
   Main: true
   Service: true
   Recent: true

@@ -82,6 +82,7 @@ modules:
   - recent
   - router
   - datatable
+  - dates
 scripts: 
   - extends/regex
   - extends/array

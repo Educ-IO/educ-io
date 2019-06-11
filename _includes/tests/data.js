@@ -340,14 +340,14 @@ Data = function() {
               start.format("YYYY-MM-DD"));
             values.to.have.deep.nested.property(`${name}.Values.End`,
               start.clone().add(1, span.span).add(-1, "d").format("YYYY-MM-DD"));
-          })(_blocks.spans[_span], moment(new Date()));
+          })(_blocks.spans[_span], FACTORY.Dates.now());
           _return._populate = ((id, span) => modal => {
             modal.find(`[data-id='${id}'] a.dropdown-item[data-value='${$.escapeSelector(span.value)}']`).click();
           })(_return.id, _blocks.spans[_span]);
           return _return;
         },
         span_Date: () => {
-          var _start = moment(new Date()),
+          var _start = FACTORY.Dates.now(),
             _end = _start.clone().add(7, "d"),
             _default = "Custom",
             _details = GEN.t(GEN.i(10, 30)),
@@ -570,7 +570,7 @@ Data = function() {
           var _type = GEN.a(GEN.i(5, 10)),
             _increment = GEN.o([0.25, 0.5, 0.75, 1, 1.5, 2, 2.5]),
             _additions = _.map(_.range(GEN.i(1, 10)), () => ({
-              date: moment(GEN.d()),
+              date: FACTORY.Dates.parse(GEN.d()),
               total: GEN.i(1, 10),
               details: GEN.b() ? GEN.t(GEN.i(10, 50)) : "",
               type: _type,
@@ -1168,13 +1168,13 @@ Data = function() {
                   increase = field.find("button.alter-numerical.btn-primary"),
                   decrease = field.find("button.alter-numerical.btn-info"),
                   format = "YYYY-MM-DD",
-                  _start = moment(new Date()),
-                  _end = moment(new Date(_start));
+                  _start = FACTORY.Dates.now(),
+                  _end = _start.clone();
                 /* <!-- Check details textarea --> */
                 _.times(GEN.i(1, 10), () => _interactions.text(details));
 
                 /* <!-- Check initial date --> */
-                _end.add(6, "d");
+                _end = _end.add(6, "d");
                 start.val(_start.format(format)).change();
 
                 expect(start.val()).to.be.a("string")
@@ -1184,15 +1184,15 @@ Data = function() {
 
                 /* <!-- Check increase/decrease date --> */
                 increase[0].click();
-                _start.add(7, "d");
-                _end.add(7, "d");
+                _start = _start.add(7, "d");
+                _end = _end.add(7, "d");
                 expect(start.val()).to.be.a("string")
                   .that.equals(_start.format(format));
                 expect(end.val()).to.be.a("string")
                   .that.equals(_end.format(format));
                 decrease[0].click();
-                _start.add(-7, "d");
-                _end.add(-7, "d");
+                _start = _start.add(-7, "d");
+                _end = _end.add(-7, "d");
                 expect(start.val()).to.be.a("string")
                   .that.equals(_start.format(format));
                 expect(end.val()).to.be.a("string")
@@ -1212,9 +1212,7 @@ Data = function() {
                   span.value == "Custom" ?
                     expect(end.val()).to.be.a("string").that.equals(_end.format(format)) :
                     expect(end.val()).to.be.a("string")
-                    .that.equals(_start.clone()
-                      .add(1, span.span ? span.span : "d")
-                      .add(-1, "d").format(format));
+                    .that.equals(_start.clone().add(1, span.span ? span.span : "d").add(-1, "d").format(format));
 
                 });
 
@@ -1422,7 +1420,7 @@ Data = function() {
               increment: GEN.o([0.25, 0.5, 0.75, 1, 1.5, 2]),
               _interact: (field, modal, state) => {
                 var _additions = _.map(_.range(GEN.i(1, 10)), () => ({
-                    date: moment(GEN.d()),
+                    date: FACTORY.Dates.parse(GEN.d()),
                     total: GEN.i(1, 10),
                     details: GEN.t(GEN.i(10, 50)),
                   })),
@@ -1434,7 +1432,7 @@ Data = function() {
                   value = field.find(`input#${state.id}_NUMERIC`),
                   clear = field.find("button.eraser").first(),
                   format = "YYYY-MM-DD",
-                  start = moment(GEN.d()),
+                  start = FACTORY.Dates.parse(GEN.d()),
                   date = field.find(`input#${state.id}_DATE`),
                   list = field.find(`div#${state.id}_LIST`),
                   add = field.find("button.btn-success");

@@ -44,8 +44,8 @@
 		<label class="material-switch{{#if readonly}} disabled{{/if}}" for="{{id}}"></label>
 	</div>
 	{{#if children}}
-	<ul class="list-group mt-1 mt-lg-2" id="{{id}}_CHILDREN"{{#if name}} name="{{name}}"{{/if}}
-      style="display: none;" {{#if field}} data-field="{{field}}"{{/if}} class="mt-1"
+	<ul class="list-group mt-1 mt-lg-2 collapse" id="{{id}}_CHILDREN"{{#if name}} name="{{name}}"{{/if}}
+      {{#if field}} data-field="{{field}}"{{/if}} class="mt-1"
       {{#if order}} data-order="{{order}}"{{/if}}{{#if template}}
       data-template="{{template}}"{{/if}} data-id="{{id}}">
 		{{#each children}}
@@ -69,7 +69,7 @@
   	<div id="{{concat id '_ITEMS'}}"
          data-id="{{concat id '_ITEMS'}}"
          data-template="{{list_template}}"
-         style="display: none;" class="list-holder evidence-holder mt-1 mt-md-2"
+         class="list-holder evidence-holder mt-1 mt-md-2 collapse"
       	 {{#if name}}name="{{name}}"{{/if}}
     		 {{#if field}}data-field="{{field}}"{{/if}}
          {{#if order}}data-order="{{order}}"{{/if}}>

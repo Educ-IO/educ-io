@@ -18,7 +18,7 @@ learn: /guides/survey
 imports:
   - name: underscore
     load: first
-  - name: jquery
+  - name: jquery_slim
     load: first
   - name: popper
     load: first
@@ -36,7 +36,7 @@ imports:
     load: last
   - name: autosize
     load: last
-  - name: moment
+  - name: day
     load: last
   - name: waves-css
     load: last

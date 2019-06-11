@@ -83,6 +83,7 @@ modules:
   - recent
   - router
   - datatable
+  - dates
   - grid
   - headers
   - view/readwrite

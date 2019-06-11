@@ -26,16 +26,16 @@ css:
 imports:
   - name: underscore
     load: first
-  - name: jquery
+  - name: jquery_slim
     load: first
   - name: popper
     load: first
   - name: chai
-    load: first
+    load: last
   - name: chance
-    load: first
-  - name: moment
-    load: first
+    load: last
+  - name: day
+    load: last
   - name: handlebars
     load: last
   - name: hello
@@ -85,6 +85,7 @@ modules:
   - help
   - service
   - router
+  - dates
   - main
 scripts: 
   - extends/regex

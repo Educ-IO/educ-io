@@ -8,7 +8,7 @@ Data = (options, factory) => {
   /* <!-- @options.always: Whether to always output booleans (e.g. === false) [Optional]  --> */
   /* <!-- @factory.Flags: Function to create a fields helper object --> */
   /* <!-- REQUIRES: Global Scope: JQuery, Underscore --> */
-  /* <!-- REQUIRES: Factory Scope: Flags --> */
+  /* <!-- REQUIRES: Factory Scope: Flags, Dates --> */
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
@@ -99,7 +99,7 @@ Data = (options, factory) => {
 
           /* <!-- TODO: Handle Parsing of types here --> */
           return _val !== "" ?
-            _type == "date" ? window.moment ? moment(_val) : _val :
+            _type == "date" ? factory.Dates.parse(_val) :
             _type == "datetime" ? _val :
             _type == "number" ? Number(_val) :
             _val : _val;
@@ -183,7 +183,7 @@ Data = (options, factory) => {
         Values: _.extend(_field, values[_name].Values),
         __order: values[_name].Order === false ? _order : values[_name].Order,
         __type: values[_name].Type === false ? _type : values[_name].Type
-      } : (_.isObject(_field) && !_field._isAMomentObject) ? {
+      } : _.isObject(_field) && !(_field._isAMomentObject || (window.dayjs && dayjs.isDayjs(_field))) ? {
         Values: _field[MAGIC] ? _field[MAGIC] : _field,
         __order: _order,
         __type: _type

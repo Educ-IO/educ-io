@@ -23,6 +23,7 @@ App = function() {
     SCOPE_CLASSWORK = "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
     SCOPE_COURSEWORK = "https://www.googleapis.com/auth/classroom.coursework.me.readonly";
   const ID = "diary",
+    MIME_TYPE = "application/x-educ-docket-item",
     FN = {};
   /* <!-- Internal Constants --> */
 
@@ -153,7 +154,7 @@ App = function() {
           FN.config.update(ರ‿ರ.id, _config);
         }))
         .then(results => FN.options[type](!!results).then(FN.action.refresh))),
-    
+
   };
   /* <-- Option Functions --> */
 
@@ -236,11 +237,12 @@ App = function() {
 
           /* <!-- Scroll to target if possible --> */
           if (Element.prototype.scrollIntoView && _target[0].scrollIntoView) {
-            _return = (top => promise => promise.then($("html, body").animate({
-              scrollTop: top
-            }, 400)))(ಠ_ಠ.Display.top());
-
+            ಠ_ಠ.container[0].scrollIntoView({
+              block: "start",
+              inline: "nearest"
+            });
             _target[0].scrollIntoView({
+              behavior: "smooth",
               block: "start",
               inline: "nearest"
             });
@@ -253,6 +255,7 @@ App = function() {
               direction: Hammer.DIRECTION_VERTICAL,
               threshold: _target.height() / 2
             });
+
             _movable.on("pan", e => {
               if (e.pointerType == "touch") {
                 var _destination = $(document.elementFromPoint(e.center.x, e.center.y));
@@ -264,6 +267,7 @@ App = function() {
                 }
               }
             });
+
             _movable.on("panend", e => {
               var _source = $(e.target);
               _source = _source.is("div.item") ? _source : _source.parents("div.item");
@@ -278,6 +282,7 @@ App = function() {
               /* <!-- Save List --> */
               if (_list.length > 0) ಠ_ಠ.Flags.log("LIST TO SAVE:", _list);
             });
+
           }
         }
       });
@@ -312,7 +317,7 @@ App = function() {
         var _finish = FN.items.busy(target, _item);
 
         /* <!-- Update Date --> */
-        _item.FROM = new moment($(e.target).val());
+        _item.FROM = new ಠ_ಠ.Dates.parse($(e.target).val());
 
         /* <!-- Process Item, Reconcile UI then Update Database --> */
         ರ‿ರ.tasks.items.process(_item).then(item => {
@@ -321,7 +326,7 @@ App = function() {
           })
           .then(item => ರ‿ರ.tasks.items.update(item))
           .then(_finish)
-          .then(() => FN.show.weekly(moment(ರ‿ರ.show || ರ‿ರ.today)))
+          .then(() => FN.show.weekly(ಠ_ಠ.Dates.parse(ರ‿ರ.show || ರ‿ರ.today)))
           .catch(FN.items.errors.update);
       });
       _input.bootstrapMaterialDatePicker({
@@ -345,7 +350,7 @@ App = function() {
       /* <!-- Update Item --> */
       _item._complete = !(_item._complete);
       _item.STATUS = _item._complete ? "COMPLETE" : "";
-      _item.DONE = _item._complete ? moment() : "";
+      _item.DONE = _item._complete ? ಠ_ಠ.Dates.now() : "";
 
       /* <!-- Process Item, Reconcile UI then Update Database --> */
       return ರ‿ರ.tasks.items.process(_item).then(item => {
@@ -437,18 +442,19 @@ App = function() {
   };
   /* <-- Items Functions --> */
 
+
   /* <-- Interact Functions --> */
   FN.interact = {
 
-		edit: target => {
+    edit: target => {
 
       if (!target) return;
 
       var _item = FN.items.get(target),
-          _tags = _item.TAGS,
-          _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
-          _template = "tag",
-          _id = "tag";
+        _tags = _item.TAGS,
+        _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ),
+        _template = "tag",
+        _id = "tag";
 
       var _reconcile = target => {
         var _new = $(ಠ_ಠ.Display.template.get({
@@ -463,7 +469,7 @@ App = function() {
       var _handleRemove = target => target.find("span.badge a").on("click.remove", e => {
         e.preventDefault();
         var _target = $(e.currentTarget),
-            _tag = _target.parents("span.badge").text().replace("×", "");
+          _tag = _target.parents("span.badge").text().replace("×", "");
         if (_tag) {
           _item.TAGS = (_item.BADGES = _.filter(_item.BADGES, badge => badge != _tag)).join(";");
           _handleRemove(_reconcile(_target.parents("form")));
@@ -471,112 +477,259 @@ App = function() {
       });
 
       return ಠ_ಠ.Display.modal(_template, {
-        target: ಠ_ಠ.container,
-        id: _id,
-        title: "Edit Tags",
-        instructions: ಠ_ಠ.Display.doc.get("TAG_INSTRUCTIONS"),
-        validate: values => values ? ಠ_ಠ.Flags.log("Values for Validation", values) && true : false,
-        /* <!-- Do we need to validate? --> */
-        handlers: {
-          clear: _dialog.handlers.clear,
-        },
-        tags: _item.TAGS,
-        badges: _item.BADGES,
-        all: ರ‿ರ.tasks.badges(ರ‿ರ.db)
-      }, dialog => {
+          target: ಠ_ಠ.container,
+          id: _id,
+          title: "Edit Tags",
+          instructions: ಠ_ಠ.Display.doc.get("TAG_INSTRUCTIONS"),
+          validate: values => values ? ಠ_ಠ.Flags.log("Values for Validation", values) && true : false,
+          /* <!-- Do we need to validate? --> */
+          handlers: {
+            clear: _dialog.handlers.clear,
+          },
+          tags: _item.TAGS,
+          badges: _item.BADGES,
+          all: ರ‿ರ.tasks.badges(ರ‿ರ.db)
+        }, dialog => {
 
-        /* <!-- General Handlers --> */
-        ಠ_ಠ.Fields().on(dialog);
+          /* <!-- General Handlers --> */
+          ಠ_ಠ.Fields().on(dialog);
 
-        /* <!-- Handle CTRL Enter to Save --> */
-        _dialog.handlers.keyboard.enter(dialog);
+          /* <!-- Handle CTRL Enter to Save --> */
+          _dialog.handlers.keyboard.enter(dialog);
 
-        /* <!-- Handle Click to Remove --> */
-        _handleRemove(dialog);
+          /* <!-- Handle Click to Remove --> */
+          _handleRemove(dialog);
 
-        /* <!-- Handle Click to Add --> */
-        dialog.find("li button").on("click.add", e => {
-          e.preventDefault();
-          var _input = $(e.currentTarget).parents("li").find("span[data-type='tag'], input[data-type='tag']");
-          var _val = _input.val() || _input.text();
-          if (_input.is("input")) _input.val("") && _input.focus();
-          if (_val && (_item.BADGES ? _item.BADGES : _item.BADGES = []).indexOf(_val) < 0) {
-            _item.BADGES.push(_val);
-            _item.TAGS = _item.BADGES.join(";");
-            _handleRemove(_reconcile(dialog.find("form")));
-          }
-        });
+          /* <!-- Handle Click to Add --> */
+          dialog.find("li button").on("click.add", e => {
+            e.preventDefault();
+            var _input = $(e.currentTarget).parents("li").find("span[data-type='tag'], input[data-type='tag']");
+            var _val = _input.val() || _input.text();
+            if (_input.is("input")) _input.val("") && _input.focus();
+            if (_val && (_item.BADGES ? _item.BADGES : _item.BADGES = []).indexOf(_val) < 0) {
+              _item.BADGES.push(_val);
+              _item.TAGS = _item.BADGES.join(";");
+              _handleRemove(_reconcile(dialog.find("form")));
+            }
+          });
 
-        /* <!-- Handle Enter on textbox to Add --> */
-        dialog.find("li input[data-type='tag']")
-          .keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? e.preventDefault() || $(e.currentTarget).siblings("button[data-action='add']").click() : null).focus();
+          /* <!-- Handle Enter on textbox to Add --> */
+          dialog.find("li input[data-type='tag']")
+            .keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? e.preventDefault() || $(e.currentTarget).siblings("button[data-action='add']").click() : null).focus();
 
-      })
+        })
         .then(values => {
-        if (values) {
-          /* <!-- Apply the Update --> */
-          var _finish = FN.items.busy(target, _item);
-          /* <!-- Process Item, Reconcile UI then Update Database --> */
-          return ರ‿ರ.tasks.items.process(_item).then(item => {
-            ರ‿ರ.db.update(item);
-            return item;
-          })
-            .then(item => ರ‿ರ.tasks.items.update(item))
-            .catch(FN.items.errors.update)
-            .then(_finish);
-        } else {
-          /* <!-- Cancel the Update --> */
-          _item.TAGS = _tags;
-          return ರ‿ರ.tasks.items.process(_item);
-        }
-      })
+          if (values) {
+            /* <!-- Apply the Update --> */
+            var _finish = FN.items.busy(target, _item);
+            /* <!-- Process Item, Reconcile UI then Update Database --> */
+            return ರ‿ರ.tasks.items.process(_item).then(item => {
+                ರ‿ರ.db.update(item);
+                return item;
+              })
+              .then(item => ರ‿ರ.tasks.items.update(item))
+              .catch(FN.items.errors.update)
+              .then(_finish);
+          } else {
+            /* <!-- Cancel the Update --> */
+            _item.TAGS = _tags;
+            return ರ‿ರ.tasks.items.process(_item);
+          }
+        })
         .catch(e => e ? ಠ_ಠ.Flags.error("Edit Tags Error", e) : ಠ_ಠ.Flags.log("Edit Tags Cancelled"));
 
     },
 
     detag: (target, tag) => ಠ_ಠ.Display.confirm({
-      id: "remove_Tag",
-      target: ಠ_ಠ.container,
-      message: ಠ_ಠ.Display.doc.get({
-        name: "CONFIRM_DETAG",
-        content: tag
-      }),
-      action: "Remove"
-    })
-    .then(confirm => {
-      if (!confirm) return Promise.resolve(false); /* <!-- No confirmation, so don't proceed --> */
-      var _item = FN.items.get(target),
+        id: "remove_Tag",
+        target: ಠ_ಠ.container,
+        message: ಠ_ಠ.Display.doc.get({
+          name: "CONFIRM_DETAG",
+          content: tag
+        }),
+        action: "Remove"
+      })
+      .then(confirm => {
+        if (!confirm) return Promise.resolve(false); /* <!-- No confirmation, so don't proceed --> */
+        var _item = FN.items.get(target),
           _finish = FN.items.busy(target, _item);
 
-      /* <!-- Update Item --> */
-      _item.TAGS = (_item.BADGES = _.filter(_item.BADGES, badge => badge != tag)).join(";");
+        /* <!-- Update Item --> */
+        _item.TAGS = (_item.BADGES = _.filter(_item.BADGES, badge => badge != tag)).join(";");
 
-      /* <!-- Process Item, Reconcile UI then Update Database --> */
-      return ರ‿ರ.tasks.items.process(_item).then(item => {
-        ರ‿ರ.db.update(item);
-        target.find(`span.badge a:contains('${tag}')`).filter(function() {
-          return $(this).text() == tag;
-        }).parents("span.badge").remove();
-        return item;
+        /* <!-- Process Item, Reconcile UI then Update Database --> */
+        return ರ‿ರ.tasks.items.process(_item).then(item => {
+            ರ‿ರ.db.update(item);
+            target.find(`span.badge a:contains('${tag}')`).filter(function() {
+              return $(this).text() == tag;
+            }).parents("span.badge").remove();
+            return item;
+          })
+          .then(item => ರ‿ರ.tasks.items.update(item))
+          .catch(FN.items.errors.update)
+          .then(_finish);
       })
-        .then(item => ರ‿ರ.tasks.items.update(item))
-        .catch(FN.items.errors.update)
-        .then(_finish);
-    }).catch(e => e)
+      .catch(e => e)
 
-  },
+
+  };
   /* <-- Interact Functions --> */
 
 
+  /* <-- Drag Functions --> */
+  FN.drag = {
+
+    decode: (e, destination) => {
+
+      e.preventDefault();
+
+      var _id = e.originalEvent.dataTransfer.getData(MIME_TYPE),
+        _source = FN.drag.get(_id),
+        _destination = $(e.currentTarget);
+
+      return {
+        id: _id,
+        source: _source,
+        destination: _destination.is(destination) ? _destination : _destination.parents(destination)
+      };
+
+    },
+
+    get: data => !data || data.indexOf("item_") !== 0 ? false : $(`#${data}`),
+
+    insert: (e, decoded, selectors) => {
+
+      /* <!-- Stop any further event triggering, as we are handling! --> */
+      e.stopPropagation();
+
+      (decoded.destination.is(selectors.item) ?
+        decoded.source.insertBefore(decoded.destination) :
+        decoded.destination.find(selectors.item).length > 0 ?
+        decoded.source.insertBefore(decoded.destination.find(selectors.item).first()) :
+        decoded.source.insertAfter(decoded.destination.find(".divider")))
+      .addClass("bg-bright").delay(1000).queue(function() {
+        $(this).removeClass("bg-bright").dequeue();
+      });
+
+      var _list = [];
+      _.each(decoded.source.parent().children(selectors.item), (el, i) => {
+        var _el = $(el),
+          _item = ರ‿ರ.db.get(_el.data("id"));
+        _el.data("order", _item.ORDER = i + 1);
+        if (_item.__hash != ರ‿ರ.tasks.hash(_item)) _list.push(_item);
+      });
+
+      /* <!-- Save List --> */
+      if (_list.length > 0) {
+        ಠ_ಠ.Flags.log("LIST TO UPDATE:", _list);
+        _.each(_list, item => ರ‿ರ.tasks.items.update(item).then(r => (r === false) ? ಠ_ಠ.Flags.error("Update Item Failed", item) : true));
+      }
+
+    },
+
+    items: (items, selectors) => {
+
+      FN.drag.clear = FN.drag.clear || _.debounce(items => items.removeClass("drop-target"), 100);
+
+      items.draggable
+
+        .on("dragstart.draggable", e => {
+          $(e.currentTarget).addClass("not-drop-target")
+            .parents([selectors.item, selectors.group].join(",")).addClass("not-drop-target");
+          e.originalEvent.dataTransfer.setData(MIME_TYPE, e.currentTarget.id);
+          e.originalEvent.dataTransfer.dropEffect = "move";
+        });
+
+
+      items.droppable
+
+        .on("dragend.droppable", () => {
+          $(".drop-target, .not-drop-target").removeClass("drop-target not-drop-target");
+        })
+
+        .on("dragenter.droppable", e => {
+
+          var decode = FN.drag.decode(e, [selectors.item, selectors.group].join(","));
+
+          if (!decode.destination.hasClass("drop-target")) {
+            FN.drag.clear($(".drop-target").not(decode.destination));
+            decode.destination.addClass("drop-target");
+          }
+
+        })
+        .on("dragover.droppable", e => {
+
+          if (e.currentTarget.dataset.droppable) {
+            e.preventDefault();
+            e.originalEvent.dataTransfer.dropEffect = "move";
+          }
+
+        })
+        .on("drop.droppable", e => {
+
+          var decode = FN.drag.decode(e, [selectors.item, selectors.group].join(","));
+
+          if (decode.source && decode.id != decode.destination.id) {
+
+            decode.group = {
+              source: decode.source.parents(selectors.group),
+              destination: decode.destination.is(selectors.group) ?
+                decode.destination : decode.destination.parents(selectors.group)
+            };
+
+            decode.item = ರ‿ರ.db.get(decode.source.data("id"));
+
+            if (decode.group.source[0] != decode.group.destination[0]) {
+
+              /* <!-- Different Group / Day --> */
+              decode.date = {
+                source: ಠ_ಠ.Dates.parse(decode.group.source.data("date")),
+                destination: ಠ_ಠ.Dates.parse(decode.group.destination.data("date"))
+              };
+
+              if (!decode.item._complete &&
+                (decode.date.destination.isAfter(decode.date.source) || decode.date.destination.isSame(ಠ_ಠ.Dates.now().startOf("day")))) {
+
+                /* <!-- Moving an incomplete item to today or future --> */
+                decode.item.FROM = decode.date.destination;
+                FN.drag.insert(e, decode, selectors);
+
+              } else if (decode.item._timed) {
+
+                /* <!-- Moving a timed item forwards/backwards --> */
+                decode.item.FROM = decode.date.destination;
+                if (decode.item._complete && decode.item.DONE.clone().startOf("day").isAfter(decode.date.destination))
+                  decode.item.DONE = decode.date.destination;
+                FN.drag.insert(e, decode, selectors);
+
+              }
+
+            } else if (!decode.item._timed && !decode.item.complete &&
+              decode.source[0] != decode.destination[0]) {
+
+              /* <!-- Same Group / Day --> */
+              FN.drag.insert(e, decode, selectors);
+
+            }
+
+          }
+        });
+
+    },
+
+  };
+  /* <-- Drag Functions --> */
+
+
   /* <-- Show Functions --> */
-	FN.show = {
+  FN.show = {
 
     /* <!-- Internal Methods --> */
     prepare: list => _.each(list, item => {
       !item.DISPLAY && item.DETAILS ? item.DISPLAY = ಱ.showdown.makeHtml(item.DETAILS) : false;
       item._action = ((item._complete && item.DONE) ?
-                      item.DONE : (item._timed || item.FROM.isAfter(ರ‿ರ.today)) ?
-                      item.FROM : moment(ರ‿ರ.today)).format("YYYY-MM-DD");
+        item.DONE : (item._timed || item.FROM.isAfter(ರ‿ರ.today)) ?
+        item.FROM : ಠ_ಠ.Dates.parse(ರ‿ರ.today)).format("YYYY-MM-DD");
       item.__hash = ರ‿ರ.tasks.hash(item);
     }),
     /* <!-- Interal Methods --> */
@@ -584,7 +737,7 @@ App = function() {
     /* <!-- Date Methods --> */
     date: () => ರ‿ರ.show || ರ‿ರ.today,
 
-    from: () => moment(FN.show.date()).clone(),
+    from: () => ಠ_ಠ.Dates.parse(FN.show.date()),
     /* <!-- Date Methods --> */
 
     /* <!-- Diary Methods --> */
@@ -595,6 +748,11 @@ App = function() {
       items: _.sortBy(FN.show.prepare(list), "FROM"),
     }).then(() => list),
 
+    cleanup: () => {
+      $("body").removeClass("modal-open");
+      $("div.modal-backdrop.show").remove();
+    },
+
     daily: focus => new Promise(resolve => {
       ರ‿ರ.show = focus.startOf("day").toDate();
       resolve(ಠ_ಠ.Display.state().enter([STATE_OPENED, STATE_DAILY]));
@@ -603,39 +761,42 @@ App = function() {
     weekly: focus => new Promise(resolve => {
 
       ರ‿ರ.show = focus.startOf("day").toDate();
-      focus = focus.isoWeekday() == 7 ? focus.subtract(1, "days") : focus;
+
+      focus = ಠ_ಠ.Dates.isoWeekday(focus) == 7 ? focus.subtract(1, "days") : focus;
 
       var _days = [],
-          _add = (date, css, action, tasks, events, extras, type) => {
-            _days.push({
-              sizes: date.isoWeekday() >= 6 ? {
-                xs: 12
-              } : {
-                lg: type.large ? 9 : type.small.before ? 3 : 6,
-                xl: type.large ? 6 : type.small.before || type.small.after ? 3 : 4
-              },
-              row_sizes: date.isoWeekday() == 6 ? {
-                lg: type.large ? 9 : type.small.before ? 3 : 6,
-                xl: type.large ? 6 : type.small.before || type.small.after ? 3 : 4
-              } : false,
-              title: date.format("ddd"),
-              date: date.toDate(),
-              instruction: date.isoWeekday() == 6 ? "row-start" : date.isoWeekday() == 7 ? "row-end" : false,
-              class: date.isoWeekday() >= 6 ? `p-0 ${css.block}` : css.block,
-              action: action,
-              title_class: css.title,
-              wide: css.wide,
-              tasks: tasks,
-              events: events,
-              extras: extras
-            });
-          };
+        _add = (date, css, action, tasks, events, extras, type) => {
 
-      focus.add(focus.isoWeekday() == 1 ? -3 : -2, "days");
+          _days.push({
+            sizes: ಠ_ಠ.Dates.isoWeekday(date) >= 6 ? {
+              xs: 12
+            } : {
+              lg: type.large ? 9 : type.small.before ? 3 : 6,
+              xl: type.large ? 6 : type.small.before || type.small.after ? 3 : 4
+            },
+            row_sizes: ಠ_ಠ.Dates.isoWeekday(date) == 6 ? {
+              lg: type.large ? 9 : type.small.before ? 3 : 6,
+              xl: type.large ? 6 : type.small.before || type.small.after ? 3 : 4
+            } : false,
+            title: date.format("ddd"),
+            date: date.toDate(),
+            instruction: ಠ_ಠ.Dates.isoWeekday(date) == 6 ? "row-start" : ಠ_ಠ.Dates.isoWeekday(date) == 7 ? "row-end" : false,
+            class: ಠ_ಠ.Dates.isoWeekday(date) >= 6 ? `p-0 ${css.block}` : css.block,
+            action: action,
+            title_class: css.title,
+            wide: css.wide,
+            tasks: tasks,
+            events: events,
+            extras: extras
+          });
+        };
+
+      focus = focus.add(ಠ_ಠ.Dates.isoWeekday(focus) == 1 ? -3 : -2, "days");
+
       var _weekStart = focus.toDate(),
         _weekEnd = focus.clone().add(1, "weeks").toDate(),
-        _calendars = (ಠ_ಠ.Display.state().in([STATE_CALENDARS, STATE_CLASSES], true) && 
-                      (ರ‿ರ.config.calendars || ರ‿ರ.config.classes) ?
+        _calendars = (ಠ_ಠ.Display.state().in([STATE_CALENDARS, STATE_CLASSES], true) &&
+          (ರ‿ರ.config.calendars || ರ‿ರ.config.classes) ?
           ಠ_ಠ.Main.authorise(SCOPE_CALENDARS)
           .then(result => result === true ? Promise.all(
               _.map([].concat(ರ‿ರ.config.calendars || [],
@@ -650,57 +811,61 @@ App = function() {
         /* <!-- Prepare Overlays --> */
         overlay = overlay && overlay.length > 0 ?
           _.each((overlay = _.flatten(overlay)), item => {
-          if (item.start.dateTime) item._timed = true;
-          item.start = moment(item.start.dateTime || item.start.date);
-          item.end = moment(item.end.dateTime || item.end.date);
-          if (item._timed) item.TIME = `${item.start.format("HH:mm")} - ${item.end.format("HH:mm")}`;
-          item.DISPLAY = ಱ.showdown.makeHtml(item.summary);
-          item._link = item.htmlLink;
-          item._icon = "calendar_today";
-        }) : [];
+            if (item.start.dateTime) item._timed = true;
+            item.start = ಠ_ಠ.Dates.parse(item.start.dateTime || item.start.date);
+            item.end = ಠ_ಠ.Dates.parse(item.end.dateTime || item.end.date);
+            if (item._timed) item.TIME = `${item.start.format("HH:mm")} - ${item.end.format("HH:mm")}`;
+            item.DISPLAY = ಱ.showdown.makeHtml(item.summary);
+            item._link = item.htmlLink;
+            item._icon = "calendar_today";
+          }) : [];
 
         /* <!-- Filter Deadlines --> */
         if (ಠ_ಠ.Display.state().in(STATE_CLASSES) && ರ‿ರ.deadlines && ರ‿ರ.deadlines.length > 0)
           overlay = overlay.concat(_.filter(ರ‿ರ.deadlines,
-                                            deadline => deadline.due.isSameOrAfter(_weekStart) &&
-                                            deadline.due.isSameOrBefore(_weekEnd)));
+            deadline => deadline.due.isSameOrAfter(_weekStart) &&
+            deadline.due.isSameOrBefore(_weekEnd)));
 
         _.times(7, () => {
-          focus.add(1, "days");
-          var _day = focus.isoWeekday(),
-              _diff = focus.diff(ರ‿ರ.show, "days"),
-              _lg = _diff === 0 || (_day == 6 && _diff == -1) || (_day == 7 && _diff == 1),
-              _sm_Before = !_lg && (_diff == -1 || (_day == 5 && _diff == -2) || (_day == 6 && _diff == -2)),
-              _sm_After = !_lg && (_diff == 1 || (_day == 1 && _diff == 2)),
-              _sizes = {
-                large: _lg,
-                small: {
-                  before: _sm_Before,
-                  after: _sm_After,
-                }
-              },
-              _display = focus.format("YYYY-MM-DD"),
-              _start = focus.clone().startOf("day"),
-              _end = focus.clone().endOf("day"),
-              _all = FN.show.prepare(ರ‿ರ.db ?
-                                     ರ‿ರ.tasks.query(focus, ರ‿ರ.db, focus.isSame(ರ‿ರ.today)) : []),
-              _diary = {
-                tasks: _.chain(_all).filter(item => !item._timed).sortBy("DETAILS").sortBy("GHOST").sortBy("ORDER").sortBy("_countdown").value(),
-                events: _.chain(_all).filter(item => item._timed).sortBy(item => moment(item.TIME, ["h:m a", "H:m", "h:hh A"]).toDate()).value(),
-                extras: _.chain(overlay)
+          focus = focus.add(1, "days");
+          var _day = ಠ_ಠ.Dates.isoWeekday(focus),
+            _diff = focus.diff(ರ‿ರ.show, "days"),
+            _lg = _diff === 0 || (_day == 6 && _diff == -1) || (_day == 7 && _diff == 1),
+            _sm_Before = !_lg && (_diff == -1 || (_day == 5 && _diff == -2) || (_day == 6 && _diff == -2)),
+            _sm_After = !_lg && (_diff == 1 || (_day == 1 && _diff == 2)),
+            _sizes = {
+              large: _lg,
+              small: {
+                before: _sm_Before,
+                after: _sm_After,
+              }
+            },
+            _display = focus.format("YYYY-MM-DD"),
+            _start = focus.clone().startOf("day"),
+            _end = focus.clone().endOf("day"),
+            _all = FN.show.prepare(ರ‿ರ.db ?
+              ರ‿ರ.tasks.query(focus, ರ‿ರ.db, focus.isSame(ರ‿ರ.today)) : []),
+            _diary = {
+              tasks: _.chain(_all).filter(item => !item._timed).sortBy("DETAILS").sortBy("GHOST").sortBy("ORDER").sortBy("_countdown").value(),
+              events: _.chain(_all).filter(item => item._timed)
+                .sortBy(item => ಠ_ಠ.Dates.parse(item.TIME, ["h:m a", "H:m", "h:hh A"]).toDate()).value(),
+              extras: _.chain(overlay)
                 .filter(item => (item.due || item.end).isSameOrAfter(_start) &&
-                        (item.due || item.start).isSameOrBefore(_end))
+                  (item.due || item.start).isSameOrBefore(_end))
                 .sortBy(item => (item.due || item.start).toDate())
                 .value()
-              };
+            };
           _add(focus, {
-            block: focus.isSame(ರ‿ರ.today) || (focus.isoWeekday() == 6 && focus.clone().add(1, "days").isSame(ರ‿ರ.today)) ?
-            "present bg-highlight-gradient top-to-bottom" : _diff === 0 ? "focussed bg-light" : focus.isBefore(ರ‿ರ.today) ? "past text-muted" : "future",
-            title: focus.isSame(ರ‿ರ.today) ? "present" : _diff === 0 ? "bg-bright-gradient left-to-right" : "",
-            wide: _diff === 0
-          },
-               _display, _diary.tasks, _diary.events, _diary.extras, _sizes);
+              block: focus.isSame(ರ‿ರ.today) || (ಠ_ಠ.Dates.isoWeekday(focus) == 6 && focus.clone().add(1, "days").isSame(ರ‿ರ.today)) ?
+                "present bg-highlight-gradient top-to-bottom" : _diff === 0 ? "focussed bg-light" : focus.isBefore(ರ‿ರ.today) ? "past text-muted" : "future",
+              title: focus.isSame(ರ‿ರ.today) ? "present" : _diff === 0 ? "bg-bright-gradient left-to-right" : "",
+              wide: _diff === 0
+            },
+            _display, _diary.tasks, _diary.events, _diary.extras, _sizes);
         });
+
+        /* <!-- Just in case of open modals etc --> */
+        FN.show.cleanup();
 
         var _diary = ಠ_ಠ.Display.template.show({
           template: "weekly",
@@ -729,48 +894,13 @@ App = function() {
         /* <!-- Hookup all relevant events --> */
         FN.items.hookup(_diary);
 
-        /* <!-- Drag / Drop --> */
-        var _get = data => !data || data.indexOf("item_") !== 0 ? false : $(`#${data}`),
-            _items = _diary.find("div.item[draggable=true]"),
-            _clear = _.debounce(items => items.removeClass("drop-target"), 100);
-        _items
-          .on("dragstart.item", e => e.originalEvent.dataTransfer.setData("text/plain", e.target.id))
-          .on("dragend.item", () => _clear($("div.item.drop-target")))
-          .on("dragover.item", e => e.preventDefault())
-          .on("dragenter.item", e => {
-          var _destination = $(e.target);
-          _destination = _destination.is("div.item[draggable=true]") ? _destination : _destination.parents("div.item[draggable=true]");
-          if (!_destination.hasClass("drop-target")) {
-            _clear($("div.item.drop-target").not(`#${_destination[0].id}`));
-            _destination.addClass("drop-target");
-          }
-        })
-          .on("drop.item", e => {
-          e.preventDefault();
-          var _id = e.originalEvent.dataTransfer.getData("text/plain"),
-              _source = _get(_id);
-          var _destination = $(e.target);
-          _destination = _destination.is("div.item[draggable=true]") ? _destination : _destination.parents("div.item[draggable=true]");
-          if (!_source || _id == _destination.id) return;
-          if (_source.parents(".group")[0] == _destination.parents(".group")[0]) {
-            _source.insertBefore(_destination);
-            _source.addClass("bg-bright");
-            setTimeout(() => _source.removeClass("bg-bright"), 1000);
-            var _list = [];
-            _source.parent().children("div.item[draggable=true]").each((i, el) => {
-              var _el = $(el),
-                  _item = ರ‿ರ.db.get(_el.data("id")),
-                  _order = i + 1;
-              _el.data("order", _order);
-              if (_item && _item.ORDER != _order)(_item.ORDER = _order) && _list.push(_item);
-            });
-            /* <!-- Save List --> */
-            if (_list.length > 0) {
-              ಠ_ಠ.Flags.log("LIST TO UPDATE:", _list);
-              _.each(_list, item => ರ‿ರ.tasks.items.update(item)
-                     .then(r => (r === false) ? ಠ_ಠ.Flags.error("Update Item Failed", item) : true));
-            }
-          }
+        /* <!-- Item Drag / Drop --> */
+        FN.drag.items({
+          draggable: _diary.find("div.item[draggable=true]"),
+          droppable: _diary.find("div.item[data-droppable=true], div.group[data-droppable=true]")
+        }, {
+          item: "div.item[data-droppable=true]",
+          group: "div.group[data-droppable=true]",
         });
 
         /* <!-- Scroll to today if visible --> */
@@ -817,7 +947,7 @@ App = function() {
       _save = item => ರ‿ರ.tasks.items.create(item).then(r => {
           if (r === false) return r;
           ರ‿ರ.db.update(r);
-          return FN.show.weekly(moment(FN.show.date()));
+          return FN.show.weekly(ಠ_ಠ.Dates.parse(FN.show.date()));
         })
         .catch(e => ಠ_ಠ.Flags.error("Create New Error", e) && !_retried && _error())
         .then(r => r === false ? _error() : Promise.resolve(true));
@@ -832,7 +962,7 @@ App = function() {
           instructions: ಠ_ಠ.Display.doc.get("NEW_INSTRUCTIONS"),
           validate: values => values ? ಠ_ಠ.Flags.log("Values for Validation", values) && true : false,
           /* <!-- Do we need to validate? --> */
-          date: moment(FN.show.date()).format("YYYY-MM-DD"),
+          date: ಠ_ಠ.Dates.parse(FN.show.date()).format("YYYY-MM-DD"),
           handlers: {
             clear: _dialog.handlers.clear,
           },
@@ -892,7 +1022,7 @@ App = function() {
         if (results[1]) ರ‿ರ.deadlines = results[1];
       })
       .then(ಠ_ಠ.Main.busy("Loading Data"))
-      .then(() => FN.show.weekly(moment(FN.show.date())))
+      .then(() => FN.show.weekly(ಠ_ಠ.Dates.parse(FN.show.date())))
       .catch(e => ಠ_ಠ.Flags.error("Data Error", e ? e : "No Inner Error").negative()),
 
     archive: () => {
@@ -946,11 +1076,11 @@ App = function() {
         id: _id,
         type: "hidden",
         class: "d-none dt-picker",
-        value: moment(FN.show.date()).format("YYYY-MM-DD")
+        value: ಠ_ಠ.Dates.parse(FN.show.date()).format("YYYY-MM-DD")
       }).appendTo(ಠ_ಠ.container);
 
       _input.on("change", e => {
-        var _date = new moment($(e.target).val());
+        var _date = new ಠ_ಠ.Dates.parse($(e.target).val());
         if (_date.isValid()) FN.show.weekly(_date);
       });
 
@@ -971,7 +1101,7 @@ App = function() {
     refresh: () => {
 
       /* <!-- Reset State to Today --> */
-      ರ‿ರ.today = moment().startOf("day").toDate();
+      ರ‿ರ.today = ಠ_ಠ.Dates.now().startOf("day").toDate();
 
       /* <-- Open and render data --> */
       return FN.action.load();
@@ -1018,19 +1148,19 @@ App = function() {
         _.filter(classes, course => !course.teacher).length > 0 ? SCOPE_COURSEWORK : []))
       .then(result => result === true ?
         Promise.all(_.map(classes, course => ಠ_ಠ.Google.classrooms.work(course).list()
-          .then(results => _.each(results, result => result ? 
-																		result._title = `COURSE: ${course.name}` : null))))
+          .then(results => _.each(results, result => result ?
+            result._title = `COURSE: ${course.name}` : null))))
         .then(_.flatten)
         .then(_.compact)
         .then(results => _.tap(results, results => _.each(results, result => {
-          result.due = result.dueDate ? moment([
+          result.due = result.dueDate ? ಠ_ಠ.Dates.parse(new Date(
             result.dueDate.year,
             result.dueDate.month - 1,
             result.dueDate.day,
             result.dueTime ? result.dueTime.hours : 0,
             result.dueTime ? result.dueTime.minutes : 0,
-            result.dueTime && result.dueTime.seconds ? result.dueTime.seconds : 0,
-          ]) : moment();
+            result.dueTime && result.dueTime.seconds ? result.dueTime.seconds : 0
+          )) : ಠ_ಠ.Dates.now();
           if (result.dueTime) {
             result._timed = true;
             result.TIME = result.due.format("HH:mm");
@@ -1120,7 +1250,7 @@ App = function() {
                 matches: /TODAY/i,
                 length: 0,
                 keys: ["t", "T"],
-                fn: () => FN.show.weekly(moment(ರ‿ರ.today)),
+                fn: () => FN.show.weekly(ಠ_ಠ.Dates.parse(ರ‿ರ.today)),
               },
               forward: {
                 matches: /FORWARD/i,
@@ -1135,7 +1265,7 @@ App = function() {
                     keys: ".",
                     fn: () => {
                       var _start = FN.show.from();
-                      FN.show.weekly(_start.add(_start.isoWeekday() == 6 ? 2 : 1, "days"));
+                      FN.show.weekly(_start.add(ರ‿ರ.Dates.isoWeekday(_start) == 6 ? 2 : 1, "days"));
                     },
                   }
                 }
@@ -1153,7 +1283,7 @@ App = function() {
                     keys: ",",
                     fn: () => {
                       var _start = FN.show.from();
-                      FN.show.weekly(_start.subtract(_start.isoWeekday() == 7 ? 2 : 1, "days"));
+                      FN.show.weekly(_start.subtract(ರ‿ರ.Dates.isoWeekday(_start) == 7 ? 2 : 1, "days"));
                     },
                   }
                 }
@@ -1289,7 +1419,7 @@ App = function() {
         },
         route: (handled, command) => {
           if (handled) return;
-          var _parsed = moment(command);
+          var _parsed = ಠ_ಠ.Dates.parse(command);
           if (_parsed.isValid()) FN.show.weekly(_parsed);
         }
       });
@@ -1302,14 +1432,9 @@ App = function() {
     /* <!-- Start App after fully loaded --> */
     start: () => {
 
-      /* <!-- Setup Moment --> */
-      moment().format();
-      var locale = window.navigator.userLanguage || window.navigator.language;
-      if (locale) moment.locale(locale);
-
       /* <!-- Setup Today | Override every 15mins --> */
       var _today = () => {
-        ರ‿ರ.today = moment().startOf("day").toDate();
+        ರ‿ರ.today = ಠ_ಠ.Dates.now().startOf("day").toDate();
         _.delay(_today, 900000);
       };
       _today();

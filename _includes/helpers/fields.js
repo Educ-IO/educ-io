@@ -7,12 +7,13 @@ Fields = (options, factory) => {
   /* <!-- @options.templater: Function to get template for rendering (e.g. Display.template.get) [Optional for all but complex add fields]  --> */
   /* <!-- @options.list_*: See below [All Optional] --> */
   /* <!-- @options.doc_*: See below [All Optional] --> */
-  /* <!-- REQUIRES: Global Scope: JQuery, Underscore, Moment, autosize | App Scope: Flags, Display, Google; --> */
+  /* <!-- REQUIRES: Global Scope: JQuery, Underscore, DayJS/Moment, autosize | App Scope: Flags, Display, Google, Router, Dates; --> */
 
   /* <!-- Internal Constants --> */
   const DATE_FORMAT = "yyyy-mm-dd",
     DATE_FORMAT_M = DATE_FORMAT.toUpperCase(),
     TIME_FORMAT = "HH:mm";
+
   const EVENT_CHANGE_DT = "change.datetime",
     EVENT_CHANGE_AUTOSIZE = "change.autosize";
   const DEFAULTS = {
@@ -146,7 +147,7 @@ Fields = (options, factory) => {
             _derived = _historical ? _start : _end;
 
           var _initial_Date = _initial.val() ?
-            moment(_initial.val(), DATE_FORMAT_M) : moment(),
+            factory.Dates.parse(_initial.val()) : factory.Dates.now(),
             _dervied_Date;
 
           if (_span) {
@@ -164,7 +165,7 @@ Fields = (options, factory) => {
                 start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, e => {
                   var _value = $(e.currentTarget).val();
                   if (_value) {
-                    _value = moment(_value, DATE_FORMAT_M);
+                    _value = factory.Dates.parse(_value);
                     if (_value.isValid())
                       end.val(_value.add(1, span).subtract(1, "d").format(DATE_FORMAT_M));
                   } else {
@@ -181,11 +182,11 @@ Fields = (options, factory) => {
               start.off(EVENT_CHANGE_DT).on(EVENT_CHANGE_DT, e => {
                 var _value_S = $(e.currentTarget).val();
                 if (_value_S) {
-                  _value_S = moment(_value_S, DATE_FORMAT_M);
+                  _value_S = factory.Dates.parse(_value_S);
                   if (_value_S.isValid()) {
-                    var _value_E = moment(end.val(), DATE_FORMAT_M);
+                    var _value_E = factory.Dates.parse(end.val());
                     if (!end.val() || (_value_E.isValid() && _value_E.isSameOrBefore(_value_S)))
-                      end.val(moment(_value_S, DATE_FORMAT_M).add(1, "d").format(DATE_FORMAT_M));
+                      end.val(factory.Dates.parse(_value_S).add(1, "d").format(DATE_FORMAT_M));
                   }
                 } else {
                   end.val("");
@@ -252,7 +253,7 @@ Fields = (options, factory) => {
           var _span = _modifier.data("span") ? _modifier.data("span") : "d";
 
           var _start = _target.find(`input[name='${_target.attr("id")}_start']`),
-            _start_Date = _start.val() ? moment(_start.val(), DATE_FORMAT_M) : moment();
+            _start_Date = _start.val() ? factory.Dates.parse(_start.val()) : factory.Dates.now();
           _start.val(_start_Date.add(_value, _span).format(DATE_FORMAT_M)).trigger(EVENT_CHANGE_DT);
 
 
@@ -422,9 +423,8 @@ Fields = (options, factory) => {
     form.find("[data-reveal]").off("change.reveal").on("change.reveal", e => {
       var _revealer = $(e.currentTarget),
         _target = _get(_revealer.data("reveal"));
-      _revealer.is("input[type=checkbox]") ?
-        _target[_revealer.prop("checked") === true ? "slideDown" : "slideUp"]() :
-        _target.slideToggle();
+      _target.collapse(_revealer.is("input[type=checkbox]") ?
+        _revealer.prop("checked") === true ? "show" : "hide" : "toggle");
     });
 
   };
@@ -482,13 +482,14 @@ Fields = (options, factory) => {
 
       /* <!-- Time Default to now --> */
       form.find("div.dt-picker-time[data-input-default='now'] > input, input.dt-picker-time[data-input-default='now']")
-        .val((index, value) => value ? value : moment().startOf("hour").add(index, "hours").format(TIME_FORMAT));
+        .val((index, value) => value ? value :
+          factory.Dates.now().startOf("hour").add(index, "hours").format(TIME_FORMAT));
 
     }
 
     /* <!-- General Default NOW --> */
     form.find("input[data-input-default='now'], textarea[data-input-default='now']")
-      .val((index, value) => value ? value : moment().format(DATE_FORMAT_M));
+      .val((index, value) => value ? value : factory.Dates.now().format(DATE_FORMAT_M));
 
   };
 

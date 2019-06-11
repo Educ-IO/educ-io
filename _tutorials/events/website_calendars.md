@@ -23,7 +23,7 @@ To retrieve events, we are going to use the [Google Calendar API](https://develo
 
 Using a generic API key means the calendar you want to access must be [publicaly available](https://support.google.com/calendar/answer/37083?hl=en){:target="_blank" rel="noopener"} and you will need the calendar ID from the settings page.
 
-When you have your API key and calendar ID, insert them into the code below. You will need to include the [Moment](https://momentjs.com/docs/#/use-it/browser/){:target="_blank" rel="noopener"} library, to provide simple date handling. You should also include a [fetch](https://github.com/github/fetch){:target="_blank" rel="noopener"} polyfill for older browsers, which adds in that functionality where it isn't available.
+When you have your API key and calendar ID, insert them into the code below. You will need to include the [Moment](https://momentjs.com/docs/#/use-it/browser/){:target="_blank" rel="noopener"} or [Day.js](https://github.com/iamkun/dayjs){:target="_blank" rel="noopener"}  library, to provide simple date handling. You should also include a [fetch](https://github.com/github/fetch){:target="_blank" rel="noopener"} polyfill for older browsers, which adds in that functionality where it isn't available.
 
 {% highlight javascript %}
 var _loadDiary = function() {
@@ -33,7 +33,7 @@ var _loadDiary = function() {
   
   var BASE = "https://content.googleapis.com/calendar/v3/calendars/";
   
-  var START = moment().subtract(2, "days").startOf("day").toDate().toISOString();
+  var START = (window.moment || window.dayjs)().subtract(2, "days").startOf("day").toDate().toISOString();
   var LIMIT = "5";
   var FILTER = "Highlight=TRUE";
 

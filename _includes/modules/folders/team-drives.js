@@ -85,7 +85,7 @@ TeamDrives = ಠ_ಠ => {
                 id: drive.id,
                 name: drive.name,
                 details: {
-                  created: drive.createdTime ? moment(drive.createdTime) : null,
+                  created: drive.createdTime ? ಠ_ಠ.Dates.parse(drive.createdTime) : null,
                   domainOnly: drive.restrictions && drive.restrictions.domainUsersOnly,
                   teamOnly: drive.restrictions && drive.restrictions.teamMembersOnly,
                   comment: drive.capabilities && drive.capabilities.canComment,

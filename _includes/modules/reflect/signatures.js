@@ -66,7 +66,7 @@ Signatures = (ಠ_ಠ, stringify, replacer, elevate) => {
       valid: valid,
       who: comment.author.me ? true : comment.author.displayName,
       email: comment.author.emailAddress,
-      when: moment(comment.modifiedTime).fromNow(),
+      when: ಠ_ಠ.Dates.parse(comment.modifiedTime).fromNow(),
       link: `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${file.id}`
     }),
 

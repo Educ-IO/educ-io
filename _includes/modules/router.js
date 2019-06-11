@@ -356,7 +356,7 @@ Router = function() {
             var _hammer = this[_target] ? this[_target] :
               (this[_target] = new window.Hammer((route.target ?
                 $(route.target) : ಠ_ಠ.container)[0]));
-            _hammer.on(route.actions.join(" "), ((state, fn, debug, name) => e => (!state || ಠ_ಠ.Display.state().in(state, true)) ? (!debug || ಠ_ಠ.Flags.log(`Touch Action ${e.type} routed to : ${name}`)) && fn(null) : false)(route.state, route.fn, debug, name));
+            _hammer.on(route.actions.join(" "), ((state, fn, debug, name) => e => e.pointerType == "touch" &&(!state || ಠ_ಠ.Display.state().in(state, true)) ? (!debug || ಠ_ಠ.Flags.log(`Touch Action ${e.type} routed to : ${name}`)) && fn(null) : false)(route.state, route.fn, debug, name));
           }
         }, {}) : true;
         _shortcuts = debug => _keyboard(debug) && _touch(debug),

@@ -103,9 +103,9 @@ App = function() {
       id: v.id,
       files: v.attachments,
       type: v.recurringEventId ? "Series" : "Single",
-      when: v.start ? v.start.dateTime ? moment(v.start.dateTime) : v.start.date ? moment(v.start.date) : null : null,
-      when_display: _format.date(v.start ? v.start.dateTime ? moment(v.start.dateTime) : v.start.date ? moment(v.start.date) : null : null, v.end && v.end.dateTime ? moment(v.end.dateTime) : null),
-      duration: _format.duration(v.start && v.start.dateTime ? moment(v.start.dateTime) : null, v.end && v.end.dateTime ? moment(v.end.dateTime) : null),
+      when: v.start ? v.start.dateTime ? ಠ_ಠ.Dates.parse(v.start.dateTime) : v.start.date ? ಠ_ಠ.Dates.parse(v.start.date) : null : null,
+      when_display: _format.date(v.start ? v.start.dateTime ? ಠ_ಠ.Dates.parse(v.start.dateTime) : v.start.date ? ಠ_ಠ.Dates.parse(v.start.date) : null : null, v.end && v.end.dateTime ? ಠ_ಠ.Dates.parse(v.end.dateTime) : null),
+      duration: _format.duration(v.start && v.start.dateTime ? ಠ_ಠ.Dates.parse(v.start.dateTime) : null, v.end && v.end.dateTime ? ಠ_ಠ.Dates.parse(v.end.dateTime) : null),
       what: v.summary,
       where: v.location,
       who: v.organizer ? v.organizer.displayName ? ಠ_ಠ.Display.username(v.organizer.displayName) : v.organizer.email : "",
@@ -155,9 +155,9 @@ App = function() {
           resolve(event);
         })
         .catch(e => ಠ_ಠ.Flags.error("Patch Error", e) && reject(e));
-      
+
     }),
-    
+
     add: (id, event) => new Promise((resolve, reject) => {
 
       var _decode = values => ({
@@ -198,7 +198,7 @@ App = function() {
         values ?
           (values = _decode(values)) && _tags.patch(id, event.id, values.name, values.value).then(event => resolve(event)).catch(e => reject(e)) :
           resolve(false);
-        
+
       }).catch(e => e ? (ಠ_ಠ.Flags.error("Tagging Error", e) && reject(e)) : (ಠ_ಠ.Flags.log("Tagging Cancelled") && resolve(false)));
 
     }),
@@ -339,7 +339,7 @@ App = function() {
 
   var _load_Month = (calendar, date, parameters) => {
     ಠ_ಠ.Flags.log(`Loading Month From: ${_current = date} from Calendar: ${_id = calendar}`);
-    return _load(ಠ_ಠ.Google.calendar.list(calendar, date.toDate(), moment(date).clone().add(1, "months").toDate()), [STATE_EVENT, STATE_SEARCH, STATE_PROPERTY], STATE_MONTH, parameters);
+    return _load(ಠ_ಠ.Google.calendar.list(calendar, date.toDate(), ಠ_ಠ.Dates.parse(date).add(1, "months").toDate()), [STATE_EVENT, STATE_SEARCH, STATE_PROPERTY], STATE_MONTH, parameters);
   };
 
   var _load_Event = (calendar, event, parameters) => {
@@ -417,8 +417,8 @@ App = function() {
     }).appendTo(ಠ_ಠ.container);
 
     _input.on("change", e => {
-      var _date = new moment($(e.target).val());
-      if (_date.isValid()) _load_Month(_id, moment(_date).startOf("month"));
+      var _date = new ಠ_ಠ.Dates.parse($(e.target).val());
+      if (_date.isValid()) _load_Month(_id, ಠ_ಠ.Dates.parse(_date).startOf("month"));
     });
 
     _input.bootstrapMaterialDatePicker({
@@ -463,7 +463,8 @@ App = function() {
           open_calendar: {
             matches: [/OPEN/i, /CALENDAR/i],
             keys: ["o", "O"],
-            fn: () => _open_Calendars().then(calendar => _load_Month(calendar.id, moment().startOf("month")))
+            fn: () => _open_Calendars()
+              .then(calendar => _load_Month(calendar.id, ಠ_ಠ.Dates.now().startOf("month")))
           },
           close_calendar: {
             matches: [/CLOSE/i, /CALENDAR/i],
@@ -481,7 +482,7 @@ App = function() {
             matches: /TODAY/i,
             state: STATE_OPENED,
             keys: ["t", "T"],
-            fn: () => _load_Month(_id, moment().startOf("month"))
+            fn: () => _load_Month(_id, ಠ_ಠ.Dates.now().startOf("month"))
           },
           refresh: {
             matches: /REFRESH/i,
@@ -494,19 +495,20 @@ App = function() {
             state: STATE_MONTH,
             keys: ">",
             actions: "swipeleft",
-            fn: () => _load_Month(_id, moment(_current).clone().add(1, "months"))
+            fn: () => _load_Month(_id, ಠ_ಠ.Dates.parse(_current).add(1, "months"))
           },
           backward: {
             matches: /BACKWARD/i,
             state: STATE_MONTH,
             keys: "<",
             actions: "swiperight",
-            fn: () => _load_Month(_id, moment(_current).clone().subtract(1, "months"))
+            fn: () => _load_Month(_id, ಠ_ಠ.Dates.parse(_current).subtract(1, "months"))
           },
           load_calendar: {
             matches: [/LOAD/i, /CALENDAR/i],
             length: 1,
-            fn: command => _open_Calendar(_decodeValue(command)).then(calendar => _load_Month(calendar.id, moment().startOf("month")))
+            fn: command => _open_Calendar(_decodeValue(command))
+              .then(calendar => _load_Month(calendar.id, ಠ_ಠ.Dates.now().startOf("month")))
           },
           load_item: {
             matches: [/LOAD/i, /ITEM/i],
@@ -576,8 +578,12 @@ App = function() {
                 } : "",
                 m: ಠ_ಠ.Display.state().in(STATE_MONTH) && _current ? _current.toISOString() : "",
               };
-              
-							ಠ_ಠ.Link({app: "events", route: "view", data: _data}, ಠ_ಠ).generate();
+
+              ಠ_ಠ.Link({
+                app: "events",
+                route: "view",
+                data: _data
+              }, ಠ_ಠ).generate();
             }
           },
           view: {
@@ -597,7 +603,7 @@ App = function() {
                   _load_Search(params.i.i, params.i.s, params) :
                   params.i.p ?
                   _load_Properties(params.i.i, params.i.p.p, params.i.p.v, params) :
-                  params.i.m ? _load_Month(params.i.i, moment(params.i.m), params) : false;
+                  params.i.m ? _load_Month(params.i.i, ಠ_ಠ.Dates.parse(params.i.m), params) : false;
               } catch (e) {
                 ಠ_ಠ.Flags.error("Failed to Parse Events Params", e ? e : "No Inner Error");
               }
@@ -618,11 +624,8 @@ App = function() {
 
     start: () => {
 
-      /* <!-- Setup Moment --> */
-      moment().format();
-      var locale = window.navigator.userLanguage || window.navigator.language;
-      if (locale) moment.locale(locale);
-      _current = moment().startOf("month");
+      /* <!-- Setup Date --> */
+      _current = ಠ_ಠ.Dates.now().startOf("month");
 
       /* <!-- Create DB Reference --> */
       DB = new loki("events.db");

@@ -116,11 +116,6 @@ App = function() {
     /* <!-- Start App after fully loaded --> */
     start: () => {
 
-      /* <!-- Setup Moment --> */
-      moment().format();
-      var locale = window.navigator.userLanguage || window.navigator.language;
-      if (locale) moment.locale(locale);
-
       /* <!-- Setup Showdown --> */
       _showdown = new showdown.Converter({
         strikethrough: true

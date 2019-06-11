@@ -167,12 +167,12 @@ App = function() {
       "ANALYSIS" : "",
 
     span: dates => {
-      var _today = moment(),
+      var _today = ಠ_ಠ.Dates.now(),
         _past = dates.span == "AY" ?
         _today.month() > 8 ?
-        _today.clone().month(8).startOf("month") :
-        _today.clone().subtract(1, "year").month(8).startOf("month") :
-        _today.clone().subtract(1, dates.span);
+        _today.month(8).startOf("month") :
+        _today.subtract(1, "year").month(8).startOf("month") :
+        _today.subtract(1, dates.span);
       dates.from = _past.startOf("day");
       dates.to = _today.endOf("day");
       return dates;
@@ -503,8 +503,8 @@ App = function() {
       });
     }).then(values => values ? {
       span: values.Period && values.Period.Values ? values.Period.Values.Span : null,
-      from: values.Range.Values.Start ? moment(values.Range.Values.Start) : null,
-      to: values.Range.Values.End ? moment(values.Range.Values.End).endOf("day") : null
+      from: values.Range.Values.Start ? ಠ_ಠ.Dates.parse(values.Range.Values.Start) : null,
+      to: values.Range.Values.End ? ಠ_ಠ.Date.parse(values.Range.Values.End).endOf("day") : null
     } : false),
 
     analysis: mine => {
@@ -785,7 +785,7 @@ App = function() {
       var _title = ರ‿ರ.template && ರ‿ರ.template.title ?
         ರ‿ರ.template.title : ರ‿ರ.template && ರ‿ರ.template.name ?
         ರ‿ರ.template.name : "Report",
-        _date = new moment().format("YYYY-MM-DD");
+        _date = ಠ_ಠ.Dates.now().format("YYYY-MM-DD");
 
       return {
         name: ರ‿ರ.file ?
@@ -825,8 +825,7 @@ App = function() {
         FN.process.form(value.content, value.actions) :
         ಠ_ಠ.Google.files.is(TYPE_ANALYSIS)(file) ?
         FN.process.analysis(value.content.forms, value.content.mine,
-          value.content.full,
-          _.tap(value.content.dates, FN.helper.span),
+          value.content.full, value.content.dates ? _.tap(value.content.dates, FN.helper.span) : value.content.dates,
           value.content.expected)
         .then(() => ಠ_ಠ.Display.state()
           .enter([STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL, STATE_ANALYSIS_ANY])) :
@@ -913,7 +912,7 @@ App = function() {
           expected: ರ‿ರ.analysis.expected(),
         }), SAVING_REPLACER))
         .then(value => ಠ_ಠ.Google.files.upload(ರ‿ರ.file ? null : {
-            name: `${FN.helper.title(ರ‿ರ.analysis.names(), TYPE_ANALYSIS)} | ${new moment().format("YYYY-MM-DD")}${EXTENSION}`
+            name: `${FN.helper.title(ರ‿ರ.analysis.names(), TYPE_ANALYSIS)} | ${ಠ_ಠ.Dates.now().format("YYYY-MM-DD")}${EXTENSION}`
           }, value, TYPE_ANALYSIS, null, ರ‿ರ.file ? ರ‿ರ.file.id : null, true)
           .then(FN.action.recent)
           .then(ಠ_ಠ.Main.busy("Saving"))
@@ -1571,7 +1570,6 @@ App = function() {
     },
 
     start: () => {
-      moment().format();
       if (window.underscoreDeepExtend && window._) _.mixin({
         "deepExtend": underscoreDeepExtend(_)
       });

@@ -41,7 +41,7 @@ imports:
     load: last
   - name: autosize
     load: last
-  - name: moment_all
+  - name: day
     load: last
   - name: waves-css
     load: last
@@ -69,6 +69,7 @@ modules:
   - recent
   - router
   - datatable
+  - dates
   - grid
   - headers
   - merge/master

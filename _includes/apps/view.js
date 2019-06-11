@@ -210,9 +210,6 @@ App = function() {
 
     },
 
-    /* <!-- Start App after fully loaded --> */
-    start: () => moment().format(),
-
     /* <!-- Clear the existing state --> */
     clean: () => ಠ_ಠ.Router.clean(false),
 

@@ -60,8 +60,8 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
       complete: FN.helper.complete(report.file),
       form: report.title,
       when: {
-        Created: moment(report.file.createdTime).format("llll"),
-        Modified: moment(report.file.modifiedTime).format("llll")
+        Created: ಠ_ಠ.Dates.parse(report.file.createdTime).format("llll"),
+        Modified: ಠ_ಠ.Dates.parse(report.file.modifiedTime).format("llll")
       },
       signatures: report.signatures ? _.map(report.signatures, signature => ({
         Valid: signature.valid ? true : undefined,
@@ -201,8 +201,8 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
           _reports = _.reduce(_.map(reports,
               report => _.extend(FN.generate.values(_all, report.file), {
                 __id: report.file.id,
-                __created: moment(report.file.createdTime).format("MMM D, YYYY HH:mm"),
-                __modified: moment(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
+                __created: ಠ_ಠ.Dates.parse(report.file.createdTime).format("MMM D, YYYY HH:mm"),
+                __modified: ಠ_ಠ.Dates.parse(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
                 __owner: FN.helper.owner(report.file),
                 __link: FN.helper.url(report.file),
                 __complete: FN.helper.complete(report.file),

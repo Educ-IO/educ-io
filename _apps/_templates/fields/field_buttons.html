@@ -27,12 +27,12 @@
                           class="btn {{which ../large 'btn-lg ' ''}}{{class}} d-flex justify-content-center waves-effect{{#if ../readonly}} disabled{{/if}}"{{#if ../readonly}} aria-disabled="true"{{/if}}>
   <input type="radio" name="{{../id}}_OPTIONS" autocomplete="off"
          data-targets="{{../id}}" data-value="{{value}}"
-         {{#if ../readonly}} class="disabled" disabled{{/if}} />
+         class="d-none{{#if ../readonly}} disabled{{/if}}"{{#if ../readonly}} disabled{{/if}} />
   <i class="material-icons md-18 md-light md-inactive to-dim">{{either icon "check"}}</i>
   </label>{{/each}}
   <label role="button" class="btn btn-secondary d-flex justify-content-center no-active waves-effect{{#if readonly}} disabled{{/if}}"
          title="Clear / Reset"{{#if readonly}} aria-disabled="true"{{/if}}>
-    <input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-targets="{{id}}"{{#if readonly}} class="disabled" disabled{{/if}} />
+    <input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-targets="{{id}}" class="d-none{{#if readonly}} disabled{{/if}}"{{#if readonly}} disabled{{/if}} />
     <i class="material-icons md-18 md-dark">refresh</i>
   </label>
 </div>
@@ -42,12 +42,12 @@
                           class="btn {{which ../large 'btn-lg ' ''}}d-flex justify-content-center waves-effect {{class}}{{#if ../readonly}} disabled{{/if}}"{{#if ../readonly}} aria-disabled="true"{{/if}}>
   <input type="radio" name="{{../id}}_OPTIONS" autocomplete="off"
          data-targets="{{../id}}" data-value="{{value}}"
-         {{#if ../readonly}} disabled class="disabled"{{/if}} />
+         class="d-none{{#if ../readonly}} disabled{{/if}}"{{#if ../readonly}} disabled{{/if}} />
   <i class="material-icons md-light md-inactive to-dim md-{{which ../large '24' '18'}}">{{either icon "check"}}</i>
   </label>{{/each}}
   <label role="button" class="btn btn-secondary d-flex justify-content-center {{which large 'btn-lg ' ''}}no-active waves-effect{{#if readonly}} disabled{{/if}}" title="Clear / Reset"
          {{#if readonly}} aria-disabled="true"{{/if}}>
-    <input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-targets="{{id}}"{{#if readonly}} class="disabled" disabled{{/if}} />
+    <input type="radio" name="{{id}}_OPTIONS" autocomplete="off" data-targets="{{id}}" class="d-none{{#if readonly}} disabled{{/if}}"{{#if readonly}} disabled{{/if}} />
     <i class="material-icons md-dark md-{{which large '24' '18'}}">refresh</i>
   </label>
 </div>

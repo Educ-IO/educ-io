@@ -3,7 +3,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
   /* <!-- MODULE: Provides a filterable representation of tablular-style data --> */
   /* <!-- PARAMETERS: Receives the global app context, the source table data, options, target element and callback function for post-updates --> */
-  /* <!-- REQUIRES: Global Scope: JQuery, Underscore | App Scope: Flags, CSS --> */
+  /* <!-- REQUIRES: Global Scope: JQuery, Underscore, , Moment or Day.Js | App Scope: Flags, CSS, Dates --> */
   /* <!-- @table = {id, name, data, headers} --> */
   /* <!-- @options = {filters, inverted_Filters, sorts, widths, frozen, readonly, advanced, collapsed, template, removable} --> */
 
@@ -47,7 +47,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     _filters = ಠ_ಠ.Filters({
       normal: options.filters,
       inverted: options.inverted_Filters
-    });
+    }, ಠ_ಠ);
     _sorts = options.sorts;
 
     /* <!-- Get 'Default' Filters and Searches if applicable --> */
@@ -220,6 +220,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     var _target = $(t);
     _target.parents("div.input-group").find("input[type='text']").val("");
     _filters.remove(_target.data("field"));
+    /* <!-- TODO: Remove as JQuery slim does not support fading animation effects (move to CSS) --> */
     _target.parents("div.form").fadeOut(FADE_DELAY);
     _update(true, true, target, null, true);
   };
@@ -300,6 +301,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
       } else if (keycode === 13) { /* <!-- Enter Key Pressed --> */
         e.preventDefault();
         _target = $(e.target);
+        /* <!-- TODO: Remove as JQuery slim does not support fading animation effects (move to CSS) --> */
         _target.parents("div.form").fadeOut(FADE_DELAY);
       }
     }).off("input").on("input", e => {
@@ -380,7 +382,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
           _on = _toggler.hasClass("d-none");
       _target.closest(".dropdown-menu").find("i.toggler").addClass("d-none");
       if (_on) _target.find("i.toggler").removeClass("d-none");
-           
+      /* <!-- TODO: Remove as JQuery slim does not support fading animation effects (move to CSS) --> */
       _target.tooltip("hide").parents("div.form").fadeOut(FADE_DELAY);
       _update(true, true, target);
       if (_complete) _complete();
@@ -388,6 +390,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
     target.find(".table-header a").on("click", e => {
       e.preventDefault();
+      /* <!-- TODO: Remove as JQuery slim does not support fading animation effects (move to CSS) --> */
       $($(e.target).data("targets")).fadeToggle(FADE_DELAY).promise().done(el => $(el).find("input[type='text']:visible").first().focus());
     });
 

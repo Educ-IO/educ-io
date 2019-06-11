@@ -263,7 +263,8 @@ Display = function() {
         });
 
         Handlebars.registerHelper("isDate", function(variable, options) {
-          if (variable && (variable instanceof Date || variable._isAMomentObject)) {
+          if (variable && (variable instanceof Date || variable._isAMomentObject ||
+              (window.dayjs && dayjs.isDayjs(variable)))) {
             return options.fn ? options.fn(this) : true;
           } else {
             return options.inverse ? options.inverse(this) : false;
@@ -286,9 +287,17 @@ Display = function() {
           }
         });
 
+        Handlebars.registerHelper("isoDate", variable => {
+          if (!variable) return;
+          if (!(variable = (variable._isAMomentObject || (window.dayjs && dayjs.isDayjs(variable)) ?
+              variable.toDate() : variable instanceof Date ? variable : false))) return;
+          return variable.toISOString();
+        });
+
         Handlebars.registerHelper("localeDate", (variable, short) => {
           if (!variable) return;
-          if (!(variable = (variable._isAMomentObject ? variable.toDate() : variable instanceof Date ? variable : false))) return;
+          if (!(variable = (variable._isAMomentObject || (window.dayjs && dayjs.isDayjs(variable)) ?
+              variable.toDate() : variable instanceof Date ? variable : false))) return;
           return (short || (variable.getHours() === 0 && variable.getMinutes() === 0 && variable.getSeconds() === 0 && variable.getMilliseconds() === 0)) ? variable.toLocaleDateString() : variable.toLocaleString();
         });
 
@@ -305,6 +314,17 @@ Display = function() {
 
         Handlebars.registerHelper("exists", function(variable, options) {
           if (typeof variable !== "undefined") {
+            return options.fn ? options.fn(this) : true;
+          } else {
+            return options.inverse ? options.inverse(this) : false;
+          }
+        });
+
+        Handlebars.registerHelper("contains", function(variable, contains, options) {
+          if (variable && (
+              (typeof variable === "object" && variable.constructor === Array) ||
+              (typeof variable === "string" || variable instanceof String)
+            ) && variable.indexOf(contains) >= 0) {
             return options.fn ? options.fn(this) : true;
           } else {
             return options.inverse ? options.inverse(this) : false;

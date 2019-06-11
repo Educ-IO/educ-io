@@ -12,11 +12,12 @@ drive:
   name: For Drive
   apps:
     - folders
+    - templates
 team:
   name: Your Team
   apps:
+    - blocks
     - reflect
-    - tiles
     - survey
 school:
   name: Whole School

@@ -31,8 +31,6 @@ imports:
     load: first
   - name: popper
     load: first
-  - name: transducers
-    load: first
   - name: moment
     load: first
   - name: handlebars_full
@@ -105,6 +103,7 @@ modules:
   - service
   - main
   - datatable
+  - dates
   - grid
   - headers
   - reflect/analysis

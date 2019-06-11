@@ -83,20 +83,10 @@ Grid = (ಠ_ಠ, data, options) => {
 		/* <!-- Check Array for Dates --> */
 		ಠ_ಠ.Flags.time("Checking for Dates in Sheet Values");
 		var _formats;
-		if (options.locale && moment.locale(options.locale) == options.locale.toLowerCase()) {
+    
+		if (options.locale && ಠ_ಠ.Dates.locale(options.locale)) {
 			ಠ_ಠ.Flags.log("Spreadsheet Locale:", options.locale);
-			var _locales = moment.localeData()._longDateFormat;
-			_formats = [moment.ISO_8601];
-			if (_locales) {
-				if (_locales.L) {
-					_formats.unshift(_locales.L);
-					if (_locales.LT) _formats.unshift(_locales.L + " " + _locales.LT);
-					if (_locales.LT) _formats.unshift(_locales.L + " " + _locales.LTS);
-				}
-				if (_locales.LL) _formats.unshift(_locales.LL);
-				if (_locales.LLL) _formats.unshift(_locales.LLL);
-				if (_locales.LLLL) _formats.unshift(_locales.LLLL);
-			}
+      _formats = ಠ_ಠ.Dates.formats();
 			ಠ_ಠ.Flags.log("Date Parsing Formats:", _formats);
 		} else if (options.locale) {
 			ಠ_ಠ.Flags.error(`Could Not Set Date/Time Locale to ${options.locale}`);
@@ -113,21 +103,16 @@ Grid = (ಠ_ಠ, data, options) => {
 		while (data.length > _check.current && (_check.is.length + _check.not.length) < options.size.cols) {
 			_check = _.reduce(data[_check.current++], (dates, value, index) => {
 				if (value && dates.is.indexOf(index) < 0 && dates.not.indexOf(index) < 0)
-					_.isString(value) && moment(value, _formats, true).isValid() ? dates.is.push(index) : dates.not.push(index);
+					_.isString(value) && ಠ_ಠ.Dates.parse(value, _formats, true).isValid() ? dates.is.push(index) : dates.not.push(index);
 				return dates;
 			}, _check);
 		}
 		dates = _check.is;
 
-		/* dates = _.reduce(data[0], (dates, value, index) => {
-      if (value && _.isString(value) && moment(value, _formats, true).isValid()) dates.push(index);
-      return dates;
-    }, []); */
-
 		ಠ_ಠ.Flags.log("Date Column Indexes:", dates);
 
 		if (dates.length > 0) _.each(data, row => _.each(dates, index => {
-			row[index] = row[index] ? moment(row[index], _formats, true).toDate() : row[index];
+			row[index] = row[index] ? ಠ_ಠ.Dates.parse(row[index], _formats, true).toDate() : row[index];
 		}));
 		ಠ_ಠ.Flags.time("Checking for Dates in Sheet Values", true);
 

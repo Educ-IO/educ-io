@@ -45,7 +45,7 @@ imports:
     load: last
   - name: mousetrap
     load: last
-  - name: moment
+  - name: day
     load: last
   - name: filesaver
     load: last
@@ -74,6 +74,7 @@ modules:
   - recent
   - router
   - datatable
+  - dates
   - folders/folder
   - folders/team-drives
   - folders/groups

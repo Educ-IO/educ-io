@@ -10,7 +10,7 @@ Main = function() {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "App"];
+  var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "Dates", "App"];
   /* <!-- Internal Variables --> */
 
   /* <!-- Plumbing Functions --> */

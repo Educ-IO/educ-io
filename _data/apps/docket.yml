@@ -27,7 +27,7 @@ css:
 imports:
   - name: underscore
     load: first
-  - name: jquery
+  - name: jquery_slim
     load: first
   - name: popper
     load: first
@@ -85,6 +85,7 @@ modules:
   - items
   - recent
   - router
+  - dates
   - docket/tasks
 scripts: 
   - extends/regex

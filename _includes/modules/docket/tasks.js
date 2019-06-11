@@ -47,6 +47,7 @@ Tasks = ಠ_ಠ => {
           title: "From",
           type: "date",
           index: true,
+          hash: true,
         }
       },
       column_order: {
@@ -132,6 +133,7 @@ Tasks = ಠ_ಠ => {
   /* <!-- Internal Functions --> */
   var _hash = item => objectHash.sha1(_.reduce([META.column_type, META.column_order, META.column_status, META.column_tags, META.column_details], (value, col) => {
     if (item[col.value]) value[col.value] = item[col.value];
+    if (value[col.value] && value[col.value].toISOString) value[col.value] = value[col.value].toISOString();
     return value;
   }, {}));
 
@@ -141,8 +143,8 @@ Tasks = ಠ_ಠ => {
     var _due = item[META.column_details.value].match(EXTRACT_DATE);
 
     /* <!-- Set Due Date if available --> */
-    !(item[META.header_due.value] = _due && _due.length >= 1 ? moment(_due[0], ["DD/MM/YYYY", "D/M/YY", "DD-MM-YY", "DD-MM-YYYY", "DD-MMM-YY", "DD-MMM-YYYY", "YYYY-MM-DD"]) : "") ?
-    delete item._countdown: (item._countdown = item[META.header_due.value].diff(moment(), "days"));
+    !(item[META.header_due.value] = _due && _due.length >= 1 ? ಠ_ಠ.Dates.parse(_due[0], ["DD/MM/YYYY", "D/M/YY", "DD-MM-YY", "DD-MM-YYYY", "DD-MMM-YY", "DD-MMM-YYYY", "YYYY-MM-DD"]) : "") ?
+    delete item._countdown: (item._countdown = item[META.header_due.value].diff(ಠ_ಠ.Dates.now(), "days"));
 
     /* <!-- Extract Time from Details if found --> */
     var _all = item[META.column_details.value].match(EXTRACT_ALLDAY),
@@ -174,7 +176,7 @@ Tasks = ಠ_ಠ => {
       var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
       /* <!-- Parse Value if required --> */
       _row[column.developerMetadata.metadataValue] = _val ?
-        column.isDate ? moment(_val) :
+        column.isDate ? ಠ_ಠ.Dates.parse(_val) :
         column.isInteger ? parseInt(_val, 10) :
         _val : _val;
     });
@@ -183,9 +185,11 @@ Tasks = ಠ_ಠ => {
     _data.last = Math.max(_data.last !== undefined ? _data.last : 0, (_row.__ROW = index));
 
     /* <!-- Set on-the-fly Item Properties (TIME and BADGES, so we can query them) --> */
-    var __process = _process(
-      moment().startOf("day").subtract(ZOMBIE, "days"),
-      moment().startOf("day").subtract(GHOST, "days"));
+    var __reference = ಠ_ಠ.Dates.now().startOf("day"),
+      __process = _process(
+        __reference.clone().subtract(ZOMBIE, "days"),
+        __reference.subtract(GHOST, "days"));
+
     if (_row[META.column_details.value]) list.push(__process(_row));
 
     return list;
@@ -355,11 +359,11 @@ Tasks = ಠ_ಠ => {
     DB.removeCollection(NAMES.db);
     _db = null;
   };
-  
+
   var _open = id => {
 
     if (_db) _close();
-    
+
     $("nav a[data-link='sheet']").prop("href", `https://docs.google.com/spreadsheets/d/${id}/edit`);
     ಠ_ಠ.Flags.log(`Opening Data File: ${id}`);
 
@@ -532,7 +536,7 @@ Tasks = ಠ_ಠ => {
         "$ne": ""
       };
       _queryFuture[META.column_from.value] = {
-        "$gt": moment().startOf("day").toDate()
+        "$gt": ಠ_ಠ.Dates.now().startOf("day").toDate()
       };
       _queryDateFrom[META.column_from.value] = {
         "$lte": date.endOf("day").toDate()
@@ -595,7 +599,7 @@ Tasks = ಠ_ಠ => {
           "$ne": ""
         };
         _queryFuture[META.column_from.value] = {
-          "$gte": (from._isAMomentObject ? from.clone() : moment(from)).startOf("day").toDate()
+          "$gte": ಠ_ಠ.Dates.parse(from).startOf("day").toDate()
         };
         return {
           "$and": [_queryText, {
@@ -633,7 +637,7 @@ Tasks = ಠ_ಠ => {
 
   var _convertToArray = item => _.reduce(_data.columns.meta, (value, column) => {
     value[column.developerMetadata.location.dimensionRange.startIndex] =
-      column.isDate && item[column.developerMetadata.metadataValue] && item[column.developerMetadata.metadataValue]._isAMomentObject ?
+      column.isDate && item[column.developerMetadata.metadataValue] && item[column.developerMetadata.metadataValue].format ?
       item[column.developerMetadata.metadataValue].format("YYYY-MM-DD") :
       item[column.developerMetadata.metadataValue] ? item[column.developerMetadata.metadataValue] : "";
     return value;
@@ -857,9 +861,10 @@ Tasks = ಠ_ಠ => {
       delete: _delete,
 
       process: items => {
-        _.each(_.isArray(items) ? items : [items], _process(
-          moment().startOf("day").subtract(ZOMBIE, "days"),
-          moment().startOf("day").subtract(GHOST, "days")));
+        var _reference = ಠ_ಠ.Dates.now().startOf("day"),
+          _zombie = _reference.clone().subtract(ZOMBIE, "days"),
+          _ghost = _reference.subtract(GHOST, "days");
+        _.each(_.isArray(items) ? items : [items], _process(_zombie, _ghost));
         return Promise.resolve(items);
       },
 

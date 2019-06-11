@@ -356,8 +356,8 @@ Google_API = (options, factory) => {
     /* <!-- Build DATES portion of the query --> */
     var _formatDate = value => value ?
       _.isString(value) ? value :
-      _.isDate(value) ? value.toISOString() :
-      value._isAMomentObject ? value.toISOString() :
+      _.isDate(value) || _.isFunction(value.toISOString) ?
+      value.toISOString() :
       new Date().toISOString() :
       new Date().toISOString();
 
@@ -848,20 +848,20 @@ Google_API = (options, factory) => {
         }),
 
     },
-    
+
     classrooms: {
-      
+
       list: state => _list(
         NETWORKS.classroom.get, "/v1/courses", "courses", [], {
           courseStates: state || "ACTIVE",
           fields: "nextPageToken,courses(id,name,section,description,calendarId,teacherFolder)",
         }),
-      
-			work: classroom => {
+
+      work: classroom => {
 
         var _id = classroom && classroom.id ? classroom.id : classroom,
           _url = `v1/courses/${_id}/courseWork`;
-        
+
         return {
 
           list: state => _list(
@@ -875,7 +875,7 @@ Google_API = (options, factory) => {
 
       },
     },
-    
+
     teamDrives: {
 
       get: id => _call(NETWORKS.general.get, `drive/v3/teamdrives/${id}`, {
