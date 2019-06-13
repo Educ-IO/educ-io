@@ -10,7 +10,6 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
   /* <!-- Internal Consts --> */
   const LARGE_ROWS = 1000,
     FILTER_DELAY = 200,
-    FADE_DELAY = 200,
     defaults = {
       template: "rows",
       filters: {},
@@ -33,6 +32,15 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
       },
       process: false,
     };
+  const TRANSITION = (el, property) =>
+    new Promise(resolve => {
+      const transitionEnded = e => {
+        if (e.propertyName !== property) return;
+        el.removeEventListener("transitionend", transitionEnded);
+        resolve(el);
+      };
+      el.addEventListener("transitionend", transitionEnded);
+    });
   options = _.defaults(options, defaults);
   /* <!-- Internal Consts --> */
 
@@ -117,12 +125,12 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
   var _updateHeaders = (container, defaults, slight) => {
 
     var query = {
-      headers : ".table-header[data-index]",
-      filter_forms : ".filter-wrapper .form",
-      execute : query => (container ? container.find(query) : target.find(query)) 
+      headers: ".table-header[data-index]",
+      filter_forms: ".filter-wrapper .form",
+      execute: query => (container ? container.find(query) : target.find(query))
     };
     var _headers = query.execute(query.headers).sort((a, b) => parseInt(a.dataset.index) - parseInt(b.dataset.index)),
-        _filterForms = query.execute(query.filter_forms);
+      _filterForms = query.execute(query.filter_forms);
 
     var _style = _css.sheet("table-column-tohide");
 
@@ -146,7 +154,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
         /* <!-- Set Visibility --> */
         _t.toggleClass("d-none", table.headers[i].hide(defaults)).toggleClass("to-hide", !!table.headers[i].hide_initially);
-        
+
         /* <!-- Set Similar Style Rules for Rows --> */
         var _selector = "#" + _name + " tbody tr td:nth-child(" + table.headers.slice(0, _i).reduce((t, h) => h.hide() ? t : t + 1, 1) + ")";
         table.headers[_i].hide_initially ?
@@ -154,11 +162,11 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
           _css.removeRule(_style, _selector);
 
       }
-      
+
       /* <!-- Display Relevant Tickbox Togglers on Menu --> */
       var _filterForm = $(_filterForms[i]);
-      _.each(["now", "always", "initially"], 
-             prop => _filterForm.find(`.dropdown-item[data-action='${prop}'] i.toggler`)[table.headers[i][`hide_${prop}`] ? "removeClass" : "addClass"]("d-none"));
+      _.each(["now", "always", "initially"],
+        prop => _filterForm.find(`.dropdown-item[data-action='${prop}'] i.toggler`)[table.headers[i][`hide_${prop}`] ? "removeClass" : "addClass"]("d-none"));
 
       /* <!-- Set Sorts --> */
       _t.toggleClass("sort", !!_sorts[_f]).toggleClass("desc", !!(_sorts[_f] && _sorts[_f].is_desc)).toggleClass("asc", !!(_sorts[_f] && !_sorts[_f].is_desc));
@@ -216,13 +224,25 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     return true;
   };
 
+  var _toggleFilter = (t, force) => {
+    t = _.isFunction(t.hasClass) ? t : $(t);
+    var _return = force === true || (force !== false && t.hasClass("d-none")) ?
+      Promise.resolve(t.removeClass("d-none").find("input[type='text']:visible").first().focus()) :
+      TRANSITION(t[0], "opacity").then(el => {
+        $(el).addClass("d-none");
+      });
+    t.toggleClass("o-none", force === true ? false : force === false ? true : null);
+    return _return;
+  };
+
   var _clearFilter = t => {
     var _target = $(t);
     _target.parents("div.input-group").find("input[type='text']").val("");
-    _filters.remove(_target.data("field"));
-    /* <!-- TODO: Remove as JQuery slim does not support fading animation effects (move to CSS) --> */
-    _target.parents("div.form").fadeOut(FADE_DELAY);
-    _update(true, true, target, null, true);
+    _toggleFilter(_target.parents("div.form"), false)
+      .then(() => {
+        _filters.remove(_target.data("field"));
+        _update(true, true, target, null, true);
+      });
   };
 
   var _createRows = rows => ಠ_ಠ.Display.template.get(options.template)({
@@ -294,15 +314,13 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     /* <!-- Set Filter Handlers --> */
     var _filter_Timeout = 0;
     _table.find("input.table-search").off("keyup").on("keyup", e => {
-      var _target, keycode = ((typeof e.keyCode != "undefined" && e.keyCode) ? e.keyCode : e.which);
+      var keycode = ((typeof e.keyCode != "undefined" && e.keyCode) ? e.keyCode : e.which);
       if (keycode === 27) { /* <!-- Escape Key Pressed --> */
         e.preventDefault();
         _clearFilter(e.target);
       } else if (keycode === 13) { /* <!-- Enter Key Pressed --> */
         e.preventDefault();
-        _target = $(e.target);
-        /* <!-- TODO: Remove as JQuery slim does not support fading animation effects (move to CSS) --> */
-        _target.parents("div.form").fadeOut(FADE_DELAY);
+        _toggleFilter($(e.target).parents("div.form"), false);
       }
     }).off("input").on("input", e => {
       clearTimeout(_filter_Timeout);
@@ -330,6 +348,9 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
     /* <!-- Clear Column Filter --> */
     _table.find("button[data-command='clear']").on("click", e => _clearFilter(e.target));
+
+    /* <!-- Close Column Filter --> */
+    _table.find("button[data-command='close']").on("click", e => _toggleFilter($(e.target).parents("div.form"), false));
 
     /* <!-- Apply Table Sort --> */
     _table.find("a[data-command='sort'], button[data-command='sort']").on("click", e => {
@@ -376,22 +397,20 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
           };
         }
       }
-      
+
       /* <!-- Switch On/Off Togglers --> */
       var _toggler = _target.find("i.toggler"),
-          _on = _toggler.hasClass("d-none");
+        _on = _toggler.hasClass("d-none");
       _target.closest(".dropdown-menu").find("i.toggler").addClass("d-none");
       if (_on) _target.find("i.toggler").removeClass("d-none");
-      /* <!-- TODO: Remove as JQuery slim does not support fading animation effects (move to CSS) --> */
-      _target.tooltip("hide").parents("div.form").fadeOut(FADE_DELAY);
+      _toggleFilter(_target.tooltip("hide").parents("div.form"), false);
       _update(true, true, target);
       if (_complete) _complete();
     });
 
     target.find(".table-header a").on("click", e => {
       e.preventDefault();
-      /* <!-- TODO: Remove as JQuery slim does not support fading animation effects (move to CSS) --> */
-      $($(e.target).data("targets")).fadeToggle(FADE_DELAY).promise().done(el => $(el).find("input[type='text']:visible").first().focus());
+      _toggleFilter($(e.target).data("targets"));
     });
 
     /* <!-- Set up Table --> */

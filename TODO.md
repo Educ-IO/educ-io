@@ -2,9 +2,6 @@ TODO LIST
 =========
 General
 -------
-* ** PERFORMANCE ** Remove fadeToggle / fadeOut code from datatable.js and filters.html (template) - replace with CSS opacity animations or bootstrap collapse (then move all apps to JQUERY slim)
-
-
 * Can we put Liquid / Jekyll tags into templates and pre-process them? Maybe better to pull variables into centralised object passed to template....
 
 * ** IMPORTANT ** Headless Tests -> Write new permission request handing!!!
@@ -130,6 +127,7 @@ Folders
 
 Reflect
 -------
+* ** BUG ** Check for enter / submit handlers of Reflect forms
 
 * ** FEATURE ** Complete Email from Signer for pre-shared reports
 
@@ -160,6 +158,7 @@ Survey
 
 Complete
 --------
+* ** PERFORMANCE ** Remove fadeToggle / fadeOut code from datatable.js and filters.html (template) - replace with CSS opacity animations or bootstrap collapse (then move all apps to JQUERY slim) <-- DONE
 * ** BUGS ** Check saved analysis opens properly from Google Drive, and that create analysis DayJs error has gone! <-- DONE
 * ** FEATURE ** Move item to different day by drag <-- DONE
 	ITEM Hash function has to include reference to FROM (otherwise it won't know to save) <-- DONE
@@ -704,4 +703,4 @@ Complete
 * Move Docs to Compiled Page to Improve Speed / Caching
 * Move Loader to Template / CSS
 
-ᕕ( ᐛ )ᕗ JD - 2019-03-29
+ᕕ( ᐛ )ᕗ JD - 2019-06-12

@@ -27,7 +27,7 @@ css:
 imports:
   - name: underscore
     load: first
-  - name: jquery
+  - name: jquery_slim
     load: first
   - name: popper
     load: first

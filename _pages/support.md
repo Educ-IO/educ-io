@@ -10,7 +10,7 @@ modules:
   - page
   - support
 imports:
-- name: jquery
+- name: jquery_slim
   load: first
 - name: popper
   load: first

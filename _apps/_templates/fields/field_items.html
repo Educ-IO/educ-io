@@ -30,7 +30,7 @@
 {{!-- ======================================================= --}}
 
 {{#if description}}<!-- {{description}} -->{{/if}}
-<div class="input-group{{#if large}} input-group-lg{{/if}} evidence">
+<div class="input-group{{#if large}} input-group-lg{{/if}} evidence d-flex-inline">
   {{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
   <textarea id="{{id}}_DETAILS" 
             class="form-control{{#if large}} form-control-lg{{/if}} resizable optional"
@@ -40,7 +40,7 @@
             {{#if readonly}} readonly="readonly"{{/if}}></textarea>
   <div class="input-group-append">
     {{> control_button b_id=(concat id "_TYPE")
-    		b_class="btn-dark complex-list-type dropdown-toggle" b_default=type
+    		b_class="btn-dark complex-list-type dropdown-toggle h-100" b_default=type
     		b_text=type b_toggle="dropdown" disabled=readonly }}
     <div class="dropdown-menu dropdown-menu-right">
       {{#each options}}

@@ -249,7 +249,7 @@ App = function() {
           _.map(value.Email.Values, _map) : _map(value.Email.Values);
         return value;
       })
-      .catch(e => e ? ಠ_ಠ.Flags.error("Send Error", e) : ಠ_ಠ.Flags.log("Send Cancelled")),
+      .catch(e => (e ? ಠ_ಠ.Flags.error("Send Error", e) : ಠ_ಠ.Flags.log("Send Cancelled")).negative()),
 
     dirty: report => !ರ‿ರ.hash ||
       ರ‿ರ.hash !== new Hashes.MD5().hex(FN.helper.stringify(report, SIGNING_REPLACER)),
@@ -281,15 +281,22 @@ App = function() {
       }, ಠ_ಠ);
 
       _form.first(_shown);
+      
+      /* <!-- Handle Default Form Submission (Keyboard) etc. | Maybe doesn't get triggered? --> */
+      _shown.find("form").submit(actions && actions.editable ? e => {
+        e.preventDefault();
+        FN.action.save.report().then(result => result ? FN.process.signatures() : false);
+      } : e => e.preventDefault());
 
       if (process) process(_shown);
-
+      
       /* <!-- Smooth Scroll Anchors --> */
       if (ಠ_ಠ.Scroll) ಠ_ಠ.Scroll({
         class: "smooth-scroll"
       }).start();
 
       return _form.last(_shown);
+      
     },
 
     form: value => {
@@ -321,8 +328,7 @@ App = function() {
             JSON.parse(value);
             if (value) return true;
           } catch (e) {
-            ಠ_ಠ.Flags.error("JSON Parsing", e);
-            return false;
+            return ಠ_ಠ.Flags.error("JSON Parsing", e).negative();
           }
         },
         state: {
@@ -413,13 +419,13 @@ App = function() {
     form: name => FN.create.generic(FN.edit.form, name ?
         ಱ.forms.get(name).template : "", TYPE_FORM)
       .then(FN.helper.notify.save("NOTIFY_SAVE_FORM_SUCCESS"))
-      .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Form Create Prompt", e) : false),
+      .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Form Create Prompt", e).negative() : false),
 
     scale: name => FN.create.generic(FN.edit.scale, name ?
         ಱ.forms.scale(name) : "", TYPE_SCALE)
       .then(value => value ?
         ಠ_ಠ.Display.state().enter(STATE_SCALE_OPENED).protect("a.jump").on("JUMP") : null)
-      .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Scale Create Prompt", e) : false),
+      .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Scale Create Prompt", e).negative() : false),
 
     tracker: name => name,
     /* <!-- TODO: Tracker Creation --> */
@@ -430,7 +436,6 @@ App = function() {
   /* <!-- Prompt Functions --> */
   FN.prompt = {
 
-    /* <!-- TODO: Prompt for Filter Dates --> */
     dates: () => ಠ_ಠ.Display.modal("dates", {
       id: "dates",
       instructions: ಠ_ಠ.Display.doc.get("ANALYSE_DATES"),
@@ -565,8 +570,8 @@ App = function() {
           ಠ_ಠ.Router.clean(false); /* <!-- Clear any existing file/state --> */
           return FN.create[result.action.command](result.option.value);
         })() : null;
-    }).catch(e => e ? ಠ_ಠ.Flags.error("Create Select Prompt", e) :
-      ಠ_ಠ.Flags.log("Create Prompt Cancelled")),
+    }).catch(e => (e ? ಠ_ಠ.Flags.error("Create Select Prompt", e) :
+      ಠ_ಠ.Flags.log("Create Prompt Cancelled")).negative()),
 
     scales: () => ({
       name: "Scale",
@@ -614,7 +619,7 @@ App = function() {
     signatures: () => {
 
       var _data = FN.action.dehydrate().data,
-        _target = $(ರ‿ರ.form).find(".signatures").empty(),
+        _target = ರ‿ರ.form.find(".signatures").empty(),
         _none = () => {
 
           _target.html(ಠ_ಠ.Display.doc.get("NO_SIGNATURES"));
@@ -623,7 +628,7 @@ App = function() {
         },
         _display = signatures => {
 
-          ರ‿ರ.form.signatures = signatures.length;
+          ರ‿ರ.signatures = signatures.length;
           ಠ_ಠ.Display.template.show({
             template: "count",
             name: "Signatures",
@@ -890,7 +895,7 @@ App = function() {
             type == "xlsx" ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :
             type == "md" ? "text/markdown" :
             type == "csv" ? "text/csv" : "application/octet-stream")))
-        .catch(e => ಠ_ಠ.Flags.error("Exporting", e))
+        .catch(e => ಠ_ಠ.Flags.error("Exporting", e).negative())
         .then(ಠ_ಠ.Main.busy("Exporting")),
 
       report: () => {
@@ -932,7 +937,7 @@ App = function() {
           .then(FN.helper.notify.save("NOTIFY_SAVE_FORM_SUCCESS"))),
 
       report: (force, dehydrated) => FN.action.get(dehydrated, true)
-        .then(saving => (!ರ‿ರ.form.signatures || !FN.helper.dirty(saving.data.report) ?
+        .then(saving => (!ರ‿ರ.signatures || !FN.helper.dirty(saving.data.report) ?
             Promise.resolve(true) : ಠ_ಠ.Display.confirm({
               id: "confirm_Save",
               target: ಠ_ಠ.container,
@@ -1191,7 +1196,7 @@ App = function() {
             }),
             success: value => FN.action.load(value.result)
               .then(() => FN.action.recent(value.result, true))
-              .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e))
+              .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e).negative())
               .then(ಠ_ಠ.Main.busy("Opening Report")),
           },
 
@@ -1211,7 +1216,7 @@ App = function() {
 
           load: {
             success: value => FN.action.load(value.result)
-              .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e))
+              .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e).negative())
               .then(ಠ_ಠ.Main.busy("Loading")),
           },
 
@@ -1344,7 +1349,7 @@ App = function() {
                     }])
                     .then(() => ಠ_ಠ.Display.state()
                       .enter([STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL, STATE_ANALYSIS_ANY]))
-                    .catch(e => ಠ_ಠ.Flags.error(`Analysing Form: ${_form.id}`, e))
+                    .catch(e => ಠ_ಠ.Flags.error(`Analysing Form: ${_form.id}`, e).negative())
                     .then(ಠ_ಠ.Main.busy("Finding Reports")) : false;
                 },
               },

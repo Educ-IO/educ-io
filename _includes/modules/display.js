@@ -826,10 +826,15 @@ Display = function() {
 
         /* <!-- Get / Set the Existing Scroll (if required) --> */
         var _result = false,
-          _complete = options.scroll ?
-          (top => result => $("html, body").animate({
-            scrollTop: top
-          }, 100, "swing", () => resolve(result)))(_top()) :
+          _complete = options.scroll && Element.prototype.scrollIntoView ?
+          (element => result => {
+            element.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+              inline: "nearest"
+            });
+            return resolve(result);
+          })(document.scrollingElement || document.documentElement) :
           result => resolve(result);
 
         /* <!-- Set Event Handlers (if required) --> */
@@ -840,16 +845,10 @@ Display = function() {
         dialog.alert();
 
         /* <!-- Scroll to the alert (if required) --> */
-        if (options.scroll) {
-          Element.prototype.scrollIntoView ?
-            dialog[0].scrollIntoView({
-              block: "start",
-              inline: "nearest"
-            }) :
-            $("html, body").animate({
-              scrollTop: dialog.offset().top
-            }, 100);
-        }
+        if (options.scroll && Element.prototype.scrollIntoView) dialog[0].scrollIntoView({
+          block: "start",
+          inline: "nearest"
+        });
 
       });
 

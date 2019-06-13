@@ -1,7 +1,7 @@
 {% raw %}
 <div class="filter-wrapper">
   {{#each headers}}
-  <div id="collapse_{{../id}}_{{@index}}" class="form form-tabbed container-fluid pt-2 pb-1 px-2 column-settings data-identifier" aria-labelledby="heading_{{../id}}_{{@index}}" style="display: none;" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}">
+  <div id="collapse_{{../id}}_{{@index}}" class="form form-tabbed container-fluid pt-2 pb-1 px-2 column-settings data-identifier transition-opacity o-none d-none" aria-labelledby="heading_{{../id}}_{{@index}}" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}">
     <div class="input-group no-gutters d-flex d-md-none">
       <span class="input-group-prepend"><button type="button" class="btn btn-secondary mb-0" data-command="clear" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" title="Clear this filter">&times;</button></span>
       <input data-field="{{@index}}" data-action="filter" type="text" class="form-control table-search" placeholder="Filter {{#if name}}{{name}}{{else}}{{this}}{{/if}} ...">
@@ -14,7 +14,7 @@
           {{#each ../choices}}{{#if this}}{{#if menu}}<a class="dropdown-item" href="#" data-command="hide" data-action="{{@key}}" data-toggle="tooltip" title="{{desc}}"><i class="material-icons md-24 float-right toggler d-none">check_box</i>{{name}}</a>{{/if}}{{/if}}{{/each}}
         </div>
       </div>
-        <button type="button" class="close ml-2" aria-label="Close" onclick="event.preventDefault(); $('#collapse_{{../id}}_{{@index}}').fadeOut();" data-toggle="tooltip" title="Close this panel but retain the filter"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close ml-2" aria-label="Close" data-command="close" data-toggle="tooltip" title="Close this panel but retain the filter"><span aria-hidden="true">&times;</span></button>
     </div>
     <div class="input-group col-md-12 col-lg-8 col-xl-6 p-0 no-gutters d-none d-md-flex">
       <span class="input-group-prepend">
@@ -29,7 +29,7 @@
           {{#each ../choices}}{{#if this}}{{#if menu}}<a class="dropdown-item" href="#" data-command="hide" data-action="{{@key}}" data-toggle="tooltip" title="{{desc}}"><i class="material-icons md-24 float-right toggler d-none">check_box</i>{{name}}</a>{{/if}}{{/if}}{{/each}}
         </div>
       </div>
-      <button type="button" class="close ml-2" aria-label="Close" onclick="event.preventDefault(); $('#collapse_{{../id}}_{{@index}}').fadeOut();" data-toggle="tooltip" title="Close this panel but retain the filter"><span aria-hidden="true">&times;</span></button>
+      <button type="button" class="close ml-2" aria-label="Close" data-command="close" data-toggle="tooltip" title="Close this panel but retain the filter"><span aria-hidden="true">&times;</span></button>
     </div>
   </div>{{/each}}
 </div>

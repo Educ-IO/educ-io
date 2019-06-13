@@ -97,6 +97,22 @@ a.app-logo svg {
 }
 // -- Outline Letter Logo -- //
 
+// -- Opacity -- //
+.transition-opacity {
+  will-change: opacity;
+  transition-property: opacity;
+  transition-duration: 0.2s;
+}
+
+.o-none {
+  opacity: 0 !important;
+}
+
+.o-full {
+  opacity: 1;
+}
+// -- Opacity -- //
+
 // -- Tables -- //
 .table.thead-dark thead th {
   color: $colour-background;

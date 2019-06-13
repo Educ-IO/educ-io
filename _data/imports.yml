@@ -1656,3 +1656,46 @@ day:
       crossorigin: anonymous
       bulk: 1.1
       id: __day_en-gb
+
+velocity:
+  name: Velocity
+  desc: Accelerated JavaScript animation.
+  url: https://cdnjs.com/libraries/velocity
+  project: https://github.com/julianshapiro/velocity
+  version: 2.0.5
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/velocity/2.0.5/velocity.min.js
+      integrity: sha256-NtPQd/Jy7Ze2E72YS8WJDGMu6xFYomLYibE0hpyLTjs=
+      crossorigin: anonymous
+      bulk: 47
+      id: __velocity
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/velocity/2.0.5/velocity.js
+      integrity: sha256-iI70D0FC20WDLwBr+1c26/6BtQFIvqqybzHBqwGiDSA=
+      crossorigin: anonymous
+      bulk: 187
+      id: __velocity
+
+      
+transit:
+  name: JQuery Transit
+  desc: Smooth CSS3 transitions and transformations for jQuery.
+  url: https://cdnjs.com/libraries/jquery.transit
+  project: https://github.com/rstacruz/jquery.transit/
+  version: 0.9.12
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery.transit/0.9.12/jquery.transit.min.js
+      integrity: sha256-rqEXy4JTnKZom8mLVQpvni3QHbynfjPmPxQVsPZgmJY=
+      crossorigin: anonymous
+      bulk: 7.3
+      id: __transit
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery.transit/0.9.12/jquery.transit.js
+      integrity: sha256-mkdmXjMvBcpAyyFNCVdbwg4v+ycJho65QLDwVE3ViDs=
+      crossorigin: anonymous
+      bulk: 21.8
+      id: __transit

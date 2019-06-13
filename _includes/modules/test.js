@@ -429,6 +429,29 @@ Page = function() {
       },
     },
     {
+      name: "CSS3 Transitions and Transition End",
+      desc: "Support for CSS Tranisitions and triggering the Transition End Event",
+      url: "https://caniuse.com/#feat=css-transitions",
+      required: true,
+      test: function() {
+        return document.createElement("div").style.transition !== undefined;
+      },
+      success: {
+        icon: "check",
+        class: "text-success",
+        message: ""
+      },
+      failure: {
+        icon: "priority_high",
+        class: "text-warning",
+        message: "Unfortunately, your browser doesn't support modern, standards-based, transitions."
+      },
+      type: {
+        name: "operation",
+        class: "badge-primary"
+      },
+    },
+    {
       name: "WebCrypto API Encryption - AES-GCM Algorithm",
       desc: "Checks Browser-based Cryptography Encryption Algorithm",
       required: false,
