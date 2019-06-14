@@ -57,7 +57,7 @@
 
               <!-- Save Button Group -->
               {{#unless completed}}{{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
-              <button type="submit" id="{{id}}_SAVE" data-route="save.report" href="#" class="btn btn-info btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">save</i>Save</button>
+              <button type="submit" id="{{id}}_SAVE" data-route="save.report" href="#" class="btn btn-info btn-lg d-flex"{{#if actions}}{{#if actions.save}} data-toggle="tooltip" data-tigger="hover focus" data-html="true" data-placement="top" title="{{ actions.save }}"{{/if}}{{/if}}><i class="mr-2 material-icons md-light md-24 align-self-center">save</i>Save</button>
               <button type="button" class="btn btn-info btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="sr-only">Toggle Dropdown</span>
               </button>
@@ -70,7 +70,7 @@
 
               <!-- Sign Button Group -->
               {{#if signable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
-              <a id="{{id}}_SIGN" data-route="sign.report" href="#" role="button" class="btn btn-action-dark btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">vpn_key</i>Sign</a>
+              <a id="{{id}}_SIGN" data-route="sign.report" href="#" role="button" class="btn btn-action-dark btn-lg d-flex"{{#if actions}}{{#if actions.sign}} data-toggle="tooltip" data-tigger="hover focus" data-html="true" data-placement="top" title="{{ actions.sign }}"{{/if}}{{/if}}><i class="mr-2 material-icons md-light md-24 align-self-center">vpn_key</i>Sign</a>
               <button type="button" class="btn btn-action-dark btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="sr-only">Toggle Dropdown</span>
               </button>
@@ -83,7 +83,7 @@
 
               <!-- Send Button Group -->
               {{#unless completed}}{{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
-                <a id="{{id}}_SEND" data-route="send.report" href="#" role="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">send</i>Send</a>
+                <a id="{{id}}_SEND" data-route="send.report" href="#" role="button" class="btn btn-primary btn-lg d-flex"{{#if actions}}{{#if actions.send}} data-toggle="tooltip" data-tigger="hover focus" data-html="true" data-placement="top" title="{{ actions.send }}"{{/if}}{{/if}}><i class="mr-2 material-icons md-light md-24 align-self-center">send</i>Send</a>
                 <button type="button" class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
@@ -96,7 +96,7 @@
 
               <!-- Complete Button Group -->
               {{#unless completed}}{{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
-                <button id="{{id}}_COMPLETE" data-route="complete.report" href="#" class="btn btn-success btn-lg d-flex"><i class="mr-4 material-icons md-light md-24 align-self-center">cloud_done</i>Complete</button>
+                <button id="{{id}}_COMPLETE" data-route="complete.report" href="#" class="btn btn-success btn-lg d-flex"{{#if actions}}{{#if actions.complete}} data-toggle="tooltip" data-tigger="hover focus" data-html="true" data-placement="top" title="{{ actions.complete }}"{{/if}}{{/if}}><i class="mr-4 material-icons md-light md-24 align-self-center">cloud_done</i>Complete</button>
                 <button type="button" class="btn btn-success btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>

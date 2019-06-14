@@ -108,7 +108,9 @@ Forms = function(loaded) {
 
       }
 
-      return {
+      ಠ_ಠ.Flags.log("Generating Form from Template", template);
+      
+      var _return = {
         template: "form",
         id: id,
         name: template.name,
@@ -123,7 +125,12 @@ Forms = function(loaded) {
         signable: signable,
         completed: completed,
         preview: preview,
+        actions: MARKDOWN(template.actions || {}),
       };
+      
+      ಠ_ಠ.Flags.log("Generated Form", _return);
+      
+      return _return;
 
     }
 

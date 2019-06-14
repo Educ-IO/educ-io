@@ -113,6 +113,14 @@ a.app-logo svg {
 }
 // -- Opacity -- //
 
+// -- Popovers -- //
+div.tooltip {
+  p {
+    margin: 0;
+  }
+}
+// -- Popovers -- //
+
 // -- Tables -- //
 .table.thead-dark thead th {
   color: $colour-background;
