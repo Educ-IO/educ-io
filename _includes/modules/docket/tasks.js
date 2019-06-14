@@ -131,7 +131,8 @@ Tasks = ಠ_ಠ => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _hash = item => objectHash.sha1(_.reduce([META.column_type, META.column_order, META.column_status, META.column_tags, META.column_details], (value, col) => {
+  var _hash = item => objectHash.sha1(_.reduce(
+    [META.column_type, META.column_order, META.column_status, META.column_from, META.column_tags, META.column_details], (value, col) => {
     if (item[col.value]) value[col.value] = item[col.value];
     if (value[col.value] && value[col.value].toISOString) value[col.value] = value[col.value].toISOString();
     return value;

@@ -611,12 +611,22 @@ App = function() {
         $(this).removeClass("bg-bright").dequeue();
       });
 
-      var _list = [];
+      var _list = [],
+        _check = item => {
+          var __hash = ರ‿ರ.tasks.hash(item);
+          ಠ_ಠ.Flags.log(`Checking E:${item.__hash} and N:${__hash}`, item);
+          if (item.__hash != __hash) _list.push(item);
+        };
+
+      /* <!-- A timed item won't be droppable, so check on it's own --> */
+      if (decoded.item._timed) _check(decoded.item);
+
+      /* <!-- Check droppable elements for ordering --> */
       _.each(decoded.source.parent().children(selectors.item), (el, i) => {
         var _el = $(el),
           _item = ರ‿ರ.db.get(_el.data("id"));
         _el.data("order", _item.ORDER = i + 1);
-        if (_item.__hash != ರ‿ರ.tasks.hash(_item)) _list.push(_item);
+        _check(_item);
       });
 
       /* <!-- Save List --> */
@@ -686,31 +696,36 @@ App = function() {
                 source: ಠ_ಠ.Dates.parse(decode.group.source.data("date")),
                 destination: ಠ_ಠ.Dates.parse(decode.group.destination.data("date"))
               };
+              ಠ_ಠ.Flags.log("DRAG DESTINATION DATE:", decode.date);
 
-              if (!decode.item._complete &&
-                (decode.date.destination.isAfter(decode.date.source) || decode.date.destination.isSame(ಠ_ಠ.Dates.now().startOf("day")))) {
-
-                /* <!-- Moving an incomplete item to today or future --> */
-                decode.item.FROM = decode.date.destination;
-                FN.drag.insert(e, decode, selectors);
-
-              } else if (decode.item._timed) {
+              if (decode.item._timed) {
 
                 /* <!-- Moving a timed item forwards/backwards --> */
                 decode.item.FROM = decode.date.destination;
                 if (decode.item._complete && decode.item.DONE.clone().startOf("day").isAfter(decode.date.destination))
                   decode.item.DONE = decode.date.destination;
+
+                ಠ_ಠ.Flags.log("TIMED ITEM DRAGGED:", decode.item);
+                FN.drag.insert(e, decode, selectors);
+
+              } else if (!decode.item._complete && decode.date.destination.isSameOrAfter(ಠ_ಠ.Dates.now().startOf("day"))) {
+
+                /* <!-- Moving an incomplete item to today or future --> */
+                decode.item.FROM = decode.date.destination;
+
+                ಠ_ಠ.Flags.log("INCOMPLETE ITEM DRAGGED TO PRESENT/FUTURE:", decode.item);
                 FN.drag.insert(e, decode, selectors);
 
               }
 
-            } else if (!decode.item._timed && !decode.item.complete &&
-              decode.source[0] != decode.destination[0]) {
+            } else if (decode.source[0] != decode.destination[0]) {
 
-              /* <!-- Same Group / Day --> */
+              /* <!-- Not Dropped on itself --> */
+              ಠ_ಠ.Flags.log("RE-ORDERING ITEM", decode.item);
               FN.drag.insert(e, decode, selectors);
 
             }
+
 
           }
         });
