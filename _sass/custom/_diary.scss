@@ -48,6 +48,13 @@
 }
 
 #diary, #diary_list {
+  div.group {
+  	div.small {
+      div.item {
+        span > i, a > i {margin-top: 0.1rem !important;}
+      }
+    }  
+  }
 	div.item {
     will-change: padding-top, background-color;
     @include transition(padding-top 0.2s ease, background-color 0.6s linear);

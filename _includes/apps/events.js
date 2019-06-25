@@ -545,6 +545,8 @@ App = function() {
             fn: command => _load_Properties(_decodeValue(command[2]), _decodeValue(command[0]), _decodeValue(command[1])),
           },
           search: {
+            matches: /SEARCH/i,
+            length: 0,
             state: STATE_MONTH,
             keys: ["s", "S", "f", "F"],
             fn: () => _search(_id)

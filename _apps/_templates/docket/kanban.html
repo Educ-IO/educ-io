@@ -1,0 +1,12 @@
+{% raw %}
+<div {{#if id}}id="{{id}}" {{/if}}class="border-exagerate container-fluid pt-lg-2 px-1 px-sm-2 px-lg-3 nvh-100">
+  <div class="row m-0 pt-2">
+    {{#each status}}
+  	<div class="py-2{{#if ../sizes}} {{#each ../sizes}}{{#is @index "!=" 0}} {{/is}}col-{{#is @key '!=' 'xs'}}{{@key}}-{{/is}}{{this}}{{/each}}{{/if}}">
+      {{this}}
+    </div>
+    {{/each}}
+  </div>
+</div>
+{{#if action}}{{> action id=id action=action}}{{/if}}
+{% endraw %}

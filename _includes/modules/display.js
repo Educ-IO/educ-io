@@ -94,6 +94,24 @@ Display = function() {
     return _element;
 
   };
+  
+  var _modal = () => {
+    var _modals = $(".modal.show[role='dialog']");
+    if (_modals.length > 0) {
+      _modals.addClass("d-none");
+      $("div.modal-backdrop.show").addClass("d-none");
+      $("body").removeClass("modal-open");
+      return fn => {
+        $(".modal.d-none[role='dialog'], div.modal-backdrop.d-none").removeClass("d-none");
+        $("body").addClass("modal-open");
+        if (fn) fn();
+      };
+    } else {
+      return fn => {
+        if (fn) fn();
+      };
+    }
+  };
 
   var _compile = (name, raw) => {
 
@@ -107,7 +125,7 @@ Display = function() {
         });
 
         /* <!-- Look for partial templates to register/compile too --> */
-        var partial_names, partial_regex = /\s?{#?>\s?([a-zA-Z]{1}[^\r\n\t\f }]+)/gi;
+        var partial_names, partial_regex = /\s?{~?#?>\s?([a-zA-Z]{1}[^\r\n\t\f }]+)/gi;
         while ((partial_names = partial_regex.exec(html)) !== null) {
           if (partial_names && partial_names[1]) {
             if (Handlebars.templates[partial_names[1]] === undefined) {
@@ -157,7 +175,8 @@ Display = function() {
     return value;
   };
 
-  var _clean = () => $(".modal-backdrop").remove() && $(".modal-open").removeClass("modal-open"); /* <!-- Weird Modal Not Hiding Bug --> */
+  var _clean = () => $("div.modal-backdrop.show").last().remove() && 
+      $("body.modal-open").removeClass("modal-open"); /* <!-- Weird Modal Not Hiding Bug --> */
 
   var _toggle = (state, toggle, container) => {
     var _$ = (container ? container.find : $);
@@ -325,6 +344,17 @@ Display = function() {
               (typeof variable === "object" && variable.constructor === Array) ||
               (typeof variable === "string" || variable instanceof String)
             ) && variable.indexOf(contains) >= 0) {
+            return options.fn ? options.fn(this) : true;
+          } else {
+            return options.inverse ? options.inverse(this) : false;
+          }
+        });
+        
+        Handlebars.registerHelper("startsWith", function(variable, contains, options) {
+          if (variable && (
+              (typeof variable === "object" && variable.constructor === Array) ||
+              (typeof variable === "string" || variable instanceof String)
+            ) && variable.indexOf(contains) === 0) {
             return options.fn ? options.fn(this) : true;
           } else {
             return options.inverse ? options.inverse(this) : false;
@@ -686,12 +716,13 @@ Display = function() {
         if (!options) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("confirm")(options));
+        var dialog = $(_template("confirm")(options)),
+            finish = _modal();
         _target(options).append(dialog);
 
         /* <!-- Set Event Handlers --> */
         dialog.find(".modal-footer button.btn-primary").click(() => _clean() && resolve(true));
-        dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
+        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(reject));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
@@ -712,14 +743,15 @@ Display = function() {
         if (!options) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("inform")(options));
+        var dialog = $(_template("inform")(options)),
+            finish = _modal();
         _target(options).append(dialog);
 
         /* <!-- Set Shown Event Handler (if present) --> */
         if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
 
         /* <!-- Set Basic Event Handlers --> */
-        dialog.on("hidden.bs.modal", () => dialog.remove() && resolve());
+        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(resolve));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
@@ -739,8 +771,8 @@ Display = function() {
 
         if (!options) return reject();
 
-        /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template(template)(options));
+        var dialog = $(_template(template)(options)),
+            finish = _modal();
         _target(options).append(dialog);
 
         if (dialog.find("form").length > 0) {
@@ -776,6 +808,14 @@ Display = function() {
                 e.stopPropagation();
               }
             });
+            
+            /* <!-- Handle Enter Key (if simple) --> */
+            if (options.enter) dialog.keypress(e => {
+              if (e.which == 13) {
+                e.preventDefault();
+                dialog.find(".modal-footer button.btn-primary").click();
+              }
+            });
 
           }
 
@@ -785,16 +825,17 @@ Display = function() {
         }
 
         /* <!-- Modal Dismissing Clicks --> */
-        dialog.find("btn[data-click='dismiss-modal'], a[data-click='dismiss-modal']").on("click.dismiss", () => {
-          _clean();
-          dialog.modal("hide");
-        });
+        dialog.find("btn[data-click='dismiss-modal'], a[data-click='dismiss-modal']").on("click.dismiss",
+          () => {
+            _clean();
+            dialog.modal("hide");
+          });
 
         /* <!-- Set Shown Event Handler (if present) --> */
         if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
 
         /* <!-- Set Basic Event Handlers --> */
-        dialog.on("hidden.bs.modal", () => dialog.remove() && resolve());
+        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(resolve));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal({
@@ -874,7 +915,8 @@ Display = function() {
         options.__LONG = (_length > MAX_ITEMS);
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("choose")(options));
+        var dialog = $(_template("choose")(options)),
+            finish = _modal();
         _target(options).append(dialog);
 
         /* <!-- Parsing Method --> */
@@ -919,8 +961,8 @@ Display = function() {
         });
 
         dialog.on("hidden.bs.modal",
-          () => dialog.remove() && (_.isEmpty(parsed) ? reject() : resolve(parsed)));
-
+                  () => dialog.remove() && finish(() => _.isEmpty(parsed) ? reject() : resolve(parsed)));
+           
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
 
@@ -945,7 +987,8 @@ Display = function() {
         if (!options || !options.list || !options.choices) return reject();
 
         /* <!-- Great Modal Options Dialog --> */
-        var dialog = $(_template("options")(options));
+        var dialog = $(_template("options")(options)),
+            finish = _modal();
         _target(options).append(dialog);
         dialog.find("a.dropdown-item").on("click.toggler", (e) => $(e.target).closest(".input-group-append, .input-group-prepend").children("button")[0].innerText = e.target.innerText);
         dialog.find("a[data-toggle='tooltip']").tooltip({
@@ -967,7 +1010,7 @@ Display = function() {
           resolve(_return);
         });
         dialog.on("shown.bs.modal", () => {});
-        dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
+        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(reject));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
@@ -994,7 +1037,8 @@ Display = function() {
         if (!options || (!options.simple && !options.message)) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("text")(options));
+        var dialog = $(_template("text")(options)),
+            finish = _modal();
         _target(options).append(dialog);
 
         /* <!-- Set Event Handlers --> */
@@ -1034,8 +1078,9 @@ Display = function() {
 
         /* <!-- Handle Clicked Submit --> */
         dialog.find(".modal-footer button.btn-primary").click(_submit);
-        dialog.on("hidden.bs.modal", () => dialog.remove() && (_submitted ? _submit() : reject()));
-
+        dialog.on("hidden.bs.modal", 
+                  () => dialog.remove() && finish(() => _submitted ? _submit() : reject()));
+        
         /* <!-- Show the Modal Dialog --> */
         dialog.on("shown.bs.modal", () => dialog.find("textarea[name='value'], input[type='text'][name='value'], input[type='password'][name='value']").focus());
         dialog.modal("show");
@@ -1060,7 +1105,8 @@ Display = function() {
 
         /* <!-- Great Modal Choice Dialog --> */
         var files = [],
-          dialog = $(_template("upload")(options));
+            dialog = $(_template("upload")(options)),
+            finish = _modal();
         _target(options).append(dialog);
 
         /* <!-- Handle Files Population --> */
@@ -1085,7 +1131,7 @@ Display = function() {
           _clean();
           if (files && files.length > 0) resolve(options.single ? files[0] : files);
         });
-        dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
+        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(reject));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
@@ -1116,7 +1162,8 @@ Display = function() {
         options.__LONG = (_length > MAX_ITEMS);
 
         /* <!-- Great Modal Options Dialog --> */
-        var dialog = $(_template("action")(options));
+        var dialog = $(_template("action")(options)),
+            finish = _modal();
         _target(options).append(dialog);
         dialog.find("a[data-toggle='tooltip']").tooltip({
           animation: false,
@@ -1140,7 +1187,7 @@ Display = function() {
 
         });
         dialog.on("shown.bs.modal", () => {});
-        dialog.on("hidden.bs.modal", () => dialog.remove() && reject());
+        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(reject));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");

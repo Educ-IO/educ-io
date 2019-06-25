@@ -350,7 +350,7 @@ Google_API = (options, factory) => {
 
     /* <!-- Build OWNER portion of the query --> */
     var _o = owner !== null && owner !== undefined ?
-      `and${owner === false ? " not" : ""} ('${_.isString(owner) ? owner : "me"}' in owners)` :
+      ` and${owner === false ? " not" : ""} ('${_.isString(owner) ? owner : "me"}' in owners)` :
       "";
 
     /* <!-- Build DATES portion of the query --> */
@@ -362,7 +362,7 @@ Google_API = (options, factory) => {
       new Date().toISOString();
 
     var _d = dates !== null && dates !== undefined ?
-      `and (${dates.from ? `modifiedTime >= '${_formatDate(dates.from)}'` : ""}${dates.from && dates.to ? " and " : ""}${dates.to ? `modifiedTime <= '${_formatDate(dates.to)}'` : ""})` : "";
+      ` and (${dates.from ? `modifiedTime >= '${_formatDate(dates.from)}'` : ""}${dates.from && dates.to ? " and " : ""}${dates.to ? `modifiedTime <= '${_formatDate(dates.to)}'` : ""})` : "";
 
     var _data = {
       pageSize: PAGE_SIZE,
@@ -732,16 +732,27 @@ Google_API = (options, factory) => {
         return _properties;
       },
 
-      type: (mime, corpora, spaces) => _list(NETWORKS.general.get, "drive/v3/files", "files", [], {
-        pageSize: PAGE_SIZE,
-        q: `trashed = false and mimeType = '${mime}'`,
-        orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-        fields: `kind,nextPageToken,incompleteSearch,files(${FIELDS},owners)`,
-        includeTeamDriveItems: true,
-        supportsTeamDrives: true,
-        corpora: corpora ? corpora : "user,allTeamDrives",
-        spaces: spaces ? spaces : "drive",
-      }),
+      type: (mime, corpora, spaces) => {
+        var _domain = "domain", 
+            _fn = corpora => _list(NETWORKS.general.get, "drive/v3/files", "files", [], {
+              pageSize: PAGE_SIZE,
+              q: `trashed = false and mimeType = '${mime}'`,
+              orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
+              fields: `kind,nextPageToken,incompleteSearch,files(${FIELDS},owners)`,
+              includeItemsFromAllDrives: true,
+              includeTeamDriveItems: true,
+              supportsTeamDrives: true,
+              corpora: corpora ? corpora : "user,allTeamDrives",
+              spaces: spaces ? spaces : "drive",
+            }),
+            _split = corpora => {
+              corpora = corpora.split(",");
+              corpora.splice(corpora.indexOf(_domain),1);
+              corpora = corpora.join(",");
+              return Promise.all([_fn(corpora), _fn(_domain)]).then(values => _.compact(_.flatten(values)));
+            };
+        return corpora && corpora.indexOf(_domain) >= 0 && corpora != _domain ? _split(corpora) : _fn(corpora);
+      },
 
       comments: file => {
 
@@ -805,12 +816,12 @@ Google_API = (options, factory) => {
 
     calendar: {
 
-      get: id => _call(NETWORKS.general.get, `calendar/v3/calendars/${id}`, {
+      get: id => _call(NETWORKS.general.get, `calendar/v3/calendars/${encodeURIComponent(id)}`, {
         fields: "id,summary,description,timeZone",
       }),
 
       list: (id, start, end) => _list(NETWORKS.general.get,
-        `calendar/v3/calendars/${id}/events`, "items", [], STRIP_NULLS({
+        `calendar/v3/calendars/${encodeURIComponent(id)}/events`, "items", [], STRIP_NULLS({
           orderBy: "startTime",
           singleEvents: true,
           timeMin: start ? start.toISOString() : null,
@@ -819,7 +830,7 @@ Google_API = (options, factory) => {
         })),
 
       search: (id, property, query) => _list(NETWORKS.general.get,
-        `calendar/v3/calendars/${id}/events`, "items", [], STRIP_NULLS({
+        `calendar/v3/calendars/${encodeURIComponent(id)}/events`, "items", [], STRIP_NULLS({
           orderBy: "startTime",
           singleEvents: true,
           sharedExtendedProperty: property,
@@ -829,11 +840,11 @@ Google_API = (options, factory) => {
 
       events: {
 
-        get: (id, event) => _call(NETWORKS.general.get, `calendar/v3/calendars/${id}/events/${event}`, {
+        get: (id, event) => _call(NETWORKS.general.get, `calendar/v3/calendars/${encodeURIComponent(id)}/events/${event}`, {
           fields: "id,summary,description,start,end,extendedProperties,organizer,attendees,attachments,recurringEventId,source,status,htmlLink,location",
         }),
 
-        update: (id, event, data) => _call(NETWORKS.general.patch, `calendar/v3/calendars/${id}/events/${event}`, data, "application/json"),
+        update: (id, event, data) => _call(NETWORKS.general.patch, `calendar/v3/calendars/${encodeURIComponent(id)}/events/${event}`, data, "application/json"),
 
       },
 

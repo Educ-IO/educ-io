@@ -279,10 +279,6 @@ Router = function() {
           matches: /ROUTES/i,
           fn: () => _.each(_options.routes, (route, key) => ಠ_ಠ.Flags.log(`Registered Route: ${key}`, route))
         },
-        search: {
-          matches: /SEARCH/i,
-          fn: () => _clean(true),
-        },
         spin: {
           matches: /SPIN/i,
           fn: () => ಠ_ಠ.Display.busy({
@@ -366,8 +362,8 @@ Router = function() {
         /* <!-- Self-Removing Setup Function --> */
         _setup = () => {
 
-          /* <!-- Debug Flag: For future logging --> */
-          _debug = ಠ_ಠ.Flags && ಠ_ಠ.Flags.debug();
+          /* <!-- Verbose Debug Flag: For future logging --> */
+          _debug = ಠ_ಠ.Flags && ಠ_ಠ.Flags.verbose();
 
           /* <!-- Run App Setup --> */
           if (_options.setup) _options.setup();

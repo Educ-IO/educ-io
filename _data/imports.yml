@@ -1,4 +1,4 @@
-# Last Updated: 2019-06-02
+# Last Updated: 2019-06-15
 
 localstorage:
   name: localStorage
@@ -780,22 +780,22 @@ axios:
   desc: HTTP Client for API calls.
   url: https://cdnjs.com/libraries/axios
   project: https://github.com/mzabriskie/axios
-  version: 0.18.0
-  last: 0.17.1
+  version: 0.19.0
+  last: 0.18.0
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js
-      integrity: sha256-mpnrJ5DpEZZkwkE1ZgkEQQJW/46CSEh/STrZKOB/qoM=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js
+      integrity: sha256-S1J4GVHHDMiirir9qsXWc8ZWw74PHHafpsHp5PXtjTs=
       crossorigin: anonymous
-      bulk: 12.6
+      bulk: 13.4
       map: true
       id: __axios
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js
-      integrity: sha256-lrZTgsdM1iVdRigETFOU8u8/BmLX1ysQ8bzrULbuVFU=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js
+      integrity: sha256-XmdRbTre/3RulhYk/cOBUMpYlaAp2Rpo/s556u0OIKk=
       crossorigin: anonymous
-      bulk: 41.7
+      bulk: 44.1
       map: true
       id: __axios
       
@@ -1038,8 +1038,8 @@ html2canvas:
   desc: Screenshots with JavaScript
   url: https://www.jsdelivr.com/package/npm/html2canvas?path=dist
   project: http://html2canvas.hertzen.com/
-  version: 1.0.0-rc.2
-  last: 1.0.0-alpha12
+  version: 1.0.0-rc.3
+  last: 1.0.0-rc.2
   license: MIT
   type: js
   prod:
@@ -1052,7 +1052,7 @@ html2canvas:
     - url: https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.3/dist/html2canvas.js
       integrity: sha256-F4t6XlV28CZmYi4hGMY++J0atQvzWKQhgpDH2WFEvD8=
       crossorigin: anonymous
-      bulk: 370
+      bulk: 376
       map: true
       id: __html2canvas
 
@@ -1212,21 +1212,21 @@ rellax:
   desc: A buttery smooth, super lightweight, vanilla javascript parallax library
   url: https://cdnjs.com/libraries/rellax
   project: https://github.com/dixonandmoe/rellax
-  version: 1.9.1
-  last: 1.8.0
+  version: 1.10.0
+  last: 1.9.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/rellax/1.9.1/rellax.min.js
+    - url: https://cdnjs.cloudflare.com/ajax/libs/rellax/1.10.0/rellax.min.js
       integrity: sha256-jyHh7xruaFLUoKPPnsSwEvYrBnzJczScRNnuh4Ysblc=
       crossorigin: anonymous
       bulk: 4.3
       id: __rellax
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/rellax/1.9.1/rellax.js
-      integrity: sha256-1XNgEpHuL8xN4s1hjSGuZTNqrVhy+HfF/OPuvVkiKNs=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/rellax/1.10.0/rellax.js
+      integrity: sha256-b9iCa+uXg1ls4OGWXZY7fTQVTEgK46A+Yy6gjTrRg3U=
       crossorigin: anonymous
-      bulk: 12.4
+      bulk: 13.8
       id: __rellax
 
 three:
@@ -1234,21 +1234,21 @@ three:
   desc: JavaScript 3D library
   url: https://cdnjs.com/libraries/three.js
   project: https://github.com/mrdoob/three.js
-  version: 104
-  last: 102
+  version: 105
+  last: 104
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/104/three.min.js
-      integrity: sha256-wEYWZyN8ZS6ht2AUoHFTEx8C+n5EdQFZ/aTqfjBNRK0=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.min.js
+      integrity: sha256-Mc6q7xXvKBXW87eVjSASXbPqfuc9tHqbn6AHp1R97J4=
       crossorigin: anonymous
-      bulk: 558
+      bulk: 559
       id: __three
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/104/three.js
-      integrity: sha256-QIc9BNSs4VKcUDsQBT/mwJwE6LpKHqrLB6HqF/oHM2g=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.js
+      integrity: sha256-NncZTBhUdU+UoOVS7s+6ou1L+4zhUVvFcLxV6q3oubw=
       crossorigin: anonymous
-      bulk: 1150
+      bulk: 1152
       id: __three
 
 waves-js:
@@ -1659,7 +1659,7 @@ day:
 
 velocity:
   name: Velocity
-  desc: Accelerated JavaScript animation.
+  desc: Accelerated JavaScript animation
   url: https://cdnjs.com/libraries/velocity
   project: https://github.com/julianshapiro/velocity
   version: 2.0.5
@@ -1678,10 +1678,9 @@ velocity:
       bulk: 187
       id: __velocity
 
-      
 transit:
   name: JQuery Transit
-  desc: Smooth CSS3 transitions and transformations for jQuery.
+  desc: Smooth CSS3 transitions and transformations for jQuery
   url: https://cdnjs.com/libraries/jquery.transit
   project: https://github.com/rstacruz/jquery.transit/
   version: 0.9.12
@@ -1699,3 +1698,169 @@ transit:
       crossorigin: anonymous
       bulk: 21.8
       id: __transit
+
+chart-js:
+  name: Chart JS
+  desc: Simple HTML5 charts using the canvas element
+  url: https://cdnjs.com/libraries/Chart.js
+  project: https://github.com/chartjs/Chart.js
+  version: 2.8.0
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js
+      integrity: sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=
+      crossorigin: anonymous
+      bulk: 153
+      id: __chart-js
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js
+      integrity: sha256-arMsf+3JJK2LoTGqxfnuJPFTU4hAK57MtIPdFpiHXOU=
+      crossorigin: anonymous
+      bulk: 387
+      id: __chart-js
+ 
+chart-css:
+  name: Chart JS
+  desc: Simple HTML5 charts using the canvas element
+  url: https://cdnjs.com/libraries/Chart.js
+  project: https://github.com/chartjs/Chart.js
+  version: 2.8.0
+  license: MIT
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css
+      integrity: sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=
+      crossorigin: anonymous
+      bulk: 0.521
+      id: __chart-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.css
+      integrity: sha256-IvM9nJf/b5l2RoebiFno92E5ONttVyaEEsdemDC6iQA=
+      crossorigin: anonymous
+      bulk: 0.811
+      id: __chart-css
+
+chartist-js:
+  name: Chartist JS
+  desc: Simple Responsive Charts
+  url: https://cdnjs.com/libraries/chartist
+  project: https://github.com/gionkunz/chartist-js
+  version: 0.11.1
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.1/chartist.min.js
+      integrity: sha256-dV9yEU66gO4KERizbr/66K8HtNHA+BRYeNEbaqXoI5M=
+      crossorigin: anonymous
+      map: true
+      bulk: 39.3
+      id: __chartist-js
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.1/chartist.js
+      integrity: sha256-Yp0lOr0LDc0oRubR2oUMiuM4w7EJAdxyhBQBOHj/YdY=
+      crossorigin: anonymous
+      bulk: 174
+      id: __chartist-js
+
+chartist-css:
+  name: Chartist JS
+  desc: Simple Responsive Charts
+  url: https://cdnjs.com/libraries/chartist
+  project: https://github.com/gionkunz/chartist-js
+  version: 0.11.1
+  license: MIT
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.1/chartist.min.css
+      integrity: sha256-Te9+aTaL9j0U5PzLhtAHt+SXlgIT8KT9VkyOZn68hak=
+      crossorigin: anonymous
+      bulk: 11.2
+      id: __chartist-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.1/chartist.min.css
+      integrity: sha256-Te9+aTaL9j0U5PzLhtAHt+SXlgIT8KT9VkyOZn68hak=
+      crossorigin: anonymous
+      bulk: 11.2
+      id: __chartist-css
+
+frappe_charts-js:
+  name: Frappe Charts
+  desc: Simple Responsive Charts
+  url: https://cdnjs.com/libraries/frappe-charts
+  project: https://github.com/frappe/charts
+  version: 1.2.0
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/frappe-charts/1.2.0/frappe-charts.min.iife.js
+      integrity: sha256-2tMyAmV8R52dGDXHFQBu5GzjGb3QRP3aysqJavElZBQ=
+      crossorigin: anonymous
+      map: true
+      bulk: 63.2
+      id: __frappe_charts-js
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/frappe-charts/1.2.0/frappe-charts.min.iife.js
+      integrity: sha256-2tMyAmV8R52dGDXHFQBu5GzjGb3QRP3aysqJavElZBQ=
+      crossorigin: anonymous
+      map: true
+      bulk: 63.2
+      id: __frappe_charts-js
+
+frappe_charts-css:
+  name: Frappe Charts
+  desc: Simple Responsive Charts
+  url: https://cdnjs.com/libraries/frappe-charts
+  project: https://github.com/frappe/charts
+  version: 1.2.0
+  license: MIT
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/frappe-charts/1.2.0/frappe-charts.min.css
+      integrity: sha256-zsBtimKFJtbF1LelsDODeMY32WbMvwCG6SDp/Mlnby4=
+      crossorigin: anonymous
+      bulk: 1.7
+      id: __frappe_charts-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/frappe-charts/1.2.0/frappe-charts.min.css
+      integrity: sha256-zsBtimKFJtbF1LelsDODeMY32WbMvwCG6SDp/Mlnby4=
+      crossorigin: anonymous
+      bulk: 1.7
+      id: __frappe_charts-css
+
+d3:
+  name: D3 JS
+  desc: D3.js is a JavaScript library for manipulating documents based on data
+  url: https://cdnjs.com/libraries/d3
+  project: https://github.com/d3/d3
+  version: 5.9.2
+  license: BSD-3-Clause
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.min.js
+      integrity: sha256-k9RyZhvMj2bg0fd8L3IE41t0HpTXnivMoePN/Ksq250=
+      crossorigin: anonymous
+      bulk: 237
+      id: __d3
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.js
+      integrity: sha256-kX9/pjvgpDgSmoSfzAlYJeICaZXca16iu+c3F6ueKRo=
+      crossorigin: anonymous
+      bulk: 495
+      id: __d3
+
+google_charts:
+  name: Google Charts API
+  project: https://developers.google.com/chart/
+  desc: The Google Charts Javascript Loader / API provides access to Charting Components
+  type: js
+  prod:
+    - url: https://www.gstatic.com/charts/loader.js
+      mode: no-cors
+      bulk: 138
+      id: __google_charts
+  dev:
+    - url: https://www.gstatic.com/charts/loader.js
+      mode: no-cors
+      bulk: 138
+      id: __google_charts

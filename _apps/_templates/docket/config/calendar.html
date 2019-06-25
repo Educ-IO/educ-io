@@ -1,0 +1,10 @@
+{% raw %}
+<li data-output-name="*" class="list-group-item d-flex justify-content-between align-items-center"
+    data-id="{{id}}">
+  <span class="d-none" data-output-name="id">{{id}}</span>
+  <span title="Calendar ID: {{id}}" data-output-name="name">{{name}}</span>
+  {{#if count}}<span class="badge badge-dark badge-pill">{{count}}</span>{{/if}}
+  <a role="button" class="close ml-2" aria-label="Remove Calendar" data-action="remove" 
+     href="#config.remove.calendar.{{encode (replace id '\.' '|')}}" title="Remove Calendar"><span aria-hidden="true">×</span></a>
+</li>
+{% endraw %}

@@ -10,21 +10,34 @@ App = function() {
   const STATE_READY = "ready",
     STATE_CONFIG = "config",
     STATE_OPENED = "opened",
+    STATE_DEFAULT = "default",
+    STATE_LOADED = "loaded",
+    STATE_MONTHLY = "monthly",
     STATE_WEEKLY = "weekly",
     STATE_DAILY = "daily",
+    STATE_KANBAN = "kanban",
+    STATE_ANALYSIS = "analysis",
     STATE_CALENDARS = "calendars",
-    STATE_ISSUES = "issues",
     STATE_CLASSES = "classes",
-    STATES = [STATE_READY, STATE_CONFIG, STATE_OPENED,
-      STATE_WEEKLY, STATE_DAILY,
-      STATE_CALENDARS, STATE_ISSUES, STATE_CLASSES
-    ];
+    STATE_PREFERENCES = "preferences",
+    STATES = [STATE_READY, STATE_CONFIG, STATE_OPENED, STATE_DEFAULT, STATE_LOADED,
+      STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY,
+      STATE_KANBAN, STATE_ANALYSIS, STATE_CALENDARS, STATE_CLASSES,
+      STATE_PREFERENCES
+    ],
+    SOURCE = [STATE_DEFAULT, STATE_LOADED],
+    DIARIES = [STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY],
+    DISPLAY = [STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY, STATE_KANBAN, STATE_ANALYSIS];
   const SCOPE_CALENDARS = "https://www.googleapis.com/auth/calendar.readonly",
     SCOPE_CLASSWORK = "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
     SCOPE_COURSEWORK = "https://www.googleapis.com/auth/classroom.coursework.me.readonly";
   const ID = "diary",
-    MIME_TYPE = "application/x-educ-docket-item",
-    FN = {};
+        PREFERENCES = "edit_Preferences",
+        MIME_TYPE = "application/x-educ-docket-item",
+        FN = {},
+        PROPERTIES = {
+          DOCKET: "DATA"
+        };
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -40,6 +53,16 @@ App = function() {
   /* <-- Helper Functions --> */
   FN.helper = {
 
+    picker: () => ({
+              title: "Select a Docket Sheet to Open",
+              view: "SPREADSHEETS",
+              mime: ಠ_ಠ.Google.files.natives()[1],
+              properties: PROPERTIES,
+              all: true,
+              recent: true,
+              team: true,
+            }),
+              
     choose: {
 
       prompt: (name, map, list) => list()
@@ -87,7 +110,6 @@ App = function() {
       }, JSON.stringify(ರ‿ರ.config = {
         data: data,
         calendar: false,
-        issues: false,
         classes: false
       }), FN.config.mime)
       .then(uploaded => {
@@ -114,6 +136,7 @@ App = function() {
       return ಠ_ಠ.Google.reader().promiseAsText(loaded).then(parsed => {
         ಠ_ಠ.Flags.log(`Loaded Docket Config [${file.name} / ${file.id}]: ${parsed}`);
         ರ‿ರ.id = file.id;
+        ಠ_ಠ.Display.state().enter(STATE_CONFIG);
         return parsed;
       }).then(parsed => ರ‿ರ.config = JSON.parse(parsed));
     }),
@@ -125,8 +148,39 @@ App = function() {
         ಠ_ಠ.Flags.log(`Docket Config (${FN.config.name}) Updated`, uploaded);
         return uploaded;
       })
-      .catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error"))
+      .catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error")),
 
+    edit: () => ಠ_ಠ.Display.modal("config", {
+        id: PREFERENCES,
+        title: "Preferences",
+        enter: true,
+        state: {
+          data: ರ‿ರ.config.data,
+          view: ರ‿ರ.config.view,
+          ghost: ರ‿ರ.config.ghost === false ? 0 : ರ‿ರ.config.ghost,
+          zombie: ರ‿ರ.config.zombie === false ? 0 : ರ‿ರ.config.zombie,
+          calendars: ರ‿ರ.config.calendars,
+          classes: ರ‿ರ.config.classes,
+        }
+      }),
+    
+    field: field =>  $(`#${PREFERENCES} div[data-output-field='${field}']`),
+    
+    label: field => field.find("small.form-text").toggleClass("d-none", field.find("li").length === 0),
+    
+    remove: (field, id) => FN.config.label(FN.config.field(field).find(`li[data-id='${id}']`).remove()),
+    
+    add: (field, template, items) => {
+      var _field = FN.config.field(field), _list = _field.children("ul");
+      _.each(items, item => {
+        if (_list.find(`li[data-id='${item.id}']`).length === 0)
+          $(ಠ_ಠ.Display.template.get((_.extend({
+            template: template
+          }, item)))).appendTo(_list);
+      });
+      FN.config.label(_field);
+    },
+    
   };
   /* <-- Config Functions --> */
 
@@ -142,8 +196,6 @@ App = function() {
 
     calendars: force => FN.options.action(force, STATE_CALENDARS),
 
-    issues: force => FN.options.action(force, STATE_ISSUES),
-
     classes: force => FN.options.action(force, STATE_CLASSES),
 
     process: type => () => FN.options[type]()
@@ -157,6 +209,17 @@ App = function() {
 
   };
   /* <-- Option Functions --> */
+
+
+  /* <-- Focus Functions --> */
+  FN.focus = {
+
+    date: () => ರ‿ರ.show || ರ‿ರ.today,
+
+    from: () => ಠ_ಠ.Dates.parse(FN.focus.date()),
+
+  };
+  /* <-- Focus Functions --> */
 
 
   /* <-- Items Functions --> */
@@ -237,10 +300,6 @@ App = function() {
 
           /* <!-- Scroll to target if possible --> */
           if (Element.prototype.scrollIntoView && _target[0].scrollIntoView) {
-            ಠ_ಠ.container[0].scrollIntoView({
-              block: "start",
-              inline: "nearest"
-            });
             _target[0].scrollIntoView({
               behavior: "smooth",
               block: "start",
@@ -326,7 +385,7 @@ App = function() {
           })
           .then(item => ರ‿ರ.tasks.items.update(item))
           .then(_finish)
-          .then(() => FN.show.weekly(ಠ_ಠ.Dates.parse(ರ‿ರ.show || ರ‿ರ.today)))
+          .then(() => FN.show.current(ಠ_ಠ.Dates.parse(ರ‿ರ.show || ರ‿ರ.today)))
           .catch(FN.items.errors.update);
       });
       _input.bootstrapMaterialDatePicker({
@@ -469,9 +528,11 @@ App = function() {
       var _handleRemove = target => target.find("span.badge a").on("click.remove", e => {
         e.preventDefault();
         var _target = $(e.currentTarget),
-          _tag = _target.parents("span.badge").text().replace("×", "");
+          _tag = _target.parents("span.badge").data("tag");
         if (_tag) {
-          _item.TAGS = (_item.BADGES = _.filter(_item.BADGES, badge => badge != _tag)).join(";");
+          _item.TAGS = (_item.BADGES = _.filter(
+            _item.BADGES, badge => badge != _tag
+          )).sort().join(";");
           _handleRemove(_reconcile(_target.parents("form")));
         }
       });
@@ -508,7 +569,7 @@ App = function() {
             if (_input.is("input")) _input.val("") && _input.focus();
             if (_val && (_item.BADGES ? _item.BADGES : _item.BADGES = []).indexOf(_val) < 0) {
               _item.BADGES.push(_val);
-              _item.TAGS = _item.BADGES.join(";");
+              _item.TAGS = _item.BADGES.sort().join(";");
               _handleRemove(_reconcile(dialog.find("form")));
             }
           });
@@ -736,8 +797,8 @@ App = function() {
   /* <-- Drag Functions --> */
 
 
-  /* <-- Show Functions --> */
-  FN.show = {
+  /* <-- Display Functions --> */
+  FN.display = {
 
     /* <!-- Internal Methods --> */
     prepare: list => _.each(list, item => {
@@ -747,20 +808,37 @@ App = function() {
         item.FROM : ಠ_ಠ.Dates.parse(ರ‿ರ.today)).format("YYYY-MM-DD");
       item.__hash = ರ‿ರ.tasks.hash(item);
     }),
-    /* <!-- Interal Methods --> */
+    /* <!-- Internal Methods --> */
 
-    /* <!-- Date Methods --> */
-    date: () => ರ‿ರ.show || ರ‿ರ.today,
+    actions: () => ({
+      list: [{
+        action: "new.task",
+        icon: "add"
+      }, {
+        action: "search",
+        icon: "search"
+      }, {
+        action: "jump",
+        icon: "fast_forward"
+      }, {
+        action: "jump.today",
+        icon: "today"
+      }],
+      icon: "edit"
+    }),
 
-    from: () => ಠ_ಠ.Dates.parse(FN.show.date()),
-    /* <!-- Date Methods --> */
-
-    /* <!-- Diary Methods --> */
-    list: list => ಠ_ಠ.Display.modal("list", {
+    list: (list, subtitle, analysis) => ಠ_ಠ.Display.modal("list", {
       target: ಠ_ಠ.container,
       id: `${ID}_list`,
       title: `${list.length} Docket Item${list.length > 1 ? "s" : ""}`,
-      items: _.sortBy(FN.show.prepare(list), "FROM"),
+      subtitle: subtitle,
+      items: _.sortBy(FN.display.prepare(list), "FROM"),
+      statistics: analysis ? ಠ_ಠ.Display.template.get(_.extend({
+        template: "statistics"
+      }, analysis)) : null
+    }, dialog => {
+      /* <!-- Ensure Links open new tabs --> */
+      dialog.find("a:not([href^='#'])").attr("target", "_blank").attr("rel", "noopener");
     }).then(() => list),
 
     cleanup: () => {
@@ -768,20 +846,161 @@ App = function() {
       $("div.modal-backdrop.show").remove();
     },
 
-    daily: focus => new Promise(resolve => {
+    tagged: tag => tag.indexOf("#") === 0 ?
+      FN.display.list(ರ‿ರ.tasks.tagged(tag, ರ‿ರ.db), `Tasks for Project: ${tag.replace("#","")}`,
+        ರ‿ರ.tasks.analysis(tag, ರ‿ರ.db)) : FN.display.list(ರ‿ರ.tasks.tagged(tag, ರ‿ರ.db), `Tasks tagged with: ${tag}`),
+
+    scroll: (target, container) => {
+
+      /* <!-- Scroll to today if visible --> */
+      if (Element.prototype.scrollIntoView && !ಠ_ಠ.Flags.debug()) {
+        target = _.isString(target) ? container.find(target) : target;
+        target = target.length > 0 ? target : container;
+        if (target[0].scrollIntoView) {
+          target[0].scrollIntoView({
+            block: "start",
+            inline: "nearest"
+          });
+          if (window.scrollBy && container.outerHeight(true) > $(window).height()) window.scrollBy(0, -10);
+        }
+      }
+    },
+
+    hookup: container => {
+
+      /* <!-- Hookup all relevant events --> */
+      FN.items.hookup(container);
+
+      /* <!-- Item Drag / Drop --> */
+      FN.drag.items({
+        draggable: container.find("div.item[draggable=true]"),
+        droppable: container.find("div.item[data-droppable=true], div.group[data-droppable=true]")
+      }, {
+        item: "div.item[data-droppable=true]",
+        group: "div.group[data-droppable=true]",
+      });
+
+      return container;
+
+    },
+
+    day: (focus, overlay) => {
+
+      var _return = {};
+      _return.diff = focus.diff(ರ‿ರ.show, "days");
+      _return.display = focus.format("YYYY-MM-DD");
+      _return.start = focus.clone().startOf("day");
+      _return.end = focus.clone().endOf("day");
+      _return.all = FN.display.prepare(ರ‿ರ.db ?
+        ರ‿ರ.tasks.query(focus, ರ‿ರ.db, focus.isSame(ರ‿ರ.today)) : []);
+      _return.tasks = _.chain(_return.all).filter(item => !item._timed)
+        .sortBy("DETAILS").sortBy("GHOST").sortBy("ORDER").sortBy("_countdown").value();
+      _return.events = _.chain(_return.all).filter(item => item._timed)
+        .sortBy(item => ಠ_ಠ.Dates.parse(item.TIME, ["h:m a", "H:m", "h:hh A"]).toDate()).value();
+      _return.extras = _.chain(overlay)
+        .filter(item => (item.due || item.end).isSameOrAfter(_return.start) &&
+          (item.due || item.start).isSameOrBefore(_return.end))
+        .sortBy(item => (item.due || item.start).toDate())
+        .value();
+
+      _return.length = _.reduce([_return.tasks, _return.events, _return.extras], (total, items) => total + (items ? items.length : 0), 0);
+
+      return _return;
+
+    }
+
+  };
+  /* <-- Display Functions --> */
+
+
+  /* <-- Show Functions --> */
+  FN.show = {
+
+    current: focus => FN.show.dated(focus, ಠ_ಠ.Display.state().in(STATE_MONTHLY) ?
+      FN.show.monthly : ಠ_ಠ.Display.state().in(STATE_WEEKLY) ?
+      FN.show.weekly : ಠ_ಠ.Display.state().in(STATE_DAILY) ?
+      FN.show.daily : FN.show.weekly),
+
+    dated: (focus, fn) => new Promise(resolve => {
+
       ರ‿ರ.show = focus.startOf("day").toDate();
-      resolve(ಠ_ಠ.Display.state().enter([STATE_OPENED, STATE_DAILY]));
+
+      /* <!-- Just in case of open modals etc --> */
+      FN.display.cleanup();
+
+      var _start = focus.clone().subtract(1, "month").toDate(),
+        _end = focus.clone().add(1, "month").toDate();
+
+      (ಠ_ಠ.Display.state().in([STATE_CALENDARS, STATE_CLASSES], true) &&
+        (ರ‿ರ.config.calendars || ರ‿ರ.config.classes) ?
+        ಠ_ಠ.Main.authorise(SCOPE_CALENDARS)
+        .then(result => result === true ? Promise.all(
+            _.map([].concat(ರ‿ರ.config.calendars || [],
+                _.filter(ರ‿ರ.config.classes || [], item => item.calendar)), item =>
+              ಠ_ಠ.Google.calendar.list(item.calendar || item.id, _start, _end)
+              .then(events => _.tap(events,
+                events => _.each(events, event => event._title = `CALENDAR: ${item.name}`, events)))))
+          .catch(e => ಠ_ಠ.Flags.error("Events Loading:", e).reflect([])) :
+          false).then(ಠ_ಠ.Main.busy("Loading Events")) : Promise.resolve(false)).then(overlay => {
+
+        /* <!-- Prepare Overlays --> */
+        overlay = overlay && overlay.length > 0 ?
+          _.each((overlay = _.flatten(overlay)), item => {
+            if (item.start.dateTime) item._timed = true;
+            item.start = ಠ_ಠ.Dates.parse(item.start.dateTime || item.start.date);
+            item.end = ಠ_ಠ.Dates.parse(item.end.dateTime || item.end.date);
+            if (item._timed) {
+              item.TIME = `${item.start.format("HH:mm")} - ${item.end.format("HH:mm")}`;
+            } else if (item.start.clone().add(1, "day").isSame(item.end)) {
+              /* <!-- End Dates for non-timed Events are Exclusive --> */
+              item.end = item.end.subtract(1, "day");
+            }
+            item.DISPLAY = ಱ.showdown.makeHtml(item.summary);
+            item._link = item.htmlLink;
+            item._icon = "calendar_today";
+          }) : [];
+
+        /* <!-- Filter Deadlines --> */
+        if (ಠ_ಠ.Display.state().in(STATE_CLASSES) && ರ‿ರ.deadlines && ರ‿ರ.deadlines.length > 0)
+          overlay = overlay.concat(_.filter(ರ‿ರ.deadlines,
+            deadline => deadline.due.isSameOrAfter(_start) &&
+            deadline.due.isSameOrBefore(_end)));
+
+        resolve(fn(focus, overlay));
+
+      });
+
     }),
 
-    weekly: focus => new Promise(resolve => {
+    daily: (focus, overlay) => {
 
-      ರ‿ರ.show = focus.startOf("day").toDate();
+      var _data = FN.display.day(focus, overlay),
+        _diary = FN.display.hookup(ಠ_ಠ.Display.template.show({
+          template: "daily",
+          id: ID,
+          name: ರ‿ರ.name,
+          title: _data.start.format("ddd"),
+          day: _data.start.format("Do"),
+          date: _data.start.toDate(),
+          tasks: _data.tasks,
+          events: _data.events,
+          extras: _data.extras,
+          action: FN.display.actions(),
+          target: ಠ_ಠ.container,
+          clear: true,
+        }));
+
+      FN.display.scroll(_diary.find("h4.name, div.day"), _diary);
+
+    },
+
+    weekly: (focus, overlay) => {
 
       focus = ಠ_ಠ.Dates.isoWeekday(focus) == 7 ? focus.subtract(1, "days") : focus;
+      var _today = focus.isSame(ರ‿ರ.today);
 
       var _days = [],
         _add = (date, css, action, tasks, events, extras, type) => {
-
           _days.push({
             sizes: ಠ_ಠ.Dates.isoWeekday(date) >= 6 ? {
               xs: 12
@@ -808,138 +1027,147 @@ App = function() {
 
       focus = focus.add(ಠ_ಠ.Dates.isoWeekday(focus) == 1 ? -3 : -2, "days");
 
-      var _weekStart = focus.toDate(),
-        _weekEnd = focus.clone().add(1, "weeks").toDate(),
-        _calendars = (ಠ_ಠ.Display.state().in([STATE_CALENDARS, STATE_CLASSES], true) &&
-          (ರ‿ರ.config.calendars || ರ‿ರ.config.classes) ?
-          ಠ_ಠ.Main.authorise(SCOPE_CALENDARS)
-          .then(result => result === true ? Promise.all(
-              _.map([].concat(ರ‿ರ.config.calendars || [],
-                  _.filter(ರ‿ರ.config.classes || [], item => item.calendar)), item => ಠ_ಠ.Google.calendar.list(item.calendar || item.id, _weekStart, _weekEnd)
-                .then(events => _.tap(events,
-                  events => _.each(events, event => event._title = `CALENDAR: ${item.name}`, events)))))
-            .catch(e => ಠ_ಠ.Flags.error("Events Loading:", e).reflect([])) :
-            false).then(ಠ_ಠ.Main.busy("Loading Events")) : Promise.resolve(false));
+      _.times(7, () => {
 
-      _calendars.then(overlay => {
+        focus = focus.add(1, "days");
 
-        /* <!-- Prepare Overlays --> */
-        overlay = overlay && overlay.length > 0 ?
-          _.each((overlay = _.flatten(overlay)), item => {
-            if (item.start.dateTime) item._timed = true;
-            item.start = ಠ_ಠ.Dates.parse(item.start.dateTime || item.start.date);
-            item.end = ಠ_ಠ.Dates.parse(item.end.dateTime || item.end.date);
-            if (item._timed) item.TIME = `${item.start.format("HH:mm")} - ${item.end.format("HH:mm")}`;
-            item.DISPLAY = ಱ.showdown.makeHtml(item.summary);
-            item._link = item.htmlLink;
-            item._icon = "calendar_today";
-          }) : [];
+        var _data = FN.display.day(focus, overlay),
+          _day = ಠ_ಠ.Dates.isoWeekday(focus),
+          _lg = _data.diff === 0 || (_day == 6 && _data.diff == -1) || (_day == 7 && _data.diff == 1),
+          _sm_Before = !_lg && (_data.diff == -1 || (_day == 5 && _data.diff == -2) || (_day == 6 && _data.diff == -2)),
+          _sm_After = !_lg && (_data.diff == 1 || (_day == 1 && _data.diff == 2)),
+          _sizes = {
+            large: _lg,
+            small: {
+              before: _sm_Before,
+              after: _sm_After,
+            }
+          };
 
-        /* <!-- Filter Deadlines --> */
-        if (ಠ_ಠ.Display.state().in(STATE_CLASSES) && ರ‿ರ.deadlines && ರ‿ರ.deadlines.length > 0)
-          overlay = overlay.concat(_.filter(ರ‿ರ.deadlines,
-            deadline => deadline.due.isSameOrAfter(_weekStart) &&
-            deadline.due.isSameOrBefore(_weekEnd)));
-
-        _.times(7, () => {
-          focus = focus.add(1, "days");
-          var _day = ಠ_ಠ.Dates.isoWeekday(focus),
-            _diff = focus.diff(ರ‿ರ.show, "days"),
-            _lg = _diff === 0 || (_day == 6 && _diff == -1) || (_day == 7 && _diff == 1),
-            _sm_Before = !_lg && (_diff == -1 || (_day == 5 && _diff == -2) || (_day == 6 && _diff == -2)),
-            _sm_After = !_lg && (_diff == 1 || (_day == 1 && _diff == 2)),
-            _sizes = {
-              large: _lg,
-              small: {
-                before: _sm_Before,
-                after: _sm_After,
-              }
-            },
-            _display = focus.format("YYYY-MM-DD"),
-            _start = focus.clone().startOf("day"),
-            _end = focus.clone().endOf("day"),
-            _all = FN.show.prepare(ರ‿ರ.db ?
-              ರ‿ರ.tasks.query(focus, ರ‿ರ.db, focus.isSame(ರ‿ರ.today)) : []),
-            _diary = {
-              tasks: _.chain(_all).filter(item => !item._timed).sortBy("DETAILS").sortBy("GHOST").sortBy("ORDER").sortBy("_countdown").value(),
-              events: _.chain(_all).filter(item => item._timed)
-                .sortBy(item => ಠ_ಠ.Dates.parse(item.TIME, ["h:m a", "H:m", "h:hh A"]).toDate()).value(),
-              extras: _.chain(overlay)
-                .filter(item => (item.due || item.end).isSameOrAfter(_start) &&
-                  (item.due || item.start).isSameOrBefore(_end))
-                .sortBy(item => (item.due || item.start).toDate())
-                .value()
-            };
-          _add(focus, {
-              block: focus.isSame(ರ‿ರ.today) || (ಠ_ಠ.Dates.isoWeekday(focus) == 6 && focus.clone().add(1, "days").isSame(ರ‿ರ.today)) ?
-                "present bg-highlight-gradient top-to-bottom" : _diff === 0 ? "focussed bg-light" : focus.isBefore(ರ‿ರ.today) ? "past text-muted" : "future",
-              title: focus.isSame(ರ‿ರ.today) ? "present" : _diff === 0 ? "bg-bright-gradient left-to-right" : "",
-              wide: _diff === 0
-            },
-            _display, _diary.tasks, _diary.events, _diary.extras, _sizes);
-        });
-
-        /* <!-- Just in case of open modals etc --> */
-        FN.show.cleanup();
-
-        var _diary = ಠ_ಠ.Display.template.show({
-          template: "weekly",
-          id: ID,
-          days: _days,
-          action: {
-            list: [{
-              action: "new.task",
-              icon: "add"
-            }, {
-              action: "search",
-              icon: "search"
-            }, {
-              action: "jump",
-              icon: "fast_forward"
-            }, {
-              action: "jump.today",
-              icon: "today"
-            }],
-            icon: "edit"
-          },
-          target: ಠ_ಠ.container,
-          clear: true,
-        });
-
-        /* <!-- Hookup all relevant events --> */
-        FN.items.hookup(_diary);
-
-        /* <!-- Item Drag / Drop --> */
-        FN.drag.items({
-          draggable: _diary.find("div.item[draggable=true]"),
-          droppable: _diary.find("div.item[data-droppable=true], div.group[data-droppable=true]")
-        }, {
-          item: "div.item[data-droppable=true]",
-          group: "div.group[data-droppable=true]",
-        });
-
-        /* <!-- Scroll to today if visible --> */
-        if (Element.prototype.scrollIntoView && !ಠ_ಠ.Flags.debug()) {
-          var _now = _diary.find("div.focussed").length == 1 ? _diary.find("div.focussed") : _diary.find("div.present");
-          if (_now.length === 1 && _now[0].scrollIntoView) {
-            _now[0].scrollIntoView({
-              block: "start",
-              inline: "nearest"
-            });
-            if (window.scrollBy && _diary.outerHeight(true) > $(window).height()) window.scrollBy(0, -10);
-          }
-        }
-
-        resolve(ಠ_ಠ.Display.state().enter([STATE_OPENED, STATE_WEEKLY]));
+        _add(focus, {
+          block: focus.isSame(ರ‿ರ.today) || (ಠ_ಠ.Dates.isoWeekday(focus) == 6 && focus.clone().add(1, "days").isSame(ರ‿ರ.today)) ?
+            "present bg-highlight-gradient top-to-bottom" : _data.diff === 0 ?
+            "focussed bg-light" : focus.isBefore(ರ‿ರ.today) ? "past text-muted" : "future",
+          title: focus.isSame(ರ‿ರ.today) ?
+            "present" : _data.diff === 0 ? "bg-bright-gradient left-to-right" : "",
+          wide: _data.diff === 0
+        }, _data.display, _data.tasks, _data.events, _data.extras, _sizes);
 
       });
 
+      var _diary = FN.display.hookup(ಠ_ಠ.Display.template.show({
+        template: "weekly",
+        id: ID,
+        name: ರ‿ರ.name,
+        days: _days,
+        action: FN.display.actions(),
+        target: ಠ_ಠ.container,
+        clear: true,
+      }));
 
+      /* <!-- Scroll to today if visible --> */
+      FN.display.scroll(_diary.find(`h4.name, ${_today ? "div.present" : "div.focussed"}`), _diary);
+
+    },
+
+    monthly: (focus, overlay) => {
+
+      var _today = focus.isSame(ರ‿ರ.today),
+        _end = focus.clone().endOf("month");
+      focus = focus.clone().startOf("month").subtract(1, "days");
+
+      var _days = [],
+        _add = (date, css, action, tasks, events, extras, large) => {
+          _days.push({
+            title: date.format("ddd"),
+            subtitle: date.format("Do"),
+            date: date.toDate(),
+            class: css.block,
+            action: action,
+            title_class: css.title,
+            tasks: tasks,
+            events: events,
+            extras: extras,
+            large: large,
+          });
+        };
+
+      _.times(_end.date(), index => {
+
+        focus = focus.add(1, "days");
+
+        var _data = FN.display.day(focus, overlay),
+          _type = focus.isSame(ರ‿ರ.today) ? "present" : _data.diff === 0 ? "focussed" :
+          focus.isBefore(ರ‿ರ.today) ? "past text-muted" : "future",
+          _border = focus.isSame(ರ‿ರ.today) ?
+          "border border-white rounded bg-highlight-gradient top-to-bottom" :
+          index % 2 ? "bg-light" : "",
+          _title = focus.isSame(ರ‿ರ.today) ?
+          "present" : _data.diff === 0 ? "bg-bright-gradient left-to-right" :
+          index % 2 ? "border-left border-bottom border-secondary" : "";
+
+        _add(focus, {
+            block: `${_type} ${_border}`.trim(),
+            title: `${_title} pl-2`,
+          }, _data.display, _data.tasks, _data.events, _data.extras,
+          focus.isSame(ರ‿ರ.today) && _data.length > 5);
+
+      });
+
+      var _diary = FN.display.hookup(ಠ_ಠ.Display.template.show({
+        template: "monthly",
+        id: ID,
+        name: ರ‿ರ.name,
+        title: _end.format("MMM"),
+        year: _end.format("YYYY"),
+        days: _days,
+        action: FN.display.actions(),
+        target: ಠ_ಠ.container,
+        clear: true,
+      }));
+
+      FN.display.scroll(_diary.find(`h4.name, ${_today ? "div.present" : "div.focussed"}`), _diary);
+
+    },
+
+    analysis: () => new Promise(resolve => {
+
+      /* <!-- Just in case of open modals etc --> */
+      FN.display.cleanup();
+
+      ಠ_ಠ.Display.template.show({
+        template: "analysis",
+        id: "analysis",
+        target: ಠ_ಠ.container,
+        clear: true,
+      });
+
+      resolve(true);
 
     }),
 
-    tagged: tag => FN.show.list(ರ‿ರ.tasks.tagged(tag, ರ‿ರ.db)),
-    /* <!-- Diary Methods --> */
+    kanban: () => new Promise(resolve => {
+
+      /* <!-- Just in case of open modals etc --> */
+      FN.display.cleanup();
+
+      var _status = ["Pending", "In Progress", "Done"];
+
+      ಠ_ಠ.Display.template.show({
+        template: "kanban",
+        id: "kanban",
+        sizes: {
+          lg: 12 / _status.length,
+        },
+        status: _status,
+        action: FN.display.actions(),
+        target: ಠ_ಠ.container,
+        clear: true,
+      });
+
+      resolve(true);
+
+    }),
 
   };
   /* <-- Show Functions --> */
@@ -962,7 +1190,7 @@ App = function() {
       _save = item => ರ‿ರ.tasks.items.create(item).then(r => {
           if (r === false) return r;
           ರ‿ರ.db.update(r);
-          return FN.show.weekly(ಠ_ಠ.Dates.parse(FN.show.date()));
+          return FN.show.current(ಠ_ಠ.Dates.parse(FN.focus.date()));
         })
         .catch(e => ಠ_ಠ.Flags.error("Create New Error", e) && !_retried && _error())
         .then(r => r === false ? _error() : Promise.resolve(true));
@@ -977,7 +1205,7 @@ App = function() {
           instructions: ಠ_ಠ.Display.doc.get("NEW_INSTRUCTIONS"),
           validate: values => values ? ಠ_ಠ.Flags.log("Values for Validation", values) && true : false,
           /* <!-- Do we need to validate? --> */
-          date: ಠ_ಠ.Dates.parse(FN.show.date()).format("YYYY-MM-DD"),
+          date: ಠ_ಠ.Dates.parse(FN.focus.date()).format("YYYY-MM-DD"),
           handlers: {
             clear: _dialog.handlers.clear,
           },
@@ -1017,7 +1245,7 @@ App = function() {
         message: ಠ_ಠ.Display.doc.get("SEARCH_INSTRUCTIONS"),
         action: "Search",
         simple: true,
-      }).then(query => query ? FN.show.list(ರ‿ರ.tasks.search(query, ರ‿ರ.db, !ರ‿ರ.show ?
+      }).then(query => query ? FN.display.list(ರ‿ರ.tasks.search(query, ರ‿ರ.db, !ರ‿ರ.show ?
         ರ‿ರ.today : ರ‿ರ.show >= ರ‿ರ.today ?
         ರ‿ರ.show : false)) : false)
       .catch(e => e ? ಠ_ಠ.Flags.error("Search Error", e) : ಠ_ಠ.Flags.log("Search Cancelled"))
@@ -1030,14 +1258,21 @@ App = function() {
   FN.action = {
 
     load: config => Promise.all([].concat(
-        ರ‿ರ.tasks.open((config || ರ‿ರ.config).data),
+        ರ‿ರ.tasks.open((config || ರ‿ರ.config).data, {
+          zombie: ರ‿ರ.config.zombie,
+          ghost: ರ‿ರ.config.ghost
+        }),
         ರ‿ರ.config.classes ? FN.classes.load(ರ‿ರ.config.classes) : []))
       .then(results => {
+        ಠ_ಠ.Display.state().change(SOURCE, [STATE_OPENED]
+          .concat([!config || config.data == ರ‿ರ.config.data ? STATE_DEFAULT : STATE_LOADED]));
         ರ‿ರ.db = results[0];
         if (results[1]) ರ‿ರ.deadlines = results[1];
       })
       .then(ಠ_ಠ.Main.busy("Loading Data"))
-      .then(() => FN.show.weekly(ಠ_ಠ.Dates.parse(FN.show.date())))
+      .then(() => ಠ_ಠ.Display.state().change(DISPLAY, DIARIES.indexOf(ರ‿ರ.config.view) >= 0 ?
+                                             ರ‿ರ.config.view : STATE_WEEKLY))
+      .then(() => FN.show.current(ಠ_ಠ.Dates.parse(FN.focus.date())))
       .catch(e => ಠ_ಠ.Flags.error("Data Error", e ? e : "No Inner Error").negative()),
 
     archive: () => {
@@ -1053,7 +1288,8 @@ App = function() {
         })
         .then(values => {
           if (_.isEmpty(values)) return false;
-          var _years = _.reduce(values.Archive.Values, (list, value, year) => (value === true) ? list.concat([year]) : list, []);
+          var _years = _.reduce(values.Archive.Values, (list, value, year) => (value === true) ?
+                                list.concat([year]) : list, []);
           return Promise.all(_.map(_years, year => ರ‿ರ.tasks.archive(year, ರ‿ರ.db)))
             .then(items => {
               var _items = _.sortBy(_.compact(_.flatten(items, true)), "__ROW").reverse();
@@ -1091,12 +1327,12 @@ App = function() {
         id: _id,
         type: "hidden",
         class: "d-none dt-picker",
-        value: ಠ_ಠ.Dates.parse(FN.show.date()).format("YYYY-MM-DD")
+        value: ಠ_ಠ.Dates.parse(FN.focus.date()).format("YYYY-MM-DD")
       }).appendTo(ಠ_ಠ.container);
 
       _input.on("change", e => {
         var _date = new ಠ_ಠ.Dates.parse($(e.target).val());
-        if (_date.isValid()) FN.show.weekly(_date);
+        if (_date.isValid()) FN.show.current(_date);
       });
 
       _input.bootstrapMaterialDatePicker({
@@ -1127,12 +1363,15 @@ App = function() {
 
       /* <-- Remove old and unused config settings --> */
       delete config.calendar;
-      _.each(config, (value, key) => value === false ? delete config[key] : null);
+      _.each(config, (value, key) => value === false && (key !== "zombie" && key !== "ghost") ?
+             delete config[key] : null);
 
       /* <-- Set States from Config --> */
       FN.options.calendars(!!config.calendars);
-      FN.options.issues(!!config.issues);
       FN.options.classes(!!config.classes);
+
+      /* <-- Set Name from Config (if available) --> */
+      config.name ? ರ‿ರ.name = config.name : delete ರ‿ರ.name;
 
       /* <-- Open and render data --> */
       return FN.action.load(config);
@@ -1201,6 +1440,119 @@ App = function() {
   };
   /* <-- Classes Functions --> */
 
+
+  /* <-- Create Functions --> */
+  FN.create = {
+
+    /* <-- Create new Config, and open/create DB --> */
+    default: () =>
+
+      /* <-- Clear any existing config --> */
+      FN.config.clear()
+
+      /* <-- Search for existing docket files owned by user --> */
+      .then(() => ಠ_ಠ.Google.files.search(ಠ_ಠ.Google.files.natives()[1],
+        `${_.keys(PROPERTIES)[0]}=${_.values(PROPERTIES)[0]}`, true))
+
+      /* <-- Prompt User to use an existing file as their default docket database --> */
+      .then(results => results && results.length > 0 ? ಠ_ಠ.Display.choose({
+          id: "select_Database",
+          title: "Use Existing Data Sheet?",
+          instructions: ಠ_ಠ.Display.doc.get("EXISTING"),
+          choices: _.map(results, r => ({
+            value: r.id,
+            name: `${r.name} | Last Modified: ${ಠ_ಠ.Dates.parse(r.modifiedByMeTime).fromNow()}`
+          })),
+          cancel: "Create New",
+          action: "Select Existing",
+        })
+        .catch(e => (e ? ಠ_ಠ.Flags.error("Displaying Select Prompt", e) :
+          ಠ_ಠ.Flags.log("Select Prompt Cancelled")).negative()) : false)
+
+      /* <-- Return the File ID if selected, otherwise create new DB --> */
+      .then(result => result ? result.value : ರ‿ರ.tasks.create())
+
+      /* <-- Create/save new Config with the file ID --> */
+      .then(FN.config.create)
+
+      /* <-- Show / Then Close Busy Indication  --> */
+      .then(ಠ_ಠ.Main.busy("Creating Config"))
+
+      /* <-- Start the main process of loading and displaying the data! --> */
+      .then(() => FN.action.start(ರ‿ರ.config)),
+
+
+    /* <-- Create new Config with existing file --> */
+    existing: value => FN.config.create(value.id)
+
+      /* <-- Show / Then Close Busy Indication --> */
+      .then(ಠ_ಠ.Main.busy("Creating Config"))
+
+      /* <-- Start the main process of loading and displaying the data! --> */
+      .then(() => FN.action.start(ರ‿ರ.config)),
+
+
+    /* <-- Create new Shared Database --> */
+    new: () => 
+    
+      /* <-- Prompt User for new file name --> */
+      ಠ_ಠ.Display.text({
+        id: "file_name",
+        title: "File Name",
+        message: ಠ_ಠ.Display.doc.get("FILE_NAME"),
+        simple: true,
+        state: {
+          value: "Shared Docket Data"
+        }
+      })
+    
+      /* <-- Create new DB --> */
+      .then(name => name ? ರ‿ರ.tasks.create(name)
+            .then(ಠ_ಠ.Main.busy("Creating Database")) : false)
+
+      /* <-- Start the main process of loading and displaying the data! --> */
+      .then(id => id ? FN.action.start(_.defaults({
+        data: id
+      }, ರ‿ರ.config)) : false)
+    
+      .catch(e => (e ? ಠ_ಠ.Flags.error("Displaying Text Prompt", e) :
+          ಠ_ಠ.Flags.log("Text Prompt Cancelled")).negative())
+
+  };
+  /* <-- Create Functions --> */
+
+
+  /* <-- Open Functions --> */
+  FN.open = {
+
+    /* <-- Open Default Configuration Database --> */
+    default: value =>
+
+      /* <-- Find existing config --> */
+      FN.config.find()
+
+      /* <-- Update Existing or Create New config --> */
+      .then(config => config ?
+        FN.config.update(config.id, {
+          data: value.id
+        }) : FN.config.create(value.id))
+
+      /* <-- Show / Then Close Busy Indication  --> */
+      .then(ಠ_ಠ.Main.busy("Loading Config"))
+
+      /* <-- Start the main process of loading and displaying the data! --> */
+      .then(() => FN.action.start(ರ‿ರ.config)),
+
+    /* <-- Open Shared Database --> */
+    shared: value => FN.action.start(_.defaults({
+      data: value.id,
+      name: value.name
+    }, ರ‿ರ.config)),
+
+  };
+  /* <-- Open Functions --> */
+
+
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -1227,33 +1579,34 @@ App = function() {
           .then(config => !config ?
             ಠ_ಠ.Router.run(STATE_READY) :
             FN.action.start(config)
-            .then(result => result ?
-              true : ಠ_ಠ.Router.run(STATE_CONFIG))),
+            .then(result => result === false ?
+              ಠ_ಠ.Router.run(STATE_CONFIG) : true)),
         routes: {
 
           /* <!-- Default Overrides --> */
-          create: () => FN.config.clear()
-            .then(() => ರ‿ರ.tasks.create())
-            .then(id => FN.config.create(id))
-            .then(ಠ_ಠ.Main.busy("Creating Config"))
-            .then(() => FN.action.start(ರ‿ರ.config)),
+          create: () => ಠ_ಠ.Display.state().in(STATE_CONFIG) ?
+            FN.create.new() : FN.create.default(),
 
           open: {
-            options: {
-              title: "Select a Docket Sheet to Open",
-              view: "SPREADSHEETS",
-            },
-            success: value => FN.config.find()
-              .then(config => config ? FN.config.update(config.id, {
-                data: value.id
-              }) : FN.config.create(value.id))
-              .then(ಠ_ಠ.Main.busy("Loading Config"))
-              .then(() => FN.action.start(ರ‿ರ.config)),
+            options: FN.helper.picker,
+            success: value => ಠ_ಠ.Display.state().in(STATE_OPENED) ?
+              FN.open.shared(value.result) : FN.create.existing(value.result),
+          },
+
+          close: {
+            keys: ["c", "C"],
           },
           /* <!-- Default Overrides --> */
 
 
           /* <!-- Custom Routes --> */
+          default: {
+            matches: /DEFAULT/i,
+            length: 0,
+            state: STATE_CONFIG,
+            fn: () => FN.action.start(ರ‿ರ.config),
+          },
+
           jump: {
             matches: /JUMP/i,
             length: 0,
@@ -1265,22 +1618,25 @@ App = function() {
                 matches: /TODAY/i,
                 length: 0,
                 keys: ["t", "T"],
-                fn: () => FN.show.weekly(ಠ_ಠ.Dates.parse(ರ‿ರ.today)),
+                fn: () => FN.show.current(ಠ_ಠ.Dates.parse(ರ‿ರ.today)),
               },
               forward: {
                 matches: /FORWARD/i,
                 length: 0,
                 keys: ">",
                 actions: "swipeleft",
-                fn: () => FN.show.weekly(FN.show.from().add(1, "weeks")),
+                fn: () => FN.show.current(FN.focus.from().add(1, ಠ_ಠ.Display.state().in(STATE_MONTHLY) ?
+                  "months" : "weeks")),
                 routes: {
                   day: {
                     matches: /DAY/i,
                     length: 0,
                     keys: ".",
                     fn: () => {
-                      var _start = FN.show.from();
-                      FN.show.weekly(_start.add(ರ‿ರ.Dates.isoWeekday(_start) == 6 ? 2 : 1, "days"));
+                      var _start = FN.focus.from();
+                      FN.show.current(
+                        _start.add(ಠ_ಠ.Display.state().in([STATE_MONTHLY, STATE_WEEKLY], true) &&
+                          ಠ_ಠ.Dates.isoWeekday(_start) == 6 ? 2 : 1, "days"));
                     },
                   }
                 }
@@ -1290,21 +1646,63 @@ App = function() {
                 length: 0,
                 keys: "<",
                 actions: "swiperight",
-                fn: () => FN.show.weekly(FN.show.from().subtract(1, "weeks")),
+                fn: () => FN.show.current(FN.focus.from().subtract(1, ಠ_ಠ.Display.state().in(STATE_MONTHLY) ?
+                  "months" : "weeks")),
                 routes: {
                   day: {
                     matches: /DAY/i,
                     length: 0,
                     keys: ",",
                     fn: () => {
-                      var _start = FN.show.from();
-                      FN.show.weekly(_start.subtract(ರ‿ರ.Dates.isoWeekday(_start) == 7 ? 2 : 1, "days"));
+                      var _start = FN.focus.from();
+                      FN.show.current(
+                        _start.subtract(ಠ_ಠ.Display.state().in([STATE_MONTHLY, STATE_WEEKLY], true) &&
+                          ಠ_ಠ.Dates.isoWeekday(_start) == 7 ?
+                          2 : 1, "days"));
                     },
                   }
                 }
               },
 
             },
+          },
+
+          display: {
+            matches: /DISPLAY/i,
+            state: STATE_OPENED,
+            routes: {
+              daily: {
+                matches: /DAILY/i,
+                keys: ["d", "D"],
+                fn: () => FN.show.dated(ಠ_ಠ.Dates.parse(FN.focus.date()), FN.show.daily)
+                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_DAILY))
+              },
+              weekly: {
+                matches: /WEEKLY/i,
+                keys: ["w", "W"],
+                fn: () => FN.show.dated(ಠ_ಠ.Dates.parse(FN.focus.date()), FN.show.weekly)
+                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_WEEKLY))
+              },
+              monthly: {
+                matches: /MONTHLY/i,
+                keys: ["m", "M"],
+
+                fn: () => FN.show.dated(ಠ_ಠ.Dates.parse(FN.focus.date()), FN.show.monthly)
+                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_MONTHLY))
+              },
+              analysis: {
+                matches: /ANALYSIS/i,
+                keys: ["a", "A"],
+                fn: () => FN.show.analysis()
+                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_ANALYSIS))
+              },
+              kanban: {
+                matches: /KANBAN/i,
+                keys: ["k", "K"],
+                fn: () => FN.show.kanban()
+                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_KANBAN))
+              },
+            }
           },
 
           show: {
@@ -1319,21 +1717,16 @@ App = function() {
                 matches: /CALENDARS/i,
                 fn: FN.options.process("calendars")
               },
-              issues: {
-                matches: /ISSUES/i,
-                fn: () => FN.options.issues().then(result => FN.config.update(ರ‿ರ.id, {
-                  issues: result
-                }))
-              },
             }
           },
 
           config: {
             matches: /CONFIG/i,
             routes: {
+              
               clear: {
                 matches: /CLEAR/i,
-                fn: () => () => ಠ_ಠ.Display.confirm({
+                fn: () => ಠ_ಠ.Display.confirm({
                     id: "clear_Config",
                     target: ಠ_ಠ.container,
                     message: ಠ_ಠ.Display.doc.get("CLEAR_CONFIGURATION"),
@@ -1342,10 +1735,12 @@ App = function() {
                   .then(confirm => confirm ?
                     ಠ_ಠ.Display.busy() && FN.config.clear() : false)
                   .then(cleared => cleared ?
-                    ಠ_ಠ.Display.state().exit([STATE_CONFIG, STATE_OPENED]) && ಠ_ಠ.Router.run(STATE_READY) : false)
+                    ಠ_ಠ.Display.state().exit([STATE_CONFIG, STATE_OPENED]) && ಠ_ಠ.Router.run(STATE_READY) :
+                        false)
                   .catch(e => e ?
                     ಠ_ಠ.Flags.error("Clear Config Error", e) : ಠ_ಠ.Flags.log("Clear Config Cancelled"))
               },
+              
               show: {
                 matches: /SHOW/i,
                 fn: () => {
@@ -1360,19 +1755,135 @@ App = function() {
                       code: _.escape(JSON.stringify(_details, null, 4))
                     }) : config);
                 }
-              }
+              },
+              
+              download: {
+                matches: /DOWNLOAD/i,
+                fn: () => {
+                  FN.config.find()
+                    .then(FN.config.load)
+                    .then(ಠ_ಠ.Main.busy("Loading Config"))
+                    .then(config => ಠ_ಠ.Saver({}, ಠ_ಠ)
+                          .save(JSON.stringify(config, null, 2), "docket-config.json", "application/json"));
+                }
+              },
+              
+              edit: {
+                matches: /EDIT/i,
+                keys: ["p", "P"],
+                fn: () => {
+                  ಠ_ಠ.Display.state().enter(STATE_PREFERENCES);
+                  return FN.config.edit().then(values => {
+                    ಠ_ಠ.Display.state().exit(STATE_PREFERENCES);
+                    if (values !== undefined) {
+                      var _config = {};
+                        
+                      /* <!-- Comparison Sets --> */
+                      _.each(["data", "view"], prop => {
+                        if (values[prop] && ರ‿ರ.config[prop] != values[prop].Value)
+                        _config[prop] = values[prop].Value;
+                      });
+                      
+                      /* <!-- Array Sets (override) --> */
+                      _.each(["calendars", "classes"], prop => {
+                        values[prop] && (
+                          (_.isArray(values[prop].Values) && values[prop].Values.length > 0) ||
+                          (_.isObject(values[prop].Values) && values[prop].Values.id)) ?
+                          _config[prop] = _.isArray(values[prop].Values) ? 
+                            values[prop].Values : [values[prop].Values] :
+                          delete ರ‿ರ.config[prop];
+                      });
+                      
+                      /* <!-- Complex Sets --> */
+                      _.each(["zombie", "ghost"], prop => {
+                        values[prop] === undefined ?
+                          delete ರ‿ರ.config[prop] :
+                          values[prop].Value <= 0 ? 
+                            _config[prop] = false :
+                            values[prop] ? 
+                              _config[prop] = values[prop].Value :
+                              delete ರ‿ರ.config[prop];
+                      });
+                      
+                      return FN.config.update(ರ‿ರ.id, _config)
+                        .then(ಠ_ಠ.Main.busy("Saving Config"))
+                        .then(() => FN.config.get()
+                          .then(ಠ_ಠ.Main.busy("Loading Config"))
+                          .then(config => FN.action.start(config)));
+                      
+                    }
+                  });
+                }
+              },
+              
+              set: {
+                matches: /SET/i,
+                state: STATE_PREFERENCES,
+                routes: {
+                  data: {
+                    matches: /DATA/i,
+                    fn: () => ಠ_ಠ.Router.pick.single(FN.helper.picker())
+                      .then(file => $(`#${PREFERENCES}_data`).val(file.id)),
+                  }
+                }
+              },
+              
+              add: {
+                matches: /ADD/i,
+                state: STATE_PREFERENCES,
+                routes: {
+                  calendar: {
+                    matches: /CALENDAR/i,
+                    fn: () => FN.calendars.choose($(`#${PREFERENCES}_add_calendar`).addClass("loader"))
+                      .then(results => _.tap(results,
+                                             () => $(`#${PREFERENCES}_add_calendar`).removeClass("loader")))
+                      .then(results => results !== false ? 
+                            FN.config.add("calendars", "calendar", results) : results)
+                  },
+                  class: {
+                    matches: /CLASS/i,
+                    fn: () => FN.classes.choose($(`#${PREFERENCES}_add_class`).addClass("loader"))
+                      .then(results => _.tap(results,
+                                             () => $(`#${PREFERENCES}_add_class`).removeClass("loader")))
+                      .then(results => results !== false ?
+                            FN.config.add("classes", "class", results) : results)
+                  }
+                }
+              },
+              
+              remove: {
+                matches: /REMOVE/i,
+                state: STATE_PREFERENCES,
+                routes: {
+                  calendar: {
+                    matches: /CALENDAR/i,
+                    length: 1,
+                    fn: id => FN.config.remove("calendars", decodeURIComponent(id).replace(/\|/gi, "."))
+                  },
+                  class: {
+                    matches: /CLASS/i,
+                    length: 1,
+                    fn: id => FN.config.remove("classes", decodeURIComponent(id).replace(/\|/gi, "."))
+                  }
+                }
+              },
+              
             }
           },
 
           search: {
+            matches: /SEARCH/i,
             state: STATE_OPENED,
-            keys: ["s", "S", "f", "F"],
-            fn: FN.find.search,
             routes: {
+              default: {
+                length: 0,
+                keys: ["s", "S", "f", "F"],
+                fn: FN.find.search,
+              },
               tags: {
                 matches: /TAGS/i,
                 length: 1,
-                fn: command => FN.show.tagged(command)
+                fn: command => FN.display.tagged(decodeURIComponent(command))
                   .then(results => ಠ_ಠ.Flags.log(`Found Docket ${results.length} Item${results.length > 1 ? "s" : ""}`, results))
               }
             }
@@ -1410,7 +1921,8 @@ App = function() {
               tag: {
                 matches: /TAG/i,
                 length: 2,
-                fn: command => FN.interact.detag($(`#item_${command[0]}`), command[1])
+                fn: command => FN.interact.detag($(`#item_${command[0]}`),
+                  decodeURIComponent(command[1]))
               },
             }
           },
@@ -1435,7 +1947,7 @@ App = function() {
         route: (handled, command) => {
           if (handled) return;
           var _parsed = ಠ_ಠ.Dates.parse(command);
-          if (_parsed.isValid()) FN.show.weekly(_parsed);
+          if (_parsed.isValid()) FN.show.current(_parsed);
         }
       });
 
@@ -1460,12 +1972,17 @@ App = function() {
       });
 
       /* <!-- Create Tasks Reference --> */
-      ರ‿ರ.tasks = ಠ_ಠ.Tasks(ಠ_ಠ);
+      ರ‿ರ.tasks = ಠ_ಠ.Tasks({
+        properties: PROPERTIES,
+      }, ಠ_ಠ);
 
     },
 
     /* <!-- Clear the existing state --> */
     clean: () => ಠ_ಠ.Router.clean(false),
+
+    /* <!-- Present Internal State (for debugging etc) --> */
+    state: ರ‿ರ,
 
   };
 

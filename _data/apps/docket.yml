@@ -61,6 +61,10 @@ imports:
     load: last
   - name: objectHash
     load: last
+  - name: d3
+    load: lazy
+  - name: filesaver
+    load: lazy
   - name: google
     load: lazy
 helpers:
@@ -75,6 +79,7 @@ helpers:
   - fields
   - dialog
   - colours
+  - saver
 modules:
   - flags
   - controller
@@ -87,6 +92,7 @@ modules:
   - router
   - dates
   - docket/tasks
+  - docket/analysis
 scripts: 
   - extends/regex
   - extends/array
@@ -102,14 +108,23 @@ templates:
   - text
   - shared/control_icon
   - shared/control_button
+  - docket/config
+  - docket/badge
   - docket/item
+  - docket/action
+  - docket/monthly
   - docket/weekly
   - docket/daily
+  - docket/kanban
+  - docket/analysis
   - docket/new
   - docket/archive
   - docket/list
   - docket/tags
   - docket/tag
+  - docket/statistics
+  - docket/config/calendar
+  - docket/config/class
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -130,6 +145,8 @@ docs:
   - docket/FAILED_UPDATE
   - docket/CLEAR_CONFIGURATION
   - docket/CONFIRM_DETAG
+  - docket/EXISTING
+  - docket/FILE_NAME
 scopes:
   google:
     - scope: email
@@ -169,7 +186,100 @@ keys:
       general: AIzaSyDJoxwCqR2Ht0UZQ0fA6IoHYSqkOPvVBXI
       oauth: 100010371662-2msrdi93d6e6asc8o6h208tc7tlgc5kn.apps.googleusercontent.com
 menus:
+  - name: Database
+    groups:
+      all:
+        commands:
+          - name: Default
+            desc: Open your default Docket Database | Sheet
+            hash: default
+            auth: google
+            toggle:
+              - default
+          - name: Shared
+            desc: Open a new shared Docket Database | Sheet
+            hash: open
+            auth: google
+            toggle:
+              - loaded
+            imports:
+              - google
+            divider: true
+            
+          - name: Create
+            desc: Create a new Docket Database (e.g. for sharing)
+            hash: create
+            auth: google
+            divider: true
+            
+          - name: Close
+            desc: Close current Docket Database
+            disabled_until:
+              - loaded
+              
+  - name: Show
+    disabled_until:
+      - opened
+    groups:
+      all:
+        commands:
+          - name: Daily
+            desc: Display Daily Diary
+            shortcut: "d"
+            hash: display.daily
+            toggle:
+              - daily
+          - name: Weekly
+            desc: Display Weekly Diary
+            shortcut: "w"
+            hash: display.weekly
+            toggle:
+              - weekly
+          - name: Monthly
+            desc: Display Monthly Diary
+            shortcut: "m"
+            hash: display.monthly
+            toggle:
+              - monthly
+            divider: true
+            
+          - name: Kanban
+            desc: Display Tasks on Kanban Board
+            shortcut: "k"
+            hash: display.kanban
+            toggle:
+              - kanban
+            visibility: debug
+          - name: Analysis
+            desc: Display Analysis / Statistics for your Tasks
+            shortcut: "a"
+            hash: display.analysis
+            toggle:
+              - analysis
+            visibility: debug
+            divider: true
+            
+          - name: Calendar/s
+            desc: Display Google Calendar Events
+            hash: show.calendars
+            auth: google
+            toggle:
+              - calendars
+            scope: https://www.googleapis.com/auth/calendar.readonly
+          - name: Deadlines
+            desc: Display Google Classroom Deadlines
+            hash: show.classes
+            auth: google
+            toggle:
+              - classes
+            scopes:
+              - https://www.googleapis.com/auth/classroom.courses.readonly
+             
   - name: Diary
+    disabled_until:
+      - daily
+      - weekly
+      - monthly
     groups:
       all:
         commands:
@@ -191,58 +301,36 @@ menus:
             hash: search
             disabled_until:
               - opened
-  - name: Go
-    groups:
-      all:
-        commands:
-          - name: Forward
-            desc: Go forward a week
+            divider: true
+            
+          - name: Go Forwards
+            desc: Move forward a page (day/week/month)
             shortcut: "&gt;"
             hash: jump.forward
             disabled_until:
               - opened
-          - name: Backward
-            desc: Go backward a week
+              - weekly
+          - name: Go Backwards
+            desc: Move backward a page (day/week/month)
             shortcut: "&lt;"
             hash: jump.backward
             disabled_until:
               - opened
+              - weekly
           - name: To Today
             desc: Jump to today
             shortcut: "t"
             hash: jump.today
             disabled_until:
               - opened
-          - name: Jump To
-            desc: Jump to arbitrary date
+          - name: Select Date
+            desc: Focus on a particular date
             shortcut: "j"
             hash: jump
             disabled_until:
               - opened
-  - name: Show
-    groups:
-      all:
-        commands:
-          - name: Calendar/s
-            desc: Display Google Calendar Events
-            hash: show.calendars
-            disabled_until:
-              - opened
-            auth: google
-            toggle:
-              - calendars
-            scope: https://www.googleapis.com/auth/calendar.readonly
-          - name: Deadlines
-            desc: Display Google Classroom Deadlines
-            hash: show.classes
-            disabled_until:
-              - opened
-            auth: google
-            toggle:
-              - classes
-            scopes:
-              - https://www.googleapis.com/auth/classroom.courses.readonly
-  - name: Settings
+          
+  - name: Tools
     groups:
       all:
         commands:
@@ -259,16 +347,38 @@ menus:
             hash: archive
             disabled_until:
               - opened
+            divider: true
+          
+          - name: Clear Config
+            desc: Clear App Config (to restart)
+            hash: config.clear
+            auth: google
+            disabled_until:
+              - config
+          - name: Download Config
+            desc: Download App Config
+            hash: config.download
+            auth: google
+            disabled_until:
+              - config
+            imports:
+              - filesaver
           - name: Show Config
             desc: Show App Config
             hash: config.show
             disabled_until:
-              - opened
+              - config
             auth: google
-          - name: Clear Config
-            desc: Clear App Config
-            hash: config.clear
-            auth: google
+            divider: true
+            
+          - name: Preferences
+            desc: Edit App Config
+            hash: config.edit
+            disabled_until:
+              - config
+            imports:
+              - google
+              
   - name: About
     short_name: Help
     groups:
@@ -285,6 +395,7 @@ menus:
             url: /guides/docket
             desc: A guide to using this app
             divider: true
+            
           - name: Permissions
             url: /scopes/?highlight=docket
             desc: Find out about the permissions and scopes that this app uses
@@ -292,6 +403,7 @@ menus:
             url: /changes?highlight=docket
             desc: Find out about the most recent changes and features of this app
             divider: true
+            
           - name: Privacy
             url: /about?highlight=privacy
             desc: We are passionate about protecting your privacy and security
@@ -299,6 +411,7 @@ menus:
             url: /about
             desc: Find out about our platform, technology and approach
             divider: true
+            
           - name: Get Help
             hash: help
             desc: Get help or request a feature
@@ -309,20 +422,15 @@ menus:
             auth: google
 buttons:
     - name: Create
-      desc: Create a new Docket
+      desc: Start using the App by creating a new Docket Database
       hash: create
       auth: google
       class: state-ready
-    - name: Open Existing
-      desc: Open an Existing Docket
+    - name: Open
+      desc: Make an Existing Docket Database your default
       hash: open
       auth: google
       class: state-config disabled
       imports:
         - google
-    - name: Clear Config
-      desc: Clear current config to restart!
-      hash: config.clear
-      auth: google
-      class: state-config disabled
 published: true

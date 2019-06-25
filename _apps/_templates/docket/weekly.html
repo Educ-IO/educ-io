@@ -1,6 +1,7 @@
 {% raw %}
+{{~#if name}}<div class="text-light bg-dark col-12"><h4 class="name font-weight-light m-0 py-1">{{name}}</h4></div>{{/if~}}
 <div {{#if id}}id="{{id}}" {{/if}}class="border-exagerate container-fluid pt-lg-2 px-1 px-sm-2 px-lg-3 nvh-100">
-  <div class="row m-0 pt-2">
+  <div class="row week m-0 pt-2">
   {{#each days}}{{#is instruction 'row-start'}}<div class="{{#if class}}{{class}} {{/if}}m-0 mb-1 row{{#if row_sizes}}{{#each row_sizes}} col-{{#is @key '!=' 'xs'}}{{@key}}-{{/is}}{{this}}{{/each}}{{/if}} border border-white rounded">{{/is}}<div class="group {{#unless instruction}}{{#if class}}{{class}} {{/if}}{{/unless}}{{#if sizes}}{{#each sizes}}{{#is @index "!=" 0}} {{/is}}col-{{#is @key '!=' 'xs'}}{{@key}}-{{/is}}{{this}}{{/each}}{{/if}}{{#unless instruction}} border border-white rounded mb-1{{/unless}} px-2 px-lg-3"{{#if date}} data-droppable="true" data-date="{{isoDate date}}"{{/if}}>
       <div class="py-2">
         <div class="row">
@@ -24,16 +25,5 @@
     </div>{{#is instruction "row-end"}}</div>{{/is}}{{/each}}
   </div>
 </div>
-{{#if action}}<div {{#if id}}id="{{id}}_add"{{/if}} class="position-fixed mr-3 mb-3 mr-lg-5 mb-lg-5 pr-xl-4 pb-xl-4{{#if action.list}} btn-float-dropdown dropdown{{/if}}">
-  {{#if action.list}}
-  	<button aria-expanded="false" aria-haspopup="true" class="btn btn-float btn-secondary dropup" data-toggle="dropdown" type="button">
-      <i class="material-icons">{{#if action.icon}}{{action.icon}}{{else}}add{{/if}}</i>
-  	</button>
-    <div class="dropdown-menu">
-      {{#each action.list}}<a class="btn btn-float{{#if class}} {{class}}{{else}} btn-light{{/if}} btn-sm" role="button" href="#{{action}}"><i class="material-icons{{#unless class}} text-dark{{/unless}}">{{icon}}</i></a>{{/each}}
-    </div>
-  {{else}}
-  	<a class="btn btn-float{{#if action.class}} {{action.class}}{{else}} btn-secondary{{/if}}" role="button" href="#{{#if action.action}}{{action.action}}{{else}}{{action}}{{/if}}"><i class="material-icons{{#unless class}} text-light{{/unless}}">{{#if action.icon}}{{action.icon}}{{else}}add{{/if}}</i></a>
-  {{/if}}
-</div>{{/if}}
+{{#if action}}{{> action id=id action=action}}{{/if}}
 {% endraw %}

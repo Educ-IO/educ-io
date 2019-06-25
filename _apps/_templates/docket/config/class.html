@@ -1,0 +1,13 @@
+{% raw %}
+<li data-output-name="*" class="list-group-item d-flex justify-content-between align-items-center"
+    data-id="{{id}}">
+  {{~#if teacher}}<i class="material-icons">school</i>{{/if~}}
+  <span class="d-none" data-output-name="id">{{id}}</span>
+  <span class="d-none" data-output-name="calendar">{{calendar}}</span>
+  <input type="checkbox" class="d-none" data-output-name="teacher"{{#if teacher}} checked{{/if}}>
+  <span title="Class Calendar ID: {{calendar}}" data-output-name="name">{{name}}</span>
+  {{#if count}}<span class="badge badge-dark badge-pill">{{count}}</span>{{/if}}
+  <a role="button" class="close ml-2" aria-label="Remove Class" href="#config.remove.class.{{id}}"
+     title="Remove Class"><span aria-hidden="true">×</span></a>
+</li>
+{% endraw %}

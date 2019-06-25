@@ -293,6 +293,7 @@ App = function() {
             fn: () => ರ‿ರ.folder.search("root")
           },
           search: {
+            matches: /SEARCH/i,
             state: STATE_OPENED,
             keys: "s",
             fn: command => ರ‿ರ.folder.search(command)

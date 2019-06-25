@@ -190,7 +190,7 @@ Forms = function(loaded) {
       }, {});
 
       /* <!-- Get Scales & Forms from Google Drive --> */
-      ಱ.loaded = Promise.all(_.map(TYPES, type => ಠ_ಠ.Google.files.type(type.mime)
+      ಱ.loaded = Promise.all(_.map(TYPES, type => ಠ_ಠ.Google.files.type(type.mime, "domain,user,allTeamDrives")
           .then(files => Promise.all(_.map(files, file => ಠ_ಠ.Google.files.download(file.id)
             .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
             .then(content => {

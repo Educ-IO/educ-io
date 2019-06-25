@@ -889,8 +889,8 @@ App = function() {
           (type == "md" ?
             ರ‿ರ.analysis.table().markdown(values) :
             type == "csv" ?
-            ರ‿ರ.analysis.table().csv(values) :
-            ರ‿ರ.analysis.table().excel(values, "Analysis"))
+              ರ‿ರ.analysis.table().csv(values) :
+              ರ‿ರ.analysis.table().excel(values, "Analysis"))
           .then(data => ಠ_ಠ.Saver({}, ಠ_ಠ).save(data, `${ರ‿ರ.analysis.title()}.${type}`,
             type == "xlsx" ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :
             type == "md" ? "text/markdown" :
@@ -1589,6 +1589,7 @@ App = function() {
     /* <!-- Clear the existing state --> */
     clean: () => ಠ_ಠ.Router.clean(false),
 
+    /* <!-- Present Internal State (for debugging etc) --> */
     state: ರ‿ರ,
 
     persistent: ಱ,

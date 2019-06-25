@@ -2,6 +2,8 @@ TODO LIST
 =========
 General
 -------
+* ** BUG ** Multi Modal - bug with Z-index (need to suspend / reactivate modal?)
+
 * Can we put Liquid / Jekyll tags into templates and pre-process them? Maybe better to pull variables into centralised object passed to template....
 
 * ** IMPORTANT ** Headless Tests -> Write new permission request handing!!!
@@ -70,7 +72,6 @@ Mobile
 
 Docket
 ------
-* ** FEATURE ** Task Stats / Aggregated 'Projects' using tags (hash?)
 * ** FEATURE ** KanBan style task management - using STATUS field?
 
 * ** BUG ** Delete item can lead to subsequent hash failures on changes. <-- Bring in new SaaD version / Likely to do with order, and removing an item first
@@ -158,6 +159,9 @@ Survey
 
 Complete
 --------
+* ** FEATURE ** Task Stats / Aggregated 'Projects' using tags (hash?) <== DONE
+* ** FEATURE ** Preferences Dialog <-- DONE
+* ** FEATURE ** Default View <-- DONE
 * ** PERFORMANCE ** Remove fadeToggle / fadeOut code from datatable.js and filters.html (template) - replace with CSS opacity animations or bootstrap collapse (then move all apps to JQUERY slim) <-- DONE
 * ** BUGS ** Check saved analysis opens properly from Google Drive, and that create analysis DayJs error has gone! <-- DONE
 * ** FEATURE ** Move item to different day by drag <-- DONE

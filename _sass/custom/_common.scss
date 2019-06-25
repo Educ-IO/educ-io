@@ -160,6 +160,11 @@ em.kb-shortcut, strong.kb-shortcut {
   color: $colour-background !important;
   @include arrayed_Gradient(darken(rgba(0,255,0,0.9), 10%) rgba(255,0,0,0.9) rgba(0,0,255,0.9), 74%);
 }
+
+.badge-attention {
+  color: $colour-background !important;
+  @include arrayed_Gradient(rgba(204,0,183,0.9) rgba(82,5,135,0.9) darken(rgba(82,11,135,0.9), 20%), 90%);
+}
 // -- Badges -- //
 
 // -- Backgrounds -- //
@@ -177,6 +182,10 @@ em.kb-shortcut, strong.kb-shortcut {
 
 .bg-action-light, .bg-highlight-light {
 	background-color: lighten($colour-highlight, 50%) !important;
+}
+
+.bg-action-lightest, .bg-highlight-lightest {
+	background-color: transparentize(lighten($colour-highlight, 50%), 0.75) !important;
 }
 
 .bg-action-dark, .bg-highlight-dark {

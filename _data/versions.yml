@@ -1,4 +1,8 @@
 site :
+  0.1.5n :
+    name : Docket v0.0.6-beta
+    desc : New Views
+    numeric : 0.1.5.15
   0.1.5m :
     name : Performance Improvements
     desc : Bug Fixes and Performance Improvements
@@ -924,6 +928,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  0.0.6-beta :
+    name : New Views
+    desc : Daily, Weekly and Monthly Views
+    type : major
   0.0.5-beta :
     name : Integrations
     desc : Google Calendar and Classroom Integrations

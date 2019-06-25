@@ -12,6 +12,7 @@ Flags = function() {
   /* <!-- Internal Variables --> */
   var _alert = false,
     _debug = false,
+    _verbose = false,
     _development = false,
     _page = false,
     _option = false,
@@ -44,6 +45,8 @@ Flags = function() {
     if (_debug) window.onerror = function(m, u, l, c, o) {
       _err(`Error: ${m} Script: ${u} Line: ${l} Column: ${c} Trace: ${o}`);
     };
+    
+    _verbose = _debug ? (_url.param("verbose") === "" || _url.fparam("verbose") === "") : false;
 
     _development = (_url.attr("host").split(".")[0] == "dev" || _url.param("dev") === "" || _url.fparam("dev") === "");
 
@@ -129,6 +132,10 @@ Flags = function() {
             return _base + (path ? path : "");
           },
 
+          verbose: function() {
+            return _verbose;
+          },
+          
           debug: function() {
             return _debug;
           },

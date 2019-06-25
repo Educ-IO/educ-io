@@ -1,4 +1,4 @@
-Tasks = ಠ_ಠ => {
+Tasks = (options, factory) => {
   "use strict";
 
   /* <!-- MODULE: Provides an interface to create / load / manipulate stored tasks --> */
@@ -9,9 +9,11 @@ Tasks = ಠ_ಠ => {
   const EXTRACT_ALLDAY = /(^|\s|\(|\{|\[)(all day|all morning|all afternoon|all evening|[ap]m)\b/i;
   const EXTRACT_TIME = /(?:^|\s)((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))(?:[.!?]?)(?:\s|$)/i;
   const EXTRACT_DATE = /\b(\d{4})-(\d{2})-(\d{2})|((0?[1-9]|[12]\d|30|31)[^\w\d\r\n:](0?[1-9]|1[0-2]|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[^\w\d\r\n:](\d{4}|\d{2}))\b/i;
-  const SPLIT_TAGS = /[^a-zA-Z0-9]/;
-  const ZOMBIE = 60,
-    GHOST = 120;
+  const SPLIT_TAGS = /[^a-zA-Z0-9#!\?\-_]/; /* <!-- Valid Characters for Tags/Badges --> */
+  const DEFAULTS = {
+    zombie: 60,
+    ghost: 120,
+  };
   const DB = new loki("docket.db"),
     NAMES = {
       spreadsheet: "Educ.IO | Docket Data",
@@ -126,6 +128,10 @@ Tasks = ಠ_ಠ => {
     };
   /* <!-- Internal Constants --> */
 
+  /* <!-- Internal Options --> */
+  options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
+  /* <!-- Internal Options --> */
+  
   /* <!-- Internal Variables --> */
   var _data, _db;
   /* <!-- Internal Variables --> */
@@ -144,8 +150,8 @@ Tasks = ಠ_ಠ => {
     var _due = item[META.column_details.value].match(EXTRACT_DATE);
 
     /* <!-- Set Due Date if available --> */
-    !(item[META.header_due.value] = _due && _due.length >= 1 ? ಠ_ಠ.Dates.parse(_due[0], ["DD/MM/YYYY", "D/M/YY", "DD-MM-YY", "DD-MM-YYYY", "DD-MMM-YY", "DD-MMM-YYYY", "YYYY-MM-DD"]) : "") ?
-    delete item._countdown: (item._countdown = item[META.header_due.value].diff(ಠ_ಠ.Dates.now(), "days"));
+    !(item[META.header_due.value] = _due && _due.length >= 1 ? factory.Dates.parse(_due[0], ["DD/MM/YYYY", "D/M/YY", "DD-MM-YY", "DD-MM-YYYY", "DD-MMM-YY", "DD-MMM-YYYY", "YYYY-MM-DD"]) : "") ?
+    delete item._countdown: (item._countdown = item[META.header_due.value].diff(factory.Dates.now(), "days"));
 
     /* <!-- Extract Time from Details if found --> */
     var _all = item[META.column_details.value].match(EXTRACT_ALLDAY),
@@ -159,13 +165,14 @@ Tasks = ಠ_ಠ => {
     delete item._timed: (item._timed = true);
 
     /* <!-- Split Tabs into Badges --> */
-    if (item[META.column_tags.value]) item[META.header_badges.value] = item[META.column_tags.value].split(SPLIT_TAGS);
+    if (item[META.column_tags.value]) item[META.header_badges.value] = 
+        _.compact(item[META.column_tags.value].split(SPLIT_TAGS).sort());
 
     /* <!-- Set Appropriate Status --> */
     if (item[META.column_status.value] && item[META.column_status.value].toUpperCase() == "COMPLETE") item._complete = true;
 
     /* <!-- Set Zombie | Ghost Status --> */
-    if (!item._timed && !item._complete && item._countdown === undefined)(item[META.header_ghost.value] = item[META.column_from.value].isBefore(ghostly)) ? (item._dormant = item[META.column_from.value].fromNow()) : (item[META.header_zombie.value] = item[META.column_from.value].isBefore(zombified));
+    if (!item._timed && !item._complete && item._countdown === undefined) (item[META.header_ghost.value] = ghostly === false ? false : item[META.column_from.value].isBefore(ghostly)) ? (item._dormant = item[META.column_from.value].fromNow()) : (item[META.header_zombie.value] = zombified === false ? false : item[META.column_from.value].isBefore(zombified));
 
     return item;
   };
@@ -177,7 +184,7 @@ Tasks = ಠ_ಠ => {
       var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
       /* <!-- Parse Value if required --> */
       _row[column.developerMetadata.metadataValue] = _val ?
-        column.isDate ? ಠ_ಠ.Dates.parse(_val) :
+        column.isDate ? factory.Dates.parse(_val) :
         column.isInteger ? parseInt(_val, 10) :
         _val : _val;
     });
@@ -186,10 +193,10 @@ Tasks = ಠ_ಠ => {
     _data.last = Math.max(_data.last !== undefined ? _data.last : 0, (_row.__ROW = index));
 
     /* <!-- Set on-the-fly Item Properties (TIME and BADGES, so we can query them) --> */
-    var __reference = ಠ_ಠ.Dates.now().startOf("day"),
+    var __reference = factory.Dates.now().startOf("day"),
       __process = _process(
-        __reference.clone().subtract(ZOMBIE, "days"),
-        __reference.subtract(GHOST, "days"));
+        options.zombie === false ? false : __reference.clone().subtract(options.zombie, "days"),
+        options.ghost === false ? false : __reference.subtract(options.ghost, "days"));
 
     if (_row[META.column_details.value]) list.push(__process(_row));
 
@@ -223,7 +230,7 @@ Tasks = ಠ_ಠ => {
         batches: []
       }).batches;
 
-    return ಠ_ಠ.Google.sheets.batch(spreadsheetId, _dimensions.concat(_metadata).concat(_merges).concat([{
+    return factory.Google.sheets.batch(spreadsheetId, _dimensions.concat(_metadata).concat(_merges).concat([{
         "createDeveloperMetadata": meta.rows(0, 1).tag(META.row_headers)
       }, {
         "createDeveloperMetadata": meta.rows(1, 2).tag(META.row_headers)
@@ -325,34 +332,32 @@ Tasks = ಠ_ಠ => {
   var _populateDataSheetHeaders = (spreadsheetId, sheetTitle, columns) => {
     var _groups = _.map(columns, column => column._meta && column._meta.group ? column._meta.group : ""),
       _titles = _.map(columns, column => column._meta && column._meta.title ? column._meta.title : "");
-    return ಠ_ಠ.Google.sheets.update(spreadsheetId, `'${sheetTitle}'!A1:${ಠ_ಠ.Google_Sheets_Notation().convertR1C1(`R2C${_titles.length}`)}`, [_groups, _titles]);
+    return factory.Google.sheets.update(spreadsheetId, `'${sheetTitle}'!A1:${factory.Google_Sheets_Notation().convertR1C1(`R2C${_titles.length}`)}`, [_groups, _titles]);
   };
 
   var _populateDataSheet = (spreadsheetId, sheetId, sheetTitle, headerColour) => {
-    var _grid = ಠ_ಠ.Google_Sheets_Grid({
+    var _grid = factory.Google_Sheets_Grid({
         sheet: sheetId
       }),
-      _meta = ಠ_ಠ.Google_Sheets_Metadata({
+      _meta = factory.Google_Sheets_Metadata({
         sheet: sheetId
-      }, ಠ_ಠ),
+      }, factory),
       _columns = _.map(_.filter(META, column => column._meta && column.key == "COLUMN_NAME"), column => column);
     return _populateDataSheetHeaders(spreadsheetId, sheetTitle, _columns)
       .then(() => _formatDataSheet(spreadsheetId, sheetId, _columns, _grid, _meta, headerColour));
   };
 
-  var _create = () => ಠ_ಠ.Google.sheets.create(NAMES.spreadsheet, NAMES.sheet, {
+  var _create = name => factory.Google.sheets.create(name || NAMES.spreadsheet, NAMES.sheet, {
       red: 0.545,
       green: 0.153,
       blue: 0.153
     }, [META.sheet_tasks, META.schema_version]).then(sheet => {
-      ಠ_ಠ.Flags.log(`Created Data File: ${sheet.properties.title} - [${sheet.spreadsheetId}]`);
+      factory.Flags.log(`Created Data File: ${sheet.properties.title} - [${sheet.spreadsheetId}]`);
       return sheet;
     })
     .then(sheet => _populateDataSheet(sheet.spreadsheetId, sheet.sheets[0].properties.sheetId, sheet.sheets[0].properties.title))
-    .then(sheet => ಠ_ಠ.Google.files.update(sheet.spreadsheetId, {
-      properties: {
-        DOCKET: "DATA"
-      }
+    .then(sheet => factory.Google.files.update(sheet.spreadsheetId, {
+      properties: options.properties
     }))
     .then(response => response.id);
 
@@ -361,24 +366,27 @@ Tasks = ಠ_ಠ => {
     _db = null;
   };
 
-  var _open = id => {
+  var _open = (id, opts) => {
 
+    /* <!-- Override Default Options with Supplied ones --> */
+    options = _.defaults(opts, options);
+    
     if (_db) _close();
 
     $("nav a[data-link='sheet']").prop("href", `https://docs.google.com/spreadsheets/d/${id}/edit`);
-    ಠ_ಠ.Flags.log(`Opening Data File: ${id}`);
+    factory.Flags.log(`Opening Data File: ${id}`);
 
-    var _meta = ಠ_ಠ.Google_Sheets_Metadata({}, ಠ_ಠ),
-      _notation = ಠ_ಠ.Google_Sheets_Notation();
+    var _meta = factory.Google_Sheets_Metadata({}, factory),
+      _notation = factory.Google_Sheets_Notation();
 
-    return ಠ_ಠ.Google.sheets.metadata.find(id, _meta.filter().parse(META.sheet_tasks).make())
+    return factory.Google.sheets.metadata.find(id, _meta.filter().parse(META.sheet_tasks).make())
       .then(value => {
         if (value && value.matchedDeveloperMetadata && value.matchedDeveloperMetadata.length == 1) {
           _data = {
             spreadsheet: id,
             sheet: value.matchedDeveloperMetadata[0].developerMetadata.location.sheetId
           };
-          return ಠ_ಠ.Google.sheets.get(id);
+          return factory.Google.sheets.get(id);
         } else {
           return false;
         }
@@ -395,7 +403,7 @@ Tasks = ಠ_ಠ => {
             _meta.filter().location(_location).key(META.column_type.key).make(),
             _meta.filter().location(_location).key(META.row_headers.key).make()
           ];
-        return ಠ_ಠ.Google.sheets.metadata.find(value.spreadsheet, _filters);
+        return factory.Google.sheets.metadata.find(value.spreadsheet, _filters);
       })
       .then(value => {
         if (!value || !value.matchedDeveloperMetadata) return;
@@ -418,13 +426,13 @@ Tasks = ಠ_ಠ => {
           });
         });
 
-        ಠ_ಠ.Flags.log("METADATA (Rows):", _data.rows);
-        ಠ_ಠ.Flags.log("METADATA (Columns):", _data.columns);
+        factory.Flags.log("METADATA (Rows):", _data.rows);
+        factory.Flags.log("METADATA (Columns):", _data.columns);
 
         _data.range = `${_notation.convertR1C1(`R${_data.rows.end + 1}C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`;
-        ಠ_ಠ.Flags.log("Fetching Values for Range:", _data.range);
+        factory.Flags.log("Fetching Values for Range:", _data.range);
 
-        return ಠ_ಠ.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_data.range}`);
+        return factory.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_data.range}`);
 
       })
       .then(value => {
@@ -447,7 +455,7 @@ Tasks = ಠ_ಠ => {
 
         /* <!-- Populate and Return --> */
         _data.data = value.values ? _populate(value.values) : [];
-        ಠ_ಠ.Flags.log("Data Values:", _data.data);
+        factory.Flags.log("Data Values:", _data.data);
         return _data.data;
         /* <!-- Populate and Return --> */
 
@@ -537,7 +545,7 @@ Tasks = ಠ_ಠ => {
         "$ne": ""
       };
       _queryFuture[META.column_from.value] = {
-        "$gt": ಠ_ಠ.Dates.now().startOf("day").toDate()
+        "$gt": factory.Dates.now().startOf("day").toDate()
       };
       _queryDateFrom[META.column_from.value] = {
         "$lte": date.endOf("day").toDate()
@@ -557,6 +565,14 @@ Tasks = ಠ_ಠ => {
       };
     },
 
+    all_tagged: tag => {
+      var _queryTag = {};
+      _queryTag[META.header_badges.value] = {
+        "$contains": tag
+      };
+      return _queryTag;
+    },
+    
     tagged: tag => {
       var _queryTag = {},
         _queryStatus = {};
@@ -600,7 +616,7 @@ Tasks = ಠ_ಠ => {
           "$ne": ""
         };
         _queryFuture[META.column_from.value] = {
-          "$gte": ಠ_ಠ.Dates.parse(from).startOf("day").toDate()
+          "$gte": factory.Dates.parse(from).startOf("day").toDate()
         };
         return {
           "$and": [_queryText, {
@@ -622,17 +638,17 @@ Tasks = ಠ_ಠ => {
     var _query = {
       "$or": [_queries.current(date), _queries.complete(date)]
     };
-    ಠ_ಠ.Flags.log(`Query [Current] for :${date}`, _query);
+    factory.Flags.log(`Query [Current] for :${date}`, _query);
     var _data = _results(_query, db);
-    ಠ_ಠ.Flags.log(`Result Values [Current] for :${date}`, _data);
+    factory.Flags.log(`Result Values [Current] for :${date}`, _data);
     return _data;
   };
 
   var _date = (date, db) => {
     var _query = _queries.dated(date);
-    ಠ_ಠ.Flags.log(`Query for :${date}`, _query);
+    factory.Flags.log(`Query for :${date}`, _query);
     var _data = _results(_query, db);
-    ಠ_ಠ.Flags.log(`Result Values for :${date}`, _data);
+    factory.Flags.log(`Result Values for :${date}`, _data);
     return _data;
   };
 
@@ -649,13 +665,13 @@ Tasks = ಠ_ಠ => {
     /* <!-- For new data sheets --> */
     _data.last = _data.last ? _data.last : -1;
 
-    var _notation = ಠ_ಠ.Google_Sheets_Notation(),
+    var _notation = factory.Google_Sheets_Notation(),
       _range = `${_notation.convertR1C1(`R${_data.rows.end + 2 + _data.last}C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`,
       _value = _convertToArray(item);
 
-    ಠ_ಠ.Flags.log(`Writing Values [NEW] for Range: ${_range}`, _value);
+    factory.Flags.log(`Writing Values [NEW] for Range: ${_range}`, _value);
 
-    return ಠ_ಠ.Google.sheets.append(_data.spreadsheet, `${_data.title}!${_range}`, [_value]).then(result => {
+    return factory.Google.sheets.append(_data.spreadsheet, `${_data.title}!${_range}`, [_value]).then(result => {
       if (result && result.updates) {
         item.__ROW = (_data.last += 1);
         item.__hash = _hash(item);
@@ -669,16 +685,16 @@ Tasks = ಠ_ಠ => {
 
   var _update = item => {
 
-    var _notation = ಠ_ಠ.Google_Sheets_Notation(),
+    var _notation = factory.Google_Sheets_Notation(),
       _range = `${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.start}`)}:${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.end}`, true)}`,
       _value = _convertToArray(item);
 
-    return ಠ_ಠ.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_range}`).then(value => {
+    return factory.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_range}`).then(value => {
       var _existing = _populate(value.values)[0];
       _existing.__hash = _hash(_existing);
       if (_existing.__hash == item.__hash) {
-        ಠ_ಠ.Flags.log(`Writing Values [UPDATED] for Range: ${_range}`, _value);
-        return ಠ_ಠ.Google.sheets.update(_data.spreadsheet, `${_data.title}!${_range}`, [_value]).then(() => {
+        factory.Flags.log(`Writing Values [UPDATED] for Range: ${_range}`, _value);
+        return factory.Google.sheets.update(_data.spreadsheet, `${_data.title}!${_range}`, [_value]).then(() => {
           item.__hash = _hash(item);
           return item;
         });
@@ -689,10 +705,10 @@ Tasks = ಠ_ಠ => {
 
   };
 
-  var _archive = (year, db) => ಠ_ಠ.Google.sheets.filtered(_data.spreadsheet, ಠ_ಠ.Google_Sheets_Metadata({}, ಠ_ಠ).filter().parse(META.sheet_archive).value(year).make())
+  var _archive = (year, db) => factory.Google.sheets.filtered(_data.spreadsheet, factory.Google_Sheets_Metadata({}, factory).filter().parse(META.sheet_archive).value(year).make())
     .then(value => value && value.sheets && value.sheets.length == 1 && _.find(value.sheets[0].developerMetadata, m => m.metadataKey == META.sheet_archive.key && m.metadataValue == year) ?
       value.sheets[0].properties :
-      ಠ_ಠ.Google.sheets.batch(_data.spreadsheet, [{
+      factory.Google.sheets.batch(_data.spreadsheet, [{
         "addSheet": {
           "properties": {
             "sheetId": year,
@@ -705,7 +721,7 @@ Tasks = ಠ_ಠ => {
           }
         }
       }, {
-        "createDeveloperMetadata": ಠ_ಠ.Google_Sheets_Metadata({}, ಠ_ಠ).sheet(year).tag({
+        "createDeveloperMetadata": factory.Google_Sheets_Metadata({}, factory).sheet(year).tag({
           key: META.sheet_archive.key,
           value: year
         })
@@ -721,26 +737,26 @@ Tasks = ಠ_ಠ => {
         _items = (db ? db : _db).where(item => item[META.column_from.value].year() == year),
         _values = _.map(_items, item => _convertToArray(item));
 
-      var _notation = ಠ_ಠ.Google_Sheets_Notation(),
+      var _notation = factory.Google_Sheets_Notation(),
         _range = `${_notation.convertR1C1(`R1C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`;
 
-      ಠ_ಠ.Flags.log(`Appending Values [NEW] for Range: ${_range}`, _values);
+      factory.Flags.log(`Appending Values [NEW] for Range: ${_range}`, _values);
 
-      return ಠ_ಠ.Google.sheets.append(_data.spreadsheet, `'${_sheet.properties.title}'!${_range}`, _values).then(result => result && result.updates ? _items : false);
+      return factory.Google.sheets.append(_data.spreadsheet, `'${_sheet.properties.title}'!${_range}`, _values).then(result => result && result.updates ? _items : false);
     });
 
   var _remove = items => {
 
-    var _grid = ಠ_ಠ.Google_Sheets_Grid({
+    var _grid = factory.Google_Sheets_Grid({
         sheet: _data.sheet
       }),
       _start = _data.rows.end + 1 + _.min(items, item => item.__ROW).__ROW,
       _end = _data.rows.end + 1 + _.max(items, item => item.__ROW).__ROW,
       _dimension = _grid.dimension("ROWS", _start - 1, _end);
 
-    ಠ_ಠ.Flags.log(`Removing Rows : ${_start}-${_end} / Dimension : ${JSON.stringify(_dimension)} for items:`, items);
+    factory.Flags.log(`Removing Rows : ${_start}-${_end} / Dimension : ${JSON.stringify(_dimension)} for items:`, items);
 
-    return ಠ_ಠ.Google.sheets.batch(_data.spreadsheet, {
+    return factory.Google.sheets.batch(_data.spreadsheet, {
       "deleteDimension": {
         "range": _dimension
       }
@@ -752,20 +768,20 @@ Tasks = ಠ_ಠ => {
 
     if (item.__ROW === undefined || item.__ROW === null) return Promise.reject();
 
-    var _grid = ಠ_ಠ.Google_Sheets_Grid({
+    var _grid = factory.Google_Sheets_Grid({
         sheet: _data.sheet
       }),
       _row = _data.rows.end + 1 + item.__ROW,
       _dimension = _grid.dimension("ROWS", _row - 1, _row),
-      _notation = ಠ_ಠ.Google_Sheets_Notation(),
+      _notation = factory.Google_Sheets_Notation(),
       _range = `${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.start}`)}:${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.end}`, true)}`;
 
-    return ಠ_ಠ.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_range}`).then(value => {
+    return factory.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_range}`).then(value => {
       var _existing = _populate(value.values)[0];
       _existing.__hash = _hash(_existing);
       if (_existing.__hash == item.__hash) {
-        ಠ_ಠ.Flags.log(`Deleting Row : ${_row} / Dimension : ${JSON.stringify(_dimension)} for item:`, item);
-        return ಠ_ಠ.Google.sheets.batch(_data.spreadsheet, {
+        factory.Flags.log(`Deleting Row : ${_row} / Dimension : ${JSON.stringify(_dimension)} for item:`, item);
+        return factory.Google.sheets.batch(_data.spreadsheet, {
           "deleteDimension": {
             "range": _dimension
           }
@@ -815,19 +831,35 @@ Tasks = ಠ_ಠ => {
 
     search: (query, db, from) => {
       var _query = _queries.text(query, from);
-      ಠ_ಠ.Flags.log(`Query for :${query}`, _query);
+      factory.Flags.log(`Query for :${query}`, _query);
       var _results = (db ? db : _db).find(_query);
-      ಠ_ಠ.Flags.log(`Result Values for : ${query}`, _results);
+      factory.Flags.log(`Result Values for : ${query}`, _results);
       return _results;
     },
 
     query: (date, db, current) => current ? _current(date, db) : _date(date, db),
 
+    analysis: (tag, db) => {
+      var _query = _queries.all_tagged(tag);
+      factory.Flags.log(`Query [ALL] for: ${tag}`, _query);
+      var _all = (db ? db : _db).find(_query);
+      factory.Flags.log(`Result Values for: ${tag}`, _all);
+      var _complete = _.filter(_all,
+                               result => result[META.column_status.value] == "COMPLETE");
+      var _analysis = {
+        total: _all.length,
+        complete: _complete.length,
+        percentage_complete: Math.round(_complete.length / _all.length * 100),
+      };
+      factory.Flags.log(`Analysis for: ${tag}`, _analysis);
+      return _analysis;
+    },
+    
     tagged: (tag, db) => {
       var _query = _queries.tagged(tag);
-      ಠ_ಠ.Flags.log(`Query [Current] for :${tag}`, _query);
+      factory.Flags.log(`Query [Current] for: ${tag}`, _query);
       var _results = (db ? db : _db).find(_query);
-      ಠ_ಠ.Flags.log(`Result Values for : ${tag}`, _results);
+      factory.Flags.log(`Result Values for: ${tag}`, _results);
       return _results;
     },
 
@@ -845,7 +877,7 @@ Tasks = ಠ_ಠ => {
         tally[_year][item._complete || (item._timed && !item[META.column_from.value].isAfter()) ? "complete" : "incomplete"] += 1;
         return tally;
       }, {});
-      ಠ_ಠ.Flags.log("Result Values for years", _results);
+      factory.Flags.log("Result Values for years", _results);
       return _results;
     },
 
@@ -862,9 +894,9 @@ Tasks = ಠ_ಠ => {
       delete: _delete,
 
       process: items => {
-        var _reference = ಠ_ಠ.Dates.now().startOf("day"),
-          _zombie = _reference.clone().subtract(ZOMBIE, "days"),
-          _ghost = _reference.subtract(GHOST, "days");
+        var _reference = factory.Dates.now().startOf("day"),
+          _zombie = options.zombie === false ? false : _reference.clone().subtract(options.zombie, "days"),
+          _ghost = options.ghost === false ? false : _reference.subtract(options.ghost, "days");
         _.each(_.isArray(items) ? items : [items], _process(_zombie, _ghost));
         return Promise.resolve(items);
       },
