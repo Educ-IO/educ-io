@@ -73,6 +73,7 @@ helpers:
   - google/sheets/metadata
   - google/sheets/grid
   - google/sheets/format
+  - google/sheets/properties
   - google
   - data
   - css
@@ -80,6 +81,7 @@ helpers:
   - dialog
   - colours
   - saver
+  - saad
 modules:
   - flags
   - controller
@@ -87,31 +89,47 @@ modules:
   - help
   - service
   - main
-  - items
-  - recent
   - router
   - dates
-  - docket/tasks
   - docket/analysis
-scripts: 
+  - docket/archive
+  - docket/calendars
+  - docket/classes
+  - docket/database
+  - docket/errors
+  - docket/filter
+  - docket/graphs
+  - docket/menu
+  - docket/query
+  - docket/schema
+  - docket/task
+  - docket/tasks
+  - docket/views
+scripts:
   - extends/regex
   - extends/array
+  - extends/math
+  - extends/string
 templates:
   - options
   - choose
   - confirm
   - alert
   - loader
-  - recent
   - help
   - inform
   - text
+  - notify
   - shared/control_icon
   - shared/control_button
+  - shared/menu_item
+  - shared/menu_divider
+  - docket/recent
   - docket/config
   - docket/badge
   - docket/item
   - docket/action
+  - docket/name
   - docket/monthly
   - docket/weekly
   - docket/daily
@@ -122,11 +140,16 @@ templates:
   - docket/list
   - docket/tags
   - docket/tag
+  - docket/suggestions
   - docket/statistics
+  - docket/visualisation/time_series
   - docket/config/calendar
   - docket/config/class
+  - docket/tables/stats_overall
+  - docket/tables/stats_categories
+  - docket/tables/stats_times
+  - docket/icons/ghost
 docs:
-  - shared/FILTERS
   - shared/JUMP
   - shared/HELP
   - shared/HELP_AVAILABLE
@@ -140,13 +163,27 @@ docs:
   - docket/NEW_INSTRUCTIONS
   - docket/SEARCH_INSTRUCTIONS
   - docket/ARCHIVE_INSTRUCTIONS
+  - docket/EDIT_INSTRUCTIONS
+  - docket/NAVIGATION_INSTRUCTIONS
+  - docket/SHORTCUT_INSTRUCTIONS
   - docket/TAG_INSTRUCTIONS
+  - docket/VIEW_INSTRUCTIONS
+  - docket/MOVE_INSTRUCTIONS
+  - docket/KANBAN_INSTRUCTIONS
+  - docket/ANALYSIS_INSTRUCTIONS
+  - docket/PROJECT_INSTRUCTIONS
+  - docket/FAILED_CREATE
+  - docket/FAILED_DELETE
   - docket/FAILED_SAVE
   - docket/FAILED_UPDATE
   - docket/CLEAR_CONFIGURATION
   - docket/CONFIRM_DETAG
   - docket/EXISTING
   - docket/FILE_NAME
+  - docket/KANBAN_READY
+  - docket/KANBAN_UNDERWAY
+  - docket/KANBAN_DONE
+  - docket/KANBAN_POOL
 scopes:
   google:
     - scope: email
@@ -192,12 +229,14 @@ menus:
         commands:
           - name: Default
             desc: Open your default Docket Database | Sheet
+            shortcut: "h"
             hash: default
             auth: google
             toggle:
               - default
           - name: Shared
             desc: Open a new shared Docket Database | Sheet
+            shortcut: "o"
             hash: open
             auth: google
             toggle:
@@ -205,6 +244,7 @@ menus:
             imports:
               - google
             divider: true
+            divider_class: recent_list
             
           - name: Create
             desc: Create a new Docket Database (e.g. for sharing)
@@ -214,6 +254,8 @@ menus:
             
           - name: Close
             desc: Close current Docket Database
+            shortcut: "c"
+            hash: close
             disabled_until:
               - loaded
               
@@ -256,7 +298,8 @@ menus:
             hash: display.analysis
             toggle:
               - analysis
-            visibility: debug
+            imports:
+              - d3
             divider: true
             
           - name: Calendar/s
@@ -266,6 +309,10 @@ menus:
             toggle:
               - calendars
             scope: https://www.googleapis.com/auth/calendar.readonly
+            disabled_until:
+              - daily
+              - weekly
+              - monthly
           - name: Deadlines
             desc: Display Google Classroom Deadlines
             hash: show.classes
@@ -274,6 +321,10 @@ menus:
               - classes
             scopes:
               - https://www.googleapis.com/auth/classroom.courses.readonly
+            disabled_until:
+              - daily
+              - weekly
+              - monthly
              
   - name: Diary
     disabled_until:
@@ -335,7 +386,7 @@ menus:
       all:
         commands:
           - name: Open Data
-            desc: Open Sheets Data
+            desc: Open Sheets Database
             url: #data.open
             disabled_until:
               - opened

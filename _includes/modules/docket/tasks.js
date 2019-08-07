@@ -1,809 +1,817 @@
 Tasks = (options, factory) => {
   "use strict";
 
-  /* <!-- MODULE: Provides an interface to create / load / manipulate stored tasks --> */
-  /* <!-- PARAMETERS: Receives the global app context --> */
-  /* <!-- REQUIRES: Global Scope: Loki, JQuery, Underscore | App Scope: Google --> */
+  /* <!-- MODULE: Provides an interface to interact with Tasks --> */
+  
+  /* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
+  /* <!-- @options.date_format --> */
+  /* <!-- @options.functions --> */
+  /* <!-- @options.functions.errors --> */
+  /* <!-- @options.functions.display --> */
+  /* <!-- @options.state.session: --> */
+  /* <!-- @options.state.session.database: --> */
+  /* <!-- @options.state.session.db: --> */
+  /* <!-- @options.state.application: --> */
+  /* <!-- @options.state.application.showdown: --> */
+  /* <!-- @options.state.application.task: --> */
+  
+  /* <!-- REQUIRES: Global Scope: Loki, JQuery, Underscore, Hammer, Autosize | Factory Scope: Display, Google --> */
 
   /* <!-- Internal Constants --> */
-  const EXTRACT_ALLDAY = /(^|\s|\(|\{|\[)(all day|all morning|all afternoon|all evening|[ap]m)\b/i;
-  const EXTRACT_TIME = /(?:^|\s)((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))(?:[.!?]?)(?:\s|$)/i;
-  const EXTRACT_DATE = /\b(\d{4})-(\d{2})-(\d{2})|((0?[1-9]|[12]\d|30|31)[^\w\d\r\n:](0?[1-9]|1[0-2]|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[^\w\d\r\n:](\d{4}|\d{2}))\b/i;
-  const SPLIT_TAGS = /[^a-zA-Z0-9#!\?\-_]/; /* <!-- Valid Characters for Tags/Badges --> */
-  const DEFAULTS = {
-    zombie: 60,
-    ghost: 120,
-  };
-  const DB = new loki("docket.db"),
-    NAMES = {
-      spreadsheet: "Educ.IO | Docket Data",
-      sheet: "Tasks",
-      db: "Tasks"
-    },
-    META = {
-      schema_version: {
-        key: "SCHEMA_VERSION",
-        value: "1.1",
-      },
-      sheet_archive: {
-        key: "SHEET_ARCHIVE",
-      },
-      sheet_tasks: {
-        key: "SHEET_NAME",
-        value: "TASKS",
-      },
-      column_type: {
-        key: "COLUMN_NAME",
-        value: "TYPE",
-        _meta: {
-          group: "Meta",
-          title: "Type",
-          index: true,
-          hash: true,
-        }
-      },
-      column_from: {
-        key: "COLUMN_NAME",
-        value: "FROM",
-        _meta: {
-          title: "From",
-          type: "date",
-          index: true,
-          hash: true,
-        }
-      },
-      column_order: {
-        key: "COLUMN_NAME",
-        value: "ORDER",
-        _meta: {
-          title: "Order",
-          width: 80,
-          index: true,
-          hash: true,
-          type: "int",
-        }
-      },
-      column_status: {
-        key: "COLUMN_NAME",
-        value: "STATUS",
-        _meta: {
-          title: "Status",
-          width: 80,
-          index: true,
-          hash: true,
-        }
-      },
-      column_done: {
-        key: "COLUMN_NAME",
-        value: "DONE",
-        _meta: {
-          title: "Done",
-          type: "date",
-          index: true,
-        }
-      },
-      column_tags: {
-        key: "COLUMN_NAME",
-        value: "TAGS",
-        _meta: {
-          group: "Data",
-          title: "Tags",
-          width: 200,
-          type: "markdown",
-          hash: true,
-        }
-      },
-      column_details: {
-        key: "COLUMN_NAME",
-        value: "DETAILS",
-        _meta: {
-          title: "Details",
-          width: 500,
-          type: "markdown",
-          hash: true,
-        }
-      },
-      row_headers: {
-        key: "ROW_HEADERS",
-        visibility: "DOCUMENT"
-      },
-      header_time: {
-        value: "TIME",
-      },
-      header_due: {
-        value: "DUE",
-      },
-      header_badges: {
-        value: "BADGES",
-      },
-      header_ghost: {
-        value: "GHOST"
-      },
-      header_zombie: {
-        value: "ZOMBIE"
-      }
-    },
-    STATUS = {
-      complete: "COMPLETE"
-    };
+  const FN = {}, 
+        MIME_TYPE = "application/x-educ-docket-item", 
+        DROP_SELECTORS = {
+          item: "div.item[data-droppable=true]",
+          group: "div.group[data-droppable=true], div.card-body[data-droppable=true]",
+        };
   /* <!-- Internal Constants --> */
-
-  /* <!-- Internal Options --> */
-  options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
-  /* <!-- Internal Options --> */
   
   /* <!-- Internal Variables --> */
-  var _data, _db;
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _hash = item => objectHash.sha1(_.reduce(
-    [META.column_type, META.column_order, META.column_status, META.column_from, META.column_tags, META.column_details], (value, col) => {
-    if (item[col.value]) value[col.value] = item[col.value];
-    if (value[col.value] && value[col.value].toISOString) value[col.value] = value[col.value].toISOString();
-    return value;
-  }, {}));
-
-  var _process = (zombified, ghostly) => item => {
-
-    /* <!-- Extract Date from Details if found --> */
-    var _due = item[META.column_details.value].match(EXTRACT_DATE);
-
-    /* <!-- Set Due Date if available --> */
-    !(item[META.header_due.value] = _due && _due.length >= 1 ? factory.Dates.parse(_due[0], ["DD/MM/YYYY", "D/M/YY", "DD-MM-YY", "DD-MM-YYYY", "DD-MMM-YY", "DD-MMM-YYYY", "YYYY-MM-DD"]) : "") ?
-    delete item._countdown: (item._countdown = item[META.header_due.value].diff(factory.Dates.now(), "days"));
-
-    /* <!-- Extract Time from Details if found --> */
-    var _all = item[META.column_details.value].match(EXTRACT_ALLDAY),
-      _time = item[META.column_details.value].match(EXTRACT_TIME);
-
-    /* <!-- If time is actually part of the due date, discard time (better than look-ahead regex matching?). --> */
-    if (_due && _due.length >= 1 && _time && _time.length >= 1 && item[META.header_due.value] && item[META.header_due.value].isValid() && _due[0].indexOf(_time[1]) >= 0) _time = null;
-
-    /* <!-- Set Time if available --> */
-    !(item[META.header_time.value] = _all && _all.length >= 1 ? _all[_all.length >= 2 ? 2 : 1] : _time && _time.length >= 1 ? _time[1] : "") ?
-    delete item._timed: (item._timed = true);
-
-    /* <!-- Split Tabs into Badges --> */
-    if (item[META.column_tags.value]) item[META.header_badges.value] = 
-        _.compact(item[META.column_tags.value].split(SPLIT_TAGS).sort());
-
-    /* <!-- Set Appropriate Status --> */
-    if (item[META.column_status.value] && item[META.column_status.value].toUpperCase() == "COMPLETE") item._complete = true;
-
-    /* <!-- Set Zombie | Ghost Status --> */
-    if (!item._timed && !item._complete && item._countdown === undefined) (item[META.header_ghost.value] = ghostly === false ? false : item[META.column_from.value].isBefore(ghostly)) ? (item._dormant = item[META.column_from.value].fromNow()) : (item[META.header_zombie.value] = zombified === false ? false : item[META.column_from.value].isBefore(zombified));
-
-    return item;
-  };
-
-  var _populate = rows => _.reduce(rows, (list, row, index) => {
-
-    var _row = {};
-    _.each(_data.columns.meta, column => {
-      var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
-      /* <!-- Parse Value if required --> */
-      _row[column.developerMetadata.metadataValue] = _val ?
-        column.isDate ? factory.Dates.parse(_val) :
-        column.isInteger ? parseInt(_val, 10) :
-        _val : _val;
-    });
-
-    /* <!-- Set ROW / Index Reference --> */
-    _data.last = Math.max(_data.last !== undefined ? _data.last : 0, (_row.__ROW = index));
-
-    /* <!-- Set on-the-fly Item Properties (TIME and BADGES, so we can query them) --> */
-    var __reference = factory.Dates.now().startOf("day"),
-      __process = _process(
-        options.zombie === false ? false : __reference.clone().subtract(options.zombie, "days"),
-        options.ghost === false ? false : __reference.subtract(options.ghost, "days"));
-
-    if (_row[META.column_details.value]) list.push(__process(_row));
-
-    return list;
-
-  }, []);
-
-  var _formatDataSheet = (spreadsheetId, sheetId, columns, grid, meta, headerColour) => {
-    var _dimensions = _.map(columns, (column, index) => ({
-        "updateDimensionProperties": grid.columns(index, index + 1)
-          .dimension(column._meta && column._meta.width ? column._meta.width : 100)
-      })),
-      _metadata = _.map(columns, (column, index) => ({
-        "createDeveloperMetadata": meta.columns(index, index + 1).tag(column)
-      })),
-      _merges = _.reduce(columns, (memo, column, index, columns) => {
-        if ((column._meta.group && column._meta.group != memo.name) || index == (columns.length - 1)) {
-          if (memo.name || index == (columns.length - 1)) memo.batches.push({
-            "mergeCells": {
-              "range": grid.range(0, 1, memo.start, index == (columns.length - 1) ? index + 1 : index),
-              "mergeType": "MERGE_ALL",
-            }
-          });
-          memo.name = column._meta.group;
-          memo.start = index;
-        }
-        return memo;
-      }, {
-        name: false,
-        start: false,
-        batches: []
-      }).batches;
-
-    return factory.Google.sheets.batch(spreadsheetId, _dimensions.concat(_metadata).concat(_merges).concat([{
-        "createDeveloperMetadata": meta.rows(0, 1).tag(META.row_headers)
-      }, {
-        "createDeveloperMetadata": meta.rows(1, 2).tag(META.row_headers)
-      }, {
-        "repeatCell": {
-          "range": {
-            "sheetId": sheetId,
-            "startRowIndex": 0,
-            "endRowIndex": 2
-          },
-          "cell": {
-            "userEnteredFormat": {
-              "backgroundColor": headerColour ? headerColour : {
-                "red": 0.0,
-                "green": 0.0,
-                "blue": 0.0
-              },
-              "horizontalAlignment": "CENTER",
-              "verticalAlignment": "MIDDLE",
-              "textFormat": {
-                "foregroundColor": {
-                  "red": 1.0,
-                  "green": 1.0,
-                  "blue": 1.0
-                },
-                "fontSize": 12,
-                "bold": true
-              }
-            }
-          },
-          "fields": "userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)"
-        }
-      }, {
-        "repeatCell": {
-          "range": {
-            "sheetId": sheetId,
-            "startRowIndex": 0,
-            "endRowIndex": 2,
-            "startColumnIndex": _metadata.length - 1,
-            "endColumnIndex": _metadata.length
-          },
-          "cell": {
-            "userEnteredFormat": {
-              "textFormat": {
-                "foregroundColor": {
-                  "red": 1.0,
-                  "green": 1.0,
-                  "blue": 0.0
-                },
-                "fontSize": 14,
-                "bold": true
-              }
-            }
-          },
-          "fields": "userEnteredFormat(textFormat)"
-        }
-      }, {
-        "repeatCell": {
-          "range": {
-            "sheetId": sheetId,
-            "startColumnIndex": _metadata.length - 2,
-            "endColumnIndex": _metadata.length
-          },
-          "cell": {
-            "userEnteredFormat": {
-              "wrapStrategy": "WRAP"
-            }
-          },
-          "fields": "userEnteredFormat(wrapStrategy)"
-        }
-      }, {
-        "repeatCell": {
-          "range": {
-            "sheetId": sheetId,
-            "startColumnIndex": 0,
-            "endColumnIndex": _metadata.length - 2
-          },
-          "cell": {
-            "userEnteredFormat": {
-              "horizontalAlignment": "CENTER",
-            }
-          },
-          "fields": "userEnteredFormat(horizontalAlignment)"
-        }
-      }, {
-        "updateSheetProperties": {
-          "properties": {
-            "sheetId": sheetId,
-            "gridProperties": {
-              "frozenRowCount": 2
-            },
-          },
-          "fields": "gridProperties.frozenRowCount"
-        }
-      }]), true)
-      .then(response => response && response.updatedSpreadsheet ? response.updatedSpreadsheet : false);
-  };
-
-  var _populateDataSheetHeaders = (spreadsheetId, sheetTitle, columns) => {
-    var _groups = _.map(columns, column => column._meta && column._meta.group ? column._meta.group : ""),
-      _titles = _.map(columns, column => column._meta && column._meta.title ? column._meta.title : "");
-    return factory.Google.sheets.update(spreadsheetId, `'${sheetTitle}'!A1:${factory.Google_Sheets_Notation().convertR1C1(`R2C${_titles.length}`)}`, [_groups, _titles]);
-  };
-
-  var _populateDataSheet = (spreadsheetId, sheetId, sheetTitle, headerColour) => {
-    var _grid = factory.Google_Sheets_Grid({
-        sheet: sheetId
-      }),
-      _meta = factory.Google_Sheets_Metadata({
-        sheet: sheetId
-      }, factory),
-      _columns = _.map(_.filter(META, column => column._meta && column.key == "COLUMN_NAME"), column => column);
-    return _populateDataSheetHeaders(spreadsheetId, sheetTitle, _columns)
-      .then(() => _formatDataSheet(spreadsheetId, sheetId, _columns, _grid, _meta, headerColour));
-  };
-
-  var _create = name => factory.Google.sheets.create(name || NAMES.spreadsheet, NAMES.sheet, {
-      red: 0.545,
-      green: 0.153,
-      blue: 0.153
-    }, [META.sheet_tasks, META.schema_version]).then(sheet => {
-      factory.Flags.log(`Created Data File: ${sheet.properties.title} - [${sheet.spreadsheetId}]`);
-      return sheet;
-    })
-    .then(sheet => _populateDataSheet(sheet.spreadsheetId, sheet.sheets[0].properties.sheetId, sheet.sheets[0].properties.title))
-    .then(sheet => factory.Google.files.update(sheet.spreadsheetId, {
-      properties: options.properties
-    }))
-    .then(response => response.id);
-
-  var _close = () => {
-    DB.removeCollection(NAMES.db);
-    _db = null;
-  };
-
-  var _open = (id, opts) => {
-
-    /* <!-- Override Default Options with Supplied ones --> */
-    options = _.defaults(opts, options);
+  FN.input = {
     
-    if (_db) _close();
-
-    $("nav a[data-link='sheet']").prop("href", `https://docs.google.com/spreadsheets/d/${id}/edit`);
-    factory.Flags.log(`Opening Data File: ${id}`);
-
-    var _meta = factory.Google_Sheets_Metadata({}, factory),
-      _notation = factory.Google_Sheets_Notation();
-
-    return factory.Google.sheets.metadata.find(id, _meta.filter().parse(META.sheet_tasks).make())
-      .then(value => {
-        if (value && value.matchedDeveloperMetadata && value.matchedDeveloperMetadata.length == 1) {
-          _data = {
-            spreadsheet: id,
-            sheet: value.matchedDeveloperMetadata[0].developerMetadata.location.sheetId
-          };
-          return factory.Google.sheets.get(id);
-        } else {
-          return false;
-        }
-      })
-      .then(value => {
-        if (!value) return;
-        _data.title = _.find(value.sheets, sheet => sheet.properties.sheetId == _data.sheet).properties.title;
-        return _data;
-      })
-      .then(value => {
-        if (!value) return;
-        var _location = _meta.location.sheet(value.sheet),
-          _filters = [
-            _meta.filter().location(_location).key(META.column_type.key).make(),
-            _meta.filter().location(_location).key(META.row_headers.key).make()
-          ];
-        return factory.Google.sheets.metadata.find(value.spreadsheet, _filters);
-      })
-      .then(value => {
-        if (!value || !value.matchedDeveloperMetadata) return;
-
-        _data.rows = {
-          meta: _.filter(value.matchedDeveloperMetadata, metadata => metadata.developerMetadata.metadataKey == META.row_headers.key),
-          start: 0,
-          end: 0
-        };
-        _data.columns = {
-          meta: _.filter(value.matchedDeveloperMetadata, metadata => metadata.developerMetadata.metadataKey == META.column_type.key),
-          start: 1,
-          end: 0
-        };
-        _.each([_data.rows, _data.columns], dimension => {
-          _.each(dimension.meta, metadata => {
-            dimension.start = Math.min(dimension.start, metadata.developerMetadata.location.dimensionRange.startIndex >= dimension.start ?
-              metadata.developerMetadata.location.dimensionRange.startIndex : dimension.start);
-            dimension.end = Math.max(dimension.end, metadata.developerMetadata.location.dimensionRange.endIndex);
-          });
+    new : (id, title, instructions) => {
+    
+      var _dialog = factory.Dialog({}, factory);
+      
+      return factory.Display.modal("new", {
+          target: factory.container,
+          id: id || "new",
+          title: title || "Create New Item",
+          instructions: instructions || factory.Display.doc.get("NEW_INSTRUCTIONS"),
+          date: factory.Dates.parse(options.functions.focus.date()).format(options.date_format),
+          handlers: {
+            clear: _dialog.handlers.clear,
+          },
+          updates: {
+            extract: _dialog.handlers.extract(options.state.application.task.regexes)
+          }
+        }, dialog => {
+          factory.Fields().on(dialog);
+          factory.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {trigger: "hover"});
+          _dialog.handlers.keyboard.enter(dialog);
+          dialog.find(id ? `#${id}_details` : "#new_details").focus();
         });
+    },
+    
+    date : (target, change) => {
 
-        factory.Flags.log("METADATA (Rows):", _data.rows);
-        factory.Flags.log("METADATA (Columns):", _data.columns);
-
-        _data.range = `${_notation.convertR1C1(`R${_data.rows.end + 1}C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`;
-        factory.Flags.log("Fetching Values for Range:", _data.range);
-
-        return factory.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_data.range}`);
-
-      })
-      .then(value => {
-        if (!value) return;
-
-        /* <!-- Map Date / Markdown Fields / Columns --> */
-        var _columnTypes = {
-          date: _.map(_.filter(META, column => column._meta && column._meta.type == "date"), column => column.value),
-          markdown: _.map(_.filter(META, column => column._meta && column._meta.type == "markdown"), column => column.value),
-          integer: _.map(_.filter(META, column => column._meta && column._meta.type == "int"), column => column.value),
-          time: _.map(_.filter(META, column => column._meta && column._meta.type == "time"), column => column.value)
-        };
-        _.each(_data.columns.meta, column => {
-          column.isDate = (_columnTypes.date.indexOf(column.developerMetadata.metadataValue) >= 0);
-          column.isMarkdown = (_columnTypes.markdown.indexOf(column.developerMetadata.metadataValue) >= 0);
-          column.isInteger = (_columnTypes.integer.indexOf(column.developerMetadata.metadataValue) >= 0);
-          column.isTime = (_columnTypes.time.indexOf(column.developerMetadata.metadataValue) >= 0);
-        });
-        /* <!-- Map Date / Markdown Fields / Columns --> */
-
-        /* <!-- Populate and Return --> */
-        _data.data = value.values ? _populate(value.values) : [];
-        factory.Flags.log("Data Values:", _data.data);
-        return _data.data;
-        /* <!-- Populate and Return --> */
-
-      })
-      .then(data => {
-        _db = DB.addCollection(NAMES.db, {
-          indices: ["__ROW"].concat(_.map(_.filter(_data.columns, column => column._meta && column._meta.index), column => column.value))
-        });
-        if (data && data.length > 0) _db.insert(data);
-        return _db;
+      var _input = target.find("input.dt-picker");
+      _input.on("change", e => {
+        var value = $(e.target).val();
+        if (value) change(factory.Dates.parse(value));
       });
-  };
+      
+      _input.bootstrapMaterialDatePicker({
+        format: options.date_format,
+        cancelText: "Cancel",
+        clearButton: false,
+        nowButton: true,
+        time: false,
+        switchOnClick: true,
+        triggerEvent: "dblclick"
+      });
 
-  var _queries = {
+      _input.dblclick();
 
-    current: date => {
-      var _queryTime = {},
-        _queryCurrent = {},
-        _queryDate = {},
-        _queryStatus = {};
-      _queryTime[META.header_time.value] = {
-        "$eq": ""
-      };
-      _queryCurrent[META.column_from.value] = {
-        "$gte": date.startOf("day").toDate()
-      };
-      _queryDate[META.column_from.value] = {
-        "$lte": date.endOf("day").toDate()
-      };
-      _queryStatus[META.column_status.value] = {
-        "$ne": STATUS.complete
-      };
-      return {
-        "$and": [{
-          "$or": [_queryTime, _queryCurrent]
-        }, _queryDate, _queryStatus]
-      };
-    },
-
-    complete: date => {
-      var _queryDateDoneFrom = {},
-        _queryDateDoneTo = {},
-        _queryStatus = {},
-        _queryNotTimed = {},
-        _queryTimed = {},
-        _queryDateFrom = {},
-        _queryDateTo = {};
-      _queryDateDoneFrom[META.column_done.value] = {
-        "$lte": date.endOf("day").toDate()
-      };
-      _queryDateDoneTo[META.column_done.value] = {
-        "$gte": date.startOf("day").toDate()
-      };
-      _queryStatus[META.column_status.value] = {
-        "$eq": STATUS.complete
-      };
-      _queryNotTimed[META.header_time.value] = {
-        "$eq": ""
-      };
-      _queryTimed[META.header_time.value] = {
-        "$ne": ""
-      };
-      _queryDateFrom[META.column_from.value] = {
-        "$lte": date.endOf("day").toDate()
-      };
-      _queryDateTo[META.column_from.value] = {
-        "$gte": date.startOf("day").toDate()
-      };
-      return {
-        "$or": [{
-            "$and": [_queryNotTimed, _queryDateDoneFrom, _queryDateDoneTo, _queryStatus]
-          },
-          {
-            "$and": [_queryTimed, _queryDateFrom, _queryDateTo, _queryStatus]
-          }
-        ]
-      };
-    },
-
-    dated: date => {
-      var _queryTime = {},
-        _queryFuture = {},
-        _queryDateFrom = {},
-        _queryDateTo = {},
-        _queryStatus = {};
-      _queryTime[META.header_time.value] = {
-        "$ne": ""
-      };
-      _queryFuture[META.column_from.value] = {
-        "$gt": factory.Dates.now().startOf("day").toDate()
-      };
-      _queryDateFrom[META.column_from.value] = {
-        "$lte": date.endOf("day").toDate()
-      };
-      _queryDateTo[META.column_from.value] = {
-        "$gte": date.startOf("day").toDate()
-      };
-      _queryStatus[META.column_status.value] = {
-        "$ne": STATUS.complete
-      };
-      return {
-        "$or": [{
-          "$and": [{
-            "$or": [_queryTime, _queryFuture]
-          }, _queryDateFrom, _queryDateTo, _queryStatus]
-        }, _queries.complete(date)]
-      };
-    },
-
-    all_tagged: tag => {
-      var _queryTag = {};
-      _queryTag[META.header_badges.value] = {
-        "$contains": tag
-      };
-      return _queryTag;
     },
     
-    tagged: tag => {
-      var _queryTag = {},
-        _queryStatus = {};
-      _queryTag[META.header_badges.value] = {
-        "$contains": tag
+  };
+  
+  
+  FN.items = {
+    
+    clone : items => {
+      
+      var _clone = item => _.mapObject(_.clone(item), val => val && val.clone ? val.clone() : val);
+      return _.isArray(items) ? _.map(items, _clone) : _clone(items);
+
+    },
+    
+    get : target => (target.data("id") !== null && target.data("id") !== undefined) ?
+      options.state.session.db.get(target.data("id")) : false,
+    
+    /* <!-- Inserts a new Item into the DB / Database, and then onto the UI if a holder is visible (e.g. date or state box shown) --> */
+    insert: item => Promise.resolve(FN.items.reconcile(item))
+      .then(item => {
+
+        var _element = FN.items.place(item);
+        
+        return options.state.session.database.items.insert(item)
+          .then(_element ? FN.status.busy(_element, item) : Promise.resolve(true))
+          .then(() => FN.elements.replace(_element, item)) /* <!-- Updates with row / ID --> */
+          .catch(e => {
+            if (_element) _element.remove();
+            return options.functions.errors.insert(e);
+          });
+        
+      }),
+    
+    /* <!-- Places an Item into the UI if a holder is visible (e.g. date or state box shown) --> */
+    /* <!-- If an element is not passed, it will be created (using data-display parameters from the holder) --> */
+    place: (item, element) => {
+      
+      /* <-- Get the relevant date/status for item --> */
+      var _date = (item.IS_TIMED || item.IN_FUTURE ? item.FROM : factory.Dates.now()).toISOString(true).split("T")[0],
+          _status = item.STATUS, _holder = $(`div[data-date='${_date}'], div[data-status='${_status}']`);
+      
+      var _place = holder => {
+        
+        if (!element) {
+          
+          /* <-- Updates various fields, including ACTION for date dialog (force to ensure everything is refreshed) --> */
+          element = FN.elements.create(FN.items.reconcile(item, true), true, 
+                                        holder.data("display-wide"), holder.data("display-simple"), holder.data("display-forward"), holder.data("display-backward"));
+          
+          FN.hookup(element, true);
+          
+        }
+        
+        var _last = holder.find("div[data-zombie='true'], div[data-ghost='true']");
+        _last.length > 0 ? element.insertBefore(_last.first()) : element.insertAfter(holder.find("[data-divider='true']").first());
+        
+        return element;
       };
-      _queryStatus[META.column_status.value] = {
-        "$ne": STATUS.complete
-      };
-      return {
-        "$and": [_queryTag, _queryStatus]
-      };
+      
+      return _holder.length == 1 ? _place(_holder) : false;
+      
+    },
+    
+    reconcile: (items, force) => options.state.application.task.prepare(options.state.application.schema.process(items), force),
+    
+    status: (status, target, item, original) => {
+      
+      item.STATUS = status;
+      if (!options.state.application.schema.enums.status.complete.equals(item.STATUS, true)) {
+        item.IS_COMPLETE = false;
+        item.DONE = "";
+      }
+      
+      return FN.actions.edit(target, item, original, true)
+        .then(result => result ? FN.items.place(item) && target.remove() : result);
+      
+    },
+    
+    update : (target, item, original, keep) => Promise.resolve(FN.items.reconcile(item))
+      .then(item => keep ? target : FN.elements.replace(target, item))
+      .then(target => options.state.session.database.items.update(item)
+          .then(FN.status.busy(target, item))
+          .then(() => item)
+          .catch(e => {
+            FN.elements.replace(target, original);
+            options.functions.errors.update(e);
+          })),
+    
+  };
+  
+  
+  FN.elements = {
+    
+    clear : () => {
+
+      var s = window.getSelection ? window.getSelection() : document.selection;
+      s ? s.removeAllRanges ? s.removeAllRanges() : s.empty ? s.empty() : false : false;
+
     },
 
-    text: (value, from) => {
-      var _queryText, _queryDetails = {},
-        _queryTags = {};
-      _queryDetails[META.column_details.value] = {
-        "$regex": [value, "i"]
-      };
-      _queryTags[META.column_tags.value] = {
-        "$regex": [value, "i"]
-      };
-      _queryText = {
-        "$or": [_queryDetails, _queryTags]
-      };
-      if (!from) {
-        return _queryText;
-      } else {
-        var _queryStatus = {},
-          _queryNotTime = {},
-          _queryTime = {},
-          _queryFuture = {};
-        _queryStatus[META.column_status.value] = {
-          "$ne": STATUS.complete
-        };
-        _queryNotTime[META.header_time.value] = {
-          "$eq": ""
-        };
-        _queryTime[META.header_time.value] = {
-          "$ne": ""
-        };
-        _queryFuture[META.column_from.value] = {
-          "$gte": factory.Dates.parse(from).startOf("day").toDate()
-        };
-        return {
-          "$and": [_queryText, {
-            "$or": [{
-              "$and": [_queryStatus, _queryNotTime]
-            }, {
-              "$and": [_queryTime, _queryFuture]
-            }]
-          }]
-        };
-      }
+    create : (item, editable, wide, simple, forward, backward) => $(factory.Display.template.get(_.extend({
+      template: "item",
+      editable: editable ? true : false,
+      wide: wide ? true : false,
+      simple: simple ? true : false,
+      forward: forward ? forward : false,
+      backward: forward ? backward : false,
+    }, item))),
+  
+    replace : (target, item, group) => FN.hookup(FN.elements.create(item, (group || target).data("display-editable"), (group || target).data("display-wide"),
+                                                                    (group || target).data("display-simple"), (group || target).data("display-forward"),
+                                                                    (group || target).data("display-backward")).replaceAll(target), true),
+    
+  };
+  
+  
+  FN.actions = {
+    
+    cancel : (target, item) => {
+
+      /* <!-- Reconcile UI --> */
+      target.find("div.edit textarea").val((item || FN.items.get(target)).DETAILS);
+      return Promise.resolve();
+
+    },
+    
+    forward : (target, item, original) => {
+
+      /* <!-- Either use supplied Item or grab it from the target --> */
+      item = item || FN.items.get(target);
+      original = original || FN.items.clone(item);
+      
+      /* <!-- Set the appropriate status --> */
+      return options.state.application.schema.enums.status.underway.equals(item.STATUS, true) ?
+        FN.actions.complete(target, item, original) : !item.STATUS ?
+          FN.items.status(options.state.application.schema.enums.status.ready, target, item, original) : 
+          options.state.application.schema.enums.status.ready.equals(item.STATUS, true) ? 
+            FN.items.status(options.state.application.schema.enums.status.underway, target, item, original) : Promise.resolve(false);
+        
+    },
+    
+    backward : (target, item, original) => {
+
+      /* <!-- Either use supplied Item or grab it from the target --> */
+      item = item || FN.items.get(target);
+      original = original || FN.items.clone(item);
+
+      /* <!-- Set the appropriate status --> */
+      return options.state.application.schema.enums.status.complete.equals(item.STATUS, true) ?
+        FN.items.status(options.state.application.schema.enums.status.underway, target, item, original) : 
+        options.state.application.schema.enums.status.underway.equals(item.STATUS, true) ?
+          FN.items.status(options.state.application.schema.enums.status.ready, target, item, original) : 
+          options.state.application.schema.enums.status.ready.equals(item.STATUS, true) ?
+            FN.items.status("", target, item, original) : Promise.resolve(false);
+      
+    },
+    
+    complete : (target, item, original) => {
+
+      /* <!-- Either use supplied Item or grab it from the target --> */
+      item = item || FN.items.get(target);
+      original = original || FN.items.clone(item);
+
+      /* <!-- Update Item --> */
+      item.IS_COMPLETE = !(item.IS_COMPLETE);
+      item.STATUS = item.IS_COMPLETE ? "COMPLETE" : "";
+      item.DONE = item.IS_COMPLETE ? factory.Dates.now() : "";
+
+      return FN.actions.edit(target, item, original);
+
     },
 
-  };
+    delete : (target, item) => factory.Display.confirm({
+          id: "delete_Item",
+          target: factory.container,
+          message: `Please confirm that you wish to delete this item: ${(item = item || FN.items.get(target)).DISPLAY}`,
+          action: "Delete"
+        })
+        .then(confirm => confirm ? options.state.session.database.items.delete(item)
+                  .then(() => target.remove())
+                  .catch(options.functions.errors.delete)
+                  .then(FN.status.busy(target, item)) : false),
 
-  var _results = (query, db) => (db ? db : _db).find(query);
+    duplicate : (target, item) => {
 
-  var _current = (date, db) => {
-    var _query = {
-      "$or": [_queries.current(date), _queries.complete(date)]
-    };
-    factory.Flags.log(`Query [Current] for :${date}`, _query);
-    var _data = _results(_query, db);
-    factory.Flags.log(`Result Values [Current] for :${date}`, _data);
-    return _data;
-  };
+      /* <!-- Either use supplied Item or grab it from the target --> */
+      item = item || FN.items.get(target);
 
-  var _date = (date, db) => {
-    var _query = _queries.dated(date);
-    factory.Flags.log(`Query for :${date}`, _query);
-    var _data = _results(_query, db);
-    factory.Flags.log(`Result Values for :${date}`, _data);
-    return _data;
-  };
+      FN.input.date(target, date => {
 
-  var _convertToArray = item => _.reduce(_data.columns.meta, (value, column) => {
-    value[column.developerMetadata.location.dimensionRange.startIndex] =
-      column.isDate && item[column.developerMetadata.metadataValue] && item[column.developerMetadata.metadataValue].format ?
-      item[column.developerMetadata.metadataValue].format("YYYY-MM-DD") :
-      item[column.developerMetadata.metadataValue] ? item[column.developerMetadata.metadataValue] : "";
-    return value;
-  }, []);
-
-  var _new = item => {
-
-    /* <!-- For new data sheets --> */
-    _data.last = _data.last ? _data.last : -1;
-
-    var _notation = factory.Google_Sheets_Notation(),
-      _range = `${_notation.convertR1C1(`R${_data.rows.end + 2 + _data.last}C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`,
-      _value = _convertToArray(item);
-
-    factory.Flags.log(`Writing Values [NEW] for Range: ${_range}`, _value);
-
-    return factory.Google.sheets.append(_data.spreadsheet, `${_data.title}!${_range}`, [_value]).then(result => {
-      if (result && result.updates) {
-        item.__ROW = (_data.last += 1);
-        item.__hash = _hash(item);
-        return item;
-      } else {
-        return false;
-      }
-    });
-
-  };
-
-  var _update = item => {
-
-    var _notation = factory.Google_Sheets_Notation(),
-      _range = `${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.start}`)}:${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.end}`, true)}`,
-      _value = _convertToArray(item);
-
-    return factory.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_range}`).then(value => {
-      var _existing = _populate(value.values)[0];
-      _existing.__hash = _hash(_existing);
-      if (_existing.__hash == item.__hash) {
-        factory.Flags.log(`Writing Values [UPDATED] for Range: ${_range}`, _value);
-        return factory.Google.sheets.update(_data.spreadsheet, `${_data.title}!${_range}`, [_value]).then(() => {
-          item.__hash = _hash(item);
-          return item;
+        factory.Flags.log(`Cloning Item to: ${date.format(options.date_format)}`, item);
+        return FN.items.insert({
+          FROM: date,
+          TAGS: item.TAGS,
+          DETAILS: item.DETAILS,
+          TYPE: item.TYPE
         });
-      } else {
-        return Promise.reject(`Hash Mismath for Range: ${_range} [Hash_ITEM: ${item.__hash}, Hash_EXISTING: ${_existing.__hash}]`);
-      }
-    });
+
+      });
+
+    },
+
+    edit : (target, item, original, keep) => {
+
+      /* <!-- Either use supplied Item or grab it from the target --> */
+      item = item || FN.items.get(target);
+      original = original || FN.items.clone(item);
+
+      /* <!-- Update Item --> */
+      item.DETAILS = target.find("div.edit textarea").val();
+      item.DISPLAY =options.state.application.showdown.makeHtml(item.DETAILS);
+
+      return FN.items.update(target, item, original, keep);
+    },
+    
+    move : (target, item) => {
+
+      /* <!-- Either use supplied Item or grab it from the target --> */
+      item = item || FN.items.get(target);
+
+      FN.input.date(target, date => {
+
+        item.FROM = date;
+
+        /* <!-- Process Item, Reconcile UI then Update Database --> */
+        Promise.resolve(FN.items.reconcile(item))
+          .then(item => options.state.session.database.items.update(item))
+          .then(FN.status.busy(target, item))
+          .then(() => target.remove())
+          .then(() => FN.items.place(item))
+          .catch(options.functions.errors.update);
+        
+      });
+
+    },
 
   };
+  
+  
+  FN.status = {
+    
+    busy : (target, item) => (clear => () => {
+      
+      /* <!-- Either use supplied Item or grab it from the target --> */
+      item = item || FN.items.get(target);
+      
+      /* <!-- Run the clear if supplied --> */
+      if (clear && _.isFunction(clear)) clear();
 
-  var _archive = (year, db) => factory.Google.sheets.filtered(_data.spreadsheet, factory.Google_Sheets_Metadata({}, factory).filter().parse(META.sheet_archive).value(year).make())
-    .then(value => value && value.sheets && value.sheets.length == 1 && _.find(value.sheets[0].developerMetadata, m => m.metadataKey == META.sheet_archive.key && m.metadataValue == year) ?
-      value.sheets[0].properties :
-      factory.Google.sheets.batch(_data.spreadsheet, [{
-        "addSheet": {
-          "properties": {
-            "sheetId": year,
-            "title": year,
-            "tabColor": {
-              "red": 0.0,
-              "green": 1.0,
-              "blue": 0.0
+    })(factory.Display.busy({
+      target: target.is(".status-holder") ? target : target.find(".status-holder"),
+      class: "loader-small float-right ml-1",
+      fn: true
+    })),
+      
+  };
+  
+  
+  FN.new = {
+    
+    item: type => FN.input.new("new", `Create New ${type}`).then(values => {
+          if (!values) return false;
+          factory.Flags.log("Values for Creation", values);
+          return FN.items.insert({
+            FROM: values.From ? values.From.Value : null,
+            TAGS: values.Tags ? values.Tags.Value : null,
+            DETAILS: values.Details ? values.Details.Value : null,
+          });
+        })
+        .catch(e => e ? factory.Flags.error("Create New Error", e) : factory.Flags.log("Create New Cancelled")),
+
+    task: () => FN.new.item("Task"),
+
+  };
+  
+  
+  FN.tags = {
+
+    edit: (target, item, original) => {
+
+      if (!target) return;
+      
+      /* <!-- Either use supplied Item or grab it from the target --> */
+      item = item || FN.items.get(target);
+      original = original || FN.items.clone(item);
+      
+      var _cancel = () => FN.items.reconcile(_.tap(item, item => item.tags = original.tags)),
+          _reconcile = target => target.empty().append($(factory.Display.template.get({
+            template: "tags",
+            tags: item.TAGS,
+            badges: item.BADGES
+          }))),
+          _dialog = factory.Dialog({}, factory),
+          _template = "tag",
+          _id = "tag";
+
+      /* <!-- Remove Tags from within Dialog --> */
+      var _handleRemove = target => target.find("span.badge a").on("click.remove", e => {
+        e.preventDefault();
+        var _target = $(e.currentTarget),
+          _tag = _target.parents("span.badge").data("tag");
+        if (_tag) {
+          item.TAGS = (item.BADGES = _.filter(
+            item.BADGES, badge => badge != _tag
+          )).sort().join(";");
+          _handleRemove(_reconcile(_target.parents("form")));
+        }
+      });
+      
+      return factory.Display.modal(_template, {
+          target: factory.container,
+          id: _id,
+          title: "Edit Tags",
+          instructions: factory.Display.doc.get("TAG_INSTRUCTIONS"),
+          handlers: {
+            clear: _dialog.handlers.clear,
+          },
+          tags: item.TAGS,
+          badges: item.BADGES,
+          all: options.state.session.database.badges()
+        }, dialog => {
+
+          /* <!-- General Handlers --> */
+          factory.Fields().on(dialog);
+
+          /* <!-- Handle CTRL Enter to Save --> */
+          _dialog.handlers.keyboard.enter(dialog);
+
+          /* <!-- Handle Click to Remove --> */
+          _handleRemove(dialog);
+
+          /* <!-- Handle Click to Add --> */
+          var _add = elements => elements.on("click.add", e => {
+            e.preventDefault();
+            var _input = $(e.currentTarget).parents("li").find("span[data-type='tag'], input[data-type='tag']"),
+                _val = _input.val() || _input.text();
+            (_input.is("input") ? _input : dialog.find("input[data-type='tag']")).val("").change().focus();
+            
+            if (_val && (item.BADGES ? item.BADGES : item.BADGES = []).indexOf(_val) < 0) {
+              item.BADGES.push(_val);
+              item.TAGS = item.BADGES.sort().join(";");
+              _handleRemove(_reconcile(dialog.find("form")));
             }
+            
+          });
+          _add(dialog.find("li button"));
+
+          /* <!-- Handle Refresh Suggestions --> */
+          var _last, _handle = e =>  {
+            var _suggestion = () => {
+              var _val = $(e.currentTarget).val();
+              if (_val != _last) {
+                _last = _val;
+                var _suggestions = options.state.session.database.badges(_val),
+                    _list = dialog.find("ul.list-group");
+                _list.children("li[data-suggestion]").remove();
+                if (_suggestions.length > 0) {
+                  var _new = $(factory.Display.template.get("suggestions")(_suggestions));
+                  _list.append(_new);
+                  _add(_new.find("button"));
+                }
+              }
+            };
+            _.debounce(_suggestion, 250)();
+          };
+      
+          /* <!-- Handle Enter on textbox to Add --> */
+          dialog.find("li input[data-type='tag']")
+            .keydown(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? 
+                      e.preventDefault() || (e.shiftKey ? dialog.find(".modal-footer button.btn-primary") : $(e.currentTarget).siblings("button[data-action='add']")).click() :
+                      _handle(e))
+            .change(_handle)
+            .focus();
+
+        })
+        .then(values => values ? FN.items.update(target, item, original) : _cancel())
+        .catch(e => _cancel() && (e ? factory.Flags.error("Edit Tags Error", e) : factory.Flags.log("Edit Tags Cancelled")));
+
+    },
+
+    remove: (target, tag) => factory.Display.confirm({
+        id: "remove_Tag",
+        target: factory.container,
+        message: factory.Display.doc.get({
+          name: "CONFIRM_DETAG",
+          content: tag
+        }),
+        action: "Remove"
+      })
+      .then(confirm => {
+        if (!confirm) return Promise.resolve(false); /* <!-- No confirmation, so don't proceed --> */
+        var _item = FN.items.get(target);
+
+        /* <!-- Update Item --> */
+        _item.TAGS = (_item.BADGES = _.filter(_item.BADGES, badge => badge != tag)).join(";");
+
+        /* <!-- Process Item, Reconcile UI then Update Database --> */
+        return Promise.resolve(FN.items.reconcile(_item)).then(item => {
+            target.find(`span.badge a:contains('${tag}')`).filter(function() {
+              return $(this).text() == tag;
+            }).parents("span.badge").remove();
+            return item;
+          })
+          .then(item => options.state.session.database.items.update(item))
+          .catch(options.functions.errors.update)
+          .then(FN.status.busy(target, _item));
+      }).catch(e => e)
+
+
+  };
+  
+  
+  FN.drag = {
+
+    decode: (e, destination) => {
+
+      e.preventDefault();
+
+      var _id = e.originalEvent.dataTransfer.getData(MIME_TYPE),
+        _source = FN.drag.get(_id),
+        _destination = $(e.currentTarget);
+
+      return {
+        id: _id,
+        source: _source,
+        destination: _destination.is(destination) ? _destination : _destination.parents(destination)
+      };
+
+    },
+
+    get: data => !data || data.indexOf("item_") !== 0 ? false : $(`#${data}`),
+
+    insert: (e, decoded, selectors) => {
+
+      /* <!-- Stop any further event triggering, as we are handling! --> */
+      e.stopPropagation();
+
+      (decoded.destination.is(selectors.item) ?
+        decoded.source.insertBefore(decoded.destination) :
+        decoded.destination.find(selectors.item).length > 0 ?
+        decoded.source.insertBefore(decoded.destination.find(selectors.item).first()) :
+        decoded.source.insertAfter(decoded.destination.find(".divider")))
+      .addClass("bg-bright").delay(1000).queue(function() {
+        $(this).removeClass("bg-bright").dequeue();
+      });
+
+      var _list = [],
+        _check = item => {
+          var __hash = options.state.session.database.hash(item);
+          factory.Flags.log(`Checking E:${item.__HASH} and N:${__hash}`, item);
+          if (item.__HASH != __hash) _list.push(item);
+        };
+
+      /* <!-- A timed item won't be droppable, so check on it's own --> */
+      if (decoded.item.IS_TIMED) _check(decoded.item);
+
+      /* <!-- Check droppable elements for ordering --> */
+      _.each(decoded.source.parent().children(selectors.item), (el, i) => {
+        var _el = $(el),
+          _item = options.state.session.db.get(_el.data("id"));
+        _el.data("order", _item.ORDER = i + 1);
+        _check(_item);
+      });
+
+      /* <!-- Save List --> */
+      return _list.length > 0 ? 
+        options.state.session.database.items.update(_list)
+          .then(result => result === false ? factory.Flags.error("Save / Update Items Failed", _list).negative() : true) : 
+        false;
+
+    },
+
+    hookup: (items, selectors) => {
+
+      FN.drag.clear = FN.drag.clear || _.debounce(items => items.removeClass("drop-target"), 100);
+
+      if (items.draggable) items.draggable
+
+        .on("dragstart.draggable", e => {
+          $(e.currentTarget).addClass("not-drop-target")
+            .parents([selectors.item, selectors.group].join(",")).addClass("not-drop-target");
+          e.originalEvent.dataTransfer.setData(MIME_TYPE, e.currentTarget.id);
+          e.originalEvent.dataTransfer.dropEffect = "move";
+        });
+
+      if (items.droppable) items.droppable
+
+        .on("dragend.droppable", () => {
+          $(".drop-target, .not-drop-target").removeClass("drop-target not-drop-target");
+        })
+
+        .on("dragenter.droppable", e => {
+
+          var decode = FN.drag.decode(e, [selectors.item, selectors.group].join(","));
+
+          if (!decode.destination.hasClass("drop-target")) {
+            FN.drag.clear($(".drop-target").not(decode.destination));
+            decode.destination.addClass("drop-target");
+          }
+
+        })
+        .on("dragover.droppable", e => {
+
+          if (e.currentTarget.dataset.droppable) {
+            e.preventDefault();
+            e.originalEvent.dataTransfer.dropEffect = "move";
+          }
+
+        })
+        .on("drop.droppable", e => {
+
+          var decode = FN.drag.decode(e, [selectors.item, selectors.group].join(","));
+
+          if (decode.source && decode.id != decode.destination.id) {
+
+            decode.group = {
+              source: decode.source.parents(selectors.group),
+              destination: decode.destination.is(selectors.group) ?
+                decode.destination : decode.destination.parents(selectors.group)
+            };
+
+            decode.item = options.state.session.db.get(decode.source.data("id"));
+
+            if (decode.group.source[0] != decode.group.destination[0]) {
+              
+              if (decode.group.destination.data("date")) {
+                
+                /* <!-- Different Group / Day --> */
+                decode.date = {
+                  source: factory.Dates.parse(decode.group.source.data("date")),
+                  destination: factory.Dates.parse(decode.group.destination.data("date"))
+                };
+                factory.Flags.log("DRAG DESTINATION DATE:", decode.date);
+
+                if (decode.item.IS_TIMED) {
+
+                  /* <!-- Moving a timed item forwards/backwards --> */
+                  decode.item.FROM = decode.date.destination;
+                  if (decode.item.IS_COMPLETE && decode.item.DONE.clone().startOf("day").isAfter(decode.date.destination))
+                    decode.item.DONE = decode.date.destination;
+
+                  factory.Flags.log("TIMED ITEM DRAGGED:", decode.item);
+                  FN.drag.insert(e, decode, selectors);
+
+                } else if (!decode.item.IS_COMPLETE && decode.date.destination.isSameOrAfter(factory.Dates.now().startOf("day"))) {
+
+                  /* <!-- Moving an incomplete item to today or future --> */
+                  decode.item.FROM = decode.date.destination;
+
+                  factory.Flags.log("INCOMPLETE ITEM DRAGGED TO PRESENT/FUTURE:", decode.item);
+                  FN.drag.insert(e, decode, selectors);
+
+                }
+                
+              } else if (decode.group.destination.data("status") !== undefined) {
+                
+                decode.item.STATUS = decode.group.destination.data("status");
+                
+                factory.Flags.log("DRAG DESTINATION STATUS:", decode.item.STATUS);
+                
+                FN.drag.insert(e, decode, selectors)
+                  .then(value => value ? Promise.resolve(FN.items.reconcile(decode.item))
+                        .then(item => FN.elements.replace(decode.source, item, decode.group.destination)) : value);
+                
+              }
+
+            } else if (decode.source[0] != decode.destination[0]) {
+
+              /* <!-- Not Dropped on itself --> */
+              factory.Flags.log("RE-ORDERING ITEM", decode.item);
+              FN.drag.insert(e, decode, selectors);
+
+            }
+
+
+          }
+        });
+
+    },
+
+  }; /* <!-- Functions to handle Drag / Drop functionality --> */
+  
+  
+  FN.event = {
+    
+    hookup : container => {
+
+      var _return = promise => promise;
+
+      /* <!-- Ensure Links open new tabs --> */
+      container.find("a:not([href^='#'])").attr("target", "_blank").attr("rel", "noopener");
+
+      /* <!-- Enable Button Links --> */
+      container.find(".input-group button").on("click.action", e => {
+        var target = $(e.currentTarget);
+        if (target.data("action")) {
+          var parent = target.parents("div.item");
+          _return(target.data("action") == "cancel" ? FN.actions.cancel(parent) :
+                  target.data("action") == "delete" ? FN.actions.delete(parent) :
+                  target.data("action") == "update" ? FN.actions.edit(parent) : 
+                  target.data("action") == "move" ? FN.actions.move(parent) : 
+                  target.data("action") == "complete" ? FN.actions.complete(parent) : 
+                  target.data("action") == "copy" ? FN.actions.duplicate(parent) :
+                  target.data("action") == "tags" ? FN.tags.edit(parent) :
+                  target.data("action") == "forward" ? FN.actions.forward(parent) :
+                  target.data("action") == "backward" ? FN.actions.backward(parent) :
+                  Promise.reject());
+        }
+      });
+
+      /* <!-- Enable Keyboard Shortcuts --> */
+      container.find("div.edit textarea")
+        .keydown(e => {
+          var code = e.keyCode ? e.keyCode : e.which;
+          if (code == 13 || code == 27) e.preventDefault(); /* <!-- Enter or Escape Pressed --> */
+        })
+        .keyup(e => {
+          var code = e.keyCode ? e.keyCode : e.which;
+          var _handle = target => {
+            var parent = $(target).parents("div.item");
+            parent.find("div.edit, div.display").toggleClass("d-none");
+            parent.toggleClass("editable").toggleClass("editing")
+              .attr("draggable", (i, attr) =>
+                attr === undefined || attr === null || attr === false || attr === "false" ?
+                "true" : "false");
+            return parent;
+          };
+          if (code == 13) {
+            /* <!-- Enter Pressed --> */
+            e.preventDefault();
+            _return(e.shiftKey ?
+              FN.actions.complete(_handle(e.currentTarget)) : FN.actions.edit(_handle(e.currentTarget)));
+          } else if (code == 27) {
+            /* <!-- Escape Pressed / Cancel Update --> */
+            e.preventDefault();
+            _return(FN.actions.cancel(_handle(e.currentTarget)));
+          }
+        });
+
+      /* <!-- Enable Item Editing --> */
+      (container.is("div.item") ?
+        container : container.find("div.item.editable, div.item.editing"))
+      .off("click.item").on("click.item", e => {
+        var _target = $(e.currentTarget),
+          _clicked = $(e.target);
+        _target.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
+        !_clicked.is("input, textarea, a, span, a > i") ?
+          e.shiftKey ? e.preventDefault() || FN.elements.clear() || FN.actions.complete(_target) :
+          _target.find("div.edit, div.display").toggleClass("d-none") &&
+          _target.toggleClass("editable").toggleClass("editing")
+          .attr("draggable", (i, attr) =>
+            attr === undefined || attr === null || attr === false || attr === "false" ?
+            "true" : "false") : false;
+        
+        if (_target.find("div.edit").is(":visible")) {
+
+          /* <!-- Remove any tooltips etc --> */
+          $("div.tooltip.show").remove();
+          
+          /* <!-- Focus Cursor on Text Area --> */
+          _target.find("div.edit textarea").focus();
+
+          /* <!-- Scroll to target if possible --> */
+          if (Element.prototype.scrollIntoView && _target[0].scrollIntoView) {
+            _target[0].scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+              inline: "nearest"
+            });
+          }
+
+          if (_target.attr("draggable")) {
+
+            var _movable = new Hammer(_target.find("div.edit")[0]);
+            _movable.get("pan").set({
+              direction: Hammer.DIRECTION_VERTICAL,
+              threshold: _target.height() / 2
+            });
+
+            _movable.on("pan", e => {
+              if (e.pointerType == "touch") {
+                var _destination = $(document.elementFromPoint(e.center.x, e.center.y));
+                _destination = _destination.is("div.item[draggable=true]") ? _destination : _destination.parents("div.item[draggable=true]");
+                if (_destination && _destination.length == 1) {
+                  var _source = $(e.target);
+                  _source = _source.is("div.item") ? _source : _source.parents("div.item");
+                  if (_source.parents(".group")[0] == _destination.parents(".group")[0]) _source.insertBefore(_destination);
+                }
+              }
+            });
+
+            _movable.on("panend", e => {
+              var _source = $(e.target);
+              _source = _source.is("div.item") ? _source : _source.parents("div.item");
+              var _list = [];
+              _source.parent().children("div.item[draggable=true]").each((i, el) => {
+                var _el = $(el),
+                  _item = options.state.session.db.get(_el.data("id")),
+                  _order = i + 1;
+                _el.data("order", _order);
+                if (_item && _item.ORDER != _order)(_item.ORDER = _order) && _list.push(_item);
+              });
+              
+              /* <!-- Save List --> */
+              _list.length > 0 ? 
+                options.state.session.database.items.update(_list).then(r => (r === false) ? factory.Flags.error("Save / Update Items Failed", _list).negative() : true) : false;
+            });
+
           }
         }
-      }, {
-        "createDeveloperMetadata": factory.Google_Sheets_Metadata({}, factory).sheet(year).tag({
-          key: META.sheet_archive.key,
-          value: year
-        })
-      }]).then(response => response && response.replies && response.replies.length == 2 ? response.replies[0].addSheet.properties : false))
-    .then(value => value ? _populateDataSheet(_data.spreadsheet, value.sheetId, value.title, {
-      "red": 0.4,
-      "green": 0.4,
-      "blue": 0.4
-    }) : value)
-    .then(value => {
-      if (!value) return value;
-      var _sheet = _.find(value.sheets, sheet => _.find(sheet.developerMetadata, m => m.metadataKey == META.sheet_archive.key && m.metadataValue == year)),
-        _items = (db ? db : _db).where(item => item[META.column_from.value].year() == year),
-        _values = _.map(_items, item => _convertToArray(item));
+      });
 
-      var _notation = factory.Google_Sheets_Notation(),
-        _range = `${_notation.convertR1C1(`R1C${_data.columns.start}`)}:${_notation.convertR1C1(`C${_data.columns.end}`, true)}`;
+      /* <!-- Enable Tooltips --> */
+      factory.Display.tooltips(container.find("[data-toggle='tooltip']"), {
+        container: "body",
+        trigger: "hover",
+      });
+      
+      return container;
 
-      factory.Flags.log(`Appending Values [NEW] for Range: ${_range}`, _values);
-
-      return factory.Google.sheets.append(_data.spreadsheet, `'${_sheet.properties.title}'!${_range}`, _values).then(result => result && result.updates ? _items : false);
-    });
-
-  var _remove = items => {
-
-    var _grid = factory.Google_Sheets_Grid({
-        sheet: _data.sheet
-      }),
-      _start = _data.rows.end + 1 + _.min(items, item => item.__ROW).__ROW,
-      _end = _data.rows.end + 1 + _.max(items, item => item.__ROW).__ROW,
-      _dimension = _grid.dimension("ROWS", _start - 1, _end);
-
-    factory.Flags.log(`Removing Rows : ${_start}-${_end} / Dimension : ${JSON.stringify(_dimension)} for items:`, items);
-
-    return factory.Google.sheets.batch(_data.spreadsheet, {
-      "deleteDimension": {
-        "range": _dimension
-      }
-    });
-
-  };
-
-  var _delete = (item, db) => {
-
-    if (item.__ROW === undefined || item.__ROW === null) return Promise.reject();
-
-    var _grid = factory.Google_Sheets_Grid({
-        sheet: _data.sheet
-      }),
-      _row = _data.rows.end + 1 + item.__ROW,
-      _dimension = _grid.dimension("ROWS", _row - 1, _row),
-      _notation = factory.Google_Sheets_Notation(),
-      _range = `${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.start}`)}:${_notation.convertR1C1(`R${_data.rows.end + 1 + item.__ROW}C${_data.columns.end}`, true)}`;
-
-    return factory.Google.sheets.values(_data.spreadsheet, `${_data.title}!${_range}`).then(value => {
-      var _existing = _populate(value.values)[0];
-      _existing.__hash = _hash(_existing);
-      if (_existing.__hash == item.__hash) {
-        factory.Flags.log(`Deleting Row : ${_row} / Dimension : ${JSON.stringify(_dimension)} for item:`, item);
-        return factory.Google.sheets.batch(_data.spreadsheet, {
-          "deleteDimension": {
-            "range": _dimension
-          }
-        }).then(() => {
-          /* <!-- Reduce the relevant and last row to account for the removed row --> */
-          (db ? db : _db).updateWhere(row => row.__ROW > item.__ROW, row => row.__ROW -= 1);
-          _data.last -= 1;
-          return true;
-        });
-      } else {
-        return Promise.reject(`Hash Mismath for Range: ${_range} [Hash_ITEM: ${item.__hash}, Hash_EXISTING: ${_existing.__hash}]`);
-      }
-
-    });
-
-  };
-
-  var _badges = db => _.chain((db ? db : _db).chain().data()).pluck(META.header_badges.value).flatten()
-    .reduce((totals, badge) => {
-      if (badge) totals[badge] = totals[badge] ? totals[badge] + 1 : 1;
-      return totals;
-    }, {}).pairs().sortBy(1).reverse().first(4).value();
+    },
+    
+  }; /* <!-- Functions to handle Event Clicks and Editing functionality --> */
+  
+  
+  FN.hookup = (element, draggable, droppable, selectors) => {
+    
+    /* <!-- Hookup all relevant events --> */
+    FN.event.hookup(element);
+    
+    /* <!-- Item Drag / Drop --> */
+    FN.drag.hookup({draggable: draggable === true ? element : draggable, droppable: droppable === true ? element : droppable}, selectors || DROP_SELECTORS);
+    
+    return element;
+    
+  }; /* <!-- Function to hookup all interactivity to rendered elements --> */
   /* <!-- Internal Functions --> */
 
   /* <!-- Initial Calls --> */
@@ -811,102 +819,21 @@ Tasks = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
 
-    regexes: {
-
-      EXTRACT_ALLDAY: EXTRACT_ALLDAY,
-
-      EXTRACT_TIME: EXTRACT_TIME,
-
-      EXTRACT_DATE: EXTRACT_DATE,
-
-      SPLIT_TAGS: SPLIT_TAGS,
-
-    },
-
-    create: _create,
-
-    open: _open,
-
-    close: _close,
-
-    search: (query, db, from) => {
-      var _query = _queries.text(query, from);
-      factory.Flags.log(`Query for :${query}`, _query);
-      var _results = (db ? db : _db).find(_query);
-      factory.Flags.log(`Result Values for : ${query}`, _results);
-      return _results;
-    },
-
-    query: (date, db, current) => current ? _current(date, db) : _date(date, db),
-
-    analysis: (tag, db) => {
-      var _query = _queries.all_tagged(tag);
-      factory.Flags.log(`Query [ALL] for: ${tag}`, _query);
-      var _all = (db ? db : _db).find(_query);
-      factory.Flags.log(`Result Values for: ${tag}`, _all);
-      var _complete = _.filter(_all,
-                               result => result[META.column_status.value] == "COMPLETE");
-      var _analysis = {
-        total: _all.length,
-        complete: _complete.length,
-        percentage_complete: Math.round(_complete.length / _all.length * 100),
-      };
-      factory.Flags.log(`Analysis for: ${tag}`, _analysis);
-      return _analysis;
-    },
     
-    tagged: (tag, db) => {
-      var _query = _queries.tagged(tag);
-      factory.Flags.log(`Query [Current] for: ${tag}`, _query);
-      var _results = (db ? db : _db).find(_query);
-      factory.Flags.log(`Result Values for: ${tag}`, _results);
-      return _results;
-    },
-
-    years: db => {
-
-      var _all = (db ? db : _db).chain().data();
-      var _results = _.reduce(_all, (tally, item) => {
-        var _year;
-        if (item[META.column_from.value]) _year = item[META.column_from.value].year();
-        _year = _year ? _year : "N/A";
-        if (!tally[_year]) tally[_year] = {
-          incomplete: 0,
-          complete: 0
-        };
-        tally[_year][item._complete || (item._timed && !item[META.column_from.value].isAfter()) ? "complete" : "incomplete"] += 1;
-        return tally;
-      }, {});
-      factory.Flags.log("Result Values for years", _results);
-      return _results;
-    },
-
-    archive: _archive,
-
-    badges: _badges,
-
-    items: {
-
-      create: _new,
-
-      update: _update,
-
-      delete: _delete,
-
-      process: items => {
-        var _reference = factory.Dates.now().startOf("day"),
-          _zombie = options.zombie === false ? false : _reference.clone().subtract(options.zombie, "days"),
-          _ghost = options.ghost === false ? false : _reference.subtract(options.ghost, "days");
-        _.each(_.isArray(items) ? items : [items], _process(_zombie, _ghost));
-        return Promise.resolve(items);
-      },
-
-      remove: _remove,
-
-    },
-
-    hash: _hash
-
+    /* <!-- Called from the Docket App Router --> */
+    new : FN.new.task, /* <!-- Creates a new task, via a new task dialog --> */
+    
+    tag : FN.tags.edit, /* <!-- Edits tags for an existing Task, via an edit dialog --> */
+    
+    detag : FN.tags.remove, /* <!-- Removes a tag from a Task, via a confirmation dialog --> */
+    /* <!-- Called from the Docket App Router --> */
+    
+    
+    /* <!-- Called from the Views module to hookup events for templated Items being rendered --> */
+    hookup : container => FN.hookup(container, 
+                container.find("div.item[draggable=true]"), 
+                container.find("div.item[data-droppable=true], div.group[data-droppable=true], div.card-body[data-droppable=true]")),
+    
   };
   /* <!-- External Visibility --> */
 

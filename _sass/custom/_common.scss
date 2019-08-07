@@ -1,6 +1,5 @@
 // -- Outline Letter Logo -- //
 a.navbar-brand.logo, .navbar-brand a.logo {
-	max-height: 48px;
 	svg {
 		height: 40px;	
 		pointer-events: visible;
@@ -70,6 +69,10 @@ a.navbar-brand.logo, .navbar-brand a.logo {
 }
 
 .dropdown-item {
+  &.toggler_child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 	svg {
 		max-height: 1em;
 		max-width: 1em;
@@ -202,5 +205,20 @@ em.kb-shortcut, strong.kb-shortcut {
 	background-color: $colour-light-danger !important;
 }
 // -- Other Backgrounds -- //
+
+// -- Opacities -- //
+.o-10 {
+  opacity: 0.1;
+}
+.o-25 {
+  opacity: 0.25;
+}
+.o-50 {
+  opacity: 0.5;
+}
+.o-100 {
+  opacity: 1;
+}
+// -- Opacties -- //
 
 // -- Backgrounds -- //

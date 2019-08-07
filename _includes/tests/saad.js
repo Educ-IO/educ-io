@@ -5,8 +5,8 @@ SaaD = function() {
   const FACTORY = this;
   const DELAY = FACTORY.App.delay,
     RANDOM = FACTORY.App.random,
-    RACE = FACTORY.App.race(60000),
-    PAUSE = () => DELAY(RANDOM(1000, 2000)),
+    RACE = FACTORY.App.race(360000),
+    PAUSE = () => DELAY(RANDOM(20000, 30000)),
     GEN = FACTORY.App.generate;
   /* <!-- Internal Constants --> */
 
@@ -32,9 +32,13 @@ SaaD = function() {
         var item = GEN.o(items),
           key = GEN.o(_.reject(_.keys(item),
             key => key.indexOf("__") === 0 || key == "meta" || key == "$loki"));
-        item[key] = GEN.an(GEN.i(5, 20));
+        var value = GEN.an(GEN.i(5, 20));
+        FACTORY.Flags.log(`CHANGING ${key} FROM: ${item[key]} || TO: ${value}`, item);
+        item[key] = value;
       };
-      _.each(_.range(number ? number : GEN.i(1, 20)), change);
+      number = number ? number : GEN.i(1, 20);
+      FACTORY.Flags.log(`MAKING ${number} CHANGES TO ITEMS`, items);
+      _.each(_.range(number), change);
       return items;
     },
 
@@ -101,6 +105,8 @@ SaaD = function() {
               column => item[column.value] === undefined ?
               "" : item[column.value])));
 
+          return true;
+        
         })
         .then(() => {
 
@@ -108,6 +114,8 @@ SaaD = function() {
           expect(database.data).to.be.an("array").to.have.lengthOf(items.length);
           _.each(items, (item, index) => expect(database.data[index])
             .to.deep.include(_.omit(item, ["meta", "$loki", "__HASH"])));
+        
+          return true;
 
         })
       ),
@@ -121,9 +129,60 @@ SaaD = function() {
 
   };
   /* <!-- Check Functions --> */
+  
+  /* <!-- Sheet Functions --> */
+  var _sheet = {
+    
+    insert: (db, database, ingest, hash) => {
+      
+     /* <!-- Check Database is Empty --> */
+      expect(database.data)
+        .to.have.lengthOf(0);
 
+      /* <!-- Generate Test Data Items --> */
+      var _items = _generate.items(schema),
+        _values = _.map(_items, db.arrayise),
+        _range = db.range(
+          db.state.data.rows.end + 1,
+          db.state.data.columns.start,
+          db.state.data.rows.end + 1 + _items.length,
+          db.state.data.columns.end);
+
+      FACTORY.Flags.log(`INJECTING DATA (FOR ${_items.length} ITEMS) INTO: ${_range}`, _values);
+
+      return FACTORY.Google.sheets.append(
+          db.state.data.spreadsheet,
+          `${db.state.data.title}!${_range}`, _values)
+
+        .then(spreadsheet => {
+        
+          expect(spreadsheet).to.be.an("object")
+            .and.to.have.nested.property("updates.updatedCells")
+            .and.to.equal(_.reduce(_values, (count, item) => count += item.length, 0));
+          expect(spreadsheet).to.have.nested.property("updates.updatedColumns")
+            .and.to.equal(db.state.data.columns.end - db.state.data.columns.start + 1);
+
+          /* <!-- Open Database with Ingest & Hash Parameters (Schema Default Ingest & Hash == FALSE) --> */
+          return db.open(db.state.data.spreadsheet, schema.sheets.sheet_name, ingest, hash);
+        
+        }).then(database => {
+        
+          /* <!-- Check Database is No Longer Empty --> */
+          expect(database.data)
+             .to.have.lengthOf(_items.length);
+        
+          FACTORY.Flags.log(`OPENED DATABASE HAS ${database.data.length} ITEMS`, database.data);
+        
+          return {database: database, items: _items};
+      });
+        
+    },
+    
+  };
+  /* <!-- Sheet Functions --> */
+  
   /* <!-- Start Function --> */
-  var _start = (db, open, insert) => db.create()
+  var _start = (db, open, insert, count) => db.create()
     .then(sheet => _.tap(open ?
       PAUSE()
       .then(() => db.open(sheet.spreadsheetId, schema.sheets.sheet_name))
@@ -132,7 +191,7 @@ SaaD = function() {
         FACTORY.Flags.log("SHEET CREATED:", sheet);
         FACTORY.Flags.log("SAAD INITIALISED:", db);
       }))
-    .then(value => insert ? db.insert(_generate.items(schema)) : value);
+    .then(value => insert ? db.insert(_generate.items(schema, count ? count : null)) : value);
   /* <!-- Start Function --> */
 
   /* <!-- Internal Functions --> */
@@ -148,6 +207,25 @@ SaaD = function() {
       PAUSE().then(() => FACTORY.Google.files.delete(db.state.data.spreadsheet)) : false;
   };
   /* <!-- Internal Functions --> */
+  
+  /* <!-- Test Functions --> */
+  var _test = {
+    
+    update: (ingest, hash, changes, number) => db => RACE(new Promise(r => _start(db, true)
+      .then(database => _sheet.insert(db, database, ingest, hash)
+          .then(value => {
+            var changed = _generate.changes(changes(value.database.data), _.isFunction(number) ? number(value.database.data) : number);
+            return db.update(changed, true) /* <!-- Commit Changes to DB --> */
+              .then(changes => {
+                _.each(changes, (value, i) => expect(value).to.deep.include(changed[i]));
+                /* <!-- Check that Changes have been successfully made --> */
+                return _check.inserted(db, value.database.data);
+              });
+          }))
+      .then(_success(r, "Single Update")).catch(_failure(r, "Single Update")).then(_cleanup(db))
+    )),
+    
+  };/* <!-- Test Functions --> */
 
   /* <!-- External Visibility --> */
   return {
@@ -169,6 +247,11 @@ SaaD = function() {
 
     },
 
+    fail: db => RACE(new Promise(r => _start(db, true, true, 1)
+      .then(items => _check.inserted(db, items.concat(items).concat(_generate.items(schema, 1))))
+      .then(_success(r, "Fail")).catch(_failure(r, "Fail")).then(_cleanup(db))
+    )),
+    
     create: db => RACE(new Promise(r => _start(db)
       .then(sheet => {
 
@@ -321,54 +404,45 @@ SaaD = function() {
       })
       .then(_success(r, "Populate")).catch(_failure(r, "Populate")).then(_cleanup(db))
     )),
+    
+    fill: db => RACE(new Promise(r => _start(db, true, true, 1050) /* <!-- Default number of rows in a new sheet is 1000 --> */
+      .then(items => {
 
-    ingest: db => RACE(new Promise(r => _start(db, true)
-      .then(database => {
+        FACTORY.Flags.log("Items INSERTED:", items.length);
 
-        /* <!-- Check Database is Empty --> */
-        expect(database.data)
-          .to.have.lengthOf(0);
-
-        /* <!-- Generate Test Data Items --> */
-        var _items = _generate.items(schema),
-          _values = _.map(_items, db.arrayise),
-          _range = db.range(
-            db.state.data.rows.end + 1,
-            db.state.data.columns.start,
-            db.state.data.rows.end + 1 + _items.length,
-            db.state.data.columns.end);
-
-        FACTORY.Flags.log(`INJECTING DATA INTO: ${_range}`, _values);
-
-        return FACTORY.Google.sheets.append(
-            db.state.data.spreadsheet,
-            `${db.state.data.title}!${_range}`, _values)
-
-          .then(spreadsheet => {
-            expect(spreadsheet).to.be.an("object")
-              .and.to.have.nested.property("updates.updatedCells")
-              .and.to.equal(_.reduce(_values, (count, item) => count += item.length, 0));
-            expect(spreadsheet).to.have.nested.property("updates.updatedColumns")
-              .and.to.equal(db.state.data.columns.end - db.state.data.columns.start + 1);
-
-            return db.open(db.state.data.spreadsheet, schema.sheets.sheet_name, true);
-          })
-          .then(database => {
-
-            /* <!-- Check Database is Empty --> */
-            expect(database.data)
-              .to.have.lengthOf(_items.length);
-
-            /* <!-- Check Items have been properly injested --> */
-            _.each(_items, (item, index) => {
-              expect(database.data[index]).to.deep.include(item);
-              expect(database.data[index]).to.have.property("__ROW", index);
-              expect(database.data[index]).to.have.property("__ID").and.to.be.ok;
-            });
-
-          });
+        /* <!-- Re-Open the Database, and check the values are correctly added to the spreadsheet --> */
+        return _check.inserted(db, items);
 
       })
+      .then(_success(r, "Populate")).catch(_failure(r, "Populate")).then(_cleanup(db))
+    )),
+    
+    edge: db => RACE(new Promise(r => _start(db, true, true, 1000) /* <!-- Default number of rows in a new sheet is 1000 --> */
+      .then(items => {
+        var _generated;
+        return db.insert(_generated = _generate.items(schema, 1))
+          .then(() => _check.inserted(db, items.concat(_generated)))
+          .then(() => db.delete(_generated))
+          .then(() => db.insert(_generated = _generate.items(schema, 10)))
+          .then(() => _check.inserted(db, items.concat(_generated)))
+          .then(() => db.delete(_generated))
+          .then(() => _check.inserted(db, items));
+      })
+      .then(_success(r, "Populate")).catch(_failure(r, "Populate")).then(_cleanup(db))
+    )),
+
+    ingest: db => RACE(new Promise(r => _start(db, true)
+      .then(database => _sheet.insert(db, database, true)
+          .then(value => {
+      
+            /* <!-- Check Items have been properly injested --> */
+            _.each(value.items, (item, index) => {
+              expect(value.database.data[index]).to.deep.include(item);
+              expect(value.database.data[index]).to.have.property("__ROW", index);
+              expect(value.database.data[index]).to.have.property("__ID").and.to.be.ok;
+            });
+
+          }))
       .then(_success(r, "Ingest")).catch(_failure(r, "Ingest")).then(_cleanup(db))
     )),
 
@@ -378,7 +452,35 @@ SaaD = function() {
       .then(items => _check.inserted(db, items))
       .then(_success(r, "Update")).catch(_failure(r, "Update")).then(_cleanup(db))
     )),
-
+    
+    legacyUpdate: db => RACE(new Promise(r => _start(db, true)
+      .then(database => _sheet.insert(db, database, false)
+          .then(value => {
+      
+            /* <!-- Check Items have been properly opened --> */
+            _.each(value.items, (item, index) => {
+              expect(value.database.data[index]).to.deep.include(item);
+              expect(value.database.data[index]).to.have.property("__ROW", index);
+              expect(value.database.data[index]).to.have.property("__ID").and.not.to.be.ok;
+            });
+      
+            /* <!-- Generate Random Changes --> */
+            return _generate.changes(value.database.data, 5);
+      
+          }))
+      .then(db.update) /* <!-- Commit Changes to DB --> */
+      .then(items => _check.inserted(db, items)) /* <!-- Check that Changes have been successfully made --> */
+      .then(_success(r, "Legacy Update")).catch(_failure(r, "Legacy Update")).then(_cleanup(db))
+    )),
+    
+    singleUpdate: _test.update(true, true, items => [GEN.o(items)], 1),
+    
+    singleLegacyUpdate: _test.update(false, true, items => [GEN.o(items)], 1),
+    
+    multipleUpdate: _test.update(true, true, items => _.uniq(_.map(_.range(GEN.i(2, items.length)), () => GEN.o(items))), () => GEN.i(2, 5)),
+    
+    multipleLegacyUpdate: _test.update(false, true, items => _.uniq(_.map(_.range(GEN.i(2, items.length)), () => GEN.o(items))), () => GEN.i(2, 5)),
+    
     delete: db => RACE(new Promise(r => {
 
       var _all;

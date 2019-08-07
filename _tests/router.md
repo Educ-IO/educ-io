@@ -3,6 +3,9 @@ title: Router
 for: [debug]
 script: tests/router
 tests:
+  - name: Lifecycle
+    desc: Test Router Life Cycle Events
+    function: test_Router_Lifecycle
   - name: Prepare
     desc: Test Route Preparation Mechanisms
     function: test_Router_Prepare

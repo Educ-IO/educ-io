@@ -1,0 +1,29 @@
+{% raw %}
+<div class="d-flex nvh-25 flex-column py-2 px-3 bg-light border">
+  {{#exists timed}}<div class="small pb-2 border-bottom">
+    <span class="display-5 d-flex align-items-center">
+      <i class="material-icons md-36 mr-2">schedule</i>
+      <span class="font-weight-bold text-secondary mr-2">{{timed}}</span>
+      <span class="small text-danger font-weight-lighter">timed items</span>
+    </span>
+    {{#if future}}<span class="display-5 d-flex align-items-center">
+      <span class="font-weight-bold text-primary mr-2">{{future}}</span>
+      <span class="small text-dark font-weight-lighter">scheduled in the <b>future</b></span>
+    </span>{{/if}}
+  </div>{{/exists}}
+  {{#if durations}}<div class="small mt-2 pb-2 border-bottom">
+    <span class="display-5 d-flex flex-row align-items-center">
+      <i class="material-icons md-36 mr-2">av_timer</i>
+      <span class="text-secondary mr-2">{{durations}}</span>
+      <span class="small text-info font-weight-lighter mr-2">items totalling</span>
+      <span class="small font-weight-normal text-dark" data-toggle="tooltip" title="{{hours}} hrs">{{duration}}</span>
+    </span>
+  </div>{{/if}}
+  <div class="small mt-2">
+    <span class="display-5 d-flex flex-row align-items-center">
+      <i class="material-icons md-36 mr-2">linear_scale</i>
+      <span class="display-6 text-black graph-tooltip"></span>
+    </span>
+  </div>
+</div>
+{% endraw %}

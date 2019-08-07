@@ -14,12 +14,28 @@ Main = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Plumbing Functions --> */
+
   /* <!-- TODO: Overlapping busy calls can cause issues, so we check that it is function --> */
   const BUSY = status => _.wrap(ಠ_ಠ.Display.busy({
     target: ಠ_ಠ.container,
     status: status,
     fn: true
   }), (busy, value) => _.tap(value, () => _.isFunction(busy) ? busy() : false));
+  
+  const PROMPT = (name, map, list) => (_.isFunction(list) ? list() : Promise.resolve(list))
+        .catch(e => ಠ_ಠ.Flags.error(`${name} List`, e).negative())
+        .then(BUSY(`Loading ${name}s`))
+        .then(options => options === false || options.length === 0 ||
+          (options.length == 1 && (options[0] === undefined || options[0] === null)) ? false : ಠ_ಠ.Display.choose({
+            id: `choose_${name}`,
+            title: `Please Choose a ${name} to Open ...`,
+            action: options && options.length > 0 ? "Open" : false,
+            choices: map ? _.map(options, map) : options,
+            multiple: true
+          })
+          .catch(e => (e ? ಠ_ಠ.Flags.error(`${name} Select:`, e) : ಠ_ಠ.Flags.log(`${name} Select Cancelled`)).negative())
+          .then(results => results ? _.isArray(results) ? results.length === 0 ? false : results : [results] : false));
+  
   /* <!-- Plumbing Functions --> */
 
   /* <!-- Internal Functions --> */
@@ -171,9 +187,9 @@ Main = function() {
         google_SignIn();
         _routeIn = function() {
           _routeIn = function() {
-            if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(true);
+            if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(true);
           };
-          if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
+          if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(command);
         };
 
       } else if ((/\|/i).test(directive)) {
@@ -185,33 +201,35 @@ Main = function() {
 
       } else {
 
-        if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
+        if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(command);
 
       }
 
     } else {
 
-      if (ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
+      if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(command);
 
     }
+    
   };
 
-  var router = () => {
-    if (ಠ_ಠ.Flags) ಠ_ಠ.Flags.change(_route);
-  };
+  var router = () => ಠ_ಠ.Flags ? ಠ_ಠ.Flags.change(_route) : false;
 
   var setupRouter = start => {
 
     /* <!-- Route Start --> */
     if (start) start();
 
-    /* <!-- Call Router Initially --> */
-    if (window.location.hash) router();
+    /* <!-- Call Router Initially (if required) --> */
+    Promise.resolve(window.location.hash ? router() : null)
+      /* <!-- Module Finally | After all initial routes --> */
+      .then(() => _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m].finally) ? 
+                                   ಠ_ಠ[m].finally.call(ಠ_ಠ) : false));
 
     /* <!-- Add Router Method --> */
     window.onhashchange = router;
     window.onpopstate = e => {
-      if (ಠ_ಠ.Flags && e && e.state && e.state.command) ಠ_ಠ.Flags.route(event.state.command, _route);
+      if (ಠ_ಠ.Flags && e && e.state && e.state.command) ಠ_ಠ.Flags.route(e.state.command, _route);
     };
 
   };
@@ -453,6 +471,8 @@ Main = function() {
     }),
 
     busy: BUSY,
+    
+    prompt: PROMPT,
 
     /* <!-- Extra Scope Authorisation --> */
     authorise: google_Authorise,

@@ -1,3 +1,16 @@
+/* <!-- Standard Deviation Method --> */
+if (!Array.prototype.stdDev) {
+  Array.prototype.stdDev = function() {
+    var n = this.length,
+        mean = n ? this.reduce((a,b) => a+b)/n : false;
+    return mean ? Math.sqrt(this.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n) : 0;
+  };
+}
+/* <!-- Is Null Method --> */
+
+
+
+
 /* <!-- Is Null Method --> */
 if (!Array.prototype.isNull) {
   Array.prototype.isNull = function() {

@@ -47,7 +47,15 @@
   }
 }
 
-#diary, #diary_list {
+#kanban {
+  div.card-body {
+    &.drop-target:not(.not-drop-target) {
+      background-color: rgba($colour-bright-background, 0.3);
+    }
+  }
+}
+
+.items-holder {
   div.group {
   	div.small {
       div.item {
@@ -69,11 +77,11 @@
       &:hover {
         box-shadow: map-get($shadows, 2);
         border-bottom-color: transparent;
-        background-color: rgba(gold, 0.5);
+        background-color: rgba($colour-highlight, 0.4);
       }
       &.complete, &.background {
         &:hover {
-        	background-color: rgba(gold, 0.1);
+        	background-color: rgba($colour-highlight, 0.1);
         }
       }
       &.background {
@@ -82,7 +90,6 @@
         }
       }
     }
-    padding-top: 0.1rem;
     &:not(:last-child) {border-bottom: 1px dashed $colour-emphasis};
     &:last-child {border-bottom: 1px solid transparent};
     &.small {
@@ -98,9 +105,9 @@
     .text-faded {opacity: 0.5;}
     .text-very-faded {opacity: 0.25;}
     a.text-very-faded:hover {opacity: 0.75;}
-    .loader {margin: 0.1rem 0.2rem 0.2rem 0;}
+    .loader {margin-top: 0.01rem !important;}
     p {
-      margin: 0.1rem 0 0.2rem 0;
+      margin: 0;
       padding: 0;
     }
     .date, .date span {
@@ -115,32 +122,40 @@
       &.badge-rainbow {
         a[href]:hover {color: $colour-general-light !important;}
       }
-      margin-top: 0.15rem;
     }
     .display.small > a {margin-top: -0.15em;}
-    span > i, a > i {margin-top: 0.25rem !important;}
     svg {
       height: 1.4em;
     	width: 1.4em;
-      .e, .g {
-        stroke-linecap: round;
-        stroke: $colour-general;
-      }
-      .g {
-        fill: $colour-background;
-      	stroke-width: 1em;
-      }
-      .e {
-        fill: $colour-general;
-        stroke-width: 0.1em;
-      }
+      
     }
     a.hover-dark:hover {color: $colour-general;}
   }
 }
 
-#diary_add, diary_edit {
+.icon.md-1 > svg {
+  height: 0.8em;
+  width: 0.8em;
+}
+
+div.item svg, .icon > svg {
+  .e, .g {
+      stroke-linecap: round;
+      stroke: $colour-general;
+    }
+    .g {
+      fill: $colour-background;
+      stroke-width: 1em;
+    }
+    .e {
+      fill: $colour-general;
+      stroke-width: 0.1em;
+    }
+}
+
+.action-menu {
   bottom: 0;
   right: 0;
+  > button, > .dropdown-menu {z-index: 100;}
 }
 // -- Diary -- //

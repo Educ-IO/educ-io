@@ -51,6 +51,7 @@ globals:
   underscoreDeepExtend: false
   quotedPrintable: false
   jsyaml: false
+  d3: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -107,6 +108,16 @@ globals:
   Sheets: true
   TeamDrives: true
   Groups: true
+  Filter: true
+  Database: true
+  Task: true
+  Archive: true
+  Calendars: true
+  Classes: true
+  Errors: true
+  Graphs: true
+  Menu: true
+  Views: true
   __Ω__UK_Teachers_Standards: true
   __Σ__Evidence_Tracker: true
   __Σ__Form_Master: true

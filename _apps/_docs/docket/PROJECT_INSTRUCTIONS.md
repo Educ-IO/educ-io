@@ -1,0 +1,3 @@
+A __project__ is a special sort of tag, preceeded by a __#__. They are handled slightly differently in that you can filter with them on the __analysis__ view and also click on them to see the total number of tasks associated with the project, and how far towards completion the project is.
+
+Typically you might use __tags__ to indicate a client, or type of task (e.g a personal or work one). Projects allow further classification and organisation of tasks, and are really useful if you are tracking a large number of tasks - particularly when __split across multiple shared databases__.

@@ -1,7 +1,7 @@
 /* <!-- Regex Escape --> */
 RegExp.escape = function(value) {
   /* <!-- Previously: /[-/\\^$*+?.()|[\]{}]/g --> */
-  return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  return value ? value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"): value;
 };
 /* <!-- Regex Escape --> */
 

@@ -1,15 +1,15 @@
 {% raw %}
-{{~#if name}}<div class="text-light bg-dark col-12"><h4 class="name font-weight-light m-0 py-1">{{name}}</h4></div>{{/if~}}
-<div {{#if id}}id="{{id}}" {{/if}}class="border-exagerate container-fluid pt-lg-2 px-1 px-sm-2 px-lg-3 nvh-100">
+{{~#if name}}{{> name }}{{/if~}}
+<div {{#if id}}id="{{id}}" {{/if}}class="items-holder border-exagerate container-fluid pt-lg-2 px-1 px-sm-2 px-lg-3 mvh-100">
   <div class="row day m-0 pt-2">
-  	<div class="py-2 col-12">
+  	<div class="py-2 col-12"{{#if date}} data-date="{{isoDate date true}}"{{/if}}{{#if wide}} data-wide="true"{{/if}}>
       <div class="row d-flex align-items-center">
         <h4 class="display-4 col-12 col-lg-6 mb-lg-0">
           <span class="text-muted font-weight-bold">{{title}}</span><span class="ml-2">{{day}}</span>
         </h4>
         {{#if date}}<span class="font-weight-light col-12 col-lg-6 text-lg-right h5">{{localeDate date}}</span>{{/if}}
       </div>
-      <hr class="mt-2 mt-xl-3 mb-0 divider" />
+      <hr class="mt-2 mt-xl-3 mb-0 divider" data-divider="true" />
       {{#if extras}}{{#each extras}}
       {{!-- Call Partial Template --}}
       {{> item editable=false wide=../wide}}

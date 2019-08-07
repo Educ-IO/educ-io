@@ -99,11 +99,8 @@ Flags = function() {
       command = command[1];
     }
 
-    if (command.indexOf(".") >= 1) {
-      router(directive, command.split("."));
-    } else {
-      router(directive, command);
-    }
+    return command.indexOf(".") >= 1 ?
+      router(directive, command.split(".")) : router(directive, command);
 
   };
 
@@ -219,7 +216,7 @@ Flags = function() {
                   window.location.hash = "!";
                 }
 
-                _route(command, router);
+                return _route(command, router);
 
               }
 

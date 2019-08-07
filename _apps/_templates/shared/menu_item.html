@@ -1,0 +1,4 @@
+{% raw %}
+<a {{#if id}}id="{{id}}"{{/if}}class="dropdown-item{{#if class}} {{class}}{{/if}}{{#if toggler}} toggler_child{{/if}}" href="#{{#if auth}}{{auth}},{{/if}}{{command}}" data-toggle="tooltip"{{#if desc_html}} data-html="true"{{/if}} title="{{desc}}">{{#if toggler}}<i class="material-icons md-24 float-right toggler show-{{toggler}}">{{#if icon}}{{icon}}{{else}}check_box{{/if}}</i>{{/if}}{{title}}<span class="sr-only">{{#if desc_text}}{{desc_text}}{{else}}{{desc}}{{/if}}</span></a>
+{{~#if divider}}{{> menu_divider class=divider_class }}{{/if~}}
+{% endraw %}

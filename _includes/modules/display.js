@@ -95,24 +95,31 @@ Display = function() {
 
   };
   
-  var _modal = () => {
-    var _modals = $(".modal.show[role='dialog']");
+  var _modal = run => {
+    var _modals = $(".modal.show[role='dialog']"),
+        _after = fn => {
+          if (run && _.isFunction(run)) run();
+          if (fn && _.isFunction(fn)) fn();
+        };
     if (_modals.length > 0) {
       _modals.addClass("d-none");
       $("div.modal-backdrop.show").addClass("d-none");
       $("body").removeClass("modal-open");
       return fn => {
         $(".modal.d-none[role='dialog'], div.modal-backdrop.d-none").removeClass("d-none");
+        $(".modal[role='dialog']").focus();
         $("body").addClass("modal-open");
-        if (fn) fn();
+        _after(fn);
       };
     } else {
-      return fn => {
-        if (fn) fn();
-      };
+      return _after;
     }
+  }, _modalise = (element, fn) => {
+    element.on("hide.bs.modal", () => $("div.modal-backdrop.d-none").removeClass("d-none"));
+    element.on("hidden.bs.modal", _modal(() => element.remove() && (fn && _.isFunction(fn) ? fn() : true)));
+    return element;
   };
-
+  
   var _compile = (name, raw) => {
 
     var __compile = html => {
@@ -157,12 +164,8 @@ Display = function() {
 
   };
 
-  var _template = (name, raw) => {
-
-    return Handlebars.templates === undefined || Handlebars.templates[name] === undefined ?
+  var _template = (name, raw) => Handlebars.templates === undefined || Handlebars.templates[name] === undefined ?
       _compile(name, raw) : Handlebars.templates[name];
-
-  };
 
   var _visuals = value => {
     _popovers(value.find("[data-toggle='popover']"));
@@ -262,6 +265,9 @@ Display = function() {
         Handlebars.registerHelper("encode", variable => variable ?
           encodeURIComponent(variable) : "");
 
+        Handlebars.registerHelper("humanize", variable => variable ? variable.humanize ?
+          variable.humanize() : "" : "");
+        
         Handlebars.registerHelper("string", variable => variable ? variable.toString ?
           variable.toString() : JSON.stringify(variable) : "");
 
@@ -306,18 +312,23 @@ Display = function() {
           }
         });
 
-        Handlebars.registerHelper("isoDate", variable => {
+        Handlebars.registerHelper("isoDate", (variable, short) => {
           if (!variable) return;
           if (!(variable = (variable._isAMomentObject || (window.dayjs && dayjs.isDayjs(variable)) ?
-              variable.toDate() : variable instanceof Date ? variable : false))) return;
-          return variable.toISOString();
+              variable : variable instanceof Date ? variable : false))) return;
+          return (short === true || ((variable.hours ? variable.hours() : variable.getHours()) === 0 && 
+            (variable.minutes ? variable.minutes() : variable.getMinutes()) === 0 && 
+            (variable.seconds ? variable.seconds() : variable.getSeconds()) === 0 && 
+            (variable.milliseconds ? variable.milliseconds() : variable.getMilliseconds()) === 0)) ?
+              variable.toISOString(true).split("T")[0] : variable.toISOString(true);
         });
 
         Handlebars.registerHelper("localeDate", (variable, short) => {
           if (!variable) return;
           if (!(variable = (variable._isAMomentObject || (window.dayjs && dayjs.isDayjs(variable)) ?
               variable.toDate() : variable instanceof Date ? variable : false))) return;
-          return (short || (variable.getHours() === 0 && variable.getMinutes() === 0 && variable.getSeconds() === 0 && variable.getMilliseconds() === 0)) ? variable.toLocaleDateString() : variable.toLocaleString();
+          return (short === true || (variable.getHours() === 0 && variable.getMinutes() === 0 && variable.getSeconds() === 0 && variable.getMilliseconds() === 0)) ?
+            variable.toLocaleDateString() : variable.toLocaleString();
         });
 
         Handlebars.registerHelper("formatBytes", variable => {
@@ -552,6 +563,9 @@ Display = function() {
         var _element = options.clear === true ? _target(options).empty() : _target(options),
           _return = $(this.get(options))[options.prepend === true ? "prependTo" : "appendTo"](_element);
 
+        /* <!-- Allow for showing / hiding previous modals (e.g. help modals from help modals)	--> */
+        if (options.wrapper && options.wrapper === "MODAL")  _modalise(_return);
+       
         return _visuals(_return);
 
       },
@@ -716,13 +730,12 @@ Display = function() {
         if (!options) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("confirm")(options)),
-            finish = _modal();
-        _target(options).append(dialog);
+        var dialog = $(_template("confirm")(options));
+        
+        _target(options).append(_modalise(dialog, reject));
 
         /* <!-- Set Event Handlers --> */
         dialog.find(".modal-footer button.btn-primary").click(() => _clean() && resolve(true));
-        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(reject));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
@@ -743,15 +756,12 @@ Display = function() {
         if (!options) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("inform")(options)),
-            finish = _modal();
-        _target(options).append(dialog);
+        var dialog = $(_template("inform")(options));
+       
+        _target(options).append(_modalise(dialog, resolve));
 
         /* <!-- Set Shown Event Handler (if present) --> */
         if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
-
-        /* <!-- Set Basic Event Handlers --> */
-        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(resolve));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
@@ -771,9 +781,9 @@ Display = function() {
 
         if (!options) return reject();
 
-        var dialog = $(_template(template)(options)),
-            finish = _modal();
-        _target(options).append(dialog);
+        var dialog = $(_template(template)(options));
+            
+        _target(options).append(_modalise(dialog, resolve));
 
         if (dialog.find("form").length > 0) {
 
@@ -788,7 +798,7 @@ Display = function() {
                 form.classList.add("was-validated");
               });
 
-              /* <!-- NOTES: Reliance on serializeArray can be removed once all Apps are ready for dyhydrated objects (e.g. Folders) --> */
+              /* <!-- TODO / NOTES: Reliance on serializeArray can be removed once all Apps are ready for dyhydrated objects (e.g. Folders) --> */
               var _form = dialog.find("form"),
                 _values = ಠ_ಠ.Data ? ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form) : _form.serializeArray();
               if (!ಠ_ಠ.Data) _.each(_form.find("input:indeterminate"), el => _values.push({
@@ -833,9 +843,6 @@ Display = function() {
 
         /* <!-- Set Shown Event Handler (if present) --> */
         if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
-
-        /* <!-- Set Basic Event Handlers --> */
-        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(resolve));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal({
@@ -915,13 +922,12 @@ Display = function() {
         options.__LONG = (_length > MAX_ITEMS);
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("choose")(options)),
-            finish = _modal();
-        _target(options).append(dialog);
+        var dialog = $(_template("choose")(options)), parsed;
+        
+        _target(options).append(_modalise(dialog, () => _.isEmpty(parsed) ? reject() : resolve(parsed)));
 
         /* <!-- Parsing Method --> */
-        var parsed,
-          choice = () => {
+        var choice = () => {
             var _value = dialog.find(
               ["input[name='choices']:checked", "select[name='choices'] option:selected"]
               .join(", ")
@@ -959,9 +965,6 @@ Display = function() {
             dialog.find(".modal-footer button.btn-primary").click();
           }
         });
-
-        dialog.on("hidden.bs.modal",
-                  () => dialog.remove() && finish(() => _.isEmpty(parsed) ? reject() : resolve(parsed)));
            
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
@@ -987,9 +990,10 @@ Display = function() {
         if (!options || !options.list || !options.choices) return reject();
 
         /* <!-- Great Modal Options Dialog --> */
-        var dialog = $(_template("options")(options)),
-            finish = _modal();
-        _target(options).append(dialog);
+        var dialog = $(_template("options")(options));
+        
+        _target(options).append(_modalise(dialog, reject));
+        
         dialog.find("a.dropdown-item").on("click.toggler", (e) => $(e.target).closest(".input-group-append, .input-group-prepend").children("button")[0].innerText = e.target.innerText);
         dialog.find("a[data-toggle='tooltip']").tooltip({
           animation: false,
@@ -1009,8 +1013,6 @@ Display = function() {
           });
           resolve(_return);
         });
-        dialog.on("shown.bs.modal", () => {});
-        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(reject));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
@@ -1037,9 +1039,7 @@ Display = function() {
         if (!options || (!options.simple && !options.message)) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("text")(options)),
-            finish = _modal();
-        _target(options).append(dialog);
+        var dialog = $(_template("text")(options));
 
         /* <!-- Set Event Handlers --> */
         var _submitted = false,
@@ -1064,6 +1064,8 @@ Display = function() {
               e.stopPropagation();
             }
           };
+        
+        _target(options).append( _modalise(dialog, () => _submitted ? _submit() : reject()));
 
         /* <!-- Handle Enter Key (if simple) --> */
         if (options.simple || options.password) dialog.keypress(e => {
@@ -1078,8 +1080,6 @@ Display = function() {
 
         /* <!-- Handle Clicked Submit --> */
         dialog.find(".modal-footer button.btn-primary").click(_submit);
-        dialog.on("hidden.bs.modal", 
-                  () => dialog.remove() && finish(() => _submitted ? _submit() : reject()));
         
         /* <!-- Show the Modal Dialog --> */
         dialog.on("shown.bs.modal", () => dialog.find("textarea[name='value'], input[type='text'][name='value'], input[type='password'][name='value']").focus());
@@ -1104,10 +1104,9 @@ Display = function() {
         if (!options || !options.message) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
-        var files = [],
-            dialog = $(_template("upload")(options)),
-            finish = _modal();
-        _target(options).append(dialog);
+        var files = [], dialog = $(_template("upload")(options));
+        
+        _target(options).append(_modalise(dialog, reject));
 
         /* <!-- Handle Files Population --> */
         var _populate = () => {
@@ -1131,7 +1130,6 @@ Display = function() {
           _clean();
           if (files && files.length > 0) resolve(options.single ? files[0] : files);
         });
-        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(reject));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
@@ -1162,9 +1160,10 @@ Display = function() {
         options.__LONG = (_length > MAX_ITEMS);
 
         /* <!-- Great Modal Options Dialog --> */
-        var dialog = $(_template("action")(options)),
-            finish = _modal();
-        _target(options).append(dialog);
+        var dialog = $(_template("action")(options));
+        
+        _target(options).append(_modalise(dialog, reject));
+        
         dialog.find("a[data-toggle='tooltip']").tooltip({
           animation: false,
           trigger: "hover",
@@ -1186,8 +1185,6 @@ Display = function() {
           });
 
         });
-        dialog.on("shown.bs.modal", () => {});
-        dialog.on("hidden.bs.modal", () => dialog.remove() && finish(reject));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");

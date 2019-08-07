@@ -106,11 +106,20 @@ Dialog = (options, factory) => {
       var _value = target.val();
 
       _.each(dialog.find(`input[data-source='${target.prop("id")}'], textarea[data-source='${target.prop("id")}']`), el => {
+        
         var _el = $(el);
-        if (_el.data("extract") && regexes[_el.data("extract")]) {
-          var _match = (_value ? _value : "").match(regexes[_el.data("extract")]);
-          _el.val(_match && _match.length >= 1 ? _match[0] : "");
+        
+        if (_el.data("extract")) {
+          
+          var _found, _match = _.find(_el.data("extract").split("|"), regex => {
+            var _matcher = regex => regex ? (_value ? _value : "").match(regex) : null,
+                _match = _matcher(regexes[regex]);
+            return _match && _match.length >= 1 ? _found = _match[0] : false;
+          });
+          _el.val(_match ? _found : "");
+          
         }
+        
       });
 
     },

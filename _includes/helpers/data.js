@@ -102,6 +102,7 @@ Data = (options, factory) => {
             _type == "date" ? factory.Dates.parse(_val) :
             _type == "datetime" ? _val :
             _type == "number" ? Number(_val) :
+            _type == "boolean" ? (_val === "true") :
             _val : _val;
         };
 

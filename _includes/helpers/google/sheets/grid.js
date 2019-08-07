@@ -86,6 +86,8 @@ Google_Sheets_Grid = options => {
       range: () => _rows(start, end),
 
     }),
+    
+    sheet: () => options.sheet,
 
   };
   /* === External Visibility === */

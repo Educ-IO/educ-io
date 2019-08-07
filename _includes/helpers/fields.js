@@ -556,7 +556,7 @@ Fields = (options, factory) => {
             _current = 0,
             _finish = factory.Display.busy({
               target: list.closest("li"),
-              class: "loader-small w-100",
+              class: "loader-small w-100 h-0",
               fn: true
             });
           var _complete = () => ++_current == _total ? _finish() : false;

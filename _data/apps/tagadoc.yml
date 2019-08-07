@@ -35,6 +35,10 @@ scopes:
       reason: In order to read metadata tags for events, this 'readonly' permissions is required.
       request: login
 versions:
+  1.2.7 :
+    name : Visual Margin Fix
+    desc : Update to space edit button more correctly in Google Calendar
+    type : minor
   1.2.6 :
     name : Bug Fix
     desc : Improved handling of extension installing or updating events

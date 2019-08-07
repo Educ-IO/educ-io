@@ -2,8 +2,6 @@ TODO LIST
 =========
 General
 -------
-* ** BUG ** Multi Modal - bug with Z-index (need to suspend / reactivate modal?)
-
 * Can we put Liquid / Jekyll tags into templates and pre-process them? Maybe better to pull variables into centralised object passed to template....
 
 * ** IMPORTANT ** Headless Tests -> Write new permission request handing!!!
@@ -43,6 +41,7 @@ Picker
 
 Router
 ------
+* ** IMPROVEMENT ** Long running routes, have immediate busy status (Working?) - use as an option in the route specification (saves having to do in route handling code?)
 
 Apps
 ----
@@ -70,17 +69,31 @@ Mobile
 * Horizontal scroll is broken on a mobile device - don't use it, or at least default to a flexbox fit algorithm then push 'grid' view into a menu - should probably be the global default because it's a pain everywhere.
 * Freeze should measure the viewport width before doing anything because 2-3 columns screws the view. Should maybe just fix the headers?
 
+Display
+-------
+
+Tag-A-Doc
+---------
+* Visual feedback whilst logging in?
+
+SaaD
+----
+
+
 Docket
 ------
-* ** FEATURE ** KanBan style task management - using STATUS field?
+* ** CLEANUP ** Remove Legacy Archive Code (update Database Module too)
 
-* ** BUG ** Delete item can lead to subsequent hash failures on changes. <-- Bring in new SaaD version / Likely to do with order, and removing an item first
+* ** IMPROVEMENT ** Project Status aross shared database sheets (and multiple sheet overview, together with clickable links to open each one - like an overview view)
+ - Include Projects / Tags / Months hours and durations counts
+ 
+* ** IMPROVEMENT | CLEANUP ** Go through Events / Classes to pull into new module, with longer 'get' periods to avoid making events calls whenever moving between views / focus dates
 
-* ** IMPROVEMENT ** Handle clash on updates / delete
-	-> User notification of issues // Should be toast rather than banner <-- DONE / Not Done
-  -> Need to roll-back UI updates
+* ** IMPROVEMENT ** Periodic Refresh (shorter time periods for shared dockets) - is it possible to get changes since a certain point and integrate those?
 
-* ** MOBILE ** Re-Ordering Items by touch...
+* ** IMPROVEMENT ** Add multiple dates for items (+ next to date picker field?) - to save having to create and duplicate
+
+* ** IMPROVEMENT | MOBILE ** Re-Ordering Items by touch... (how???)
 
 Tiles
 -----
@@ -93,8 +106,8 @@ Grades
 
 View
 ----
+* ** IMPROVEMENT ** Detect and render columns containing markdown (with icon at the column top - markdown icon)
 * ** BUG ** Mechanism for detecting date columns currently not working - e.g. Pages
-
 * Turn off advanced table display for fewer filtered rows?
 	+ Important to help deal with flickers
 * Pass Date column information to readonly view
@@ -120,6 +133,8 @@ Merge
 
 Folders
 -------
+* ** IMPROVEMENT ** Can we get the owner domain of a team drive from examining ownership permissions on it or the files within it?
+
 * ** FEATURE ** - Batch Clone to multiple folders: https://www.cloudconnectcommunity.com/ccc/ls/community/g-suite/post/4860149603500032
 
 * Use new format MODAL form returns (once Data is stable ... activate by including Data helper in App Build)
@@ -128,7 +143,9 @@ Folders
 
 Reflect
 -------
-* ** BUG ** Check for enter / submit handlers of Reflect forms
+* ** IMPROVEMENT ** create.report.{{id}} route should prompt to re-use existing report if one is already open (e.g. not completed)
+
+* ** BUG ** Check for enter / submit handlers of Reflect forms <-- DONE
 
 * ** FEATURE ** Complete Email from Signer for pre-shared reports
 
@@ -159,6 +176,35 @@ Survey
 
 Complete
 --------
+* ** BUG ** Pressing TODAY shortcut on Analysis page jumps back to weekly but without updating state! <-- DONE
+* ** IMPROVEMENT ** Put out route for Docket Files ... <-- DONE
+* ** IMPROVEMENT ** Tag Search - Project Statistics, improve look of overall (graphics / colour) <-- DONE
+* ** IMPROVEMENT ** Analysis Graph Legend (text looks rubbish) <-- DONE
+* ** IMPROVEMENT ** Aalysis Graph Height / Responsive
+  - Partly done, need to rejig mid-screen size layout and also centre tags on small screen <-- DONE
+* ** VISUAL ** Modals calling modals result in flash of background cover - can this be improved?
+  Sort of fixed. CSS transitions can resolve the showing of the modals, but on close the previous modal is only triggered when the old one is gone, making the modal background flash out. <-- DONE
+* ** BUG ** Multi Modal - bug with Z-index (need to suspend / reactivate modal?) <-- DONE
+* ** IMPROVEMENT ** Kanban - should have forward/back dates in config? <-- DONE
+* ** BUG ** - Move generates two copies???? Double hookup event somewhere? <-- DONE
+* ** IMPROVEMENT ** Kanban - item buttons (contextual according to status?) <-- DONE
+* ** FEATURE ** KanBan style task management - using STATUS field? <-- DONE
+* ** IMPROVEMENT ** Module separation <-- DONE
+* ** IMPROVEMENT ** Filtered / Suggested Tags when editing <-- DONE
+* ** IMPROVEMENT ** Add multiple regex parsing support in create dialog <-- DONE
+* ** TEST ** SaaD Test - create / edit / delete last item (e.g. after end of sheet) | double check that Sheet Check is working properly. <-- DONE
+* ** IMPROVEMENT ** Duplicate Item for Other date....e.g. for mobile ease of entry <-- DONE
+* ** IMPROVEMENT ** Handle clash on updates / delete <-- DONE
+	-> User notification of issues // Should be toast rather than banner <-- DONE
+  -> Need to roll-back UI updates <-- DONE
+* ** IMPROVEMENT ** Visual feedback on new item creation! / Use Item Template for display of updated item! <-- DONE
+* ** IMPROVEMENT ** Add Hours Parsed Box into new item creation dialog <-- DONE
+* ** IMPROVEMENT ** When completing an task in item edit mode - also update the details according to text box <-- DONE
+* ** IMPROVEMENT ** Change Button Status (Success / Failure) Display to Flex for Center Alignment <-- DONE
+* ** BUG ** Delete item can lead to subsequent hash failures on changes. <-- Bring in new SaaD version / Likely to do with order, and removing an item first <-- DONE
+* ** IMPROVEMENT ** Padding Top of an Item when it wraps on normal (non-small) view... <-- DONE
+* ** IMPROVEMENT ** Change Item Display Mode to Flex <-- DONE
+* ** IMPROVEMENT ** Tooltips on Dialogs (e.g. click on project or tag, particularly times etc) <-- DONE
 * ** FEATURE ** Task Stats / Aggregated 'Projects' using tags (hash?) <== DONE
 * ** FEATURE ** Preferences Dialog <-- DONE
 * ** FEATURE ** Default View <-- DONE

@@ -431,7 +431,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
         class: `${index === 0 ? "ml-1 " : ""}signature${signature.valid ? "" : " text-warning"}`,
         valid: signature.valid,
         html: true,
-        desc: ಠ_ಠ.Display.template.get("signature_summary")(signature),
+        desc: ಠ_ಠ.Display.template.get("signature_summary")(signature).trim(),
       }))),
 
     tooltips: () => ಠ_ಠ.Display.tooltips($(`#${ID}`).find("[data-toggle='tooltip']"), {

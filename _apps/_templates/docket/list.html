@@ -2,21 +2,21 @@
 <div id="{{id}}" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
   <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header bg-light">
         <div class="flex-column">
           <h5 class="modal-title" id="modal_options_title">{{title}}</h5>
-        	{{~#if subtitle}}<h6 class="text-secondary">{{subtitle}}</h6>{{/if~}}
+        	{{~#if subtitle}}<h6 class="text-secondary m-0">{{subtitle}}</h6>{{/if~}}
         </div>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body items-holder">
         {{~#if statistics}}
         	{{{ statistics }}}
-        	<hr />
         {{/if~}}
         {{#each items}}
+        {{#if @first}}{{#if ../statistics}}<hr />{{/if}}{{/if}}
         {{!-- Call Partial Template --}}
         {{> item dates=true}}
         {{/each}}

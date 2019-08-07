@@ -77,7 +77,7 @@ div.loader {
     }
   }
 	&.loader-small {
-    height: 0;
+    &.h-0 {height: 0;}
 		.loading {
 			width: $spinner-size-small;
 			height: $spinner-size-small;
@@ -114,12 +114,22 @@ div.loader {
     .spinner {border-top-color: $colour-background !important;}
   }
 }
-.btn i.material-icons.result {
-  &.md-1 {padding-top: 0.45rem !important;}
-  &.md-18 {padding-top: 0.3rem !important;}
-  &.md-24 {padding-top: 0.19rem !important;}
-  @include animation(fadeInGracefully 0.6s ease-in-out);
+.btn {
+  i.material-icons.result {
+    &.md-1 {padding-top: 0.26rem !important;}
+    &.md-18 {padding-top: 0.3rem !important;}
+    &.md-24 {padding-top: 0.19rem !important;}
+    @include animation(fadeInGracefully 0.6s ease-in-out);
+  }
+  &.btn-lg {
+    i.material-icons.result {
+      &.md-1 {padding-top: 0.45rem !important;}
+      &.md-18 {padding-top: 0.4rem !important;}
+      &.md-24 {padding-top: 0.29rem !important;}
+    }
+  }
 }
+
 .btn:not([class^="btn-outline-"]):not([class*=" btn-outline-"]):not([class^="btn-light"]):not([class*=" btn-light"]) {
   i.material-icons {color: $colour-background-menu !important;}
   &.loader {

@@ -37,6 +37,10 @@ Router = function() {
     range: false,
     length: false,
     partial: false,
+  }, _lifecycles = {
+    started: false,
+    cleared: false,
+    tested: false
   };
   /* <!-- Internal Variables --> */
 
@@ -46,14 +50,17 @@ Router = function() {
   var _initialise = () => {
 
     APP.hooks.start.push(() => {
+      _lifecycles.started = !_lifecycles.started;
       FACTORY.Flags.log("Router Start Called");
     });
-
+    
     APP.hooks.test.push(() => {
+      _lifecycles.tested = !_lifecycles.tested;
       FACTORY.Flags.log("Router Test Called");
     });
 
     APP.hooks.clear.push(() => {
+      _lifecycles.cleared = !_lifecycles.cleared;
       FACTORY.Flags.log("Router Clear Called");
     });
 
@@ -156,6 +163,10 @@ Router = function() {
 
     },
 
+    test_Router_Lifecycle : () =>  PAUSE()
+      .then(() => _lifecycles.started === true && _lifecycles.cleared === false && 
+            _lifecycles.tested === false),
+    
     test_Router_Prepare: () => new Promise(resolve => {
 
       PAUSE().then(() => {

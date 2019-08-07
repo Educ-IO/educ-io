@@ -75,7 +75,7 @@ Groups = ಠ_ಠ => {
     .catch(e => ಠ_ಠ.Flags.error("Group Load Failure", e ? e : "No Inner Error"))
     .then(ಠ_ಠ.Display.busy({
       target: targets.parents("td"),
-      class: "loader-small w-100",
+      class: "loader-small w-100 h-0",
       fn: true
     }));
   /* <!-- Internal Functions --> */

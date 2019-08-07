@@ -1,15 +1,23 @@
 {% raw %}
-<div class="row">
+<div class="row d-flex align-items-center">
   <div class="col-xl-4 col-lg-6 col-12">
 		<div>
-    	<h5>Project Statistics</h5>  
+    	<span class="display-5">Statistics</span>  
     </div>
   </div>
 	<div class="col-xl-8 col-lg-6 col-12">
-    <div class="d-flex flex-column">
-      <h6><span class="text-secondary">Complete: </span><strong>{{complete}}</strong></h6>
-      <h6><span class="text-secondary">Total: </span><strong>{{total}}</strong></h6>
-      <h6><span class="text-secondary">Overall: </span><strong>{{percentage_complete}}%</strong></h6>
+    <div class="d-flex flex-column flex-lg-row">
+      <div class="display-6 d-flex align-items-center">
+        <span class="text-primary mr-2 d-flex">Complete:</span>
+        <span class="font-weight-normal text-{{#if percentage_colour}}{{percentage_colour}}{{else}}secondary{{/if}}">{{percentage_complete}}%</span>
+      </div>
+      <div class="display-6 ml-3 text-secondary">
+        <span class="font-weight-bold text-dark mr-1">{{complete}}</span>
+        <span class="mr-1">Done</span>
+        <span class="text-dark mr-1">|</span>
+        <span class="font-weight-normal text-dark mr-1">{{total}}</span>
+        <span>Total</span>
+      </div>
     </div>
   </div>
 </div>

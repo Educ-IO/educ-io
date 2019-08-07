@@ -1,0 +1,9 @@
+{% raw %}
+{{#each this}}<li class="list-group-item d-flex justify-content-between align-items-center" data-suggestion="true">
+  <span data-type="tag">{{ this.[0] }}</span>
+  <div class="float-right">
+    <span class="badge badge-{{#is this.[1] "lt" 10}}secondary{{else}}dark{{/is}} badge-pill mr-3">{{ this.[1] }}</span>
+    <button data-action="add" type="button" class="btn btn-outline-primary">Add</button>
+  </div>
+</li>{{/each}}
+{% endraw %}

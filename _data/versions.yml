@@ -1,4 +1,8 @@
 site :
+  0.1.6 :
+    name : Docket v1.0.0
+    desc : Major Docket Improvements
+    numeric : 0.1.6.0
   0.1.5n :
     name : Docket v0.0.6-beta
     desc : New Views
@@ -928,6 +932,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  1.0.0 :
+    name : Kanban, Analysis and db
+    desc : New Kanban and Analysis Views plus an updated database layer
+    type : major
   0.0.6-beta :
     name : New Views
     desc : Daily, Weekly and Monthly Views

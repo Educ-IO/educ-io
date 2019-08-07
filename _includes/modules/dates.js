@@ -85,6 +85,11 @@ Dates = function() {
     parse : function() {
       /* <!-- (value, _formats, true) --> */
       return _date ? _date.apply(null, arguments) : new Date();
+    },
+    
+    duration: function() {
+      /* <!-- (value, units) --> */
+      return _date && _date.duration ? _date.duration.apply(null, arguments) : false;
     }
 		/* <!-- External Functions --> */
 		

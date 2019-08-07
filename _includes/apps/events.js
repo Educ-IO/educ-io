@@ -8,8 +8,8 @@ App = function() {
 
   /* <!-- Internal Constants --> */
   const _encodeID = id => id.replace(/[.@]/g, ""),
-    _encodeValue = value => value.replace(/\./g, "%2E"),
-    _decodeValue = value => value && value.replace ? value.replace(/%2E/g, ".") : value;
+    _encodeValue = value => value.replace(/\./g, "%2E").replace(/@/g, "%40"),
+    _decodeValue = value => value && value.replace ? value.replace(/%2E/g, ".").replace(/%40/g, "@") : value;
 
   const STATE_OPENED = "opened",
     /* <!-- Calendar has been opened --> */
@@ -96,7 +96,7 @@ App = function() {
 
   /* <!-- Internal Functions --> */
   var _format = {
-      duration: (start, end) => `${start && end ? `For ${moment.duration(start.diff(end)).humanize()}` : ""}`,
+      duration: (start, end) => `${start && end ? `For ${ಠ_ಠ.Dates.duration(start.diff(end)).humanize()}` : ""}`,
       date: (start, end) => `${start ? start.format(start.hour() === 0 && start.minute() === 0 && start.second() === 0 && !end ? "LL" : "LLL") : ""}`,
     },
     _map = v => ({

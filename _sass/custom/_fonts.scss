@@ -1,4 +1,4 @@
-h1, h2, h3, h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading, .navbar-brand, a.navbar-brand  {
+h1, h2, h3, h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading, .navbar-brand, a.navbar-brand, .brand  {
 	letter-spacing: $font-spacing-heading;
 	font-family: $font-heading, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	font-weight: $font-weight-heading;
@@ -21,8 +21,11 @@ h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading {
 	color: darken($colour-highlight, 15%) !important;
 }
 
+.navbar-brand, .brand {
+  text-transform: uppercase;
+}
+
 a.navbar-brand  {
-	text-transform: uppercase;
 	font-size: 1.5rem;
 	&:hover {color: darken($colour-highlight, 20%) !important;}
 }

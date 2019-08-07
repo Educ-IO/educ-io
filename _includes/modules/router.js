@@ -33,13 +33,12 @@ Router = function() {
 
     PICK = (picker => ({
       single: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
-        options && options.title ?
-        options.title : "Select a File to Open", false,
-        options.team !== undefined ? options.team : true, picker(options),
+        options && options.title ? options.title : "Select a File to Open", false,
+        options && options.team !== undefined ? options.team : true, picker(options),
         HANDLE(options, resolve, reject), null, true)),
       multiple: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
         options && options.title ? options.title : "Select a File/s to Open", true,
-        options.team !== undefined ? options.team : true, picker(options),
+        options && options.team !== undefined ? options.team : true, picker(options),
         HANDLE(options, resolve, reject), null, true)),
     }))(options => () => [_.tap(new google.picker
         .DocsView(options ? google.picker.ViewId[options.view] : null)
@@ -97,38 +96,58 @@ Router = function() {
   /* <!-- Internal Setup Constants --> */
 
   /* <!-- Internal Functions --> */
-  var _start, _end, _shortcuts, _keyboard, _touch, _enter = (recent, fn, simple, state) => {
+  var _start, _end, _shortcuts, _keyboard, _touch,
+      _enter = (recent, fn, simple, state) => {
+        
+        /* <!-- Load the Initial Instructions --> */
+        var _show = recent => ಠ_ಠ.Display.doc.show({
+            name: "README",
+            content: recent && recent.length > 0 ? ಠ_ಠ.Display.template.get({
+              template: "recent",
+              recent: recent
+            }) : "",
+            target: ಠ_ಠ.container,
+            clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
+          }),
+          _fn = fn ? fn : () => {},
+          _complete = state ? () => ಠ_ಠ.Display.state().enter(state) && _fn() : _fn;
 
-      /* <!-- Load the Initial Instructions --> */
-      var _show = recent => ಠ_ಠ.Display.doc.show({
-          name: "README",
-          content: recent && recent.length > 0 ? ಠ_ಠ.Display.template.get({
-            template: "recent",
-            recent: recent
-          }) : "",
-          target: ಠ_ಠ.container,
-          clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
-        }),
-        _fn = fn ? fn : () => {},
-        _complete = state ? () => ಠ_ಠ.Display.state().enter(state) && _fn() : _fn;
+        recent > 0 ?
+          ಠ_ಠ.Recent.last(recent).then(_show).then(_complete)
+          .catch(e => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error")) :
+          simple && fn ? _complete() : _show() && _complete();
 
-      recent > 0 ?
-        ಠ_ಠ.Recent.last(recent).then(_show).then(_complete)
-        .catch(e => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error")) :
-        simple && fn ? _complete() : _show() && _complete();
+      },
+      _clean = restart => _end() && (!restart || _start()),
+      _exit = (test, states, fn) => {
+        if (test && test()) {
+          ಠ_ಠ.container.empty() && ಠ_ಠ.Display.state().exit(states).protect("a.jump").off();
+          if (fn) fn();
+          return true;
+        }
+      },
+      _execute = (route, command) => {
+        var l_command = STRIP(command, route.__length),
+          l_options = PREPARE(route.options, l_command),
+          l_result = route.fn(_.isArray(l_command) ? l_command.length === 0 ? null : l_command.length == 1 ? l_command[0] : l_command : l_command, l_options);
+        return l_result && l_result.then ? l_result
+          .then(result => {
+            /* <!-- Clean up the state if required! --> */
+            if (route.clean) _clean(false);
 
-    },
-    _clean = restart => _end() && (!restart || _start());
+            /* <!-- Run the success function if available --> */
+            return route.success ? route.success(
+              _.isObject(result) && _.has(result, "command") && _.has(result, "result") ?
+              result : {
+                command: l_command,
+                result: result
+              }) : true;
+          })
+          .catch(route.failure ? route.failure :
+            e => e ?
+            ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative() : false) : l_result;
+      };
 
-  var _exit = (test, states, fn) => {
-
-    if (test && test()) {
-      ಠ_ಠ.container.empty() && ಠ_ಠ.Display.state().exit(states).protect("a.jump").off();
-      if (fn) fn();
-      return true;
-    }
-
-  };
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -191,6 +210,7 @@ Router = function() {
         },
         open: {
           matches: /OPEN/i,
+          requires: "google",
           /* <!-- OPTIONS: Multiple | Single property dictates files returned, all others passed through to picker method -->  */
           fn: (command, options) => options && options.mutiple ?
             PICK.multiple(options) : PICK.single(options),
@@ -341,7 +361,10 @@ Router = function() {
           /* <!-- Bind Shortcut key/s if required --> */
           if (route.keys && (!route.length || route.length === 0)) {
             route.keys = _.isArray(route.keys) ? route.keys : [route.keys];
-            _.each(route.keys, key => window.Mousetrap.bind(key, ((state, fn, debug, name) => () => (!state || ಠ_ಠ.Display.state().in(state, true)) ? (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && fn(null) : false)(route.state, route.fn, debug, name)));
+            _.each(route.keys, key => window.Mousetrap.bind(key, ((route, debug, name) => () => (!route.state || ಠ_ಠ.Display.state().in(route.state, true)) ? 
+                (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && (route.requires ? 
+                  ಠ_ಠ.Controller.load(_.map(_.isString(route.requires) ? [route.requires] : route.requires, required => ಠ_ಠ.IMPORTS.LOAD_LAZY[required])) : 
+                  Promise.resolve()).then(() => _execute(route, null)) : false)(route, debug, name)));
           }
         }) : true;
         _touch = debug => window.Hammer ? _.each(_options.routes, (route, name) => {
@@ -352,7 +375,10 @@ Router = function() {
             var _hammer = this[_target] ? this[_target] :
               (this[_target] = new window.Hammer((route.target ?
                 $(route.target) : ಠ_ಠ.container)[0]));
-            _hammer.on(route.actions.join(" "), ((state, fn, debug, name) => e => e.pointerType == "touch" &&(!state || ಠ_ಠ.Display.state().in(state, true)) ? (!debug || ಠ_ಠ.Flags.log(`Touch Action ${e.type} routed to : ${name}`)) && fn(null) : false)(route.state, route.fn, debug, name));
+            _hammer.on(route.actions.join(" "), ((state, fn, requires, options, debug, name) => e => e.pointerType == "touch" && (!state || ಠ_ಠ.Display.state().in(state, true)) ? 
+                (!debug || ಠ_ಠ.Flags.log(`Touch Action ${e.type} routed to : ${name}`)) && (requires ? 
+                  ಠ_ಠ.Controller.load(_.map(_.isString(requires) ? [requires] : requires, required => ಠ_ಠ.IMPORTS.LOAD_LAZY[required])) : 
+                  Promise.resolve()).then(() => fn(null,  PREPARE(options))) : false)(route.state, route.fn, route.requires, route.options, debug, name));
           }
         }, {}) : true;
         _shortcuts = debug => _keyboard(debug) && _touch(debug),
@@ -378,7 +404,7 @@ Router = function() {
 
       return command => {
 
-        var _handled = true;
+        var _handled = true, _executions = {};
 
         if (!_options) SETUP();
 
@@ -431,30 +457,8 @@ Router = function() {
               (!route.state || ಠ_ಠ.Display.state().in(route.state, true)) &&
               _match(route, command) && _check(route, STRIP(command, (route.__length = route.matches.length))));
 
-          var _execute = (route, command) => {
-            var l_command = STRIP(command, route.__length),
-              l_options = PREPARE(route.options, l_command),
-              l_result = route.fn(_.isArray(l_command) ? l_command.length === 0 ? null : l_command.length == 1 ? l_command[0] : l_command : l_command, l_options);
-            return l_result && l_result.then ? l_result
-              .then(result => {
-                /* <!-- Clean up the state if required! --> */
-                if (route.clean) _clean(false);
-
-                /* <!-- Run the success function if available --> */
-                return route.success ? route.success(
-                  _.isObject(result) && _.has(result, "command") && _.has(result, "result") ?
-                  result : {
-                    command: l_command,
-                    result: result
-                  }) : true;
-              })
-              .catch(route.failure ? route.failure :
-                e => e ?
-                ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative() : false) : l_result;
-          };
-
           /* <!-- Execute the route if available --> */
-          _route && _route.fn ? _execute(_route, command) === false ?
+          _route && _route.fn ? (_executions.local = _execute(_route, command)) === false ?
             (_handled = false) : true : (_handled = false);
 
           /* <!-- Log is available, so debug log --> */
@@ -467,8 +471,13 @@ Router = function() {
         _last = command;
 
         /* <!-- Route to App-Specific Command --> */
-        if (_options.route) _options.route(_handled, command);
+        if (_options.route) _executions.app = _options.route(_handled, command);
 
+        return Promise.all([
+            Promise.resolve(_executions.local),
+            Promise.resolve(_executions.app)
+            ]);
+        
       };
 
     },

@@ -331,7 +331,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
   busy = (cell, row, css_class, track) => on => {
     on ? ಠ_ಠ.Display.busy({
       target: cell,
-      class: "loader-small w-100"
+      class: "loader-small w-100 h-0"
     }) && (track ? locate(row) : true) && row.addClass(css_class ? css_class : "bg-active") :
     ಠ_ಠ.Display.busy({
       target: cell,
@@ -382,7 +382,11 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
     team: _team,
     teamDriveId: v.teamDriveId,
     size: v.size,
-    out: v.mimeType === "application/vnd.google-apps.spreadsheet" || ಠ_ಠ.Google.files.in("application/x.educ-io.view")(v) ? {
+    out: v.mimeType === "application/vnd.google-apps.spreadsheet" && v.properties && v.properties.DOCKET && v.properties.DOCKET == "DATA" ?{
+      name: "Docket",
+      desc: "Open in Docket",
+      url: "/docket/#google,load." + v.id
+    } : v.mimeType === "application/vnd.google-apps.spreadsheet" || ಠ_ಠ.Google.files.in("application/x.educ-io.view")(v) ? {
       name: "View",
       desc: "Open in View",
       url: "/view/#google,load." + v.id + ".lazy"

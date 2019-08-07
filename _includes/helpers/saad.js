@@ -149,11 +149,14 @@ SaaD = (options, factory) => {
 
     hash: item => objectHash.sha1(_.reduce(ರ‿ರ.hashes, (value, column) => {
       if (item[column.value]) value[column.value] = item[column.value];
+      if (value[column.value] && value[column.value].toISOString) value[column.value] = value[column.value].toISOString();
       return value;
     }, {})),
 
     range: (row_start, column_start, row_end, column_end) => ರ‿ರ.helpers.notation.rangeR1C1(
       `${row_start === null ? "" : `R${row_start}`}${column_start === null ? "" : `C${column_start}`}:${row_end === null ? "" : `R${row_end}`}${column_end === null ? "" : `C${column_end}`}`),
+    
+    process: items => options.process ? _.isArray(items) ? _.map(items, options.process) : options.process(items) : items,
 
   };
 
@@ -161,23 +164,29 @@ SaaD = (options, factory) => {
   FN.generate = {
 
     cells: {
-
+    
+      row: item => ([{
+        values: _.map(FN.utilities.convertToArray(item), value => _.tap({userEnteredValue: {}},
+          object => object.userEnteredValue[_.isNumber(value) ? "numberValue": "stringValue"] = value))
+      }]),
+      
       update: item => ({
         updateCells: {
-          rows: [{
-            values: _.map(FN.utilities.convertToArray(item),
-              value => ({
-                userEnteredValue: {
-                  stringValue: value
-                }
-              }))
-          }],
+          rows: FN.generate.cells.row(item),
           range: ರ‿ರ.helpers.grid.range(ರ‿ರ.data.rows.end + item.__ROW,
             ರ‿ರ.data.rows.end + item.__ROW + 1,
             ರ‿ರ.data.columns.start - 1,
             ರ‿ರ.data.columns.end),
-          fields: "userEnteredValue.stringValue"
+          fields: "userEnteredValue.stringValue,userEnteredValue.numberValue"
         }
+      }),
+      
+      append: item => ({
+        appendCells: {
+          sheetId: ರ‿ರ.helpers.grid.sheet(),
+          rows: FN.generate.cells.row(item),
+          fields: "userEnteredValue.stringValue,userEnteredValue.numberValue"
+        }              
       }),
 
       delete: item => ({
@@ -203,7 +212,7 @@ SaaD = (options, factory) => {
           range: ರ‿ರ.helpers.grid.dimension.apply(null, ["ROWS"].concat(
             ರ‿ರ.helpers.notation.gridA1(ರ‿ರ.helpers.notation.clean(range), true)))
         }
-      })
+      }),
 
     },
 
@@ -332,8 +341,10 @@ SaaD = (options, factory) => {
           var _row = {};
           _.each(ರ‿ರ.data.columns.meta, column => {
             var _val = row[column.developerMetadata.location.dimensionRange.startIndex];
-            _row[column.developerMetadata.metadataValue] = _val && column.isDate ?
-              factory.Dates.parse(_val) : _val;
+            _row[column.developerMetadata.metadataValue] = _val ? 
+                column.isDate ? factory.Dates.parse(_val) : 
+                column.isInteger ? Math.parseInteger(_val) :
+                _val : _val;
           });
 
           /* <!-- Set ROW / Index Reference --> */
@@ -359,7 +370,7 @@ SaaD = (options, factory) => {
             });
 
           /* <!-- Set on-the-fly Item Properties and Add to Return List --> */
-          if (_.compact(_row).length > 0) list.push(options.process ? options.process(_row) : row);
+          if (_.compact(_row).length > 0) list.push(FN.utilities.process(_row));
 
           return list;
 
@@ -382,10 +393,10 @@ SaaD = (options, factory) => {
 
     /* <!-- FUNCTION: Creates a new Database Spreadsheet --> */
     /* <!-- PARAMETERS: meta: Array of metadata to add to the newly created sheet --> */
-    create: meta => {
+    create: (meta, spreadsheetName, sheetName) => {
 
       return factory.Google.sheets.create(
-          options.names.spreadsheet, options.names.sheet,
+          spreadsheetName || options.names.spreadsheet, sheetName || options.names.sheet,
           factory.Google_Sheets_Format({}, factory).colour(options.schema.colour), meta)
 
         .then(sheet => {
@@ -399,7 +410,8 @@ SaaD = (options, factory) => {
           ರ‿ರ.data = {
             spreadsheet: sheet.spreadsheetId,
             sheet: sheet.sheets[0].properties.sheetId,
-            title: sheet.sheets[0].properties.title
+            title: sheet.sheets[0].properties.title,
+            max: sheet.sheets[0].properties.gridProperties.rowCount,
           };
           ರ‿ರ.helpers = FN.helpers(ರ‿ರ.data.sheet);
         }))
@@ -437,8 +449,10 @@ SaaD = (options, factory) => {
         })
         .then(value => {
           if (!value) return;
-          ರ‿ರ.data.title = _.find(value.sheets,
-            sheet => sheet.properties.sheetId == ರ‿ರ.data.sheet).properties.title;
+          var _sheet = _.find(value.sheets,
+            sheet => sheet.properties.sheetId == ರ‿ರ.data.sheet);
+          ರ‿ರ.data.title = _sheet.properties.title;
+          ರ‿ರ.data.max = _sheet.properties.gridProperties.rowCount;
           return ರ‿ರ.data;
         })
         .then(value => {
@@ -555,18 +569,23 @@ SaaD = (options, factory) => {
 
       .then(values => FN.populate.rows(_.chain(values.valueRanges)
         .sortBy(value => {
-          var _range = value.valueRange.range.split(":");
+          var _range = (id ? value.valueRange.range : value.range).split(":");
           return ರ‿ರ.helpers.notation.rowA1(_range[_range.length - 1]);
         })
-        .map(value => value.valueRange.values[0])
+        .map(value => (id ? value.valueRange.values : value.values)[0])
         .value(), null, false, true))
 
       .then(all => {
+        
+        /* <!-- Match Sort to Range Sort --> */
+        /* <!-- Warning: Could introduce a subtle edge case bug where rows were re-ordered but indexed by ID --> */
+        items = _.sortBy(items, "__ROW");
+        
         for (var i = 0; i < all.length; i++) {
           if (all[i].__HASH !== items[i].__HASH) return Promise.reject(
             `Hash Mismatch for Range: ${FN.utilities.range(
               ರ‿ರ.data.rows.end + 1 + all[i].__ROW, ರ‿ರ.data.columns.start,
-              ರ‿ರ.data.rows.end + 1 + all[i].__ROW, ರ‿ರ.data.columns.end)} [ITEM: ${items[i].__HASH}, STORED: ${all[i].__HASH}]`);
+              ರ‿ರ.data.rows.end + 1 + all[i].__ROW, ರ‿ರ.data.columns.end)} [ITEM: ${items[i].__HASH}, SHEET: ${all[i].__HASH}]`);
         }
       }),
 
@@ -581,13 +600,17 @@ SaaD = (options, factory) => {
           /* <!-- Log the data entry range --> */
           if (factory.Flags.debug()) factory.Flags.log(
             `Preparing to Write Values [NEW] for Range: ${FN.utilities.range(ರ‿ರ.data.rows.end + 1 + item.__ROW, ರ‿ರ.data.columns.start, null, ರ‿ರ.data.columns.end)}`, item);
-
-          return [FN.generate.cells.update(item), FN.generate.rows.id(item.__ROW)];
+            
+          var append = item => FN.generate.cells.append(item),
+              update = item => FN.generate.cells.update(item);
+        
+          return [item.__ROW + ರ‿ರ.data.rows.end >= ರ‿ರ.data.max ? append(item, ರ‿ರ.data.max += 1) : update(item), FN.generate.rows.id(item.__ROW)];
 
         },
-        commit = batches => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet, batches);
+        commit = batches => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet, batches),
+          array = _.isArray(items);
 
-      return commit(_.reduce((items = _.isArray(items) ? items : [items]),
+      return commit(_.reduce((items = array ? items : [items]),
           (batches, item) => batches.concat(generate(item)), []))
         .then(results => {
 
@@ -609,7 +632,7 @@ SaaD = (options, factory) => {
                 ರ‿ರ.db.insert(item);
               }
             });
-            return items;
+            return !array && items.length == 1 ? items[0] : items;
 
           } else {
 
@@ -625,21 +648,22 @@ SaaD = (options, factory) => {
 
     update: (items, check) => {
 
-      var id = _.every(items = _.isArray(items) ? items : [items], "__ID"),
-        range = () => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet,
-          _.map(items, FN.generate.cells.update)),
-        metadata = () => factory.Google.sheets.update(ರ‿ರ.data.spreadsheet,
-          _.pluck(items, "__ID"),
-          _.map(items, FN.utilities.convertToArray),
-          null, ರ‿ರ.data.sheet),
-        commit = () => (id ? metadata() : range())
-        .then(() => {
-          _.each(items, item => {
-            item.__HASH = FN.utilities.hash(item);
-            ರ‿ರ.db.update(item);
+      var array = _.isArray(items),
+          id = _.every(items = array ? items : [items], "__ID"),
+          range = () => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet,
+            _.map(items, FN.generate.cells.update)),
+          metadata = () => factory.Google.sheets.update(ರ‿ರ.data.spreadsheet,
+            _.pluck(items, "__ID"),
+            _.map(items, FN.utilities.convertToArray),
+            null, ರ‿ರ.data.sheet),
+          commit = () => (id ? metadata() : range())
+          .then(() => {
+            _.each(items, item => {
+              item.__HASH = FN.utilities.hash(item);
+              ರ‿ರ.db.update(item);
+            });
+            return !array && items.length == 1 ? items[0] : items;
           });
-          return items;
-        });
 
       return check || options.options.check ? FN.rows.check(items, id).then(commit) : commit();
 
@@ -647,45 +671,49 @@ SaaD = (options, factory) => {
 
     delete: (items, check) => {
 
-      var id = _.every(items = _.isArray(items) ? items : [items], "__ID"),
-        range = () => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet,
-          _.map(items, FN.generate.cells.delete)),
+      var array = _.isArray(items),
+          id = _.every(items = array ? items : [items], "__ID"),
+          range = () => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet,
+            _.map(items, FN.generate.cells.delete)),
 
-        metadata = () => factory.Google.sheets.clear(ರ‿ರ.data.spreadsheet,
-          _.pluck(items, "__ID"),
-          ರ‿ರ.data.sheet)
-        .then(response => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet,
-          _.chain(response.clearedRanges)
-          .sortBy(value => ರ‿ರ.helpers.notation.rowA1(
-            ರ‿ರ.helpers.notation.clean(value).split(":")[0]
-          ))
-          .map(FN.generate.rows.delete)
-          .value().reverse())),
-        /* <!-- REVERSE Order: Delete from end to start --> */
-        commit = () => (id ? metadata() : range())
-        .then(() => {
-          ರ‿ರ.data.last -= items.length; /* <!-- Reduce the last row to account for removals --> */
-          _.each(items, item => {
+          metadata = () => factory.Google.sheets.clear(ರ‿ರ.data.spreadsheet,
+            _.pluck(items, "__ID"),
+            ರ‿ರ.data.sheet)
+          .then(response => factory.Google.sheets.batch(ರ‿ರ.data.spreadsheet,
+            _.chain(response.clearedRanges)
+            .sortBy(value => ರ‿ರ.helpers.notation.rowA1(
+              ರ‿ರ.helpers.notation.clean(value).split(":")[0]
+            ))
+            .map(FN.generate.rows.delete)
+            .value().reverse())),
+          /* <!-- REVERSE Order: Delete from end to start --> */
+          commit = () => (id ? metadata() : range())
+          .then(() => {
+            ರ‿ರ.data.last -= items.length; /* <!-- Reduce the last row to account for removals --> */
+            _.each(items, item => {
 
-            /* <!-- Remove from the DBs too --> */
-            ರ‿ರ.data.data = _.reject(ರ‿ರ.data.data, element => element === item);
-            ರ‿ರ.db.remove(item);
+              /* <!-- Remove from the DBs too --> */
+              ರ‿ರ.data.data = _.reject(ರ‿ರ.data.data, element => element.__ID === item.__ID || element.$loki === item.$loki);
+              ರ‿ರ.db.remove(item);
 
-            /* <!-- Remove SaaD specific properties too --> */
-            delete item.__HASH;
-            delete item.__ROW;
-            delete item.__ID;
+              /* <!-- Remove SaaD specific properties too --> */
+              delete item.__HASH;
+              delete item.__ROW;
+              delete item.__ID;
 
+            });
+
+            /* <!-- Update ROWS for the remaining items --> */
+            _.each(ರ‿ರ.data.data, (item, index) => {
+              item.__ROW = index;
+              ರ‿ರ.db.update(item);
+            });
+
+            /* <!-- As we have removed a row/rows, reduce the max grid size too --> */
+            ರ‿ರ.data.max -= items.length;
+
+            return !array && items.length == 1 ? items[0] : items;
           });
-
-          /* <!-- Update ROWS for the remaining items --> */
-          _.each(ರ‿ರ.data.data, (item, index) => {
-            item.__ROW = index;
-            ರ‿ರ.db.update(item);
-          });
-
-          return items;
-        });
 
       return (check || options.options.check ? FN.rows.check(items, id).then(commit) : commit());
 
@@ -693,6 +721,13 @@ SaaD = (options, factory) => {
 
   };
 
+  /* <!-- Internal Post-Processing Functions --> */
+  FN.post = {
+    
+    process : items => Promise.resolve(FN.utilities.process(items)),
+    
+  };
+  
   /* <!-- Initial Calls --> */
   FN.initialise(); /* <!-- Run initial variable initialisation --> */
 
@@ -701,10 +736,10 @@ SaaD = (options, factory) => {
 
     state: ರ‿ರ,
 
-    create: sheetMetadata => FN.sheet.create(_.union([{
+    create: (sheetMetadata, spreadsheetName, sheetName) => FN.sheet.create(_.union([{
       key: "SCHEMA_VERSION",
       value: options.schema.version
-    }], [sheetMetadata ? sheetMetadata : _.values(options.sheets)[0]])),
+    }], [sheetMetadata ? sheetMetadata : _.values(options.sheets)[0]]), spreadsheetName, sheetName),
 
     hash: FN.utilities.hash,
 
@@ -721,6 +756,8 @@ SaaD = (options, factory) => {
     delete: FN.rows.delete,
 
     update: FN.rows.update,
+    
+    process: FN.post.process,
 
     regexes: {
 
@@ -734,6 +771,14 @@ SaaD = (options, factory) => {
 
     },
 
+    /* <!-- Remove once Archiving Functionality is consolidated and tested --> */
+    temp: {
+      
+      convertToArray: FN.utilities.convertToArray,
+      
+      populateDataSheet:  FN.populate.sheet,
+      
+    }
   };
   /* <!-- External Visibility --> */
 

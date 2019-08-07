@@ -18,13 +18,7 @@
 						<input class="form-control mr-3" type="text" data-type="tag" />
             <button data-action="add" type="button" class="btn btn-primary">Add</button>
           </li>
-  				{{#each all}}<li class="list-group-item d-flex justify-content-between align-items-center">
-            <span data-type="tag">{{ this.[0] }}</span>
-          	<div class="float-right">
-              <span class="badge badge-{{#is this.[1] "lt" 10}}secondary{{else}}dark{{/is}} badge-pill mr-3">{{ this.[1] }}</span>
-          	  <button data-action="add" type="button" class="btn btn-outline-primary">Add</button>
-            </div>
-          </li>{{/each}}
+          {{#if all}}{{~> suggestions all }}{{/if}}
 				</ul>
       </div>
       <div class="modal-footer">
