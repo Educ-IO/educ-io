@@ -723,7 +723,7 @@ Display = function() {
 
     	}
     */
-    confirm: options => {
+    confirm: (options, shown) => {
 
       return new Promise((resolve, reject) => {
 
@@ -737,6 +737,9 @@ Display = function() {
         /* <!-- Set Event Handlers --> */
         dialog.find(".modal-footer button.btn-primary").click(() => _clean() && resolve(true));
 
+        /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
+        dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
+        
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
 
@@ -760,8 +763,8 @@ Display = function() {
        
         _target(options).append(_modalise(dialog, resolve));
 
-        /* <!-- Set Shown Event Handler (if present) --> */
-        if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
+        /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
+        dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
@@ -841,8 +844,8 @@ Display = function() {
             dialog.modal("hide");
           });
 
-        /* <!-- Set Shown Event Handler (if present) --> */
-        if (shown) dialog.on("shown.bs.modal", () => shown(dialog));
+        /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
+        dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal({
@@ -863,7 +866,7 @@ Display = function() {
     		target : optional name / element / jquery of containing element
     	}
     --> */
-    alert: options => {
+    alert: (options, shown) => {
 
       return new Promise((resolve, reject) => {
 
@@ -889,6 +892,9 @@ Display = function() {
         if (options.action) dialog.find("button.action").click(() => (_result = true) && dialog.alert("close"));
         dialog.on("closed.bs.alert", () => _complete(_result));
 
+        /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
+        dialog.on("shown.bs.alert", shown ? () => shown(dialog) : () => _visuals(dialog));
+        
         /* <!-- Show the Alert --> */
         dialog.alert();
 
@@ -910,7 +916,7 @@ Display = function() {
     		target : optional name / element / jquery of containing element
     	}
     --> */
-    choose: options => {
+    choose: (options, shown) => {
 
       return new Promise((resolve, reject) => {
 
@@ -957,6 +963,9 @@ Display = function() {
               _.tap(parse(true, _values), value => value ? resolve(value) : false);
             }
           });
+        
+        /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
+        dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
 
         /* <!-- Handle Enter Key (if simple) --> */
         dialog.keypress(e => {
@@ -983,7 +992,7 @@ Display = function() {
     		target : optional name / element / jquery of containing element
     	}
     --> */
-    options: options => {
+    options: (options, shown) => {
 
       return new Promise((resolve, reject) => {
 
@@ -1013,6 +1022,9 @@ Display = function() {
           });
           resolve(_return);
         });
+        
+        /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
+        dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
@@ -1032,7 +1044,7 @@ Display = function() {
     		target : optional name / element / jquery of containing element
     	}
     --> */
-    text: options => {
+    text: (options, shown) => {
 
       return new Promise((resolve, reject) => {
 
@@ -1081,8 +1093,12 @@ Display = function() {
         /* <!-- Handle Clicked Submit --> */
         dialog.find(".modal-footer button.btn-primary").click(_submit);
         
+        var _focus = () => dialog.find("textarea[name='value'], input[type='text'][name='value'], input[type='password'][name='value']").focus();
+        
+        /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
+        dialog.on("shown.bs.modal", _.compose(_focus, shown ? () => shown(dialog) : () => _visuals(dialog)));
+        
         /* <!-- Show the Modal Dialog --> */
-        dialog.on("shown.bs.modal", () => dialog.find("textarea[name='value'], input[type='text'][name='value'], input[type='password'][name='value']").focus());
         dialog.modal("show");
 
       });
@@ -1097,7 +1113,7 @@ Display = function() {
     		target : optional name / element / jquery of containing element
     	}
     --> */
-    files: options => {
+    files: (options, shown) => {
 
       return new Promise((resolve, reject) => {
 
@@ -1131,6 +1147,9 @@ Display = function() {
           if (files && files.length > 0) resolve(options.single ? files[0] : files);
         });
 
+        /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
+        dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
+        
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
 
@@ -1148,7 +1167,7 @@ Display = function() {
     		target : optional name / element / jquery of containing element
     	}
     --> */
-    action: options => {
+    action: (options, shown) => {
 
       return new Promise((resolve, reject) => {
 
@@ -1185,6 +1204,9 @@ Display = function() {
           });
 
         });
+        
+        /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
+        dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");

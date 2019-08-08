@@ -106,6 +106,7 @@ modules:
   - dates
   - grid
   - headers
+  - reflect/decode
   - reflect/analysis
   - reflect/forms
   - reflect/signatures
@@ -174,6 +175,7 @@ templates:
   - reflect/dates
   - reflect/report_link
   - reflect/signature_summary
+  - reflect/meta
 docs:
   - shared/JUMP
   - shared/HELP
@@ -193,6 +195,7 @@ docs:
   - reflect/SIGN_INSTRUCTIONS
   - reflect/SHARE_INSTRUCTIONS
   - reflect/EXPORT_INSTRUCTIONS
+  - reflect/EXISTING_REPORT_INSTRUCTIONS
   - reflect/URL
   - reflect/FILE
   - reflect/CREATE

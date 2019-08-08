@@ -6,7 +6,6 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
 
   /* <!-- Internal Constants --> */
   const DB = new loki("reflect-analysis.db"),
-    META = "__meta",
     ID = "analysis",
     MISSING = "NO DATA",
     EMPTY = "",
@@ -29,6 +28,8 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
   /* <!-- Internal Functions --> */
 
   /* <-- Helper Functions --> */
+  FN.decode = ಠ_ಠ.Decode(ಠ_ಠ, forms);
+  
   FN.helper = {
 
     complete: file => file.appProperties.COMPLETE,
@@ -47,7 +48,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
   /* <-- Helper Functions --> */
 
 
-  /* <-- Generate Functions --> */
+  /* <-- Query Functions --> */
   FN.query = {
 
     standard: report => ({
@@ -72,7 +73,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
     })
 
   };
-  /* <-- Generate Functions --> */
+  /* <-- Query Functions --> */
 
 
   /* <-- Generate Functions --> */
@@ -81,40 +82,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
     id: () => _.map(forms, "id").join("_"),
 
     names: () => _.map(forms, form => form.template.title),
-
-    values: (fields, report) => _.reduce(fields, (memo, field) => {
-      var _val = report.appProperties[`FIELD.${field.id}`];
-      memo[(field.title || field.id).toLowerCase()] = _val ? JSON.parse(_val) : EMPTY;
-      return memo;
-    }, {}),
-
-    fields: type => _.reduce(forms, (memo, form) => {
-      return _.reduce(form.template.groups, (memo, group) =>
-        _.reduce(_.filter(group.fields, field => field[META] && field[META].index &&
-            (!type || (type && field[META].analyse.type == type))),
-          (memo, field) => _.find(memo, {
-            title: field.title
-          }) ? memo :
-          memo.concat({
-            id: field.field,
-            title: field.title,
-            type: field[META].analyse ? field[META].analyse.type : null,
-            template: field.template,
-            badges: field.template == "field_radio" && field.options ?
-              _.map(field.options, option => ({
-                value: option.value,
-                badge: option.class && option.class.indexOf("-") >= 0 ?
-                  option.class.split("-")[1] : EMPTY
-              })) : null,
-            numerics: field.template == "field_radio" && field.options ?
-              _.map(field.options, option => ({
-                value: option.value,
-                numeric: option.numeric === null || option.numeric === undefined ?
-                  null : option.numeric
-              })) : null
-          }), memo), memo);
-    }, []),
-
+   
     headers: fields => _.map(fields, v => ({
       name: v.name || v,
       display: v.display || null,
@@ -145,7 +113,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
       });
 
       var _values = _.map(reports, report => _.extend(query ? query(report) : {},
-        FN.generate.values(fields, report.file)));
+        FN.decode.values(report.file, fields, true)));
 
       _data.insert(_values);
 
@@ -181,7 +149,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
 
     summary: (id, target, wrapper, reports, after) => {
 
-      var _fields = FN.generate.fields(),
+      var _fields = FN.decode.fields(),
         _row = _.find(_fields, {
           "type": "row"
         }),
@@ -199,7 +167,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
 
         var _all = [_row, _column].concat(_contexts).concat(_values),
           _reports = _.reduce(_.map(reports,
-              report => _.extend(FN.generate.values(_all, report.file), {
+              report => _.extend(FN.decode.values(report.file, _all, true), {
                 __id: report.file.id,
                 __created: ಠ_ಠ.Dates.parse(report.file.createdTime).format("MMM D, YYYY HH:mm"),
                 __modified: ಠ_ಠ.Dates.parse(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
@@ -376,7 +344,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
 
       var _columns = ["ID", "Owner", "Completed", "Form", "When"]
         .concat(ರ‿ರ.signatures ? ["Signatures"] : []),
-        _fields = FN.generate.fields(),
+        _fields = FN.decode.fields(),
         _headers = FN.generate.headers(_columns.concat(FN.helper.headers(_fields))),
         _data = FN.generate.data(id, _columns, _fields, reports, FN.query.standard);
 

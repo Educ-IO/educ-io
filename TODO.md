@@ -143,9 +143,6 @@ Folders
 
 Reflect
 -------
-* ** IMPROVEMENT ** create.report.{{id}} route should prompt to re-use existing report if one is already open (e.g. not completed)
-
-* ** BUG ** Check for enter / submit handlers of Reflect forms <-- DONE
 
 * ** FEATURE ** Complete Email from Signer for pre-shared reports
 
@@ -166,6 +163,7 @@ Reflect
   
 * ** TESTING ** Fields / Data - write test for toggle button on textual input (both interaction and persistence)
 
+
 Publish
 -------
 
@@ -176,6 +174,8 @@ Survey
 
 Complete
 --------
+* ** IMPROVEMENT ** create.report.{{id}} route should prompt to re-use existing report if one is already open (e.g. not completed) <-- DONE
+* ** BUG ** Check for enter / submit handlers of Reflect forms <-- DONE
 * ** BUG ** Pressing TODAY shortcut on Analysis page jumps back to weekly but without updating state! <-- DONE
 * ** IMPROVEMENT ** Put out route for Docket Files ... <-- DONE
 * ** IMPROVEMENT ** Tag Search - Project Statistics, improve look of overall (graphics / colour) <-- DONE

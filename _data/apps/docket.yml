@@ -291,7 +291,6 @@ menus:
             hash: display.kanban
             toggle:
               - kanban
-            visibility: debug
           - name: Analysis
             desc: Display Analysis / Statistics for your Tasks
             shortcut: "a"

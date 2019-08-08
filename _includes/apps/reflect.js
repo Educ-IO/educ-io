@@ -257,6 +257,17 @@ App = function() {
   };
   /* <-- Helper Functions --> */
 
+  
+  /* <!-- Find Functions --> */
+  FN.find = {
+    
+    reports: form => ಠ_ಠ.Google.files.type(TYPE_REPORT, "domain,user,allTeamDrives", null, `(${form ? `appProperties has {key='FORM' and value='${form.$name ? form.$name : form.name ? form.name : form}'} and ` : ""}'me' in owners and not appProperties has {key='COMPLETE' and value='true'})`)
+                      .catch(e => ಠ_ಠ.Flags.error("Reports Finding Error", e).negative())
+                      .then(ಠ_ಠ.Main.busy("Looking for Existing Reports")),
+      
+    
+  };
+  /* <!-- Find Functions --> */
 
   /* <!-- Display Functions --> */
   FN.display = {
@@ -410,6 +421,35 @@ App = function() {
         return result ? _process(JSON.parse(result)) : Promise.resolve(result);
       }),
 
+    select: (files, name, actions, form, process) => {
+      
+      var _decoder = ಠ_ಠ.Decode(ಠ_ಠ, {
+                      id: name,
+                      template: ಱ.forms.template(name)
+                     }),
+          _fields = _decoder.fields(),
+          _create = false;
+              
+      return FN.prompt.choose(_.map(files, file => ({
+          value: file.id,
+          name: file.name,
+          title: ಠ_ಠ.Display.template.get(_.extend({
+            template: "meta",
+            Created: ಠ_ಠ.Dates.parse(file.createdTime).format("YYYY-MM-DD"),
+            Modified: ಠ_ಠ.Dates.parse(file.modifiedByMeTime).format("YYYY-MM-DD")
+          }, _.pick(_decoder.values(file, _fields), value => value || value === false || value === 0))),
+          html: true,
+        })), "Open Existing or Create New?", "EXISTING_REPORT_INSTRUCTIONS", false, [{
+        text: "Create New",
+        handler: () => _create = true
+      }], null, "Open")
+      .then(value => _create ? FN.create.report(name, actions, form, process) : value ? FN.action.load(_.find(files, file => file.id == value.value)) : false);
+      
+    },
+    
+    existing: (name, actions, form, process) => FN.find.reports(form || name)
+      .then(results => results && results.length > 0 ? FN.create.select(results, name, actions, form, process) : FN.create.report(name, actions, form, process)),
+    
     report: (name, actions, form, process) => FN.display.report(name, [STATE_REPORT_OPENED]
       .concat(!actions || (actions.editable && !actions.completed) ? [STATE_REPORT_EDITABLE] : [])
       .concat(actions && actions.signable ? [STATE_REPORT_SIGNABLE] : [])
@@ -536,14 +576,14 @@ App = function() {
           _analyse(results) : false);
     },
 
-    choose: (options, title, instructions, multiple, actions, validate) =>
+    choose: (options, title, instructions, multiple, actions, validate, action) =>
       ಠ_ಠ.Display.choose({
         id: "select_chooser",
         title: title,
         instructions: ಠ_ಠ.Display.doc.get(instructions),
         choices: options,
         multiple: multiple,
-        action: "Select",
+        action: action || "Select",
         actions: actions,
         validate: validate
       })
@@ -592,11 +632,11 @@ App = function() {
         name: "New ..."
       }].concat(ಱ.forms.selection("forms", "Report"))
     }),
-
+    
     reports: () => ({
       name: "Report",
       desc: "Create Report",
-      command: "report",
+      command: "existing", /* <!-- Runs through check for existing reports first --> */
       doc: "CREATE_REPORT",
       options: ಱ.forms.selection("forms", "Report"),
     }),
@@ -1489,7 +1529,7 @@ App = function() {
             length: 0,
             fn: () => FN.prompt.create(
                 [FN.prompt.scales(), FN.prompt.forms(), FN.prompt.reports(), FN.prompt.trackers()])
-              .then(form => ರ‿ರ.form = form),
+              .then(form => form ? ರ‿ರ.form = form : false),
             routes: {
               form: {
                 matches: /FORM/i,
@@ -1508,23 +1548,23 @@ App = function() {
                 matches: /REPORT/i,
                 routes: {
                   prompt: () => FN.prompt.create([FN.prompt.reports()])
-                    .then(form => ರ‿ರ.form = form),
+                    .then(form => form ? ರ‿ರ.form = form : false),
                   named: {
                     length: 1,
                     fn: command => ಱ.forms.persistent().loaded
                       .then(forms => (forms.has(command) ?
-                          Promise.resolve(FN.create.report(command, true)) :
+                          Promise.resolve(FN.create.existing(command, true)) :
                           FN.prompt.create([FN.prompt.reports()]))
-                        .then(form => ರ‿ರ.form = form))
+                        .then(form => form ? ರ‿ರ.form = form : false))
                       .then(ಠ_ಠ.Main.busy("Loading Form"))
                   },
                   folder: {
                     length: 2,
                     fn: command => FN.create.parent(command[0])
                       .then(folder => ಱ.forms.has(command[1]) ?
-                        Promise.resolve(FN.create.report(command[1], true)) :
+                        Promise.resolve(FN.create.existing(command[1], true)) :
                         FN.prompt.create([FN.prompt.reports()], folder))
-                      .then(form => ರ‿ರ.form = form)
+                      .then(form => form ? ರ‿ರ.form = form : false)
                   },
                 },
               },
@@ -1559,7 +1599,7 @@ App = function() {
                 fn: command => FN.create.parent(command)
                   .then(folder =>
                     FN.prompt.create([FN.prompt.scales(), FN.prompt.forms(), FN.prompt.reports()], folder))
-                  .then(form => ರ‿ರ.form = form)
+                  .then(form => form ? ರ‿ರ.form = form : false)
               },
             },
           },

@@ -732,13 +732,14 @@ Google_API = (options, factory) => {
         return _properties;
       },
 
-      type: (mime, corpora, spaces) => {
+      type: (mime, corpora, spaces, query) => {
+        
         var _domain = "domain", 
             _fn = corpora => _list(NETWORKS.general.get, "drive/v3/files", "files", [], {
               pageSize: PAGE_SIZE,
-              q: `trashed = false and mimeType = '${mime}'`,
+              q: `trashed = false and mimeType = '${mime}'${query ? ` and ${query}` : ""}`,
               orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
-              fields: `kind,nextPageToken,incompleteSearch,files(${FIELDS},owners)`,
+              fields: `kind,nextPageToken,incompleteSearch,files(${FULL})`,
               includeItemsFromAllDrives: true,
               includeTeamDriveItems: true,
               supportsTeamDrives: true,

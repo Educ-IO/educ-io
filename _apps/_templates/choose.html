@@ -17,7 +17,7 @@
             <select class="custom-select form-control" id="choices" name="choices"
                     size="{{either size 5}}"{{#if multiple}}multiple{{/if}}>
               {{#each choices}}
-              <option value="{{@key}}"{{#if class}} class="{{class}}"{{/if}}{{#if title}} title="{{title}}"{{/if}}>{{#exists name}}{{#if name}}{{name}}{{#exists desc}}{{#if desc}} - {{desc}}{{/if}}{{/exists}}{{/if}}{{else}}{{this}}{{/exists}}</option>
+              <option value="{{@key}}"{{#if class}} class="{{class}}"{{/if}}{{#if title}} title="{{title}}"{{/if}}>{{~#exists name}}{{#if name}}{{name}}{{#exists desc}}{{#if desc}} - {{desc}}{{/if}}{{/exists}}{{/if}}{{else}}{{this}}{{/exists~}}</option>
               {{/each}}
             </select>
           </div>
@@ -28,7 +28,7 @@
               <div class="form-check">
                 <label class="form-check-label">
                   <input class="form-check-input" type="radio" name="choices" id="choice_{{@key}}" value="{{@key}}"{{#if @first}} checked{{/if}}>
-                  {{#exists name}}{{#if name}}{{name}}{{#exists desc}}{{#if desc}} - {{desc}}{{/if}}{{/exists}}{{/if}}{{else}}{{this}}{{/exists}}
+                  <span{{#if html}} data-html="true"{{/if}}{{#if title}} title='{{title}}'{{/if}}{{#if content}} data-toggle="popover" data-trigger="hover focus" data-content='{{content}}'{{else}}{{#if title}} data-toggle="tooltip"{{/if}}{{/if}}>{{~#exists name}}{{#if name}}{{name}}{{#exists desc}}{{#if desc}} - {{desc}}{{/if}}{{/exists}}{{/if}}{{else}}{{this}}{{/exists~}}</span>
                 </label>
               </div>
             {{/each}}

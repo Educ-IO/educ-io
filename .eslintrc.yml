@@ -118,6 +118,7 @@ globals:
   Graphs: true
   Menu: true
   Views: true
+  Decode: true
   __Ω__UK_Teachers_Standards: true
   __Σ__Evidence_Tracker: true
   __Σ__Form_Master: true

@@ -39,7 +39,7 @@
               name="{{which toggle (concat id '_DETAILS') id}}" 
               data-output-name="{{which toggle 'Details' 'Value'}}"
               {{#if default}} data-input-default="{{default}}"{{/if}}
-              class="form-control{{#if large}} form-control-lg{{/if}} resizable optional"
+              class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#unless (any required readonly)}} optional{{/unless}}"
               style="white-space: pre-line;"
               {{#if required}} required="required"{{/if}}
               {{#if readonly}} readonly="readonly"{{/if}} rows="{{rows}}"
@@ -50,7 +50,7 @@
            data-output-name="{{which toggle 'Details' 'Value'}}"
            {{#if default}} data-input-default="{{default}}"{{/if}}
            type="{{val 'text' type}}"
-           class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#if class}} {{class}}{{/if}}"
+           class="form-control{{#if large}} form-control-lg{{/if}} resizable{{#unless (any required readonly)}} optional{{/unless}}{{#if class}} {{class}}{{/if}}"
            {{#if required}} required="required"{{/if}}
            {{#if readonly}} readonly="readonly"{{/if}}
            {{#if value}} value="{{value}}"{{/if}}

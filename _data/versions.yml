@@ -1,4 +1,8 @@
 site :
+  0.1.6a :
+    name : Reflect v0.0.7f-beta
+    desc : Reflect Route Improvement
+    numeric : 0.1.6.1
   0.1.6 :
     name : Docket v1.0.0
     desc : Major Docket Improvements
@@ -840,6 +844,10 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.7f-beta :
+    name : Reflect Route Improvements
+    desc : Routing to Create a new Report will now check for incomplete reports and offer to open them first
+    type : minor
   0.0.7e-beta :
     name : Reflect Analysis Improvements
     type : minor
