@@ -185,6 +185,10 @@ Schema = () => {
           value: "HAS_PROJECTS"
         }, /* <!-- Whether Task has any valid projects --> */
         
+        has_assignations: {
+          value: "HAS_ASSIGNATIONS"
+        }, /* <!-- Whether Task has any valid assignations --> */
+        
         in_future: {
           value: "IN_FUTURE"
         }, /* <!-- Whether Task starts in the future --> */

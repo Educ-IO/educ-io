@@ -327,7 +327,7 @@ Tasks = (options, factory) => {
 
     })(factory.Display.busy({
       target: target.is(".status-holder") ? target : target.find(".status-holder"),
-      class: "loader-small float-right ml-1",
+      class: "loader-small float-right ml-1 pb-1 pr-1",
       fn: true
     })),
       
@@ -466,25 +466,18 @@ Tasks = (options, factory) => {
         action: "Remove"
       })
       .then(confirm => {
+        
         if (!confirm) return Promise.resolve(false); /* <!-- No confirmation, so don't proceed --> */
-        var _item = FN.items.get(target);
+        var _item = FN.items.get(target),
+            _original = FN.items.clone(_item);
 
         /* <!-- Update Item --> */
         _item.TAGS = (_item.BADGES = _.filter(_item.BADGES, badge => badge != tag)).join(";");
 
-        /* <!-- Process Item, Reconcile UI then Update Database --> */
-        return Promise.resolve(FN.items.reconcile(_item)).then(item => {
-            target.find(`span.badge a:contains('${tag}')`).filter(function() {
-              return $(this).text() == tag;
-            }).parents("span.badge").remove();
-            return item;
-          })
-          .then(item => options.state.session.database.items.update(item))
-          .catch(options.functions.errors.update)
-          .then(FN.status.busy(target, _item));
-      }).catch(e => e)
-
-
+        return FN.items.update(target, _item, _original);
+        
+      }).catch(e => e ? factory.Flags.error("Remove Tag Error", e) : factory.Flags.log("Remove Tag Cancelled"))
+    
   };
   
   

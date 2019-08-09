@@ -168,6 +168,11 @@ em.kb-shortcut, strong.kb-shortcut {
   color: $colour-background !important;
   @include arrayed_Gradient(rgba(204,0,183,0.9) rgba(82,5,135,0.9) darken(rgba(82,11,135,0.9), 20%), 90%);
 }
+
+.badge-target {
+  color: $colour-background !important;
+  @include arrayed_Gradient(rgba(200,200,0,0.95) rgba(0,0,0,0.7) rgba(66,5,50,0.9) rgba(50,49,50,0.9), 90%);
+}
 // -- Badges -- //
 
 // -- Backgrounds -- //

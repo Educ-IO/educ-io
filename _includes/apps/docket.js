@@ -226,9 +226,11 @@ App = function() {
       ಠ_ಠ.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {trigger: "hover"});
     }).then(() => list),
     
-    tagged: tag => tag.indexOf("#") === 0 ?
-      FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks for Project: ${tag.replace("#","")}`,
-        ಱ.analysis.analysis(tag, ರ‿ರ.db)) : FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks tagged with: ${tag}`),
+    tagged: tag => tag.indexOf(ಱ.task.markers.project) === 0 ?
+      FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks for Project: ${tag.replace(ಱ.task.markers.project,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)) : 
+        tag.indexOf(ಱ.task.markers.assignation) === 0 ? 
+          FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks for: ${tag.replace(ಱ.task.markers.assignation,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)):
+        FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks tagged with: ${tag}`),
 
     cleanup: () => {
       $("body").removeClass("modal-open");

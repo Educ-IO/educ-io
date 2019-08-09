@@ -84,14 +84,18 @@ Docket
 ------
 * ** CLEANUP ** Remove Legacy Archive Code (update Database Module too)
 
+* ** CLEANUP ** Rescale Analysis graph horizontally on screen resize ...
+
 * ** IMPROVEMENT ** Project Status aross shared database sheets (and multiple sheet overview, together with clickable links to open each one - like an overview view)
  - Include Projects / Tags / Months hours and durations counts
  
-* ** IMPROVEMENT | CLEANUP ** Go through Events / Classes to pull into new module, with longer 'get' periods to avoid making events calls whenever moving between views / focus dates
-
 * ** IMPROVEMENT ** Periodic Refresh (shorter time periods for shared dockets) - is it possible to get changes since a certain point and integrate those?
 
-* ** IMPROVEMENT ** Add multiple dates for items (+ next to date picker field?) - to save having to create and duplicate
+
+* ** IMPROVEMENT | CLEANUP ** Go through Events / Classes to pull into new module, with longer 'get' periods to avoid making events calls whenever moving between views / focus dates
+
+
+* ** IMPROVEMENT ** Add multiple dates for items (+ next to date picker field?) - to save having to create and duplicate ???
 
 * ** IMPROVEMENT | MOBILE ** Re-Ordering Items by touch... (how???)
 
@@ -146,10 +150,13 @@ Reflect
 
 * ** FEATURE ** Complete Email from Signer for pre-shared reports
 
+* ** FEATURE ** Test Group Share
+
 
 * ** IMPROVEMENT ** Verify in Analysis should also recalculate summary / meta field values.
 
 * ** IMPROVEMENT ** Replace DeepClone with our own version (better handling of Regexes) | With DEBUG tests
+
 
 * ** IMPROVEMENT ** Create form -> Should lead to 'show form' pathway, with button for return to edit (same as edit but without state file)
 
@@ -174,6 +181,8 @@ Survey
 
 Complete
 --------
+* ** BUG ** Small width (mobile) statistics on tagged item list doesn't work well ... <-- DONE
+* ** IMPROVEMENT ** @ in tag name for assignments? Different colour (gradient background) and bold etc <-- DONE
 * ** IMPROVEMENT ** create.report.{{id}} route should prompt to re-use existing report if one is already open (e.g. not completed) <-- DONE
 * ** BUG ** Check for enter / submit handlers of Reflect forms <-- DONE
 * ** BUG ** Pressing TODAY shortcut on Analysis page jumps back to weekly but without updating state! <-- DONE

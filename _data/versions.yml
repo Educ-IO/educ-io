@@ -1,4 +1,8 @@
 site :
+  0.1.6b :
+    name : Docket v1.0.1a
+    desc : Minor Docket Fixes
+    numeric : 0.1.6.2
   0.1.6a :
     name : Reflect v0.0.7f-beta
     desc : Reflect Route Improvement
@@ -940,6 +944,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  1.0.1a :
+    name : Visual Bug Fixes
+    desc : Small screen alignment and padding fixes
+    type : minor
   1.0.0 :
     name : Kanban, Analysis and db
     desc : New Kanban and Analysis Views plus an updated database layer

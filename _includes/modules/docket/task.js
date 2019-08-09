@@ -17,10 +17,11 @@ Task = (options, factory) => {
           date: /\b(\d{4})-(\d{2})-(\d{2})|((0?[1-9]|[12]\d|30|31)[^\w\d\r\n:](0?[1-9]|1[0-2]|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[^\w\d\r\n:](\d{4}|\d{2}))\b/i,
         },
         SPLIT = {
-          tags: /[^a-zA-Z0-9#!\?\-_]/, /* <!-- Valid Characters for Tags/Badges --> */
+          tags: /[^a-zA-Z0-9#@!\?\-_]/, /* <!-- Valid Characters for Tags/Badges --> */
         },
         MARKERS = {
           project: "#",
+          assignation: "@",
         },
         FN = {};
   /* <!-- Internal Constants --> */
@@ -151,7 +152,7 @@ Task = (options, factory) => {
 
       /* <!-- Set Has Tags --> */
       item[options.schema.columns.tags.value] && 
-        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(MARKERS.project) !== 0) ?
+        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(MARKERS.project) !== 0 && value.indexOf(MARKERS.assignation) !== 0) ?
           item[options.schema.columns.has_tags.value] = true : delete item[options.schema.columns.has_tags.value];
 
 
@@ -160,7 +161,13 @@ Task = (options, factory) => {
         _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(MARKERS.project) === 0) ?
           item[options.schema.columns.has_projects.value] = true : delete item[options.schema.columns.has_projects.value];      
 
-
+      
+      /* <!-- Set Has Assignations --> */
+      item[options.schema.columns.tags.value] && 
+        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(MARKERS.assignation) === 0) ?
+          item[options.schema.columns.has_assignations.value] = true : delete item[options.schema.columns.has_assignations.value];    
+      
+      
       /* <!-- Set Appropriate Status --> */
       options.schema.enums.status.complete.equals(item[options.schema.columns.status.value], true) ?
         item[options.schema.columns.is_complete.value] = true : delete item[options.schema.columns.is_complete.value];
@@ -194,6 +201,8 @@ Task = (options, factory) => {
       date: EXTRACT.date,
 
     },
+    
+    markers : MARKERS,
     
     process: () => process ? process : (process = FN.process.items(
         options.zombie === false ? false : reference.clone().subtract(options.zombie, "days"),

@@ -25,7 +25,7 @@ Graphs = () => {
     height: h,
     innerWidth: w - l - r,
     innerHeight: h - t - b
-  }))(20, 15, 10, 30);
+  }))(10, 10, 10, 15);
 
   var _svg = (holder, margins) => d3.select(holder)
     .append("svg").attr("width", "100%").attr("height", "100%")
