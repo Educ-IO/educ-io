@@ -130,18 +130,22 @@ templates:
   - docket/item
   - docket/action
   - docket/name
-  - docket/monthly
-  - docket/weekly
-  - docket/daily
-  - docket/kanban
-  - docket/analysis
-  - docket/new
-  - docket/archive
-  - docket/list
+  - docket/views/monthly
+  - docket/views/weekly
+  - docket/views/daily
+  - docket/views/kanban
+  - docket/views/analysis
+  - docket/views/queue
+  - docket/dialogs/new
+  - docket/dialogs/archive
+  - docket/dialogs/tag
+  - docket/dialogs/list
   - docket/tags
-  - docket/tag
   - docket/suggestions
   - docket/statistics
+  - docket/queue/file
+  - docket/queue/permission
+  - docket/queue/tasks
   - docket/visualisation/time_series
   - docket/config/calendar
   - docket/config/class
@@ -299,6 +303,12 @@ menus:
               - analysis
             imports:
               - d3
+          - name: Queue
+            desc: Display Task Queue from all your Docket Databases
+            shortcut: "q"
+            hash: display.queue
+            toggle:
+              - queue
             divider: true
             
           - name: Calendar/s
@@ -423,6 +433,7 @@ menus:
             
           - name: Preferences
             desc: Edit App Config
+            shortcut: "p"
             hash: config.edit
             disabled_until:
               - config

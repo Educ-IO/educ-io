@@ -17,17 +17,18 @@ App = function() {
     STATE_DAILY = "daily",
     STATE_KANBAN = "kanban",
     STATE_ANALYSIS = "analysis",
+    STATE_QUEUE = "queue",
     STATE_CALENDARS = "calendars",
     STATE_CLASSES = "classes",
     STATE_PREFERENCES = "preferences",
     STATES = [STATE_READY, STATE_CONFIG, STATE_OPENED, STATE_DEFAULT, STATE_LOADED,
       STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY,
-      STATE_KANBAN, STATE_ANALYSIS, STATE_CALENDARS, STATE_CLASSES,
+      STATE_KANBAN, STATE_ANALYSIS, STATE_QUEUE, STATE_CALENDARS, STATE_CLASSES,
       STATE_PREFERENCES
     ],
     SOURCE = [STATE_DEFAULT, STATE_LOADED],
     DIARIES = [STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY],
-    DISPLAY = [STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY, STATE_KANBAN, STATE_ANALYSIS];
+    DISPLAY = [STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY, STATE_KANBAN, STATE_ANALYSIS, STATE_QUEUE];
   /* <!-- State Constants --> */
   
   /* <!-- Scope Constants --> */
@@ -226,10 +227,10 @@ App = function() {
       ಠ_ಠ.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {trigger: "hover"});
     }).then(() => list),
     
-    tagged: tag => tag.indexOf(ಱ.task.markers.project) === 0 ?
-      FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks for Project: ${tag.replace(ಱ.task.markers.project,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)) : 
-        tag.indexOf(ಱ.task.markers.assignation) === 0 ? 
-          FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks for: ${tag.replace(ಱ.task.markers.assignation,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)):
+    tagged: tag => tag.indexOf(ಱ.markers.project) === 0 ?
+      FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks for Project: ${tag.replace(ಱ.markers.project,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)) : 
+        tag.indexOf(ಱ.markers.assignation) === 0 ? 
+          FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks for: ${tag.replace(ಱ.markers.assignation,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)):
         FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks tagged with: ${tag}`),
 
     cleanup: () => {
@@ -295,7 +296,8 @@ App = function() {
   /* <-- Action Functions --> */
   FN.action = {
 
-    load: config => Promise.resolve((ಱ.task = ಠ_ಠ.Task({
+    /* <-- reset = Reset View to default / configured default --> */
+    load: (config, reset) => Promise.resolve((ಱ.task = ಠ_ಠ.Task({
           schema: ಱ.schema,
           zombie: ರ‿ರ.config.zombie,
           ghost: ರ‿ರ.config.ghost,
@@ -304,6 +306,7 @@ App = function() {
             session: ರ‿ರ,
             application: ಱ,
           },
+          markers: ಱ.markers
         }, ಠ_ಠ)))
       .then(task => (ಱ.schema.process = task.process())) /* <!-- Create Processing Task Function --> */
       .then(() => Promise.all([].concat(
@@ -317,15 +320,16 @@ App = function() {
         if (results[1]) ರ‿ರ.deadlines = results[1];
       })
       .then(ಠ_ಠ.Main.busy("Loading Data"))
-      .then(() => ಠ_ಠ.Display.state().change(DISPLAY, DISPLAY.indexOf((config || ರ‿ರ.config).view) >= 0 ?
-                                             (config || ರ‿ರ.config).view : STATE_WEEKLY))
+      .then(() => reset ? ಠ_ಠ.Display.state().change(DISPLAY, DISPLAY.indexOf((config || ರ‿ರ.config).view) >= 0 ?
+                                             (config || ರ‿ರ.config).view : STATE_WEEKLY) : false)
       .then(() => ಠ_ಠ.Display.state().in(DIARIES, true) ? 
               FN.display.current(ಠ_ಠ.Dates.parse(FN.focus.date())) :
               ಠ_ಠ.Display.state().in(STATE_ANALYSIS) ? FN.views.analysis(FN.display.cleanup()) :
               ಠ_ಠ.Display.state().in(STATE_KANBAN) ? FN.views.kanban({
                 past: ರ‿ರ.config.past,
                 future: ರ‿ರ.config.future,
-              }, FN.display.cleanup()) : false)
+              }, FN.display.cleanup()) : 
+              ಠ_ಠ.Display.state().in(STATE_QUEUE) ? FN.views.queue(FN.display.cleanup()) : false)
       .catch(e => ಠ_ಠ.Flags.error("Data Error", e ? e : "No Inner Error").negative()),
 
     jump: () => {
@@ -379,11 +383,11 @@ App = function() {
       FN.options.calendars(!!config.calendars);
       FN.options.classes(!!config.classes);
 
-      /* <-- Set Name from Config (if available) --> */
-      config.name ? ರ‿ರ.name = config.name : delete ರ‿ರ.name;
+      /* <-- Set Name from Config (if available, and also if supplied config is not the same as default config) --> */
+      config.name && (!ರ‿ರ.config || config.data != ರ‿ರ.config.data) ? ರ‿ರ.name = config.name : delete ರ‿ರ.name;
 
       /* <-- Open and render data --> */
-      return FN.action.load(config);
+      return FN.action.load(config, true);
 
     },
     
@@ -499,10 +503,11 @@ App = function() {
       .then(() => FN.action.start(ರ‿ರ.config)),
 
     /* <-- Open Shared Database --> */
-    shared: value => FN.menu.add(value).then(value => FN.action.start(_.defaults({
-      data: value.id,
-      name: value.name
-    }, ರ‿ರ.config))),
+    shared: value => (ರ‿ರ.config && ರ‿ರ.config.data != value.id ? FN.menu.add(value) : Promise.resolve(value))
+      .then(value => FN.action.start(_.defaults({
+        data: value.id,
+        name: value.name
+      }, ರ‿ರ.config))),
 
   };
   /* <-- Open Functions --> */
@@ -736,6 +741,12 @@ App = function() {
                   .then(ಠ_ಠ.Main.busy("Loading View"))
                   .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_KANBAN))
               },
+              precis: {
+                matches: /QUEUE/i,
+                keys: ["q", "Q"],
+                fn: () => FN.views.queue(FN.display.cleanup())
+                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_QUEUE))
+              }
             }
           },
 
@@ -980,7 +991,7 @@ App = function() {
 
           refresh: {
             matches: /REFRESH/i,
-            state: DIARIES,
+            state: DISPLAY,
             length: 0,
             keys: ["r", "R"],
             fn: FN.action.refresh
@@ -1010,6 +1021,12 @@ App = function() {
       };
       _today();
 
+      /* <!-- Add Markers --> */
+      ಱ.markers = {
+        project: "#",
+        assignation: "@",
+      };
+      
       /* <!-- Setup Showdown --> */
       ಱ.showdown = new showdown.Converter({
         strikethrough: true

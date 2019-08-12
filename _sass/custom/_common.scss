@@ -161,17 +161,22 @@ em.kb-shortcut, strong.kb-shortcut {
 
 .badge-rainbow {
   color: $colour-background !important;
-  @include arrayed_Gradient(darken(rgba(0,255,0,0.9), 10%) rgba(255,0,0,0.9) rgba(0,0,255,0.9), 74%);
+  @include arrayed_Gradient(darken(rgba(0,255,0,0.9), 10%) rgba(255,0,0,0.9) rgba(0,0,255,0.9), 80%);
 }
 
 .badge-attention {
   color: $colour-background !important;
-  @include arrayed_Gradient(rgba(204,0,183,0.9) rgba(82,5,135,0.9) darken(rgba(82,11,135,0.9), 20%), 90%);
+  @include arrayed_Gradient(rgba(204,0,183,0.9) rgba(82,5,135,0.9) darken(rgba(82,11,135,0.9), 20%), 70%);
 }
 
 .badge-target {
   color: $colour-background !important;
-  @include arrayed_Gradient(rgba(200,200,0,0.95) rgba(0,0,0,0.7) rgba(66,5,50,0.9) rgba(50,49,50,0.9), 90%);
+  @include arrayed_Gradient(rgba(200,200,0,0.95) rgba(0,0,0,0.95) rgba(66,5,50,0.9) rgba(50,49,50,0.9), 60%, 0 0 0 0.7);
+}
+
+.badge-vital {
+  color: $colour-background !important;
+  @include arrayed_Gradient(darken($colour-vital, 15%) $colour-vital lighten($colour-vital, 10%), 50%, 0 0 0.65);
 }
 // -- Badges -- //
 

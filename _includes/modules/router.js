@@ -311,12 +311,12 @@ Router = function() {
           fn: command => {
 
             /* <!-- Load the Instructions --> */
-            var show = (name, title) => ಠ_ಠ.Display.doc.show({
+            var show = (name, title) => $(`div.modal[data-doc="${name}"]`).length === 0 ? ಠ_ಠ.Display.doc.show({
               name: name,
               title: title,
               target: $("body"),
               wrapper: "MODAL"
-            }).modal("show");
+            }).modal("show") : false;
 
             /* <!-- Process Specific App Instructions --> */
             var _shown = false;

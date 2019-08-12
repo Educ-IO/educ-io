@@ -35,19 +35,25 @@ Analysis = (options, factory) => {
     
     if (detailed) {
       
-      /* <!-- TODO: Add Per-Project Analysis here --> */
       _analysis.detailed = true;
       
       var _empty = value => !value,
-          _project = value => value && value.indexOf("#") === 0,
+          _project = value => value && value.indexOf(options.markers.project) === 0,
+          _assignment = value => value && value.indexOf(options.markers.assignation) === 0,
           _uniq = value => value ? value.toLowerCase() : value,
           _all = _.chain(items).pluck(options.schema.columns.badges.value).flatten().compact()
                     .uniq(false, _uniq).value().sort();
       
-      _analysis.tags = _.chain(_all).reject(_empty).reject(_project).map(value => value.toUpperCase()).value();
-      _analysis.projects = _.chain(_all).reject(_empty).filter(_project).map(
-        value => ({name: value.substr(1)})
-      ).value();
+      _analysis.tags = _.chain(_all).reject(item => _empty(item) || _project(item) || _assignment(item)).map(value => value.toUpperCase()).value();
+      
+      _.each([{name: "projects", fn: _project}, {name: "assignments", fn: _assignment}], 
+              item => _analysis[item.name] = _.chain(_all).reject(_empty).filter(item.fn).map(
+                value => ({
+                  name: value.substr(1).toUpperCase(),
+                  count: _.chain(items).pluck(options.schema.columns.badges.value).flatten().reject(_empty)
+                    .map(tag => tag.toUpperCase()).filter(tag => tag == value.toUpperCase()).value().length,
+                })
+              ).value());
       
     }
     
@@ -64,6 +70,7 @@ Analysis = (options, factory) => {
     generate: _generate,
 
     analysis: (tag, db) => {
+      
       var _query = options.query.all_tagged(tag);
       factory.Flags.log(`Query [ALL] for: ${tag}`, _query);
       var _all = (db ? db : options.db).find(_query);
@@ -73,10 +80,12 @@ Analysis = (options, factory) => {
       factory.Flags.log(`Analysis for: ${tag}`, _results);
       
       return _results;
+    
     },
     
     summary: (since, db) => {
-      var _query = options.query.after(since);
+      
+      var _query = options.query.forward(since);
       if (since) factory.Flags.log(`Query [Since] for: ${since}`, _query);
       var _all = (db ? db : options.db).find(_query);
       factory.Flags.log(since ? `Query [Since] for: ${since}` : "Query [all]", _all);
@@ -85,6 +94,7 @@ Analysis = (options, factory) => {
       factory.Flags.log(since ? `Analysis [Since] for: ${since}` : 
                         "Analysis for all", _results);
       return _results;
+      
     },
     
     series: (tags, projects, timed, since, until, db) => {

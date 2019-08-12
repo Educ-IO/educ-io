@@ -109,7 +109,7 @@ Google_API = (options, factory) => {
   const APP_DATA = "appDataFolder";
 
   const SKELETON = "id,name,size,parents,mimeType";
-  const FIELDS = `kind,${SKELETON},description,version,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId,ownedByMe,capabilities,isAppAuthorized`;
+  const FIELDS = `kind,${SKELETON},description,version,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId,driveId,ownedByMe,capabilities,isAppAuthorized`;
   const FULL = `${FIELDS},createdTime,modifiedTime,sharingUser,owners`;
 
   const EVENTS = {
@@ -233,11 +233,13 @@ Google_API = (options, factory) => {
       team === true ? {
         fields: FIELDS,
         includeTeamDriveItems: true,
+        supportsAllDrives: true,
         supportsTeamDrives: true,
         corpora: "user,allTeamDrives"
       } : {
         fields: FIELDS,
         teamDriveId: team,
+        supportsAllDrives: true,
         includeTeamDriveItems: true,
         supportsTeamDrives: true,
         corpora: "teamDrive"

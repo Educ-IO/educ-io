@@ -130,6 +130,14 @@ Query = (options, factory) => {
     
     completed: FN.status.completed,
 
+    forward: date => date ? {
+      "$or": [
+        FN.status.completed(date, date),
+        {"$and": [FN.general.timed(), FN.temporal.after(date)]},
+        {"$and": [FN.general.timeless(), FN.status.incomplete()]},
+      ]
+    } : {},
+    
     dated: date => ({
         "$or": [{"$and": [{"$or": [FN.general.timed(), FN.temporal.future()]},
                           FN.temporal.before(date), FN.temporal.after(date), FN.status.incomplete()]}, FN.status.completed(date)]}),

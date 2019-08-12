@@ -95,6 +95,7 @@ SaaD = (options, factory) => {
 
   /* <!-- Setup Variables --> */
   options = _.defaults(options, defaults);
+  if (!_.isFunction(options.db.name)) (name => options.db.name = () => name)(options.db.name);
   factory = factory ? factory : this; /* <!-- Set Factory / Context --> */
   /* <!-- Setup Variables --> */
 
@@ -526,13 +527,14 @@ SaaD = (options, factory) => {
             });
             /* <!-- Map Date / Markdown Fields / Columns --> */
 
-            /* <!-- Populate and Return --> */
-            return value.values ?
-              FN.populate.rows(value.values, metadata.matchedDeveloperMetadata, ingest, hash)
-              .then(rows => {
-                factory.Flags.log("Data Values:", rows);
-                return (ರ‿ರ.data.data = rows);
-              }) : ರ‿ರ.data.data = [];
+            /* <!-- Populate Version, and Return --> */
+            return Promise.all([factory.Google.files.get(id, true), 
+                                value.values ? FN.populate.rows(value.values, metadata.matchedDeveloperMetadata, ingest, hash) : Promise.resolve([])])
+              .then(values => {
+                ರ‿ರ.data.version = values[0].version;
+                factory.Flags.log("Data Values:", values[1]);
+                return (ರ‿ರ.data.data = values[1]);
+              });
             /* <!-- Populate and Return --> */
 
           });
@@ -542,8 +544,8 @@ SaaD = (options, factory) => {
 
           if (!data) return;
 
-          if (ರ‿ರ.db) DB.removeCollection(options.db.name);
-          ರ‿ರ.db = DB.addCollection(options.db.name, {
+          if (ರ‿ರ.db) DB.removeCollection(options.db.name(id));
+          ರ‿ರ.db = DB.addCollection(options.db.name(id), {
             indices: ["__ID", "__ROW"].concat(_.map(_.filter(ರ‿ರ.data.columns,
               c => c._meta && c._meta.index), c => c.value))
           });
@@ -553,7 +555,7 @@ SaaD = (options, factory) => {
     },
 
     close: () => {
-      DB.removeCollection(options.db.name);
+      ರ‿ರ.data ? DB.removeCollection(options.db.name(ರ‿ರ.data.spreadsheet)) : false;
       ರ‿ರ = {};
     }
 
@@ -734,6 +736,8 @@ SaaD = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
 
+    id: () => ರ‿ರ.data ? ರ‿ರ.data.spreadsheet : false,
+    
     state: ರ‿ರ,
 
     create: (sheetMetadata, spreadsheetName, sheetName) => FN.sheet.create(_.union([{

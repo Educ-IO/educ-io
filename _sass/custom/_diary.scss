@@ -119,9 +119,6 @@
     .badge {
       a[href]:hover {color: $colour-emphasis;}
       a[href].close:hover {color: $colour-background;}
-      &.badge-rainbow {
-        a[href]:hover {color: $colour-general-light !important;}
-      }
     }
     .display.small > a {margin-top: -0.15em;}
     svg {

@@ -1,0 +1,15 @@
+{% raw %}
+<div {{#if id}}id="{{id}}" {{/if}}class="items-holder border-exagerate container-fluid pt-lg-1 mvh-100">
+  <div class="row d-flex align-items-center">
+    <h4 class="display-4 col-12 mb-lg-0 d-flex flex-column flex-md-row">
+      <span class="text-muted font-weight-bold">{{title}}</span><span class="ml-2">{{subtitle}}</span>
+    </h4>
+  </div>
+  <div class="row m-0 pt-2">
+    <div class="container-fluid w-100 h-100">
+      {{#each files}}{{> file}}{{/each}}  
+    </div>
+  </div>
+</div>
+{{#if action}}{{> action id=id action=action}}{{/if}}
+{% endraw %}

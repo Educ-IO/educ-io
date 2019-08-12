@@ -27,7 +27,7 @@ Views = (options, factory) => {
         class: "btn-info"
       }],
       icon: "edit"
-    }, FN = {};
+    }, EMPTY = "", FN = {};
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -38,6 +38,17 @@ Views = (options, factory) => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  FN.helpers = {
+    
+    owner: file => file.ownedByMe ? "Me" : file.owners && file.owners.length > 0 ?
+      `${file.owners[0].displayName}${file.owners[0].emailAddress ? ` (${file.owners[0].emailAddress})` : EMPTY}` : "Shared Drive",
+
+    command: file => `google,load.${file.id}`,
+    
+    url: file => `${factory.Flags.full()}${factory.Flags.dir()}/#${FN.helpers.command(file)}`,
+    
+  };
+  
   FN.scroll = (target, container) => {
 
       /* <!-- Scroll to today if visible --> */
@@ -447,6 +458,59 @@ Views = (options, factory) => {
 
     });
   
+  FN.queue = () => {
+    
+    var _query = `(properties has {key='${options.state.application.schema.property.name}' and value='${options.state.application.schema.property.value}'})`,
+        _find = factory.Google.files.type(factory.Google.files.natives()[1], "domain,user,allTeamDrives", null, _query),
+        _error = e => factory.Flags.error("Reports Finding Error", e).negative(),
+        _analysis = db => options.state.application.analysis.summary(factory.Dates.now().startOf("day"), db),
+        _decode = permissions => (file, index) => _.extend(file, {
+            load: `${FN.helpers.command(file)}.kanban`,
+            owner: FN.helpers.owner(file),
+            createdDate: factory.Dates.parse(file.createdTime),
+            modifiedDate: factory.Dates.parse(file.modifiedTime),
+            modifiedByMeDate: factory.Dates.parse(file.modifiedByMeTime),
+            share: permissions[index],
+            loaded: file.id == options.state.session.database.id() ? true : false,
+            analysis: file.id == options.state.session.database.id() ? _analysis(options.state.session.db) : false
+        });
+    
+    return _find.catch(_error).then(factory.Main.busy("Looking for Databases"))
+      .then(files => {
+      
+        factory.Flags.log(`Found ${files.length} database file${files.length > 1 ? "s" : ""}`, files);
+      
+        return Promise.all(_.map(files, file => factory.Google.permissions.get(file, file.driveId)))
+          .then(factory.Main.busy("Checking Permissions"))
+          .then(permissions => {
+        
+            factory.Flags.log("Retrieved Permissions for Database Files", permissions);
+          
+            var _view = factory.Display.template.show({
+              template: "queue",
+              id: "queue",
+              title: "Tasks",
+              subtitle: "Queue",
+              files: _.map(files, _decode(permissions)),
+              target: factory.container,
+              clear: true,
+            });
+          
+            _.each(_.reject(files, file => file.id == options.state.session.database.id()),
+                    file => factory.Database(options.state.application, factory).open(file.id, options.state.application.schema.sheets.sheet_tasks)
+                      .then(db => factory.Display.template.show(_.extend({
+                        template: "tasks",
+                        target: _view.find(`div[data-file='${file.id}'] div.analysis`),
+                        clear: true,
+                      }, _analysis(db)))));
+          
+            return true;
+          
+          });
+      
+      });
+    
+  };
   /* <!-- Internal Functions --> */
 
   /* <!-- Initial Calls --> */
@@ -464,8 +528,8 @@ Views = (options, factory) => {
     
     kanban : FN.kanban,
     
-    test : () => options.functions.test.test()
-
+    queue : FN.queue,
+    
   };
   /* <!-- External Visibility --> */
 

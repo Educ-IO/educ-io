@@ -18,16 +18,16 @@ Filter = options => {
   /* <-- General Filters --> */
   FN.general = {
     
-    timed: items => _.filter(items, result => result._timed === true && !result._future),
+    timed: items => _.filter(items, result => result[options.schema.columns.is_timed.value] === true && !result[options.schema.columns.in_future.value]),
     
     pending: items => _.filter(items, result => result[options.schema.columns.status.value] != options.schema.enums.status.complete && 
-                               (result._future === true || result._timed === false)),
+                               (result[options.schema.columns.in_future.value] === true || result[options.schema.columns.is_timed.value] === false)),
     
   };
   
   FN.temporal = {
     
-    future: items => _.filter(items, result => result._future === true),
+    future: items => _.filter(items, result => result[options.schema.columns.in_future.value] === true),
     
   };
   

@@ -19,10 +19,6 @@ Task = (options, factory) => {
         SPLIT = {
           tags: /[^a-zA-Z0-9#@!\?\-_]/, /* <!-- Valid Characters for Tags/Badges --> */
         },
-        MARKERS = {
-          project: "#",
-          assignation: "@",
-        },
         FN = {};
   /* <!-- Internal Constants --> */
 
@@ -152,19 +148,19 @@ Task = (options, factory) => {
 
       /* <!-- Set Has Tags --> */
       item[options.schema.columns.tags.value] && 
-        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(MARKERS.project) !== 0 && value.indexOf(MARKERS.assignation) !== 0) ?
+        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(options.markers.project) !== 0 && value.indexOf(options.markers.assignation) !== 0) ?
           item[options.schema.columns.has_tags.value] = true : delete item[options.schema.columns.has_tags.value];
 
 
       /* <!-- Set Has Projects --> */
       item[options.schema.columns.tags.value] && 
-        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(MARKERS.project) === 0) ?
+        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(options.markers.project) === 0) ?
           item[options.schema.columns.has_projects.value] = true : delete item[options.schema.columns.has_projects.value];      
 
       
       /* <!-- Set Has Assignations --> */
       item[options.schema.columns.tags.value] && 
-        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(MARKERS.assignation) === 0) ?
+        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(options.markers.assignation) === 0) ?
           item[options.schema.columns.has_assignations.value] = true : delete item[options.schema.columns.has_assignations.value];    
       
       
@@ -201,8 +197,6 @@ Task = (options, factory) => {
       date: EXTRACT.date,
 
     },
-    
-    markers : MARKERS,
     
     process: () => process ? process : (process = FN.process.items(
         options.zombie === false ? false : reference.clone().subtract(options.zombie, "days"),

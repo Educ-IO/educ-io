@@ -331,6 +331,11 @@ Display = function() {
             variable.toLocaleDateString() : variable.toLocaleString();
         });
 
+        Handlebars.registerHelper("fromNow", (variable, short) => {
+          if (!variable || !(variable._isAMomentObject || (window.dayjs && dayjs.isDayjs(variable)))) return;
+          return short === true ? variable.fromNow(true) : variable.fromNow();
+        });
+        
         Handlebars.registerHelper("formatBytes", variable => {
           if (variable && !isNaN(variable) && variable > 0) return _bytes(variable, 2);
         });
@@ -523,6 +528,7 @@ Display = function() {
       wrap: function(wrapper, content, options) {
         return this.get(wrapper)
           .replace(/\{\{+\s*content\s*}}/gi, content)
+          .replace(/\{\{+\s*doc\s*}}/gi, options && options.name ? options.name : "name")
           .replace(/\{\{+\s*title\s*}}/gi, options && options.title ? options.title : "Title")
           .replace(/\{\{+\s*close\s*}}/gi, options && options.close ? options.close : "Close");
       },
@@ -564,7 +570,7 @@ Display = function() {
           _return = $(this.get(options))[options.prepend === true ? "prependTo" : "appendTo"](_element);
 
         /* <!-- Allow for showing / hiding previous modals (e.g. help modals from help modals)	--> */
-        if (options.wrapper && options.wrapper === "MODAL")  _modalise(_return);
+        if (options.wrapper && options.wrapper === "MODAL") _modalise(_return);
        
         return _visuals(_return);
 

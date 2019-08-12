@@ -82,6 +82,8 @@ Database = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
     
+    id: database.id,
+    
     db: db,
     
     open: FN.main.open,

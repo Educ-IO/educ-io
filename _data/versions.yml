@@ -1,4 +1,8 @@
 site :
+  0.1.6c :
+    name : Docket v1.0.2
+    desc : New View for Multiple DBs
+    numeric : 0.1.6.3
   0.1.6b :
     name : Docket v1.0.1a
     desc : Minor Docket Fixes
@@ -944,6 +948,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  1.0.2 :
+    name : New Multi-DB View
+    desc : Tasks Queue for Multiple Task Databases
+    type : minor
   1.0.1a :
     name : Visual Bug Fixes
     desc : Small screen alignment and padding fixes

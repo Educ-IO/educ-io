@@ -78,18 +78,22 @@ Tag-A-Doc
 
 SaaD
 ----
-
+* Refresh Mechanism - used Version number of file on Open / Create, increment for each write action
 
 Docket
 ------
+* ** IMPROVEMENT ** Add Tabular / Matrix View of Tags / Projects and Duration Totals (one column per-calendar month)
+
+* ** IMPROVEMENT ** Add Timer Start (+ stop) to each item, allowing timed work
+
+* ** IMPROVEMENT ** Add multiple dates for items (+ next to date picker field?) - to save having to create and duplicate ???
+
 * ** CLEANUP ** Remove Legacy Archive Code (update Database Module too)
 
 * ** CLEANUP ** Rescale Analysis graph horizontally on screen resize ...
-
-* ** IMPROVEMENT ** Project Status aross shared database sheets (and multiple sheet overview, together with clickable links to open each one - like an overview view)
- - Include Projects / Tags / Months hours and durations counts
  
 * ** IMPROVEMENT ** Periodic Refresh (shorter time periods for shared dockets) - is it possible to get changes since a certain point and integrate those?
+  Update SaaD with file version. <-- DONE
 
 
 * ** IMPROVEMENT | CLEANUP ** Go through Events / Classes to pull into new module, with longer 'get' periods to avoid making events calls whenever moving between views / focus dates
@@ -181,6 +185,8 @@ Survey
 
 Complete
 --------
+* ** IMPROVEMENT ** Project Status aross shared database sheets (and multiple sheet overview, together with clickable links to open each one - like an overview view)
+ - Include Projects / Tags / Months hours and durations counts <-- DONE
 * ** BUG ** Small width (mobile) statistics on tagged item list doesn't work well ... <-- DONE
 * ** IMPROVEMENT ** @ in tag name for assignments? Different colour (gradient background) and bold etc <-- DONE
 * ** IMPROVEMENT ** create.report.{{id}} route should prompt to re-use existing report if one is already open (e.g. not completed) <-- DONE

@@ -16,7 +16,7 @@ Schema = () => {
     v1_1 : () => ({
       
       db: {
-        name: "Tasks",
+        name: id => `Tasks_${id}`,
         file: "docket.db",
       },
       

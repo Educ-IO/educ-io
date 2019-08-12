@@ -55,7 +55,7 @@
   
 }
 
-@mixin arrayed_Gradient($colours, $length) {
+@mixin arrayed_Gradient($colours, $length, $ends:null) {
 
   @each $pre in webkit, moz, ms, o, none {
     
@@ -67,14 +67,17 @@
       $angle: (((360 - ($c_length * 10)) / $c_length) * $i) + ($c_length * 5);
       $start: nth($colours, $i);
       $end: rgba(nth($colours, $i), 0);
-
+      @if $ends {
+        $end: rgba(nth($colours, $i), nth($ends, $i));
+      }
+      
       @if $pre == none {
 
-        $colour-gradients: append($colour-gradients, linear-gradient(#{$angle}deg, $start, $end 74%), comma);
+        $colour-gradients: append($colour-gradients, linear-gradient(#{$angle}deg, $start, $end $length), comma);
 
       } @else {
 
-        $colour-gradients: append($colour-gradients, -#{$pre}-linear-gradient(#{$angle}deg, $start, $end 74%), comma);
+        $colour-gradients: append($colour-gradients, -#{$pre}-linear-gradient(#{$angle}deg, $start, $end $length), comma);
 
       }
       
