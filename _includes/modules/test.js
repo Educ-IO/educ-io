@@ -429,6 +429,29 @@ Page = function() {
       },
     },
     {
+      name: "Web Workers",
+      desc: "Support for Web Workers, which are javascript routines that run in the background.",
+      url: "https://caniuse.com/#feat=webworkers",
+      required: true,
+      test: function() {
+        return !!(window && window.Worker);
+      },
+      success: {
+        icon: "check",
+        class: "text-success",
+        message: ""
+      },
+      failure: {
+        icon: "priority_high",
+        class: "text-warning",
+        message: "Unfortunately, your browser doesn't support modern web workers."
+      },
+      type: {
+        name: "operation",
+        class: "badge-primary"
+      },
+    },
+    {
       name: "CSS3 Transitions and Transition End",
       desc: "Support for CSS Tranisitions and triggering the Transition End Event",
       url: "https://caniuse.com/#feat=css-transitions",

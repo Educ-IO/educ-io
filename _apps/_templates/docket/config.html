@@ -31,7 +31,7 @@
           <div class="row">
             {{!-- Database Sheet and Default View --}}
             
-            <div class="form-group col-12 col-lg-8 col-xl-9">
+            <div class="form-group col-12 col-lg-6 col-xl-7">
               <label for="{{id}}_data">Default Database Sheet</label>
               <div class="input-group">
                 <input type="text" id="{{id}}_data" name="data" class="form-control"
@@ -44,14 +44,20 @@
               <small class="form-text text-muted">Google Drive File ID for your default database sheet.</small>
             </div>
 
-            <div class="form-group col-12 col-lg-4 col-xl-3">
+            <div class="form-group col-12 col-lg-3 col-xl-2">
               <label for="{{id}}_view">Default View</label>
               <select id="{{id}}_view" name="view" class="custom-select">
                 <option value="daily"{{#is state.view "daily"}} selected{{/is}}>Daily</option>      
                 <option value="weekly"{{#if state.view}}{{#is state.view "weekly"}} selected{{/is}}{{else}} selected{{/if}}>Weekly</option>
                 <option value="monthly"{{#is state.view "monthly"}} selected{{/is}}>Monthly</option>
               </select>
-              <small class="form-text text-muted">Initial view on App load.</small>
+              <small class="form-text text-muted">Initial loaded view.</small>
+            </div>
+            
+             <div class="form-group col-12 col-lg-3 col-xl-3">
+              <label for="{{id}}_refresh">Refresh</label>
+              <input type="number" id="{{id}}_refresh" name="refresh" class="form-control optional" min="0" max="60" step="5"{{#exists state.refresh}} value="{{state.refresh}}"{{/exists}} />
+              <small class="form-text text-muted">Update every N mins (blank = default, 0 = disabled).</small>
             </div>
 
           </div>

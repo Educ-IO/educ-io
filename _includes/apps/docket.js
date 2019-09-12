@@ -148,6 +148,7 @@ App = function() {
           classes: ರ‿ರ.config.classes,
           past: ರ‿ರ.config.past,
           future: ರ‿ರ.config.future,
+          refresh: ರ‿ರ.config.refresh === false ? 0 : ರ‿ರ.config.refresh
         }
       }),
     
@@ -167,6 +168,50 @@ App = function() {
       });
       FN.config.label(_field);
     },
+    
+    process: values => {
+      
+      var _config = {};
+
+      /* <!-- Comparison Sets --> */
+      _.each(["data", "view"], prop => {
+        if (values[prop] && ರ‿ರ.config[prop] != values[prop].Value)
+        _config[prop] = values[prop].Value;
+      });
+
+      /* <!-- Array Sets (override) --> */
+      _.each(["calendars", "classes"], prop => {
+        values[prop] && (
+          (_.isArray(values[prop].Values) && values[prop].Values.length > 0) ||
+          (_.isObject(values[prop].Values) && values[prop].Values.id)) ?
+          _config[prop] = _.isArray(values[prop].Values) ? 
+            values[prop].Values : [values[prop].Values] :
+          delete ರ‿ರ.config[prop];
+      });
+
+      /* <!-- Complex Sets --> */
+      _.each(["zombie", "ghost", "refresh"], prop => {
+        values[prop] === undefined ?
+          delete ರ‿ರ.config[prop] :
+          values[prop].Value <= 0 ? 
+            _config[prop] = false :
+            values[prop] ? 
+              _config[prop] = values[prop].Value :
+              delete ರ‿ರ.config[prop];
+      });
+
+      /* <!-- Simple Sets --> */
+      _.each(["past", "future"], prop => {
+        values[prop] === undefined ?
+          delete ರ‿ರ.config[prop] :
+          values[prop] && values[prop].Value >= 0 ? 
+              _config[prop] = values[prop].Value :
+              delete ರ‿ರ.config[prop];
+      });
+                      
+      return _config;
+      
+    }
     
   };
   /* <-- Config Functions --> */
@@ -386,6 +431,9 @@ App = function() {
       /* <-- Set Name from Config (if available, and also if supplied config is not the same as default config) --> */
       config.name && (!ರ‿ರ.config || config.data != ರ‿ರ.config.data) ? ರ‿ರ.name = config.name : delete ರ‿ರ.name;
 
+      /* <-- Set Refresh Timer Period --> */
+      config.refresh !== false ? FN.background.start(config, config.refresh || 15) : false;
+      
       /* <-- Open and render data --> */
       return FN.action.load(config, true);
 
@@ -511,6 +559,39 @@ App = function() {
 
   };
   /* <-- Open Functions --> */
+      
+      
+  /* <-- Background | Refresh Functions --> */
+  FN.background = {
+    
+    start: (config, interval) => {
+      
+      /* <-- Close function will terminate previous timeout function (also used with Router State clearing) --> */
+      if (ರ‿ರ.background && ರ‿ರ.background.close) ರ‿ರ.background.close();
+      
+      var _refresh = () => {
+        /* <-- Check if modal or editing UI is visible before proceeding --> */
+        if ($("div.item div.edit:visible, div.modal.show:visible, .drop-target:visible").length === 0) {
+          ಠ_ಠ.Flags.log("Underlying Data Change Detected: RELOADING");
+          /* <-- TODO: Rather brute force! Should update DB silently if change is not on current view... --> */
+          FN.action.refresh();
+        } else {
+          ಠ_ಠ.Flags.log("Underlying Data Change Detected: NOT RELOADING (UI Blocking)");
+        } 
+      }, _run = () => {
+        ರ‿ರ.database.mismatch().then(result => result ? _refresh() : false);
+        ರ‿ರ.background.id = setTimeout(_run, interval * 60 * 1000);
+      };
+      
+      ರ‿ರ.background = {
+        id: setTimeout(_run, interval * 60 * 1000),
+        close: () => clearTimeout(ರ‿ರ.background.id),
+      };
+      
+    },
+    
+  };
+  /* <-- Refresh Functions --> */
   
   
   /* <!-- Internal Functions --> */
@@ -587,6 +668,10 @@ App = function() {
             match: /PROJECT/i,
             show: "PROJECT_INSTRUCTIONS",
             title: "Managing Project Tags ..."
+          },{
+            match: /LINKS/i,
+            show: "LINK_INSTRUCTIONS",
+            title: "Linking to a Database ..."
           }
         ],
         routes: {
@@ -820,52 +905,12 @@ App = function() {
                   ಠ_ಠ.Display.state().enter(STATE_PREFERENCES);
                   return FN.config.edit().then(values => {
                     ಠ_ಠ.Display.state().exit(STATE_PREFERENCES);
-                    if (values !== undefined) {
-                      var _config = {};
-                        
-                      /* <!-- Comparison Sets --> */
-                      _.each(["data", "view"], prop => {
-                        if (values[prop] && ರ‿ರ.config[prop] != values[prop].Value)
-                        _config[prop] = values[prop].Value;
-                      });
-                      
-                      /* <!-- Array Sets (override) --> */
-                      _.each(["calendars", "classes"], prop => {
-                        values[prop] && (
-                          (_.isArray(values[prop].Values) && values[prop].Values.length > 0) ||
-                          (_.isObject(values[prop].Values) && values[prop].Values.id)) ?
-                          _config[prop] = _.isArray(values[prop].Values) ? 
-                            values[prop].Values : [values[prop].Values] :
-                          delete ರ‿ರ.config[prop];
-                      });
-                      
-                      /* <!-- Complex Sets --> */
-                      _.each(["zombie", "ghost"], prop => {
-                        values[prop] === undefined ?
-                          delete ರ‿ರ.config[prop] :
-                          values[prop].Value <= 0 ? 
-                            _config[prop] = false :
-                            values[prop] ? 
-                              _config[prop] = values[prop].Value :
-                              delete ರ‿ರ.config[prop];
-                      });
-                      
-                      /* <!-- Simple Sets --> */
-                      _.each(["past", "future"], prop => {
-                        values[prop] === undefined ?
-                          delete ರ‿ರ.config[prop] :
-                          values[prop] && values[prop].Value >= 0 ? 
-                              _config[prop] = values[prop].Value :
-                              delete ರ‿ರ.config[prop];
-                      });
-                      
-                      return FN.config.update(ರ‿ರ.id, _config)
+                    return values !== undefined ? FN.config.update(ರ‿ರ.id, FN.config.process(values))
                         .then(ಠ_ಠ.Main.busy("Saving Config"))
                         .then(() => FN.config.get()
                           .then(ಠ_ಠ.Main.busy("Loading Config"))
-                          .then(config => FN.action.start(config)));
+                          .then(config => FN.action.start(config))) : false;
                       
-                    }
                   });
                 }
               },
@@ -1017,6 +1062,7 @@ App = function() {
       /* <!-- Setup Today | Override every 15mins --> */
       var _today = () => {
         ರ‿ರ.today = ಠ_ಠ.Dates.now().startOf("day").toDate();
+        ಠ_ಠ.Flags.log("Setting Today to:", ರ‿ರ.today);
         _.delay(_today, 900000);
       };
       _today();

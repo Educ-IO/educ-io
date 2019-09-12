@@ -1,4 +1,5 @@
 {% raw %}
+{{~#if name}}{{> name }}{{/if~}}
 <div {{#if id}}id="{{id}}" {{/if}}class="items-holder border-exagerate container-fluid pt-lg-1 mvh-100">
   <div class="row m-0 pt-2">
     {{#each status}}

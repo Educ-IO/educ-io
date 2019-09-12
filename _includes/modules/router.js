@@ -180,6 +180,7 @@ Router = function() {
         name : App Name (for Titles)
         start : Function to execute once entered (after login)
         simple : Bypass authenticated readme (if false passed to recent). Calling App should handle default authentication event via the start method above.
+        state : State Object to be cleared on log out / router exit 
         states : Potential States that should be cleared on exit (e.g. opened),
         test : Tests whether app has been used (for cleaning purposes)
         clear : Function to execute once exited / cleared (after logout)

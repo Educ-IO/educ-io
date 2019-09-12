@@ -19,6 +19,7 @@ Flags = function() {
     _highlight = false,
     _key = false,
     _oauth = false,
+    _initial = false,
     _performance = false,
     _base, _dir,
     _default = v => v,
@@ -53,6 +54,8 @@ Flags = function() {
     _key = (_url.param("key") || _url.fparam("key"));
 
     _oauth = (_url.param("oauth") || _url.fparam("oauth"));
+    
+    _initial = (_url.param("i") || _url.fparam("i"));
 
     _option = (_url.param("option") === "" || _url.fparam("option") === "");
 
@@ -172,6 +175,10 @@ Flags = function() {
 
           key: function() {
             return _key;
+          },
+          
+          initial: function() {
+            return _initial;
           },
 
           highlight: function() {

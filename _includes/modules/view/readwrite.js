@@ -455,7 +455,7 @@ ReadWrite = (ಠ_ಠ, sheet) => {
               _total = _tabs.length;
 
             _tabs.each((i, el) => {
-              var _name = $(el).data("name");
+              var _name = String($(el).data("name"));
               var _get = !_tables[_name] ?
                 new Promise(resolve =>
                   ಠ_ಠ.Google.sheets.values(_id, _name + "!A:ZZ").then(data => resolve(data.values))) :

@@ -382,6 +382,8 @@ SaaD = (options, factory) => {
         .then(results => {
           if (results && results.replies) _.each(_batches, (batch, index) =>
             batch.row.__ID = results.replies[index].createDeveloperMetadata.developerMetadata.metadataId);
+          /* <!-- Increment Version Counter --> */
+          ರ‿ರ.data.version += 1;
           return _rows;
         }) : Promise.resolve(_rows);
 
@@ -531,7 +533,7 @@ SaaD = (options, factory) => {
             return Promise.all([factory.Google.files.get(id, true), 
                                 value.values ? FN.populate.rows(value.values, metadata.matchedDeveloperMetadata, ingest, hash) : Promise.resolve([])])
               .then(values => {
-                ರ‿ರ.data.version = values[0].version;
+                ರ‿ರ.data.version = parseInt(values[0].version, 10);
                 factory.Flags.log("Data Values:", values[1]);
                 return (ರ‿ರ.data.data = values[1]);
               });
@@ -554,6 +556,17 @@ SaaD = (options, factory) => {
         });
     },
 
+    mismatch: () => factory.Google.files.get(ರ‿ರ.data.spreadsheet, true)
+              .then(file => ({
+                version: parseInt(file.version, 10),
+                modified: file.modifiedTime !== file.modifiedByMeTime,
+              }))
+              .then(meta => meta.version > ರ‿ರ.data.version || meta.modified ? 
+                    true : (() => {
+                      ರ‿ರ.data.version = meta.version;
+                      return false;
+                    })()),
+    
     close: () => {
       ರ‿ರ.data ? DB.removeCollection(options.db.name(ರ‿ರ.data.spreadsheet)) : false;
       ರ‿ರ = {};
@@ -618,6 +631,9 @@ SaaD = (options, factory) => {
 
           if (results && results.replies) {
 
+            /* <!-- Increment Version Counter --> */
+            ರ‿ರ.data.version += 1;
+            
             _.each(items, (item, index) => {
               var _index = (index * 2) + 1;
               if (results.replies.length > _index) {
@@ -660,11 +676,17 @@ SaaD = (options, factory) => {
             null, ರ‿ರ.data.sheet),
           commit = () => (id ? metadata() : range())
           .then(() => {
+            
+            /* <!-- Increment Version Counter --> */
+            ರ‿ರ.data.version += 1;
+            
             _.each(items, item => {
               item.__HASH = FN.utilities.hash(item);
               ರ‿ರ.db.update(item);
             });
+            
             return !array && items.length == 1 ? items[0] : items;
+            
           });
 
       return check || options.options.check ? FN.rows.check(items, id).then(commit) : commit();
@@ -691,6 +713,10 @@ SaaD = (options, factory) => {
           /* <!-- REVERSE Order: Delete from end to start --> */
           commit = () => (id ? metadata() : range())
           .then(() => {
+            
+            /* <!-- Increment Version Counter --> */
+            ರ‿ರ.data.version += 1;
+            
             ರ‿ರ.data.last -= items.length; /* <!-- Reduce the last row to account for removals --> */
             _.each(items, item => {
 
@@ -754,6 +780,8 @@ SaaD = (options, factory) => {
     open: FN.sheet.open,
 
     close: FN.sheet.close,
+    
+    check: FN.sheet.check,
 
     insert: FN.rows.insert,
 
@@ -763,6 +791,8 @@ SaaD = (options, factory) => {
     
     process: FN.post.process,
 
+    mismatch: FN.sheet.mismatch,
+    
     regexes: {
 
       EXTRACT_ALLDAY: EXTRACT_ALLDAY,

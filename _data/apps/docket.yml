@@ -176,6 +176,7 @@ docs:
   - docket/KANBAN_INSTRUCTIONS
   - docket/ANALYSIS_INSTRUCTIONS
   - docket/PROJECT_INSTRUCTIONS
+  - docket/LINK_INSTRUCTIONS
   - docket/FAILED_CREATE
   - docket/FAILED_DELETE
   - docket/FAILED_SAVE

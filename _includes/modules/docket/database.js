@@ -130,6 +130,10 @@ Database = (options, factory) => {
     
     hash: database.hash,
     
+    mismatch: database.mismatch,
+    
+    version: () => database.state.data.version,
+    
     items: {
     
       insert: database.insert,

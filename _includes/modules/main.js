@@ -220,8 +220,8 @@ Main = function() {
     /* <!-- Route Start --> */
     if (start) start();
 
-    /* <!-- Call Router Initially (if required) --> */
-    Promise.resolve(window.location.hash ? router() : null)
+    /* <!-- Call Router Initially (if required) | Default Hash = #! --> */
+    Promise.resolve(ಠ_ಠ.Flags && ಠ_ಠ.Flags.initial() ? ಠ_ಠ.Flags.route(ಠ_ಠ.Flags.initial(), _route) : window.location.hash ? router() : null)
       /* <!-- Module Finally | After all initial routes --> */
       .then(() => _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m].finally) ? 
                                    ಠ_ಠ[m].finally.call(ಠ_ಠ) : false));

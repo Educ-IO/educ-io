@@ -109,7 +109,7 @@ Google_API = (options, factory) => {
   const APP_DATA = "appDataFolder";
 
   const SKELETON = "id,name,size,parents,mimeType";
-  const FIELDS = `kind,${SKELETON},description,version,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId,driveId,ownedByMe,capabilities,isAppAuthorized`;
+  const FIELDS = `kind,${SKELETON},description,version,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,modifiedTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId,driveId,ownedByMe,capabilities,isAppAuthorized`;
   const FULL = `${FIELDS},createdTime,modifiedTime,sharingUser,owners`;
 
   const EVENTS = {

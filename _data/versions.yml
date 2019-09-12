@@ -1,4 +1,8 @@
 site :
+  0.1.6d :
+    name : Docket v1.0.3
+    desc : Updated Permalinks for opening shared DBs
+    numeric : 0.1.6.4
   0.1.6c :
     name : Docket v1.0.2
     desc : New View for Multiple DBs
@@ -948,6 +952,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  1.0.3 :
+    name : Updated Entry Links
+    desc : Updated Permalinks for opening shared DBs
+    type : minor
   1.0.2 :
     name : New Multi-DB View
     desc : Tasks Queue for Multiple Task Databases

@@ -40,9 +40,10 @@ Views = (options, factory) => {
   /* <!-- Internal Functions --> */
   FN.helpers = {
     
-    owner: file => file.ownedByMe ? "Me" : file.owners && file.owners.length > 0 ?
-      `${file.owners[0].displayName}${file.owners[0].emailAddress ? ` (${file.owners[0].emailAddress})` : EMPTY}` : "Shared Drive",
+    owner: file => file.ownedByMe ? "Me" : file.owners && file.owners.length > 0 ? file.owners[0].displayName : "Shared Drive",
 
+    email: file => file.owners && file.owners.length > 0 && file.owners[0].emailAddress ? file.owners[0].emailAddress : EMPTY,
+    
     command: file => `google,load.${file.id}`,
     
     url: file => `${factory.Flags.full()}${factory.Flags.dir()}/#${FN.helpers.command(file)}`,
@@ -256,6 +257,7 @@ Views = (options, factory) => {
           _analysis = factory.Display.template.show({
             template: "analysis",
             id: "analysis",
+            name: options.state.session.name,
             title: "Stats",
             projects: _summary.projects,
             tags: _summary.tags,
@@ -446,6 +448,7 @@ Views = (options, factory) => {
       options.functions.tasks.hookup(factory.Display.template.show({
         template: "kanban",
         id: "kanban",
+        name: options.state.session.name,
         sizes: {
           lg: 12 / (_status.length - 1),
         },
@@ -467,6 +470,7 @@ Views = (options, factory) => {
         _decode = permissions => (file, index) => _.extend(file, {
             load: `${FN.helpers.command(file)}.kanban`,
             owner: FN.helpers.owner(file),
+            owner_details: FN.helpers.email(file),
             createdDate: factory.Dates.parse(file.createdTime),
             modifiedDate: factory.Dates.parse(file.modifiedTime),
             modifiedByMeDate: factory.Dates.parse(file.modifiedByMeTime),
