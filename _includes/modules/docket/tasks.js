@@ -115,7 +115,7 @@ Tasks = (options, factory) => {
       
       /* <-- Get the relevant date/status for item --> */
       var _date = (item.IS_TIMED || item.IN_FUTURE ? item.FROM : factory.Dates.now()).toISOString(true).split("T")[0],
-          _status = item.STATUS, _holder = $(`div[data-date='${_date}'], div[data-status='${_status}']`);
+          _status = item.STATUS, _holder = $(`div[data-date='${_date}'], div[data-status='${_status ? _status : item.IS_TIMED ? "NONE" : ""}']`);
       
       var _place = holder => {
         
@@ -252,6 +252,7 @@ Tasks = (options, factory) => {
           id: "delete_Item",
           target: factory.container,
           message: `Please confirm that you wish to delete this item: ${(item = item || FN.items.get(target)).DISPLAY}`,
+          enter: true,
           action: "Delete"
         })
         .then(confirm => confirm ? options.state.session.database.items.delete(item)

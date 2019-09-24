@@ -177,6 +177,16 @@ Display = function() {
     _routes(_visuals(value).find("a[data-route], button[data-route], input[data-route]"));
     return value;
   };
+  
+  var _keys = (options, dialog) => {
+    /* <!-- Handle Enter Key (if simple) --> */
+    if (options.enter) dialog.keypress(e => {
+      if (e.which == 13) {
+        e.preventDefault();
+        dialog.find(".modal-footer button.btn-primary").click();
+      }
+    });
+  };
 
   var _clean = () => $("div.modal-backdrop.show").last().remove() && 
       $("body.modal-open").removeClass("modal-open"); /* <!-- Weird Modal Not Hiding Bug --> */
@@ -746,6 +756,9 @@ Display = function() {
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
         dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
         
+        /* <!-- Handle Enter Key (if simple) --> */
+        _keys(options, dialog);
+        
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
 
@@ -772,6 +785,9 @@ Display = function() {
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
         dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
 
+        /* <!-- Handle Enter Key (if simple) --> */
+        _keys(options, dialog);
+        
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
 
@@ -829,12 +845,7 @@ Display = function() {
             });
             
             /* <!-- Handle Enter Key (if simple) --> */
-            if (options.enter) dialog.keypress(e => {
-              if (e.which == 13) {
-                e.preventDefault();
-                dialog.find(".modal-footer button.btn-primary").click();
-              }
-            });
+            _keys(options, dialog);
 
           }
 

@@ -1,4 +1,8 @@
 site :
+  0.1.6e :
+    name : Docket v1.0.4
+    desc : New Shortcut in Kanban View
+    numeric : 0.1.6.5
   0.1.6d :
     name : Docket v1.0.3
     desc : Updated Permalinks for opening shared DBs
@@ -952,6 +956,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  1.0.4 :
+    name : New Shortcut in Kanban View
+    desc : Create Items directly in Kanban View
+    type : minor
   1.0.3 :
     name : Updated Entry Links
     desc : Updated Permalinks for opening shared DBs

@@ -1003,7 +1003,7 @@ App = function() {
 
           new: {
             matches: /NEW/i,
-            state: DIARIES,
+            state: [STATE_KANBAN].concat(DIARIES),
             routes: {
               task: {
                 matches: /TASK/i,

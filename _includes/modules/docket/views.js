@@ -7,6 +7,12 @@ Views = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const ACTIONS = {
+    CATEGORISED : {
+      action: "new.task",
+      icon: "add",
+      class: "btn-dark"
+    },
+    TEMPORAL : {
       list: [{
         action: "new.task",
         icon: "add",
@@ -27,7 +33,9 @@ Views = (options, factory) => {
         class: "btn-info"
       }],
       icon: "edit"
-    }, EMPTY = "", FN = {};
+    },
+    
+  }, EMPTY = "", FN = {};
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -104,7 +112,7 @@ Views = (options, factory) => {
           tasks: _data.tasks,
           events: _data.events,
           extras: _data.extras,
-          action: ACTIONS,
+          action: ACTIONS.TEMPORAL,
           target: factory.container,
           clear: true,
         }));
@@ -180,7 +188,7 @@ Views = (options, factory) => {
         name: options.state.session.name,
         icon: options.icon,
         days: _days,
-        action: ACTIONS,
+        action: ACTIONS.TEMPORAL,
         target: factory.container,
         clear: true,
       }));
@@ -242,7 +250,7 @@ Views = (options, factory) => {
         title: _end.format("MMM"),
         year: _end.format("YYYY"),
         days: _days,
-        action: ACTIONS,
+        action: ACTIONS.TEMPORAL,
         target: factory.container,
         clear: true,
       }));
@@ -453,6 +461,7 @@ Views = (options, factory) => {
           lg: 12 / (_status.length - 1),
         },
         status: _status,
+        action: ACTIONS.CATEGORISED,
         target: factory.container,
         clear: true,
       }));

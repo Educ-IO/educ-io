@@ -349,7 +349,7 @@ SaaD = function() {
         expect(database)
           .to.be.an("object")
           .and.to.have.property("name")
-          .and.to.eql(schema.db.name);
+          .and.to.eql(schema.db.name());
 
         expect(database.data)
           .to.have.lengthOf(0);
