@@ -267,9 +267,11 @@ Google_API = (options, factory) => {
             /* <!-- TODO: TeamDrive Items picked from Recent don't have teamDriveId ... --> */
             var _files = data[RESPONSE.DOCUMENTS];
             multiple ?
-              (get ? Promise.all(_.map(_files, file => _get(file.id, file.teamDriveId))) :
+              (get ? Promise.all(_.map(_files, file => _get(file.id, data.viewToken[0] == "recently-picked" && !file.teamDriveId ? 
+                                                            file.parentId : file.teamDriveId))) :
                 Promise.resolve(_files)).then(files => callback(files, context)) :
-              (get ? _get(_files[0].id, _files[0].teamDriveId) : Promise.resolve(_files[0]))
+              (get ? _get(_files[0].id, data.viewToken[0] == "recently-picked" && !_files[0].teamDriveId ?
+                          _files[0].parentId : _files[0].teamDriveId) : Promise.resolve(_files[0]))
               .then(file => callback(file, context));
           } else if (data[RESPONSE.ACTION] == ACTION.CANCEL) {
             callback(false, context);

@@ -18,17 +18,18 @@ App = function() {
     STATE_KANBAN = "kanban",
     STATE_ANALYSIS = "analysis",
     STATE_QUEUE = "queue",
+    STATE_PROJECTS = "projects",
     STATE_CALENDARS = "calendars",
     STATE_CLASSES = "classes",
     STATE_PREFERENCES = "preferences",
     STATES = [STATE_READY, STATE_CONFIG, STATE_OPENED, STATE_DEFAULT, STATE_LOADED,
       STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY,
-      STATE_KANBAN, STATE_ANALYSIS, STATE_QUEUE, STATE_CALENDARS, STATE_CLASSES,
-      STATE_PREFERENCES
+      STATE_KANBAN, STATE_ANALYSIS, STATE_QUEUE, STATE_PROJECTS,
+      STATE_CALENDARS, STATE_CLASSES, STATE_PREFERENCES
     ],
     SOURCE = [STATE_DEFAULT, STATE_LOADED],
     DIARIES = [STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY],
-    DISPLAY = [STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY, STATE_KANBAN, STATE_ANALYSIS, STATE_QUEUE];
+    DISPLAY = [STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY, STATE_KANBAN, STATE_ANALYSIS, STATE_QUEUE, STATE_PROJECTS];
   /* <!-- State Constants --> */
   
   /* <!-- Scope Constants --> */
@@ -826,12 +827,18 @@ App = function() {
                   .then(ಠ_ಠ.Main.busy("Loading View"))
                   .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_KANBAN))
               },
-              precis: {
+              queue: {
                 matches: /QUEUE/i,
                 keys: ["q", "Q"],
                 fn: () => FN.views.queue(FN.display.cleanup())
                   .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_QUEUE))
-              }
+              },
+              projects: {
+                matches: /PROJECTS/i,
+                keys: ["p", "P"],
+                fn: () => FN.views.projects(FN.display.cleanup())
+                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_PROJECTS))
+              },
             }
           },
 
@@ -900,7 +907,7 @@ App = function() {
               
               edit: {
                 matches: /EDIT/i,
-                keys: ["p", "P"],
+                keys: ["e", "E"],
                 fn: () => {
                   ಠ_ಠ.Display.state().enter(STATE_PREFERENCES);
                   return FN.config.edit().then(values => {
@@ -1003,7 +1010,7 @@ App = function() {
 
           new: {
             matches: /NEW/i,
-            state: [STATE_KANBAN].concat(DIARIES),
+            state: [STATE_KANBAN, STATE_PROJECTS].concat(DIARIES),
             routes: {
               task: {
                 matches: /TASK/i,

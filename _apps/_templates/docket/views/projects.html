@@ -1,0 +1,16 @@
+{% raw %}
+{{~#if name}}{{> name }}{{/if~}}
+<div {{#if id}}id="{{id}}" {{/if}}class="items-holder border-exagerate container-fluid pt-lg-1 mvh-100">
+  {{~#if title}}<div class="row d-flex align-items-center">
+    <h4 class="display-4 col-12 mb-lg-0 d-flex flex-column flex-md-row">
+      <span class="text-muted font-weight-bold">{{title}}</span>{{~#if subtitle}}<span class="ml-2">{{subtitle}}</span>{{/if~}}
+    </h4>
+  </div>{{/if~}}
+  <div class="row m-0 pt-2">
+    <div class="container-fluid w-100 h-100">
+      {{#each projects}}{{> project}}{{/each}}  
+    </div>
+  </div>
+</div>
+{{#if action}}{{> action id=id action=action}}{{/if}}
+{% endraw %}

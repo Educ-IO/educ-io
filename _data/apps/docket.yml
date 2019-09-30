@@ -18,6 +18,11 @@ learn: /guides/docket
 css:
   primary:
   secondary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/toasts
+    - bootstrap/progress
     - material/menu
     - material/general
     - custom/mixins/transitions
@@ -136,6 +141,7 @@ templates:
   - docket/views/kanban
   - docket/views/analysis
   - docket/views/queue
+  - docket/views/projects
   - docket/dialogs/new
   - docket/dialogs/archive
   - docket/dialogs/tag
@@ -146,6 +152,7 @@ templates:
   - docket/queue/file
   - docket/queue/permission
   - docket/queue/tasks
+  - docket/projects/project
   - docket/visualisation/time_series
   - docket/config/calendar
   - docket/config/class
@@ -174,6 +181,7 @@ docs:
   - docket/VIEW_INSTRUCTIONS
   - docket/MOVE_INSTRUCTIONS
   - docket/KANBAN_INSTRUCTIONS
+  - docket/PROJECTS_INSTRUCTIONS
   - docket/ANALYSIS_INSTRUCTIONS
   - docket/PROJECT_INSTRUCTIONS
   - docket/LINK_INSTRUCTIONS
@@ -304,6 +312,12 @@ menus:
               - analysis
             imports:
               - d3
+          - name: Projects
+            desc: Display Projects Overview
+            shortcut: "p"
+            hash: display.projects
+            toggle:
+              - projects
           - name: Queue
             desc: Display Task Queue from all your Docket Databases
             shortcut: "q"
@@ -434,7 +448,7 @@ menus:
             
           - name: Preferences
             desc: Edit App Config
-            shortcut: "p"
+            shortcut: "e"
             hash: config.edit
             disabled_until:
               - config

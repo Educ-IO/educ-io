@@ -1,0 +1,69 @@
+{% raw %}
+<div data-project="{{name}}" class="row align-items-center py-2 border-bottom{{#if data}}{{#is count data.statuses.COMPLETE}} bg-light{{/is}}{{/if}}">
+  
+  {{!-- Project Details --}}
+  <div class="col-12 col-xl-4 d-flex flex-row align-items-center">
+    
+    <div class="container-fluid p-0 mb-1 mb-xl-0">
+      
+      <div class="row">
+        
+        {{!-- Actions and Name --}}
+        <div class="col-12 col-md-6 d-flex flex-row align-items-center border-md-right border-secondary">
+          
+          {{~#if data}}{{#is count data.statuses.COMPLETE}}<div class="d-inline-flex mr-1"><i class="material-icons md-24 mr-1 text-light bg-success p-1 rounded" data-toggle="tooltip" data-html="true" title="All Project Tasks <strong>Complete</strong>">done_outline</i></div>{{/is}}{{/if~}}
+          <span class="display-6">{{name}}</span>
+          
+        </div>
+
+        {{!-- Overall Status /Counts --}}
+        {{~#if data}}{{#with data}}<div class="col-12 col-md-6 d-flex flex-row align-items-center border-md-right{{#is ../count statuses.COMPLETE}} o-50{{/is}}">
+
+          <div>
+            <i class="material-icons md-24 mr-2 text-light bg-dark p-1 rounded">{{#if durations._milliseconds}}timelapse{{else}}timeline{{/if}}</i>
+          </div>
+
+          <div class="d-flex flex-column justify-content-start">
+            <div class="d-flex flex-row align-items-center text-break small my-1">
+              <span class="mr-1 font-weight-normal bg-info p-1 text-light">Tasks:</span>
+              <span class="font-weight-bold bg-secondary text-light p-1">{{../count}}</span>
+            </div>
+            {{#each statuses}}{{~#if this}}{{#unless (any (is @key 'ZOMBIES') (is @key 'GHOSTS'))}}<div class="small my-1">
+              <span class="font-weight-{{#is @key 'COMPLETE'}}normal bg-success text-light p-1{{else}}light text-secondary{{/is}}">{{@key}}:</span>
+              <span class="font-weight-bold{{#is @key 'COMPLETE'}} bg-dark text-light p-1{{/is}}">{{this}}</span>
+            </div>{{/unless}}{{/if}}{{/each}}
+            {{#if durations._milliseconds}}<div class="d-flex flex-row align-items-center text-break" data-toggle="tooltip" title="{{string durations}}">
+              <span class="mr-1 font-weight-light">Overall:</span><span class="font-weight-bold text-primary pr-1">{{humanize durations}}</span>
+            </div>{{/if}}
+          </div>
+
+        </div>{{/with}}{{/if~}} 
+        
+      </div>
+    
+    </div>
+  
+  </div>
+  
+  {{!-- Overview --}}
+  <div class="col-12 col-xl-8 d-flex flex-row justify-content-center align-items-center align-items-stretch overview{{#if data}}{{#is count data.statuses.COMPLETE}} o-25{{/is}}{{/if}}">
+  
+    {{!-- Overall Status /Counts --}}
+    {{~#if data}}{{#with data}}<div class="progress w-100">
+      {{~#if percentages.COMPLETE}}<div class="progress-bar{{#unless (is ../count statuses.COMPLETE)}} progress-bar-striped{{/unless}} bg-{{#is percentages.COMPLETE 100}}success{{else}}warning{{/is}}" role="progressbar" style="width: {{percentages.COMPLETE}}%" aria-valuenow="{{percentages.COMPLETE}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-offset="10" data-html="true" title="{{statuses.COMPLETE}} <strong>Completed</strong> Task{{#is statuses.COMPLETE 'gt' 1}}s{{/is}}"></div>{{/if~}}
+      {{~#if percentages.[IN PROGRESS]}}<div class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width: {{percentages.[IN PROGRESS]}}%" aria-valuenow="{{percentages.[IN PROGRESS]}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-html="true" title="{{statuses.[IN PROGRESS]}} Task{{#is statuses.[IN PROGRESS] 'gt' 1}}s{{/is}} in <strong>Progress</strong>"></div>{{/if~}}
+      {{~#if percentages.READY}}<div class="progress-bar progress-bar-striped bg-dark" role="progressbar" style="width: {{percentages.READY}}%" aria-valuenow="{{percentages.READY}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-html="true" title="{{statuses.READY}} Task{{#is statuses.READY 'gt' 1}}s{{/is}} <strong>Ready</strong> to work on"></div>{{/if~}}
+      {{~#if percentages.INACTIVE}}<div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{percentages.INACTIVE}}%" aria-valuenow="{{percentages.INACTIVE}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-html="true" title="{{statuses.INACTIVE}} <strong>Inactive</strong> Task{{#is statuses.INACTIVE 'gt' 1}}s{{/is}}"></div>{{/if~}}
+    </div>{{/with}}{{/if~}}
+    
+  </div>
+  
+  {{!-- Description --}}
+  {{~#if description}}<div class="col-12 d-flex flex-row align-items-center">
+    <div class="mt-2 ml-1">
+      <span class="text-secondary small">{{description}}</span>
+    </div>
+  </div>{{/if~}}
+    
+</div>
+{% endraw %}

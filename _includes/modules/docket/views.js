@@ -411,7 +411,8 @@ Views = (options, factory) => {
             options.state.application.query.status(options.state.application.query.incomplete(), _until),
             options.state.application.query.completed(_from, _until)
           ],
-          _data = _.map(_queries, q => options.state.application.task.prepare(options.state.session.db ? _.reject(options.state.session.database.execute(q), "IS_TIMED") : []));
+          _data = _.map(_queries, q => options.state.application.task.prepare(options.state.session.db ?
+                                                                              _.reject(options.state.session.database.execute(q), "IS_TIMED") : []));
     
       var _status = [{
         header: "dark",
@@ -524,6 +525,36 @@ Views = (options, factory) => {
       });
     
   };
+  
+  FN.projects = () => new Promise(resolve => {
+    
+    factory.Flags.log("Entering Projects View");
+    
+    var _summary = options.state.application.analysis.summary(null, options.state.session.db),
+        _analysis = _.map(_summary.projects, project => _.extend(
+                      {
+                        data: options.state.application.analysis.series(false, project.name, null, null, null, options.state.session.db)
+                      }, project));
+    
+    factory.Display.template.show({
+      template: "projects",
+      id: "projects",
+      name: options.state.session.name,
+      title: "Projects",
+      subtitle: "Overview",
+      projects: _analysis,
+      action: ACTIONS.CATEGORISED,
+      target: factory.container,
+      clear: true,
+    });
+    
+    factory.Flags.log("Existing Projects", _summary.projects);
+    
+    factory.Flags.log("Existing Project Analysis", _analysis);
+    
+    resolve(true);
+    
+  });
   /* <!-- Internal Functions --> */
 
   /* <!-- Initial Calls --> */
@@ -542,6 +573,8 @@ Views = (options, factory) => {
     kanban : FN.kanban,
     
     queue : FN.queue,
+    
+    projects : FN.projects
     
   };
   /* <!-- External Visibility --> */

@@ -1,4 +1,8 @@
 site :
+  0.1.6f :
+    name : Docket v1.0.5
+    desc : Bug Fixes and initial beta Project View
+    numeric : 0.1.6.6
   0.1.6e :
     name : Docket v1.0.4
     desc : New Shortcut in Kanban View
@@ -956,6 +960,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  1.0.5 :
+    name : New Project View
+    desc : Bug Fixes and initial beta Project View
+    type : minor
   1.0.4 :
     name : New Shortcut in Kanban View
     desc : Create Items directly in Kanban View

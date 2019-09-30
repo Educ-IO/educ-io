@@ -161,7 +161,7 @@ Analysis = (options, factory) => {
             /* <!-- Add Series Duration Counts --> */
             if (item[options.schema.columns.duration.value]) memo.series[series.name][series.value].counts.Duration += 1;
             
-            /* <!-- Add Series Tags|Badges Counts --> */
+            /* <!-- Add Series Tags | Badges Counts --> */
             if (item[options.schema.columns.badges.value]) _.each(_.reject(item[options.schema.columns.badges.value], badge => !badge), badge => {
               badge = (badge.indexOf("#") === 0 ? badge.substr(1) : badge).toUpperCase();
               
@@ -190,9 +190,9 @@ Analysis = (options, factory) => {
 
         /* <!-- Update Status Counts --> */
         if (item[options.schema.columns.status.value]) _count(memo.statuses, item[options.schema.columns.status.value].toUpperCase());
+        if (item[options.schema.columns.is_zombie.value] || item[options.schema.columns.is_ghost.value]) _count(memo.statuses, "INACTIVE");
         if (item[options.schema.columns.is_zombie.value]) _count(memo.statuses, "ZOMBIES");
         if (item[options.schema.columns.is_ghost.value]) _count(memo.statuses, "GHOSTS");
-        
         
         /* <!-- Update Type Count --> */
         if (item[options.schema.columns.type.value]) _count(memo.types, item[options.schema.columns.type.value].toUpperCase());
@@ -230,9 +230,12 @@ Analysis = (options, factory) => {
           all : [],
         },
         statuses : {
-          COMPLETE : null,
-          ZOMBIES : null,
-          GHOSTS : null
+          "COMPLETE" : null,
+          "IN PROGRESS" : null,
+          "READY" : null,
+          "ZOMBIES" : null,
+          "GHOSTS" : null,
+          "INACTIVE" : null
         },
         types : {},
         timed : 0,
@@ -242,6 +245,7 @@ Analysis = (options, factory) => {
       });
       
       _summary.data = _all;
+      _summary.percentages = _.mapObject(_summary.statuses, value => value ? Math.preciseRound(value / _summary.data.length, 2) * 100 : value);
       _summary.stats.average = _summary.stats.count ? Math.preciseRound(_summary.stats.total / _summary.stats.count, 2) : 0;
       _summary.stats.sd =  Math.preciseRound(_summary.stats.all.stdDev(), 1);
       
