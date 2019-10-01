@@ -273,8 +273,8 @@ App = function() {
       ಠ_ಠ.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {trigger: "hover"});
     }).then(() => list),
     
-    tagged: tag => tag.indexOf(ಱ.markers.project) === 0 ?
-      FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks for Project: ${tag.replace(ಱ.markers.project,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)) : 
+    tagged: (tag, all) => tag.indexOf(ಱ.markers.project) === 0 ?
+      FN.display.list(ರ‿ರ.database.tagged(tag, all), `Tasks for Project: ${tag.replace(ಱ.markers.project,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)) : 
         tag.indexOf(ಱ.markers.assignation) === 0 ? 
           FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks for: ${tag.replace(ಱ.markers.assignation,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)):
         FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks tagged with: ${tag}`),
@@ -375,7 +375,8 @@ App = function() {
                 past: ರ‿ರ.config.past,
                 future: ರ‿ರ.config.future,
               }, FN.display.cleanup()) : 
-              ಠ_ಠ.Display.state().in(STATE_QUEUE) ? FN.views.queue(FN.display.cleanup()) : false)
+              ಠ_ಠ.Display.state().in(STATE_QUEUE) ? FN.views.queue(FN.display.cleanup()) : 
+              ಠ_ಠ.Display.state().in(STATE_PROJECTS) ? FN.views.projects(FN.display.cleanup()) : false)
       .catch(e => ಠ_ಠ.Flags.error("Data Error", e ? e : "No Inner Error").negative()),
 
     jump: () => {
@@ -989,9 +990,14 @@ App = function() {
               tags: {
                 matches: /TAGS/i,
                 state: DISPLAY,
-                length: 1,
-                fn: command => FN.display.tagged(decodeURIComponent(command))
-                  .then(results => ಠ_ಠ.Flags.log(`Found Docket ${results.length} Item${results.length > 1 ? "s" : ""}`, results))
+                length: {
+                  min: 1,
+                  max: 2
+                },
+                fn: command => _.isArray(command) ?
+                  FN.display.tagged(decodeURIComponent(command[0]), command[1] && command[1].toLowerCase() === "true") :
+                  FN.display.tagged(decodeURIComponent(command))
+                    .then(results => ಠ_ಠ.Flags.log(`Found Docket ${results.length} Item${results.length > 1 ? "s" : ""}`, results))
               }
             }
           },

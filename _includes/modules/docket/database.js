@@ -99,7 +99,7 @@ Database = (options, factory) => {
         return totals;
       }, {}).pairs().sortBy(1).reverse().first(4).value(),
     
-    tagged: tag => FN.execute.query(options.query.tagged(tag)),
+    tagged: (tag, all) => FN.execute.query(all ? options.query.all_tagged(tag) : options.query.tagged(tag)),
     
     query: (date, current) => FN.execute.query(current ? 
                                 {"$or": [options.query.current(date), options.query.completed(date)]} :

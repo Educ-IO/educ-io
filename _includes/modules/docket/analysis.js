@@ -19,19 +19,22 @@ Analysis = (options, factory) => {
     var _complete = options.filter.complete(items),
         _timed = options.filter.timed(items),
         _future = options.filter.future(items),
-        _pending = options.filter.pending(items);
+        _pending = options.filter.pending(items),
+        _total = _complete.length - _timed.length,
+        _done = items.length - _future.length - _timed.length;
     
     var _analysis = {
       total: items.length,
       pending: _pending.length,
       complete: _complete.length,
-      percentage_complete: Math.round(_complete.length / (items.length - _future.length - _timed.length) * 100),
+      percentage_complete: Math.round((_total === 0 && _done === 0 ? 1 : _total / _done) * 100),
       percentage_all_complete: Math.round(_complete.length / items.length * 100),
       timed: _timed.length,
       future: _future.length,
     };
     
-    _analysis.percentage_colour = _analysis.percentage_complete >= 75 ? "success" : _analysis.percentage_complete >= 25 ? "warning" : "danger";
+    _analysis.percentage_colour = _analysis.percentage_complete >= 75 ? 
+      "success" : _analysis.percentage_complete >= 25 ? "warning" : "danger";
     
     if (detailed) {
       
@@ -128,7 +131,19 @@ Analysis = (options, factory) => {
                                item[options.schema.columns.from.value] : earliest,
                                         factory.Dates.now().startOf("day")),
           _latest = _.reduce(_all, (latest, item) => item[options.schema.columns.from.value] && item[options.schema.columns.from.value].isAfter(latest) ?
-                             item[options.schema.columns.from.value] : latest, _earliest);
+                             item[options.schema.columns.from.value] : latest, _earliest),
+          _complete_earliest = _.reduce(_all, (earliest, item) => item[options.schema.columns.done.value] ? 
+                                   !earliest || item[options.schema.columns.done.value].isBefore(earliest) ?
+                               item[options.schema.columns.done.value] : earliest : earliest, null),
+          _complete_latest = _.reduce(_all, (latest, item) => item[options.schema.columns.done.value] ? 
+                                   !latest || item[options.schema.columns.done.value].isAfter(latest) ?
+                               item[options.schema.columns.done.value] : latest : latest, null),
+          _due_earliest = _.reduce(_all, (earliest, item) => item[options.schema.columns.due.parsed] ? 
+                                   !earliest || item[options.schema.columns.due.parsed].isBefore(earliest) ?
+                               item[options.schema.columns.due.parsed] : earliest : earliest, null),
+          _due_latest = _.reduce(_all, (latest, item) => item[options.schema.columns.due.parsed] ? 
+                                   !latest || item[options.schema.columns.due.parsed].isAfter(latest) ?
+                               item[options.schema.columns.due.parsed] : latest : latest, null);
           
       var _count = (holder, name, count) => name ? holder[name] ? holder[name] += count || 1 : holder[name] = count || 1 : null;
                     
@@ -216,6 +231,18 @@ Analysis = (options, factory) => {
           earliest : _earliest,
           latest : _latest,
           range : factory.Dates.duration(_latest.diff(_earliest))
+        },
+        complete : {
+          earliest : _complete_earliest,
+          latest : _complete_latest,
+          range : _complete_earliest && _complete_latest ? factory.Dates.duration(_complete_latest.diff(_complete_earliest)) : null,
+          full_range : _complete_latest ? factory.Dates.duration(_complete_latest.diff(_earliest)) : null
+        },
+        due : {
+          earliest : _due_earliest,
+          latest : _due_latest,
+          range : _due_earliest && _due_latest ? factory.Dates.duration(_due_latest.diff(_due_earliest)) : null,
+          full_range : _due_latest ? factory.Dates.duration(_due_latest.diff(_earliest)) : null
         },
         series : {
           days : {},
