@@ -63,6 +63,77 @@ Analysis = (options, factory) => {
     return _analysis;
     
   };
+  
+  var _dates = items => {
+    
+    var today = factory.Dates.now().startOf("day"),
+        data = _.reduce(items, (memo, item) => {
+          var _from = item[options.schema.columns.from.value],
+              _due = item[options.schema.columns.due.parsed],
+              _done = item[options.schema.columns.done.value];
+          if (_from) {
+            if (_from.isBefore(memo.from.earliest)) memo.from.earliest = _from;
+            memo.from.latest = !memo.from.latest || _from.isAfter(memo.from.latest) ? _from : memo.from.latest;
+          }
+          if (_due) {
+            memo.due.earliest = !memo.due.earliest || _due.isBefore(memo.due.earliest) ? _due : memo.due.earliest;
+            memo.due.next = _due.isSameOrAfter(today) && (!memo.due.next || _due.isBefore(memo.due.next)) ? _due : memo.due.next;
+            memo.due.latest = !memo.due.latest || _due.isAfter(memo.due.latest) ? _due : memo.due.latest;
+          }
+          if (_done) {
+            memo.done.earliest = !memo.done.earliest || _done.isBefore(memo.done.earliest) ? _done : memo.done.earliest;
+            memo.done.last = _done.isSameOrBefore(today) && (!memo.done.last || _done.isAfter(memo.done.last)) ? _done : memo.done.last;
+            memo.done.latest = !memo.done.latest || _done.isAfter(memo.done.latest) ? _done : memo.done.latest;
+          }
+          return memo;
+        }, {
+          from: {
+            earliest : factory.Dates.now().startOf("day"),
+            latest : null
+          },
+          due: {
+            earliest : null,
+            next : null,
+            latest : null
+          },
+          done: {
+            earliest : null,
+            last : null,
+            latest : null
+          }
+        });
+      
+    if (items && items.length > 0) {
+      
+      /* <!-- Duration between earliest from and latest done date --> */
+      if (data.done.latest) 
+        data.duration = factory.Dates.duration(data.done.latest.diff(data.from.earliest));
+      
+      /* <!-- Rangse and Historical Ranges (from today) --> */
+      if (!data.from.earliest.isSame(data.from.latest))
+        data.from.range = factory.Dates.duration(data.from.latest.diff(data.from.earliest));
+      if (data.from.earliest.isBefore(today)) 
+        data.from.history = factory.Dates.duration(today.diff(data.from.earliest));
+      
+      if (data.due.earliest && data.due.latest && !data.due.earliest.isSame(data.due.latest))
+        data.due.range = factory.Dates.duration(data.due.latest.diff(data.due.earliest));
+      if (data.due.latest && !data.due.latest.isSame(data.from.earliest))
+        data.due.history = factory.Dates.duration(data.due.latest.diff(data.from.earliest));
+      
+      if (data.done.earliest && data.done.latest && !data.done.earliest.isSame(data.done.latest))
+        data.done.range = factory.Dates.duration(data.done.latest.diff(data.done.earliest));
+      if (data.done.latest && !data.done.latest.isSame(data.from.earliest))
+        data.done.history = factory.Dates.duration(data.done.latest.diff(data.from.earliest));
+      
+      if (data.done.last) {
+        data.done.since = factory.Dates.duration(today.diff(data.done.last));
+        if (data.done.since.months() > 1) data.done.dormant = true;
+      }
+      
+    }
+    
+    return data;
+  };
   /* <!-- Internal Functions --> */
 
   /* <!-- Initial Calls --> */
@@ -127,24 +198,6 @@ Analysis = (options, factory) => {
       var _all = (db ? db : options.db).find(_query);
       factory.Flags.log(since ? `Series [Since] for: ${since}` : "Series [all]", _all);
       
-      var _earliest = _.reduce(_all, (earliest, item) => item[options.schema.columns.from.value] && item[options.schema.columns.from.value].isBefore(earliest) ?
-                               item[options.schema.columns.from.value] : earliest,
-                                        factory.Dates.now().startOf("day")),
-          _latest = _.reduce(_all, (latest, item) => item[options.schema.columns.from.value] && item[options.schema.columns.from.value].isAfter(latest) ?
-                             item[options.schema.columns.from.value] : latest, _earliest),
-          _complete_earliest = _.reduce(_all, (earliest, item) => item[options.schema.columns.done.value] ? 
-                                   !earliest || item[options.schema.columns.done.value].isBefore(earliest) ?
-                               item[options.schema.columns.done.value] : earliest : earliest, null),
-          _complete_latest = _.reduce(_all, (latest, item) => item[options.schema.columns.done.value] ? 
-                                   !latest || item[options.schema.columns.done.value].isAfter(latest) ?
-                               item[options.schema.columns.done.value] : latest : latest, null),
-          _due_earliest = _.reduce(_all, (earliest, item) => item[options.schema.columns.due.parsed] ? 
-                                   !earliest || item[options.schema.columns.due.parsed].isBefore(earliest) ?
-                               item[options.schema.columns.due.parsed] : earliest : earliest, null),
-          _due_latest = _.reduce(_all, (latest, item) => item[options.schema.columns.due.parsed] ? 
-                                   !latest || item[options.schema.columns.due.parsed].isAfter(latest) ?
-                               item[options.schema.columns.due.parsed] : latest : latest, null);
-          
       var _count = (holder, name, count) => name ? holder[name] ? holder[name] += count || 1 : holder[name] = count || 1 : null;
                     
       var _series = value => ([
@@ -177,14 +230,15 @@ Analysis = (options, factory) => {
             if (item[options.schema.columns.duration.value]) memo.series[series.name][series.value].counts.Duration += 1;
             
             /* <!-- Add Series Tags | Badges Counts --> */
-            if (item[options.schema.columns.badges.value]) _.each(_.reject(item[options.schema.columns.badges.value], badge => !badge), badge => {
-              badge = (badge.indexOf("#") === 0 ? badge.substr(1) : badge).toUpperCase();
-              
-              memo.series[series.name][series.value].counts[badge] ? 
-                 memo.series[series.name][series.value].counts[badge] += 1 :
-                 memo.series[series.name][series.value].counts[badge] = 1;
-              
-            });
+            if (item[options.schema.columns.badges.value]) _.each(_.reject(item[options.schema.columns.badges.value], badge => !badge),
+                  badge => {
+                    badge = (badge.indexOf("#") === 0 ? badge.substr(1) : badge).toUpperCase();
+
+                    memo.series[series.name][series.value].counts[badge] ? 
+                       memo.series[series.name][series.value].counts[badge] += 1 :
+                       memo.series[series.name][series.value].counts[badge] = 1;
+
+                  });
             
           });
           
@@ -226,24 +280,7 @@ Analysis = (options, factory) => {
         
         return memo;
         
-      }, {
-        bounds : {
-          earliest : _earliest,
-          latest : _latest,
-          range : factory.Dates.duration(_latest.diff(_earliest))
-        },
-        complete : {
-          earliest : _complete_earliest,
-          latest : _complete_latest,
-          range : _complete_earliest && _complete_latest ? factory.Dates.duration(_complete_latest.diff(_complete_earliest)) : null,
-          full_range : _complete_latest ? factory.Dates.duration(_complete_latest.diff(_earliest)) : null
-        },
-        due : {
-          earliest : _due_earliest,
-          latest : _due_latest,
-          range : _due_earliest && _due_latest ? factory.Dates.duration(_due_latest.diff(_due_earliest)) : null,
-          full_range : _due_latest ? factory.Dates.duration(_due_latest.diff(_earliest)) : null
-        },
+      }, _.extend(_dates(_all), {
         series : {
           days : {},
           weeks : {},
@@ -269,7 +306,7 @@ Analysis = (options, factory) => {
         durations : factory.Dates.duration(0),
         durationed : 0,
         future : 0,
-      });
+      }));
       
       _summary.data = _all;
       _summary.percentages = _.mapObject(_summary.statuses, value => value ? Math.preciseRound(value / _summary.data.length, 2) * 100 : value);

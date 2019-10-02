@@ -1,4 +1,8 @@
 site :
+  0.1.6h :
+    name : Docket v1.0.7
+    desc : Project View Improvements
+    numeric : 0.1.6.8
   0.1.6g :
     name : Docket v1.0.6
     desc : Project View Developments
@@ -964,10 +968,14 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  1.0.7 :
+    name : Project View Improvements
+    desc : Stable Project View
+    type : minor
   1.0.6 :
     name : Project View Improvements
     desc : Developing Project View
-    type : minor    
+    type : minor
   1.0.5 :
     name : New Project View
     desc : Bug Fixes and initial beta Project View

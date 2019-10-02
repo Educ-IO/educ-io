@@ -442,7 +442,8 @@ Display = function() {
               }
               return _b[_a];
             },
-            "eq": (a, b) => _.isEqual(a, b)
+            "eq": (a, b) => _.isEqual(a, b),
+            "neq": (a, b) => !_.isEqual(a, b)
           };
 
           if (!operators[operator]) throw new Error(`IS doesn't understand the operator ${operator}`);

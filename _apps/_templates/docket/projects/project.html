@@ -1,5 +1,5 @@
 {% raw %}
-<div data-project="{{name}}" class="row align-items-center py-2 border-bottom{{#if data}}{{#is count data.statuses.COMPLETE}} bg-light{{/is}}{{/if}}">
+<div data-project="{{name}}" class="row align-items-center py-2 border-bottom{{#if data}}{{#if (all (is count data.statuses.COMPLETE) data.done.dormant)}} bg-light{{/if}}{{/if}}">
   
   {{!-- Project Details --}}
   <div class="col-12 col-xl-4 d-flex flex-row align-items-center">
@@ -17,18 +17,18 @@
         </div>
 
         {{!-- Overall Status /Counts --}}
-        {{~#if data}}{{#with data}}<div class="col-12 col-md-6 d-flex flex-row align-items-center border-md-right{{#is ../count statuses.COMPLETE}} o-50{{/is}}">
+        {{~#if data}}{{#with data}}<div class="col-12 col-md-6 d-flex flex-row align-items-center border-md-right{{#if (all (is ../count statuses.COMPLETE) done.dormant)}} o-50{{/if}}">
 
           <div>
-            <i class="material-icons md-24 mr-2 text-light bg-dark p-1 rounded">{{#if durations._milliseconds}}timelapse{{else}}timeline{{/if}}</i>
+            <i class="material-icons md-24 mr-2 text-light bg-dark p-1 my-1 rounded">{{#if durations._milliseconds}}timelapse{{else}}timeline{{/if}}</i>
           </div>
 
           <div class="d-flex flex-column justify-content-start">
             {{#each statuses}}{{~#if this}}{{#unless (any (is @key 'ZOMBIES') (is @key 'GHOSTS'))}}<div class="small my-1">
-              <span class="font-weight-{{#is @key 'COMPLETE'}}normal bg-success text-light p-1 mr-1{{else}}light text-secondary{{/is}}">{{@key}}:</span>
+              <span class="font-weight-{{#is @key 'COMPLETE'}}{{#is ../../count 'eq' this}}normal bg-success text-light{{else}}bold text-success{{/is}} p-1 mr-1{{else}}light text-secondary{{/is}}">{{@key}}:</span>
               <span class="font-weight-bold{{#is @key 'COMPLETE'}} bg-dark text-light p-1{{/is}}">{{this}}</span>
               <span>/</span>
-              <span class="font-weight-bold bg-info text-light p-1">{{../../count}}</span>
+              <span class="font-weight-bold{{#is @key 'COMPLETE'}} bg-info text-light{{/is}} p-1">{{../../count}}</span>
             </div>{{/unless}}{{/if}}{{/each}}
             {{#if durations._milliseconds}}<div class="d-flex flex-row align-items-center text-break" data-toggle="tooltip" title="{{string durations}}">
               <span class="mr-1 font-weight-light">Overall:</span><span class="font-weight-bold text-primary pr-1">{{humanize durations}}</span>
@@ -44,15 +44,16 @@
   </div>
   
   {{!-- Overview --}}
-  <div class="col-12 col-xl-8 d-flex flex-row justify-content-center align-items-center align-items-stretch overview{{#if data}}{{#is count data.statuses.COMPLETE}} o-25{{/is}}{{/if}}">
+  <div class="col-12 col-xl-8 d-flex flex-row justify-content-center align-items-center align-items-stretch overview{{#if data}}{{#if (all (is count data.statuses.COMPLETE) data.done.dormant)}} o-25{{/if}}{{/if}}">
   
-    {{!-- Overall Status /Counts --}}
+    {{!-- Overall Status / Counts --}}
     {{~#if data}}{{#with data}}<div class="container-fluid p-0">
     
       <div class="row mb-1">
         
+        {{!-- {{#unless (is ../count statuses.COMPLETE)}} progress-bar-striped{{/unless}} --}}
         <div class="progress w-100">
-          {{~#if percentages.COMPLETE}}<div class="progress-bar{{#unless (is ../count statuses.COMPLETE)}} progress-bar-striped{{/unless}} bg-{{#is percentages.COMPLETE 100}}success{{else}}warning{{/is}}" role="progressbar" style="width: {{percentages.COMPLETE}}%" aria-valuenow="{{percentages.COMPLETE}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-offset="10" data-html="true" title="{{statuses.COMPLETE}} <strong>Completed</strong> Task{{#is statuses.COMPLETE 'gt' 1}}s{{/is}}"></div>{{/if~}}
+          {{~#if percentages.COMPLETE}}<div class="progress-bar progress-bar-striped bg-{{#is percentages.COMPLETE 100}}success{{else}}warning{{/is}}" role="progressbar" style="width: {{percentages.COMPLETE}}%" aria-valuenow="{{percentages.COMPLETE}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-offset="10" data-html="true" title="{{statuses.COMPLETE}} <strong>Completed</strong> Task{{#is statuses.COMPLETE 'gt' 1}}s{{/is}}"></div>{{/if~}}
           {{~#if percentages.[IN PROGRESS]}}<div class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width: {{percentages.[IN PROGRESS]}}%" aria-valuenow="{{percentages.[IN PROGRESS]}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-html="true" title="{{statuses.[IN PROGRESS]}} Task{{#is statuses.[IN PROGRESS] 'gt' 1}}s{{/is}} in <strong>Progress</strong>"></div>{{/if~}}
           {{~#if percentages.READY}}<div class="progress-bar progress-bar-striped bg-dark" role="progressbar" style="width: {{percentages.READY}}%" aria-valuenow="{{percentages.READY}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-html="true" title="{{statuses.READY}} Task{{#is statuses.READY 'gt' 1}}s{{/is}} <strong>Ready</strong> to work on"></div>{{/if~}}
           {{~#if percentages.INACTIVE}}<div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{percentages.INACTIVE}}%" aria-valuenow="{{percentages.INACTIVE}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-html="true" title="{{statuses.INACTIVE}} <strong>Inactive</strong> Task{{#is statuses.INACTIVE 'gt' 1}}s{{/is}}"></div>{{/if~}}
@@ -62,43 +63,34 @@
     
       <div class="row small">
 
-        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center align-items-stretch border-left">
-          {{~#if bounds.range}}{{~#if bounds.range._milliseconds}}<span class="text-secondary">Bounds<strong class="text-dark ml-1">{{humanize bounds.range}}</strong></span>{{/if~}}{{/if~}}
+        {{!-- Period Project Took / has Taken / will Take --}}
+        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center align-items-stretch bg-light">
+          
+          <div class="container-fluid p-0">
+            <div class="row justify-content-center align-items-center align-items-stretch">
+              {{~#if (all duration (is ../count statuses.COMPLETE))}}<span class="text-secondary">Took<strong class="text-dark ml-1">{{humanize duration}}</strong></span>{{else}}{{~#if from.history}}<span class="text-secondary">Taken<strong class="text-dark ml-1">{{humanize from.history}}</strong></span>{{else}}{{~#if from.range}}<span class="text-secondary">Duration<strong class="text-dark ml-1">{{humanize from.range}}</strong></span>{{/if~}}{{/if~}}{{/if~}}
+            </div>
+            <div class="row">
+              <div class="col-6 d-flex flex-row justify-content-center align-items-center align-items-stretch">
+                <span class="text-secondary">From<strong class="text-dark ml-1">{{localeDate from.earliest}}</strong></span>
+              </div>
+              <div class="col-6 d-flex flex-row justify-content-center align-items-center align-items-stretch">
+                <span class="text-secondary">To<strong class="text-dark ml-1">{{#if (all done.last (is ../count statuses.COMPLETE))}}{{localeDate done.last}}{{else}}{{localeDate from.latest}}{{/if}}</strong></span>
+              </div>
+            </div>
+          </div>
+          
         </div>
         
-        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center align-items-stretch border-left">
-          {{~#if due.range}}{{~#if due.range._milliseconds}}<span class="text-secondary">Due<strong class="text-dark ml-1">{{humanize due.range}}</strong></span>{{/if~}}{{/if~}}
-          {{~#if due.full_range}}{{~#if due.full_range._milliseconds}}<span class="text-secondary">Due | Full<strong class="text-dark ml-1">{{humanize due.full_range}}</strong></span>{{/if~}}{{/if~}}
+        {{!-- Last Completed --}}
+        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center">
+          {{~#if done.latest}}<span class="text-secondary">Last Completed<strong class="text-dark ml-1">{{localeDate done.latest}}</strong></span>{{/if~}}
         </div>
         
-        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center align-items-stretch border-left">
-          {{~#if complete.range}}{{~#if complete.range._milliseconds}}<span class="text-secondary">Done<strong class="text-dark ml-1">{{humanize complete.range}}</strong></span>{{/if~}}{{/if~}}
-          {{~#if complete.full_range}}{{~#if complete.full_range._milliseconds}}<span class="text-secondary">Done | Full<strong class="text-dark ml-1">{{humanize complete.full_range}}</strong></span>{{/if~}}{{/if~}}
-        </div>
-
-      </div>
-
-      <div class="row small">
-
-        <div class="col-12 col-xl-2 d-flex flex-row justify-content-center align-items-center align-items-stretch border-left">
-          <span class="text-secondary">From<strong class="text-dark ml-1">{{localeDate bounds.earliest}}</strong></span>
-        </div>
-        <div class="col-12 col-xl-2 d-flex flex-row justify-content-center align-items-center align-items-stretch">
-          <span class="text-secondary">To<strong class="text-dark ml-1">{{localeDate bounds.latest}}</strong></span>
-        </div>
-        
-        <div class="col-12 col-xl-2 d-flex flex-row justify-content-center align-items-center align-items-stretch border-left">
-          {{~#if due.earliest}}<span class="text-secondary">From<strong class="text-dark ml-1">{{localeDate due.earliest}}</strong></span>{{/if~}}
-        </div>
-        <div class="col-12 col-xl-2 d-flex flex-row justify-content-center align-items-center align-items-stretch">
-          {{~#if due.latest}}<span class="text-secondary">By<strong class="text-dark ml-1">{{localeDate due.latest}}</strong></span>{{/if~}}
-        </div>
-        
-        <div class="col-12 col-xl-2 d-flex flex-row justify-content-center align-items-center align-items-stretch border-left">
-          {{~#if complete.earliest}}<span class="text-secondary">From<strong class="text-dark ml-1">{{localeDate complete.earliest}}</strong></span>{{/if~}}
-        </div>
-        <div class="col-12 col-xl-2 d-flex flex-row justify-content-center align-items-center align-items-stretch">
-          {{~#if complete.latest}}<span class="text-secondary">By<strong class="text-dark ml-1">{{localeDate complete.latest}}</strong></span>{{/if~}}
+        {{!-- Next / Last Due --}}
+        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center bg-light">
+          {{~#if due.next}}<span class="text-secondary">Next Due<strong class="text-danger ml-1">{{localeDate due.next}}</strong></span>{{/if~}}
+          {{~#if (all due.next due.latest (is due.next 'neq' due.latest))}}<span class="text-secondary ml-2">Due Last<strong class="text-dark ml-1">{{localeDate due.latest}}</strong></span>{{/if~}}
         </div>
 
       </div>

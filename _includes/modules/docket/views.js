@@ -359,10 +359,11 @@ Views = (options, factory) => {
             
             /* <!-- Show Graph --> */
             options.functions.graphs[_analysis.find("select.graph-type").val().split("|")[0]](_series[0], 
-              _analysis.find("select.graph-type").val().indexOf("|") > 0 ? _results.series[_analysis.find("select.graph-type").val().split("|")[1]] :
-                _results.bounds.range.years() >= 2 ? _results.series.months :
-                _results.bounds.range.months() >= 2 ? _results.series.weeks :
-                _results.series.days, _target.width(), _target.height() / 1.05, _analysis.find("span.graph-tooltip"));
+              _analysis.find("select.graph-type").val().indexOf("|") > 0 ? 
+                _results.series[_analysis.find("select.graph-type").val().split("|")[1]] :
+                  _results.from.range && _results.from.range.years() >= 2 ? _results.series.months :
+                  _results.from.range && _results.from.range.months() >= 2 ? _results.series.weeks :
+                  _results.series.days, _target.width(), _target.height() / 1.05, _analysis.find("span.graph-tooltip"));
             
             _busy();
             
@@ -547,8 +548,6 @@ Views = (options, factory) => {
       target: factory.container,
       clear: true,
     });
-    
-    factory.Flags.log("Existing Projects", _summary.projects);
     
     factory.Flags.log("Existing Project Analysis", _analysis);
     
