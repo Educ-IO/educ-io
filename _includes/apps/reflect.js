@@ -836,7 +836,7 @@ App = function() {
         name: ರ‿ರ.file ?
           ರ‿ರ.file.name : `${FN.helper.title(`${ಠ_ಠ.me ? `${ಠ_ಠ.me.display_name()} | ` : ""}${_title} | ${_date}`, TYPE_REPORT)}${EXTENSION}`,
         data: {
-          form: ರ‿ರ.template,
+          form: _.omit(ರ‿ರ.template, META),
           report: ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(ರ‿ರ.form)
         }
       };

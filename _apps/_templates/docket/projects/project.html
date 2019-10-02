@@ -25,10 +25,10 @@
 
           <div class="d-flex flex-column justify-content-start">
             {{#each statuses}}{{~#if this}}{{#unless (any (is @key 'ZOMBIES') (is @key 'GHOSTS'))}}<div class="small my-1">
-              <span class="font-weight-{{#is @key 'COMPLETE'}}{{#is ../../count 'eq' this}}normal bg-success text-light{{else}}bold text-success{{/is}} p-1 mr-1{{else}}light text-secondary{{/is}}">{{@key}}:</span>
+              <span class="font-weight-{{#is @key 'COMPLETE'}}{{#is ../../count 'eq' this}}normal bg-success text-light{{else}}bold text-success{{/is}} mr-1{{else}}light text-secondary{{/is}} p-1">{{@key}}:</span>
               <span class="font-weight-bold{{#is @key 'COMPLETE'}} bg-dark text-light p-1{{/is}}">{{this}}</span>
               <span>/</span>
-              <span class="font-weight-bold{{#is @key 'COMPLETE'}} bg-info text-light{{/is}} p-1">{{../../count}}</span>
+              <span class="font-weight-bold{{#is @key 'COMPLETE'}} bg-info text-light p-1{{/is}}">{{../../count}}</span>
             </div>{{/unless}}{{/if}}{{/each}}
             {{#if durations._milliseconds}}<div class="d-flex flex-row align-items-center text-break" data-toggle="tooltip" title="{{string durations}}">
               <span class="mr-1 font-weight-light">Overall:</span><span class="font-weight-bold text-primary pr-1">{{humanize durations}}</span>
@@ -68,14 +68,14 @@
           
           <div class="container-fluid p-0">
             <div class="row justify-content-center align-items-center align-items-stretch">
-              {{~#if (all duration (is ../count statuses.COMPLETE))}}<span class="text-secondary">Took<strong class="text-dark ml-1">{{humanize duration}}</strong></span>{{else}}{{~#if from.history}}<span class="text-secondary">Taken<strong class="text-dark ml-1">{{humanize from.history}}</strong></span>{{else}}{{~#if from.range}}<span class="text-secondary">Duration<strong class="text-dark ml-1">{{humanize from.range}}</strong></span>{{/if~}}{{/if~}}{{/if~}}
+              {{~#if (all duration (is ../count statuses.COMPLETE))}}<span class="text-secondary">Took<strong class="text-dark ml-1">{{humanize duration}}</strong></span>{{else}}{{~#if from.history}}<span class="text-secondary">{{#if from.future}}Taking{{else}}Taken{{/if}}<strong class="text-dark ml-1">{{humanize from.history}}</strong></span>{{else}}{{~#if from.range}}<span class="text-secondary">Duration<strong class="text-dark ml-1">{{humanize from.range}}</strong></span>{{/if~}}{{/if~}}{{/if~}}
             </div>
             <div class="row">
               <div class="col-6 d-flex flex-row justify-content-center align-items-center align-items-stretch">
                 <span class="text-secondary">From<strong class="text-dark ml-1">{{localeDate from.earliest}}</strong></span>
               </div>
               <div class="col-6 d-flex flex-row justify-content-center align-items-center align-items-stretch">
-                <span class="text-secondary">To<strong class="text-dark ml-1">{{#if (all done.last (is ../count statuses.COMPLETE))}}{{localeDate done.last}}{{else}}{{localeDate from.latest}}{{/if}}</strong></span>
+                <span class="text-secondary">To<strong class="text-dark ml-1">{{#if (all done.last (is ../count statuses.COMPLETE))}}{{localeDate done.last}}{{else}}{{localeDate from.end}}{{/if}}</strong></span>
               </div>
             </div>
           </div>

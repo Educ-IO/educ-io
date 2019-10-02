@@ -142,6 +142,7 @@ Forms = function(loaded) {
       name: value.name,
       title: value.title,
       type: value.type,
+      meta: value.__meta
     });
     return list;
   }, []);
@@ -200,7 +201,14 @@ Forms = function(loaded) {
               } catch (e) {
                 ಠ_ಠ.Flags.error(`Error Parsing: ${file.id}`, e);
               }
-              return _process(_object, type, file.id);
+              _object = _process(_object, type, file.id);
+              var _meta = {},
+                  _prop = (v, k) => _meta[k.toLowerCase()] = v && _.isString(v) ?
+                    v.toLowerCase() == "true" ? true : v.toLowerCase() == "false" ? false : v : v;
+              if (file.appProperties) _.each(file.appProperties, _prop);
+              if (file.properties) _.each(file.properties, _prop);
+              if (!_.isEmpty(_meta)) _object.__meta = _meta;
+              return _object;
             })
             .then(object => object ? ರ‿ರ.cache[type.name][file.id] = object : object)
             .then(() => file.teamDriveId ? ಠ_ಠ.Google.teamDrives.get(file.teamDriveId)
@@ -235,6 +243,7 @@ Forms = function(loaded) {
       .filter({
         type: subtype ? subtype : "Report"
       })
+      .reject(item => item.meta && item.meta.hidden)
       .map(item => {
         var _file = ರ‿ರ.files[item.key];
         return {

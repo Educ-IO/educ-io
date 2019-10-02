@@ -40,7 +40,7 @@ __Σ__UK_Teachers_Reflective =  {
             {span: "y", value: "Yearly", name: "Yearly"}
           ],
           __meta: {
-             index: true,
+            index: true,
             transform: "{% raw %}{{Start}} -> {{End}}{{#if Type}} ({{Type}}){{/if}}{% endraw %}",
             analyse: {
               type: "column"
@@ -148,6 +148,34 @@ __Σ__UK_Teachers_Reflective =  {
         },
       }
     },
+    previous : {
+      template: "group",
+      name: "Previous Reports",
+      __help__: "If you have __created previous reports__, you can choose to review the targets contained within them, marking those that you feel have been completed (together with the evidence supporting this).",
+      fields : {
+        past_targets : {
+          template: "field_complex",
+          title: "Targets from Previous Reports",
+          field: "Previous Targets",
+          prefix: "Evidence",
+          icon: "grade",
+          required: false,
+          type : "Evaluation",
+          list_template : "field_items",
+          list_field: "Evaluations",
+          items_details : "Further details about how this was met",
+          options: [
+            {name : "From Google Drive", value: "drive", class: "g-picker"},
+            {name : "From File", value: "file", class: "g-file"},
+            {name : "From Web", value: "web", class: "web"},
+            {name : "Offline / Paper", value: "paper", class: "paper", divider: true},
+          ],
+          __meta: {
+            references: "future_targets",
+          }
+        },
+      }
+    },
     forward : {
       template: "group",
       name: "Looking Forward",
@@ -155,7 +183,7 @@ __Σ__UK_Teachers_Reflective =  {
       fields : {
         future_targets : {
           template: "field_complex",
-          title: "Targets for the coming week",
+          title: "Targets for the upcoming assessment period",
           field: "Future Targets",
           type: "Target",
           prefix: "Evidence Type",
@@ -163,7 +191,7 @@ __Σ__UK_Teachers_Reflective =  {
           list_field: "Targets",
           rows : 3,
           required: true,
-          __help__: "Enter details of the targets you are setting yourself this week, together with the type of evidence that will confirm you have met the target.  \n\nThen save them to the list below using the __green__ add button.",
+          __help__: "Enter details of the targets you are setting yourself, together with the type of evidence that will confirm you have met the target.  \n\nThen save them to the list below using the __green__ add button.",
           options: [
             "Lesson Plan",
             "Lesson Observation",

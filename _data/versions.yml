@@ -1,4 +1,8 @@
 site :
+  0.1.6i :
+    name : Reflect v0.0.7g-beta
+    desc : Reflect Forms Improvement
+    numeric : 0.1.6.9
   0.1.6h :
     name : Docket v1.0.7
     desc : Project View Improvements
@@ -872,6 +876,10 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.7g-beta :
+    name : Reflect Form Improvements
+    desc : Metadata flag to remove testing forms from selection dialog
+    type : minor
   0.0.7f-beta :
     name : Reflect Route Improvements
     desc : Routing to Create a new Report will now check for incomplete reports and offer to open them first

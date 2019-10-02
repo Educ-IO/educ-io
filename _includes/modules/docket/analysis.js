@@ -108,6 +108,7 @@ Analysis = (options, factory) => {
       /* <!-- Duration between earliest from and latest done date --> */
       if (data.done.latest) 
         data.duration = factory.Dates.duration(data.done.latest.diff(data.from.earliest));
+      data.from.end = data.from.latest.isAfter(today) && (data.from.future = true) ? data.from.latest : today;
       
       /* <!-- Rangse and Historical Ranges (from today) --> */
       if (!data.from.earliest.isSame(data.from.latest))
