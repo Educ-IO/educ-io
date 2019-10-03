@@ -24,12 +24,13 @@
           </div>
 
           <div class="d-flex flex-column justify-content-start">
-            {{#each statuses}}{{~#if this}}{{#unless (any (is @key 'ZOMBIES') (is @key 'GHOSTS'))}}<div class="small my-1">
+            {{#if total}}{{#each statuses}}{{~#if this}}{{#unless (any (is @key 'ZOMBIES') (is @key 'GHOSTS'))}}<div class="small my-1">
               <span class="font-weight-{{#is @key 'COMPLETE'}}{{#is ../../count 'eq' this}}normal bg-success text-light{{else}}bold text-success{{/is}} mr-1{{else}}light text-secondary{{/is}} p-1">{{@key}}:</span>
               <span class="font-weight-bold{{#is @key 'COMPLETE'}} bg-dark text-light p-1{{/is}}">{{this}}</span>
               <span>/</span>
               <span class="font-weight-bold{{#is @key 'COMPLETE'}} bg-info text-light p-1{{/is}}">{{../../count}}</span>
-            </div>{{/unless}}{{/if}}{{/each}}
+            </div>{{/unless}}{{/if}}{{/each}}{{else}}<div class="small my-1"><span class="font-weight-bold text-dark p-1">Tasks:</span>
+              <span class="font-weight-bold bg-secondary text-light p-1">{{../count}}</span></div>{{/if}}
             {{#if durations._milliseconds}}<div class="d-flex flex-row align-items-center text-break" data-toggle="tooltip" title="{{string durations}}">
               <span class="mr-1 font-weight-light">Overall:</span><span class="font-weight-bold text-primary pr-1">{{humanize durations}}</span>
             </div>{{/if}}

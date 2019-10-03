@@ -1,4 +1,8 @@
 site :
+  0.1.6j :
+    name : Site 0.1.6j
+    desc : Visual Updates
+    numeric : 0.1.6.10
   0.1.6i :
     name : Reflect v0.0.7g-beta
     desc : Reflect Forms Improvement

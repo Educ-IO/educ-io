@@ -1,7 +1,7 @@
 {% raw %}
 <div class="d-flex justify-content-md-center">
 
-	<div class="mt-2 mt-lg-4 pb-4 col-12 col-md-10 col-lg-9 col-xl-8">
+	<div class="mt-2 mt-lg-4 pb-4 col-12 col-md-10 col-lg-9 col-xl-8 form-container">
 		
 		{{#if header}}{{{header}}}{{/if}}
 		
@@ -10,13 +10,16 @@
     {{#if title}}<div class="d-flex mb-2 mb-xl-3">
     	{{#if (any editable completed)}}<div class="d-inline-flex mr-1">
       	<i class="material-icons md-24 text-primary align-self-center"
-           {{#if completed}} title="Report is completed and locked against editing"{{/if}}>{{#if completed}}lock{{else}}lock_open{{/if}}</i>
+           {{#if completed}} data-toggle="tooltip" data-html="true" title="Report is <strong>completed</strong> and <strong>locked</strong> against editing"{{/if}}>{{#if completed}}lock{{else}}lock_open{{/if}}</i>
       </div>{{/if}}
     	<h4 id="{{id}}_title" class="p-0 m-0">{{title}}</h4>
-    	<a href="#" class="d-inline-flex text-decoration-none ml-auto" data-toggle="collapse"
-         data-target=".group-collapse" aria-expanded="false" aria-controls=".group-collapse"
-         title="Show / Hide all Form Groups below">
-        <i class="material-icons md-24 align-self-center">vertical_align_center</i>
+      <a href="#" class="d-inline-flex text-decoration-none ml-auto"
+         data-toggle="expand" data-targets=".form-container">
+        <i class="material-icons md-24 align-self-center" data-toggle="tooltip" data-html="true" title="<strong>Expand</strong> / <strong>Contract</strong> to Fill Screen Width">panorama_horizontal</i>
+      </a>
+    	<a href="#" class="d-inline-flex text-decoration-none ml-1" data-toggle="collapse"
+         data-target=".group-collapse" aria-expanded="false" aria-controls=".group-collapse">
+        <i class="material-icons md-24 align-self-center" data-toggle="tooltip" data-html="true" title="<strong>Show</strong> / <strong>Hide</strong> all Form Groups below">vertical_align_center</i>
       </a>
     </div>{{/if}}
 		

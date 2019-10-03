@@ -309,6 +309,8 @@ Analysis = (options, factory) => {
         future : 0,
       }));
       
+      _summary.total = _.reduce(_summary.statuses, (total, value) => value ? total + value : total, 0); 
+        
       _summary.data = _all;
       _summary.percentages = _.mapObject(_summary.statuses, value => value ? Math.preciseRound(value / _summary.data.length, 2) * 100 : value);
       _summary.stats.average = _summary.stats.count ? Math.preciseRound(_summary.stats.total / _summary.stats.count, 2) : 0;

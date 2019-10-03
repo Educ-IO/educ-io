@@ -71,7 +71,26 @@ Display = function() {
       placement: _placement
     }));
   };
-
+  
+  var _expands = targets => targets.off("click.expand").on("click.expand", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    var _this = $(e.currentTarget),
+        _targets = _this.data("targets");
+    if (!_targets) return;
+    $(_targets).each((i, el) => {
+      var _el = $(el),
+          _classes = _el.attr("class").split(/\s+/);
+      _.each(_classes, _class => {
+        if (_class && _class != "col-12" && _class.indexOf("col-") === 0) {
+          _el.removeClass(_class).addClass(`_${_class}`);
+        } else if (_class && _class.indexOf("_col-") === 0) {
+          _el.removeClass(_class).addClass(_class.substr(1));
+        }
+      });
+    });
+  });
+  
   var _routes = targets => targets.off("click.route").on("click.route", e => {
     e.preventDefault();
     e.stopPropagation();
@@ -82,7 +101,7 @@ Display = function() {
       _command && _command.prop("onclick") ?
         _command.first().click() :
         _command ?
-        _command[0].click() : window.location.hash = `#${_route}`;
+          _command[0].click() : window.location.hash = `#${_route}`;
     }
   });
 
@@ -170,6 +189,7 @@ Display = function() {
   var _visuals = value => {
     _popovers(value.find("[data-toggle='popover']"));
     _tooltips(value.find("[data-toggle='tooltip']"));
+    _expands(value.find("[data-toggle='expand']"));
     return value;
   };
 
