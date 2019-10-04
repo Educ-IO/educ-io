@@ -429,7 +429,7 @@ SaaD = (options, factory) => {
     /* <!-- PARAMETERS: sheetMetadata: Metadata to retrieve the correct sheet --> */
     /* <!-- PARAMETERS: ingest: Overrides schema ingest (if true) --> */
     /* <!-- PARAMETERS: ingest: Overrides schema always hash (if true) --> */
-    open: (id, sheetMetadata, ingest, hash) => {
+    open: (id, sheetMetadata, ingest, hash, version) => {
 
       factory.Flags.log(`Opening Data File: ${id}`);
 
@@ -530,10 +530,10 @@ SaaD = (options, factory) => {
             /* <!-- Map Date / Markdown Fields / Columns --> */
 
             /* <!-- Populate Version, and Return --> */
-            return Promise.all([factory.Google.files.get(id, true), 
+            return Promise.all([version ? Promise.resolve(version) : factory.Google.files.get(id, true), 
                                 value.values ? FN.populate.rows(value.values, metadata.matchedDeveloperMetadata, ingest, hash) : Promise.resolve([])])
               .then(values => {
-                ರ‿ರ.data.version = parseInt(values[0].version, 10);
+                ರ‿ರ.data.version = parseInt(_.isString(values[0]) ? values[0] : values[0].version, 10);
                 factory.Flags.log("Data Values:", values[1]);
                 return (ರ‿ರ.data.data = values[1]);
               });

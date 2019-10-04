@@ -1,5 +1,5 @@
 {% raw %}
-<div data-project="{{name}}" class="row align-items-center py-2 border-bottom{{#if data}}{{#if (all (is count data.statuses.COMPLETE) data.done.dormant)}} bg-light{{/if}}{{/if}}">
+<div data-project="{{name}}" class="row align-items-center py-2 px-1 pr-lg-2{{~#is name 'NO PROJECT'}} bg-action-barely{{/is}} border-bottom{{#if data}}{{#if (all (is count data.statuses.COMPLETE) data.done.dormant)}} bg-light{{/if}}{{/if}}">
   
   {{!-- Project Details --}}
   <div class="col-12 col-xl-4 d-flex flex-row align-items-center">
@@ -12,7 +12,7 @@
         <div class="col-12 col-md-6 d-flex flex-row align-items-center border-md-right border-secondary">
           {{~#if data}}{{#is count data.statuses.COMPLETE}}<div class="d-inline-flex mr-1"><i class="material-icons md-24 mr-1 text-light bg-success p-1 rounded" data-toggle="tooltip" data-html="true" title="All Project Tasks <strong>Complete</strong>">done_outline</i></div>{{/is}}{{/if~}}
           <span class="display-6">
-            <a href="#search.tags.{{encode (concat '#' name)}}.true" class="text-decoration-none">{{name}}</a>
+            {{~#is name 'NO PROJECT'}}{{name}}{{else}}<a href="#search.tags.{{encode (concat '#' name)}}.true" class="text-decoration-none">{{name}}</a>{{/is~}}
           </span>
         </div>
 
@@ -65,7 +65,7 @@
       <div class="row small">
 
         {{!-- Period Project Took / has Taken / will Take --}}
-        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center align-items-stretch bg-light">
+        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center align-items-stretch{{~#unless (is ../name 'NO PROJECT')}} bg-light{{/unless}}">
           
           <div class="container-fluid p-0">
             <div class="row justify-content-center align-items-center align-items-stretch">
@@ -84,12 +84,12 @@
         </div>
         
         {{!-- Last Completed --}}
-        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center">
+        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center{{~#is ../name 'NO PROJECT'}} bg-light{{/is}}">
           {{~#if done.latest}}<span class="text-secondary">Last Completed<strong class="text-dark ml-1">{{localeDate done.latest}}</strong></span>{{/if~}}
         </div>
         
         {{!-- Next / Last Due --}}
-        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center bg-light">
+        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center{{~#unless (is ../name 'NO PROJECT')}} bg-light{{/unless}}">
           {{~#if due.next}}<span class="text-secondary">Next Due<strong class="text-danger ml-1">{{localeDate due.next}}</strong></span>{{/if~}}
           {{~#if (all due.next due.latest (is due.next 'neq' due.latest))}}<span class="text-secondary ml-2">Due Last<strong class="text-dark ml-1">{{localeDate due.latest}}</strong></span>{{/if~}}
         </div>

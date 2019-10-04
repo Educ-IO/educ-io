@@ -65,6 +65,13 @@ App = function() {
               recent: true,
               team: true,
             }, FN.loader());
+  
+  FN.file = value => ({
+    data: value.id,
+    name: value.name,
+    title: value.properties && value.properties.TITLE ? value.properties.TITLE : "",
+    version: value.version,
+  });
   /* <-- Helper Functions --> */
 
   
@@ -355,8 +362,21 @@ App = function() {
           markers: ಱ.markers
         }, ಠ_ಠ)))
       .then(task => (ಱ.schema.process = task.process())) /* <!-- Create Processing Task Function --> */
-      .then(() => Promise.all([].concat(
-        ರ‿ರ.database.open(ರ‿ರ.refresh = (config || ರ‿ರ.config).data, ಱ.schema.sheets.sheet_tasks),
+      .then(() => {
+        /* <-- Get Custom Title, and Version from File Properties, if not already loaded --> */
+        if (config.title === undefined) {
+          return ಠ_ಠ.Google.files.get((config || ರ‿ರ.config).data, true)
+            .then(file => {
+              window.document.title = file.properties && file.properties.TITLE ? file.properties.TITLE : ಱ.title;
+              return file.version;
+            });
+        } else {
+          window.document.title = config.title || ಱ.title;
+          return (config || ರ‿ರ.config).version;
+        }
+      })
+      .then(version => Promise.all([].concat(
+        ರ‿ರ.database.open(ರ‿ರ.refresh = (config || ರ‿ರ.config).data, version),
         ರ‿ರ.config.classes ? FN.classes.load(ರ‿ರ.config.classes) : [])))
       .then(results => {
         $("nav a[data-link='sheet']").prop("href", `https://docs.google.com/spreadsheets/d/${ರ‿ರ.refresh}/edit`);
@@ -554,10 +574,7 @@ App = function() {
 
     /* <-- Open Shared Database --> */
     shared: value => (ರ‿ರ.config && ರ‿ರ.config.data != value.id ? FN.menu.add(value) : Promise.resolve(value))
-      .then(value => FN.action.start(_.defaults({
-        data: value.id,
-        name: value.name
-      }, ರ‿ರ.config))),
+      .then(value => FN.action.start(_.defaults(FN.file(value), ರ‿ರ.config))),
 
   };
   /* <-- Open Functions --> */
@@ -704,11 +721,7 @@ App = function() {
               } else {
                 ರ‿ರ.initial = ((value, state) => () => {
                   delete ರ‿ರ.initial;
-                  return {
-                    data: value.id,
-                    name: value.name,
-                    view: state,
-                  };
+                  return _.extend(FN.file(value), {view: state});
                 })(value.result, value.command && value.command.length >= 2 ?
                   _.find(DISPLAY, state => new RegExp(state, "i").test(value.command[1])) :
                   null);
@@ -1105,6 +1118,9 @@ App = function() {
       
       /* <!-- Create Database Reference --> */
       ರ‿ರ.database = ಠ_ಠ.Database(ಱ, ಠ_ಠ);
+      
+      /* <!-- Get Window Title --> */
+      ಱ.title = window.document.title;
       
       ಠ_ಠ.Flags.log("APP Start Called");
 

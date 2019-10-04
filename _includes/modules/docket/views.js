@@ -307,7 +307,9 @@ Views = (options, factory) => {
                 _results = options.state.application.analysis.series(_.isArray(_tags) && _tags.length === 0 ? true : _tags, 
                                             _project == "***none***" ? 
                                               null : _project == "***all***" ? 
-                                                true : _project, _timed, _bounds ? _bounds.since : _bounds, _bounds ? _bounds.until : _bounds, options.state.session.db);
+                                                true : _project, _timed, _bounds ? 
+                                                  _bounds.since : _bounds, _bounds ?
+                                                    _bounds.until : _bounds, options.state.session.db);
             
             /* <!-- Time Series Graph --> */
             var _target = _analysis.find("div.row.visualisation"),
@@ -324,7 +326,8 @@ Views = (options, factory) => {
                 name: name,
                 value: count
               };
-              if ((name == "ONGOING" || name == "COMPLETE") && _results.data.length) _return.percent = Math.round((count * 100) / _results.data.length);
+              if ((name == "ONGOING" || name == "COMPLETE") && _results.data.length) 
+                _return.percent = Math.round((count * 100) / _results.data.length);
               return _return;
             };
             factory.Display.template.show({
@@ -536,6 +539,12 @@ Views = (options, factory) => {
                       {
                         data: options.state.application.analysis.series(false, project.name, null, null, null, options.state.session.db)
                       }, project));
+    
+    _analysis.unshift(_.extend(
+                      {
+                        data: options.state.application.analysis.series(false, null, null, null, null, options.state.session.db)
+                      }, {name: "NO PROJECT"}));
+    _analysis[0].count = _analysis[0].data ? _analysis[0].data.total ? _analysis[0].data.total : _analysis[0].data.data.length : 0;
     
     factory.Display.template.show({
       template: "projects",

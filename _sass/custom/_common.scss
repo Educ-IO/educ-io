@@ -201,6 +201,10 @@ em.kb-shortcut, strong.kb-shortcut {
 	background-color: transparentize(lighten($colour-highlight, 50%), 0.75) !important;
 }
 
+.bg-action-barely, .bg-highlight-barely {
+	background-color: transparentize(lighten($colour-highlight, 50%), 0.85) !important;
+}
+
 .bg-action-dark, .bg-highlight-dark {
 	background-color: darken($colour-highlight, 10%) !important;
 }

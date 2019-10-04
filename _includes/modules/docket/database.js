@@ -21,7 +21,7 @@ Database = (options, factory) => {
   /* <!-- Internal Functions --> */
   FN.main = {
     
-    open : id => database.open(id, options.schema.sheets.sheet_name).then(value => (db = value)),
+    open : (id, version) => database.open(id, options.schema.sheets.sheet_name, null, null, version).then(value => (db = value)),
     
   };
   
