@@ -98,9 +98,9 @@ Display = function() {
       _route = _this.data("route");
     if (_route) {
       var _command = $(`nav a[href='#${_route}']:not(.disabled), nav a[href^='#'][href$=',${_route}']:not(.disabled)`);
-      _command && _command.prop("onclick") ?
+      _command && _command.length > 0 && _command.prop("onclick") ?
         _command.first().click() :
-        _command ?
+        _command && _command.length > 0 ?
           _command[0].click() : window.location.hash = `#${_route}`;
     }
   });
@@ -210,6 +210,8 @@ Display = function() {
 
   var _clean = () => $("div.modal-backdrop.show").last().remove() && 
       $("body.modal-open").removeClass("modal-open"); /* <!-- Weird Modal Not Hiding Bug --> */
+  
+  var _tidy = () => $("div.tooltip.show").last().remove(); /* <!-- Tooltips Not Hiding --> */
 
   var _toggle = (state, toggle, container) => {
     var _$ = (container ? container.find : $);
@@ -542,6 +544,8 @@ Display = function() {
 
     },
 
+    tidy: _tidy,
+    
     username: _username,
 
     popovers: (targets, options) => _popovers(targets, options),

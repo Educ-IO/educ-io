@@ -151,12 +151,11 @@ Folders
 
 Reflect
 -------
-* ** BUG ** field_complex field type needs to have required check (currently ignored)
+* ** FEATURE ** Target Loading from Previous Reports
 
 * ** FEATURE ** Complete Email from Signer for pre-shared reports
 
 * ** FEATURE ** Test Group Share
-
 
 * ** IMPROVEMENT ** Verify in Analysis should also recalculate summary / meta field values.
 
@@ -164,10 +163,6 @@ Reflect
 
 
 * ** IMPROVEMENT ** Create form -> Should lead to 'show form' pathway, with button for return to edit (same as edit but without state file)
-
-* ** FEATURE ** Multiple Scale Associations for Targets (dialog?)
-
-* ** FEATURE ** Target Loading from Previous Reports
 
 * ** FEATURE ** Target Analysis - for individual (e.g. me) and cohort. Look at target completion over time in a tabular format (sparklines?)
 
@@ -189,6 +184,9 @@ Survey
 
 Complete
 --------
+* ** FEATURE ** Multiple Scale Associations for Targets (dialog?) <-- DONE
+* ** FEATURE ** field_complex field type should have tagged scale associated with it <-- DONE
+* ** BUG ** field_complex field type needs to have required check (currently ignored) <-- DONE
 * ** IMPROVEMENT ** Add NO PROJECT Row to Projects View <-- DONE
 * ** IMPROVEMENT ** Add Title Prepend to window.document.title <-- DONE
 * ** IMPROVEMENT ** Project Status aross shared database sheets (and multiple sheet overview, together with clickable links to open each one - like an overview view)

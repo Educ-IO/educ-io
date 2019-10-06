@@ -89,7 +89,7 @@ Forms = function(loaded) {
           field.id = field_Id;
           if (editable === false || completed === true) field.readonly = true;
           if (field.order === undefined) field.order = ++_order;
-          if (field.scale) {
+          if (field.scale && _.isString(field.scale)) {
             var _scale = _get(field.scale, ರ‿ರ.cache.scales);
             field.markers = PROCESS(_scale.scale);
           }
@@ -274,9 +274,11 @@ Forms = function(loaded) {
     }),
 
     scale: name => _get(name, ರ‿ರ.cache.scales),
-
+    
     persistent: () => ಱ,
 
+    process: PROCESS,
+    
   };
   /* <!-- External Visibility --> */
 

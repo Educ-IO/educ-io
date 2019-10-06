@@ -6,6 +6,7 @@
   data-initial="{{which b_class b_class 'btn-dark'}}"
 	{{#if b_id}}id={{b_id}}{{/if}}
   {{#if b_title}} title="{{ b_title }}"{{/if}}
+  {{#if b_tooltip}} data-toggle="tooltip" title="{{ b_tooltip }}"{{/if}}
   {{#if b_aria_title}} aria-label="{{ b_aria_title }}"{{/if}}
   {{#if disabled}} disabled{{/if}}>
 		<i class="toggle-true d-none material-icons md-24 h-100 mb-0">thumb_up</i>

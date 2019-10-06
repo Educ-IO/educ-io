@@ -349,3 +349,8 @@ select > option.trusted {
 div.modal-backdrop.show {
   @include transition(display 0.2s linear);
 }
+
+// -- Form Validation -- //
+.valid-feedback, .invalid-feedback {
+  p {margin-bottom: 0;}
+}

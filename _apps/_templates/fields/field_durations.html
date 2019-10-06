@@ -32,16 +32,16 @@
 {{#> field_general}}
   <div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
     {{> control_button b_icon_large="true" b_class="btn-secondary eraser no-active"
-      b_title="Clear / Reset" b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly
+      b_tooltip="Clear / Reset" b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly
       b_target=(concat id "_DURATION" "||" id "_DETAILS" "||" id "_NUMERIC" "||" id "_DATE") }}
     {{> control_button b_icon_large="true" b_class="btn-info alter-numerical"
-      b_title="Decrease" b_target=(concat id "_DURATION") b_icon="remove"
+      b_tooltip="Decrease" b_target=(concat id "_DURATION") b_icon="remove"
       b_value=(concat "-" (either increment 1)) disabled=readonly }}
     {{> control_button b_icon_large="true" b_class="btn-primary alter-numerical"
-      b_title="Increase" b_target=(concat id "_DURATION") b_icon="add"
+      b_tooltip="Increase" b_target=(concat id "_DURATION") b_icon="add"
       b_value=(either increment 1) disabled=readonly }}
     {{> control_button b_icon_large="true" b_class="btn-success complex-list-add"
-      b_title=(concat "Add " type " to List") b_item=(either type "Item") 
+      b_tooltip=(concat "Add " type " to List") b_item=(either type "Item") 
       b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
       b_target=(concat id "_LIST") b_icon="add_circle_outline"
       b_icon_type="light" disabled=readonly }}
@@ -70,22 +70,22 @@
            {{#if readonly}} readonly="readonly"{{/if}} />
 
     <span class="input-group-append d-none d-lg-flex">
-      {{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
+      {{> control_button b_class="btn-secondary eraser no-active" b_tooltip="Clear / Reset"
         b_target=(concat id "_DURATION" "||" id "_DETAILS" "||" id "_NUMERIC" "||" id "_DATE")
         b_reset=(concat id "_TYPE") b_icon="refresh" disabled=readonly }}
     </span>
 
     <span class="input-group-append d-none d-lg-flex">
       {{> control_button b_class="btn-info alter-numerical"
-        b_title="Decrement" b_target=(concat id "_DURATION") b_icon="remove"
+        b_tooltip="Decrement" b_target=(concat id "_DURATION") b_icon="remove"
         b_value=(concat "-" (either increment 1)) disabled=readonly }}
       {{> control_button b_class="btn-primary alter-numerical"
-        b_title="Increment" b_target=(concat id "_DURATION") b_icon="add"
+        b_tooltip="Increment" b_target=(concat id "_DURATION") b_icon="add"
         b_value=(either increment 1) disabled=readonly }}
     </span>
 
     <span class="input-group-append d-none d-lg-flex">
-      {{> control_button b_class="btn-success complex-list-add" b_title=(concat "Add " type " to List")
+      {{> control_button b_class="btn-success complex-list-add" b_tooltip=(concat "Add " type " to List")
         b_item=(either type "Item") b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE")
         b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" disabled=readonly }}
     </span>

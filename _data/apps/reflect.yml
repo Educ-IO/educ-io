@@ -176,6 +176,8 @@ templates:
   - reflect/report_link
   - reflect/signature_summary
   - reflect/meta
+  - reflect/scale
+  - reflect/tag
 docs:
   - shared/JUMP
   - shared/HELP
@@ -358,6 +360,12 @@ menus:
             hash: revoke
             disabled_until:
               - report-complete
+            auth: google
+          - name: Validate
+            desc: Validate Report
+            hash: validate.report
+            disabled_until:
+              - opened-report
             auth: google
           - name: Complete
             desc: Complete this Report

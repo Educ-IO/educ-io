@@ -1,4 +1,8 @@
 site :
+  0.1.6l :
+    name : Reflect v0.0.7h-beta
+    desc : Target Improvements
+    numeric : 0.1.6.12
   0.1.6k :
     name : Docket v1.0.8
     desc : Project Updates
@@ -884,6 +888,10 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.7h-beta :
+    name : Reflect Target Improvements
+    desc : Ability to associate (tag) scales against targets
+    type : minor
   0.0.7g-beta :
     name : Reflect Form Improvements
     desc : Metadata flag to remove testing forms from selection dialog

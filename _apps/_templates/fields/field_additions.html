@@ -32,8 +32,9 @@
     placeholder="{{either details 'Details'}}"
     {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}{{#if readonly}} readonly="readonly"{{/if}}></textarea>
   <span class="input-group-append d-none d-lg-flex">
-    {{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
-    b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE_LG") b_icon="refresh" disabled=readonly }}
+    {{> control_button b_class="btn-secondary eraser no-active" b_tooltip="Clear / Reset"
+    b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE_LG" "||" id "_SCALE_LG") b_icon="refresh" disabled=readonly }}
+    {{~#if scale}}{{> control_button b_class="btn-info flex-column justify-content-center align-items-center" b_tooltip=(either scale.tooltip "Open Scale") b_id=(concat id "_SCALE_LG") b_icon="dns" b_icon_type="light" b_icon_centered=true b_expand="scale" b_target=scale.name b_value=(either scale.title "Scale") b_details=scale.instructions b_field=scale.field b_action=scale.action disabled=readonly }}{{/if~}}
     {{#if prefix}}{{#if options}}{{> control_button b_id=(concat id "_TYPE_LG")
     b_class="btn-dark complex-list-type dropdown-toggle btn-wrap mw-150p"
     b_default=prefix b_text=prefix b_toggle="dropdown" disabled=readonly b_icon="" }}
@@ -47,8 +48,8 @@
   </span>
   <span class="input-group-append d-none d-lg-flex">
     {{> control_button b_class="btn-success complex-list-add"
-    	b_title=(concat "Add " type " to List")
-    	b_item=(either type "Item") b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE_LG")
+    	b_tooltip=(concat "Add " type " to List")
+    	b_item=(either type "Item") b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE_LG") b_tags=(concat id "_SCALE_LG")
     	b_target=(concat id "_LIST") b_icon="add_circle_outline"
     	b_icon_type="light" disabled=readonly }}
   </span>
@@ -56,8 +57,9 @@
 <div class="d-flex">
   <div class="btn-group float-right my-1 d-inline-flex ml-auto d-lg-none" role="group">
     {{> control_button b_small="true" b_icon_large="true" b_class="btn-secondary eraser no-active"
-    	b_title="Clear / Reset" b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE_SM")
+    	b_tooltip="Clear / Reset" b_target=(concat id "_DETAILS") b_reset=(concat id "_TYPE_SM" "||" id "_SCALE_SM")
     	b_icon="refresh" disabled=readonly }}
+    {{~#if scale}}{{> control_button b_small="true" b_icon_large="true" b_class="btn-info flex-column justify-content-center align-items-center" b_tooltip=(either scale.tooltip "Open Scale") b_id=(concat id "_SCALE_SM") b_icon="dns" b_icon_type="light" b_icon_centered=true b_expand="scale" b_target=scale.name b_value=(either scale.title "Scale") b_details=scale.instructions b_field=scale.field b_action=scale.action disabled=readonly }}{{/if~}}
     {{#if prefix}}{{#if options}}<div class="btn-group" role="group">
     {{> control_button b_small="true" b_id=(concat id "_TYPE_SM")
     	b_class="btn-dark complex-list-type dropdown-toggle btn-wrap"
@@ -70,13 +72,17 @@
     </div>
     </div>{{/if}}{{/if}}
     {{> control_button b_small="true" b_icon_large="true" b_class="btn-success complex-list-add"
-    	b_title=(concat "Add " type " to List") b_item=(either type "Item") 
-    	b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE_SM")
+    	b_tooltip=(concat "Add " type " to List") b_item=(either type "Item") 
+    	b_details=(concat id "_DETAILS") b_type=(concat id "_TYPE_SM") b_tags=(concat id "_SCALE_SM")
     	b_target=(concat id "_LIST") b_icon="add_circle_outline" b_icon_type="light" }}
   </div>
 </div>
 <div id="{{id}}_LIST" data-holder-field="{{either items 'Items'}}"
      class="list-data list-group list-group-light d-flex flex-column my-1 my-md-2"
      data-controls="{{id}}"{{#if list_field}} data-output-name="{{list_field}}"{{/if}}
-     {{#if readonly}} data-readonly="true"{{/if}}></div>
+     {{~#if readonly}} data-readonly="true"{{/if~}}
+     {{~#if (any min max)}} data-validate="true"{{/if~}}
+     {{~#if min}} data-min="{{min}}"{{/if~}}
+     {{~#if max}} data-max="{{max}}"{{/if~}}></div>
+{{~#if (any min max)}}{{> field_validation}}{{/if~}}
 {% endraw %}

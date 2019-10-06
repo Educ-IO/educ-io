@@ -227,9 +227,7 @@ self.addEventListener("fetch", function(event) {
   
   /* <!-- console.log("Handling fetch for:", event.request.url); --> */
     
-  event.respondWith(
-    
-    caches.match(event.request).then(function(response) {
+  event.respondWith(caches.match(event.request).then(function(response) {
       
       if (response) {
         
@@ -257,8 +255,8 @@ self.addEventListener("fetch", function(event) {
         
       }
 
-    })
-  );
+    }));
+  
 });
 
 /* <!-- Message Handler  --> */

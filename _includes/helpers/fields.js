@@ -249,13 +249,12 @@ Fields = (options, factory) => {
 
         if (_target.hasClass("input-daterange") && _this.data("modifier")) {
 
-          var _modifier = $(`#${_this.data("modifier")}`);
-          var _span = _modifier.data("span") ? _modifier.data("span") : "d";
+          var _modifier = $(`#${_this.data("modifier")}`),
+              _span = _modifier.data("span") ? _modifier.data("span") : "d";
 
           var _start = _target.find(`input[name='${_target.attr("id")}_start']`),
             _start_Date = _start.val() ? factory.Dates.parse(_start.val()) : factory.Dates.now();
           _start.val(_start_Date.add(_value, _span).format(DATE_FORMAT_M)).trigger(EVENT_CHANGE_DT);
-
 
         } else {
 
@@ -268,15 +267,24 @@ Fields = (options, factory) => {
 
   };
 
+  var _reset = element => {
+    var _$ = element && element.jquery ? element : $(element),
+        _default = _$.data("default");
+    if (_default) _$.text(_default);
+    _$.children(".d-none").removeClass("d-none");
+    _$.children(".d-inline").remove();
+    _$.data("selected", null);
+  };
+  
   var _erase = form => {
 
     /* <!-- Wire up eraser actions --> */
     form.find(".eraser").click(e => {
       var _this = $(e.currentTarget),
-        _clear = _get(_this.data("targets")),
-        _reset = _get(_this.data("reset"));
+        _targets = _get(_this.data("targets")),
+        _clear = _get(_this.data("reset"));
 
-      if (_clear) _clear.each((i, element) => {
+      if (_targets) _targets.each((i, element) => {
         var _this = $(element);
         _this.is(":checkbox") ?
           _this.prop("checked", false)
@@ -288,11 +296,9 @@ Fields = (options, factory) => {
           .filter("textarea.resizable").map((i, el) => autosize.update(el));
       });
 
-      if (_reset) _reset.each((i, element) => {
-        var _$ = $(element),
-          _default = _$.data("default");
-        if (_default) _$.text(_default);
-      });
+      if (_clear) _clear.each((i, element) => _reset(element));
+      
+      factory.Display.tidy();
 
     });
 
@@ -337,6 +343,7 @@ Fields = (options, factory) => {
   var _complex = form => {
 
     form.find("button.complex-list-add, a.complex-list-add").click(e => {
+      
       var _this = $(e.currentTarget);
       var _field = _this.closest("[data-output-field]"),
         _holder = form.find(`#${_this.data("details")}`),
@@ -349,6 +356,13 @@ Fields = (options, factory) => {
           _default = _selector.data("default");
         _default = _default ? _default.trim() : _default;
         if (_type == _default) _type = "";
+        
+        /* <!-- Get Tags --> */
+        var _tags = [];
+        if (_this.data("tags")) {
+          var _buttons = form.find(`#${_this.data("tags")}`);
+          if (_buttons.length === 1) _.each(_buttons.children(".tag"), tag => _tags.push($(tag).text()));
+        }
 
         /* <!-- Get the List we are adding to --> */
         var _list = form.find(`#${_this.data("targets")}`);
@@ -367,7 +381,8 @@ Fields = (options, factory) => {
         var _template = {
           template: "list_item",
           details: `${_details}${(_details && _type) ? " | " : ""}${_type ? `${_default}: ${_type}` : ""}`,
-          type: _item
+          type: _item,
+          tags: _tags
         };
         if (_list.data("holder-field")) _template.field = _list.data("holder-field");
 
@@ -391,7 +406,9 @@ Fields = (options, factory) => {
         /* <!-- Clear Up ready for next list item --> */
         _holder.off("change.validity.test").val("")
           .removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
-        _selector.text(_default);
+        
+        var _eraser = _field.find(".eraser:visible");
+        _eraser.length === 1 ? _eraser.click() : _reset(_selector);
 
       } else {
 
@@ -737,7 +754,23 @@ Fields = (options, factory) => {
       });
 
   };
-
+  
+  /* <!-- Validate individual complex elements --> */
+  var _validate = element => {
+    var _element = $(element),
+        _min = _element.data("min"),
+        _max = _element.data("max"),
+        _items = _element.children(".list-item,.list-group-item"),
+        _count = _items.length;
+    
+    return _min ? 
+            _max ? 
+              _count >= _min && _count <= _max :
+              _count >= _min : 
+              _max ? _count <= _max : true;
+    
+  };
+  
   var _start = () => {
     STEPS.first = [
       _listen, _numerical, _erase, _radio, _menus,
@@ -769,6 +802,8 @@ Fields = (options, factory) => {
     on: _on,
 
     last: _last,
+    
+    validate: _validate,
 
   };
   /* <!-- External Visibility --> */

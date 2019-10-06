@@ -427,6 +427,44 @@ Page = function() {
         name: "operation",
         class: "badge-primary"
       },
+    },            
+    {
+      name: "HTML5 Elements",
+      desc: "Support for HTML5 Elements, including forms and navigation.",
+      url: "http://html5test.com/",
+      required: true,
+      test: function() {
+        var passed = null,
+            elements = ["output","fieldset","nav","progress"],
+            types = [HTMLOutputElement,HTMLFieldSetElement,HTMLElement,HTMLProgressElement];
+        try {
+          for (var i = 0; i < elements.length; i++) {
+            var element = document.createElement(elements[i]);
+            try {
+              if (passed !== false) passed = typeof types[i] != "undefined" && element instanceof types[i];
+            } catch (error) {
+              return false;
+            }
+          }
+        } catch (error) {
+          return false;
+        }
+        return passed;
+      },
+      success: {
+        icon: "check",
+        class: "text-success",
+        message: ""
+      },
+      failure: {
+        icon: "priority_high",
+        class: "text-warning",
+        message: "Unfortunately, your browser doesn't support modern HTML5 Elements."
+      },
+      type: {
+        name: "operation",
+        class: "badge-primary"
+      },
     },
     {
       name: "Web Workers",

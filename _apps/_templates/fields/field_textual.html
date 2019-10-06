@@ -59,7 +59,7 @@
     {{/if}}
     {{#if (any button clear)}}<span 
      	class="input-group-append d-none{{#unless readonly}} d-lg-flex{{/unless}}">
-     {{#if (any button clear)}}{{> control_button b_title="Clear / Reset"
+     {{#if (any button clear)}}{{> control_button b_tooltip="Clear / Reset"
     	b_class="btn-secondary eraser no-active"
     	b_target=(which toggle (concat id '||' id '_DETAILS') id) 
     	b_icon="refresh" disabled=readonly }}{{/if}}
@@ -69,7 +69,7 @@
     </span>{{/if}}
     {{#if toggle}}<span class="input-group-append d-none d-lg-flex">
     	{{> toggle_button b_id=(concat id "_TOGGLE_LG") b_targets=id
-    		b_title="Yes / No" b_class=toggle_class disabled=readonly }}
+    		b_tooltip="Yes / No" b_class=toggle_class disabled=readonly }}
     </span>{{/if}}
     {{> field_validation}}
   </div>
@@ -78,17 +78,17 @@
   		class="btn-group float-right my-1 d-inline-flex ml-auto d-lg-none">
     {{#if (any button clear)}}{{> control_button b_small="true" b_icon_large="true" 
     	b_class=(add readonly 'btn-secondary eraser no-active' ' d-none')
-    	b_title="Clear / Reset" b_target=(which toggle (concat id '||' id '_DETAILS') id)
+    	b_tooltip="Clear / Reset" b_target=(which toggle (concat id '||' id '_DETAILS') id)
     	b_icon="refresh" disabled=readonly }}{{/if}}
     {{#if button}}{{> control_button b_small="true" b_id=(concat id "_BUTTON_SM")
     	b_class=(add readonly 'btn-primary textual-input-button' ' d-none')
     	b_target=id b_action=action b_text=button disabled=readonly }}{{/if}}
     {{#if toggle}}{{> toggle_button b_small="true" b_id=(concat id "_TOGGLE_SM") 
-    	 b_title="Yes / No" b_class=toggle_class b_targets=id disabled=readonly }}{{/if}}
+    	 b_tooltip="Yes / No" b_class=toggle_class b_targets=id disabled=readonly }}{{/if}}
   	</div>{{else}}{{#if toggle}}<div role="group"
   		class="btn-group float-right my-1 d-inline-flex ml-auto d-lg-none">
     	{{> toggle_button b_small="true" b_id=(concat id "_TOGGLE_SM") 
-    	 b_title="Yes / No" b_class=toggle_class b_targets=id disabled=readonly }}
+    	 b_tooltip="Yes / No" b_class=toggle_class b_targets=id disabled=readonly }}
   	</div>{{/if}}{{/unless}}
 	</div>{{/if}}
 	{{#if toggle}}<input id="{{id}}" data-output-name="Value" data-output-always="true"

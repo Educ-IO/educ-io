@@ -32,10 +32,10 @@
 {{#> field_general}}
   <div class="btn-group float-right mb-1 d-xl-none" role="group" id="{{id}}_BUTTONS">
     {{#if options}}{{> control_button b_small="true" 
-    	b_class="btn-info alter-numerical" b_title="Decrease" b_target=id disabled=readonly
+    	b_class="btn-info alter-numerical" b_tooltip="Decrease" b_target=id disabled=readonly
     	b_modifier=(concat id "_PERIOD_SM") b_icon="remove" b_value=(concat "-" (either increment 1)) }}
     {{> control_button b_small="true" b_class="btn-primary alter-numerical"
-    	b_title="Increase" b_target=id b_modifier=(concat id "_PERIOD_SM") b_icon="add"
+    	b_tooltip="Increase" b_target=id b_modifier=(concat id "_PERIOD_SM") b_icon="add"
     	b_value=(either increment 1) disabled=readonly }}
     {{> control_button b_id=(concat id "_PERIOD_SM") b_class="btn-dark complex-list-type dropdown-toggle" 
     	b_targets=id b_default=type b_text=type b_span=(either span "") 
@@ -65,17 +65,17 @@
            {{#if required}} required="required"{{/if}}
            {{#if readonly}} readonly="readonly"{{/if}} />
     <span class="input-group-append d-xl-none">
-      {{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
+      {{> control_button b_class="btn-secondary eraser no-active" b_tooltip="Clear / Reset"
       	b_target=id b_icon="refresh" disabled=readonly }}
     </span>
     <span class="input-group-append d-none d-xl-flex">
-      {{> control_button b_class="btn-secondary eraser no-active" b_title="Clear / Reset"
+      {{> control_button b_class="btn-secondary eraser no-active" b_tooltip="Clear / Reset"
       	b_target=id b_icon="refresh" disabled=readonly }}
       {{#if options}}{{> control_button b_small="true"
-      	b_class="btn-info alter-numerical" b_title="Decrease" b_target=id disabled=readonly
+      	b_class="btn-info alter-numerical" b_tooltip="Decrease" b_target=id disabled=readonly
       	b_modifier=(concat id "_PERIOD_LG") b_icon="remove" b_value=(concat "-" (either increment 1)) }}
       {{> control_button b_small="true" b_class="btn-primary alter-numerical"
-      	b_title="Increase" b_target=id b_modifier=(concat id "_PERIOD_LG") b_icon="add"
+      	b_tooltip="Increase" b_target=id b_modifier=(concat id "_PERIOD_LG") b_icon="add"
       	b_value=(either increment 1) disabled=readonly }}
       {{> control_button b_id=(concat id "_PERIOD_LG")
       	b_class="btn-dark complex-list-type dropdown-toggle" b_targets=id b_default=type

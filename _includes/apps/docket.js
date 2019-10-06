@@ -630,7 +630,7 @@ App = function() {
       /* <!-- Set Up / Create the Function Modules --> */
       FN.errors = ಠ_ಠ.Errors({
           autohide : false,
-          holder : "#reflect_Notify .holder",
+          holder : "#docket_Notify .holder",
           class: {
             header : "bg-danger-light",
             main : "text-danger", 

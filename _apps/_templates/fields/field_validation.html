@@ -5,7 +5,7 @@
 {{!-- [invalid] = Message shown for invalid fields after validation --}}
 {{!-- ======================================================= --}}
 {{#if required}}
-{{#if valid}}<div class="valid-feedback">{{{valid}}}</div>{{/if}}
-{{#if invalid}}<div class="invalid-feedback">{{{invalid}}}</div>{{/if}}
+{{#if valid}}<div class="valid-feedback align-items-center justify-content-end"><i class="material-icons mr-1">done</i>{{{valid}}}</div>{{/if}}
+{{#if invalid}}<div class="invalid-feedback align-items-center justify-content-end"><i class="material-icons mr-1">block</i>{{{invalid}}}</div>{{/if}}
 {{/if}}
 {% endraw %}

@@ -64,11 +64,10 @@ App = function() {
         BUTTON = "#createRelectiveReport",
         LOADED = () => $(BUTTON).removeClass(LOADER);
   /* <!-- Internal Constants --> */
-
+  
   /* <!-- Internal Variables --> */
   var ಠ_ಠ, /* <!-- Context --> */
-    ರ‿ರ = {},
-    /* <!-- State --> */
+    ರ‿ರ = {}, /* <!-- State --> */
     ಱ = {}; /* <!-- Persistant State --> */
   /* <!-- Internal Variables --> */
 
@@ -236,7 +235,7 @@ App = function() {
         id: "emails",
         validate: values => values && values.Email && values.Email.Values,
       }), dialog => {
-        ಠ_ಠ.Fields().on(dialog);
+        ಱ.fields.on(dialog);
         ಠ_ಠ.Dialog({}, ಠ_ಠ).handlers.list(dialog, EMAIL);
         dialog.find("textarea").focus();
       }).then(value => {
@@ -254,6 +253,60 @@ App = function() {
     dirty: report => !ರ‿ರ.hash ||
       ರ‿ರ.hash !== new Hashes.MD5().hex(FN.helper.stringify(report, SIGNING_REPLACER)),
 
+    scales: form => {
+      
+      form.find("button[data-expand='scale'],a[data-expand='scale']")
+        .off("click.expand").on("click.expand", e => {
+      
+          var _this = $(e.currentTarget),
+              _name = _this.data("targets"),
+              _field = _this.data("field"),
+              _action = _this.data("action"),
+              _title = _this.data("value"),
+              _instructions = _this.data("details"),
+              _scale = ಱ.forms.scale(_name);
+
+          if (_scale) return ಠ_ಠ.Display.modal("scale", {
+              id: "dialog_Scale",
+              markers: ಱ.forms.process(_scale.scale),
+              title: _title,
+              field: _field,
+              instructions: _instructions,
+              action: _action,
+              wide: true
+            }, dialog => {
+              var _form = ಱ.fields.on(dialog.find("form")),
+                  _selected = _this.data("selected");
+              ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(_form, _selected || {});
+            }).then(values => {
+            
+              /* <-- Action Button Clicked (e.g. not dismissed) --> */
+              if (values) {
+                _this.data("selected", _.isEmpty(values) ? null : values);
+                _this.children("span.d-inline").remove();
+                if (_.isEmpty(values)) {
+                  _this.children("i.material-icons").removeClass("d-none");
+                } else {
+                  _this.find("i.material-icons").addClass("d-none");
+                  var _reducer = (memo, value, key) => {
+                      if (key !== "Value" && value && value.Value === true) {
+                        memo.push(_.keys(value).length == 1 ? key :
+                          _.map(_.reduce(value, _reducer, []), (value, i) => i === 0 ? `${key} - ${value}` : value).join("; "));
+                      }
+                      return memo;
+                    };
+                  var _details = values.Standards.Values ? _.reduce(values.Standards.Values, _reducer, []): [];
+                  _.each(_details, detail => _this.append(ಠ_ಠ.Display.template.get({
+                      template: "tag",
+                      detail: detail
+                    })));
+                }
+              }
+            });
+
+        });
+      
+    }
   };
   /* <-- Helper Functions --> */
 
@@ -264,11 +317,11 @@ App = function() {
     reports: form => ಠ_ಠ.Google.files.type(TYPE_REPORT, "domain,user,allTeamDrives", null, `(${form ? `appProperties has {key='FORM' and value='${form.$name ? form.$name : form.name ? form.name : form}'} and ` : ""}'me' in owners and not appProperties has {key='COMPLETE' and value='true'})`)
                       .catch(e => ಠ_ಠ.Flags.error("Reports Finding Error", e).negative())
                       .then(ಠ_ಠ.Main.busy("Looking for Existing Reports")),
-      
     
   };
   /* <!-- Find Functions --> */
 
+  
   /* <!-- Display Functions --> */
   FN.display = {
 
@@ -282,23 +335,29 @@ App = function() {
       _return.target = ಠ_ಠ.container.empty();
       ಠ_ಠ.Display.state().change(STATES, state).protect("a.jump").on("JUMP");
 
-      var _shown = ಠ_ಠ.Display.template.show(_return);
+      var _shown = ಠ_ಠ.Display.template.show(_return),
+          _form = _shown.find("form"),
+          _fields = ಠ_ಠ.Fields({
+            me: ಠ_ಠ.me ? ಠ_ಠ.me.full_name : undefined,
+            templater: ಠ_ಠ.Display.template.get,
+            list_upload_content: "Evidence",
+            list_web_content: "Evidence",
+            forms: ಱ.forms
+          }, ಠ_ಠ);
 
-      var _form = ಠ_ಠ.Fields({
-        me: ಠ_ಠ.me ? ಠ_ಠ.me.full_name : undefined,
-        templater: ಠ_ಠ.Display.template.get,
-        list_upload_content: "Evidence",
-        list_web_content: "Evidence"
-      }, ಠ_ಠ);
-
-      _form.first(_shown);
+      /* <!-- Process 'first' field hookups --> */
+      _fields.first(_shown);
       
       /* <!-- Handle Default Form Submission (Keyboard) etc. | Maybe doesn't get triggered? --> */
-      _shown.find("form").submit(actions && actions.editable ? e => {
+      _form.submit(actions && actions.editable ? e => {
         e.preventDefault();
         FN.action.save.report().then(result => result ? FN.process.signatures() : false);
       } : e => e.preventDefault());
+      
+      /* <!-- Process Scale Hookups --> */
+      FN.helper.scales(_form);
 
+      /* <!-- Handle Process argument, if supplied --> */
       if (process) process(_shown);
       
       /* <!-- Smooth Scroll Anchors --> */
@@ -306,7 +365,8 @@ App = function() {
         class: "smooth-scroll"
       }).start();
 
-      return _form.last(_shown);
+      /* <!-- Process 'last' field hookups --> */
+      return _fields.last(_shown);
       
     },
 
@@ -527,7 +587,7 @@ App = function() {
         },
       ],
     }, dialog => {
-      ಠ_ಠ.Fields().on(dialog);
+      ಱ.fields.on(dialog);
       dialog.find("input[type='radio'][name='period_Select']").change(e => {
         var _$ = $(e.currentTarget),
           _span = _$.data("span"),
@@ -1152,6 +1212,14 @@ App = function() {
     validate: () => {
       var _form = ರ‿ರ.form.find("form.needs-validation"),
         _result = (ರ‿ರ.form.find("form.needs-validation")[0].checkValidity() !== false);
+      _result = _.reduce(_form.find("[data-validate='true']"),
+                  (result, el) => {
+                    var _result = ಱ.fields.validate(el),
+                        _el = $(el);
+                    _el.siblings(`.${_result === false ? "invalid" : "valid"}-feedback`).addClass("d-flex");
+                    _el.siblings(`.${_result === false ? "valid" : "invalid"}-feedback`).removeClass("d-flex");
+                    return result === false ? result : _result;
+                  }, _result);
       _form.toggleClass("was-validated", !_result);
       return _result;
     },
@@ -1187,6 +1255,8 @@ App = function() {
 
       /* <!-- Set Container Reference to this --> */
       container.App = this;
+      
+      /* <!-- Set Up / Create the Function Modules --> */
 
       /* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
@@ -1512,6 +1582,18 @@ App = function() {
             }
           },
 
+          validate: {
+            matches: /VALIDATE/i,
+            routes: {
+              report: {
+                matches: /REPORT/i,
+                state: STATE_REPORT_OPENED,
+                length: 0,
+                fn: () => FN.action.validate(),
+              }
+            }
+          },
+          
           complete: {
             matches: /COMPLETE/i,
             routes: {
@@ -1553,7 +1635,7 @@ App = function() {
                     length: 1,
                     fn: command => ಱ.forms.persistent().loaded
                       .then(forms => (forms.has(command) ?
-                          Promise.resolve(FN.create.existing(command, true)) :
+                          Promise.resolve(FN.create.existing(command)) :
                           FN.prompt.create([FN.prompt.reports()]))
                         .then(form => form ? ರ‿ರ.form = form : false))
                       .then(ಠ_ಠ.Main.busy("Loading Form"))
@@ -1562,7 +1644,7 @@ App = function() {
                     length: 2,
                     fn: command => FN.create.parent(command[0])
                       .then(folder => ಱ.forms.has(command[1]) ?
-                        Promise.resolve(FN.create.existing(command[1], true)) :
+                        Promise.resolve(FN.create.existing(command[1])) :
                         FN.prompt.create([FN.prompt.reports()], folder))
                       .then(form => form ? ರ‿ರ.form = form : false)
                   },
@@ -1624,6 +1706,7 @@ App = function() {
       ಱ.forms = ಱ.forms || ಠ_ಠ.Forms(LOADED);
       ಱ.signatures = ಱ.signatures ||
         ಠ_ಠ.Signatures(ಠ_ಠ, FN.helper.stringify, SIGNING_REPLACER, FN.helper.elevate);
+      ಱ.fields = ಠ_ಠ.Fields({forms : ಱ.forms}, ಠ_ಠ);
     },
 
     /* <!-- Clear the existing state --> */
