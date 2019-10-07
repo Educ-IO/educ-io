@@ -38,7 +38,7 @@ Data = function() {
     }, options), modal => {
       FACTORY.Fields({
         me: FACTORY.me ? FACTORY.me.full_name : undefined,
-        templater: DISPLAY.template.get
+        templater: options => DISPLAY.template.process($(DISPLAY.template.get(options)))
       }, FACTORY).on(modal);
       dialog.handlers.keyboard.enter(modal);
       Promise.resolve(populate ? populate(modal) : true)

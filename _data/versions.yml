@@ -1,4 +1,8 @@
 site :
+  0.1.6n :
+    name : Reflect v0.0.7i-beta
+    desc : Target Evidence Improvements
+    numeric : 0.1.6.13
   0.1.6m :
     name : Docket v1.0.8a
     desc : Bug Fix
@@ -892,6 +896,10 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.7i-beta :
+    name : Reflect Target Evidence Improvements
+    desc : Evidence attaching to Target Responses
+    type : minor
   0.0.7h-beta :
     name : Reflect Target Improvements
     desc : Ability to associate (tag) scales against targets

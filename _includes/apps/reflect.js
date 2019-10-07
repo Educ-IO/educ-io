@@ -339,7 +339,7 @@ App = function() {
           _form = _shown.find("form"),
           _fields = ಠ_ಠ.Fields({
             me: ಠ_ಠ.me ? ಠ_ಠ.me.full_name : undefined,
-            templater: ಠ_ಠ.Display.template.get,
+            templater: options => ಠ_ಠ.Display.template.process($(ಠ_ಠ.Display.template.get(options))),
             list_upload_content: "Evidence",
             list_web_content: "Evidence",
             forms: ಱ.forms

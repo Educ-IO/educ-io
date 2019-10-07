@@ -137,6 +137,7 @@ templates:
   - shared/control_button
   - shared/toggle_button
   - shared/list_item
+  - shared/response_item
   - shared/filters
   - shared/table
   - shared/datatable
@@ -160,6 +161,7 @@ templates:
   - fields/field_durations
   - fields/field_files
   - fields/field_range
+  - fields/field_responses
   - emails/email_standard
   - reflect/heading
   - reflect/group

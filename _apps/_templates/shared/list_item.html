@@ -3,7 +3,7 @@
 <div 
    class="d-flex align-items-center flex-row list-item list-group-item p-2{{#if class}} {{class}}{{/if}}">
 	<a class="align-self-center d-flex delete icon{{#if readonly}} disabled{{/if}}" href="#"
-     title="{{either delete 'Delete Item from List'}}">
+     data-toggle="tooltip" title="{{either delete 'Delete Item from List'}}">
 		<i class="align-self-center mr-2 material-icons text-danger">delete_forever</i>
 	</a>
 	<p{{#if template}} data-template="{{template}}"{{/if}}data-output-name="{{either field 'Items'}}"
@@ -30,7 +30,7 @@
       {{#present (either number Number)}}<span data-output-name="Number" 
         class="ml-2 badge badge-dark align-self-center">{{val "" number Number}}</span>{{/present}}
       {{~#if (either Tags tags)}}<span class="d-flex flex-row mt-1">
-        {{#each (either Tags tags)}}<span class="o-75 small badge badge-pill badge-light{{#unless @last}} mr-2{{/unless}}" data-output-name="Tags">{{this}}</span>{{/each}}
+        {{~#if (isString (either Tags tags))}}<span class="o-75 small badge badge-pill badge-light" data-output-name="Tags">{{either Tags tags}}</span>{{else}}{{#each (either Tags tags)}}<span class="o-75 small badge badge-pill badge-light{{#unless @last}} mr-2{{/unless}}" data-output-name="Tags">{{this}}</span>{{/each}}{{/if~}}
       </span>{{/if~}}
     </span>
 		<span data-output-name="Type" 

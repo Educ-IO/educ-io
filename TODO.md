@@ -151,6 +151,10 @@ Folders
 
 Reflect
 -------
+* ** BUG ** Dynamic List Option Generation for sub-templates (e.g. evidence in field_responses)
+
+* ** BUG ** Recursive Template Hydration <-- DONE
+
 * ** FEATURE ** Target Loading from Previous Reports
 
 * ** FEATURE ** Complete Email from Signer for pre-shared reports

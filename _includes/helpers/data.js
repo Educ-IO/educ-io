@@ -212,6 +212,12 @@ Data = (options, factory) => {
 
     var value = (el, val) => {
 
+      var complex = (descendants, val) => _.each(descendants, el => {
+        var _el = $(el),
+          _data = (_data = _el.data("output-name")) || _el.data("holder-field");
+        if (_valid(val[_data], !_el.data("output-always"))) value(_el, val[_data]);
+      });
+      
       var simple = _el => {
         if (el[0].type == "range" && el.data("value") === false) el.data("value", true);
         if (_el[0].type == "checkbox" || _el[0].type == "radio") {
@@ -240,13 +246,23 @@ Data = (options, factory) => {
             if (_val) _.each(_.isArray(_val) ? _val : [_val], item => {
               if (item.__type) {
                 try {
+                  
                   var _template = _.extend(item, {
                     template: item.__type,
                     field: _holder,
                   });
+                  
                   if (_el.data("readonly")) _template.readonly = true;
-                  _template = factory.Display.template.get(_template);
-                  $(_template).appendTo(_el);
+                  _template = $(factory.Display.template.get(_template));
+                  _template.appendTo(_el);
+                  
+                  /* <!-- Process Sub-Templates --> */
+                  var descendants = _descendants(_template, true, true);
+                  if (descendants.length === 1) {
+                    descendants = $(descendants[0]).find("[data-holder-field]");
+                    if (descendants.length === 1) complex(descendants, item)
+                  }
+                  
                 } catch (e) {
                   ERROR("Item Templating Error", e);
                 }
@@ -270,15 +286,9 @@ Data = (options, factory) => {
         }
       };
 
-      var complex = descendants => _.each(descendants, el => {
-        var _el = $(el),
-          _data = (_data = _el.data("output-name")) || _el.data("holder-field");
-        if (_valid(val[_data], !_el.data("output-always"))) value(_el, val[_data]);
-      });
-
       /* <!-- Only Process Direct Descendents --> */
       var descendants = _descendants(el, true, true);
-      return (descendants.length === 0) ? simple(el) : complex(descendants);
+      return (descendants.length === 0) ? simple(el) : complex(descendants, val);
 
     };
 

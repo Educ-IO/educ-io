@@ -325,9 +325,14 @@ a.disabled, input.disabled, .btn-disabled {
 // -- Badges -- //
 
 // -- List Groups -- //
-.list-group-light > .list-group-item {
-  background-color: $colour-light-success;
-}
+.list-group-light {
+  &>.list-item {
+    background-color: $colour-light-success;
+  }
+  &>.response-item {
+    background-color: $colour-light-warning;
+  }
+} 
 
 // -- Option Background -- //
 select > option.trusted {

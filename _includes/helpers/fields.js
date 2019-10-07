@@ -21,7 +21,7 @@ Fields = (options, factory) => {
     list_holder: ".list-holder",
     list_template: "list_item",
     list_data: ".list-data",
-    list_item: ".list-item",
+    list_item: ".list-group-item",
     list_picker_title: "Select a File / Folder to Use",
     list_picker_view: "DOCS",
     list_upload_title: "Please upload file/s ...",
@@ -37,7 +37,8 @@ Fields = (options, factory) => {
     doc_picker_title: "Select a Document to Load Text From",
     doc_picker_view: "DOCUMENTS"
   };
-  const STEPS = {};
+  const STEPS = {},
+        FN = {};
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -96,7 +97,10 @@ Fields = (options, factory) => {
         if (_links.attr("type") == "number") _number(Number("-" + _el.text()), _target, 0);
       }
     });
+    
     _this.remove();
+    
+    factory.Display.tidy();
   };
 
   var _listen = form => {
@@ -340,91 +344,6 @@ Fields = (options, factory) => {
 
   };
 
-  var _complex = form => {
-
-    form.find("button.complex-list-add, a.complex-list-add").click(e => {
-      
-      var _this = $(e.currentTarget);
-      var _field = _this.closest("[data-output-field]"),
-        _holder = form.find(`#${_this.data("details")}`),
-        _details = _holder.val();
-      if (!_holder.data("required") || _details) {
-
-        /* <!-- Get Type and Defaults --> */
-        var _selector = form.find(`#${_this.data("type")}`),
-          _type = _selector.text().trim(),
-          _default = _selector.data("default");
-        _default = _default ? _default.trim() : _default;
-        if (_type == _default) _type = "";
-        
-        /* <!-- Get Tags --> */
-        var _tags = [];
-        if (_this.data("tags")) {
-          var _buttons = form.find(`#${_this.data("tags")}`);
-          if (_buttons.length === 1) _.each(_buttons.children(".tag"), tag => _tags.push($(tag).text()));
-        }
-
-        /* <!-- Get the List we are adding to --> */
-        var _list = form.find(`#${_this.data("targets")}`);
-
-        /* <!-- Check the Checked Value input control if required --> */
-        if (_list.children(".list-item").length === 0) {
-          var _controls = _list.data("controls");
-          if (_controls) {
-            _controls = $(`#${_controls}`);
-            if (_controls.is("input[type='checkbox']")) _controls.prop("checked", true);
-          }
-        }
-
-        /* <!-- Create Template Options --> */
-        var _item = _this.data("item");
-        var _template = {
-          template: "list_item",
-          details: `${_details}${(_details && _type) ? " | " : ""}${_type ? `${_default}: ${_type}` : ""}`,
-          type: _item,
-          tags: _tags
-        };
-        if (_list.data("holder-field")) _template.field = _list.data("holder-field");
-
-        /* <!-- Get Optional Tags --> */
-        _.reduce(_field.find(`input[data-item][data-item!='${$.escapeSelector(_item)}']`),
-          (memo, input) => _.tap(memo, memo => {
-            var _input = $(input),
-              _val = _input.val(),
-              _type = _input.data("item").toLowerCase();
-            if (_val && _type && memo[_type] === undefined) memo[_type] = _val;
-            if (_input.data("targets")) {
-              var _target = $(`#${_input.data("targets")}`);
-              if (_input.attr("type") == "number") _number(Number(_val), _target, 0);
-            }
-          }), _template);
-
-        /* <!-- Create & Append Item --> */
-        if (options.templater) $(options.templater(_template))
-          .appendTo(_list).find("a.delete").click(_remove);
-
-        /* <!-- Clear Up ready for next list item --> */
-        _holder.off("change.validity.test").val("")
-          .removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
-        
-        var _eraser = _field.find(".eraser:visible");
-        _eraser.length === 1 ? _eraser.click() : _reset(_selector);
-
-      } else {
-
-        _holder.addClass("invalid");
-        _holder.on("change.validity.test", e => {
-          var _this = $(e.currentTarget);
-          if (_this.val()) _this.removeClass("invalid");
-          _this.off("change.validity.test");
-        });
-
-      }
-
-    });
-
-  };
-
   var _autosize = form => {
 
     form.find("textarea.resizable").on("focus.autosize", e => {
@@ -533,8 +452,8 @@ Fields = (options, factory) => {
         if (!value.delete) value.delete = "Remove";
 
         /* <!-- Add new Item to List --> */
-        $(factory.Display.template.get(value))
-          .appendTo(list.find(options.list_data)).find("a.delete").click(_remove);
+        FN.generate(value, list.find(options.list_data));
+        
       },
 
       picker: e => {
@@ -653,6 +572,19 @@ Fields = (options, factory) => {
 
   };
 
+  var _load = form => {
+    
+    /* <!-- Handle Populate Fields from File --> */
+    var _handle = e => {
+      var _this = $(e.currentTarget);
+      /* <!-- TODO: Can load be handled here, or kicked back to the controlling app (e.g. Reflect) --> */
+    };
+    
+    form.find("button[data-action='load'], a[data-action='load']")
+      .off("click.load").on("click.load", _handle);
+    
+  };
+  
   var _doc = form => {
 
     /* <!-- Handle Populate Textual Fields from Google Doc --> */
@@ -755,8 +687,104 @@ Fields = (options, factory) => {
 
   };
   
+  var _complex = form => {
+
+    form.find("button.complex-list-add, a.complex-list-add").click(e => {
+      
+      var _this = $(e.currentTarget);
+      var _field = _this.closest("[data-output-field]"),
+        _holder = form.find(`#${_this.data("details")}`),
+        _details = _holder.val();
+      if (!_holder.data("required") || _details) {
+
+        /* <!-- Get Type and Defaults --> */
+        var _selector = form.find(`#${_this.data("type")}`),
+          _type = _selector.text().trim(),
+          _default = _selector.data("default");
+        _default = _default ? _default.trim() : _default;
+        if (_type == _default) _type = "";
+        
+        /* <!-- Get Tags --> */
+        var _tags = [];
+        if (_this.data("tags")) {
+          var _buttons = form.find(`#${_this.data("tags")}`);
+          if (_buttons.length === 1) _.each(_buttons.children(".tag"), tag => _tags.push($(tag).text()));
+        }
+
+        /* <!-- Get the List we are adding to --> */
+        var _list = form.find(`#${_this.data("targets")}`);
+
+        /* <!-- Check the Checked Value input control if required --> */
+        if (_list.children(".list-item").length === 0) {
+          var _controls = _list.data("controls");
+          if (_controls) {
+            _controls = $(`#${_controls}`);
+            if (_controls.is("input[type='checkbox']")) _controls.prop("checked", true);
+          }
+        }
+
+        /* <!-- Create Template Options --> */
+        var _item = _this.data("item");
+        var _template = {
+          template: _this.data("list-template") || options.list_template,
+          details: `${_details}${(_details && _type) ? " | " : ""}${_type ? `${_default}: ${_type}` : ""}`,
+          type: _item,
+          tags: _tags
+        };
+        if (_list.data("holder-field")) _template.field = _list.data("holder-field");
+
+        /* <!-- Get Optional Tags --> */
+        _.reduce(_field.find(`input[data-item][data-item!='${$.escapeSelector(_item)}']`),
+          (memo, input) => _.tap(memo, memo => {
+            var _input = $(input),
+              _val = _input.val(),
+              _type = _input.data("item").toLowerCase();
+            if (_val && _type && memo[_type] === undefined) memo[_type] = _val;
+            if (_input.data("targets")) {
+              var _target = $(`#${_input.data("targets")}`);
+              if (_input.attr("type") == "number") _number(Number(_val), _target, 0);
+            }
+          }), _template);
+
+        /* <!-- Create & Append Item --> */
+        FN.generate(_template, _list);
+        
+        /* <!-- Clear Up ready for next list item --> */
+        _holder.off("change.validity.test").val("")
+          .removeClass("invalid").filter("textarea.resizable").map((i, el) => autosize.update(el));
+        
+        var _eraser = _field.find(".eraser:visible");
+        _eraser.length === 1 ? _eraser.click() : _reset(_selector);
+
+      } else {
+
+        _holder.addClass("invalid");
+        _holder.on("change.validity.test", e => {
+          var _this = $(e.currentTarget);
+          if (_this.val()) _this.removeClass("invalid");
+          _this.off("change.validity.test");
+        });
+
+      }
+
+    });
+
+  };
+  
+  /* <!-- Create & Append Item --> */
+  FN.generate = (value, target) => {
+    
+    var _generated = options.templater ? 
+        options.templater(value) : $(factory.Display.template.get(value));
+    _generated = _generated.appendTo(target);
+    _generated.find("a.delete").click(_remove);
+    _list(_generated);
+    _autosize(_generated);
+  
+  };
+  
   /* <!-- Validate individual complex elements --> */
-  var _validate = element => {
+  FN.validate = element => {
     var _element = $(element),
         _min = _element.data("min"),
         _max = _element.data("max"),
@@ -771,39 +799,39 @@ Fields = (options, factory) => {
     
   };
   
-  var _start = () => {
+  FN.start = () => {
     STEPS.first = [
       _listen, _numerical, _erase, _radio, _menus,
       _complex, _reveal, _dim, _me, _datetime,
       _spans, _list, _doc, _updates, _range,
-      _toggles
+      _toggles, _load
     ];
     STEPS.last = [_deletes, _autosize];
   };
 
-  var _first = form => _.tap(form, form => _.each(STEPS.first, step => step(form)));
+  FN.first = form => _.tap(form, form => _.each(STEPS.first, step => step(form)));
 
-  var _last = form => _.tap(form, form => _.each(STEPS.last, step => step(form)));
+  FN.last = form => _.tap(form, form => _.each(STEPS.last, step => step(form)));
 
-  var _on = form => _.tap(form, form => {
+  FN.on = form => _.tap(form, form => {
     _.each(STEPS.first, step => step(form));
     _.each(STEPS.last, step => step(form));
   });
   /* <!-- Internal Functions --> */
 
-  _start();
+  FN.start();
 
   /* <!-- External Visibility --> */
   return {
 
     /* <!-- External Functions --> */
-    first: _first,
+    first: FN.first,
 
-    on: _on,
+    on: FN.on,
 
-    last: _last,
+    last: FN.last,
     
-    validate: _validate,
+    validate: FN.validate,
 
   };
   /* <!-- External Visibility --> */
