@@ -1,4 +1,8 @@
 site :
+  0.1.6m :
+    name : Docket v1.0.8a
+    desc : Bug Fix
+    numeric : 0.1.6.12
   0.1.6l :
     name : Reflect v0.0.7h-beta
     desc : Target Improvements
@@ -992,6 +996,10 @@ accounts :
     name : Early testing version
     type : minor
 docket :
+  1.0.8a :
+    name : Bug Fix
+    desc : Fixed Project View Bug
+    type : minor
   1.0.8 :
     name : Project View Improvements
     desc : Stable Project View

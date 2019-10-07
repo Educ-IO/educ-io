@@ -145,8 +145,9 @@ Query = (options, factory) => {
     all_tagged: (tags, since, until) => since || until ? {"$and": [FN.temporal.between(since, until), FN.content.badges(tags)]} : FN.content.badges(tags),
     
     tagged: tag => ({"$and": [FN.content.badge(tag), FN.status.incomplete()]}),
-
-    project: value => _.tap({}, query => query[options.schema.columns.has_projects.value] = {$eq: value === false ? false : true}),
+    
+    project: value => _.tap({}, query => query[options.schema.columns.has_projects.value] = value === false ?
+                            {"$or": [{$exists: false}, {$eq: false}]} : {$eq: true}),
     
     tagless: (since, until) => since || until ? {"$and": [FN.temporal.between(since, until), FN.content.tagless()]} : FN.content.tagless(),
 

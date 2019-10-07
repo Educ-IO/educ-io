@@ -184,7 +184,7 @@ Analysis = (options, factory) => {
             options.query.tagless(since, until) : /* <!-- Tags === TRUE | Has no tag --> */
             options.query.all_tagged(tags, since, until);
       
-      if (projects) {
+      if (projects !== false && projects !== undefined) {
         var _projects = projects === true ? /* <!-- Projects === TRUE | Has any project --> */
            options.query.project() : 
            projects === null ? /* <!-- Projects === NULL | Has no project --> */
