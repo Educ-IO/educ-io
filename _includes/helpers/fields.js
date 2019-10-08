@@ -577,6 +577,7 @@ Fields = (options, factory) => {
     /* <!-- Handle Populate Fields from File --> */
     var _handle = e => {
       var _this = $(e.currentTarget);
+      factory.Flags.log("Load Handler", _this);
       /* <!-- TODO: Can load be handled here, or kicked back to the controlling app (e.g. Reflect) --> */
     };
     

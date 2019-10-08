@@ -260,7 +260,7 @@ Data = (options, factory) => {
                   var descendants = _descendants(_template, true, true);
                   if (descendants.length === 1) {
                     descendants = $(descendants[0]).find("[data-holder-field]");
-                    if (descendants.length === 1) complex(descendants, item)
+                    if (descendants.length === 1) complex(descendants, item);
                   }
                   
                 } catch (e) {

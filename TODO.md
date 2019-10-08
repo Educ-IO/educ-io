@@ -153,8 +153,6 @@ Reflect
 -------
 * ** BUG ** Dynamic List Option Generation for sub-templates (e.g. evidence in field_responses)
 
-* ** BUG ** Recursive Template Hydration <-- DONE
-
 * ** FEATURE ** Target Loading from Previous Reports
 
 * ** FEATURE ** Complete Email from Signer for pre-shared reports
@@ -188,6 +186,7 @@ Survey
 
 Complete
 --------
+* ** BUG ** Recursive Template Hydration <-- DONE
 * ** FEATURE ** Multiple Scale Associations for Targets (dialog?) <-- DONE
 * ** FEATURE ** field_complex field type should have tagged scale associated with it <-- DONE
 * ** BUG ** field_complex field type needs to have required check (currently ignored) <-- DONE
