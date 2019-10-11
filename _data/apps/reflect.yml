@@ -296,6 +296,7 @@ menus:
           - name: Import
             desc: Import a saved Report from a file
             hash: import.report
+            shortcut: "i"
             divider: true
 
           - name: Sign
@@ -314,6 +315,7 @@ menus:
           - name: Save
             desc: Save this Report
             hash: save.report
+            shortcut: "s"
             imports:
               - html2canvas
             disabled_until:
@@ -366,6 +368,7 @@ menus:
           - name: Validate
             desc: Validate Report
             hash: validate.report
+            shortcut: "v"
             disabled_until:
               - opened-report
             auth: google

@@ -250,10 +250,18 @@ Forms = function(loaded) {
           value: item.key,
           name: item.title,
           class: _file ? "" : "text-body trusted",
-          title: _file ? `Owned by: ${_owner(_file)}` : ""
+          title: _file ? `Owned by: ${_owner(_file)}` : "Default Reflect Form",
+          importance: _file ? 
+              item.meta && item.meta.importance ? 
+                item.meta.importance.toLowerCase() == "high" ? 1 :
+                item.meta.importance.toLowerCase() == "medium" ? 2 :
+                item.meta.importance.toLowerCase() == "low" ? 3 : 3 :
+              3 :
+            2
         };
       })
       .sortBy("name")
+      .sortBy("importance")
       .value(),
 
     has: name => !!(_get(name, ರ‿ರ.cache.forms)),

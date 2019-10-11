@@ -770,7 +770,12 @@ App = function() {
     report: (data, actions) => {
       FN.create.load(_.tap(data, data =>
           ಠ_ಠ.Flags.log(`Loaded Report File: ${JSON.stringify(data, REGEX_REPLACER, 2)}`)).form,
-        form => (ರ‿ರ.form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(form, data.report)), actions);
+        form => {
+          var _return = (ರ‿ರ.form = ಠ_ಠ.Data({}, ಠ_ಠ).rehydrate(form, data.report));
+          /* <!-- Re-wire up refreshed (e.g. List) events --> */
+          ಱ.fields.refresh(_return);
+          return _return;
+        }, actions);
       return FN.process.signatures();
     },
 
@@ -925,13 +930,13 @@ App = function() {
       .then(value => _.tap(value, () => ಠ_ಠ.Display.state().enter(STATE_FILE_LOADED)))
       .then(value =>
         ಠ_ಠ.Google.files.is(TYPE_REPORT)(file) ?
-        FN.process.report(value.content, value.actions) :
-        ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ?
-        FN.process.form(value.content, value.actions) :
-        ಠ_ಠ.Google.files.is(TYPE_ANALYSIS)(file) ?
-        FN.process.analysis(value.content.forms, value.content.mine,
-          value.content.full, value.content.dates ? _.tap(value.content.dates, FN.helper.span) : value.content.dates,
-          value.content.expected)
+          FN.process.report(value.content, value.actions) :
+          ಠ_ಠ.Google.files.is(TYPE_FORM)(file) ?
+            FN.process.form(value.content, value.actions) :
+            ಠ_ಠ.Google.files.is(TYPE_ANALYSIS)(file) ?
+              FN.process.analysis(value.content.forms, value.content.mine,
+                value.content.full, value.content.dates ? _.tap(value.content.dates, FN.helper.span) : value.content.dates,
+                value.content.expected)
         .then(() => ಠ_ಠ.Display.state()
           .enter([STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_ALL, STATE_ANALYSIS_ANY])) :
         Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id} | ${file.mimeType}`)),
@@ -1545,6 +1550,8 @@ App = function() {
                   save: {
                     state: STATE_REPORT_EDITABLE,
                     length: 0,
+                    keys: ["s", "S"],
+                    requires: "html2canvas",
                     fn: () => FN.action.save.report()
                       .then(result => result ? FN.process.signatures() : false)
                   },
@@ -1588,6 +1595,7 @@ App = function() {
               report: {
                 matches: /REPORT/i,
                 state: STATE_REPORT_OPENED,
+                keys: ["v", "V"],
                 length: 0,
                 fn: () => FN.action.validate(),
               }

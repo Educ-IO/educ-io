@@ -1,14 +1,14 @@
 {% raw %}
-<div class="d-flex justify-content-center nvh-25 flex-column py-2 px-3 bg-light border">
-  {{~#exists categories}}{{#each categories}}<div>
-    <span class="display-{{#is name 'TOTAL'}}5{{else}}6{{/is}} d-flex align-items-center{{#is name 'TOTAL'}} border-bottom{{/is}}{{#is name 'COMPLETE'}} border-bottom{{/is}}">
-      {{~#is name 'ZOMBIES'}}<i class="material-icons text-dark md-36 mr-2 o-50">trending_down</i>{{/is~}}
+<div class="d-flex justify-content-center nvh-25 h-100 flex-column py-2 px-3 bg-light border">
+  {{~#exists categories}}{{#each categories}}{{~#if value}}<div>
+    <span class="display-{{#is name 'TOTAL'}}5{{else}}6{{/is}} d-flex align-items-center{{#is name 'TOTAL'}} border-bottom{{/is}}{{#is name 'COMPLETE'}} border-bottom mb-1{{/is}}">
+      {{~#is name 'ZOMBIES'}}<i class="material-icons text-dark md-24 mr-2 o-50">trending_down</i>{{/is~}}
       {{~#is name 'GHOSTS'}}<span class="icon text-dark md-1 mr-3 o-50">{{> ghost}}</span>{{/is~}}
-      {{~#is name 'READY'}}<i class="material-icons text-dark md-36 mr-2 o-50">hourglass_empty</i>{{/is~}}
-      {{~#is name 'IN PROGRESS'}}<i class="material-icons text-dark md-36 mr-2 o-50">work_outline</i>{{/is~}}
+      {{~#is name 'READY'}}<i class="material-icons text-dark md-24 mr-2 o-50">hourglass_empty</i>{{/is~}}
+      {{~#is name 'IN PROGRESS'}}<i class="material-icons text-dark md-24 mr-2 o-50">work_outline</i>{{/is~}}
       <span class="text-primary{{#unless (is name 'TOTAL')}} font-weight-lighter{{/unless}} mr-auto small">{{name}}</span>
-      <span class="font-weight-bold text-{{#is name 'TOTAL'}}dark{{else}}{{#is name 'ONGOING'}}danger{{else}}{{#is name 'COMPLETE'}}success{{else}}secondary{{/is}}{{/is}}{{/is}} mr-2">{{value}}{{#exists percent}}<span class="font-weight-light text-secondary border-left pl-2 ml-2">{{percent}}%</span>{{/exists}}</span>
+      <span class="font-weight-bold text-{{#is name 'TOTAL'}}dark{{else}}{{#is name 'ONGOING'}}danger{{else}}{{#is name 'COMPLETE'}}success{{else}}secondary{{/is}}{{/is}}{{/is}} mr-2">{{value}}{{#exists percent}}<span class="font-weight-light text-secondary border-left pl-2 ml-2 d-inline-block text-right" style="min-width: 3em;">{{percent}}%</span>{{/exists}}</span>
     </span>
-  </div>{{/each}}{{/exists~}}
+  </div>{{/if~}}{{/each}}{{/exists~}}
 </div>
 {% endraw %}

@@ -723,11 +723,15 @@ Fields = (options, factory) => {
             if (_controls.is("input[type='checkbox']")) _controls.prop("checked", true);
           }
         }
-
+        
         /* <!-- Create Template Options --> */
         var _item = _this.data("item");
         var _template = {
           template: _this.data("list-template") || options.list_template,
+          options: _this.data("list-options") ? 
+            _.isString(_this.data("list-options")) ? 
+              JSON.parse(_this.data("list-options")) : _this.data("list-options") : null,
+          prefix: _this.data("list-prefix") || "",
           details: `${_details}${(_details && _type) ? " | " : ""}${_type ? `${_default}: ${_type}` : ""}`,
           type: _item,
           tags: _tags
@@ -807,11 +811,14 @@ Fields = (options, factory) => {
       _spans, _list, _doc, _updates, _range,
       _toggles, _load
     ];
+    STEPS.refresh = [_list],
     STEPS.last = [_deletes, _autosize];
   };
 
   FN.first = form => _.tap(form, form => _.each(STEPS.first, step => step(form)));
 
+  FN.refresh = form => _.tap(form, form => _.each(STEPS.refresh, step => step(form)));
+  
   FN.last = form => _.tap(form, form => _.each(STEPS.last, step => step(form)));
 
   FN.on = form => _.tap(form, form => {
@@ -830,6 +837,8 @@ Fields = (options, factory) => {
 
     on: FN.on,
 
+    refresh: FN.refresh,
+    
     last: FN.last,
     
     validate: FN.validate,

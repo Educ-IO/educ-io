@@ -247,10 +247,13 @@ Data = (options, factory) => {
               if (item.__type) {
                 try {
                   
-                  var _template = _.extend(item, {
+                  var _template = {
                     template: item.__type,
                     field: _holder,
-                  });
+                  };
+                  if (_el.data("extend")) _template = _.extend(_template, _.isString(_el.data("extend")) ?
+                                                                JSON.parse(_el.data("extend")) : _el.data("extend"));
+                  _template = _.extend(item, _template);
                   
                   if (_el.data("readonly")) _template.readonly = true;
                   _template = $(factory.Display.template.get(_template));

@@ -28,24 +28,19 @@
       
       <div class="input-group evidence d-flex-inline">
 
-        <textarea class="form-control resizable" data-output-name="Details" rows="1" aria-label="Further details about how this was met" placeholder="Further details about how this was met">{{val "" details Details}}</textarea>
+        <textarea class="form-control resizable" data-output-name="Response" rows="1" aria-label="Further details about how this was met" placeholder="Further details about how this was met">{{val "" response Response}}</textarea>
 
-        <div class="input-group-append">
-
-          <button type="button" class="btn btn-dark complex-list-type dropdown-toggle h-100 waves-effect" data-default="Evidence" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Evidence</button>
-          
+        {{~#if options}}<div class="input-group-append">
+          <button type="button" class="btn btn-dark complex-list-type dropdown-toggle h-100 waves-effect" data-default="{{prefix}}"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{prefix}}</button>
           <div class="dropdown-menu dropdown-menu-right">
-
-            <a class="dropdown-item g-picker" href="#" data-value="drive">From Google Drive</a>		
-
-            <a class="dropdown-item g-file" href="#" data-value="file">From File</a>		
-
-            <a class="dropdown-item web" href="#" data-value="web">From Web</a>		
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item paper" href="#" data-value="paper">Offline / Paper</a>		
+            {{#each options}}
+              <a class="dropdown-item{{#if ../readonly}} disabled{{/if}}{{#if class}} {{class}}{{/if}}" href="#"
+                 data-value="{{val "" value this}}">{{val "" name this}}</a>
+              {{/each}}
           </div>
           
-        </div>
+        </div>{{/if~}}
 
       </div>
 	

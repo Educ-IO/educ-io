@@ -327,8 +327,9 @@ Tasks = (options, factory) => {
       if (clear && _.isFunction(clear)) clear();
 
     })(factory.Display.busy({
+      append: true,
       target: target.is(".status-holder") ? target : target.find(".status-holder"),
-      class: "loader-small float-right ml-1 pb-1 pr-1",
+      class: "loader-small float-right ml-1 pr-1",
       fn: true
     })),
       
@@ -701,7 +702,8 @@ Tasks = (options, factory) => {
             /* <!-- Enter Pressed --> */
             e.preventDefault();
             _return(e.shiftKey ?
-              FN.actions.complete(_handle(e.currentTarget)) : FN.actions.edit(_handle(e.currentTarget)));
+              FN.actions.complete(_handle(e.currentTarget)) : 
+                      FN.actions.edit(_handle(e.currentTarget)));
           } else if (code == 27) {
             /* <!-- Escape Pressed / Cancel Update --> */
             e.preventDefault();
@@ -717,12 +719,13 @@ Tasks = (options, factory) => {
           _clicked = $(e.target);
         _target.find("textarea.resizable").on("focus.autosize", e => autosize(e.currentTarget));
         !_clicked.is("input, textarea, a, span, a > i") ?
-          e.shiftKey ? e.preventDefault() || FN.elements.clear() || FN.actions.complete(_target) :
-          _target.find("div.edit, div.display").toggleClass("d-none") &&
-          _target.toggleClass("editable").toggleClass("editing")
-          .attr("draggable", (i, attr) =>
-            attr === undefined || attr === null || attr === false || attr === "false" ?
-            "true" : "false") : false;
+          e.shiftKey ? e.preventDefault() || FN.elements.clear() || FN.actions.complete(_target) : 
+            e.ctrlKey ? FN.tags.edit(_target) :
+              _target.find("div.edit, div.display").toggleClass("d-none") &&
+              _target.toggleClass("editable").toggleClass("editing")
+              .attr("draggable", (i, attr) =>
+                attr === undefined || attr === null || attr === false || attr === "false" ?
+                "true" : "false") : false;
         
         if (_target.find("div.edit").is(":visible")) {
 

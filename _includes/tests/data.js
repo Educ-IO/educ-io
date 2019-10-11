@@ -518,7 +518,7 @@ Data = function() {
               template: "field_complex",
               icon: "query_builder",
               details: GEN.t(GEN.i(10, 50)),
-              type: GEN.t(GEN.i(5, 10)),
+              type: GEN.t(GEN.i(5, 10)).trim(),
             });
           _return._value = ((additions, type) => additions && additions.length > 0 ?
             _checks.list(additions, item => ({

@@ -151,7 +151,10 @@ Folders
 
 Reflect
 -------
-* ** BUG ** Dynamic List Option Generation for sub-templates (e.g. evidence in field_responses)
+* ** BUG ** Dynamic List Option Generation for sub-templates (e.g. evidence in field_responses) <-- DONE
+  - How does this work with hydrated data? Should options be save into form data?
+  
+* ** FEATURE ** Upgrade form with latest definition? On load? By hash?
 
 * ** FEATURE ** Target Loading from Previous Reports
 
