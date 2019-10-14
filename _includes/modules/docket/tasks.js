@@ -12,6 +12,7 @@ Tasks = (options, factory) => {
   /* <!-- @options.state.session.database: --> */
   /* <!-- @options.state.session.db: --> */
   /* <!-- @options.state.application: --> */
+  /* <!-- @options.state.application.errors: --> */
   /* <!-- @options.state.application.showdown: --> */
   /* <!-- @options.state.application.task: --> */
   
@@ -104,7 +105,7 @@ Tasks = (options, factory) => {
           .then(() => FN.elements.replace(_element, item)) /* <!-- Updates with row / ID --> */
           .catch(e => {
             if (_element) _element.remove();
-            return options.functions.errors.insert(e);
+            return options.state.application.errors.insert(e);
           });
         
       }),
@@ -161,7 +162,7 @@ Tasks = (options, factory) => {
           .then(() => item)
           .catch(e => {
             FN.elements.replace(target, original);
-            options.functions.errors.update(e);
+            options.state.application.errors.update(e);
           })),
     
   };
@@ -257,7 +258,7 @@ Tasks = (options, factory) => {
         })
         .then(confirm => confirm ? options.state.session.database.items.delete(item)
                   .then(() => target.remove())
-                  .catch(options.functions.errors.delete)
+                  .catch(options.state.application.errors.delete)
                   .then(FN.status.busy(target, item)) : false),
 
     duplicate : (target, item) => {
@@ -307,7 +308,7 @@ Tasks = (options, factory) => {
           .then(FN.status.busy(target, item))
           .then(() => target.remove())
           .then(() => FN.items.place(item))
-          .catch(options.functions.errors.update);
+          .catch(options.state.application.errors.update);
         
       });
 

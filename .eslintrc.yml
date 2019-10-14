@@ -81,6 +81,7 @@ globals:
   Headers: true
   Query: true
   Saver: true
+  Notify: true
   Strings: true
   Grid: true
   Scroll: true

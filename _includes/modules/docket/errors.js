@@ -12,17 +12,13 @@ Errors = (options, factory) => {
   /* <!-- Internal Options --> */
   
   /* <!-- Internal Variables --> */
+  var _notify = factory.Notify(_.defaults(options || {}, {
+    id: "docket_Notify",
+    autohide : false
+  }), factory);
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _general = (e, title, message, log) => factory.Flags.error(log || title, e) && factory.Display.notify({
-          title: _.isFunction(title) ? title() : title,
-          content: _.isFunction(message) ? message() : message,
-          class: options.class.main,
-          header_class: options.class.header,
-          autohide: options.autohide,
-          target: _.isString(options.holder) ? $(options.holder) : options.holder,
-        });
   /* <!-- Internal Functions --> */
 
   /* <!-- Initial Calls --> */
@@ -31,16 +27,19 @@ Errors = (options, factory) => {
   return {
 
     /* <!-- No error means likely a dialog cancellation --> */
-    create : e => e ?_general(e, "Create Failed", "FAILED_CREATE", "Creation Error") : false,
+    create : e => e ? _notify.actions.error(e, "Create Failed", "FAILED_CREATE", "Creation Error") : false,
     
-    delete : e => e ?_general(e, "Delete Failed", "FAILED_DELETE", "Deletion Error") : false, 
+    delete : e => e ? _notify.actions.error(e, "Delete Failed", "FAILED_DELETE", "Deletion Error") : false, 
     
-    insert : e => e ? _general(e, "Save Failed", "FAILED_SAVE", "Insertion Error") : false,
+    insert : e => e ? _notify.actions.error(e, "Save Failed", "FAILED_SAVE", "Insertion Error") : false,
     
-    update : e => e ? _general(e, "Update Failed", "FAILED_UPDATE", "Updating Error") : false,
+    update : e => e ? _notify.actions.error(e, "Update Failed", "FAILED_UPDATE", "Updating Error") : false,
     
     /* <!-- Generic : No error means likely a dialog cancellation --> */
     generic : name => e => (e ? factory.Flags.error(`${name} Error`, e) : factory.Flags.log(`${name} Cancelled`)).negative(),
+    
+    /* <!-- Empty errors --> */
+    empty : _notify.empty,
     
   };
   /* <!-- External Visibility --> */

@@ -29,6 +29,7 @@ css:
     - custom/mixins/gradients
     - custom/variables
     - custom/diary
+    - custom/notifications
 imports:
   - name: underscore
     load: first
@@ -84,6 +85,7 @@ helpers:
   - css
   - fields
   - dialog
+  - notify
   - colours
   - saver
   - saad

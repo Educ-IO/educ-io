@@ -2,6 +2,7 @@
 
 // -- Diary -- //
 #diary {
+  
   a.day {
     color: inherit;
     &:hover {text-decoration: underline;}
@@ -75,31 +76,23 @@
       cursor: pointer;
       border-radius: 4px;
       &:hover {
-        box-shadow: map-get($shadows, 2);
-        border-bottom-color: transparent;
-        background-color: rgba($colour-highlight, 0.4);
+          box-shadow: map-get($shadows, 2);
+          border-bottom-color: transparent;
+          background-color: rgba($colour-highlight, 0.4);
       }
       &.complete, &.background {
-        &:hover {
-        	background-color: rgba($colour-highlight, 0.1);
-        }
+        &:hover {background-color: rgba($colour-highlight, 0.1);}
       }
       &.background {
-        &:hover {
-        	box-shadow: map-get($shadows, 1);
-        }
+        &:hover {box-shadow: map-get($shadows, 1);}
       }
     }
-    &:not(:last-child) {border-bottom: 1px dashed $colour-emphasis};
-    &:last-child {border-bottom: 1px solid transparent};
+    &:not(:last-child) .display {border-bottom: 1px dashed $colour-emphasis;}
+    &:last-child .display {border-bottom: 1px solid transparent;}
+    &:small .display {border-bottom: none !important;}
     &.small {
-      border-bottom: none !important;
-      p {
-        margin: 1px 0 1px 0;
-      }
-      .material-icons.md-1 {
-  			font-size: 0.8rem;
-			}
+      p {margin: 1px 0 1px 0;}
+      .material-icons.md-1 {font-size: 0.8rem;}
       span > i, a > i {margin-top: 0.175rem !important;}
     }
     .text-faded {opacity: 0.5;}
@@ -124,7 +117,6 @@
     svg {
       height: 1.4em;
     	width: 1.4em;
-      
     }
     a.hover-dark:hover {color: $colour-general;}
   }

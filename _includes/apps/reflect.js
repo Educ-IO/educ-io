@@ -76,88 +76,6 @@ App = function() {
   /* <-- Helper Functions --> */
   FN.helper = {
 
-    notify: {
-
-      save: (message, delay) => result => {
-        if (result !== null) ಠ_ಠ.Display.notify(
-          _.extend({
-            delay: delay || 10000,
-            target: $("#reflect_Notify .holder")
-          }, result === false ? {
-            title: "Save FAILED",
-            content: ಠ_ಠ.Display.doc.get("NOTIFY_SAVE_FAILED"),
-            class: "text-danger",
-            header_class: "bg-danger-light"
-          } : {
-            title: "Successful Save",
-            content: ಠ_ಠ.Display.doc.get({
-              name: _.isFunction(message) ? message() : message,
-              content: result.webViewLink ?
-                result.webViewLink : result.spreadsheetId ?
-                `https://docs.google.com/spreadsheets/d/${result.spreadsheetId}/edit` : result.id ? `https://drive.google.com/file/d/${result.id}/view` : "https://drive.google.com",
-            }),
-            header_class: "bg-success-light"
-          }));
-        return result;
-      },
-
-      success: (title, message, delay) => {
-        ಠ_ಠ.Display.notify({
-          title: _.isFunction(title) ? title() : title,
-          content: _.isFunction(message) ? message() : message,
-          header_class: "bg-success-light",
-          delay: delay || 10000,
-          target: $("#reflect_Notify .holder")
-        });
-      },
-
-      error: (title, message) => () => {
-        ಠ_ಠ.Display.notify({
-          title: _.isFunction(title) ? title() : title,
-          content: _.isFunction(message) ? message() : message,
-          class: "text-danger",
-          header_class: "bg-danger-light",
-          autohide: false,
-          target: $("#reflect_Notify .holder")
-        });
-      },
-
-    },
-
-    /* <-- Deterministic Version of Stringify --> */
-    stringify: (value, replacer, space, key) => {
-
-      var _type = Object.prototype.toString.call(value),
-        _object = () => {
-          var pairs = [];
-          for (var key in value) {
-            if (value.hasOwnProperty(key)) pairs.push([
-              key, FN.helper.stringify(value[key], replacer, space, key)
-            ]);
-          }
-          pairs.sort((a, b) => a[0] < b[0] ? -1 : 1);
-          pairs = _.chain(pairs)
-            .reject(v => v[1] === undefined)
-            .map(v => `"${v[0]}":${v[1]}`)
-            .value();
-          return pairs && pairs.length > 0 ? `{${pairs.join(",")}}` : null;
-        },
-        _array = () => `[${_.chain(value)
-													.map((v, i) => 
-                               FN.helper.stringify(v, replacer, space, String(i)))
-													.reject(v => v === undefined || v === null)
-													.value().join(",")}]`,
-        _value = () => {
-          var _return = replacer ? replacer(key, value) : value;
-          return _return === undefined ? _return : JSON.stringify(_return, null, space);
-        };
-
-      return _type === "[object Object]" ?
-        _object() : _type === "[object Array]" ?
-        _array() : _value();
-
-    },
-
     prefix: mime => mime == TYPE_FORM ?
       "FORM" : mime == TYPE_SCALE ?
       "SCALE" : mime == TYPE_REVIEW ?
@@ -251,7 +169,7 @@ App = function() {
       .catch(e => (e ? ಠ_ಠ.Flags.error("Send Error", e) : ಠ_ಠ.Flags.log("Send Cancelled")).negative()),
 
     dirty: report => !ರ‿ರ.hash ||
-      ರ‿ರ.hash !== new Hashes.MD5().hex(FN.helper.stringify(report, SIGNING_REPLACER)),
+      ರ‿ರ.hash !== new Hashes.MD5().hex(ಱ.strings.stringify(report, SIGNING_REPLACER)),
 
     scales: form => {
       
@@ -307,6 +225,7 @@ App = function() {
         });
       
     }
+    
   };
   /* <-- Helper Functions --> */
 
@@ -518,7 +437,7 @@ App = function() {
 
     form: name => FN.create.generic(FN.edit.form, name ?
         ಱ.forms.get(name).template : "", TYPE_FORM)
-      .then(FN.helper.notify.save("NOTIFY_SAVE_FORM_SUCCESS"))
+      .then(ಱ.notify.actions.save("NOTIFY_SAVE_FORM_SUCCESS"))
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Form Create Prompt", e).negative() : false),
 
     scale: name => FN.create.generic(FN.edit.scale, name ?
@@ -918,7 +837,7 @@ App = function() {
       .then(content => ({
         content: file.mimeType === TYPE_REPORT ?
           _.tap(JSON.parse(content),
-            data => ರ‿ರ.hash = new Hashes.MD5().hex(FN.helper.stringify(data.report,
+            data => ರ‿ರ.hash = new Hashes.MD5().hex(ಱ.strings.stringify(data.report,
               SIGNING_REPLACER))) : file.mimeType === TYPE_ANALYSIS ? JSON.parse(content) : content,
         actions: {
           editable: (file.capabilities && file.capabilities.canEdit),
@@ -989,7 +908,7 @@ App = function() {
                   }
                 ]))
               .catch(e => ಠ_ಠ.Flags.error("Exporting", e).negative())
-              .then(FN.helper.notify.save("NOTIFY_SAVE_ANALYSIS_SUCCESS"));
+              .then(ಱ.notify.actions.save("NOTIFY_SAVE_ANALYSIS_SUCCESS"));
           }) :
           (type == "md" ?
             ರ‿ರ.analysis.table().markdown(values) :
@@ -1027,7 +946,7 @@ App = function() {
           .then(FN.action.recent)
           .then(ಠ_ಠ.Main.busy("Saving"))
           .then(uploaded => ರ‿ರ.file = uploaded)
-          .then(FN.helper.notify.save("NOTIFY_SAVE_ANALYSIS_SUCCESS"))),
+          .then(ಱ.notify.actions.save("NOTIFY_SAVE_ANALYSIS_SUCCESS"))),
 
       form: value => FN.action.screenshot($("form[role='form'][data-name]")[0])
         .then(result => ಠ_ಠ.Google.files.upload(result ? {
@@ -1039,7 +958,7 @@ App = function() {
             ಱ.forms = ಠ_ಠ.Forms(LOADED);
             return (ರ‿ರ.file = uploaded);
           })
-          .then(FN.helper.notify.save("NOTIFY_SAVE_FORM_SUCCESS"))),
+          .then(ಱ.notify.actions.save("NOTIFY_SAVE_FORM_SUCCESS"))),
 
       report: (force, dehydrated) => FN.action.get(dehydrated, true)
         .then(saving => (!ರ‿ರ.signatures || !FN.helper.dirty(saving.data.report) ?
@@ -1091,7 +1010,7 @@ App = function() {
                   return ಠ_ಠ.Google.files.upload.apply(this, [_meta, _data, _mime].concat(!ರ‿ರ.file || force ? [] : [null, ರ‿ರ.file.id, true])).then(uploaded => {
                     if (uploaded)
                       ರ‿ರ.hash = new Hashes.MD5()
-                      .hex(FN.helper.stringify(saving.data.report, SIGNING_REPLACER));
+                      .hex(ಱ.strings.stringify(saving.data.report, SIGNING_REPLACER));
                     return uploaded;
                   });
                 });
@@ -1100,7 +1019,7 @@ App = function() {
               .then(uploaded => ಠ_ಠ.Flags.log("Saved:", uploaded).reflect(uploaded))
               .catch(e => ಠ_ಠ.Flags.error("Save Error", e).negative())
               .then(ಠ_ಠ.Main.busy("Saving Report"))
-              .then(FN.helper.notify.save("NOTIFY_SAVE_REPORT_SUCCESS"));
+              .then(ಱ.notify.actions.save("NOTIFY_SAVE_REPORT_SUCCESS"));
           }).catch(() => ಠ_ಠ.Flags.log("Save Cancelled").negative())),
 
     },
@@ -1137,7 +1056,7 @@ App = function() {
                     }) === 0) ?
                 Promise.resolve(true) :
                 ಠ_ಠ.Google.permissions.share(file.id).user(email, "reader")
-                .catch(FN.helper.notify.error("Share FAILED", () => ಠ_ಠ.Display.doc.get({
+                .catch(ಱ.notify.failure("Share FAILED", () => ಠ_ಠ.Display.doc.get({
                   name: "NOTIFY_SHARE_FILE_FAILED",
                   content: email
                 })));
@@ -1150,7 +1069,7 @@ App = function() {
       .then(value => value ? Promise.all(_.map(value.emails,
         email => ಠ_ಠ.Google.permissions.share(ರ‿ರ.file)
         .user(email, "commenter")
-        .catch(FN.helper.notify.error("Share FAILED", () => ಠ_ಠ.Display.doc.get({
+        .catch(ಱ.notify.failure("Share FAILED", () => ಠ_ಠ.Display.doc.get({
           name: "NOTIFY_SHARE_REPORT_FAILED",
           content: email
         })))
@@ -1192,7 +1111,7 @@ App = function() {
               .then(result => result ? _.tap(result, result => result.to = email) : result);
         }))).then(emails => {
         if (emails && _.filter(emails, email => email).length > 0 && value)
-          FN.helper.notify.success("Successful Send",
+          ಱ.notify.success("Successful Send",
             ಠ_ಠ.Display.doc.get({
               name: "NOTIFY_SEND_SUCCESS",
               delay: 20000,
@@ -1209,7 +1128,7 @@ App = function() {
       .then(value => value ? Promise.all(_.map(value.emails,
         email => ಠ_ಠ.Google.permissions.share(ರ‿ರ.file, null, value.message)
         .user(email, "commenter")
-        .catch(FN.helper.notify.error("Share FAILED", () => ಠ_ಠ.Display.doc.get({
+        .catch(ಱ.notify.failure("Share FAILED", () => ಠ_ಠ.Display.doc.get({
           name: "NOTIFY_SHARE_REPORT_FAILED",
           content: email
         }))))) : value),
@@ -1550,7 +1469,7 @@ App = function() {
                   save: {
                     state: STATE_REPORT_EDITABLE,
                     length: 0,
-                    keys: ["s", "S"],
+                    keys: ["shift+s", "shift+S"],
                     requires: "html2canvas",
                     fn: () => FN.action.save.report()
                       .then(result => result ? FN.process.signatures() : false)
@@ -1560,6 +1479,8 @@ App = function() {
               form: {
                 matches: /FORM/i,
                 state: STATE_FORM_OPENED,
+                keys: ["alt+s", "alt+S"],
+                requires: "html2canvas",
                 fn: () => FN.action.save.form(ರ‿ರ.preview)
               }
             }
@@ -1708,12 +1629,17 @@ App = function() {
       if (window.underscoreDeepExtend && window._) _.mixin({
         "deepExtend": underscoreDeepExtend(_)
       });
+      ಱ.strings = ಠ_ಠ.Strings();
+      ಱ.notify = ಠ_ಠ.Notify({
+        id : "reflect_Notify",
+        autohide : true,
+      }, ಠ_ಠ);
     },
 
     ready: () => {
       ಱ.forms = ಱ.forms || ಠ_ಠ.Forms(LOADED);
       ಱ.signatures = ಱ.signatures ||
-        ಠ_ಠ.Signatures(ಠ_ಠ, FN.helper.stringify, SIGNING_REPLACER, FN.helper.elevate);
+        ಠ_ಠ.Signatures(ಠ_ಠ, ಱ.strings.stringify, SIGNING_REPLACER, FN.helper.elevate);
       ಱ.fields = ಠ_ಠ.Fields({forms : ಱ.forms}, ಠ_ಠ);
     },
 

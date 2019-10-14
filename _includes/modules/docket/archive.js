@@ -52,7 +52,7 @@ Archive = (options, factory) => {
             _archive(_.reduce(values.Archive.Values, (list, value, year) => (value === true) ? list.concat([year]) : list, []))
               .then(factory.Main.busy("Archiving Data"))
               .then(() => options.functions.action.refresh()))
-        .catch(options.functions.errors.generic("Archive"));
+        .catch(options.state.application.errors.generic("Archive"));
   /* <!-- Internal Functions --> */
 
   /* <!-- Initial Calls --> */

@@ -90,6 +90,7 @@ helpers:
   - table
   - css
   - scroll
+  - notify
   - saver
   - colours
 modules:

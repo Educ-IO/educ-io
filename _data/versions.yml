@@ -1,4 +1,8 @@
 site :
+  0.1.6q :
+    name : Site 0.1.6q
+    desc : Visual Updates
+    numeric : 0.1.6.16
   0.1.6p :
     name : Reflect v0.0.7i-beta
     desc : Target Evidence Improvements

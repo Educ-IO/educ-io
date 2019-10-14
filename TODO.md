@@ -82,6 +82,8 @@ SaaD
 
 Docket
 ------
+* ** CLEANUP ** Rescale Analysis graph horizontally on screen resize ...
+
 * ** IMPROVEMENT ** Add Tabular / Matrix View of Tags / Projects and Duration Totals (one column per-calendar month)
 
 * ** IMPROVEMENT ** Add Timer Start (+ stop) to each item, allowing timed work
@@ -89,11 +91,6 @@ Docket
 * ** IMPROVEMENT ** Add multiple dates for items (+ next to date picker field?) - to save having to create and duplicate ???
 
 * ** CLEANUP ** Remove Legacy Archive Code (update Database Module too)
-
-* ** CLEANUP ** Rescale Analysis graph horizontally on screen resize ...
- 
-* ** IMPROVEMENT ** Periodic Refresh (shorter time periods for shared dockets) - is it possible to get changes since a certain point and integrate those?
-  Update SaaD with file version. <-- DONE
 
 
 * ** IMPROVEMENT | CLEANUP ** Go through Events / Classes to pull into new module, with longer 'get' periods to avoid making events calls whenever moving between views / focus dates
@@ -151,9 +148,6 @@ Folders
 
 Reflect
 -------
-* ** BUG ** Dynamic List Option Generation for sub-templates (e.g. evidence in field_responses) <-- DONE
-  - How does this work with hydrated data? Should options be save into form data?
-  
 * ** FEATURE ** Upgrade form with latest definition? On load? By hash?
 
 * ** FEATURE ** Target Loading from Previous Reports
@@ -189,6 +183,11 @@ Survey
 
 Complete
 --------
+* ** BUG ** Dynamic List Option Generation for sub-templates (e.g. evidence in field_responses) <-- DONE
+  - How does this work with hydrated data? Should options be save into form data?
+* ** IMPROVEMENT ** Periodic Refresh (shorter time periods for shared dockets) - is it possible to get changes since a certain point and integrate those? <-- DONE
+  Update SaaD with file version. <-- DONE
+* ** BUG ** Used shared notify module to give error feedback <-- DONE
 * ** BUG ** Recursive Template Hydration <-- DONE
 * ** FEATURE ** Multiple Scale Associations for Targets (dialog?) <-- DONE
 * ** FEATURE ** field_complex field type should have tagged scale associated with it <-- DONE

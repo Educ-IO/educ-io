@@ -12,6 +12,40 @@ Strings = () => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  
+  /* <-- Deterministic Version of Stringify --> */
+  var _stringify = (value, replacer, space, key) => {
+
+    var _type = Object.prototype.toString.call(value),
+      _object = () => {
+        var pairs = [];
+        for (var key in value) {
+          if (value.hasOwnProperty(key)) pairs.push([
+            key, _stringify(value[key], replacer, space, key)
+          ]);
+        }
+        pairs.sort((a, b) => a[0] < b[0] ? -1 : 1);
+        pairs = _.chain(pairs)
+          .reject(v => v[1] === undefined)
+          .map(v => `"${v[0]}":${v[1]}`)
+          .value();
+        return pairs && pairs.length > 0 ? `{${pairs.join(",")}}` : null;
+      },
+      _array = () => `[${_.chain(value)
+                        .map((v, i) => 
+                             _stringify(v, replacer, space, String(i)))
+                        .reject(v => v === undefined || v === null)
+                        .value().join(",")}]`,
+      _value = () => {
+        var _return = replacer ? replacer(key, value) : value;
+        return _return === undefined ? _return : JSON.stringify(_return, null, space);
+      };
+
+    return _type === "[object Object]" ?
+      _object() : _type === "[object Array]" ?
+      _array() : _value();
+
+  };
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -88,7 +122,9 @@ Strings = () => {
       decode: value => decodeURIComponent(_.map(atob(value).split(""),
         c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")),
 
-    }
+    },
+    
+    stringify: _stringify,
     /* <!-- External Functions --> */
 
   };

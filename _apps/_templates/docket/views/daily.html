@@ -9,8 +9,9 @@
         </h4>
         {{#if date}}<span class="font-weight-light col-12 col-lg-6 text-lg-right h5">{{localeDate date}}</span>{{/if}}
       </div>
-      <hr class="mt-2 mt-xl-3 mb-0 divider" data-divider="true" />
+      <hr class="mt-2 mt-xl-3 mb-1 divider" data-divider="true" />
       {{#if extras}}{{#each extras}}
+      {{!-- Extras are overlays (e.g. calendars) --}}
       {{!-- Call Partial Template --}}
       {{> item editable=false wide=../wide}}
       {{/each}}{{/if}}

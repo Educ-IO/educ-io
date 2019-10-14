@@ -236,7 +236,7 @@ Views = (options, factory) => {
 
         _add(focus, {
             block: `${_type} ${_border}`.trim(),
-            title: `${_title} pl-2`,
+            title: `${_title ? `${_title} ` : ""}ml-2 mb-1`,
           }, _data.display, _data.tasks, _data.events, _data.extras,
           focus.isSame(options.state.session.today) && _data.length > 5);
 

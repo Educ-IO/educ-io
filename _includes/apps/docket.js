@@ -289,6 +289,7 @@ App = function() {
     cleanup: () => {
       $("body").removeClass("modal-open");
       $("div.modal-backdrop.show, div.tooltip.show").remove();
+      ಱ.errors.empty();
     },
     
     current: focus => FN.display.dated(focus, ಠ_ಠ.Display.state().in(STATE_MONTHLY) ?
@@ -384,6 +385,7 @@ App = function() {
           .concat([!config || config.data == ರ‿ರ.config.data ? STATE_DEFAULT : STATE_LOADED]));
         ರ‿ರ.db = results[0];
         if (results[1]) ರ‿ರ.deadlines = results[1];
+        ಱ.errors.empty();
       })
       .then(ಠ_ಠ.Main.busy("Loading Data"))
       .then(() => reset ? ಠ_ಠ.Display.state().change(DISPLAY, DISPLAY.indexOf((config || ರ‿ರ.config).view) >= 0 ?
@@ -628,14 +630,6 @@ App = function() {
       container.App = this;
 
       /* <!-- Set Up / Create the Function Modules --> */
-      FN.errors = ಠ_ಠ.Errors({
-          autohide : false,
-          holder : "#docket_Notify .holder",
-          class: {
-            header : "bg-danger-light",
-            main : "text-danger", 
-          }
-        }, ಠ_ಠ);
       FN.menu = ಠ_ಠ.Menu({
           state : STATE_LOADED,
           icon : SHARED
@@ -1104,6 +1098,9 @@ App = function() {
         strikethrough: true
       });
 
+      /* <!-- Create Errors Reference --> */
+      ಱ.errors = ಠ_ಠ.Errors({}, ಠ_ಠ);
+      
       /* <!-- Create Schema Reference --> */
       ಱ.schema = ಠ_ಠ.Schema().latest();
       
