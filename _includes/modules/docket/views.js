@@ -212,6 +212,7 @@ Views = (options, factory) => {
             date: date.clone(),
             class: css.block,
             action: action,
+            pre_title_class: css.pre_title,
             title_class: css.title,
             tasks: tasks,
             events: events,
@@ -226,17 +227,21 @@ Views = (options, factory) => {
 
         var _data = FN.day(focus, overlay),
           _type = focus.isSame(options.state.session.today) ? "present" : _data.diff === 0 ? "focussed" :
-          focus.isBefore(options.state.session.today) ? "past text-muted" : "future",
+            focus.isBefore(options.state.session.today) ? "past text-muted" : "future",
           _border = focus.isSame(options.state.session.today) ?
-          "border border-white rounded bg-highlight-gradient top-to-bottom" :
-          index % 2 ? "bg-light" : "",
+            "border border-white rounded bg-highlight-gradient top-to-bottom" :
+            index % 2 ? "bg-light" : "",
           _title = focus.isSame(options.state.session.today) ?
-          "present" : _data.diff === 0 ? "bg-bright-gradient left-to-right" :
-          index % 2 ? "border-left border-bottom border-secondary" : "";
+            "present" : _data.diff === 0 ? "bg-bright-gradient left-to-right pl-2 pt-1 mb-1" :
+            index % 2 ? focus.isBefore(options.state.session.today) ? "bg-secondary text-light o-25 pl-2 pt-1 mb-1" :
+              "bg-secondary text-light o-50 pl-2 pt-1 mb-1" : "ml-2 mb-1",
+          _pre_title = focus.isSame(options.state.session.today) ?
+            "py-2" : _data.diff === 0 || index % 2 ? "pt-1 pb-2" : "py-2";
 
         _add(focus, {
             block: `${_type} ${_border}`.trim(),
-            title: `${_title ? `${_title} ` : ""}ml-2 mb-1`,
+            pre_title: _pre_title,
+            title: _title,
           }, _data.display, _data.tasks, _data.events, _data.extras,
           focus.isSame(options.state.session.today) && _data.length > 5);
 

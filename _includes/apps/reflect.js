@@ -60,6 +60,8 @@ App = function() {
     undefined : EDITING_REPLACER(key, value),
     FN = {};
   
+  const SCOPE_FULL_DRIVE = "https://www.googleapis.com/auth/drive";
+  
   const LOADER = "loader",
         BUTTON = "#createRelectiveReport",
         LOADED = () => $(BUTTON).removeClass(LOADER);
@@ -98,25 +100,6 @@ App = function() {
     title: (title, mime) => {
       var _prefix = FN.helper.prefix(mime);
       return `${_prefix ? `${_prefix} | ` : ""}${title}`;
-    },
-
-    elevate: fn => {
-
-      var _retry = retry => fn()
-        .catch(e => {
-          if (e.status == 403) { /* <!-- e.status: 403 --> */
-            ಠ_ಠ.Flags.log("ELEVATE: Need to grant permission");
-            return {
-              retry: retry
-            };
-          }
-        })
-        .then(result => result && result.retry === true ?
-          ಠ_ಠ.Main.authorise("https://www.googleapis.com/auth/drive")
-          .then(result => result === true ? _retry(false) : result) : result);
-
-      return _retry(true);
-
     },
 
     values: (form, report, filter, use, initial) => _.reduce(form.groups, (memo, group) =>
@@ -1639,7 +1622,7 @@ App = function() {
     ready: () => {
       ಱ.forms = ಱ.forms || ಠ_ಠ.Forms(LOADED);
       ಱ.signatures = ಱ.signatures ||
-        ಠ_ಠ.Signatures(ಠ_ಠ, ಱ.strings.stringify, SIGNING_REPLACER, FN.helper.elevate);
+        ಠ_ಠ.Signatures(ಠ_ಠ, ಱ.strings.stringify, SIGNING_REPLACER, ಠ_ಠ.Main.elevator(SCOPE_FULL_DRIVE));
       ಱ.fields = ಠ_ಠ.Fields({forms : ಱ.forms}, ಠ_ಠ);
     },
 

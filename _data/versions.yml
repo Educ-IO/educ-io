@@ -1,4 +1,8 @@
 site :
+  0.1.6r :
+    name : Site 0.1.6r
+    desc : Bug Fixes
+    numeric : 0.1.6.17
   0.1.6q :
     name : Site 0.1.6q
     desc : Visual Updates

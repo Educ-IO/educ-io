@@ -18,7 +18,7 @@ Router = function() {
     STRIP = (command, number) => _.isArray(command) ? _.rest(command, number ? number : 1) : _.isString(command) ? [] : command,
 
     PREPARE = (options, command) => options ?
-    _.isFunction(options) ? options(command) : options : false,
+      _.isFunction(options) ? options(command) : options : false,
 
     REJECT = {
       MIME: (files, options) => options !== null && options.mime !== undefined && !_.every(_.isArray(files) ? files : [files], file => _.find(options.mime.split(","), mime => file.mimeType.localeCompare(mime.trim()) === 0)) && ಠ_ಠ.Flags.log(`Google Drive Files MIME types${_.isArray(files) ? "" : ` (${files.mimeType})`} not matched to ${options.mime}`, files),
@@ -26,10 +26,10 @@ Router = function() {
     },
 
     HANDLE = (options, resolve, reject) => files => files && (!_.isArray(files) || files.length > 0) ?
-    REJECT.MIME(files, options) || REJECT.PROPERTIES(files, options) ?
-    reject() :
-    ಠ_ಠ.Flags.log("Google Drive File/s Picked from Open", files) && resolve(files) :
-    ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject(),
+      REJECT.MIME(files, options) || REJECT.PROPERTIES(files, options) ?
+        reject() :
+          ಠ_ಠ.Flags.log("Google Drive File/s Picked from Open", files) && resolve(files) :
+        ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject(),
 
     PICK = (picker => ({
       single: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
@@ -95,7 +95,7 @@ Router = function() {
       }, route) : _.defaults(routes[name], route) : route);
   /* <!-- Internal Setup Constants --> */
 
-  /* <!-- Internal Functions --> */
+  /* <!-- Internal Functions --> */  
   var _start, _end, _shortcuts, _keyboard, _touch,
       _enter = (recent, fn, simple, state) => {
         
@@ -112,7 +112,7 @@ Router = function() {
           _fn = fn ? fn : () => {},
           _complete = state ? () => ಠ_ಠ.Display.state().enter(state) && _fn() : _fn;
 
-        recent > 0 ?
+        recent > 0 && ಠ_ಠ.Recent ?
           ಠ_ಠ.Recent.last(recent).then(_show).then(_complete)
           .catch(e => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error")) :
           simple && fn ? _complete() : _show() && _complete();
@@ -129,7 +129,9 @@ Router = function() {
       _execute = (route, command) => {
         var l_command = STRIP(command, route.__length),
           l_options = PREPARE(route.options, l_command),
-          l_result = route.fn(_.isArray(l_command) ? l_command.length === 0 ? null : l_command.length == 1 ? l_command[0] : l_command : l_command, l_options);
+          l_result = route.fn(_.isArray(l_command) ? 
+                              l_command.length === 0 ? 
+                                null : l_command.length == 1 ? l_command[0] : l_command : l_command, l_options);
         return l_result && l_result.then ? l_result
           .then(result => {
             /* <!-- Clean up the state if required! --> */
@@ -221,12 +223,14 @@ Router = function() {
           length: {
             min: 1
           },
-          qualifier: command => /^[a-zA-Z0-9-_]+$/.test(_.isArray(command) ?
-            command[0] : command),
-          /* <!-- OPTIONS: download = boolean, default false (whether downloaded file is returned), mime = comma separated mime list (as per Picker) -->  */
+          qualifier: command => /^[a-zA-Z0-9-_]+$/.test(_.isArray(command) ? command[0] : command),
+          /* <!-- OPTIONS: download = boolean, default false (whether downloaded file is returned) -->  */
+          /* <!-- OPTIONS: mime = comma separated mime list (as per Picker) -->  */
           fn: (command, options) => new Promise((resolve, reject) => {
             var _id = _.isArray(command) ? command[0] : command;
-            ಠ_ಠ.Google.files.get(_id, true)
+            (options && options.wrapper ? 
+              options.wrapper(() => ಠ_ಠ.Google.files.get(_id, true)) :
+              ಠ_ಠ.Google.files.get(_id, true))
               .then(file => {
                 ಠ_ಠ.Flags.log(`Opened Google Drive File: ${_id}`, file);
                 REJECT.MIME(file, options) || REJECT.PROPERTIES(file, options) ?
@@ -243,7 +247,7 @@ Router = function() {
               })
               .catch(e => {
                 ಠ_ಠ.Flags.error(`Opening Google Drive File: ${_id}`, e);
-                if (e && e.status == 404) ಠ_ಠ.Recent.remove(_id).then(id => $("#" + id).remove());
+                if (e && e.status == 404 && ಠ_ಠ.Recent) ಠ_ಠ.Recent.remove(_id).then(id => $("#" + id).remove());
                 reject(e);
               });
           }),
@@ -482,7 +486,7 @@ Router = function() {
       };
 
     },
-
+    
     clean: _clean,
 
     run: state => _start(true, state),

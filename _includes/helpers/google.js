@@ -746,15 +746,17 @@ Google_API = (options, factory) => {
               fields: `kind,nextPageToken,incompleteSearch,files(${FULL})`,
               includeItemsFromAllDrives: true,
               includeTeamDriveItems: true,
+              supportsAllDrives: true,
               supportsTeamDrives: true,
               corpora: corpora ? corpora : "user,allTeamDrives",
               spaces: spaces ? spaces : "drive",
-            }),
+            }).catch(() => null),
             _split = corpora => {
               corpora = corpora.split(",");
               corpora.splice(corpora.indexOf(_domain),1);
               corpora = corpora.join(",");
-              return Promise.all([_fn(corpora), _fn(_domain)]).then(values => _.compact(_.flatten(values)));
+              return Promise.all([_fn(corpora), _fn(_domain)])
+                .then(values => _.compact(_.flatten(values)));
             };
         return corpora && corpora.indexOf(_domain) >= 0 && corpora != _domain ? _split(corpora) : _fn(corpora);
       },

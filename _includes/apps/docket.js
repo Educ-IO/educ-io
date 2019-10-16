@@ -33,7 +33,8 @@ App = function() {
   /* <!-- State Constants --> */
   
   /* <!-- Scope Constants --> */
-  const SCOPE_CALENDARS = "https://www.googleapis.com/auth/calendar.readonly";
+  const SCOPE_CALENDARS = "https://www.googleapis.com/auth/calendar.readonly",
+        SCOPE_FULL_DRIVE = "https://www.googleapis.com/auth/drive";
   /* <!-- Scope Constants --> */
   
   /* <!-- Internal Constants --> */
@@ -56,6 +57,7 @@ App = function() {
   FN.loader = () => ({
               mime: ಠ_ಠ.Google.files.natives()[1],
               properties: _.object([ಱ.schema.property.name], [ಱ.schema.property.value]),
+              wrapper: ಠ_ಠ.Main.elevator(SCOPE_FULL_DRIVE),
             });
   
   FN.picker = () => _.extend({
@@ -72,6 +74,25 @@ App = function() {
     title: value.properties && value.properties.TITLE ? value.properties.TITLE : "",
     version: value.version,
   });
+  
+  FN.elevate = fn => {
+
+      var _retry = retry => fn()
+        .catch(e => {
+          if (e.status == 403) { /* <!-- e.status: 403 --> */
+            ಠ_ಠ.Flags.log("ELEVATE: Need to grant permission");
+            return {
+              retry: retry
+            };
+          }
+        })
+        .then(result => result && result.retry === true ?
+          ಠ_ಠ.Main.authorise(SCOPE_FULL_DRIVE)
+          .then(result => result === true ? _retry(false) : result) : result);
+
+      return _retry(true);
+
+    };
   /* <-- Helper Functions --> */
 
   
@@ -707,9 +728,8 @@ App = function() {
           },
           
           load: {
-            options: () => FN.loader,
+            options: FN.loader,
             success: value => {
-              
               if (ಠ_ಠ.Display.state().in(STATE_OPENED)) {
                 FN.open.shared(value.result);
               } else {
@@ -720,7 +740,6 @@ App = function() {
                   _.find(DISPLAY, state => new RegExp(state, "i").test(value.command[1])) :
                   null);
               }
-              
             }
           },
           /* <!-- Default Overrides --> */

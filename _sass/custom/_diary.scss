@@ -70,8 +70,8 @@
     &.text-complement {color: complement($colour-highlight) !important;}
     &.drop-target:not(.not-drop-target) {padding-top: 1em !important;}
     &.due-soon > .display, &.overdue > .display {border-radius: 3px;}
-    &.due-soon > .display {@include complex_LinearGradient(100grad,rgba($colour-warning, 0.2) rgba($colour-warning, 0.05) rgba($colour-warning, 0),0% 40% 100%);}
-    &.overdue >  .display {@include complex_LinearGradient(100grad,rgba($colour-error, 0.2) rgba($colour-error, 0.05) rgba($colour-error, 0),0% 40% 100%);}
+    &.due-soon > .display {@include complex_LinearGradient(100grad,rgba($colour-warning, 0.3) rgba($colour-warning, 0.1) rgba($colour-warning, 0),0% 40% 100%);}
+    &.overdue >  .display {@include complex_LinearGradient(100grad,rgba($colour-error, 0.4) rgba($colour-error, 0.2) rgba($colour-error, 0),0% 40% 100%);}
     &.editable {
       cursor: pointer;
       border-radius: 4px;

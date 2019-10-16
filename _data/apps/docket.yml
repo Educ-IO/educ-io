@@ -229,6 +229,10 @@ scopes:
       name: View assignments and questions and the work and grades for the courses that the current user participates in.
       reason: In order to read your class assignments and deadlines to display.
       request: lazy
+    - scope: https://www.googleapis.com/auth/drive
+      name: View and manage the files in your Google Drive
+      reason: To sign files that you have opened directly from a link, this permission is needed.
+      request: lazy
     - scope: https://www.googleapis.com/auth/classroom.coursework.students.readonly
       name: View assignments and questions and the work and grades for the courses that the current user teaches or administers.
       reason: In order to read your class assignments and deadlines to display.
@@ -324,8 +328,11 @@ menus:
             desc: Display Task Queue from all your Docket Databases
             shortcut: "q"
             hash: display.queue
+            auth: google
             toggle:
               - queue
+            scopes:
+              - https://www.googleapis.com/auth/drive
             divider: true
             
           - name: Calendar/s
@@ -474,6 +481,13 @@ menus:
             desc: A guide to using this app
             divider: true
             
+          - name: Install
+            desc: Install this app into your Google Drive
+            hash: install
+            auth: google
+            scope: https://www.googleapis.com/auth/drive.install
+            disabled_until:
+              - authenticated
           - name: Permissions
             url: /scopes/?highlight=docket
             desc: Find out about the permissions and scopes that this app uses

@@ -9,9 +9,10 @@
       </h4>
     </div>
   	{{#each days}}<div class="group {{#if class}}{{class}} {{/if}}col-12{{#unless large}} col-md-6 col-lg-4 col-xl-2{{else}} col-lg-4{{/unless}} mb-1 px-1"{{#if date}} data-droppable="true" data-date="{{isoDate date true}}"{{/if}}>
-      <div class="d-flex flex-column py-2 small">
-          {{#if action}}<a class="{{#if title_class}}{{title_class}} {{/if}}day" href="#{{action}}">{{/if}}<h4 class="{{#unless action}}{{#if title_class}}{{title_class}} {{/if}}{{/unless}}mb-lg-0">{{ title }}{{#if subtitle}}<span class="font-weight-light ml-1">{{subtitle}}</span>{{/if}}</h4>{{#if action}}</a>{{/if}}
-        {{!-- <hr class="mt-2 mb-1 divider" data-divider="true" /> --}}
+      <div class="d-flex flex-column small{{#if pre_title_class}} {{pre_title_class}}{{/if}}">
+          {{#if action}}<a class="{{#if title_class}}{{title_class}} {{/if}}day" href="#{{action}}">{{/if}}<h4 class="{{#unless action}}{{#if title_class}}{{title_class}} {{/if}}{{/unless}}mb-1">{{ title }}{{#if subtitle}}<span class="font-weight-light ml-1">{{subtitle}}</span>{{/if}}</h4>{{#if action}}</a>{{/if}}
+        {{!-- <hr class="m-0 mt-2 mb-1 divider" data-divider="true" /> --}}
+        <div class="d-none" data-divider="true" />
         {{#if extras}}{{#each extras}}
 					{{!-- Extras are overlays (e.g. calendars) --}}
           {{!-- Call Partial Template --}}

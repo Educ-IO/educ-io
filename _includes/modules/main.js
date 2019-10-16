@@ -475,6 +475,22 @@ Main = function() {
     prompt: PROMPT,
 
     /* <!-- Extra Scope Authorisation --> */
+    elevator: SCOPE => fn => {
+      var _retry = retry => fn()
+        .catch(e => {
+          if (e.status == 403 || e.status == 404) { /* <!-- e.status: 403 or 404 | Seems to return both? --> */
+            ಠ_ಠ.Flags.log("ELEVATE: May need to grant permission");
+            return {
+              retry: retry
+            };
+          }
+        })
+        .then(result => result && result.retry === true ?
+          google_Authorise(SCOPE)
+          .then(result => result === true ? _retry(false) : result) : result);
+      return _retry(true);
+    },
+
     authorise: google_Authorise,
     /* <!-- External Functions --> */
 
