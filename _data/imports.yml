@@ -150,7 +150,7 @@ urlparser:
       crossorigin: anonymous
       bulk: 8.6
       id: __urlparser
-      
+
 hello:
   name: Hello
   desc: This is used to manage login / tokens for OAuth2 Services.
@@ -164,12 +164,18 @@ hello:
     - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.18.0/hello.min.js
       integrity: sha256-pKFV5C2DP6gWmmr+zWBVeI206oYqwRDGA3teFiDqh4c=
       crossorigin: anonymous
+      overrides:
+        - replace: emit('auth.init', p);
+          with: if (session&&session.authuser!==null&&session.authuser!==undefined) {url=url+"&authuser="+session.authuser;} emit('auth.init', p);
       bulk: 27.8
       id: __hello
   dev:
     - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.18.0/hello.js
       integrity: sha256-BfCGnvqIG9y8fX/lMr23kQs7VrnnCRZVmzagIi/yT1c=
       crossorigin: anonymous
+      overrides:
+        - replace: emit('auth.init', p);
+          with: if (session&&session.authuser!==null&&session.authuser!==undefined) {url=url+"&authuser="+session.authuser;} emit('auth.init', p);
       bulk: 76.2
       id: __hello
 

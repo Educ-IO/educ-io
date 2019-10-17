@@ -416,6 +416,7 @@ Router = function() {
         if (!command || command === false || command[0] === false || (/PUBLIC/i).test(command)) {
 
           /* <!-- Clear the existing state (in case of logouts) --> */
+          /* <!-- command[1] = true when logging out --> */
           if (command && command[1]) _end();
 
           /* <!-- Load the Public Instructions --> */

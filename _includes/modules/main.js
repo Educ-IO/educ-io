@@ -123,13 +123,14 @@ Main = function() {
     return ಠ_ಠ.Google_API({}, {
       Network: ಠ_ಠ.Network,
       Strings: ಠ_ಠ.Strings
-    }).initialise(auth.access_token, auth.token_type, auth.expires,
+    }).initialise(auth.access_token, auth.token_type, auth.expires, auth.authuser,
       (refresher => {
         return force => new Promise((resolve, reject) => {
           refresher(_default, force).then(r => r.authResponse ? resolve({
             token: r.authResponse.access_token,
             type: r.authResponse.token_type,
             expires: r.authResponse.expires,
+            user: r.authResponse.authuser
           }) : resolve()).catch(err => reject(err));
         });
       })(google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")))), ಠ_ಠ.Flags.key() || ಠ_ಠ.SETUP.GOOGLE_KEY, ಠ_ಠ.Flags.oauth() || ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID);
@@ -215,7 +216,7 @@ Main = function() {
 
   var router = () => ಠ_ಠ.Flags ? ಠ_ಠ.Flags.change(_route) : false;
 
-  var setupRouter = start => {
+  var setupRouter = (start, quiet) => {
 
     /* <!-- Route Start --> */
     if (start) start();
@@ -223,7 +224,7 @@ Main = function() {
     /* <!-- Call Router Initially (if required) | Default Hash = #! --> */
     Promise.resolve(ಠ_ಠ.Flags && ಠ_ಠ.Flags.initial() ? ಠ_ಠ.Flags.route(ಠ_ಠ.Flags.initial(), _route) : window.location.hash ? router() : null)
       /* <!-- Module Finally | After all initial routes --> */
-      .then(() => _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m].finally) ? 
+      .then(() => quiet === true ? false : _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m].finally) ? 
                                    ಠ_ಠ[m].finally.call(ಠ_ಠ) : false));
 
     /* <!-- Add Router Method --> */
@@ -329,7 +330,7 @@ Main = function() {
     ಠ_ಠ.Display.state().exit(STATE_AUTH);
 
     /* <!-- Route Un-Authenticated --> */
-    setupRouter(_routeOut);
+    setupRouter(_routeOut, true);
 
   };
   /* <!-- Auth Triggers --> */

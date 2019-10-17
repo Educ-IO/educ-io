@@ -134,7 +134,7 @@ App = function() {
       })
       .catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error")),
 
-    find: () => ಠ_ಠ.Google.appData.search(FN.config.name, FN.config.mime).then(results => {
+    find: () => ಠ_ಠ.Google ? ಠ_ಠ.Google.appData.search(FN.config.name, FN.config.mime).then(results => {
       if (results && results.length == 1) {
         ಠ_ಠ.Flags.log(`Found Docket Config [${results[0].name} / ${results[0].id}]`);
         return results[0];
@@ -142,7 +142,7 @@ App = function() {
         ಠ_ಠ.Flags.log("No Existing Docket Config");
         return false;
       }
-    }).catch(e => ಠ_ಠ.Flags.error("Config Error", e ? e : "No Inner Error")),
+    }).catch(e => ಠ_ಠ.Flags.error("Config Error", e ? e : "No Inner Error")) : Promise.resolve(false),
 
     get: () => FN.config.find().then(result => result ? FN.config.load(result) : result),
 
@@ -606,6 +606,18 @@ App = function() {
   /* <-- Background | Refresh Functions --> */
   FN.background = {
     
+    ready: () => {
+      
+      
+
+      
+      
+      
+      
+      
+      
+    },
+    
     start: (config, interval) => {
       
       /* <-- Close function will terminate previous timeout function (also used with Router State clearing) --> */
@@ -633,7 +645,60 @@ App = function() {
     },
     
   };
-  /* <-- Refresh Functions --> */
+  /* <-- Background | Refresh Functions --> */
+  
+  /* <-- Background | Refresh Functions --> */
+  FN.setup = {
+    
+    initial: () => {
+      
+      /* <!-- Add Markers --> */
+      ಱ.markers = {
+        project: "#",
+        assignation: "@",
+      };
+      
+      /* <!-- Setup Showdown --> */
+      ಱ.showdown = new showdown.Converter({
+        strikethrough: true
+      });
+
+      /* <!-- Create Errors Reference --> */
+      ಱ.errors = ಠ_ಠ.Errors({}, ಠ_ಠ);
+      
+      /* <!-- Create Schema Reference --> */
+      ಱ.schema = ಠ_ಠ.Schema().latest();
+      
+      /* <!-- Create Query Reference --> */
+      ಱ.query = ಠ_ಠ.Query(ಱ, ಠ_ಠ);
+      
+      /* <!-- Create Filter Reference --> */
+      ಱ.filter = ಠ_ಠ.Filter(ಱ, ಠ_ಠ);
+      
+      /* <!-- Create Analysis Reference --> */
+      ಱ.analysis = ಠ_ಠ.Analysis(ಱ, ಠ_ಠ);
+      
+      /* <!-- Get Window Title --> */
+      ಱ.title = window.document.title;
+      
+    },
+    
+    session: () => {
+      
+      /* <!-- Setup Today | Override every 15mins --> */
+      var _today = () => {
+        ರ‿ರ.today = ಠ_ಠ.Dates.now().startOf("day").toDate();
+        ಠ_ಠ.Flags.log("Setting Today to:", ರ‿ರ.today);
+        _.delay(_today, 900000);
+      };
+      if (!ರ‿ರ.today) _today();
+      
+      /* <!-- Create Database Reference --> */
+      ರ‿ರ.database = ಠ_ಠ.Database(ಱ, ಠ_ಠ);
+      
+    },
+    
+  };
   
   
   /* <!-- Internal Functions --> */
@@ -1097,53 +1162,15 @@ App = function() {
 
     /* <!-- Start App after fully loaded (but BEFORE routing) --> */
     start: () => {
-
-      /* <!-- Setup Today | Override every 15mins --> */
-      var _today = () => {
-        ರ‿ರ.today = ಠ_ಠ.Dates.now().startOf("day").toDate();
-        ಠ_ಠ.Flags.log("Setting Today to:", ರ‿ರ.today);
-        _.delay(_today, 900000);
-      };
-      _today();
-
-      /* <!-- Add Markers --> */
-      ಱ.markers = {
-        project: "#",
-        assignation: "@",
-      };
-      
-      /* <!-- Setup Showdown --> */
-      ಱ.showdown = new showdown.Converter({
-        strikethrough: true
-      });
-
-      /* <!-- Create Errors Reference --> */
-      ಱ.errors = ಠ_ಠ.Errors({}, ಠ_ಠ);
-      
-      /* <!-- Create Schema Reference --> */
-      ಱ.schema = ಠ_ಠ.Schema().latest();
-      
-      /* <!-- Create Query Reference --> */
-      ಱ.query = ಠ_ಠ.Query(ಱ, ಠ_ಠ);
-      
-      /* <!-- Create Filter Reference --> */
-      ಱ.filter = ಠ_ಠ.Filter(ಱ, ಠ_ಠ);
-      
-      /* <!-- Create Analysis Reference --> */
-      ಱ.analysis = ಠ_ಠ.Analysis(ಱ, ಠ_ಠ);
-      
-      /* <!-- Create Database Reference --> */
-      ರ‿ರ.database = ಠ_ಠ.Database(ಱ, ಠ_ಠ);
-      
-      /* <!-- Get Window Title --> */
-      ಱ.title = window.document.title;
-      
       ಠ_ಠ.Flags.log("APP Start Called");
-
+      FN.setup.initial();
     },
 
     /* <!-- App is ready for action! --> */
-    ready: () => ಠ_ಠ.Flags.log("App is now READY"),
+    ready: () => {
+      ಠ_ಠ.Flags.log("App is now READY");
+      FN.setup.session();
+    },
     
     /* <!-- App is usable (all initial routes processed!) --> */
     /* <!-- This is run here (rather than router start) to ensure any initial loads are done first --> */

@@ -191,7 +191,13 @@ Forms = function(loaded) {
       }, {});
 
       /* <!-- Get Scales & Forms from Google Drive --> */
-      ಱ.loaded = Promise.all(_.map(TYPES, type => ಠ_ಠ.Google.files.type(type.mime, "domain,user,allTeamDrives")
+      var _types = _.map(TYPES, type => type.mime),
+          _mimes = _.reduce(TYPES, (memo, type) => {
+        memo[type.mime] = type;
+        return memo;
+      }, {});
+      
+      ಱ.loaded = ಠ_ಠ.Google.files.type(_types, "domain,user,allTeamDrives")                      
           .then(files => Promise.all(_.map(files, file => ಠ_ಠ.Google.files.download(file.id)
             .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
             .then(content => {
@@ -201,7 +207,7 @@ Forms = function(loaded) {
               } catch (e) {
                 ಠ_ಠ.Flags.error(`Error Parsing: ${file.id}`, e);
               }
-              _object = _process(_object, type, file.id);
+              _object = _process(_object, _mimes[file.mimeType], file.id);
               var _meta = {},
                   _prop = (v, k) => _meta[k.toLowerCase()] = v && _.isString(v) ?
                     v.toLowerCase() == "true" ? true : v.toLowerCase() == "false" ? false : v : v;
@@ -210,7 +216,7 @@ Forms = function(loaded) {
               if (!_.isEmpty(_meta)) _object.__meta = _meta;
               return _object;
             })
-            .then(object => object ? ರ‿ರ.cache[type.name][file.id] = object : object)
+            .then(object => object ? ರ‿ರ.cache[_mimes[file.mimeType].name][file.id] = object : object)
             .then(() => file.teamDriveId ? ಠ_ಠ.Google.teamDrives.get(file.teamDriveId)
               .then(drive => {
                 file.owners = [{
@@ -220,7 +226,7 @@ Forms = function(loaded) {
                 return file;
               }) : Promise.resolve(file))
             .then(file => ರ‿ರ.files[file.id] = file))))
-          .catch(e => ಠ_ಠ.Flags.error(`Error Searching for File Type: ${type.mime}`, e))))
+          .catch(e => ಠ_ಠ.Flags.error(`Error Searching for File Types: ${_types.join(";")}`, e))
         .then(() => {
           ರ‿ರ.loaded = true;
           if (loaded && _.isFunction(loaded)) loaded();

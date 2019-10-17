@@ -145,7 +145,7 @@ Google_API = (options, factory) => {
   /* <!-- Network Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _init = (token, type, expires, update) => {
+  var _init = (token, type, expires, user, update) => {
 
     /* <!-- Check Function to ensure token validity --> */
     _check = ((e, u) => force => {
@@ -156,7 +156,7 @@ Google_API = (options, factory) => {
 
           u(force).then(r => { /* Update token */
 
-            if (r) _init(r.token, r.type, r.expires, u); /* Non-Null Response, so changes required */
+            if (r) _init(r.token, r.type, r.expires, r.user, u); /* Non-Null Response, so changes required */
             resolve(true);
 
           }).catch(err => reject(err));
@@ -520,13 +520,13 @@ Google_API = (options, factory) => {
   return {
 
     /* <!-- External Functions --> */
-    initialise: function(token, type, expires, update, key, client_id) {
+    initialise: function(token, type, expires, user, update, key, client_id) {
 
       /* <!-- Set the Important Constants --> */
       KEY = key, CLIENT_ID = client_id;
 
       /* <!-- Run the Initialisation --> */
-      _init(token, type, expires, update);
+      _init(token, type, expires, user, update);
 
       /* <!-- Return for Chaining --> */
       return this;
@@ -737,11 +737,12 @@ Google_API = (options, factory) => {
       },
 
       type: (mime, corpora, spaces, query) => {
-        
         var _domain = "domain", 
             _fn = corpora => _list(NETWORKS.general.get, "drive/v3/files", "files", [], {
               pageSize: PAGE_SIZE,
-              q: `trashed = false and mimeType = '${mime}'${query ? ` and ${query}` : ""}`,
+              q: `trashed = false and ${_.isArray(mime) ? 
+                `(${_.reduce(mime, (memo,mime) => `${memo ? `${memo} or ` : ""}mimeType = '${mime}'`, "")})` :
+                `mimeType = '${mime}'`}${query ? ` and ${query}` : ""}`,
               orderBy: "starred, modifiedByMeTime desc, viewedByMeTime desc, name",
               fields: `kind,nextPageToken,incompleteSearch,files(${FULL})`,
               includeItemsFromAllDrives: true,

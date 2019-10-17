@@ -66,7 +66,7 @@
   }
 	div.item {
     will-change: padding-top, background-color;
-    @include transition(padding-top 0.2s ease, background-color 0.6s linear);
+    @include transition(padding-top 0.2s ease);
     &.text-complement {color: complement($colour-highlight) !important;}
     &.drop-target:not(.not-drop-target) {padding-top: 1em !important;}
     &.due-soon > .display, &.overdue > .display {border-radius: 3px;}
@@ -75,10 +75,12 @@
     &.editable {
       cursor: pointer;
       border-radius: 4px;
-      &:hover {
-          box-shadow: map-get($shadows, 2);
-          border-bottom-color: transparent;
-          background-color: rgba($colour-highlight, 0.4);
+      .display:hover {
+        @include transition(background-color 0.6s linear);
+        border-radius: 4px;
+        box-shadow: map-get($shadows, 2);
+        border-bottom-color: transparent;
+        background-color: rgba($colour-highlight, 0.4);
       }
       &.complete, &.background {
         &:hover {background-color: rgba($colour-highlight, 0.1);}
