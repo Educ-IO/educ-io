@@ -83,10 +83,10 @@
         background-color: rgba($colour-highlight, 0.4);
       }
       &.complete, &.background {
-        &:hover {background-color: rgba($colour-highlight, 0.1);}
+        .display:hover {background-color: rgba($colour-highlight, 0.25);}
       }
       &.background {
-        &:hover {box-shadow: map-get($shadows, 1);}
+        .display:hover {box-shadow: map-get($shadows, 1);}
       }
     }
     &:not(:last-child) .display {border-bottom: 1px dashed $colour-emphasis;}

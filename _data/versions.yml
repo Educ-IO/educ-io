@@ -1,4 +1,8 @@
 site :
+  0.1.6u :
+    name : Site v0.1.6u
+    desc : Bug Fixes
+    numeric : 0.1.6.20
   0.1.6t :
     name : Site v0.1.6t
     desc : Bug Fixes

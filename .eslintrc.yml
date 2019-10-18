@@ -93,6 +93,8 @@ globals:
   Tasks: true
   Analysis: true
   Signatures: true
+  Trackers: true
+  Evidence: true
   Google_Sheets_Grid: true
   Google_Sheets_Metadata: true
   Google_Sheets_Notation: true

@@ -111,6 +111,8 @@ modules:
   - reflect/analysis
   - reflect/forms
   - reflect/signatures
+  - reflect/trackers
+  - reflect/evidence
   - reflect/templates/form_master
   - reflect/templates/uk_teachers_reflective
   - reflect/templates/volunteering

@@ -429,8 +429,7 @@ App = function() {
         ಠ_ಠ.Display.state().enter(STATE_SCALE_OPENED).protect("a.jump").on("JUMP") : null)
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Scale Create Prompt", e).negative() : false),
 
-    tracker: name => name,
-    /* <!-- TODO: Tracker Creation --> */
+    tracker: name => name ? ಱ.trackers.create(ಱ.forms.scale(name)) : false,
   };
   /* <!-- Create Functions --> */
 
@@ -1619,7 +1618,7 @@ App = function() {
               report: {
                 matches: /CREATE/i,
                 length: 0,
-                fn: () => ಠ_ಠ.Flags.log("CREATE EVIDENCE")
+                fn: () => ಱ.evidence.add()
               }
             }
           },
@@ -1650,6 +1649,8 @@ App = function() {
       ಱ.signatures = ಱ.signatures ||
         ಠ_ಠ.Signatures(ಠ_ಠ, ಱ.strings.stringify, SIGNING_REPLACER, ಠ_ಠ.Main.elevator(SCOPE_FULL_DRIVE));
       ಱ.fields = ಠ_ಠ.Fields({forms : ಱ.forms}, ಠ_ಠ);
+      ಱ.trackers = ಠ_ಠ.Trackers({forms : ಱ.forms}, ಠ_ಠ);
+      ಱ.evidence = ಠ_ಠ.Evidence({forms : ಱ.forms}, ಠ_ಠ);
     },
 
     /* <!-- Clear the existing state --> */
