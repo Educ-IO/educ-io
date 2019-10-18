@@ -1,9 +1,9 @@
 <div class="container">
 	<div class="row align-items-start align-items-lg-center">
-		<div class="d-none d-md-block col-12 mx-auto col-md-6 order-md-2 px-2 py-2">
+		<div class="d-none d-md-block col-12 mx-auto col-md-5 order-md-2 px-2 py-2">
 			<a class="app-logo" href="#instructions">{% include {{ include.logo }} %}</a>
 		</div>
-		<div class="col-md-6 order-md-1 text-center text-md-left pr-md-5 mt-md-2 mt-xl-4">
+		<div class="col-12 col-md-7 order-md-1 text-center text-md-left pr-md-5 mt-md-2 mt-xl-4">
 			<p class="lead">{{ app.desc | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</p>
 			{{ text | markdownify }}
 			<div class="d-flex flex-column flex-lg-row flex-wrap lead mb-3 mt-4">

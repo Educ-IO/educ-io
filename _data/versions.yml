@@ -1,14 +1,18 @@
 site :
+  0.1.6t :
+    name : Site v0.1.6t
+    desc : Bug Fixes
+    numeric : 0.1.6.19
   0.1.6s :
-    name : Site 0.1.6s
+    name : Site v0.1.6s
     desc : Bug Fixes
     numeric : 0.1.6.18
   0.1.6r :
-    name : Site 0.1.6r
+    name : Site v0.1.6r
     desc : Bug Fixes
     numeric : 0.1.6.17
   0.1.6q :
-    name : Site 0.1.6q
+    name : Site v0.1.6q
     desc : Visual Updates
     numeric : 0.1.6.16
   0.1.6p :

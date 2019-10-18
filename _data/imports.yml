@@ -165,8 +165,9 @@ hello:
       integrity: sha256-pKFV5C2DP6gWmmr+zWBVeI206oYqwRDGA3teFiDqh4c=
       crossorigin: anonymous
       overrides:
-        - replace: emit('auth.init', p);
-          with: if (session&&session.authuser!==null&&session.authuser!==undefined) {url=url+"&authuser="+session.authuser;} emit('auth.init', p);
+        - replace: c("auth.init",i),
+          with: >-
+            h&&h.authuser!==null&&h.authuser!==undefined?e=e+"&authuser="+h.authuser:false, c("auth.init",i),
       bulk: 27.8
       id: __hello
   dev:

@@ -1,9 +1,9 @@
 <div class="container">
 	<div class="row row align-items-start align-items-lg-center">
-		<div class="d-none d-md-block col-12 mx-auto col-md-6 order-md-2 px-2 py-2">
+		<div class="d-none d-md-block col-12 mx-auto col-md-5 order-md-2 px-2 py-2">
       {% unless include.simple %}<a class="app-logo" href="#instructions">{% else %}<div class="app-logo">{% endunless %}{% include {{ include.logo }} %}{% unless include.simple %}</a>{% else %}</div>{% endunless %}
 		</div>
-		<div class="col-md-6 order-md-1 text-center text-md-left pr-md-5 mt-md-2 mt-xl-4">
+		<div class="col-12 col-md-7 order-md-1 text-center text-md-left pr-md-5 mt-md-2 mt-xl-4">
 			<p class="lead">{{ app.desc | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</p>
 			{% raw %}{{content}}{% endraw %}
 			<div class="d-flex flex-column flex-md-row lead mb-3 mt-2">

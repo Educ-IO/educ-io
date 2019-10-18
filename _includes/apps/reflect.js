@@ -1197,6 +1197,21 @@ App = function() {
             match: /EXPORT/i,
             show: "EXPORT_INSTRUCTIONS",
             title: "How to Export Reports and Analysis ..."
+          },
+          {
+            match: /REPORT/i,
+            show: "REPORT_INSTRUCTIONS",
+            title: "What is a Reflective Report ..."
+          },
+          {
+            match: /EVIDENCE/i,
+            show: "EVIDENCE_INSTRUCTIONS",
+            title: "How to Log Evidence ..."
+          },
+          {
+            match: /FORM/i,
+            show: "FORM_INSTRUCTIONS",
+            title: "What is a Form in Reflect ..."
           }
         ],
         routes: {
@@ -1596,6 +1611,17 @@ App = function() {
                   .then(form => form ? ರ‿ರ.form = form : false)
               },
             },
+          },
+          
+          evidence: {
+            matches: /EVIDENCE/i,
+            routes: {
+              report: {
+                matches: /CREATE/i,
+                length: 0,
+                fn: () => ಠ_ಠ.Flags.log("CREATE EVIDENCE")
+              }
+            }
           },
 
         },

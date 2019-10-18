@@ -201,6 +201,9 @@ docs:
   - reflect/SHARE_INSTRUCTIONS
   - reflect/EXPORT_INSTRUCTIONS
   - reflect/EXISTING_REPORT_INSTRUCTIONS
+  - reflect/REPORT_INSTRUCTIONS
+  - reflect/EVIDENCE_INSTRUCTIONS
+  - reflect/FORM_INSTRUCTIONS
   - reflect/URL
   - reflect/FILE
   - reflect/CREATE
@@ -537,6 +540,15 @@ menus:
               - google
             auth: google
             visibility: debug
+            divider: true
+          - name: Log Evidence
+            desc: Log your Evidence against targets or a scale
+            hash: log.evidence
+            imports:
+              - google
+            auth: google
+            visibility: debug
+            divider: true
           - name: Create Scale
             hash: create.scale
             auth: google
@@ -606,5 +618,23 @@ buttons:
   - name: Import
     desc: Import a saved Report from a file
     hash: import.report
+  - name: About
+    desc: More details about creating a Report
+    hash: instructions.report
+- name: Log Evidence
+  desc: Log your Evidence against targets or a scale
+  hash: evidence.create
+  auth: google
+  visibility: debug
+  buttons:
+  - name: Open
+    desc: Open an Evidence Tracker from your Drive
+    hash: open.tracker
+    imports:
+      - google
+    auth: google
+  - name: About
+    desc: More details about logging Evidence
+    hash: instructions.evidence
 published: true
 scoped: true

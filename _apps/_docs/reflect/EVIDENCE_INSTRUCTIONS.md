@@ -1,0 +1,1 @@
+You can log __evidence__ using this app. Evidence can be tagged against a scale (e.g the Teachers' Standards) and also against any targets you may have set yourself (or been set).
