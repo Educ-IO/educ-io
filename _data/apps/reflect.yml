@@ -237,6 +237,8 @@ docs:
   - reflect/NOTIFY_SEND_SUCCESS
   - reflect/NOTIFY_SENT_EMAIL
   - reflect/EMAIL_ACTION_OPEN_REPORT
+  - reflect/TRACKER_CHOOSE
+  - reflect/TRACKER_SCALE
 scopes:
   google:
     - scope: email
@@ -629,7 +631,7 @@ buttons:
   auth: google
   visibility: debug
   buttons:
-  - name: Open
+  - name: Open Tracker
     desc: Open an Evidence Tracker from your Drive
     hash: open.tracker
     imports:

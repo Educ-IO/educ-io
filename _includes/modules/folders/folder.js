@@ -1410,7 +1410,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
           ಠ_ಠ.Google.files.download(file.id, _team).then(binary => {
 
             (inPlace ?
-              ಠ_ಠ.Google.files.upload(metadata, binary, sourceMimeType, _team, file.id) :
+              ಠ_ಠ.Google.files.upload(metadata, binary, sourceMimeType, !!_team, file.id) :
               ಠ_ಠ.Google.files.upload(metadata, binary, sourceMimeType, _team))
             .then(uploaded => prefixAfterConversion ?
                 ಠ_ಠ.Google.files.update(file.id, {

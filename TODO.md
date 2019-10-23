@@ -148,6 +148,8 @@ Folders
 
 Reflect
 -------
+* ** FEATURE ** Custom Icons for Reflect Files <-- Seems to be a bit of an issue! CAN Override in Folders App though...
+
 * ** FEATURE ** Upgrade form with latest definition? On load? By hash?
 
 * ** FEATURE ** Target Loading from Previous Reports

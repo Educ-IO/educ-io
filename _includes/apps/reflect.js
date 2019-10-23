@@ -429,7 +429,8 @@ App = function() {
         ಠ_ಠ.Display.state().enter(STATE_SCALE_OPENED).protect("a.jump").on("JUMP") : null)
       .catch(e => e ? ಠ_ಠ.Flags.error("Displaying Scale Create Prompt", e).negative() : false),
 
-    tracker: name => name ? ಱ.trackers.create(ಱ.forms.scale(name)) : false,
+    tracker: name => name ? ಱ.trackers.create(name) : false,
+    
   };
   /* <!-- Create Functions --> */
 
@@ -583,7 +584,7 @@ App = function() {
         name: "New ..."
       }].concat(ಱ.forms.selection("scales", "Scale"))
     }),
-
+    
     forms: () => ({
       name: "Form",
       desc: "Create Form",
@@ -1219,7 +1220,8 @@ App = function() {
             options: command => ({
               title: "Select a Reflect File to Open",
               view: "DOCS",
-              mime: /FORM/i.test(command) ? TYPE_FORM : /REPORT/i.test(command) ? TYPE_REPORT : /REVIEW/i.test(command) ? TYPE_REVIEW : /TRACKER/i.test(command) ? TYPE_TRACKER : TYPES.join(","),
+              mime: /FORM/i.test(command) ? TYPE_FORM : /REPORT/i.test(command) ? TYPE_REPORT : /REVIEW/i.test(command) ?
+                TYPE_REVIEW : /TRACKER/i.test(command) ? TYPE_TRACKER : TYPES.join(","),
               mine: null,
               parent: null,
               include_folders: false,
@@ -1618,7 +1620,8 @@ App = function() {
               report: {
                 matches: /CREATE/i,
                 length: 0,
-                fn: () => ಱ.evidence.add()
+                fn: () => (ರ‿ರ.tracker ? Promise.resolve(ರ‿ರ.tracker) : ಱ.trackers.choose())
+                            .then(tracker => tracker ? ಱ.evidence.add(tracker) : false)
               }
             }
           },
@@ -1634,23 +1637,47 @@ App = function() {
     },
 
     start: () => {
+      
       if (window.underscoreDeepExtend && window._) _.mixin({
         "deepExtend": underscoreDeepExtend(_)
       });
+      
       ಱ.strings = ಠ_ಠ.Strings();
+      
       ಱ.notify = ಠ_ಠ.Notify({
         id : "reflect_Notify",
         autohide : true,
       }, ಠ_ಠ);
+    
     },
 
     ready: () => {
+      
       ಱ.forms = ಱ.forms || ಠ_ಠ.Forms(LOADED);
+      
       ಱ.signatures = ಱ.signatures ||
         ಠ_ಠ.Signatures(ಠ_ಠ, ಱ.strings.stringify, SIGNING_REPLACER, ಠ_ಠ.Main.elevator(SCOPE_FULL_DRIVE));
+      
       ಱ.fields = ಠ_ಠ.Fields({forms : ಱ.forms}, ಠ_ಠ);
-      ಱ.trackers = ಠ_ಠ.Trackers({forms : ಱ.forms}, ಠ_ಠ);
-      ಱ.evidence = ಠ_ಠ.Evidence({forms : ಱ.forms}, ಠ_ಠ);
+      
+      ಱ.trackers = ಠ_ಠ.Trackers({
+        forms : ಱ.forms,
+        type : TYPE_TRACKER,
+        replacer : REGEX_REPLACER,
+        choose : FN.prompt.choose,
+        scale : () => FN.prompt.choose(
+          ಱ.forms.selection("scales", "Scale"),
+          "Create a Tracker ...", "TRACKER_SCALE", false)
+          .then(scale => scale ? ಱ.forms.scale(scale.value) : false)
+          .then(scale => scale ? ಠ_ಠ.Display.text({
+              id: "file_name",
+              title: "File Name",
+              simple: true
+            }).then(title => title ? {name: title, scale: scale, file: `${FN.helper.title(title, TYPE_TRACKER)}${EXTENSION}`} : false) : false),
+      }, ಠ_ಠ);
+      
+      ಱ.evidence = ಠ_ಠ.Evidence({forms : ಱ.forms, trackers : ಱ.trackers}, ಠ_ಠ);
+      
     },
 
     /* <!-- Clear the existing state --> */

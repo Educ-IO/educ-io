@@ -54,7 +54,7 @@ Google_API = (options, factory) => {
   };
 
   const TEAM = (id, team, start) =>
-    team ? `${start ? "?" : "&"}${id !== team ? `teamDriveId=${team}&`:""}supportsTeamDrives=true` : "";
+    team ? `${start ? "?" : start !== null && start !== undefined ? "&" : ""}${id !== team ? team !== true ? `teamDriveId=${team}&` : "" :""}supportsTeamDrives=true&supportsAllDrives=true` : "";
   /* <!-- Internal Constants --> */
 
   /* <!-- Network Constants --> */
@@ -509,7 +509,7 @@ Google_API = (options, factory) => {
 
     return _call(
       id ? NETWORKS.general.patch : NETWORKS.general.post,
-      `upload/drive/v3/files/${id?`${id}?newRevision=true&`:"?"}uploadType=multipart${TEAM(id, team, true)}${fields ? `&fields=${fields === true ? FIELDS : fields}`:""}`, _payload, "multipart/related; boundary=" + BOUNDARY(), null, "application/binary");
+      `upload/drive/v3/files/${id?`${id}?newRevision=true&`:"?"}uploadType=multipart${TEAM(id, team, false)}${fields ? `&fields=${fields === true ? FIELDS : fields}`:""}`, _payload, "multipart/related; boundary=" + BOUNDARY(), null, "application/binary");
 
   };
   /* <!-- Internal Functions --> */

@@ -22,7 +22,7 @@ Evidence = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
     
-    add: () => factory.Flags.log("CREATE EVIDENCE"),
+    add: tracker => factory.Flags.log("CREATE EVIDENCE", tracker),
     
   };
   /* <!-- External Visibility --> */
