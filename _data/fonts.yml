@@ -4,4 +4,4 @@
   for: [all]
 "Material Icons":
   safe: "Material+Icons"
-  for: [view, folders, reflect, merge, cover, grades, tiles, poll, docket, accounts, events, debug, _extensions/cloudysky.md, _extensions/show.md, test.md, home.md]
+  for: [view, folders, reflect, merge, cover, grades, tiles, poll, docket, accounts, events, book, debug, _extensions/cloudysky.md, _extensions/show.md, test.md, home.md]

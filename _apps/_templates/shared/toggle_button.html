@@ -1,7 +1,7 @@
 {% raw %}
 <button
   type="button"
-  class="btn{{#unless b_small}}{{#if large}} btn-lg{{/if}}{{/unless}} btn-toggle d-flex {{which b_class b_class 'btn-dark'}}{{#unless no_waves}} waves-effect{{/unless}}{{#if disabled}} disabled{{/if}}"
+  class="btn{{#unless b_small}}{{#if large}} btn-lg{{/if}}{{/unless}} btn-toggle d-flex {{which b_class b_class 'btn-dark'}}{{#unless no_waves}} waves-effect{{/unless}}{{#if disabled}} disabled{{/if}} align-items-center"
   data-targets="{{b_targets}}"
   data-initial="{{which b_class b_class 'btn-dark'}}"
 	{{#if b_id}}id={{b_id}}{{/if}}
@@ -9,8 +9,8 @@
   {{#if b_tooltip}} data-toggle="tooltip" title="{{ b_tooltip }}"{{/if}}
   {{#if b_aria_title}} aria-label="{{ b_aria_title }}"{{/if}}
   {{#if disabled}} disabled{{/if}}>
-		<i class="toggle-true d-none material-icons md-24 h-100 mb-0">thumb_up</i>
-		<i class="toggle-indeterminate material-icons md-24 h-100 mb-0">check_box_outline_blank</i>
-		<i class="toggle-false d-none material-icons md-24 h-100 mb-0">thumb_down</i>
+		<i class="toggle-true d-none material-icons md-24 mb-0">thumb_up</i>
+		<i class="toggle-indeterminate material-icons md-24 mb-0">check_box_outline_blank</i>
+		<i class="toggle-false d-none material-icons md-24 mb-0">thumb_down</i>
 </button>
 {% endraw %}

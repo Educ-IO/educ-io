@@ -1,0 +1,18 @@
+{% raw %}
+{{~#if title}}<div class="row d-flex flex-row align-items-center mt-3 mt-md-1">
+  <div class="d-inline">
+    <h4 class="display-4 col-12 mb-lg-0 d-inline-flex flex-column flex-md-row">
+      <span class="text-muted font-weight-normal{{~#if subtitle}} mr-3{{/if}}">{{title}}</span>
+      {{~#if subtitle}}<span class="d-block d-md-inline subtitle font-weight-light">{{subtitle}}</span>{{/if~}}
+    </h4>
+  </div>
+  <div class="d-inline d-inline d-flex flex-column flex-md-row">
+    <a href="#date" class="text-decoration-none">
+      <i class="material-icons md-24 mb-2 mb-md-0 ml-md-2 mr-md-{{~#unless instructions}}3{{else}}1{{/unless}} text-light bg-dark p-1 rounded">swap_calls</i>
+    </a>
+    {{~#if instructions}}<a href="#instructions.{{instructions}}" class="text-decoration-none">
+      <i class="material-icons md-24 mr-md-3 text-light bg-dark p-1 rounded">help_outline</i>
+    </a>{{/if~}}
+  </div>
+</div>{{/if~}}
+{% endraw %}

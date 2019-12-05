@@ -89,6 +89,7 @@ helpers:
   - colours
   - saver
   - saad
+  - config
 modules:
   - flags
   - controller

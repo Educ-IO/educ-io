@@ -116,6 +116,7 @@ templates:
   - shared/datatable
   - shared/headers
   - shared/link
+  - shared/link_options
   - fields/field_validation
   - fields/field_general
   - fields/field_numeric

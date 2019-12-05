@@ -1,0 +1,20 @@
+{% raw %}
+<div {{#if id}}id="{{id}}" {{/if}}class="container-fluid pt-lg-1 mvh-100">
+  
+  {{> date}}
+  
+  <div class="row m-0 pt-2">
+    
+    <div class="col-12 col-lg-6 col-xl-4">
+      
+      {{> search placeholder="Search Resources"}}
+      
+      <div id="resources">{{#if resources}}{{> resources}}{{/if}}</div>
+
+    </div>
+    
+    <div id="details" class="col-12 col-lg-6 col-xl-8"></div>
+    
+  </div>
+</div>
+{% endraw %}

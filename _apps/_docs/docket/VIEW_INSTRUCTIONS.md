@@ -12,10 +12,10 @@ These two views present alternative ways of looking at your tasks. The __analysi
 
 Each item in these views may be accompanied with icons to indicate status or further information:
 
-{% include_relative _docs/docket/ICON_EXPLANATION.md icon="schedule" explanation="This is a __timed__ item (such as a meeting), meaning it is will happen on a certain day and/or time, regardless of whether you mark it as complete" %}
+{% include_relative _docs/shared/ICON_EXPLANATION.md icon="schedule" explanation="This is a __timed__ item (such as a meeting), meaning it is will happen on a certain day and/or time, regardless of whether you mark it as complete" %}
 
-{% include_relative _docs/docket/ICON_EXPLANATION.md icon="av_timer" explanation="These items have a __duration__ associated with them - helpful if you need to keep track of the time spent on particular tasks or projects" %}
+{% include_relative _docs/shared/ICON_EXPLANATION.md icon="av_timer" explanation="These items have a __duration__ associated with them - helpful if you need to keep track of the time spent on particular tasks or projects" %}
 
-{% include_relative _docs/docket/ICON_EXPLANATION.md icon="hourglass_empty" explanation="Items which have been classified as __ready__ on the Kanban board, these are next up in the list of things to do!" %}
+{% include_relative _docs/shared/ICON_EXPLANATION.md icon="hourglass_empty" explanation="Items which have been classified as __ready__ on the Kanban board, these are next up in the list of things to do!" %}
 
-{% include_relative _docs/docket/ICON_EXPLANATION.md icon="work" explanation="Items you are currently working on, as specified on the Kanban board" %}
+{% include_relative _docs/shared/ICON_EXPLANATION.md icon="work" explanation="Items you are currently working on, as specified on the Kanban board" %}

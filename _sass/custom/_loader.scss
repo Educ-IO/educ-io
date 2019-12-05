@@ -42,6 +42,16 @@ div.loader {
       border-top-color: $colour-highlight !important;
     }
   }
+  &.loader-light {
+    .loading .spinner {
+      border-top-color: $colour-background !important;
+    }
+  }
+  &.loader-dark {
+    .loading .spinner {
+      border-top-color: $colour-foreground !important;
+    }
+  }
 	// -- Size Options -- //
 	&.loader-large, &.loader-medium {
 		background-color: rgba($colour-background, 0.9);

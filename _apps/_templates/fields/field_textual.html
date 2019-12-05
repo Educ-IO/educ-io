@@ -62,9 +62,9 @@
      {{#if (any button clear)}}{{> control_button b_tooltip="Clear / Reset"
     	b_class="btn-secondary eraser no-active"
     	b_target=(which toggle (concat id '||' id '_DETAILS') id) 
-    	b_icon="refresh" disabled=readonly }}{{/if}}
+    	b_icon="refresh" b_icon_centered="true" disabled=readonly }}{{/if}}
     {{#if button}}{{> control_button b_id=(concat id "_BUTTON_LG") b_icon=""
-    	b_class="btn-primary textual-input-button"
+    	b_class="btn-primary textual-input-button" b_icon_centered="true"
     	b_target=id b_action=action b_text=button disabled=readonly }}{{/if}}
     </span>{{/if}}
     {{#if toggle}}<span class="input-group-append d-none d-lg-flex">
@@ -79,10 +79,10 @@
     {{#if (any button clear)}}{{> control_button b_small="true" b_icon_large="true" 
     	b_class=(add readonly 'btn-secondary eraser no-active' ' d-none')
     	b_tooltip="Clear / Reset" b_target=(which toggle (concat id '||' id '_DETAILS') id)
-    	b_icon="refresh" disabled=readonly }}{{/if}}
+    	b_icon="refresh" b_icon_centered="true" disabled=readonly }}{{/if}}
     {{#if button}}{{> control_button b_small="true" b_id=(concat id "_BUTTON_SM")
     	b_class=(add readonly 'btn-primary textual-input-button' ' d-none')
-    	b_target=id b_action=action b_text=button disabled=readonly }}{{/if}}
+    	b_target=id b_action=action b_text=button b_icon_centered="true" disabled=readonly }}{{/if}}
     {{#if toggle}}{{> toggle_button b_small="true" b_id=(concat id "_TOGGLE_SM") 
     	 b_tooltip="Yes / No" b_class=toggle_class b_targets=id disabled=readonly }}{{/if}}
   	</div>{{else}}{{#if toggle}}<div role="group"

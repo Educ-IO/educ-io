@@ -104,6 +104,7 @@ templates:
   - shared/control_button
   - shared/populate_buttons
   - shared/link
+  - shared/link_options
   - events/header
   - events/rows
   - events/tag

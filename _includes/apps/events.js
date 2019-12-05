@@ -7,9 +7,7 @@ App = function() {
   if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
   /* <!-- Internal Constants --> */
-  const _encodeID = id => id.replace(/[.@]/g, ""),
-    _encodeValue = value => value.replace(/\./g, "%2E").replace(/@/g, "%40"),
-    _decodeValue = value => value && value.replace ? value.replace(/%2E/g, ".").replace(/%40/g, "@") : value;
+  const _encodeID = id => id.replace(/[.@]/g, "");
 
   const STATE_OPENED = "opened",
     /* <!-- Calendar has been opened --> */
@@ -106,7 +104,7 @@ App = function() {
       when: v.start ? v.start.dateTime ? ಠ_ಠ.Dates.parse(v.start.dateTime) : v.start.date ? ಠ_ಠ.Dates.parse(v.start.date) : null : null,
       when_display: _format.date(v.start ? v.start.dateTime ? ಠ_ಠ.Dates.parse(v.start.dateTime) : v.start.date ? ಠ_ಠ.Dates.parse(v.start.date) : null : null, v.end && v.end.dateTime ? ಠ_ಠ.Dates.parse(v.end.dateTime) : null),
       duration: _format.duration(v.start && v.start.dateTime ? ಠ_ಠ.Dates.parse(v.start.dateTime) : null, v.end && v.end.dateTime ? ಠ_ಠ.Dates.parse(v.end.dateTime) : null),
-      what: v.summary,
+      what: v.summary || "",
       where: v.location,
       who: v.organizer ? v.organizer.displayName ? ಠ_ಠ.Display.username(v.organizer.displayName) : v.organizer.email : "",
       properties: v.extendedProperties && v.extendedProperties.shared ? v.extendedProperties.shared : {},
@@ -135,9 +133,10 @@ App = function() {
   /* <!-- Tag Processing Functions --> */
   var _tags = {
 
-    update: () => chrome && chrome.runtime ? chrome.runtime.sendMessage("ekniapbebejhamindielmdgpceijdpff", {
-      action: "update"
-    }) : false,
+    update: () => window.chrome && window.chrome.runtime ? 
+      window.chrome.runtime.sendMessage("ekniapbebejhamindielmdgpceijdpff", {
+        action: "update"
+      }) : false,
 
     patch: (calendar, event, property, value) => new Promise((resolve, reject) => {
 
@@ -360,7 +359,7 @@ App = function() {
   var _open_Calendar = id => ಠ_ಠ.Google.calendar.get(id).then(calendar => {
     if (calendar) {
       ಠ_ಠ.Display.state().enter(STATE_OPENED);
-      return ಠ_ಠ.Recent.add(_encodeID(calendar.id), calendar.summary, `#google,load.calendar.${_encodeValue(calendar.id)}`).then(() => calendar);
+      return ಠ_ಠ.Recent.add(_encodeID(calendar.id), calendar.summary, `#google,load.calendar.${ಠ_ಠ.Flags.encode(calendar.id)}`).then(() => calendar);
     } else {
       return calendar;
     }
@@ -507,13 +506,13 @@ App = function() {
           load_calendar: {
             matches: [/LOAD/i, /CALENDAR/i],
             length: 1,
-            fn: command => _open_Calendar(_decodeValue(command))
+            fn: command => _open_Calendar(ಠ_ಠ.Flags.decode(command))
               .then(calendar => _load_Month(calendar.id, ಠ_ಠ.Dates.now().startOf("month")))
           },
           load_item: {
             matches: [/LOAD/i, /ITEM/i],
             length: 2,
-            fn: command => _load_Event(_decodeValue(command[0]), _decodeValue(command[1]))
+            fn: command => _load_Event(ಠ_ಠ.Flags.decode(command[0]), ಠ_ಠ.Flags.decode(command[1]))
           },
           remove_list: {
             matches: [/REMOVE/i, /LIST/i],
@@ -537,12 +536,13 @@ App = function() {
             matches: [/SEARCH/i, /PROPERTIES/i],
             state: STATE_DISPLAY,
             length: 2,
-            fn: command => _load_Properties(_id, _decodeValue(command[0]), _decodeValue(command[1])),
+            fn: command => _load_Properties(_id, ಠ_ಠ.Flags.decode(command[0]), ಠ_ಠ.Flags.decode(command[1])),
           },
           search_properties_shortcut: {
             matches: [/SEARCH/i, /PROPERTIES/i],
             length: 3,
-            fn: command => _load_Properties(_decodeValue(command[2]), _decodeValue(command[0]), _decodeValue(command[1])),
+            fn: command => _load_Properties(ಠ_ಠ.Flags.decode(command[2]), ಠ_ಠ.Flags.decode(command[0]),
+                                            ಠ_ಠ.Flags.decode(command[1])),
           },
           search: {
             matches: /SEARCH/i,

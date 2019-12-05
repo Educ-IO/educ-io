@@ -1,4 +1,8 @@
 site :
+  0.1.6w :
+    name : Site v0.1.6w
+    desc : Bug Fixes, Restructured Code and new App Beta
+    numeric : 0.1.6.22
   0.1.6v :
     name : Site v0.1.6v
     desc : Conversion Bug Fix in Folders App
@@ -924,6 +928,10 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.7j-beta :
+    name : Bug Fixes and Visual Tweaks
+    desc : Fixed minor issues and improved signature analysis view
+    type : minor
   0.0.7i-beta :
     name : Reflect Target Evidence Improvements
     desc : Evidence attaching to Target Responses
@@ -1011,27 +1019,11 @@ events :
   0.0.1-alpha :
     name : Early testing version
     type : minor
-grades :
-  0.0.1-alpha :
-    name : Early testing version
-    type : minor
-merge :
-  0.0.1-alpha :
-    name : Early testing version
-    type : minor
-survey :
-  0.0.1-alpha :
-    name : Early testing version
-    type : minor
-publish :
-  0.0.1-alpha :
-    name : Early testing version
-    type : minor
-accounts :
-  0.0.1-alpha :
-    name : Early testing version
-    type : minor
 docket :
+  1.0.8b :
+    name : Bug Fix
+    desc : Fixed Time Period Display Bug
+    type : minor
   1.0.8a :
     name : Bug Fix
     desc : Fixed Project View Bug
@@ -1168,6 +1160,41 @@ docket :
   0.0.2-alpha :
     name : Early alpha version
     type : minor
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+grades :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+merge :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+survey :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+publish :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+accounts :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+plan :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+book :
+  0.0.2-beta :
+    name : First fully functional release
+    type : major
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+blocks :
   0.0.1-alpha :
     name : Early testing version
     type : minor

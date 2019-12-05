@@ -9,6 +9,7 @@
         </button>
       </div>
       <div class="modal-body">
+        {{#with totals}}{{> counts title="Totals Matching / Found"}}{{/with}}
         {{#with descendents}}{{> counts title="All Descendents"
         	class="mb-2 mb-lg-3 list-group-light"}}{{/with}}
         {{#with children}}{{> counts title="Children"}}{{/with}}

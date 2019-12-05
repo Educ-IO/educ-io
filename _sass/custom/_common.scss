@@ -149,10 +149,16 @@ em.kb-shortcut, strong.kb-shortcut {
 }
 .tooltip em.kb-shortcut {
   background-color: $colour-background !important;
-	color: $colour-general  !important;
+	color: $colour-general !important;
 }
 // -- Keyboard Shortcuts -- //
 
+// -- List Groups -- //
+.list-group-dark > .active {
+  background-color: $colour-list-dark-active-bg !important;
+  border-color: $colour-list-dark-active-bd !important;
+}
+// -- List Groups -- //
 // -- Badges -- //
 .badge-bright {
 	color: $colour-bright-foreground;
@@ -177,6 +183,11 @@ em.kb-shortcut, strong.kb-shortcut {
 .badge-vital {
   color: $colour-background !important;
   @include arrayed_Gradient(darken($colour-vital, 15%) $colour-vital lighten($colour-vital, 10%), 50%, 0 0 0.65);
+}
+
+.badge-highlight {
+  color: $colour-background !important;
+	background-color: lighten($colour-highlight, 10%) !important
 }
 // -- Badges -- //
 

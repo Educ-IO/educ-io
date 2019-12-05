@@ -16,7 +16,7 @@
         {{#if extras}}{{#each extras}}
 					{{!-- Extras are overlays (e.g. calendars) --}}
           {{!-- Call Partial Template --}}
-					{{> item editable=false small=true}}
+					{{> item editable=false small=true static=true}}
         {{/each}}{{/if}}
         {{#if events}}{{#each events}}
 					{{!-- Call Partial Template --}}

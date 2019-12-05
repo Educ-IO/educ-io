@@ -318,11 +318,10 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
   /* <!-- Internal Objects --> */
 
   /* <!-- Internal Functions --> */
-  var _updateTags = () => {
-    if (chrome && chrome.runtime) chrome.runtime.sendMessage("ekniapbebejhamindielmdgpceijdpff", {
-      action: "update"
-    });
-  };
+  var _updateTags = () => window.chrome && window.chrome.runtime ? 
+      window.chrome.runtime.sendMessage("ekniapbebejhamindielmdgpceijdpff", {
+        action: "update"
+      }) : false;
 
   var locate = row => {
     if (Element.prototype.scrollIntoView && row[0] && row[0].scrollIntoView) row[0].scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
@@ -877,9 +876,11 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
       id: "search_results",
       target: ಠ_ಠ.container,
       title: "Search Results",
-      folders: _folder_Count,
-      files: _file_Count,
-      size: _file_Size,
+      totals: {
+        folders: _folder_Count,
+        files: _file_Count,
+        size: _file_Size 
+      },
     });
 
   };

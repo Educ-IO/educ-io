@@ -109,12 +109,13 @@ Task = (options, factory) => {
       if ((item[options.schema.columns.time.value] = _period && _period.length >= 1 ?
            _period[_period.length >= 2 ? 2 : 1] : _time && _time.length >= 1 ? _time[1] : "")) {
         item[options.schema.columns.is_timed.value] = true;
-        item[options.schema.columns.time.parsed] = factory.Dates.parse(item[options.schema.columns.time.value], 
+        /* <!-- Only try to parse actual time (not All Day/AM/PM etc.) --> */
+        _time && _time.length >= 1 ? item[options.schema.columns.time.parsed] = factory.Dates.parse(item[options.schema.columns.time.value], 
           ["ha", "hh:mma", "HH:mm", "HH:mm:ss"]).set({
             "year": item[options.schema.columns.from.value].year(),
             "month": item[options.schema.columns.from.value].month(),
             "date": item[options.schema.columns.from.value].date(),
-          });
+          }) : delete item[options.schema.columns.time.parsed];
       } else {
         delete item[options.schema.columns.time.value];
         delete item[options.schema.columns.time.parsed];

@@ -2,7 +2,7 @@ Once you have __signed in__ to the docket app, your data (if present) will load 
 
 ##### Actions
 
-{% include_relative _docs/docket/ICON_EXPLANATION.md icon="edit" border=true explanation="The __edit__ shortcut button gives quick access to action and navigation [shortcut buttons](#instructions.shortcut). These actions can also be accessed from the __Diary__ menu, in the top application bar." %}
+{% include_relative _docs/shared/ICON_EXPLANATION.md icon="edit" border=true explanation="The __edit__ shortcut button gives quick access to action and navigation [shortcut buttons](#instructions.shortcut). These actions can also be accessed from the __Diary__ menu, in the top application bar." %}
 
 ##### Navigation & Views
 

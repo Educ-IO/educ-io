@@ -27,7 +27,7 @@
       LOAD_AFTER : [{id: "__fonts", url : "https://fonts.googleapis.com/css?family={{ fonts }}"}],
       {% endif %}
       {% if lazy_imports and lazy_imports.size > 0 %}LOAD_LAZY : {
-        {% for import in lazy_imports %} {{ import }}: {% include import.html import=import %}{% endfor %}
+        {% for import in lazy_imports %} "{{ import }}": {% include import.html import=import %}{% endfor %}
       },{% endif %}
     },
   };

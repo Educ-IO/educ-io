@@ -291,9 +291,6 @@ SaaD = (options, factory) => {
               helpers.format.align.vertical("MIDDLE"),
               helpers.format.text("white", 12, true)
             ]),
-            helpers.format.cells(helpers.grid.range(0, 2, _metadata.length - 1, _metadata.length), [
-              helpers.format.text("white", 14, true)
-            ]),
             helpers.format.cells(helpers.grid.columns(_metadata.length - 2, _metadata.length).range(), [
               helpers.format.wrap("WRAP")
             ]),

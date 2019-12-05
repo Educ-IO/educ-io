@@ -269,10 +269,10 @@ ReadWrite = (ಠ_ಠ, sheet) => {
 
         var _data = _sheet.data[0];
         var _fontSizes = Array(_data.columnMetadata.length).fill(sheet.properties.defaultFormat.textFormat.fontSize);
-        var _rows = _data.rowData.map(r => r.values.map((c, i) => {
+        var _rows = _.compact(_data.rowData.map(r => r && r.values ? r.values.map((c, i) => {
           if (c.effectiveFormat) _fontSizes[i] = Math.max(_fontSizes[i], c.effectiveFormat.textFormat.fontSize);
           return c.formattedValue === undefined ? null : c.formattedValue;
-        }));
+        }) : null));
 
         return Promise.resolve({
           data: _rows.clean(false, true).trim(_rows[0].length),

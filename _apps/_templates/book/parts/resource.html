@@ -1,0 +1,20 @@
+{% raw %}
+<a href="#" class="list-group-item list-group-item-action resource-item{{#if simple}} py-2{{#if selectable}} pl-2{{/if}}{{else}} py-2 px-3{{/if}}"
+   data-id="{{email}}" data-name="{{either name title}}">
+  <div class="d-flex w-100 justify-content-between align-items-center">
+    <div>
+      {{~#if selectable}}<div class="custom-control custom-switch d-inline">
+        <input type="checkbox" class="custom-control-input" id="select_{{id}}" data-id="{{email}}"
+               data-name="{{either name title}}"{{#if toggled}} checked{{/if}}>
+        <label class="custom-control-label" for="select_{{id}}"></label>
+      </div>{{/if~}}
+      <h6 class="font-weight-light m-0{{#if selectable}} d-inline{{/if}}">{{either name title}}</h6>
+      {{~#unless simple}}{{#if features}}<div>
+        {{#each features}}<span class="badge badge-highlight badge-pill{{#unless @last}} mr-1{{/unless}}">{{this}}</span>{{/each}}
+      </div>{{/if}}
+    {{#if details}}<small>{{details}}</small>{{/if}}{{/unless~}}
+    </div>
+    {{#if icon}}<i class="material-icons md-18 text-light bg-dark p-1 rounded" data-toggle="tooltip" data-html="true" title="<strong>Type:</strong> {{type}}">{{icon}}</i>{{/if}}
+  </div>
+</a>
+{% endraw %}

@@ -1,0 +1,1 @@
+Sorry! Creating your booking failed, you __might__ be successful if you retry - or the resource might no longer be available.

@@ -229,8 +229,8 @@ Router = function() {
           fn: (command, options) => new Promise((resolve, reject) => {
             var _id = _.isArray(command) ? command[0] : command;
             (options && options.wrapper ? 
-              options.wrapper(() => ಠ_ಠ.Google.files.get(_id, true)) :
-              ಠ_ಠ.Google.files.get(_id, true))
+              options.wrapper(() => ಠ_ಠ.Google.files.get(_id, true, true)) :
+              ಠ_ಠ.Google.files.get(_id, true, true))
               .then(file => {
                 ಠ_ಠ.Flags.log(`Opened Google Drive File: ${_id}`, file);
                 REJECT.MIME(file, options) || REJECT.PROPERTIES(file, options) ?
@@ -326,7 +326,13 @@ Router = function() {
             /* <!-- Process Specific App Instructions --> */
             var _shown = false;
             if (options.instructions && command) {
-              var _match = _.find(options.instructions, value => value.match.test(command));
+              var _match = _.find(options.instructions, instruction => {
+                command = _.isArray(command) ? command : [command];
+                instruction.match = _.isArray(instruction.match) ? 
+                                      instruction.match : [instruction.match];
+                return command.length == instruction.match.length && 
+                  _.every(command, (value, index) => instruction.match[index].test(value));
+              });
               if (_match) _shown = true && show(_match.show, _match.title);
             }
 

@@ -10,7 +10,7 @@
 #################################################################
 
 name: Publish
-desc: Create and mail __simple survey questions__, collating responses in your own Google Sheet
+desc: 
 link: /publish/
 colour: 117b6a
 logo: images/publish_logo.svg
@@ -95,17 +95,21 @@ scopes:
       name: View your basic profile info
       reason: In order to display your name on the navigation menu, once you have signed in.
       request: login
-    - scope: https://www.googleapis.com/auth/drive.file
-      name: View and manage Google Drive files and folders that you have opened or created with this app
-      reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.
+    - scope: https://www.googleapis.com/auth/admin.directory.resource.calendar.readonly
+      name: View calendar resources on your domain
+      reason: In order to display bookable resources, this permission is required.
       request: login
-    - scope: https://www.googleapis.com/auth/spreadsheets.readonly
-      name: View your Google Spreadsheets
-      reason: This app needs to load data from spreadsheets in order to analyse the Poll responses, but not to write to them.
+    - scope: https://www.googleapis.com/auth/admin.directory.resource.calendar
+      name: View and manage the provisioning of calendar resources on your domain
+      reason: In order to manage bookable resources (add, rename, edit etc) this permission is required.
       request: lazy
-    - scope: https://www.googleapis.com/auth/gmail.send
-      name: Send Gmail messages only
-      reason: In order to send poll email messages, once you have created a new poll.
+    - scope: https://www.googleapis.com/auth/calendar.events.readonly
+      name: View events on all your calendars
+      reason: In order to display bookable resources, this permission is required.
+      request: login
+    - scope: https://www.googleapis.com/auth/calendar.events
+      name: View and edit events on all your calendars
+      reason: In order to book resources, we need permission to add events to your calendar.
       request: lazy
     - scope: https://www.googleapis.com/auth/drive.install
       name: Special scope used to let users approve installation of an app.
@@ -130,14 +134,6 @@ menus:
             auth: google
             imports:
               - google
-          - name: Send
-            desc: Send Email Survey from your Gmail Account
-            hash: send
-            auth: google
-            disabled_until:
-              - loaded-template
-              - created-recipients
-            scope: https://www.googleapis.com/auth/gmail.send
           - name: Close
             desc: Close the current Survey
             hash: close

@@ -1,10 +1,10 @@
 ---
 layout: guide
-title: A Guide to Tiles
-permalink: /guides/tiles/
+title: A Guide to Plan
+permalink: /guides/plan/
 short_title: A Guide
 support: true
-for: tiles
+for: plan
 ---
 
 #### Introduction

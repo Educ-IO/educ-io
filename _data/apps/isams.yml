@@ -17,6 +17,10 @@ info: true
 colour: 38761d
 action: Find out more
 versions:
+  1.1.1 :
+    name : Added Links
+    desc : Clickable links in SEND Report
+    type : minor
   1.0.9 :
     name : Bug Fix
     desc : URL Download Encoding Format Change (Fix)

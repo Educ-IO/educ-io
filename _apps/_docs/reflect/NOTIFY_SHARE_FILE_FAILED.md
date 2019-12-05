@@ -1,1 +1,1 @@
-Unfortunately a file linked in this report could __not be shared__ with {{content}}, as this user does not seem to have a Google Account. Please check the email address and update it before trying again.
+Unfortunately a file linked in this report could __not be shared__ with {% raw %}{{content}}{% endraw %}, as this user does not seem to have a Google Account. Please check the email address and update it before trying again.

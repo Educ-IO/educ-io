@@ -1,0 +1,3 @@
+Once you have __selected__ the resource you wish to book, you can check it's availablity and fill in the details to book it. The name of the event is optional, although you might find it useful to complete. You can specify the times of your booking in 12hr (e.g. 2pm) or 24hr (e.g. 1400 or 14:00).
+
+If your supplied times are valid (e.g. the resource is available) then the background will be green. A red background indicates the time is not available. Once you successfully make your booking, it may take a few moments before the resource availablity is confirmed (in case someone has booked it _just_ before you do). A confirmed booking will have a __tick__ next to it.

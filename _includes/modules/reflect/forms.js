@@ -49,9 +49,9 @@ Forms = function(loaded) {
       sensitivity: "accent"
     }) === 0);
 
-  var _owner = file => file.owners ?
-    `${file.owners[0].displayName}${file.owners[0].emailAddress ? 
-              ` (${file.owners[0].emailAddress})` : ""}` : "";
+  var _user = user => `${user.displayName}${user.emailAddress ? ` (${user.emailAddress})` : ""}`;
+  
+  var _owner = file => file.owners ? _user(file.owners[0]) : "";
 
   var _process = (value, type, id) => {
     var _extend = (parent, object) => _.deepExtend(DEEPCLONE(parent), object),
@@ -67,7 +67,7 @@ Forms = function(loaded) {
       value;
   };
 
-  var _create = (id, template, editable, signable, completed, preview) => {
+  var _create = (id, template, editable, signable, completed, preview, respondent) => {
 
     if (id && template) {
 
@@ -121,6 +121,7 @@ Forms = function(loaded) {
           .concat(preview ? [] : ["_Signatures_"]),
         fields: groups.join("\n").trim(),
         owner: _file ? _owner(_file) : "",
+        respondent: respondent ? _user(respondent) : "",
         editable: editable,
         signable: signable,
         completed: completed,
@@ -282,14 +283,14 @@ Forms = function(loaded) {
       } : null;
     },
 
-    create: (id, template, editable, signable, completed, preview) => ({
+    create: (id, template, editable, signable, completed, preview, respondent) => ({
       template: template,
-      form: _create(id, template, editable, signable, completed, preview)
+      form: _create(id, template, editable, signable, completed, preview, respondent)
     }),
 
     scale: name => _get(name, ರ‿ರ.cache.scales),
     
-    persistent: () => ಱ,
+    safe: () => ಱ.loaded,
 
     process: PROCESS,
     

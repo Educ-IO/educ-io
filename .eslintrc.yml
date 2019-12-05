@@ -79,6 +79,7 @@ globals:
   Items: true
   Data: true
   Headers: true
+  Config: true
   Query: true
   Saver: true
   Notify: true
@@ -122,6 +123,28 @@ globals:
   Menu: true
   Views: true
   Decode: true
+  Bookings: true
+  Calendar: true
+  Diary: true
+  Manage: true
+  Resources: true
+  States: true
+  Action: true
+  Create: true
+  Edit: true
+  Elicit: true
+  Export: true
+  Files: true
+  Helper: true
+  Load: true
+  Process: true
+  Prompt: true
+  Replacers: true
+  Save: true
+  Scales: true
+  Show: true
+  
+  # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true
   __Σ__Evidence_Tracker: true
   __Σ__Form_Master: true

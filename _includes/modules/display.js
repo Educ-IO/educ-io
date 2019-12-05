@@ -295,7 +295,7 @@ Display = function() {
           JSON.stringify(variable) : "");
 
         Handlebars.registerHelper("encode", variable => variable ?
-          encodeURIComponent(variable) : "");
+          ಠ_ಠ.Flags ? ಠ_ಠ.Flags.encode(encodeURIComponent(variable)) : encodeURIComponent(variable) : "");
 
         Handlebars.registerHelper("humanize", variable => variable ? variable.humanize ?
           variable.humanize() : "" : "");
@@ -416,6 +416,17 @@ Display = function() {
           }
         });
 
+        Handlebars.registerHelper("absent", function(variable, options) {
+          if (typeof variable === "undefined" ||
+            variable === null ||
+            (variable.constructor === Object && Object.keys(variable).length === 0) ||
+            (variable.constructor === Array && variable.length === 0)) {
+            return options.fn ? options.fn(this) : true;
+          } else {
+            return options.inverse ? options.inverse(this) : false;
+          }
+        });
+        
         Handlebars.registerHelper("present", function(variable, options) {
           if (typeof variable !== "undefined" &&
             variable !== null &&
@@ -857,7 +868,6 @@ Display = function() {
                 form.classList.add("was-validated");
               });
 
-              /* <!-- TODO / NOTES: Reliance on serializeArray can be removed once all Apps are ready for dyhydrated objects (e.g. Folders) --> */
               var _form = dialog.find("form"),
                 _values = ಠ_ಠ.Data ? ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form) : _form.serializeArray();
               if (!ಠ_ಠ.Data) _.each(_form.find("input:indeterminate"), el => _values.push({
@@ -903,6 +913,9 @@ Display = function() {
           show: true,
           backdrop: options.backdrop !== undefined ? options.backdrop : true,
         });
+        
+        /* <!-- Clean-up any old tool-tips --> */
+        _tidy();
 
       });
 

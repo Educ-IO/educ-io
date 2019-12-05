@@ -1,0 +1,23 @@
+{% raw %}
+<div class="btn-group">
+  <a role="button" href="{{link}}" target="_blank" class="btn btn-primary">Test Link</a>
+  <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <div class="dropdown-menu">
+    <a id="link_copy" class="copy-trigger dropdown-item" href="#" data-clipboard-target="#link_text">Copy</a>
+    <a class="dropdown-item" role="button" data-parent="#extras" data-toggle="collapse" data-target="#details" aria-expanded="false" aria-controls="details">Details</a>
+    {{#unless hide_shorten}}<div class="dropdown-divider"></div>
+    <a id="link_shorten" class="dropdown-item" href="#">Shorten</a>{{/unless}}
+  </div>
+</div>
+<div class="btn-group{{# unless grouped}} ml-auto{{/unless}}">
+  <button class="btn btn-dark" type="button" data-parent="#extras" data-toggle="collapse" data-target="#qr" aria-expanded="false" aria-controls="qr">QR Code</button>
+  <button type="button" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+      <a id="qr_copy" class="copy-trigger dropdown-item" href="#" data-clipboard-text="{{{qr_link}}}">Copy</a>
+    </div>
+</div>
+{% endraw %}

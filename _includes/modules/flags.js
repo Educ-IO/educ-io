@@ -107,6 +107,10 @@ Flags = function() {
 
   };
 
+  var _encode = value => value.replace(/\./g, "%2E").replace(/@/g, "%40");
+  
+  var _decode = value => value && value.replace ? value.replace(/%2E/g, ".").replace(/%40/g, "@") : value;
+  
   /* <!-- External Visibility --> */
   return {
 
@@ -192,6 +196,10 @@ Flags = function() {
           page: function() {
             return _page;
           },
+          
+          encode: _encode,
+          
+          decode: _decode,
 
           route: function(command, router) {
 

@@ -17,6 +17,7 @@ team:
   name: Your Team
   apps:
     - blocks
+    - book
     - reflect
     - survey
 school:

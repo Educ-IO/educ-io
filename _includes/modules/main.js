@@ -475,7 +475,7 @@ Main = function() {
     
     prompt: PROMPT,
 
-    /* <!-- Extra Scope Authorisation --> */
+    /* <!-- Extra Scope Authorisation (IF REQUIRED) --> */
     elevator: SCOPE => fn => {
       var _retry = retry => fn()
         .catch(e => {
@@ -492,6 +492,7 @@ Main = function() {
       return _retry(true);
     },
 
+    /* <!-- Add Extra Scope --> */
     authorise: google_Authorise,
     /* <!-- External Functions --> */
 

@@ -39,7 +39,6 @@ App = function() {
   
   /* <!-- Internal Constants --> */
   const ID = "diary",
-        PREFERENCES = "edit_Preferences",
         SHARED = "assignment_turned_in",
         DATE_FORMAT = "YYYY-MM-DD",
         FN = {};
@@ -107,145 +106,7 @@ App = function() {
       .catch(e => e ? ಠ_ಠ.Flags.error("Search Error", e) : ಠ_ಠ.Flags.log("Search Cancelled"));
   /* <-- Search Function --> */
   
-
-  /* <-- Config Functions --> */
-  FN.config = {
-
-    name: "config.json",
-
-    mime: "application/json",
-
-    clear: () => ಠ_ಠ.Google.appData.search(FN.config.name, FN.config.mime)
-      .then(results => Promise.all(_.map(results, result => ಠ_ಠ.Google.files.delete(result.id))))
-      .then(result => result ? ರ‿ರ.config = false || ಠ_ಠ.Flags.log("Docket Config Deleted") : result),
-
-    create: data => ಠ_ಠ.Google.appData.upload({
-        name: FN.config.name
-      }, JSON.stringify(ರ‿ರ.config = {
-        data: data && data.spreadsheetId ? data.spreadsheetId : data,
-        calendar: false,
-        classes: false
-      }), FN.config.mime)
-      .then(uploaded => {
-        ಠ_ಠ.Flags.log(`Docket Config (${FN.config.name}) Saved`, uploaded);
-        ರ‿ರ.id = uploaded.id;
-        ಠ_ಠ.Display.state().enter(STATE_CONFIG);
-        return uploaded;
-      })
-      .catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error")),
-
-    find: () => ಠ_ಠ.Google ? ಠ_ಠ.Google.appData.search(FN.config.name, FN.config.mime).then(results => {
-      if (results && results.length == 1) {
-        ಠ_ಠ.Flags.log(`Found Docket Config [${results[0].name} / ${results[0].id}]`);
-        return results[0];
-      } else {
-        ಠ_ಠ.Flags.log("No Existing Docket Config");
-        return false;
-      }
-    }).catch(e => ಠ_ಠ.Flags.error("Config Error", e ? e : "No Inner Error")) : Promise.resolve(false),
-
-    get: () => FN.config.find().then(result => result ? FN.config.load(result) : result),
-
-    load: file => ಠ_ಠ.Google.files.download(file.id).then(loaded => {
-      return ಠ_ಠ.Google.reader().promiseAsText(loaded).then(parsed => {
-        ಠ_ಠ.Flags.log(`Loaded Docket Config [${file.name} / ${file.id}]: ${parsed}`);
-        ರ‿ರ.id = file.id;
-        ಠ_ಠ.Display.state().enter(STATE_CONFIG);
-        return parsed;
-      }).then(parsed => ರ‿ರ.config = JSON.parse(parsed));
-    }),
-
-    update: (id, config) => ಠ_ಠ.Google.appData.upload({
-        name: FN.config.name
-      }, JSON.stringify(ರ‿ರ.config = _.defaults(config, ರ‿ರ.config)), FN.config.mime, id)
-      .then(uploaded => {
-        ಠ_ಠ.Flags.log(`Docket Config (${FN.config.name}) Updated`, uploaded);
-        return uploaded;
-      })
-      .catch(e => ಠ_ಠ.Flags.error("Upload Error", e ? e : "No Inner Error")),
-
-    edit: () => ಠ_ಠ.Display.modal("config", {
-        id: PREFERENCES,
-        title: "Preferences",
-        enter: true,
-        state: {
-          data: ರ‿ರ.config.data,
-          view: ರ‿ರ.config.view,
-          ghost: ರ‿ರ.config.ghost === false ? 0 : ರ‿ರ.config.ghost,
-          zombie: ರ‿ರ.config.zombie === false ? 0 : ರ‿ರ.config.zombie,
-          calendars: ರ‿ರ.config.calendars,
-          classes: ರ‿ರ.config.classes,
-          past: ರ‿ರ.config.past,
-          future: ರ‿ರ.config.future,
-          refresh: ರ‿ರ.config.refresh === false ? 0 : ರ‿ರ.config.refresh
-        }
-      }),
-    
-    field: field =>  $(`#${PREFERENCES} div[data-output-field='${field}']`),
-    
-    label: field => field.find("small.form-text").toggleClass("d-none", field.find("li").length === 0),
-    
-    remove: (field, id) => FN.config.label(FN.config.field(field).find(`li[data-id='${id}']`).remove()),
-    
-    add: (field, template, items) => {
-      var _field = FN.config.field(field), _list = _field.children("ul");
-      _.each(items, item => {
-        if (_list.find(`li[data-id='${item.id}']`).length === 0)
-          $(ಠ_ಠ.Display.template.get((_.extend({
-            template: template
-          }, item)))).appendTo(_list);
-      });
-      FN.config.label(_field);
-    },
-    
-    process: values => {
-      
-      var _config = {};
-
-      /* <!-- Comparison Sets --> */
-      _.each(["data", "view"], prop => {
-        if (values[prop] && ರ‿ರ.config[prop] != values[prop].Value)
-        _config[prop] = values[prop].Value;
-      });
-
-      /* <!-- Array Sets (override) --> */
-      _.each(["calendars", "classes"], prop => {
-        values[prop] && (
-          (_.isArray(values[prop].Values) && values[prop].Values.length > 0) ||
-          (_.isObject(values[prop].Values) && values[prop].Values.id)) ?
-          _config[prop] = _.isArray(values[prop].Values) ? 
-            values[prop].Values : [values[prop].Values] :
-          delete ರ‿ರ.config[prop];
-      });
-
-      /* <!-- Complex Sets --> */
-      _.each(["zombie", "ghost", "refresh"], prop => {
-        values[prop] === undefined ?
-          delete ರ‿ರ.config[prop] :
-          values[prop].Value <= 0 ? 
-            _config[prop] = false :
-            values[prop] ? 
-              _config[prop] = values[prop].Value :
-              delete ರ‿ರ.config[prop];
-      });
-
-      /* <!-- Simple Sets --> */
-      _.each(["past", "future"], prop => {
-        values[prop] === undefined ?
-          delete ರ‿ರ.config[prop] :
-          values[prop] && values[prop].Value >= 0 ? 
-              _config[prop] = values[prop].Value :
-              delete ರ‿ರ.config[prop];
-      });
-                      
-      return _config;
-      
-    }
-    
-  };
-  /* <-- Config Functions --> */
-
-
+  
   /* <-- Option Functions --> */
   FN.options = {
 
@@ -263,8 +124,8 @@ App = function() {
       .then(result => (result ? FN[type].choose() : Promise.resolve(false))
         .then(results => _.tap(results, results => {
           var _config = {};
-          results ? _config[type] = results : delete ರ‿ರ.config[type];
-          FN.config.update(ರ‿ರ.id, _config);
+          results ? _config[type] = results : delete ರ‿ರ.config.settings[type];
+          ಱ.config.update(ರ‿ರ.config.id, ರ‿ರ.config.settings = _.defaults(_config, ರ‿ರ.config.settings));
         }))
         .then(results => FN.options[type](!!results).then(FN.action.refresh))),
 
@@ -325,10 +186,10 @@ App = function() {
       var _start = focus.clone().subtract(1, "month").toDate(),
         _end = focus.clone().add(1, "month").toDate();
 
-      (ಠ_ಠ.Display.state().in([STATE_CALENDARS, STATE_CLASSES], true) && (ರ‿ರ.config.calendars || ರ‿ರ.config.classes) ?
+      (ಠ_ಠ.Display.state().in([STATE_CALENDARS, STATE_CLASSES], true) && (ರ‿ರ.config.settings.calendars || ರ‿ರ.config.settings.classes) ?
         ಠ_ಠ.Main.authorise(SCOPE_CALENDARS).then(result => result === true ? Promise.all(
-            _.map([].concat(ರ‿ರ.config.calendars || [],
-                _.filter(ರ‿ರ.config.classes || [], item => item.calendar)), item =>
+            _.map([].concat(ರ‿ರ.config.settings.calendars || [],
+                _.filter(ರ‿ರ.config.settings.classes || [], item => item.calendar)), item =>
               ಠ_ಠ.Google.calendar.list(item.calendar || item.id, _start, _end)
               .then(events => _.tap(events,
                 events => _.each(events, event => event._title = `CALENDAR: ${item.name}`, events)))))
@@ -372,10 +233,10 @@ App = function() {
   FN.action = {
 
     /* <-- reset = Reset View to default / configured default --> */
-    load: (config, reset) => Promise.resolve((ಱ.task = ಠ_ಠ.Task({
+    load: (settings, reset) => Promise.resolve((ಱ.task = ಠ_ಠ.Task({
           schema: ಱ.schema,
-          zombie: ರ‿ರ.config.zombie,
-          ghost: ರ‿ರ.config.ghost,
+          zombie: ರ‿ರ.config.settings.zombie,
+          ghost: ರ‿ರ.config.settings.ghost,
           functions: FN,
           state: {
             session: ರ‿ರ,
@@ -386,37 +247,37 @@ App = function() {
       .then(task => (ಱ.schema.process = task.process())) /* <!-- Create Processing Task Function --> */
       .then(() => {
         /* <-- Get Custom Title, and Version from File Properties, if not already loaded --> */
-        if (config.title === undefined) {
-          return ಠ_ಠ.Google.files.get((config || ರ‿ರ.config).data, true)
+        if (settings.title === undefined) {
+          return ಠ_ಠ.Google.files.get((settings || ರ‿ರ.config.settings).data, true)
             .then(file => {
               window.document.title = file.properties && file.properties.TITLE ? file.properties.TITLE : ಱ.title;
               return file.version;
             });
         } else {
-          window.document.title = config.title || ಱ.title;
-          return (config || ರ‿ರ.config).version;
+          window.document.title = settings.title || ಱ.title;
+          return (settings || ರ‿ರ.config.settings).version;
         }
       })
       .then(version => Promise.all([].concat(
-        ರ‿ರ.database.open(ರ‿ರ.refresh = (config || ರ‿ರ.config).data, version),
-        ರ‿ರ.config.classes ? FN.classes.load(ರ‿ರ.config.classes) : [])))
+        ರ‿ರ.database.open(ರ‿ರ.refresh = (settings || ರ‿ರ.config.settings).data, version),
+        ರ‿ರ.config.settings.classes ? FN.classes.load(ರ‿ರ.config.settings.classes) : [])))
       .then(results => {
         $("nav a[data-link='sheet']").prop("href", `https://docs.google.com/spreadsheets/d/${ರ‿ರ.refresh}/edit`);
         ಠ_ಠ.Display.state().change(SOURCE, [STATE_OPENED]
-          .concat([!config || config.data == ರ‿ರ.config.data ? STATE_DEFAULT : STATE_LOADED]));
+          .concat([!settings || settings.data == ರ‿ರ.config.settings.data ? STATE_DEFAULT : STATE_LOADED]));
         ರ‿ರ.db = results[0];
         if (results[1]) ರ‿ರ.deadlines = results[1];
         ಱ.errors.empty();
       })
       .then(ಠ_ಠ.Main.busy("Loading Data"))
-      .then(() => reset ? ಠ_ಠ.Display.state().change(DISPLAY, DISPLAY.indexOf((config || ರ‿ರ.config).view) >= 0 ?
-                                             (config || ರ‿ರ.config).view : STATE_WEEKLY) : false)
+      .then(() => reset ? ಠ_ಠ.Display.state().change(DISPLAY, DISPLAY.indexOf((settings || ರ‿ರ.config.settings).view) >= 0 ?
+                                             (settings || ರ‿ರ.config.settings).view : STATE_WEEKLY) : false)
       .then(() => ಠ_ಠ.Display.state().in(DIARIES, true) ? 
               FN.display.current(ಠ_ಠ.Dates.parse(FN.focus.date())) :
               ಠ_ಠ.Display.state().in(STATE_ANALYSIS) ? FN.views.analysis(FN.display.cleanup()) :
               ಠ_ಠ.Display.state().in(STATE_KANBAN) ? FN.views.kanban({
-                past: ರ‿ರ.config.past,
-                future: ರ‿ರ.config.future,
+                past: ರ‿ರ.config.settings.past,
+                future: ರ‿ರ.config.settings.future,
               }, FN.display.cleanup()) : 
               ಠ_ಠ.Display.state().in(STATE_QUEUE) ? FN.views.queue(FN.display.cleanup()) : 
               ಠ_ಠ.Display.state().in(STATE_PROJECTS) ? FN.views.projects(FN.display.cleanup()) : false)
@@ -462,31 +323,31 @@ App = function() {
 
     },
 
-    start: config => {
+    start: settings => {
 
       /* <-- Remove old and unused config settings --> */
-      delete config.calendar;
-      _.each(config, (value, key) => value === false && (key !== "zombie" && key !== "ghost") ?
-             delete config[key] : null);
+      delete settings.calendar;
+      _.each(settings, (value, key) => value === false && (key !== "zombie" && key !== "ghost") ?
+             delete settings[key] : null);
 
       /* <-- Set States from Config --> */
-      FN.options.calendars(!!config.calendars);
-      FN.options.classes(!!config.classes);
+      FN.options.calendars(!!settings.calendars);
+      FN.options.classes(!!settings.classes);
 
       /* <-- Set Name from Config (if available, and also if supplied config is not the same as default config) --> */
-      config.name && (!ರ‿ರ.config || config.data != ರ‿ರ.config.data) ? ರ‿ರ.name = config.name : delete ರ‿ರ.name;
+      settings.name && (!ರ‿ರ.config || settings.data != ರ‿ರ.config.settings.data) ? ರ‿ರ.name = settings.name : delete ರ‿ರ.name;
 
       /* <-- Set Refresh Timer Period --> */
-      config.refresh !== false ? FN.background.start(config, config.refresh || 15) : false;
+      settings.refresh !== false ? FN.background.start(settings.refresh || 15) : false;
       
       /* <-- Open and render data --> */
-      return FN.action.load(config, true);
+      return FN.action.load(settings, true);
 
     },
     
-    clear : () => ರ‿ರ.config && ರ‿ರ.config.data != ರ‿ರ.refresh ? FN.menu.remove(ರ‿ರ.refresh) : Promise.resolve(),
+    clear : () => ರ‿ರ.config && ರ‿ರ.config.settings.data != ರ‿ರ.refresh ? FN.menu.remove(ರ‿ರ.refresh) : Promise.resolve(),
     
-    default: () => FN.action.clear().then(() => FN.action.start(ರ‿ರ.config)),
+    default: () => FN.action.clear().then(() => FN.action.start(ರ‿ರ.config.settings)),
 
   };
   /* <-- Action Functions --> */
@@ -499,7 +360,7 @@ App = function() {
     default: () =>
 
       /* <-- Clear any existing config --> */
-      FN.config.clear()
+      ಱ.config.clear()
 
       /* <-- Search for existing docket files owned by user --> */
       .then(() => ಠ_ಠ.Google.files.search(ಠ_ಠ.Google.files.natives()[1],
@@ -524,23 +385,31 @@ App = function() {
       .then(result => result ? result.value : ರ‿ರ.database.create(ಱ.schema.sheets.sheet_tasks, ಱ.schema.names.spreadsheet, ಱ.schema.names.sheet))
 
       /* <-- Create/save new Config with the file ID --> */
-      .then(FN.config.create)
+      .then(result => ಱ.config.create({
+        data: result && result.spreadsheetId ? result.spreadsheetId : result,
+        calendar: false,
+        classes: false
+      }))
 
       /* <-- Show / Then Close Busy Indication  --> */
       .then(ಠ_ಠ.Main.busy("Creating Config"))
 
       /* <-- Start the main process of loading and displaying the data! --> */
-      .then(() => FN.action.start(ರ‿ರ.config)),
+      .then(config => FN.action.start((ರ‿ರ.config = config).settings)),
 
 
     /* <-- Create new Config with existing file --> */
-    existing: value => FN.config.create(value.id)
+    existing: value => ಱ.config.create({
+        data: value.id,
+        calendar: false,
+        classes: false
+      })
 
       /* <-- Show / Then Close Busy Indication --> */
       .then(ಠ_ಠ.Main.busy("Creating Config"))
 
       /* <-- Start the main process of loading and displaying the data! --> */
-      .then(() => FN.action.start(ರ‿ರ.config)),
+      .then(config => FN.action.start((ರ‿ರ.config = config).settings)),
 
 
     /* <-- Create new Shared Database --> */
@@ -581,23 +450,28 @@ App = function() {
     default: value =>
 
       /* <-- Find existing config --> */
-      FN.config.find()
+      ಱ.config.find()
 
-      /* <-- Update Existing or Create New config --> */
-      .then(config => config ?
-        FN.config.update(config.id, {
-          data: value.id
-        }) : FN.config.create(value.id))
+        /* <-- Update Existing or Create New config --> */
+        .then(config => config ?
+          ಱ.config.update(config.id, _.defaults({
+            data: value.id
+          }, config.settings)) : ಱ.config.create({
+            data: value.id,
+            calendar: false,
+            classes: false
+          }))
 
-      /* <-- Show / Then Close Busy Indication  --> */
-      .then(ಠ_ಠ.Main.busy("Loading Config"))
+    
+        /* <-- Show / Then Close Busy Indication  --> */
+        .then(ಠ_ಠ.Main.busy("Loading Config"))
 
-      /* <-- Start the main process of loading and displaying the data! --> */
-      .then(() => FN.action.start(ರ‿ರ.config)),
+        /* <-- Start the main process of loading and displaying the data! --> */
+        .then(config => FN.action.start((ರ‿ರ.config = config).settings)),
 
     /* <-- Open Shared Database --> */
-    shared: value => (ರ‿ರ.config && ರ‿ರ.config.data != value.id ? FN.menu.add(value) : Promise.resolve(value))
-      .then(value => FN.action.start(_.defaults(FN.file(value), ರ‿ರ.config))),
+    shared: value => (ರ‿ರ.config && ರ‿ರ.config.settings.data != value.id ? FN.menu.add(value) : Promise.resolve(value))
+      .then(value => FN.action.start(_.defaults(FN.file(value), ರ‿ರ.config.settings))),
 
   };
   /* <-- Open Functions --> */
@@ -605,20 +479,8 @@ App = function() {
       
   /* <-- Background | Refresh Functions --> */
   FN.background = {
-    
-    ready: () => {
-      
-      
 
-      
-      
-      
-      
-      
-      
-    },
-    
-    start: (config, interval) => {
+    start: interval => {
       
       /* <-- Close function will terminate previous timeout function (also used with Router State clearing) --> */
       if (ರ‿ರ.background && ರ‿ರ.background.close) ರ‿ರ.background.close();
@@ -680,6 +542,17 @@ App = function() {
       
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
+      
+      /* <!-- Get Config Helper --> */
+      ಱ.config = ಠ_ಠ.Config({
+        fields: {
+          comparison: ["data", "view"],
+          array: ["calendars", "classes"],
+          complex: ["zombie", "ghost", "refresh"],
+          simple: ["past", "future"],
+        },
+        state: STATE_CONFIG
+      }, ಠ_ಠ);
       
     },
     
@@ -913,8 +786,8 @@ App = function() {
                 matches: /KANBAN/i,
                 keys: ["k", "K"],
                 fn: () => FN.views.kanban({
-                  past: ರ‿ರ.config.past,
-                  future: ರ‿ರ.config.future,
+                  past: ರ‿ರ.config.settings.past,
+                  future: ರ‿ರ.config.settings.future,
                 }, FN.display.cleanup())
                   .then(ಠ_ಠ.Main.busy("Loading View"))
                   .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_KANBAN))
@@ -962,21 +835,23 @@ App = function() {
                     action: "Clear"
                   })
                   .then(confirm => confirm ?
-                    ಠ_ಠ.Display.busy() && FN.config.clear() : false)
-                  .then(cleared => cleared ?
-                    ಠ_ಠ.Display.state().exit([STATE_CONFIG, STATE_OPENED]) && ಠ_ಠ.Router.run(STATE_READY) :
-                        false)
+                     ಱ.config.clear()
+                        .then(ಠ_ಠ.Main.busy("Clearing Config"))
+                        .then(cleared => cleared ?
+                          ಠ_ಠ.Display.state().exit([STATE_CONFIG, STATE_OPENED]) && ಠ_ಠ.Router.run(STATE_READY)
+                              : false) : false)
                   .catch(e => e ?
                     ಠ_ಠ.Flags.error("Clear Config Error", e) : ಠ_ಠ.Flags.log("Clear Config Cancelled"))
+                  
               },
               
               show: {
                 matches: /SHOW/i,
                 fn: () => {
                   var _details = {};
-                  FN.config.find()
-                    .then(result => result ? FN.config.load(_details.file = result) : result)
-                    .then(config => config ? _details.config = config : config)
+                  ಱ.config.find()
+                    .then(result => result ? ಱ.config.load(_details.file = result) : result)
+                    .then(config => config ? _details.config = config.settings : config)
                     .then(ಠ_ಠ.Main.busy("Loading Config"))
                     .then(config => config ? ಠ_ಠ.Display.inform({
                       id: "show_Config",
@@ -989,11 +864,11 @@ App = function() {
               download: {
                 matches: /DOWNLOAD/i,
                 fn: () => {
-                  FN.config.find()
-                    .then(FN.config.load)
+                  ಱ.config.find()
+                    .then(ಱ.config.load)
                     .then(ಠ_ಠ.Main.busy("Loading Config"))
                     .then(config => ಠ_ಠ.Saver({}, ಠ_ಠ)
-                          .save(JSON.stringify(config, null, 2), "docket-config.json", "application/json"));
+                          .save(JSON.stringify(config.settings, null, 2), "docket-config.json", "application/json"));
                 }
               },
               
@@ -1002,15 +877,16 @@ App = function() {
                 keys: ["e", "E"],
                 fn: () => {
                   ಠ_ಠ.Display.state().enter(STATE_PREFERENCES);
-                  return FN.config.edit().then(values => {
-                    ಠ_ಠ.Display.state().exit(STATE_PREFERENCES);
-                    return values !== undefined ? FN.config.update(ರ‿ರ.id, FN.config.process(values))
-                        .then(ಠ_ಠ.Main.busy("Saving Config"))
-                        .then(() => FN.config.get()
-                          .then(ಠ_ಠ.Main.busy("Loading Config"))
-                          .then(config => FN.action.start(config))) : false;
+                  return ಱ.config.edit(ರ‿ರ.config.settings)
+                    .then(values => {
+                      ಠ_ಠ.Display.state().exit(STATE_PREFERENCES);
+                      return values !== undefined ? 
+                        ಱ.config.update(ರ‿ರ.config.id, _.defaults(ಱ.config.process(values, ರ‿ರ.config.settings), ರ‿ರ.config.settings))
+                          .then(ಠ_ಠ.Main.busy("Saving Config"))
+                          .then(() => ಱ.config.get().then(ಠ_ಠ.Main.busy("Loading Config")))
+                          .then(config => FN.action.start((ರ‿ರ.config = config).settings)) : false;
                       
-                  });
+                    });
                 }
               },
               
@@ -1021,7 +897,8 @@ App = function() {
                   data: {
                     matches: /DATA/i,
                     fn: () => ಠ_ಠ.Router.pick.single(FN.picker())
-                      .then(file => $(`#${PREFERENCES}_data`).val(file.id)),
+                      .then(file => $("input[type='text'][name='data']").val(file.id)),
+                    
                   }
                 }
               },
@@ -1032,19 +909,19 @@ App = function() {
                 routes: {
                   calendar: {
                     matches: /CALENDAR/i,
-                    fn: () => FN.calendars.choose($(`#${PREFERENCES}_add_calendar`).addClass("loader"))
+                    fn: () => FN.calendars.choose($("div[data-output-field='calendars'] a[role='button']").addClass("loader"))
                       .then(results => _.tap(results,
-                                             () => $(`#${PREFERENCES}_add_calendar`).removeClass("loader")))
+                                             () => $("div[data-output-field='calendars'] a[role='button']").removeClass("loader")))
                       .then(results => results !== false ? 
-                            FN.config.add("calendars", "calendar", results) : results)
+                            ಱ.config.add("calendars", "calendar", results) : results)
                   },
                   class: {
                     matches: /CLASS/i,
-                    fn: () => FN.classes.choose($(`#${PREFERENCES}_add_class`).addClass("loader"))
+                    fn: () => FN.classes.choose($("div[data-output-field='classes'] a[role='button']").addClass("loader"))
                       .then(results => _.tap(results,
-                                             () => $(`#${PREFERENCES}_add_class`).removeClass("loader")))
+                                             () => $("div[data-output-field='classes'] a[role='button']").removeClass("loader")))
                       .then(results => results !== false ?
-                            FN.config.add("classes", "class", results) : results)
+                            ಱ.config.add("classes", "class", results) : results)
                   }
                 }
               },
@@ -1056,12 +933,12 @@ App = function() {
                   calendar: {
                     matches: /CALENDAR/i,
                     length: 1,
-                    fn: id => FN.config.remove("calendars", decodeURIComponent(id).replace(/\|/gi, "."))
+                    fn: id => ಱ.config.remove("calendars", decodeURIComponent(id).replace(/\|/gi, "."))
                   },
                   class: {
                     matches: /CLASS/i,
                     length: 1,
-                    fn: id => FN.config.remove("classes", decodeURIComponent(id).replace(/\|/gi, "."))
+                    fn: id => ಱ.config.remove("classes", decodeURIComponent(id).replace(/\|/gi, "."))
                   }
                 }
               },
@@ -1174,11 +1051,11 @@ App = function() {
     
     /* <!-- App is usable (all initial routes processed!) --> */
     /* <!-- This is run here (rather than router start) to ensure any initial loads are done first --> */
-    finally: () => FN.config.get()
+    finally: () => ಱ.config.get()
           .then(ಠ_ಠ.Main.busy("Loading Config"))
-          .then(config => !config ?
+          .then(config => !(ರ‿ರ.config = config) ?
             ಠ_ಠ.Router.run(STATE_READY) :
-            FN.action.start(ರ‿ರ.initial ? _.defaults(ರ‿ರ.initial(), config) : config)
+            FN.action.start((ರ‿ರ.initial ? _.defaults(ರ‿ರ.initial(), config.settings) : config.settings))
               .then(result => result === false ?
                 ಠ_ಠ.Router.run(STATE_CONFIG) : true)),
     

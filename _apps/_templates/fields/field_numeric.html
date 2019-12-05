@@ -30,12 +30,12 @@
 
 {{#> field_general}}
   <div class="btn-group float-right mb-1 d-flex d-lg-none" role="group">
-    {{> control_button b_small="true" b_class="btn-secondary eraser no-active" b_icon="refresh"
+    {{> control_button b_small="true" b_class="btn-secondary eraser no-active" b_icon="refresh" b_icon_centered="true"
     	b_tooltip="Clear / Reset" b_target=(concat id "||" id "_NUMERIC") disabled=readonly }}
     {{> control_button b_small="true" b_class="btn-info alter-numerical" disabled=readonly
-    	b_tooltip="Decrease" b_target=id b_icon="remove" b_value=(concat "-" (either increment 1)) }}
+    	b_tooltip="Decrease" b_target=id b_icon="remove" b_icon_centered="true" b_value=(concat "-" (either increment 1)) }}
     {{> control_button b_small="true" b_class="btn-primary alter-numerical" disabled=readonly
-    	b_tooltip="Increase" b_target=id b_icon="add" b_value=(either increment 1) }}
+    	b_tooltip="Increase" b_target=id b_icon="add" b_icon_centered="true" b_value=(either increment 1) }}
   </div>
   <div class="input-group{{#if large}} input-group-lg{{/if}}" data-for="{{id}}">
     {{#if icon}}{{> control_icon large=large icon=icon }}{{/if}}
@@ -50,11 +50,11 @@
            {{#if required}} required="required"{{/if}}
            {{#if readonly}} readonly="readonly"{{/if}}/>
     <span class="input-group-append d-none d-lg-flex">
-      {{> control_button b_class="btn-secondary eraser no-active" b_icon="refresh"
+      {{> control_button b_class="btn-secondary eraser no-active" b_icon="refresh" b_icon_centered="true"
       	b_tooltip="Clear / Reset" b_target=(concat id "||" id "_NUMERIC") disabled=readonly }}
-      {{> control_button b_class="btn-info alter-numerical" b_target=id b_icon="remove"
+      {{> control_button b_class="btn-info alter-numerical" b_target=id b_icon="remove" b_icon_centered="true"
       	b_tooltip="Decrement" b_value=(concat "-" (either increment 1)) disabled=readonly }}
-      {{> control_button b_class="btn-primary alter-numerical" b_target=id b_icon="add"
+      {{> control_button b_class="btn-primary alter-numerical" b_target=id b_icon="add" b_icon_centered="true"
       	b_tooltip="Increment" b_value=(either increment 1) disabled=readonly }}
     </span>
     {{> field_validation}}

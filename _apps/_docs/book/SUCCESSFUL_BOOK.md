@@ -1,0 +1,1 @@
+The resource has been [booked]({% raw %}{{content}}{% endraw %}){:target="_blank"}.

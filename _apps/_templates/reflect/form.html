@@ -1,7 +1,7 @@
 {% raw %}
 <div class="d-flex justify-content-md-center">
 
-	<div class="mt-2 mt-lg-4 pb-4 col-12 col-md-10 col-lg-9 col-xl-8 form-container">
+	<div class="mt-2 mt-lg-4 pb-4 col-12 col-lg-10 col-xl-8 form-container">
 		
 		{{#if header}}{{{header}}}{{/if}}
 		
@@ -23,7 +23,10 @@
       </a>
     </div>{{/if}}
 		
-    {{#if owner}}<h6 class="mb-0 text-muted">Form owned by: <span class="text-primary">{{owner}}</span></h6>{{/if}}
+    {{~#if (any owner respondent)}}<div class="d-flex flex-column flex-xl-row justify-content-between">
+      {{#if owner}}<h6 class="mb-0 text-muted small"><i class="material-icons md-1 align-self-center mr-1 text-background">dashboard</i><strong>Form</strong> owned by: <span class="text-primary">{{owner}}</span></h6>{{/if}}
+      {{#if respondent}}<h6 class="mb-0 text-muted small"><i class="material-icons md-1 align-self-center mr-1 text-background">assignment</i><strong>Report</strong> owned by: <span class="text-primary">{{respondent}}</span></h6>{{/if}}
+    </div>{{/if~}}
     
     {{#if headers}}
     <div id="header__headings"

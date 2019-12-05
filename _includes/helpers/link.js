@@ -18,7 +18,17 @@ Link = (options, factory) => {
     id: "generate_link",
     app: "app",
     route: "view",
+    persistent: false,
     dialog: "link",
+    large: false,
+    hide_link: false,
+    force_qr: false,
+    qr_url: "https://chart.googleapis.com/chart",
+    qr_encoding: "ISO-8859-1",
+    qr_size: 540,
+    qr_tolerance: "M",
+    options_bottom: false,
+    hide_shorten: true,
     instructions: "LINK_INSTRUCTIONS",
     title: "Your Link",
     data: {},
@@ -28,18 +38,25 @@ Link = (options, factory) => {
 
   /* <!-- Internal Variables --> */
   options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
-  var _link = factory.Flags.full(`${options.app.toLowerCase()}/#google,${options.route.toLowerCase()}.${factory.Strings().base64.encode(JSON.stringify(options.data))}`);
+  var _link = factory.Flags.full(`${options.app.toLowerCase()}/${options.persistent ? "?i=" : "#"}google,${options.route.toLowerCase()}.${factory.Strings().base64.encode(JSON.stringify(options.data))}`);
   var _clipboard;
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var _qr = () => `${options.qr_url}?cht=qr&chs=${options.qr_size}x${options.qr_size}&choe=${options.qr_encoding}&chld=${options.qr_tolerance}&chl=${encodeURIComponent(_link)}`;
+  
   var _generate = () => factory.Display.modal(options.dialog, {
     id: options.id,
     target: options.target,
     title: options.title,
     instructions: factory.Display.doc.get(options.instructions),
+    large: options.large,
+    hide_link: options.hide_link,
+    force_qr: options.force_qr,
+    options_bottom: options.options_bottom,
+    hide_shorten: options.hide_shorten,
     link: _link,
-    qr_link: () => "https://chart.googleapis.com/chart?cht=qr&chs=540x540&choe=UTF-8&chl=" + encodeURIComponent(_link),
+    qr_link: _qr,
     details: _.escape(JSON.stringify(options.data, null, 4)),
   }, dialog => {
 
@@ -49,15 +66,14 @@ Link = (options, factory) => {
       container: dialog[0]
     });
 
-    dialog.find("#link_shorten").one("click.shorten", () => {
+    if (!options.hide_shorten) dialog.find("#link_shorten").one("click.shorten", () => {
       factory.Google.url.insert(_link).then(url => {
         _link = url.id;
-        var _qr = "https://chart.googleapis.com/chart?cht=qr&chs=540x540&choe=UTF-8&chl=" + encodeURIComponent(_link);
+        var _qr = _qr();
         dialog.find("#link_text").text(_link);
         dialog.find("#qr_copy").attr("data-clipboard-text", _qr);
         dialog.find("#qr_code").attr("src", _qr);
       }).catch(e => factory.Flags.error("Link Shorten Failure", e ? e : "No Inner Error"));
-
     });
 
     $("#qr").on("show.bs.collapse", () => $("#details").collapse("hide"));

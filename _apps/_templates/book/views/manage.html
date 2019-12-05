@@ -1,0 +1,38 @@
+{% raw %}
+<div {{#if id}}id="{{id}}" {{/if}}class="container-fluid pt-lg-1 mvh-100">
+  
+  {{> date}}
+  
+  <div class="row m-0 pt-2">
+    
+    <div class="col-12 col-lg-4 col-xl-3">
+      
+      {{> search placeholder="Search Resources"}}
+      
+      <div id="resources">{{#if resources}}{{> resources}}{{/if}}</div>
+
+    </div>
+    
+    <div class="col-12 col-lg-8 col-xl-9">
+      
+      <div class="row">
+        
+        <div id="shortcut" class="col-12">
+      
+          <form>
+            <div class="form-group">
+              <input type="text" class="form-control shortcut" id="shortcut_Text" placeholder="Scan QR Code" />
+            </div>
+          </form>
+
+        </div>
+
+        <div id="details" class="col-12"></div>
+        
+      </div>
+      
+    </div>
+    
+  </div>
+</div>
+{% endraw %}

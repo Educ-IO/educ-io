@@ -1,4 +1,4 @@
-Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
+Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
   "use strict";
   /* <!-- MODULE: Provides an analysis of a form/s reports --> */
   /* <!-- PARAMETERS: Receives the global app context, the forms being analysed and the report data submitted --> */
@@ -9,7 +9,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
     ID = "analysis",
     MISSING = "NO DATA",
     EMPTY = "",
-    HIDDEN = ["ID", "Owner", "Completed", "When", "Total", "Count", "Average", "Signatures"],
+    HIDDEN = ["ID", "Owner", "Complete", "When", "Total", "Count", "Average", "Signatures"],
     NUMERIC = /\d*\.?\d+/,
     FN = {};
   /* <!-- Internal Constants --> */
@@ -28,8 +28,6 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
   /* <!-- Internal Functions --> */
 
   /* <-- Helper Functions --> */
-  FN.decode = ಠ_ಠ.Decode(ಠ_ಠ, forms);
-  
   FN.helper = {
 
     complete: file => file.appProperties.COMPLETE,
@@ -51,7 +49,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
   /* <-- Query Functions --> */
   FN.query = {
 
-    standard: report => ({
+    slim: report => ({
       id: ಠ_ಠ.Display.template.get("hyperlink")({
         url: FN.helper.url(report.file),
         text: report.file.id,
@@ -63,14 +61,16 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
       when: {
         Created: ಠ_ಠ.Dates.parse(report.file.createdTime).format("llll"),
         Modified: ಠ_ಠ.Dates.parse(report.file.modifiedTime).format("llll")
-      },
-      signatures: report.signatures ? _.map(report.signatures, signature => ({
+      }
+    }),
+    
+    standard: report => _.tap(FN.query.slim(report), 
+      value => value.signatures = report.signatures ? _.map(report.signatures, signature => ({
         Valid: signature.valid ? true : undefined,
         Invalid: signature.valid ? undefined : true,
         By: `${signature.who === true ? "Me" : signature.who}${signature.email ? ` | ${signature.email}`: ""}`,
         When: signature.when
-      })) : null,
-    })
+      })) : null),
 
   };
   /* <-- Query Functions --> */
@@ -113,7 +113,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
       });
 
       var _values = _.map(reports, report => _.extend(query ? query(report) : {},
-        FN.decode.values(report.file, fields, true)));
+        decode.meta.properties(report.file, fields, true)));
 
       _data.insert(_values);
 
@@ -149,7 +149,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
 
     summary: (id, target, wrapper, reports, after) => {
 
-      var _fields = FN.decode.fields(),
+      var _fields = decode.meta.fields(forms),
         _row = _.find(_fields, {
           "type": "row"
         }),
@@ -167,7 +167,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
 
         var _all = [_row, _column].concat(_contexts).concat(_values),
           _reports = _.reduce(_.map(reports,
-              report => _.extend(FN.decode.values(report.file, _all, true), {
+              report => _.extend(decode.meta.properties(report.file, _all, true), {
                 __id: report.file.id,
                 __created: ಠ_ಠ.Dates.parse(report.file.createdTime).format("MMM D, YYYY HH:mm"),
                 __modified: ಠ_ಠ.Dates.parse(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
@@ -342,11 +342,12 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
 
     detail: (id, target, wrapper, reports, after) => {
 
-      var _columns = ["ID", "Owner", "Completed", "Form", "When"]
+      var _columns = ["ID", "Owner", "Complete", "Form", "When"]
         .concat(ರ‿ರ.signatures ? ["Signatures"] : []),
-        _fields = FN.decode.fields(),
+        _fields = decode.meta.fields(forms),
         _headers = FN.generate.headers(_columns.concat(FN.helper.headers(_fields))),
-        _data = FN.generate.data(id, _columns, _fields, reports, FN.query.standard);
+        _data = FN.generate.data(id, _columns, _fields, reports, 
+                                  ರ‿ರ.signatures ? FN.query.standard : FN.query.slim);
 
       return ಠ_ಠ.Datatable(ಠ_ಠ, {
         id: `${ID}_DETAIL_TABLE`,
@@ -396,7 +397,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
     signatures: (target, signatures) => _.each(signatures,
       (signature, index) => target.append(ಠ_ಠ.Display.template.get({
         template: "valid",
-        class: `${index === 0 ? "ml-1 " : ""}signature${signature.valid ? "" : " text-warning"}`,
+        class: `${index === 0 ? "ml-1 " : ""}signature${signature.valid ? "" : " border border-dark text-danger bg-light p-1"}`,
         valid: signature.valid,
         html: true,
         desc: ಠ_ಠ.Display.template.get("signature_summary")(signature).trim(),
@@ -465,7 +466,8 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures) => {
           .catch(e => ಠ_ಠ.Flags.error("Signature Error", e).negative())
           .then(ಠ_ಠ.Display.busy({
             target: _target,
-            class: "loader-tiny",
+            class: "loader-tiny loader-light",
+            append: true,
             fn: true
           }));
       }))

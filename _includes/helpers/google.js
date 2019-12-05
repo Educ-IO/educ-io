@@ -82,9 +82,9 @@ Google_API = (options, factory) => {
   };
   const ADMIN_URL = {
     name: "admin",
-    url: "https://admin.googleapis.com/",
-    rate: 1,
-    concurrent: 1,
+    url: "https://www.googleapis.com/admin/",
+    rate: 4,
+    concurrent: 4,
     timeout: 30000,
   };
   const CLASSROOM_URL = {
@@ -228,23 +228,23 @@ Google_API = (options, factory) => {
     });
   };
 
-  var _get = (id, team) => {
+  var _get = (id, team, full) => {
     var _data = team ?
       team === true ? {
-        fields: FIELDS,
+        fields: full ? FULL : FIELDS,
         includeTeamDriveItems: true,
         supportsAllDrives: true,
         supportsTeamDrives: true,
         corpora: "user,allTeamDrives"
       } : {
-        fields: FIELDS,
+        fields: full ? FULL : FIELDS,
         teamDriveId: team,
         supportsAllDrives: true,
         includeTeamDriveItems: true,
         supportsTeamDrives: true,
         corpora: "teamDrive"
       } : {
-        fields: FIELDS,
+        fields: full ? FULL : FIELDS,
       };
     return _call(NETWORKS.general.get, "drive/v3/files/" + id, _data);
   };
@@ -696,7 +696,7 @@ Google_API = (options, factory) => {
         return _call(_function, _url, _data);
       },
 
-      get: (id, team) => _get(id, team),
+      get: _get,
 
       copy: (id, team, file) => {
         var _url = `drive/v3/files/${id}/copy${TEAM(id, team, true)}`;
@@ -834,7 +834,7 @@ Google_API = (options, factory) => {
           singleEvents: true,
           timeMin: start ? start.toISOString() : null,
           timeMax: end ? end.toISOString() : null,
-          fields: "kind,nextPageToken,items(id,summary,description,start,end,extendedProperties,organizer,attendees,attachments,recurringEventId,source,status,htmlLink,location)",
+          fields: "kind,nextPageToken,items(id,summary,description,created,updated,start,end,extendedProperties,organizer,attendees,attachments,recurringEventId,source,status,htmlLink,location)",
         })),
 
       search: (id, property, query) => _list(NETWORKS.general.get,
@@ -843,13 +843,15 @@ Google_API = (options, factory) => {
           singleEvents: true,
           sharedExtendedProperty: property,
           q: query,
-          fields: "kind,nextPageToken,items(id,summary,description,start,end,extendedProperties,organizer,attendees,attachments,recurringEventId,source,status,htmlLink,location)",
+          fields: "kind,nextPageToken,items(id,summary,description,created,updated,start,end,extendedProperties,organizer,attendees,attachments,recurringEventId,source,status,htmlLink,location)",
         })),
 
       events: {
 
+        create: (id, data, conference) => _call(NETWORKS.general.post, `calendar/v3/calendars/${encodeURIComponent(id)}/events${conference === true ? "" : "?conferenceDataVersion=1"}`, data, "application/json"),
+        
         get: (id, event) => _call(NETWORKS.general.get, `calendar/v3/calendars/${encodeURIComponent(id)}/events/${event}`, {
-          fields: "id,summary,description,start,end,extendedProperties,organizer,attendees,attachments,recurringEventId,source,status,htmlLink,location",
+          fields: "id,summary,description,created,updated,start,end,extendedProperties,organizer,attendees,attachments,recurringEventId,source,status,htmlLink,location",
         }),
 
         update: (id, event, data) => _call(NETWORKS.general.patch, `calendar/v3/calendars/${encodeURIComponent(id)}/events/${event}`, data, "application/json"),
@@ -860,6 +862,10 @@ Google_API = (options, factory) => {
 
     calendars: {
 
+      get: id => _call(NETWORKS.general.get, `calendar/v3/users/me/calendarList/${encodeURIComponent(id)}`, {
+          fields: "id,summary,summaryOverride,description,accessRole",
+        }),
+      
       list: () => _list(
         NETWORKS.general.get, "calendar/v3/users/me/calendarList", "items", [], {
           orderBy: "summary",
@@ -895,6 +901,37 @@ Google_API = (options, factory) => {
       },
     },
 
+    admin: {
+      
+      privileges : customer => _call(NETWORKS.admin.get, `directory/v1/customer/${customer || "my_customer"}/roles/ALL/privileges`),
+
+    },
+    
+    resources: {
+      
+      buildings: customer => _list(
+        NETWORKS.admin.get,
+        `directory/v1/customer/${customer || "my_customer"}/resources/buildings`, "buildings", [], {
+          orderBy: "buildingName",
+          fields: "nextPageToken,buildings(buildingId,buildingName,description,coordinates,floorNames,address)"
+        }),
+  
+      calendars: (query, customer) => _list(
+        NETWORKS.admin.get,
+        `directory/v1/customer/${customer || "my_customer"}/resources/calendars`, "items", [], {
+          orderBy: "resourceName",
+          query: query || "", 
+          fields: "nextPageToken,items(resourceId,resourceName,generatedResourceName,resourceType,resourceDescription,resourceEmail,capacity,buildingId,floorName,floorSection,resourceCategory,userVisibleDescription),items/featureInstances/feature/name"}),
+      
+      features: customer => _list(
+        NETWORKS.admin.get,
+        `directory/v1/customer/${customer || "my_customer"}/resources/features`, "features", [], {
+          orderBy: "name",
+          fields: "nextPageToken,features(name)"
+        })
+     
+    },
+    
     teamDrives: {
 
       get: id => _call(NETWORKS.general.get, `drive/v3/teamdrives/${id}`, {

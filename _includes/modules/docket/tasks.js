@@ -60,7 +60,7 @@ Tasks = (options, factory) => {
     date : (target, change) => {
 
       var _input = target.find("input.dt-picker");
-      _input.on("change", e => {
+      _input.off("change.date").on("change.date", e => {
         var value = $(e.target).val();
         if (value) change(factory.Dates.parse(value));
       });
@@ -665,7 +665,7 @@ Tasks = (options, factory) => {
       container.find("a:not([href^='#'])").attr("target", "_blank").attr("rel", "noopener");
 
       /* <!-- Enable Button Links --> */
-      container.find(".input-group button").on("click.action", e => {
+      container.find(".input-group button").off("click.action").on("click.action", e => {
         var target = $(e.currentTarget);
         if (target.data("action")) {
           var parent = target.parents("div.item");

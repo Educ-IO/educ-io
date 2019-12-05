@@ -1,0 +1,16 @@
+{% raw %}
+<div {{#if id}}id="{{id}}" {{/if}}class="container-fluid pt-lg-1 mvh-100">
+  
+  {{> date}}
+  
+  <div class="row m-0 pt-2">
+    
+    <div id="events" class="col-12">
+      
+      {{> all}}
+
+    </div>
+    
+  </div>
+</div>
+{% endraw %}

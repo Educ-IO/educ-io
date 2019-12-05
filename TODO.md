@@ -45,6 +45,10 @@ Router
 
 Apps
 ----
+* ** BUG ** Chromium on Ubuntu - no Local DB for recent documents etc? <-- DONE
+
+* ** BUG ** Autosize text field does not work properly on Firefox <-- DONE
+
 * ** IMPORTANT ** Cached called to userinfo to improve time-to-work?
 
 * ** IMPORTANT ** Router and subsequent anchor routes -> how do we handle duplicates?
@@ -138,6 +142,8 @@ Merge
 
 Folders
 -------
+* ** BUG ** Search Results Dialog now empty??
+
 * ** IMPROVEMENT ** Can we get the owner domain of a team drive from examining ownership permissions on it or the files within it?
 
 * ** FEATURE ** - Batch Clone to multiple folders: https://www.cloudconnectcommunity.com/ccc/ls/community/g-suite/post/4860149603500032
@@ -154,14 +160,13 @@ Reflect
 
 * ** FEATURE ** Target Loading from Previous Reports
 
-* ** FEATURE ** Complete Email from Signer for pre-shared reports
+* ** FEATURE ** Share on first save
 
-* ** FEATURE ** Test Group Share
+* ** FEATURE ** Complete Email from Signer for pre-shared reports
 
 * ** IMPROVEMENT ** Verify in Analysis should also recalculate summary / meta field values.
 
 * ** IMPROVEMENT ** Replace DeepClone with our own version (better handling of Regexes) | With DEBUG tests
-
 
 * ** IMPROVEMENT ** Create form -> Should lead to 'show form' pathway, with button for return to edit (same as edit but without state file)
 
@@ -185,6 +190,10 @@ Survey
 
 Complete
 --------
+* ** BUG ** On Complete - an invalid share email address kills the completion process, need to handle gracefully <-- DONE
+* ** IMPROVEMENT ** Edit - Cancel should not trigger refresh <-- DONE
+* ** IMPROVEMENT ** Open in Drive menu links for Reports and Forms <-- DONE
+* ** FEATURE ** Test Group Share <-- DONE
 * ** BUG ** Dynamic List Option Generation for sub-templates (e.g. evidence in field_responses) <-- DONE
   - How does this work with hydrated data? Should options be save into form data?
 * ** IMPROVEMENT ** Periodic Refresh (shorter time periods for shared dockets) - is it possible to get changes since a certain point and integrate those? <-- DONE
