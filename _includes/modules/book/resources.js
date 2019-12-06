@@ -95,6 +95,8 @@ Resources = function(loaded) {
           return this;
         
         });
+      
+      FN.sort = ಠ_ಠ.Strings().sort("name");
 
       /* <!-- Return for Chaining --> */
       return this;
@@ -106,8 +108,10 @@ Resources = function(loaded) {
     safe: () => ಱ.loaded,
     
     find: search => search ? 
-      ರ‿ರ.resources.find({title: {"$regex": [RegExp.escape(search), "i"]}}) : 
-      ರ‿ರ.resources.data,
+      ರ‿ರ.resources.chain()
+      .find({title: {"$regex": [RegExp.escape(search), "i"]}})
+      .sort(FN.sort)
+      .data() : ರ‿ರ.resources.data.sort(FN.sort),
     
     get: email => ರ‿ರ.resources.findOne({email: {"$eq": email}})
     

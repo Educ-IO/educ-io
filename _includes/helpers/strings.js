@@ -6,12 +6,37 @@ Strings = () => {
   /* <!-- REQUIRES: Global Scope: Underscore --> */
 
   /* <!-- Internal Constants --> */
+  const REGEX = {
+    NUMERIC : /(\.\d+)|(\d+(\.\d+)?)|([^\d.]+)|(\.\D+)|(\.$)/g
+  };
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  
+  /* <!-- Numerically Sensible Sort --> */
+  var _transform = value => REGEX.NUMERIC.test(value) ? 
+      ((value, number) => isNaN(number) ? value : number)(value, Number(value)) : value;
+      
+  var _compare = (value_1, value_2) => (value_1 = _transform(value_1)) > (value_2 = _transform(value_2)) ?
+      1 : value_1 < value_2 ? -1 : 0;
+  
+  var _split = value => value ? _.map(value.split(/[\s,]+/), value => value.trim()) : [""];
+  
+  var _sort = (array_1, array_2) => _.reduce(array_1,
+    (result, value, index) => result === 0 ? _compare(value, array_2.length > index ? array_2[index] : "") : result, 0);
+  
+  var _sorter = getter => (value_1, value_2) => {
+    
+    var names_1 = _split(getter ? getter(value_1) : value_1),
+        names_2 = _split(getter ? getter(value_2) : value_2);
+    
+    return names_2.length > names_1.length ? _sort(names_2, names_1)*-1 : _sort(names_1, names_2);
+    
+  };
+  /* <!-- Numerically Sensible Sort --> */
   
   /* <-- Deterministic Version of Stringify --> */
   var _stringify = (value, replacer, space, key) => {
@@ -46,6 +71,8 @@ Strings = () => {
       _array() : _value();
 
   };
+  /* <-- Deterministic Version of Stringify --> */
+  
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -123,6 +150,8 @@ Strings = () => {
         c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")),
 
     },
+    
+    sort: property => _sorter(!property || _.isFunction(property) ? property : value => value ? value[property] : null),
     
     stringify: _stringify,
     /* <!-- External Functions --> */

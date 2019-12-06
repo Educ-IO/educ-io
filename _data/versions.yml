@@ -1,4 +1,8 @@
 site :
+  0.1.6x :
+    name : Site v0.1.6x
+    desc : Bug Fixes, Restructured Code and new App Beta
+    numeric : 0.1.6.23
   0.1.6w :
     name : Site v0.1.6w
     desc : Bug Fixes, Restructured Code and new App Beta
@@ -1188,6 +1192,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.2a-beta :
+    name : Update Resource Sorting
+    type : minor
   0.0.2-beta :
     name : First fully functional release
     type : major

@@ -78,6 +78,7 @@ helpers:
   - dialog
   - saad
   - colours
+  - strings
 modules:
   - flags
   - controller

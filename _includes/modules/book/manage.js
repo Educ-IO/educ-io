@@ -139,12 +139,13 @@ Manage = (options, factory) => {
   
   FN.log = {
     
-    status : (id, title, instructions, content, handler) => factory.Display.modal("generic", {
+    status : (id, title, instructions, content, confirm, handler) => factory.Display.modal("generic", {
                   target: factory.container,
                   id: id,
                   title: title,
                   instructions: instructions,
                   content: content,
+                  confirm: confirm,
                 }, dialog => {
                   factory.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {trigger: "hover"});
                   factory.Dialog({}, factory).handlers.keyboard.enter(dialog);
@@ -167,7 +168,10 @@ Manage = (options, factory) => {
     out : (id, event) => (ರ‿ರ.db ? Promise.resolve() : FN.config.current())
                   .then(() => event || FN.get(id))
                   .then(event => FN.log.status("log_out", "Log Loaned Resources", factory.Display.doc.get("LOG_OUT_INSTRUCTIONS"),
-                             factory.Display.template.get(_.extend({template: "loan"}, event)), FN.log.loan(id, event))),
+                             factory.Display.template.get(_.extend({
+                                template: "loan",
+                                warning: event.date.isSame(factory.Dates.now(), "day") ? null : event.date,
+                             }, event)), "Confirm Loan", FN.log.loan(id, event))),
     
     loan : (id, event) => data => {
       
@@ -204,7 +208,7 @@ Manage = (options, factory) => {
                                 template: "return",
                                 event: event, 
                                 loans: options.state.session.database.loans(event.id)
-                              }), FN.log.return(id, event))),
+                              }), "Confirm Return", FN.log.return(id, event))),
     
     return : (id, event) => data => {
       
@@ -277,6 +281,10 @@ Manage = (options, factory) => {
   FN.shortcut = (command, complete) => {
     if (command) {
       factory.Flags.log("RUN SHORTCUT", command);
+      if (command.indexOf("#") >= 0) {
+        var _command = command.split("#");
+        window.location.hash = _command[_command.length - 1];
+      }
       complete();
     }
   };
@@ -471,6 +479,7 @@ Manage = (options, factory) => {
     event.what = options.functions.calendar.resources(event);
     event.who = options.functions.calendar.who(event);
     event.when = options.functions.calendar.time(event);
+    event.date = options.functions.calendar.date(event);
     factory.Flags.log("Loan from Shortcut", event);
     return !event.extendedProperties || !event.extendedProperties.private || !event.extendedProperties.private.STATUS ?
       FN.log.out(event.id, event) : event.extendedProperties.private.STATUS == options.loaned ?
@@ -483,8 +492,8 @@ Manage = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
     
-    booking: (calendar, id) => FN.data.event(calendar, id).
-      then(event => options.state.application.resources.safe()
+    booking: (calendar, id) => FN.data.event(calendar, id)
+      .then(event => options.state.application.resources.safe()
             .then(() => factory.Main.authorise([SCOPE_DRIVE_APPDATA, SCOPE_DRIVE_FILE]))
             .then(result => result === true ? FN.booking(event) : false)),
     
@@ -495,7 +504,8 @@ Manage = (options, factory) => {
       .then(FN.hookup.toggles)
       .then(FN.hookup.resources)
       .then(FN.hookup.search)
-      .then(FN.hookup.shortcut),
+      .then(FN.hookup.shortcut)
+      .then(() => $("#shortcut_Text").focus()),
       
     in: (id, log) => log ? FN.log.in(id) : FN.confirm.in(id),
       

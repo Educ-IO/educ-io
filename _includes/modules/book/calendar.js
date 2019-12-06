@@ -39,12 +39,14 @@ Calendar = (options, factory) => {
   FN.properties = event => event.extendedProperties && event.extendedProperties.private ? 
                     event.extendedProperties.private : {};
   
+  FN.date = event => factory.Dates.parse(event.start.date || event.start.dateTime).startOf("day"),
+    
   FN.times = (from, until) => `${from.format(options.format)} - ${until.format(options.format)}`;
 
   FN.time = event => {
       event.confirmed = FN.confirmed(event),
-      event.time = FN.times(factory.Dates.parse(event.start.dateTime),
-        factory.Dates.parse(event.end.dateTime));
+      event.time = event.start.dateTime ? FN.times(factory.Dates.parse(event.start.dateTime),
+        factory.Dates.parse(event.end.dateTime)) : "00:00 - 23:59";
       event.created = event.created ? factory.Dates.parse(event.created) : event.created;
       event.updated = event.updated ? factory.Dates.parse(event.updated) : event.updated;
       return event.time;
