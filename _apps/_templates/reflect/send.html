@@ -11,8 +11,8 @@
       <div class="modal-body">
         {{#if instructions}}{{{instructions}}}{{/if}}
 				<form>
-          <textarea data-output-field="Message" class="form-control form-control-lg w-100 resizable optional" rows="3" tabindex="1" placeholder="Optional Custom Message ..."></textarea>
-          {{> recipients id=(concat id "_EMAILS") values=emails }}
+          {{~#if message}}<textarea data-output-field="Message" class="form-control form-control-lg w-100 resizable optional" rows="3" tabindex="1" placeholder="Optional Custom Message ..."></textarea>{{/if~}}
+          {{> recipients id=(concat id "_EMAILS") values=emails readonly=(either readonly false)}}
 				</form>
         <ul class="list-group list-group-flush">
           <li class="list-group-item d-flex justify-content-between align-items-center">

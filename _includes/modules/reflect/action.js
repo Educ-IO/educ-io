@@ -8,7 +8,8 @@ Action = (options, factory) => {
   /* <!-- Internal Constants --> */
   const DEFAULTS = {},
         FN = {};
-  const SIGNATORY = "signatory",
+  const OVERVIEW = "overview",
+        SIGNATORY = "signatory",
         DESTINATION = "destination";
   /* <!-- Internal Constants --> */
 
@@ -95,45 +96,51 @@ Action = (options, factory) => {
     .then(options.functions.edit.report)
     .then(value => value && options.state.session.file ? options.functions.load.file(options.state.session.file).then(factory.Main.busy("Refreshing Report")) : false);
 
-  FN.convey = (id, title, instructions_doc, type, message, action) => FN.get()
-    .then(dehydrated => options.functions.elicit.send({
-      id: id,
-      title: title,
-      instructions: factory.Display.doc.get(instructions_doc),
-      emails: options.functions.decode.addresses(type, dehydrated.data.form, dehydrated.data.report),
-      action: action
-    }).then(values => values ? Promise.resolve(values).then(values => ({
-        dehydrated: dehydrated,
-        files: options.functions.decode.files(dehydrated.data.report),
-        emails: values.Email && values.Email.Values ?
-          _.isArray(values.Email.Values) ? values.Email.Values : [values.Email.Values] : [],
-        message: values.Message ? values.Message.Value : true
-      }))
-      .then(value => !value.files || value.files.length === 0 ?
-        Promise.resolve(value) :
-        Promise.all(_.map(value.files,
-          file => factory.Google.permissions.get(file.id)
-          .then(permissions => Promise.all(_.map(value.emails, email => {
-            _.find(permissions, permission =>
-                permission.type == "anyone" ||
-                (permission.type == "domain" &&
-                  email.split("@")[1].localeCompare(permission.domain,
+  FN.convey = (id, title, instructions_doc, type, message, action, suppress) => FN.get()
+    .then(dehydrated => {
+    var addresses = options.functions.decode.addresses(type, dehydrated.data.form, dehydrated.data.report);
+    return suppress && suppress.optional && addresses.length === 0 ? 
+      false : options.functions.elicit.send({
+        id: id,
+        title: title,
+        instructions: factory.Display.doc.get(instructions_doc),
+        emails: addresses,
+        action: action,
+        message: suppress && suppress.message ? false : true,
+        readonly: suppress && suppress.remove ? true : false,
+      }).then(values => values ? Promise.resolve(values).then(values => ({
+          dehydrated: dehydrated,
+          files: suppress && suppress.files ? [] : options.functions.decode.files(dehydrated.data.report),
+          emails: values.Email && values.Email.Values ?
+            _.isArray(values.Email.Values) ? values.Email.Values : [values.Email.Values] : [],
+          message: values.Message ? values.Message.Value : true
+        }))
+        .then(value => !value.files || value.files.length === 0 ?
+          Promise.resolve(value) :
+          Promise.all(_.map(value.files,
+            file => factory.Google.permissions.get(file.id)
+            .then(permissions => Promise.all(_.map(value.emails, email => {
+              _.find(permissions, permission =>
+                  permission.type == "anyone" ||
+                  (permission.type == "domain" &&
+                    email.split("@")[1].localeCompare(permission.domain,
+                      undefined, {
+                        sensitivity: "accent"
+                      }) === 0) ||
+                  email.localeCompare(permission.emailAddress,
                     undefined, {
                       sensitivity: "accent"
-                    }) === 0) ||
-                email.localeCompare(permission.emailAddress,
-                  undefined, {
-                    sensitivity: "accent"
-                  }) === 0) ?
-              Promise.resolve(true) :
-              factory.Google.permissions.share(file.id).user(email, "reader")
-              .catch(options.state.application.notify.fn.failure("Share FAILED", () => factory.Display.doc.get({
-                name: "NOTIFY_SHARE_FILE_FAILED",
-                content: email
-              })));
-          }))))).then(() => value))
-      .then(value => _.tap(value, value => factory.Flags.log("TO CONVEY:", value)))
-      .then(factory.Main.busy(message)) : false));
+                    }) === 0) ?
+                Promise.resolve(true) :
+                factory.Google.permissions.share(file.id).user(email, "reader")
+                .catch(options.state.application.notify.fn.failure("Share FAILED", () => factory.Display.doc.get({
+                  name: "NOTIFY_SHARE_FILE_FAILED",
+                  content: email
+                })));
+            }))))).then(() => value))
+        .then(value => _.tap(value, value => factory.Flags.log("TO CONVEY:", value)))
+        .then(factory.Main.busy(message)) : false);
+  });
 
   FN.send = () => FN.convey("send_Report", "Send Report for Approval / Signature",
       "SEND_INSTRUCTIONS", SIGNATORY, "Sending Report", "Send")
@@ -193,6 +200,15 @@ Action = (options, factory) => {
       return value;
     }) : value);
 
+  FN.overview = () => FN.convey("overview_Report", "Grant Report Overview",
+      "OVERVIEW_INSTRUCTIONS", OVERVIEW, "Report Overview", "Grant", {message : true, remove: true, files: true, optional: true})
+    .then(value => value ? Promise.all(_.map(value.emails,
+      email => factory.Google.permissions.share(options.state.session.file).user(email, "reader")
+      .catch(options.state.application.notify.fn.failure("Share FAILED", () => factory.Display.doc.get({
+        name: "NOTIFY_SHARE_REPORT_FAILED",
+        content: email
+      }))))) : value);
+  
   FN.share = () => FN.convey("share_Report", "Share Report for Approval / Signature",
       "SHARE_INSTRUCTIONS", SIGNATORY, "Sharing Report", "Share")
     .then(value => value ? Promise.all(_.map(value.emails,

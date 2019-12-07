@@ -28,7 +28,10 @@ Router = function() {
     HANDLE = (options, resolve, reject) => files => files && (!_.isArray(files) || files.length > 0) ?
       REJECT.MIME(files, options) || REJECT.PROPERTIES(files, options) ?
         reject() :
-          ಠ_ಠ.Flags.log("Google Drive File/s Picked from Open", files) && resolve(files) :
+          ಠ_ಠ.Flags.log("Google Drive File/s Picked from Open", files) && 
+            (options.full ? (_.isArray(files) ? 
+                              Promise.all(_.map(files, file => ಠ_ಠ.Google.files.get(file.id, true, true))) : 
+                              ಠ_ಠ.Google.files.get(files.id, true, true)).then(resolve) : resolve(files)) :
         ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject(),
 
     PICK = (picker => ({
@@ -73,6 +76,8 @@ Router = function() {
         _default = () => ({
           state: route.state,
           length: route.length,
+          clean: route.clean,
+          reset: route.reset,
         }),
         _extend = matches => ({
           matches: matches,
@@ -127,6 +132,10 @@ Router = function() {
         }
       },
       _execute = (route, command) => {
+        
+        /* <!-- Clean up the state (before command has run) if required! --> */
+        if (route.reset) _clean(false);
+        
         var l_command = STRIP(command, route.__length),
           l_options = PREPARE(route.options, l_command),
           l_result = route.fn(_.isArray(l_command) ? 
@@ -134,7 +143,8 @@ Router = function() {
                                 null : l_command.length == 1 ? l_command[0] : l_command : l_command, l_options);
         return l_result && l_result.then ? l_result
           .then(result => {
-            /* <!-- Clean up the state if required! --> */
+          
+            /* <!-- Clean up the state (after command has run) if required! --> */
             if (route.clean) _clean(false);
 
             /* <!-- Run the success function if available --> */
@@ -229,8 +239,8 @@ Router = function() {
           fn: (command, options) => new Promise((resolve, reject) => {
             var _id = _.isArray(command) ? command[0] : command;
             (options && options.wrapper ? 
-              options.wrapper(() => ಠ_ಠ.Google.files.get(_id, true, true)) :
-              ಠ_ಠ.Google.files.get(_id, true, true))
+              options.wrapper(() => ಠ_ಠ.Google.files.get(_id, true, options.full ? true : false)) :
+              ಠ_ಠ.Google.files.get(_id, true, options.full ? true : false))
               .then(file => {
                 ಠ_ಠ.Flags.log(`Opened Google Drive File: ${_id}`, file);
                 REJECT.MIME(file, options) || REJECT.PROPERTIES(file, options) ?
@@ -372,7 +382,7 @@ Router = function() {
           /* <!-- Bind Shortcut key/s if required --> */
           if (route.keys && (!route.length || route.length === 0)) {
             route.keys = _.isArray(route.keys) ? route.keys : [route.keys];
-            _.each(route.keys, key => window.Mousetrap.bind(key, ((route, debug, name) => () => (!route.state || ಠ_ಠ.Display.state().in(route.state, true)) ? 
+            _.each(route.keys, key => window.Mousetrap.bind(key, ((route, debug, name) => () => (!route.state || ಠ_ಠ.Display.state().in(route.state, route.all ? false : true)) ? 
                 (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && (route.requires ? 
                   ಠ_ಠ.Controller.load(_.map(_.isString(route.requires) ? [route.requires] : route.requires, required => ಠ_ಠ.IMPORTS.LOAD_LAZY[required])) : 
                   Promise.resolve()).then(() => _execute(route, null)) : false)(route, debug, name)));
@@ -386,7 +396,7 @@ Router = function() {
             var _hammer = this[_target] ? this[_target] :
               (this[_target] = new window.Hammer((route.target ?
                 $(route.target) : ಠ_ಠ.container)[0]));
-            _hammer.on(route.actions.join(" "), ((state, fn, requires, options, debug, name) => e => e.pointerType == "touch" && (!state || ಠ_ಠ.Display.state().in(state, true)) ? 
+            _hammer.on(route.actions.join(" "), ((state, fn, requires, options, debug, name) => e => e.pointerType == "touch" && (!state || ಠ_ಠ.Display.state().in(state, route.all ? false : true)) ? 
                 (!debug || ಠ_ಠ.Flags.log(`Touch Action ${e.type} routed to : ${name}`)) && (requires ? 
                   ಠ_ಠ.Controller.load(_.map(_.isString(requires) ? [requires] : requires, required => ಠ_ಠ.IMPORTS.LOAD_LAZY[required])) : 
                   Promise.resolve()).then(() => fn(null,  PREPARE(options))) : false)(route.state, route.fn, route.requires, route.options, debug, name));
@@ -466,7 +476,7 @@ Router = function() {
             ) && (route.next === undefined || route.next.test(command)),
 
             _route = _.find(_options.routes, route => route.active !== false &&
-              (!route.state || ಠ_ಠ.Display.state().in(route.state, true)) &&
+              (!route.state || ಠ_ಠ.Display.state().in(route.state, route.all ? false : true)) &&
               _match(route, command) && _check(route, STRIP(command, (route.__length = route.matches.length))));
 
           /* <!-- Execute the route if available --> */

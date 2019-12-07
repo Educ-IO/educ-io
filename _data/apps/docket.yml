@@ -132,6 +132,7 @@ templates:
   - shared/control_button
   - shared/menu_item
   - shared/menu_divider
+  - shared/permission
   - docket/recent
   - docket/config
   - docket/badge
@@ -153,7 +154,6 @@ templates:
   - docket/suggestions
   - docket/statistics
   - docket/queue/file
-  - docket/queue/permission
   - docket/queue/tasks
   - docket/projects/project
   - docket/visualisation/time_series

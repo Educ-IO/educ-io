@@ -26,7 +26,7 @@ Create = (options, factory) => {
       factory.Flags.error(`Opening Google Drive Folder: ${id}`, e) && resolve();
     }));
 
-  FN.load = (form, process, actions, owner) => FN.report(form.__name || form.$name, actions, form, process, owner);
+  FN.load = (form, process, actions, owner, permissions) => FN.report(form.__name || form.$name, actions, form, process, owner, permissions);
 
   FN.generic = (edit, value, mime) => edit(value)
     .then(result => {
@@ -76,11 +76,11 @@ Create = (options, factory) => {
     .then(results => results && results.length > 0 ?
           FN.select(results, name, actions, form, process) : FN.report(name, actions, form, process));
 
-  FN.report = (name, actions, form, process, owner) => options.functions.show.report(name, [options.functions.states.report.opened]
+  FN.report = (name, actions, form, process, owner, permissions) => options.functions.show.report(name, [options.functions.states.report.opened]
       .concat(!actions || (actions.editable && !actions.completed) ? [options.functions.states.report.editable] : [])
       .concat(actions && actions.signable ? [options.functions.states.report.signable] : [])
       .concat(actions && actions.completed ? [options.functions.states.report.complete] : []),
-    form, process, actions, owner);
+    form, process, actions, owner, permissions);
 
   FN.form = name => FN.generic(options.functions.edit.form, name ?
       options.state.application.forms.get(name).template : "", options.functions.files.type.forms)

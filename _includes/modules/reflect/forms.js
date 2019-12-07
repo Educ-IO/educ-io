@@ -67,7 +67,7 @@ Forms = function(loaded) {
       value;
   };
 
-  var _create = (id, template, editable, signable, completed, preview, respondent) => {
+  var _create = (id, template, editable, signable, completed, preview, respondent, permissions) => {
 
     if (id && template) {
 
@@ -122,6 +122,7 @@ Forms = function(loaded) {
         fields: groups.join("\n").trim(),
         owner: _file ? _owner(_file) : "",
         respondent: respondent ? _user(respondent) : "",
+        permissions: permissions && permissions.length > 0 ? permissions : "",
         editable: editable,
         signable: signable,
         completed: completed,
@@ -283,9 +284,9 @@ Forms = function(loaded) {
       } : null;
     },
 
-    create: (id, template, editable, signable, completed, preview, respondent) => ({
+    create: (id, template, editable, signable, completed, preview, respondent, permissions) => ({
       template: template,
-      form: _create(id, template, editable, signable, completed, preview, respondent)
+      form: _create(id, template, editable, signable, completed, preview, respondent, permissions)
     }),
 
     scale: name => _get(name, ರ‿ರ.cache.scales),

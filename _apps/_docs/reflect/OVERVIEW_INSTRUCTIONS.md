@@ -1,0 +1,3 @@
+The form this report is based on requests that you grant a read-only __overview__ of your report when you save it. This is commonly used for reports which will be worked on over a period of time, so that __nominated people__ you work with can check on the progress of this report before you complete it.
+
+By granting this, the report will be __shared__ with the following users, granting them __read-only__ access to it.

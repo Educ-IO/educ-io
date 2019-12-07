@@ -66,11 +66,20 @@ Google_API = (options, factory) => {
     concurrent: 8,
     timeout: 60000,
   };
+  const PERMISSIONS_URL = {
+    name: "permissions",
+    url: "https://www.googleapis.com/",
+    rate: 1,
+    /* <!-- To stop Sharing Limit Rate Exceeded Errors --> */
+    concurrent: 1,
+    timeout: 60000,
+  };
   const SHEETS_URL = {
     name: "sheets",
     url: "https://sheets.googleapis.com/",
-    rate: 1,
-    concurrent: 1,
+    rate: 4,
+    /* <!-- 100 per 100 seconds --> */
+    concurrent: 2,
     timeout: 30000,
   };
   const SCRIPTS_URL = {
@@ -94,7 +103,7 @@ Google_API = (options, factory) => {
     concurrent: 1,
     timeout: 30000,
   };
-  const URLS = [GENERAL_URL, SHEETS_URL, SCRIPTS_URL, ADMIN_URL, CLASSROOM_URL];
+  const URLS = [GENERAL_URL, PERMISSIONS_URL, SHEETS_URL, SCRIPTS_URL, ADMIN_URL, CLASSROOM_URL];
   /* <!-- Network Constants --> */
 
   /* <!-- Internal Constants --> */
@@ -110,7 +119,7 @@ Google_API = (options, factory) => {
 
   const SKELETON = "id,name,size,parents,mimeType";
   const FIELDS = `kind,${SKELETON},description,version,webViewLink,webContentLink,iconLink,size,modifiedByMeTime,modifiedTime,hasThumbnail,thumbnailLink,starred,shared,properties,appProperties,teamDriveId,driveId,ownedByMe,capabilities,isAppAuthorized`;
-  const FULL = `${FIELDS},createdTime,modifiedTime,sharingUser,owners`;
+  const FULL = `${FIELDS},createdTime,modifiedTime,sharingUser,owners,permissions`;
 
   const EVENTS = {
     SEARCH: {
@@ -573,25 +582,25 @@ Google_API = (options, factory) => {
 
         return {
 
-          user: (user, role) => _call(NETWORKS.general.post, _url, {
+          user: (user, role) => _call(NETWORKS.permissions.post, _url, {
             type: "user",
             emailAddress: user,
             role: role
           }),
 
-          group: (group, role) => _call(NETWORKS.general.post, _url, {
+          group: (group, role) => _call(NETWORKS.permissions.post, _url, {
             type: "group",
             emailAddress: group,
             role: role
           }),
 
-          domain: (domain, role) => _call(NETWORKS.general.post, _url, {
+          domain: (domain, role) => _call(NETWORKS.permissions.post, _url, {
             type: "domain",
             domain: domain,
             role: role
           }),
 
-          anyone: role => _call(NETWORKS.general.post, _url, {
+          anyone: role => _call(NETWORKS.permissions.post, _url, {
             type: "anyone",
             role: role
           }),

@@ -22,7 +22,7 @@ App = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-
+  
   /* <-- Is Report Dirty (e.g. has unsaved changes) Function --> */
   FN.dirty = report => !ರ‿ರ.hash || ರ‿ರ.hash !== new Hashes.MD5().hex(ಱ.strings.stringify(report, FN.replacers.signing));
   
@@ -73,8 +73,9 @@ App = function() {
           application: ಱ
         }
       };
-     _.each(["Decode", "Scales", "Elicit", "Helper", "Show", "Edit", "Create", "Prompt", "Process", "Action", "Export", "Load", "Save"], 
-            module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+     _.each(["Decode", "Scales", "Elicit", "Helper", "Show", "Edit", "Create",
+              "Prompt", "Process", "Action", "Export", "Load", "Save"], 
+                module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
       
     },
 
@@ -207,6 +208,7 @@ App = function() {
               parent: null,
               include_folders: false,
               team: false,
+              full: true,
             }),
             success: value => FN.load.file(value.result)
               .then(() => FN.action.recent(value.result, true))
@@ -215,7 +217,7 @@ App = function() {
           },
 
           import: {
-            clean: true,
+            reset: true,
             success: value => ಠ_ಠ.Google.reader().promiseAsText(value.result)
               .then(content => JSON.parse(content))
               .then(value => value.form && value.report ?
@@ -229,6 +231,9 @@ App = function() {
           },
 
           load: {
+            options: {
+              full: true, 
+            },
             success: value => FN.load.file(value.result)
               .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e).negative())
               .then(ಠ_ಠ.Main.busy("Loading")),
@@ -457,7 +462,7 @@ App = function() {
               },
               form: {
                 matches: /FORM/i,
-                state: FN.states.report.opened,
+                state: FN.states.form.opened,
                 keys: ["alt+s", "alt+S"],
                 requires: "html2canvas",
                 fn: () => FN.save.form(ರ‿ರ.preview)
@@ -516,6 +521,7 @@ App = function() {
 
           create: {
             matches: /CREATE/i,
+            reset: true,
             length: 0,
             fn: () => FN.prompt.create(
                 [FN.prompt.scales(), FN.prompt.forms(), FN.prompt.reports(), FN.prompt.trackers()])
@@ -614,6 +620,14 @@ App = function() {
             fn: () => ಱ.notify.success("Testing Notification", "Here is some <b>HTML</b> body text for testing. Some of it is <em>italic</em>, and some <u>underlined</u> or <s>striked through</s>.", 100000)
           },
 
+          overview: {
+            matches: /OVERVIEW/i,
+            length: 0,
+            state: [FN.states.report.opened, FN.states.file.loaded],
+            all: true,
+            fn: () => FN.action.overview()
+          },
+          
         },
         route: () => false,
         /* <!-- PARAMETERS: handled, command --> */

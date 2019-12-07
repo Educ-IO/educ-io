@@ -113,6 +113,36 @@ Router = function() {
       fn: command => (_tests.state = (STATE.enter(STATE_TEST_4) && command === null)) && _routed(command),
     };
 
+    APP.hooks.routes.test_override_8 = {
+      matches: [/^TEST$/i, /^STATE$/i, /^ANY$/i],
+      length: 0,
+      state: [STATE_TEST_1, STATE_TEST_2],
+      fn: command => (_tests.state_any = command === null) && _routed(command),
+    };
+    
+    APP.hooks.routes.test_override_9 = {
+      matches: [/^TEST$/i, /^STATE$/i, /^ANY$/i, /^NEG$/i],
+      length: 0,
+      state: [STATE_TEST_1, STATE_TEST_2],
+      fn: command => (_tests.state_any_neg = command === null) && _routed(command),
+    };
+    
+    APP.hooks.routes.test_override_10 = {
+      matches: [/^TEST$/i, /^STATE$/i, /^ALL$/i],
+      length: 0,
+      state: [STATE_TEST_1, STATE_TEST_2],
+      all: true,
+      fn: command => (_tests.state_all = command === null) && _routed(command),
+    };
+    
+    APP.hooks.routes.test_override_11 = {
+      matches: [/^TEST$/i, /^STATE$/i, /^ALL$/i, /^NEG$/i],
+      length: 0,
+      state: [STATE_TEST_1, STATE_TEST_2],
+      all: true,
+      fn: command => (_tests.state_all_neg = command === null) && _routed(command),
+    };
+    
     APP.hooks.routes.test = {
       matches: /^TEST$/i,
       fn: command => _tests.simple = (command === null),
@@ -339,8 +369,36 @@ Router = function() {
         expect(STATE.in(STATE_TEST_1)).to.be.true;
         expect(command).to.have.lengthOf(2);
         resolve(true);
-      })),
-
+      }))
+      .then(result => result === true ? Promise.resolve(STATE.enter(GEN.o([STATE_TEST_1, STATE_TEST_2])))
+        .then(() => _simple("State (ANY) Router", "test.state.any", (handled, command) => new Promise(resolve => {
+          expect(_tests.state_any).to.be.true;
+          expect(handled).to.be.true;
+          expect(command).to.have.lengthOf(3);
+          resolve(true);
+        }))) : result)
+      .then(result => result === true ? Promise.resolve(STATE.exit([STATE_TEST_1, STATE_TEST_2]))
+        .then(() => _simple("State (ANY | NEG) Router", "test.state.any.neg", (handled, command) => new Promise(resolve => {
+          expect(_tests.state_any_neg).to.not.be.true;
+          expect(handled).to.not.be.true;
+          expect(command).to.have.lengthOf(4);
+          resolve(true); 
+        }))) : result)
+      .then(result => result === true ? Promise.resolve(STATE.enter([STATE_TEST_1, STATE_TEST_2]))
+        .then(() => _simple("State (ALL) Router", "test.state.all", (handled, command) => new Promise(resolve => {
+          expect(_tests.state_all).to.be.true;
+          expect(handled).to.be.true;
+          expect(command).to.have.lengthOf(3);
+          resolve(true); 
+        }))) : result)
+      .then(result => result === true ? Promise.resolve(STATE.change([STATE_TEST_1, STATE_TEST_2], GEN.o([STATE_TEST_1, STATE_TEST_2])))
+        .then(() => _simple("State (ALL | NEG) Router", "test.state.all.neg", (handled, command) => new Promise(resolve => {
+          expect(_tests.state_all_neg).to.not.be.true;
+          expect(handled).to.not.be.true;
+          expect(command).to.have.lengthOf(4);
+          resolve(true); 
+        }))) : result),
+    
     test_Router_Complex: () => {
       STATE.enter(STATE_TEST_1);
       return _simple("Complex Router", "test.override.abcd12345", (handled, command) => new Promise(resolve => {

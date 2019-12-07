@@ -32,10 +32,11 @@ Load = (options, factory) => {
         revisions: file.capabilities && file.capabilities.canReadRevisions
       },
       owner: file.ownedByMe ? null : file.owners && file.owners.length > 0 ? file.owners[0] : null,
+      permissions: file.permissions ? _.reject(file.permissions, permission => permission.deleted || permission.role == "owner") : [],
     }))
     .then(value =>
       factory.Google.files.is(options.functions.files.type.report)(file) ?
-        options.functions.process.report(value.content, value.actions, value.owner) :
+        options.functions.process.report(value.content, value.actions, value.owner, value.permissions) :
         factory.Google.files.is(options.functions.files.type.form)(file) ?
           options.functions.process.form(value.content, value.actions) :
           factory.Google.files.is(options.functions.files.type.analysis)(file) ?

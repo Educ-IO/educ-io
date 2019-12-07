@@ -8,9 +8,14 @@
 		{{#if description}}<!-- {{description}} -->{{/if}}
     
     {{#if title}}<div class="d-flex mb-2 mb-xl-3">
+      
     	{{#if (any editable completed)}}<div class="d-inline-flex mr-1">
       	<i class="material-icons md-24 text-primary align-self-center"
            {{#if completed}} data-toggle="tooltip" data-html="true" title="Report is <strong>completed</strong> and <strong>locked</strong> against editing"{{/if}}>{{#if completed}}lock{{else}}lock_open{{/if}}</i>
+      </div>{{/if}}
+      {{#if permissions}}<div class="d-inline-flex mr-1">
+      	<i class="material-icons md-18 text-light border border-light rounded bg-dark o-25 p-1 align-self-center"
+           data-toggle="tooltip" data-html="true" title='{{#each permissions}}{{> permission}}{{/each}}'>group</i>
       </div>{{/if}}
     	<h4 id="{{id}}_title" class="p-0 m-0">{{title}}</h4>
       <a href="#" class="d-inline-flex text-decoration-none ml-auto"

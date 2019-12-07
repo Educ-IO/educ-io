@@ -163,6 +163,7 @@ templates:
   - shared/cell
   - shared/hyperlink
   - shared/email
+  - shared/permission
   - fields/field_validation
   - fields/field_general
   - fields/field_additions
@@ -221,6 +222,7 @@ docs:
   - reflect/REPORT_INSTRUCTIONS
   - reflect/EVIDENCE_INSTRUCTIONS
   - reflect/FORM_INSTRUCTIONS
+  - reflect/OVERVIEW_INSTRUCTIONS
   - reflect/URL
   - reflect/FILE
   - reflect/CREATE

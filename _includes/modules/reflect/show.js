@@ -20,10 +20,10 @@ Show = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Display Functions --> */
-  FN.report = (name, state, form, process, actions, owner) => {
+  FN.report = (name, state, form, process, actions, owner, permissions) => {
     
     var _initial = form ?
-      options.state.application.forms.create(name, form, actions.editable, actions.signable, actions.completed, null, owner) :
+      options.state.application.forms.create(name, form, actions.editable, actions.signable, actions.completed, null, owner, permissions) :
       options.state.application.forms.get(name, true, false),
       _return = _initial.form;
     options.state.session.template = _initial.template;
@@ -47,7 +47,7 @@ Show = (options, factory) => {
     /* <!-- Handle Default Form Submission (Keyboard) etc. | Maybe doesn't get triggered? --> */
     _form.submit(actions && actions.editable ? e => {
       e.preventDefault();
-      options.functions.action.save.report().then(result => result ? options.functions.process.signatures() : false);
+      options.functions.save.report(true).then(result => result ? options.functions.process.signatures() : false);
     } : e => e.preventDefault());
 
     /* <!-- Process Scale Hookups --> */
@@ -68,7 +68,7 @@ Show = (options, factory) => {
   
   FN.form = value => {
     if (value) {
-      factory.preview = value;
+      options.state.session.preview = value;
       var _form = options.state.application.forms.create("preview_Form", JSON.parse(value), false, false, false, true);
       _form.target = factory.container.empty();
       factory.Display

@@ -152,6 +152,8 @@ App = function() {
     _promisify(_start)
       .then(value => _promisify(_command, value))
       .then(result => {
+        result = _.isArray(result) ? _.reduce(result, 
+          (outcome, result) => outcome === false || result === false ? false : result, null) : result;
         _outcome = _update((_result = result), expected);
         return _promisify(_finish, {
           test: test,

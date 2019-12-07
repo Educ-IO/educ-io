@@ -1,7 +1,7 @@
 {% raw %}
 <div id="{{id}}" class="row px-4 pt-1 pb-3" data-output-field="Email">
   {{#each values}}
-  	{{> pill type="bright" value=this }}
+  	{{> pill type="bright" value=this readonly=../readonly }}
   {{/each}}
 </div>
 {% endraw %}

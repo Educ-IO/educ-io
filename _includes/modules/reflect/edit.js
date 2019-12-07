@@ -52,10 +52,10 @@ Edit = (options, factory) => {
     })
     .then(values => values && options.state.session.file ?
       mimeType == options.functions.files.type.form ?
-      options.functions.show.form(values) :
-      factory.Google.files.upload(null, values, options.state.session.file.mimeType, null, options.state.session.file.id, true)
-      .then(factory.Main.busy("Updating"))
-      .then(uploaded => options.state.session.file = uploaded) :
+        options.functions.show.form(values) :
+        factory.Google.files.upload(null, values, options.state.session.file.mimeType, null, options.state.session.file.id, true)
+          .then(factory.Main.busy("Updating"))
+          .then(uploaded => options.state.session.file = uploaded) :
       values)
     .catch(e => {
       if (clean) factory.Router.clean(true);
