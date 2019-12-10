@@ -20,7 +20,7 @@ Calendar = (options, factory) => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  FN.confirmed = event => {
+  var _confirmed = event => {
     var _confirmed = attendees => {
       var _confirmed = null;
       _.each(attendees, attendee => {
@@ -35,6 +35,10 @@ Calendar = (options, factory) => {
     };
     return event.resources || event.attendees ?  _confirmed(event.resources || event.attendees) : null;
   };
+  /* <!-- Internal Functions --> */
+  
+  /* <!-- Public Functions --> */
+  FN.confirmed = events => _.isArray(events) ? _.chain(events).flatten().map(_confirmed).value() : _confirmed(events);
   
   FN.properties = event => event.extendedProperties && event.extendedProperties.private ? 
                     event.extendedProperties.private : {};
@@ -69,7 +73,7 @@ Calendar = (options, factory) => {
   FN.who = event => event.organizer ? 
               event.organizer.displayName ? factory.Display.username(event.organizer.displayName) :
               event.organizer.email : "";
-  /* <!-- Internal Functions --> */
+  /* <!-- Public Functions --> */
 
   /* <!-- Initial Calls --> */
 

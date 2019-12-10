@@ -69,8 +69,8 @@ Bookings = (options, factory) => {
       /* <!-- Verify partner time is valid (in the same period of availability) --> */
       if (!_other || !_other.isValid()) return;
       var _valid = _action == "start" ?
-        _other.isAfter(_time) && _time.isSameOrBefore(_period.until) :
-        _other.isBefore(_time) && _time.isSameOrAfter(_period.from);
+        _other.isAfter(_time) && _other.isSameOrBefore(_period.until) :
+        _other.isBefore(_time) && _other.isSameOrAfter(_period.from);
 
       /* <!-- Mark Partner as Valid / Invalid --> */
       _valid ? FN.action.valid(_partner) : FN.action.invalid(_partner);
@@ -90,29 +90,38 @@ Bookings = (options, factory) => {
          /* <!-- Create Last Updater Function --> */
         ರ‿ರ.last = ((id, name, children) => silent => {
           
-          var _renderer = options.functions.render.group("group", name);
+          var _resources = _.pluck(children, "email"),
+              _renderer = options.functions.render.group("group", name),
+              _rendered;
               
-          return options.functions.data.busy(_.pluck(children, "email")).then(results => {
+          return options.functions.data.busy(_resources).then(results => {
 
-            var _render = (periods, number) => Promise.resolve(_renderer(periods, children.length))
-                  .then(FN.hookup.number(value => 
-                    options.functions.render.availability(
-                      options.functions.process.busy(results.calendars, children.length - value)
-                    )
-                  ))
-                  .then(FN.hookup.book(options.functions.process.available(periods, number))),
-                _periods = options.functions.process.busy(results.calendars, children.length - 1);
+            var _update = number => {
+              
+              var _periods = options.functions.process.busy(results.calendars, _resources.length - number);
+              
+              /* <!-- Update Booker Function --> */
+              ರ‿ರ.book = options.functions.data.book.group(factory.me.email, results.calendars, number);
+              
+              FN.hookup.book(options.functions.process.available(_periods))(_rendered);
+              
+              return options.functions.render.availability(_periods);
+            }, 
+            _render = periods => Promise.resolve(_rendered = _renderer(periods, _resources.length))
+                  .then(FN.hookup.number(_update))
+                  .then(FN.hookup.book(options.functions.process.available(periods))),
+                _periods = options.functions.process.busy(results.calendars, _resources.length - 1);
             
-            _render(_periods, 1);
+            /* <!-- Create Booker Function --> */
+            ರ‿ರ.book = options.functions.data.book.group(factory.me.email, results.calendars, 1);
+            
+            _render(_periods);
             
           })
             .catch(e => factory.Flags.error("Busy Retrieval Error", e))
             .then(silent ? true : factory.Main.busy("Checking Availability"));
           
         })(id, name, children);
-
-        /* <!-- Create Booker Function --> */
-        /* <!-- ರ‿ರ.book = options.functions.data.book(factory.me.email, id); --> */
 
         ರ‿ರ.last();
         
@@ -144,7 +153,7 @@ Bookings = (options, factory) => {
       })(id, name);
       
       /* <!-- Create Booker Function --> */
-      ರ‿ರ.book = options.functions.data.book(factory.me.email, id);
+      ರ‿ರ.book = options.functions.data.book.one(factory.me.email, id);
 
       ರ‿ರ.last();
       
@@ -186,8 +195,11 @@ Bookings = (options, factory) => {
           factory.Flags.log("Booking Form Result:", result);
           if (!result) return;
           return ರ‿ರ.book(form.serializeArray())
-            .then(result => result && result.htmlLink && 
-                    options.functions.calendar.confirmed(result) !== null ?
+            .then(result => result && options.functions.calendar.confirmed(result) !== null ?
+                      _.isArray(result) ?
+                        options.state.application.notify.success(`${result.length} Resource${result.length > 1 ? "s" : ""} Booked`, factory.Display.doc.get({
+                          name: "SUCCESSFUL_GROUP_BOOK"
+                        })) :
                       options.state.application.notify.success("Resource Booked", factory.Display.doc.get({
                         name: "SUCCESSFUL_BOOK",
                         content: result.htmlLink
@@ -196,6 +208,7 @@ Bookings = (options, factory) => {
                                                            "Booking Failed", "FAILED_BOOK"))
             .then(() => factory.App.delay(1000).then(() => ರ‿ರ.last(true)));
         })
+        .catch(e => factory.Flags.error("Booking Error", e))
         .then(factory.Main.busy("Booking")),
     
     book: e => {

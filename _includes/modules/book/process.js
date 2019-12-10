@@ -35,7 +35,7 @@ Process = (options, factory) => {
                     })
                     .value();
 
-  FN.periods = events => _.reduce(events, (memo, event, index) => {
+  FN.periods = events => _.chain(events).reduce((memo, event, index) => {
 
     var _convert = value => value / 24 * 100,
       _from = factory.Dates.parse(event.start.dateTime || event.start),
@@ -68,8 +68,11 @@ Process = (options, factory) => {
       });
 
       /* <!-- Final Free Period of the Day --> */
-      if (index == events.length - 1 && memo[memo.length - 1].from)
-        memo[memo.length - 1].until = memo[memo.length - 1].from.clone().endOf("day");
+      if (index == events.length - 1 && memo[memo.length - 1].from) {
+        var _final = memo[memo.length - 1];
+        _final.until = _final.from.clone().endOf("day");
+        _final.time = options.functions.calendar.times(_final.from, _final.until);
+      }
 
     }
 
@@ -80,7 +83,9 @@ Process = (options, factory) => {
     until: factory.Dates.parse(options.state.session.current).add(1, "day"),
     start: 0,
     width: 100,
-  }]);
+  }]).each((event, index, events) => {
+      if (index > 0 && event.title !== undefined && events[index - 1].title !== undefined && !events[index - 1].class) event.class = "danger";
+    }).value();
 
   FN.busy = (calendars, tolerance) => {
     
@@ -94,43 +99,47 @@ Process = (options, factory) => {
 
         memo = _.reduce(memo, (memo, existing) => {
 
-          if (!_handled && existing.start.isSameOrBefore(_end) && existing.end.isSameOrAfter(_start)) {
+          if (!_handled && existing.start.isBefore(_end) && existing.end.isAfter(_start)) {
             /* <!-- We have an intersection --> */
 
-            /* <!-- Handle Existing Starts before our current Busy period --> */
+            /* <!-- 1/ Handle Existing Starts before our current Busy period --> */
             if (existing.start.isBefore(_start)) {
               memo.push({
                 start: factory.Dates.parse(existing.start),
                 end: factory.Dates.parse(_start),
                 resources: _.clone(existing.resources),
+                case: 1
               });
               existing.start = _start;
             }
 
-            /* <!-- Handle Existing Ends after our current Busy period --> */
+            /* <!-- 2/ Handle Existing Ends after our current Busy period --> */
             if (existing.end.isAfter(_end)) {
               memo.push({
                 start: factory.Dates.parse(_end),
                 end: factory.Dates.parse(existing.end),
                 resources: _.clone(existing.resources),
+                case: 2
               });
               existing.end = _end;
             }
 
-            /* <!-- Handle Current Starts before Existing --> */
+            /* <!-- 3/ Handle Current Starts before Existing --> */
             if (_start.isBefore(existing.start)) memo.push({
                 start: factory.Dates.parse(_start),
                 end: factory.Dates.parse(existing.start),
                 resources: [key],
+                case: 3
               });
 
-            /* <!-- Handle Current Ends after Existing --> */
+            /* <!-- 4/ Handle Current Ends after Existing --> */
             if (_end.isAfter(existing.end)) memo.push({
                 start: factory.Dates.parse(existing.end),
                 end: factory.Dates.parse(_end),
                 resources: [key],
+                case: 4
               });
-
+            
             /* <!-- Update Existing --> */
             existing.resources.push(key);
             _handled = true;
@@ -155,7 +164,7 @@ Process = (options, factory) => {
     }, []);
     
     /* <!-- Filter by Busy periods below the tolerance threshold (e.g. has enough resources) --> */
-    return FN.periods(_.reject(_all, busy => busy.resources.length <= tolerance));
+    return FN.periods(_.chain(_all).reject(busy => busy.resources.length <= tolerance).sortBy("end").sortBy("start").value());
     
   };
   

@@ -60,7 +60,8 @@ Hookup = (options, factory) => {
   FN.book = periods => parent => (
       parent.find("input.times")
         .off("input.times")
-        .on("input.times", _debounce.check(periods)),
+        .on("input.times", _debounce.check(periods))
+        .trigger("input"), /* <!-- Input is triggered to re-check exist --> */
       parent.find("button.btn-primary")
         .off("click.book")
         .on("click.book", options.action.book), parent);
