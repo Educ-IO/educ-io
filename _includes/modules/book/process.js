@@ -108,7 +108,6 @@ Process = (options, factory) => {
                 start: factory.Dates.parse(existing.start),
                 end: factory.Dates.parse(_start),
                 resources: _.clone(existing.resources),
-                case: 1
               });
               existing.start = _start;
             }
@@ -119,7 +118,6 @@ Process = (options, factory) => {
                 start: factory.Dates.parse(_end),
                 end: factory.Dates.parse(existing.end),
                 resources: _.clone(existing.resources),
-                case: 2
               });
               existing.end = _end;
             }
@@ -129,7 +127,6 @@ Process = (options, factory) => {
                 start: factory.Dates.parse(_start),
                 end: factory.Dates.parse(existing.start),
                 resources: [key],
-                case: 3
               });
 
             /* <!-- 4/ Handle Current Ends after Existing --> */
@@ -137,7 +134,6 @@ Process = (options, factory) => {
                 start: factory.Dates.parse(existing.end),
                 end: factory.Dates.parse(_end),
                 resources: [key],
-                case: 4
               });
             
             /* <!-- Update Existing --> */

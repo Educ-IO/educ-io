@@ -60,9 +60,10 @@ Calendar = (options, factory) => {
     var _resources = _.filter(event.attendees, attendee => attendee.resource === true);
     if (!_resources || _resources.length === 0) return;
     return _.chain(_resources)
-      .map(resource => _.extend(resource, _.omit(options.state.application.resources.get(resource.email), ["meta", "$loki"])))
+      .map(resource => _.extend(_.clone(resource), _.omit(options.state.application.resources.get(resource.email), ["meta", "$loki"])))
       .flatten()
-      .value();
+      .value()
+      .sort(factory.Strings().sort("name"));
   };
   
   FN.resource = event => {

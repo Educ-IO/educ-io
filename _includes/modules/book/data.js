@@ -50,7 +50,8 @@ Data = (options, factory) => {
         var privilege = _.find(privileges.items, item => item.serviceName == "calendar");
         return !!(privilege && privilege.childPrivileges && _.find(privilege.childPrivileges, 
           child => child.serviceName == "calendar" && child.privilegeName == "CALENDAR_RESOURCE"));
-      });
+      })
+      .catch(e => e.status == 403 ? false : factory.Flags.error("Privileges Error", e).reflect(false));
   
   FN.book = {
     

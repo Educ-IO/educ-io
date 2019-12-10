@@ -4,15 +4,15 @@
   <div class="d-flex w-100 justify-content-between align-items-center{{#if children}} mb-2{{/if}}">
     <div{{~#if children}} class="d-flex align-items-center"{{/if~}}>
       {{~#if (all selectable email)}}<div class="custom-control custom-switch d-inline">
-        <input type="checkbox" class="custom-control-input" id="select_{{id}}" data-id="{{email}}"
+        <input type="checkbox" class="custom-control-input" id="select_{{replace id '\s' ''}}" data-id="{{email}}"
                data-name="{{either name title}}"{{#if toggled}} checked{{/if}}>
-        <label class="custom-control-label" for="select_{{id}}"></label>
+        <label class="custom-control-label" for="select_{{replace id '\s' ''}}"></label>
       </div>{{/if~}}
       {{~#if children}}<div class="d-inline mr-2">
         <button class="btn btn-link d-inline-flex text-decoration-none collapsed py-1 px-2 rounded" type="button" data-toggle="collapse"
-                data-target="#{{id}}_children" aria-expanded="false" aria-controls="{{id}}_children">
-          <i class="material-icons md-18" data-listen="#{{id}}_children" data-event="hide.bs.collapse">expand_more</i>
-          <i class="material-icons md-18" data-listen="#{{id}}_children" data-event="show.bs.collapse" style="display: none;">expand_less</i>
+                data-target="#{{replace id '\s' ''}}_children" aria-expanded="false" aria-controls="{{replace id '\s' ''}}_children">
+          <i class="material-icons md-18" data-listen="#{{replace id '\s' ''}}_children" data-event="hide.bs.collapse">expand_more</i>
+          <i class="material-icons md-18" data-listen="#{{replace id '\s' ''}}_children" data-event="show.bs.collapse" style="display: none;">expand_less</i>
         </button>
       </div>
       {{~#unless selectable}}<div class="resource-group c-pointer d-inline rounded p-1" data-group="{{id}}" data-name="{{either name title}}">{{/unless~}}{{/if~}}
@@ -25,7 +25,7 @@
     </div>
     {{#if icon}}<i class="material-icons md-18 text-light bg-dark p-1 rounded" data-toggle="tooltip" data-html="true" title="<strong>Type:</strong> {{type}}">{{icon}}</i>{{/if}}
   </div>
-  {{~#if children}}<div id="{{id}}_children" data-group="{{id}}"
+  {{~#if children}}<div id="{{replace id '\s' ''}}_children" data-group="{{id}}"
                         class="w-100 list-group list-group-flush list-group-dark resource-list collapse bg-transparent{{#if expanded}} show{{/if}}">
     {{#each children}}{{> resource this selectable=../selectable simple=../simple class="bg-transparent"}}{{/each}}
   </div>{{/if~}}

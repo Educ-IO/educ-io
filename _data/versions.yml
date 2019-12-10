@@ -1,4 +1,8 @@
 site :
+  0.1.7a :
+    name : Book v0.0.3b-beta
+    desc : Bug Fixes in Book App
+    numeric : 0.1.7.1
   0.1.7 :
     name : Book v0.0.3a-beta
     desc : Group Resource Bookings in Book App
@@ -1208,6 +1212,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.3b-beta :
+    name : Bug Fixes for Group Bookings and Privileges
+    type : minor
   0.0.3a-beta :
     name : Book Groups of Resources
     type : minor

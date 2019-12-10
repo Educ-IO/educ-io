@@ -41,14 +41,14 @@ Render = (options, factory) => {
       id: id,
       title: title,
       subtitle: options.state.session.current.format(options.format),
-      resources: data,
+      data: data,
       selectable: selectable,
       simple: simple,
       instructions: instructions,
       clear: true,
       target: factory.container
     });
-  
+      
   FN.search = (template, selectable, simple, target) => value => options.functions.data.resources(value)
       .then(data => {
     

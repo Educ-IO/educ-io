@@ -867,12 +867,21 @@ Google_API = (options, factory) => {
 
       },
       
-      busy: (ids, start, end, zone) => _call(NETWORKS.general.post, "calendar/v3/freeBusy", {
-        timeMin: start ? start.toISOString() : null,
-        timeMax: end ? end.toISOString() : null,
-        timeZone: zone ? zone : null,
-        items: _.map(ids, id => ({id : id})),
-      }, "application/json"),
+      busy: (ids, start, end, zone) => {
+        var _limit = 50,
+            _action = identifiers => _call(NETWORKS.general.post, "calendar/v3/freeBusy", {
+              timeMin: start ? start.toISOString() : null,
+              timeMax: end ? end.toISOString() : null,
+              timeZone: zone ? zone : null,
+              calendarExpansionMax: identifiers.length,
+              items: _.map(identifiers, id => ({id : id})),
+            }, "application/json");
+        return ids.length > _limit ? Promise.all(_.map(_.chunk(ids, _limit), _action))
+          .then(results => _.reduce(_.rest(results), (memo, result) => {
+            memo.calendars = _.extend(memo.calendars, result.calendars);
+            return memo;
+          }, results[0])) : _action(ids);
+      },
       
     },
 

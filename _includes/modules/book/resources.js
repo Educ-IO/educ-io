@@ -113,11 +113,11 @@ Resources = function(loaded) {
     
     safe: () => ಱ.loaded,
     
-    find: search => search ? 
-      ರ‿ರ.resources.chain()
-      .find({title: {"$regex": [RegExp.escape(search), "i"]}})
-      .sort(FN.sort)
-      .data() : ರ‿ರ.resources.data.sort(FN.sort),
+    find: search => {
+      var ret = ರ‿ರ.resources.chain();
+      if (search) ret = ret.find({title: {"$regex": [RegExp.escape(search), "i"]}});
+      return ret.sort(FN.sort).data();
+    },
     
     children: parent => ರ‿ರ.resources.chain()
       .find({parent: {"$regex": [RegExp.escape(parent), "i"]}})

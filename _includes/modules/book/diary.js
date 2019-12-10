@@ -8,7 +8,6 @@ Diary = (options, factory) => {
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
       id: "DIARY",
-      format: "Do MMM"
     },
     FN = {};
   /* <!-- Internal Constants --> */
@@ -37,50 +36,13 @@ Diary = (options, factory) => {
                                 
   };
   
-  FN.data = {
-
-    events: () => factory.Google.calendar.list(factory.me.email, options.state.session.current.toDate(),
-      factory.Dates.parse(options.state.session.current).add(1, "day").toDate()),
-    
-  };
+  FN.log = events => ((events.length > 0 ? factory.Flags.log("Loaded Events:", events) : false), events);
   
-  FN.render = {
-
-    all: data => factory.Display.template.show({
-      template: "diary",
-      id: options.id,
-      title: "Bookings",
-      subtitle: options.state.session.current.format(options.format),
-      events: data,
-      help: "book.view",
-      clear: true,
-      target: factory.container
-    }),
-
-    events: data => factory.Display.template.show({
-      template: "all",
-      events: data,
-      clear: true,
-      target: factory.container.find("#events")
-    }),
-    
-    refresh: () => {
-
-      /* <!-- Update Date --> */
-      factory.container.find(`#${options.id} .subtitle`)
-        .text(options.state.session.current.format(options.format));
-      
-      /* <!-- Get Data and Call Render Function --> */
-      return FN.show(FN.render.events);
-    },
-  };
-  
-  FN.show = renderer => FN.data.events()
+  FN.load = render => options.functions.data.events(factory.me.email)
                           .then(FN.process.booking)
                           .then(FN.process.events)
-                          .then(events => events && events.length > 0 ? 
-                                _.tap(events, events => factory.Flags.log("Loaded Events:", events)) : events)
-                          .then(renderer)
+                          .then(FN.log)
+                          .then(render)
                           .catch(e => factory.Flags.error("Events Retrieval Error", e))
                           .then(factory.Main.busy("Loading Bookings"));
   /* <!-- Internal Functions --> */
@@ -90,9 +52,10 @@ Diary = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
 
-    all: () => FN.show(FN.render.all),
+    all: () => FN.load(options.functions.render.view("diary", options.id, "Bookings", "book.view")),
 
-    refresh: FN.render.refresh,
+    refresh: options.functions.render.refresh(options.id,
+              () => FN.load(options.functions.render.events("all", "Events"))),
 
   };
   /* <!-- External Visibility --> */
