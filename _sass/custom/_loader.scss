@@ -140,7 +140,7 @@ div.loader {
   }
 }
 
-.btn:not([class^="btn-outline-"]):not([class*=" btn-outline-"]):not([class^="btn-light"]):not([class*=" btn-light"]) {
+.btn:not([class^="btn-outline-"]):not([class*=" btn-outline-"]):not([class^="btn-light"]):not([class*=" btn-light"]):not([class^="btn-link"]):not([class*=" btn-link"]) {
   i.material-icons {color: $colour-background-menu !important;}
   &.loader {
     .spinner {border-top-color: $colour-background-menu !important;}

@@ -1,0 +1,3 @@
+{% raw %}
+{{#each periods}}<div class="progress-bar {{#exists title}}progress-bar-striped bg-dark{{else}}bg-success o-25{{/exists}}" role="progressbar" style="width: {{width}}%" aria-valuenow="{{width}}" aria-valuemin="0" aria-valuemax="100" aria-describedby="availability_Help" data-toggle="tooltip" data-html="true" title="{{#if time}}<p class='p-0 m-0'><strong class='mr-1'>{{time}}</strong></p>{{/if}}{{#exists title}}<p class='p-0 m-0'>{{either title 'N/A'}}</p>{{#if organiser}}<p class='p-0 m-0 text-warning'>{{organiser}}</p>{{/if}}{{else}}<p class='p-0 m-0 text-success'>Available</p>{{/exists}}"></div>{{/each}}
+{% endraw %}

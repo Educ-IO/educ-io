@@ -99,7 +99,11 @@ modules:
   - book/query
   - book/schema
   - book/database
+  - book/data
   - book/calendar
+  - book/process
+  - book/render
+  - book/hookup
   - book/resources
   - book/bookings
   - book/diary
@@ -107,6 +111,7 @@ modules:
 scripts: 
   - extends/regex
   - extends/array
+  - extends/string
 templates:
   - options
   - choose
@@ -130,8 +135,10 @@ templates:
   - book/parts/search
   - book/parts/event
   - book/parts/events
+  - book/parts/group
   - book/parts/all
   - book/parts/confirmation
+  - book/parts/availability
   - book/tables/custom_properties
   - book/tables/custom_resource
   - book/tables/rows
@@ -189,6 +196,10 @@ scopes:
       name: View delegated admin roles for your domain
       reason: In order to manage bookings (loan and return) this permission is required.
       request: lazy
+    - scope: https://www.googleapis.com/auth/calendar.readonly
+      name: View your calendars
+      reason: In order to get availability of groups of bookable resources, this permission is required.
+      request: login
     - scope: https://www.googleapis.com/auth/calendar.events.readonly
       name: View events on all your calendars
       reason: In order to display bookable resources, this permission is required.
@@ -211,7 +222,7 @@ scopes:
       request: lazy
 keys:
   google:
-      general: AIzaSyDGCVVdb6-T7FMqORVUAoDASUOht341e9I
+      general: 
       oauth: 301423206398-deodq6jltqgm32odo6tt411hpdgld442.apps.googleusercontent.com
 menus:
   - name: Bookings

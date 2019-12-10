@@ -12,9 +12,15 @@ Resources = function(loaded) {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Constants --> */
-  const FEATURE = value => value.feature.name.trim(),
-        PARENT = value => value.toUpperCase().startsWith("PARENT:"),
-        EXTRACT = value => value ? value.split(":")[1].trim() : value;
+  const REGEXES = {
+          PARENT : /parent\s*:\s*([a-zA-Z]+[\s\S]*)/i,
+        },
+        CATEGORY = {
+          ROOM : "CONFERENCE_ROOM",
+        },
+        FEATURE = value => value.feature.name.trim(),
+        PARENT = value => REGEXES.PARENT.test(value),
+        EXTRACT = value => value ? (match => match ? match[1] : match)(REGEXES.PARENT.exec(value)) : value;
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Functions --> */
@@ -84,7 +90,7 @@ Resources = function(loaded) {
         .then(values => {
        
           /* <!-- Resources --> */
-          FN.populate.resources(values[0]);
+          FN.populate.resources(_.reject(values[0], value => value.resourceCategory == CATEGORY.ROOM));
         
           /* <!-- Features --> */
           FN.populate.features(values[1]);
@@ -112,6 +118,11 @@ Resources = function(loaded) {
       .find({title: {"$regex": [RegExp.escape(search), "i"]}})
       .sort(FN.sort)
       .data() : ರ‿ರ.resources.data.sort(FN.sort),
+    
+    children: parent => ರ‿ರ.resources.chain()
+      .find({parent: {"$regex": [RegExp.escape(parent), "i"]}})
+      .sort(FN.sort)
+      .data(),
     
     get: email => ರ‿ರ.resources.findOne({email: {"$eq": email}})
     

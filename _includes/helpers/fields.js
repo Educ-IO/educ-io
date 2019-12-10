@@ -103,18 +103,6 @@ Fields = (options, factory) => {
     factory.Display.tidy();
   };
 
-  var _listen = form => {
-
-    /* <!-- Wire up event / visibility listeners --> */
-    _.each(form.find("[data-listen]"), input => {
-      var _this = $(input);
-      $(_this.data("listen")).off(_this.data("event")).on(_this.data("event"), () => {
-        _this.show(500).siblings("[data-listen]").hide(500);
-      });
-    });
-
-  };
-
   var _updates = form => {
 
     /* <!-- Wire up select fields --> */
@@ -806,7 +794,7 @@ Fields = (options, factory) => {
   
   FN.start = () => {
     STEPS.first = [
-      _listen, _numerical, _erase, _radio, _menus,
+      _numerical, _erase, _radio, _menus,
       _complex, _reveal, _dim, _me, _datetime,
       _spans, _list, _doc, _updates, _range,
       _toggles, _load

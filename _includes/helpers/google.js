@@ -545,7 +545,7 @@ Google_API = (options, factory) => {
     networks: () => _.map(NETWORKS, network => network.details()),
 
     /* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
-    me: () => _call(NETWORKS.general.get, "oauth2/v1/userinfo?alt=json&key=" + KEY),
+    me: () => _call(NETWORKS.general.get, "oauth2/v1/userinfo?alt=json"),
 
     execute: (id, method, data) => _call(NETWORKS.scripts.post, `/v1/scripts/${id}:run`, {
       function: method,
@@ -866,7 +866,14 @@ Google_API = (options, factory) => {
         update: (id, event, data) => _call(NETWORKS.general.patch, `calendar/v3/calendars/${encodeURIComponent(id)}/events/${event}`, data, "application/json"),
 
       },
-
+      
+      busy: (ids, start, end, zone) => _call(NETWORKS.general.post, "calendar/v3/freeBusy", {
+        timeMin: start ? start.toISOString() : null,
+        timeMax: end ? end.toISOString() : null,
+        timeZone: zone ? zone : null,
+        items: _.map(ids, id => ({id : id})),
+      }, "application/json"),
+      
     },
 
     calendars: {
@@ -1182,7 +1189,7 @@ Google_API = (options, factory) => {
 
     url: {
 
-      insert: url => _call(NETWORKS.general.post, "urlshortener/v1/url?key=" + KEY, {
+      insert: url => _call(NETWORKS.general.post, `urlshortener/v1/url${KEY ? `?key=${KEY}` : ""}`, {
         longUrl: url
       }, "application/json"),
 

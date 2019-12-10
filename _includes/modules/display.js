@@ -187,15 +187,25 @@ Display = function() {
       _compile(name, raw) : Handlebars.templates[name];
 
   var _visuals = value => {
-    _popovers(value.find("[data-toggle='popover']"));
-    _tooltips(value.find("[data-toggle='tooltip']"));
-    _expands(value.find("[data-toggle='expand']"));
+    _popovers(value.find("[data-toggle='popover']").add(value.filter("[data-toggle='popover']")));
+    _tooltips(value.find("[data-toggle='tooltip']").add(value.filter("[data-toggle='tooltip']")));
+    _expands(value.find("[data-toggle='expand']").add(value.filter("[data-toggle='expand']")));
     return value;
   };
 
+  var _listen = element => {
+    _.each(element.find("[data-listen]"), input => {
+      var _this = $(input);
+      element.find(_this.data("listen")).off(_this.data("event")).on(_this.data("event"), () => {
+        _this.show(500).siblings("[data-listen]").hide(500);
+      });
+    });
+    return element;
+  };
+  
   var _process = value => {
     _routes(_visuals(value).find("a[data-route], button[data-route], input[data-route]"));
-    return value;
+    return _listen(value);
   };
   
   var _keys = (options, dialog) => {

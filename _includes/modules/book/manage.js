@@ -8,8 +8,6 @@ Manage = (options, factory) => {
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
       id: "MANAGE",
-      format: "Do MMM",
-      delay: 100,
       loaned: "LOANED",
       returned: "RETURNED",
     },
@@ -55,6 +53,36 @@ Manage = (options, factory) => {
   /* <-- Helper Functions --> */
   
   /* <!-- Internal Functions --> */
+  FN.access = events => {
+      
+      if (!events || events.length === 0) return Promise.resolve(events);
+      var source = _.find(ರ‿ರ.list, item => item.id == events[0].calendar);
+      
+      return (source ? Promise.resolve(source) : ರ‿ರ.admin === true ? Promise.resolve(ರ‿ರ.list[ರ‿ರ.list.push({
+        id : events[0].calendar,
+        manager : true
+      }) - 1]) : options.functions.data.calendar(events[0].calendar)
+                    .catch(e => e.status == 404 ? {id: events[0].calendar} : factory.Flags.error("Calendar List Error", e))
+        /* <!-- This only works for calendars added to a users calendar! --> */
+        .then(calendar => calendar ? ರ‿ರ.list[ರ‿ರ.list.push({
+          id : calendar.id,
+          manager : calendar.accessRole == "writer" || calendar.accessRole == "owner"
+        }) - 1] : {
+          id : events[0].calendar,
+          manager : false
+        })).then(calendar => _.map(events, event => _.tap(event, event => event.manageable = calendar.manager)));
+    };
+  
+  FN.admin = () => ರ‿ರ.admin === undefined ? options.functions.data.admin().then(admin => ರ‿ರ.admin = admin) : Promise.resolve(ರ‿ರ.admin),
+    
+  FN.event = event => {
+    event.what = options.functions.calendar.resources(event);
+    event.who = options.functions.calendar.who(event);
+    event.when = options.functions.calendar.time(event);
+    event.date = options.functions.calendar.date(event);
+    return event;
+  };
+  
   FN.get = id => ರ‿ರ.events.findOne({id: {"$eq": id}});
   
   FN.update = event => ರ‿ರ.events.update(event);
@@ -75,9 +103,17 @@ Manage = (options, factory) => {
   
   FN.process = (calendar, events) => _.map(events, event => _.tap(event, event => event.calendar = calendar)),
   
+  FN.refresh = () => Promise.all(_.map(ರ‿ರ.calendars, calendar => options.functions.data.events(calendar.id)
+                               .then(events => FN.process(calendar.id, events))))
+        .then(results => _.flatten(results))
+        .then(FN.access)
+        .then(events => options.functions.render.table(options.id)(FN.populate.events(options.functions.data.dedupe(ರ‿ರ.data = events))))
+        .then(factory.Main.busy("Loading Bookings"));
+  
   FN.confirm = {
     
-    status : (id, status) => FN.status(FN.get(id), status).then(event => event ? FN.render.refresh() : event),
+    status : (id, status) => FN.status(FN.get(id), status)
+      .then(event => event ? options.functions.render.refresh(options.id, FN.refresh) : event),
     
     remove : id => FN.confirm.status(id, null),
     
@@ -236,48 +272,6 @@ Manage = (options, factory) => {
     
   };
   
-  FN.data = {
-
-    admin: () => ರ‿ರ.admin === undefined ? factory.Google.admin.privileges()
-      .then(privileges => {
-        var privilege = _.find(privileges.items, item => item.serviceName == "calendar");
-        return (ರ‿ರ.admin = !!(privilege && privilege.childPrivileges && _.find(privilege.childPrivileges, 
-          child => child.serviceName == "calendar" && child.privilegeName == "CALENDAR_RESOURCE")));
-      }) : Promise.resolve(ರ‿ರ.admin),
-      
-    resources: search => options.state.application.resources.safe()
-      .then(resources => resources.find(search)),
-    
-    calendar: calendar => factory.Google.calendars.get(calendar),
-    
-    event: (calendar, id) => factory.Google.calendar.events.get(calendar, id),
-    
-    events: calendar => factory.Google.calendar.list(calendar, options.state.session.current.toDate(),
-      factory.Dates.parse(options.state.session.current).add(1, "day").toDate()),
-    
-    dedupe: events => _.uniq(events, false, "id"),
-    
-    access: events => {
-      if (!events || events.length === 0) return Promise.resolve(events);
-      var source = _.find(ರ‿ರ.list, item => item.id == events[0].calendar);
-      
-      return (source ? Promise.resolve(source) : ರ‿ರ.admin === true ? Promise.resolve(ರ‿ರ.list[ರ‿ರ.list.push({
-        id : events[0].calendar,
-        manager : true
-      }) - 1]) : FN.data.calendar(events[0].calendar)
-                    .catch(e => e.status == 404 ? {id: events[0].calendar} : factory.Flags.error("Calendar List Error", e))
-        /* <!-- This only works for calendars added to a users calendar! --> */
-        .then(calendar => calendar ? ರ‿ರ.list[ರ‿ರ.list.push({
-          id : calendar.id,
-          manager : calendar.accessRole == "writer" || calendar.accessRole == "owner"
-        }) - 1] : {
-          id : events[0].calendar,
-          manager : false
-        })).then(calendar => _.map(events, event => _.tap(event, event => event.manageable = calendar.manager)));
-    },
-    
-  };
-  
   FN.shortcut = (command, complete) => {
     if (command) {
       factory.Flags.log("RUN SHORTCUT", command);
@@ -287,104 +281,6 @@ Manage = (options, factory) => {
       }
       complete();
     }
-  };
-  
-  FN.action = {
-
-    target: e => $(e.target || e.currentTarget),
-    
-    search: e => FN.render.search(FN.action.target(e).val()),
-    
-    toggle: e => {
-      var target = FN.action.target(e);
-      var id = target.data("id"),
-        name = target.data("name"),
-        toggled = target.prop("checked");
-      
-      (options.state.application.resources.get(id).toggled = toggled) ? ರ‿ರ.calendars.push({
-          id: id,
-          name: name
-        }) : ರ‿ರ.calendars = _.reject(ರ‿ರ.calendars, calendar => calendar.id == id);
-      
-      factory.Flags.log(`${toggled ? "Toggled" : "DE-Toggled"} Resource with ID:`, id);
-      factory.Flags.log("Selected Calendars:", ರ‿ರ.calendars);
-      
-      (toggled ? FN.data.events(id).then(events => events && events.length > 0 ? 
-            ರ‿ರ.data.concat(FN.process(id, events)) : ರ‿ರ.data) :
-        Promise.resolve(_.reject(ರ‿ರ.data, event => event.calendar == id)))
-      .then(FN.data.access)
-      .then(data => {
-        factory.Flags.log("Calendar Events:", data);
-        FN.render.events(FN.data.dedupe(ರ‿ರ.data = data));
-      })
-      .then(factory.Main.busy("Loading Bookings"));
-    },
-    
-    shortcut: handler => e => {
-      
-      if (e.keyCode === 13) {
-        var _target = FN.action.target(e);
-        handler(_target.val(), () => _target.val(""));
-      }
-      
-    },
-    
-    resource: e => {
-      var target = FN.action.target(e);
-      if (!target.is("input.custom-control-input, label.custom-control-label")) {
-        e.preventDefault();
-        var _checkbox = (target.is(".resource-item") ? 
-            target : target.parents(".resource-item")).find("input.custom-control-input");
-        _checkbox.prop("checked", !_checkbox.prop("checked")).change();
-      }
-    }
-  };
-  
-  FN.hookup = {
-
-    toggle: items => items.off("change.toggle").on("change.toggle", FN.debounce.toggle),
-    
-    toggles: parent => _.tap(parent, parent => FN.hookup.toggle(parent.find("input.custom-control-input"))),
-    
-    resource: items => items.off("click.resource").on("click.resource", FN.action.resource),
-    
-    resources: parent => _.tap(parent, parent => FN.hookup.resource(parent.find("a.resource-item"))),
-    
-    search: parent => _.tap(parent, parent => parent.find("input.search")
-      .off("input.search")
-      .on("input.search", FN.debounce.search)),
-
-    shortcut: parent => _.tap(parent, parent => parent.find("input.shortcut")
-      .off("keyup.shortcut")
-      .on("keyup.shortcut", FN.action.shortcut(FN.shortcut))),
-    
-  };
-  
-  FN.debounce = {
-    
-    toggle : _.debounce(FN.action.toggle, options.delay * 5),
-
-    search : _.debounce(FN.action.search, options.delay),
-    
-  };
-  
-  FN.table = {
-    
-    headers: () => _.map(["ID", "When", "What", "Who", "Actions"], v => ({
-        name: v,
-        hide: function(initial) {
-          return !!(initial && this.hide_initially);
-        },
-        set_hide: function(now, always, initially) {
-          this.hide_initially = initially;
-        },
-        hide_always: false,
-        hide_now: false,
-        hide_initially: v === "ID" ? true : false,
-        field: v.toLowerCase(),
-        icons: v === "When" ? ["access_time"] : null
-      })),
-    
   };
   
   FN.populate = {
@@ -404,9 +300,8 @@ Manage = (options, factory) => {
         indices: ["when", "what", "who"]
       }, data, value => ({
         id: value.id,
-        when: value.start && value.start.dateTime ?
-          options.functions.calendar.times(factory.Dates.parse(value.start.dateTime),
-          factory.Dates.parse(value.end.dateTime)) : "",
+        date: options.functions.calendar.date(value),
+        when: options.functions.calendar.time(value),
         what: options.functions.calendar.resources(value),
         who: options.functions.calendar.who(value),
         properties: options.functions.calendar.properties(value),
@@ -416,93 +311,87 @@ Manage = (options, factory) => {
       })),
     
   };
-  
-  FN.render = {
-
-    manage: data => factory.Display.template.show({
-      template: "manage",
-      id: options.id,
-      title: "Manage",
-      subtitle: options.state.session.current.format(options.format),
-      resources: data,
-      selectable: true,
-      simple: true,
-      instructions: "manage",
-      clear: true,
-      target: factory.container
-    }),
-    
-    search: value => FN.data.resources(value)
-      .then(data => factory.Display.template.show({
-        template: "resources",
-        resources: data,
-        selectable: true,
-        simple: true,
-        clear: true,
-        target: factory.container.find("#resources")
-      }))
-      .then(FN.hookup.toggles)
-      .then(FN.hookup.resources),
-
-    events: data => factory.Datatable(factory, {
-        id: options.id,
-        name: options.id,
-        data: FN.populate.events(data),
-        headers: FN.table.headers(),
-      }, {
-        classes: ["table-hover"],
-        filters: {},
-        inverted_Filters: {},
-        sorts: {},
-        advanced: false,
-        collapsed: true,
-      }, factory.container.find("#details").empty()),
-    
-    refresh: () => {
-      
-      /* <!-- Update Date --> */
-      factory.container.find(`#${options.id} .subtitle`)
-        .text(options.state.session.current.format(options.format));
-      
-      return Promise.all(_.map(ರ‿ರ.calendars, calendar => FN.data.events(calendar.id)
-                               .then(events => FN.process(calendar.id, events))))
-        .then(results => _.flatten(results))
-        .then(FN.data.access)
-        .then(events => FN.render.events(FN.data.dedupe(ರ‿ರ.data = events)))
-        .then(factory.Main.busy("Loading Bookings"));
-      
-    },
-    
-  };
-  
+ 
   FN.booking = event => {
-    event.what = options.functions.calendar.resources(event);
-    event.who = options.functions.calendar.who(event);
-    event.when = options.functions.calendar.time(event);
-    event.date = options.functions.calendar.date(event);
+    event = FN.event(event);
     factory.Flags.log("Loan from Shortcut", event);
     return !event.extendedProperties || !event.extendedProperties.private || !event.extendedProperties.private.STATUS ?
       FN.log.out(event.id, event) : event.extendedProperties.private.STATUS == options.loaned ?
       FN.log.in(event.id, event) : false;
   };
+  
+  FN.action = {
+
+    target: e => $(e.target || e.currentTarget),
+    
+    search: e => options.functions.render.search("resources", true, true)(FN.action.target(e).val())
+                        .then(FN.hookup.toggle)
+                        .then(FN.hookup.resource),
+    
+    toggle: e => {
+      var target = FN.action.target(e);
+      var id = target.data("id"),
+          group = target.data("group"),
+          name = target.data("name"),
+          toggled = target.prop("checked");
+      
+      (options.state.application.resources.get(id || group).toggled = toggled) ? ರ‿ರ.calendars.push({
+          id: id,
+          name: name
+        }) : ರ‿ರ.calendars = _.reject(ರ‿ರ.calendars, calendar => calendar.id == id);
+      
+      factory.Flags.log(`${toggled ? "Toggled" : "DE-Toggled"} Resource with ID:`, id || group);
+      factory.Flags.log("Selected Calendars:", ರ‿ರ.calendars);
+      
+      (toggled ? options.functions.data.events(id).then(events => events && events.length > 0 ? 
+            ರ‿ರ.data.concat(FN.process(id, events)) : ರ‿ರ.data) :
+        Promise.resolve(_.reject(ರ‿ರ.data, event => event.calendar == id)))
+      .then(FN.access)
+      .then(data => {
+        factory.Flags.log("Calendar Events:", data);
+        options.functions.render.table(options.id)(FN.populate.events(options.functions.data.dedupe(ರ‿ರ.data = data)));
+      })
+      .then(factory.Main.busy("Loading Bookings"));
+    },
+    
+    shortcut: e => {
+      
+      if (e.keyCode === 13) {
+        var _target = FN.action.target(e);
+        FN.shortcut(_target.val(), () => _target.val(""));
+      }
+      
+    },
+    
+    resource: e => {
+      var target = FN.action.target(e);
+      if (!target.is("input.custom-control-input, label.custom-control-label")) {
+        e.preventDefault();
+        var _checkbox = (target.is(".resource-item") ? 
+            target : target.parents(".resource-item")).find("input.custom-control-input");
+        _checkbox.prop("checked", !_checkbox.prop("checked")).change();
+      }
+    }
+  };
   /* <!-- Internal Functions --> */
 
   /* <!-- Initial Calls --> */
-
+  FN.hookup = factory.Hookup({action: FN.action}, factory);
+  
   /* <!-- External Visibility --> */
   return {
     
-    booking: (calendar, id) => FN.data.event(calendar, id)
+    booking: (calendar, id) => options.functions.data.event(calendar, id)
       .then(event => options.state.application.resources.safe()
             .then(() => factory.Main.authorise([SCOPE_DRIVE_APPDATA, SCOPE_DRIVE_FILE]))
             .then(result => result === true ? FN.booking(event) : false)),
     
-    bookings: () => FN.data.admin()
+    bookings: () => FN.admin()
       .then(FN.empty)
-      .then(FN.data.resources)
-      .then(FN.render.manage)
-      .then(FN.hookup.toggles)
-      .then(FN.hookup.resources)
+      .then(options.functions.data.resources)
+      .then(options.functions.render.view("manage", options.id, "Manage", "manage", true, true))
+      .then(FN.hookup.toggle)
+      .then(FN.hookup.resource)
       .then(FN.hookup.search)
       .then(FN.hookup.shortcut)
       .then(() => $("#shortcut_Text").focus()),
@@ -511,7 +400,7 @@ Manage = (options, factory) => {
       
     out: (id, log) => log ? FN.log.out(id) : FN.confirm.out(id),
 
-    refresh: FN.render.refresh,
+    refresh: options.functions.render.refresh(options.id, FN.refresh),
     
     remove: FN.confirm.remove,
     

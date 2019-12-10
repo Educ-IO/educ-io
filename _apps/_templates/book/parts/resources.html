@@ -1,3 +1,5 @@
 {% raw %}
-<div class="list-group list-group-flush list-group-dark resource-list">{{#each resources}}{{> resource selectable=../selectable simple=../simple}}{{/each}}</div>
+<div class="list-group list-group-flush list-group-dark resource-list bg-transparent">
+  {{#each resources}}{{> resource selectable=../selectable simple=../simple class="bg-transparent"}}{{/each}}
+</div>
 {% endraw %}

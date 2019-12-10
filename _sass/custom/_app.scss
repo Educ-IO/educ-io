@@ -234,6 +234,10 @@ div.modal {
 	scroll-behavior: smooth;
 }
 
+.c-pointer {
+  cursor: pointer;
+}
+
 a.disabled, input.disabled, .btn-disabled {
    pointer-events: none;  // Allows for touch scrolling on disabled elements
 }

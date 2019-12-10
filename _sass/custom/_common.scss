@@ -154,9 +154,13 @@ em.kb-shortcut, strong.kb-shortcut {
 // -- Keyboard Shortcuts -- //
 
 // -- List Groups -- //
-.list-group-dark > .active {
+.list-group-dark .active {
   background-color: $colour-list-dark-active-bg !important;
   border-color: $colour-list-dark-active-bd !important;
+  &:not(.list-group-item) {
+    color: $colour-background !important;
+    font-weight: bold !important;
+  }
 }
 // -- List Groups -- //
 // -- Badges -- //

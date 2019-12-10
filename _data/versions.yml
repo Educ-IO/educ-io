@@ -1,4 +1,8 @@
 site :
+  0.1.6z :
+    name : Book v0.0.3-beta
+    desc : Book Improvements
+    numeric : 0.1.6.25
   0.1.6y :
     name : Reflect v0.0.7k-beta
     desc : Reflect Improvements
@@ -1200,6 +1204,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.3-beta :
+    name : Resource Grouping
+    type : minor
   0.0.2a-beta :
     name : Update Resource Sorting
     type : minor
