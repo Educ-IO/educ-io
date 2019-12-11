@@ -34,7 +34,7 @@ Manage = (options, factory) => {
     }; /* <!-- Persistant --> */
   /* <!-- Internal Variables --> */
 
-  /* <-- Helper Functions --> */
+  /* <!-- Helper Functions --> */
   FN.loader = () => ({
               mime: factory.Google.files.natives()[1],
               properties: _.object([options.state.application.schema.property.name],
@@ -50,7 +50,7 @@ Manage = (options, factory) => {
             }, FN.loader());
   
   FN.empty = () => "";
-  /* <-- Helper Functions --> */
+  /* <!-- Helper Functions --> */
   
   /* <!-- Internal Functions --> */
   FN.access = events => {
@@ -94,7 +94,7 @@ Manage = (options, factory) => {
                       }
                     }
                   }).then(updated => {
-                    event.properties = updated.extendedProperties;
+                    event.properties = updated.extendedProperties && updated.extendedProperties.private ? updated.extendedProperties.private : {};
                     FN.update(event);
                     return event;
                   })
@@ -113,7 +113,9 @@ Manage = (options, factory) => {
   FN.confirm = {
     
     status : (id, status) => FN.status(FN.get(id), status)
-      .then(event => event ? options.functions.render.refresh(options.id, FN.refresh) : event),
+      .then(event => event ? 
+            options.functions.render.refresh(options.id, () => options.functions.render.table(options.id)(ರ‿ರ.events))() : 
+            event),
     
     remove : id => FN.confirm.status(id, null),
     
@@ -218,17 +220,17 @@ Manage = (options, factory) => {
         var resource = _.find(event.what, resource => resource.id === loan.name),
             item = {};
         
-        /* <-- Populate Resource Booking Object --> */
-        item[options.state.application.schema.columns.calendar.value] = resource.email; /* <-- Resource Calendar Email --> */
-        item[options.state.application.schema.columns.event.value] = event.id; /* <-- Booking Event ID --> */
-        item[options.state.application.schema.columns.resource.value] = resource.id; /* <-- Resource ID --> */
-        item[options.state.application.schema.columns.name.value] = resource.name; /* <-- Resource Name --> */
-        item[options.state.application.schema.columns.identifier.value] = loan.value; /* <-- User Supplied Identifier / Serial --> */
-        item[options.state.application.schema.columns.loaned.value] = new Date(); /* <-- Loaned Out Date --> */
-        item[options.state.application.schema.columns.loaned_by.value] = factory.me.display_name(); /* <-- Loaned By | Current User --> */
-        item[options.state.application.schema.columns.loaned_to.value] = event.who; /* <-- Loaned To | End User --> */
+        /* <!-- Populate Resource Booking Object --> */
+        item[options.state.application.schema.columns.calendar.value] = resource.email; /* <!-- Resource Calendar Email --> */
+        item[options.state.application.schema.columns.event.value] = event.id; /* <!-- Booking Event ID --> */
+        item[options.state.application.schema.columns.resource.value] = resource.id; /* <!-- Resource ID --> */
+        item[options.state.application.schema.columns.name.value] = resource.name; /* <!-- Resource Name --> */
+        item[options.state.application.schema.columns.identifier.value] = loan.value; /* <!-- User Supplied Identifier / Serial --> */
+        item[options.state.application.schema.columns.loaned.value] = new Date(); /* <!-- Loaned Out Date --> */
+        item[options.state.application.schema.columns.loaned_by.value] = factory.me.display_name(); /* <!-- Loaned By | Current User --> */
+        item[options.state.application.schema.columns.loaned_to.value] = event.who; /* <!-- Loaned To | End User --> */
         
-        /* <-- Insert Into DB  --> */
+        /* <!-- Insert Into DB  --> */
         return options.state.session.database.items.insert(item)
           .then(inserted => factory.Flags.log("DB Inserted Row", inserted))
           .catch(e => factory.Flags.error("DB Insert Booking Error", e));
@@ -256,12 +258,12 @@ Manage = (options, factory) => {
         var resource = _.find(event.what, resource => resource.id === loan.name),
             item = options.state.session.database.loan(event.id, resource.id);
         
-        /* <-- Update Resource Booking Object --> */
-        item[options.state.application.schema.columns.returned.value] = new Date(); /* <-- Returned Back Date --> */
-        item[options.state.application.schema.columns.returned_by.value] = event.who; /* <-- Returned By | End User --> */
-        item[options.state.application.schema.columns.returned_to.value] = factory.me.display_name(); /* <-- Returned To | Current User --> */
+        /* <!-- Update Resource Booking Object --> */
+        item[options.state.application.schema.columns.returned.value] = new Date(); /* <!-- Returned Back Date --> */
+        item[options.state.application.schema.columns.returned_by.value] = event.who; /* <!-- Returned By | End User --> */
+        item[options.state.application.schema.columns.returned_to.value] = factory.me.display_name(); /* <!-- Returned To | Current User --> */
         
-        /* <-- Update In DB  --> */
+        /* <!-- Update In DB  --> */
         return options.state.session.database.items.update(item)
           .then(updated => factory.Flags.log("DB Updated Row", updated))
           .catch(e => factory.Flags.error("DB Insert Booking Error", e));

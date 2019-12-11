@@ -23,14 +23,14 @@ App = function() {
 
   /* <!-- Internal Functions --> */
   
-  /* <-- Is Report Dirty (e.g. has unsaved changes) Function --> */
+  /* <!-- Is Report Dirty (e.g. has unsaved changes) Function --> */
   FN.dirty = report => !ರ‿ರ.hash || ರ‿ರ.hash !== new Hashes.MD5().hex(ಱ.strings.stringify(report, FN.replacers.signing));
   
-  /* <-- Mark Forms loading / loaded --> */
+  /* <!-- Mark Forms loading / loaded --> */
   FN.loading = () => $("#createRelectiveReport").addClass("loader");
   FN.loaded = () => $("#createRelectiveReport").removeClass("loader");
   
-  /* <-- Setup Functions Functions --> */
+  /* <!-- Setup Functions Functions --> */
   FN.setup = {
 
     /* <!-- Setup required for everything --> */

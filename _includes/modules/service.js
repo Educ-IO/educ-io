@@ -162,7 +162,8 @@ Service = function() {
 
               if (k == 82) {
 
-                /* <!-- CTRL-ALT-R --> Force Cache Refresh and then reload --> */
+                /* <!-- CTRL-ALT-R --> */
+                /* <!-- Force Cache Refresh and then reload --> */
                 navigator.serviceWorker.getRegistration(window.location.pathname).then(
                   r => {
                     if (r && r.active) _message(r.active, "refresh").then(
@@ -175,7 +176,8 @@ Service = function() {
 
               }  else if (k == 76) {
 
-                /* <!-- CTRL-ALT-L --> List Cache Objects --> */
+                /* <!-- CTRL-ALT-L --> */
+                /* <!-- List Cache Objects --> */
                 navigator.serviceWorker.getRegistration(window.location.pathname).then(
                   r => {
                     if (r && r.active) _message(r.active, "list-cache-items").then(_clear);

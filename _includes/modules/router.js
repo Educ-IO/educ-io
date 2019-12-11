@@ -187,7 +187,7 @@ Router = function() {
 
     integrate: INTEGRATE,
 
-    /*
+    /* <!-- 
       Options are : {
         name : App Name (for Titles)
         start : Function to execute once entered (after login)
@@ -211,7 +211,7 @@ Router = function() {
         },
 				instructions : App-Specific Instructions
       }
-    */
+    --> */
     create: options => {
 
       /* <!-- Default Routes, can be overridden by the routes object in options --> */

@@ -114,7 +114,7 @@ Tasks = (options, factory) => {
     /* <!-- If an element is not passed, it will be created (using data-display parameters from the holder) --> */
     place: (item, element) => {
       
-      /* <-- Get the relevant date/status for item --> */
+      /* <!-- Get the relevant date/status for item --> */
       var _date = (item.IS_TIMED || item.IN_FUTURE ? item.FROM : factory.Dates.now()).toISOString(true).split("T")[0],
           _status = item.STATUS, _holder = $(`div[data-date='${_date}'], div[data-status='${_status ? _status : item.IS_TIMED ? "NONE" : ""}']`);
       
@@ -122,7 +122,7 @@ Tasks = (options, factory) => {
         
         if (!element) {
           
-          /* <-- Updates various fields, including ACTION for date dialog (force to ensure everything is refreshed) --> */
+          /* <!-- Updates various fields, including ACTION for date dialog (force to ensure everything is refreshed) --> */
           element = FN.elements.create(FN.items.reconcile(item, true), true, 
                                         holder.data("display-wide"), holder.data("display-simple"), holder.data("display-forward"), holder.data("display-backward"));
           

@@ -5,7 +5,7 @@ Google_Sheets_Properties = options => {
   /* <!-- PARAMETERS: Options (see below) and factory (to generate other helper objects) --> */
   /* <!-- REQUIRES: Global Scope: Underscore --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
@@ -45,9 +45,9 @@ Google_Sheets_Properties = options => {
   });
   /* <!-- Internal Functions --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
   return {
 
     grid: _grid,
@@ -55,5 +55,5 @@ Google_Sheets_Properties = options => {
     update: _update,
 
   };
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
 };

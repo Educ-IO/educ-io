@@ -9,7 +9,7 @@ Dialog = (options, factory) => {
   /* <!-- REQUIRES: Global Scope: jQuery, Underscore --> */
   /* <!-- REQUIRES: Factory Scope: Fields, Google, Display --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {};
@@ -189,9 +189,9 @@ Dialog = (options, factory) => {
   };
   /* <!-- Internal Functions --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
   return {
 
     populate: _populate,
@@ -199,6 +199,6 @@ Dialog = (options, factory) => {
     handlers: _handlers,
 
   };
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
 
 };

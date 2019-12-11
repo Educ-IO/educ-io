@@ -249,7 +249,7 @@ Main = function() {
     /* <!-- Disable and Hide the Sign in --> */
     $("#sign_in").hide().children(".btn").attr("title", "").off("click.login");
 
-    /* Enable and Show the Sign Out */
+    /* <!-- Enable and Show the Sign Out --> */
     user.available ?
       $("#user_details").text(user.display_name())
       .attr("title", "To remove from your account (" + user.email + "), click & follow instructions").parent().show() :
@@ -314,11 +314,11 @@ Main = function() {
     $("#auth_processing").hide();
     $("#get_Started").removeClass("loader");
 
-    /* Disable and Hide the Sign Out */
+    /* <!-- Disable and Hide the Sign Out --> */
     $("#sign_out").hide().children(".btn").off("click.logout");
     $("#user_details").text("").attr("title", "");
 
-    /* Enable and Shopw the Sign In */
+    /* <!-- Enable and Shopw the Sign In --> */
     $("#sign_in").show(200).children(".btn").attr("title", "Click here to log into this app, you will be promped to authorise the app on your account if required")
       .on("click.login", e => {
         e.preventDefault();
@@ -425,9 +425,9 @@ Main = function() {
             var g = hello(ಠ_ಠ.SETUP.GOOGLE_AUTH).getAuthResponse(),
               exp = g ? new Date(g.expires * 1000) : null;
 
-            if (is_SignedIn(g)) { /* Signed In */
+            if (is_SignedIn(g)) { /* <!-- Signed In --> */
               google_LoggedIn(g);
-            } else if (g && exp < new Date()) { /* Expired Token */
+            } else if (g && exp < new Date()) { /* <!-- Expired Token --> */
 
               ಠ_ಠ.Flags.log(`Google Auth Token Expired: ${exp}`);
               google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")))(_default, false).then(function(a) {
@@ -441,7 +441,7 @@ Main = function() {
                 google_LoggedOut();
               });
 
-            } else { /* Not Logged In */
+            } else { /* <!-- Not Logged In --> */
               google_LoggedOut();
             }
 

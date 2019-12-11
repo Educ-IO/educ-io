@@ -11,7 +11,7 @@ Link = (options, factory) => {
   /* <!-- REQUIRES: Global Scope: jQuery, Underscore --> */
   /* <!-- REQUIRES: Factory Scope: Flags, Google --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
@@ -84,14 +84,14 @@ Link = (options, factory) => {
   });
   /* <!-- Internal Functions --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
   return {
 
     generate: _generate,
 
   };
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
 
 };

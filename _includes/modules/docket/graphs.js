@@ -35,11 +35,11 @@ Graphs = () => {
   
   var _stream = (holder, series, width, height, generate_x, text_x, curve, tooltip) => {
 
-    /* <-- Set the SVG Boundary Object --> */
+    /* <!-- Set the SVG Boundary Object --> */
     var margin = _margins(width, height),
       svg = _svg(holder, margin);
 
-    /* <-- Transform the Data Series --> */
+    /* <!-- Transform the Data Series --> */
     var _max = 0,
       _series = [],
       _keys = [],
@@ -66,16 +66,16 @@ Graphs = () => {
       });
     if (_data.length <= 1) return;
 
-    /* <-- Fill in the Gaps --> */
+    /* <!-- Fill in the Gaps --> */
     _.each(_data, data => _.each(_series, series => data[series] = data[series] === undefined ? 0 : data[series]));
 
-    /* <-- Generate X and Y axis --> */
+    /* <!-- Generate X and Y axis --> */
     const x = generate_x(_keys, margin),
       y = d3.scaleLinear()
       .domain([0 - _max * 0.8, _max * 0.7])
       .range([margin.innerHeight, 0]);
 
-    /* <-- Finesse the chart --> */
+    /* <!-- Finesse the chart --> */
     svg.append("g")
       .attr("transform", "translate(0," + margin.innerHeight * (text_x ? 0.8 : 0.95) + ")")
       .call(d3.axisBottom(x).tickSize(-margin.innerHeight * (text_x ? 0.7 : 0.9)))

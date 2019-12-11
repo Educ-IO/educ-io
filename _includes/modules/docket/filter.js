@@ -15,7 +15,7 @@ Filter = options => {
 
   /* <!-- Internal Functions --> */
   
-  /* <-- General Filters --> */
+  /* <!-- General Filters --> */
   FN.general = {
     
     timed: items => _.filter(items, result => result[options.schema.columns.is_timed.value] === true && !result[options.schema.columns.in_future.value]),

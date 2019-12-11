@@ -24,7 +24,7 @@ Signatures = (ಠ_ಠ, stringify, replacer, elevate) => {
 
   /* <!-- Internal Functions --> */
 
-  /* <-- Helper Functions --> */
+  /* <!-- Helper Functions --> */
   FN.helper = {
 
     supported: () => window.crypto &&
@@ -43,10 +43,10 @@ Signatures = (ಠ_ಠ, stringify, replacer, elevate) => {
     decode: value => ಠ_ಠ.Strings().hex.decode(value),
 
   };
-  /* <-- Helper Functions --> */
+  /* <!-- Helper Functions --> */
 
 
-  /* <-- Data Functions --> */
+  /* <!-- Data Functions --> */
   FN.data = {
 
     /* <!-- Raw Data for Signing/Verifying [data property to avoid signing with file name] --> */
@@ -55,7 +55,7 @@ Signatures = (ಠ_ಠ, stringify, replacer, elevate) => {
         raw => ಠ_ಠ.Flags.log("RAW DATA for Signing/Verifying:", raw))),
 
   };
-  /* <-- Data Functions --> */
+  /* <!-- Data Functions --> */
 
 
   /* <!-- Signature Functions --> */

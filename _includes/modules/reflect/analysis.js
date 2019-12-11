@@ -27,7 +27,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
 
   /* <!-- Internal Functions --> */
 
-  /* <-- Helper Functions --> */
+  /* <!-- Helper Functions --> */
   FN.helper = {
 
     complete: file => file.appProperties.COMPLETE,
@@ -43,10 +43,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
     } : f.id),
 
   };
-  /* <-- Helper Functions --> */
+  /* <!-- Helper Functions --> */
 
 
-  /* <-- Query Functions --> */
+  /* <!-- Query Functions --> */
   FN.query = {
 
     slim: report => ({
@@ -73,10 +73,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
       })) : null),
 
   };
-  /* <-- Query Functions --> */
+  /* <!-- Query Functions --> */
 
 
-  /* <-- Generate Functions --> */
+  /* <!-- Generate Functions --> */
   FN.generate = {
 
     id: () => _.map(forms, "id").join("_"),
@@ -121,10 +121,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
     }
 
   };
-  /* <-- Generate Functions --> */
+  /* <!-- Generate Functions --> */
 
 
-  /* <-- Display Functions --> */
+  /* <!-- Display Functions --> */
   FN.display = {
 
     update: (filter, stage, view) => {
@@ -185,7 +185,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
               }
               if (!memo[_key = _key.toLowerCase()]) {
 
-                /* <-- Add Basic --> */
+                /* <!-- Add Basic --> */
                 memo[_key] = {
                   name: _name,
                   total: null,
@@ -194,10 +194,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
                   average: null
                 };
 
-                /* <-- Add Context --> */
+                /* <!-- Add Context --> */
                 _.each(ರ‿ರ.extras, extra => memo[_key][extra.name.toLowerCase()] = []);
 
-                /* <-- Add Details --> */
+                /* <!-- Add Details --> */
                 memo[_key].details = [];
 
               } else if (_.isString(memo[_key].name) && memo[_key].name != _name) {
@@ -206,17 +206,17 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
                 memo[_key].name = memo[_key].name.concat(_name);
               }
 
-              /* <-- Add Context Values Functions --> */
+              /* <!-- Add Context Values Functions --> */
               _.each(_contexts, (context, index) => {
                 var _data = data[(context.title || context.id).toLowerCase()],
                   _extra = ರ‿ರ.extras[index].name.toLowerCase();
                 if (_data && memo[_key][_extra].indexOf(_data) < 0) memo[_key][_extra].push(_data);
               });
 
-              /* <-- Add Column / Values --> */
+              /* <!-- Add Column / Values --> */
               _.each(_values, value => {
 
-                /* <-- Parse Data --> */
+                /* <!-- Parse Data --> */
                 var _data = [
                     data[(_column.title || _column.id).toLowerCase()],
                     data[(value.title || value.id).toLowerCase()]
@@ -228,14 +228,14 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
                     numeric => numeric.value == _data[1])) :
                   NUMERIC.test(_data[1]) ? parseFloat(_data[1].match(NUMERIC)[0]) : null;
 
-                /* <-- Log Numerics --> */
+                /* <!-- Log Numerics --> */
                 if (_numeric !== null && _numeric !== undefined) {
                   memo[_key].total += _numeric;
                   memo[_key].__count += 1;
                 }
                 memo[_key].count += 1;
 
-                /* <-- Push Data to Details --> */
+                /* <!-- Push Data to Details --> */
                 memo[_key].details.push({
                   id: data.__id,
                   key: _data[0] ? _data[0] : MISSING,
@@ -250,7 +250,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
           _columns = ["Name", "Total", "Count", "Average"].concat(ರ‿ರ.extras).concat(["Details"]),
           _headers = FN.generate.headers(_columns);
 
-        /* <-- Clean Up Analysis Objects --> */
+        /* <!-- Clean Up Analysis Objects --> */
         _.each(_reports, value => {
           value.details = _.sortBy(value.details, value => value.key + "_" + value.value);
           if (_.isArray(value.name)) value.name = {
@@ -260,10 +260,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
           delete value.__count;
         });
 
-        /* <-- Add in Expectations --> */
+        /* <!-- Add in Expectations --> */
         if (ರ‿ರ.expected.length > 0) {
 
-          /* <-- Filter for missing values only (case insensitive) --> */
+          /* <!-- Filter for missing values only (case insensitive) --> */
           var _missing = _.filter(
             ರ‿ರ.expected.slice(),
             value => {
@@ -273,7 +273,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
 
           ಠ_ಠ.Flags.log("Missing from Analysis:", _missing);
 
-          /* <-- Add details for missing values --> */
+          /* <!-- Add details for missing values --> */
           _.each(_missing, missing => {
 
             _reports[missing] = {
@@ -289,10 +289,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
               average: null,
             };
 
-            /* <-- Add Contexts --> */
+            /* <!-- Add Contexts --> */
             _.each(ರ‿ರ.extras, extra => _reports[missing][extra.name.toLowerCase()] = null);
 
-            /* <-- Add Details --> */
+            /* <!-- Add Details --> */
             _reports[missing].details = null;
 
           });
@@ -308,10 +308,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
           removeIndices: true
         });
 
-        /* <-- Map Reports from an object (key/value) to array --> */
+        /* <!-- Map Reports from an object (key/value) to array --> */
         var _rows = _.map(_.keys(_reports).sort(), key => _reports[key]);
 
-        /* <-- Insert Rows into table --> */
+        /* <!-- Insert Rows into table --> */
         _data.insert(_rows);
 
         var _return = ಠ_ಠ.Datatable(ಠ_ಠ, {
@@ -363,10 +363,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
     },
 
   };
-  /* <-- Display Functions --> */
+  /* <!-- Display Functions --> */
 
 
-  /* <-- Filter Functions --> */
+  /* <!-- Filter Functions --> */
   FN.filter = {
 
     all: () => FN.display.update(ರ‿ರ.filter = () => true, ರ‿ರ.stage),
@@ -376,10 +376,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
     shared: () => FN.display.update(ರ‿ರ.filter = report => report.file.ownedByMe === false),
 
   };
-  /* <-- Filter Functions --> */
+  /* <!-- Filter Functions --> */
 
 
-  /* <-- Stage Functions --> */
+  /* <!-- Stage Functions --> */
   FN.stage = {
 
     any: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage = () => true),
@@ -388,10 +388,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
       FN.helper.complete(report.file)),
 
   };
-  /* <-- Stage Functions --> */
+  /* <!-- Stage Functions --> */
 
 
-  /* <-- Append Functions --> */
+  /* <!-- Append Functions --> */
   FN.append = {
 
     signatures: (target, signatures) => _.each(signatures,
@@ -408,13 +408,13 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
     })
 
   };
-  /* <-- Append Functions --> */
+  /* <!-- Append Functions --> */
 
 
 
-  /* <-- Initial Run --> */
+  /* <!-- Initial Run --> */
   ರ‿ರ.table = FN.display.analysis(reports);
-  /* <-- Initial Run --> */
+  /* <!-- Initial Run --> */
 
 
   /* <!-- External Visibility --> */

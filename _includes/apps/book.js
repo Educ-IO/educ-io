@@ -19,11 +19,11 @@ App = function() {
 
 	/* <!-- Internal Functions --> */
   
-  /* <-- Initial Loading Notification Functions --> */
+  /* <!-- Initial Loading Notification Functions --> */
   FN.loading = () => $("a.btn.needs-resources, button.needs-resources").addClass("loader");
   FN.loaded = () => $("a.btn.needs-resources, button.needs-resources").removeClass("loader");
   
-  /* <-- Change base date --> */
+  /* <!-- Change base date --> */
   FN.refresh = () => ಠ_ಠ.Display.state().in(FN.states.book.in) ? FN.bookings.refresh() : 
                      ಠ_ಠ.Display.state().in(FN.states.diary.in) ? FN.diary.refresh() :
                      ಠ_ಠ.Display.state().in(FN.states.manage.in) ? FN.manage.refresh() : false;
@@ -68,7 +68,7 @@ App = function() {
     }
   };
   
-  /* <-- Setup Functions Functions --> */
+  /* <!-- Setup Functions Functions --> */
   FN.setup = {
 
     /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */

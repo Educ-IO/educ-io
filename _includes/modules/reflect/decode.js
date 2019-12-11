@@ -20,7 +20,7 @@ Decode = options => {
   /* <!-- Internal State Variable --> */
   /* <!-- Internal State Variable --> */
 
-  /* <-- Meta Functions --> */
+  /* <!-- Meta Functions --> */
   FN.meta = {
     
     fields : (forms, type) => _.reduce(_.isArray(forms) ? forms : [forms], (memo, form) => {
@@ -58,9 +58,9 @@ Decode = options => {
     }, {}),
     
   };
-  /* <-- Meta Functions --> */
+  /* <!-- Meta Functions --> */
   
-  /* <-- Value Functions --> */
+  /* <!-- Value Functions --> */
   FN.values = (form, report, filter, use, initial) => _.reduce(form.groups, (memo, group) =>
       _.reduce(_.filter(group.fields, field => field[options.meta] && filter(field[options.meta])),
         (memo, field) => {
@@ -75,9 +75,9 @@ Decode = options => {
       return _.chain(_values).reduce((memo, value) => memo.concat(value ?
         value.match(options.email) : []), []).filter(value => value).value();
     },
-  /* <-- Value Functions --> */
+  /* <!-- Value Functions --> */
   
-  /* <-- Get Files (e.g. Evidence Files) from Report --> */
+  /* <!-- Get Files (e.g. Evidence Files) from Report --> */
   FN.files = report => {
     var _reduction = (memo, values) => _.reduce(values, (memo, value) => {
       if (_.isObject(value)) value.Value && value.Kind && value.Mime && value.Value.Id ?

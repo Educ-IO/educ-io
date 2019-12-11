@@ -6,7 +6,7 @@ Google_Sheets_Grid = options => {
   /* <!-- @options.sheet: ID of the sheet to target (tab ID, not spreadsheet ID, defaults to 0)  --> */
   /* <!-- REQUIRES: Global Scope: Underscore --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
@@ -50,9 +50,9 @@ Google_Sheets_Grid = options => {
   };
   /* <!-- Internal Functions --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
   return {
 
     columns: (start, end) => ({
@@ -90,5 +90,5 @@ Google_Sheets_Grid = options => {
     sheet: () => options.sheet,
 
   };
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
 };

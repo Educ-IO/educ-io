@@ -15,7 +15,7 @@ Query = (options, factory) => {
 
   /* <!-- Internal Functions --> */
   
-  /* <-- General Queries --> */
+  /* <!-- General Queries --> */
   FN.general = {
     
     timeless: () => _.tap({}, q => (q[options.schema.columns.time.value] = {}).$exists = false),
@@ -24,7 +24,7 @@ Query = (options, factory) => {
     
   };
   
-  /* <-- Temporal Queries --> */
+  /* <!-- Temporal Queries --> */
   FN.temporal = {
     
     from: (date, comparator) => _.tap({}, q => (q[options.schema.columns.from.value] = {})[comparator] = date),
@@ -39,7 +39,7 @@ Query = (options, factory) => {
     
   };
   
-  /* <-- Done Queries --> */
+  /* <!-- Done Queries --> */
   FN.done = {
     
     from: (date, comparator) => _.tap({}, q => (q[options.schema.columns.done.value] = {})[comparator] = date),
@@ -50,7 +50,7 @@ Query = (options, factory) => {
     
   };
   
-  /* <-- Status Queries --> */
+  /* <!-- Status Queries --> */
   FN.status = {
     
     none: () => _.tap({}, q => (q[options.schema.columns.status.value] = {}).$exists = false),
@@ -70,7 +70,7 @@ Query = (options, factory) => {
     
   };
   
-  /* <-- Content Queries --> */
+  /* <!-- Content Queries --> */
   FN.content = {
     
     details : text => _.tap({}, q => (q[options.schema.columns.details.value] = {}).$regex = new RegExp(RegExp.escape(text), "i")),
@@ -93,13 +93,13 @@ Query = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
 
-    /* <-- General Queries --> */
+    /* <!-- General Queries --> */
     timeless: FN.general.timeless,
     
     timed: FN.general.timed,
-    /* <-- General Queries --> */
+    /* <!-- General Queries --> */
     
-    /* <-- Temporal Queries --> */
+    /* <!-- Temporal Queries --> */
     from: FN.temporal.from,
     
     before: FN.temporal.before,
@@ -107,9 +107,9 @@ Query = (options, factory) => {
     after: FN.temporal.after,
     
     between: FN.temporal.between,
-    /* <-- Temporal Queries --> */
+    /* <!-- Temporal Queries --> */
 
-    /* <-- Status Queries --> */
+    /* <!-- Status Queries --> */
     none: FN.status.none,
     
     complete: FN.status.complete,
@@ -119,9 +119,9 @@ Query = (options, factory) => {
     underway: FN.status.underway,
     
     incomplete: FN.status.incomplete,
-    /* <-- Status Queries --> */
+    /* <!-- Status Queries --> */
 
-    /* <-- Main Queries --> */
+    /* <!-- Main Queries --> */
     status: (status, until, since) => ({
       "$and": [status, since ? FN.temporal.between(since, until) : FN.temporal.before(until)]
     }),

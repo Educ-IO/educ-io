@@ -45,7 +45,7 @@ Scales = (options, factory) => {
             factory.Data({}, factory).rehydrate(_form, _selected || {});
           }).then(values => {
 
-            /* <-- Action Button Clicked (e.g. not dismissed) --> */
+            /* <!-- Action Button Clicked (e.g. not dismissed) --> */
             if (values) {
               _this.data("selected", _.isEmpty(values) ? null : values);
               _this.children("span.d-inline").remove();

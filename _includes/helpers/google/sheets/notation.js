@@ -3,7 +3,7 @@ Google_Sheets_Notation = () => {
 
   /* <!-- HELPER: Provides an helper set of functions for dealing with Google Sheets Notation --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
   /* <!-- Internal Constants --> */
   const NOTATIONS = {
@@ -84,9 +84,9 @@ Google_Sheets_Notation = () => {
   
   /* <!-- Internal Functions --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
   return {
 
     clean : _clean,
@@ -112,5 +112,5 @@ Google_Sheets_Notation = () => {
     convertR1C1: reference => NOTATIONS.R1C1.test(reference) || NOTATIONS.R1.test(reference) || NOTATIONS.C1.test(reference) ? _convertR1C1(reference) : reference
 
   };
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
 };

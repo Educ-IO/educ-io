@@ -8,7 +8,7 @@ Google_Sheets_Metadata = (options, factory) => {
   /* <!-- @factory.Google_Sheets_Grid: Function to create a grid helper object --> */
   /* <!-- REQUIRES: Global Scope: Underscore --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
@@ -49,9 +49,9 @@ Google_Sheets_Metadata = (options, factory) => {
   });
   /* <!-- Internal Functions --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
   return {
 
     columns: (start, end) => ({
@@ -175,5 +175,5 @@ Google_Sheets_Metadata = (options, factory) => {
     }),
 
   };
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
 };

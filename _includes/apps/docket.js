@@ -52,7 +52,7 @@ App = function() {
 
   /* <!-- Internal Functions --> */
 
-  /* <-- Helper Functions --> */
+  /* <!-- Helper Functions --> */
   FN.loader = () => ({
               mime: ಠ_ಠ.Google.files.natives()[1],
               properties: _.object([ಱ.schema.property.name], [ಱ.schema.property.value]),
@@ -92,10 +92,10 @@ App = function() {
       return _retry(true);
 
     };
-  /* <-- Helper Functions --> */
+  /* <!-- Helper Functions --> */
 
   
-  /* <-- Search Function --> */
+  /* <!-- Search Function --> */
   FN.search = () => ಠ_ಠ.Display.text({
         message: ಠ_ಠ.Display.doc.get("SEARCH_INSTRUCTIONS"),
         action: "Search",
@@ -104,10 +104,10 @@ App = function() {
         ರ‿ರ.today : ರ‿ರ.show >= ರ‿ರ.today ?
         ರ‿ರ.show : false)) : false)
       .catch(e => e ? ಠ_ಠ.Flags.error("Search Error", e) : ಠ_ಠ.Flags.log("Search Cancelled"));
-  /* <-- Search Function --> */
+  /* <!-- Search Function --> */
   
   
-  /* <-- Option Functions --> */
+  /* <!-- Option Functions --> */
   FN.options = {
 
     action: (force, state) => new Promise(resolve => {
@@ -130,10 +130,10 @@ App = function() {
         .then(results => FN.options[type](!!results).then(FN.action.refresh))),
 
   };
-  /* <-- Option Functions --> */
+  /* <!-- Option Functions --> */
 
 
-  /* <-- Focus Functions --> */
+  /* <!-- Focus Functions --> */
   FN.focus = {
 
     date: () => ರ‿ರ.show || ರ‿ರ.today,
@@ -141,10 +141,10 @@ App = function() {
     from: () => ಠ_ಠ.Dates.parse(FN.focus.date()),
 
   };
-  /* <-- Focus Functions --> */
+  /* <!-- Focus Functions --> */
 
 
-  /* <-- Display Functions --> */
+  /* <!-- Display Functions --> */
   FN.display = {
     
     list: (list, subtitle, analysis) => ಠ_ಠ.Display.modal("list", {
@@ -226,13 +226,13 @@ App = function() {
     }),
     
   };
-  /* <-- Display Functions --> */
+  /* <!-- Display Functions --> */
   
 
-  /* <-- Action Functions --> */
+  /* <!-- Action Functions --> */
   FN.action = {
 
-    /* <-- reset = Reset View to default / configured default --> */
+    /* <!-- reset = Reset View to default / configured default --> */
     load: (settings, reset) => Promise.resolve((ಱ.task = ಠ_ಠ.Task({
           schema: ಱ.schema,
           zombie: ರ‿ರ.config.settings.zombie,
@@ -246,7 +246,7 @@ App = function() {
         }, ಠ_ಠ)))
       .then(task => (ಱ.schema.process = task.process())) /* <!-- Create Processing Task Function --> */
       .then(() => {
-        /* <-- Get Custom Title, and Version from File Properties, if not already loaded --> */
+        /* <!-- Get Custom Title, and Version from File Properties, if not already loaded --> */
         if (settings.title === undefined) {
           return ಠ_ಠ.Google.files.get((settings || ರ‿ರ.config.settings).data, true)
             .then(file => {
@@ -318,29 +318,29 @@ App = function() {
       /* <!-- Reset State to Today --> */
       ರ‿ರ.today = ಠ_ಠ.Dates.now().startOf("day").toDate();
 
-      /* <-- Open and render data --> */
+      /* <!-- Open and render data --> */
       return FN.action.load(ರ‿ರ.refresh ? {data: ರ‿ರ.refresh} : null);
 
     },
 
     start: settings => {
 
-      /* <-- Remove old and unused config settings --> */
+      /* <!-- Remove old and unused config settings --> */
       delete settings.calendar;
       _.each(settings, (value, key) => value === false && (key !== "zombie" && key !== "ghost") ?
              delete settings[key] : null);
 
-      /* <-- Set States from Config --> */
+      /* <!-- Set States from Config --> */
       FN.options.calendars(!!settings.calendars);
       FN.options.classes(!!settings.classes);
 
-      /* <-- Set Name from Config (if available, and also if supplied config is not the same as default config) --> */
+      /* <!-- Set Name from Config (if available, and also if supplied config is not the same as default config) --> */
       settings.name && (!ರ‿ರ.config || settings.data != ರ‿ರ.config.settings.data) ? ರ‿ರ.name = settings.name : delete ರ‿ರ.name;
 
-      /* <-- Set Refresh Timer Period --> */
+      /* <!-- Set Refresh Timer Period --> */
       settings.refresh !== false ? FN.background.start(settings.refresh || 15) : false;
       
-      /* <-- Open and render data --> */
+      /* <!-- Open and render data --> */
       return FN.action.load(settings, true);
 
     },
@@ -350,23 +350,23 @@ App = function() {
     default: () => FN.action.clear().then(() => FN.action.start(ರ‿ರ.config.settings)),
 
   };
-  /* <-- Action Functions --> */
+  /* <!-- Action Functions --> */
 
   
-  /* <-- Create Functions --> */
+  /* <!-- Create Functions --> */
   FN.create = {
 
-    /* <-- Create new Config, and open/create DB --> */
+    /* <!-- Create new Config, and open/create DB --> */
     default: () =>
 
-      /* <-- Clear any existing config --> */
+      /* <!-- Clear any existing config --> */
       ಱ.config.clear()
 
-      /* <-- Search for existing docket files owned by user --> */
+      /* <!-- Search for existing docket files owned by user --> */
       .then(() => ಠ_ಠ.Google.files.search(ಠ_ಠ.Google.files.natives()[1],
         `${ಱ.schema.property.name}=${ಱ.schema.property.value}`, true))
     
-      /* <-- Prompt User to use an existing file as their default docket database --> */
+      /* <!-- Prompt User to use an existing file as their default docket database --> */
       .then(results => results && results.length > 0 ? ಠ_ಠ.Display.choose({
           id: "select_Database",
           title: "Use Existing Data Sheet?",
@@ -381,41 +381,41 @@ App = function() {
         .catch(e => (e ? ಠ_ಠ.Flags.error("Displaying Select Prompt", e) :
           ಠ_ಠ.Flags.log("Select Prompt Cancelled")).negative()) : false)
 
-      /* <-- Return the File ID if selected, otherwise create new DB --> */
+      /* <!-- Return the File ID if selected, otherwise create new DB --> */
       .then(result => result ? result.value : ರ‿ರ.database.create(ಱ.schema.sheets.sheet_tasks, ಱ.schema.names.spreadsheet, ಱ.schema.names.sheet))
 
-      /* <-- Create/save new Config with the file ID --> */
+      /* <!-- Create/save new Config with the file ID --> */
       .then(result => ಱ.config.create({
         data: result && result.spreadsheetId ? result.spreadsheetId : result,
         calendar: false,
         classes: false
       }))
 
-      /* <-- Show / Then Close Busy Indication  --> */
+      /* <!-- Show / Then Close Busy Indication  --> */
       .then(ಠ_ಠ.Main.busy("Creating Config"))
 
-      /* <-- Start the main process of loading and displaying the data! --> */
+      /* <!-- Start the main process of loading and displaying the data! --> */
       .then(config => FN.action.start((ರ‿ರ.config = config).settings)),
 
 
-    /* <-- Create new Config with existing file --> */
+    /* <!-- Create new Config with existing file --> */
     existing: value => ಱ.config.create({
         data: value.id,
         calendar: false,
         classes: false
       })
 
-      /* <-- Show / Then Close Busy Indication --> */
+      /* <!-- Show / Then Close Busy Indication --> */
       .then(ಠ_ಠ.Main.busy("Creating Config"))
 
-      /* <-- Start the main process of loading and displaying the data! --> */
+      /* <!-- Start the main process of loading and displaying the data! --> */
       .then(config => FN.action.start((ರ‿ರ.config = config).settings)),
 
 
-    /* <-- Create new Shared Database --> */
+    /* <!-- Create new Shared Database --> */
     new: () => 
     
-      /* <-- Prompt User for new file name --> */
+      /* <!-- Prompt User for new file name --> */
       ಠ_ಠ.Display.text({
         id: "file_name",
         title: "File Name",
@@ -426,11 +426,11 @@ App = function() {
         }
       })
     
-      /* <-- Create new DB --> */
+      /* <!-- Create new DB --> */
       .then(name => name ? ರ‿ರ.database.create(ಱ.schema.sheets.sheet_tasks, name, ಱ.schema.names.sheet)
             .then(ಠ_ಠ.Main.busy("Creating Database")) : false)
 
-      /* <-- Start the main process of loading and displaying the data! --> */
+      /* <!-- Start the main process of loading and displaying the data! --> */
       .then(sheet => sheet ? FN.open.shared({
           id: sheet.spreadsheetId,
           name: sheet.properties.title
@@ -440,19 +440,19 @@ App = function() {
           ಠ_ಠ.Flags.log("Text Prompt Cancelled")).negative())
 
   };
-  /* <-- Create Functions --> */
+  /* <!-- Create Functions --> */
 
 
-  /* <-- Open Functions --> */
+  /* <!-- Open Functions --> */
   FN.open = {
 
-    /* <-- Open Default Configuration Database --> */
+    /* <!-- Open Default Configuration Database --> */
     default: value =>
 
-      /* <-- Find existing config --> */
+      /* <!-- Find existing config --> */
       ಱ.config.find()
 
-        /* <-- Update Existing or Create New config --> */
+        /* <!-- Update Existing or Create New config --> */
         .then(config => config ?
           ಱ.config.update(config.id, _.defaults({
             data: value.id
@@ -463,33 +463,33 @@ App = function() {
           }))
 
     
-        /* <-- Show / Then Close Busy Indication  --> */
+        /* <!-- Show / Then Close Busy Indication  --> */
         .then(ಠ_ಠ.Main.busy("Loading Config"))
 
-        /* <-- Start the main process of loading and displaying the data! --> */
+        /* <!-- Start the main process of loading and displaying the data! --> */
         .then(config => FN.action.start((ರ‿ರ.config = config).settings)),
 
-    /* <-- Open Shared Database --> */
+    /* <!-- Open Shared Database --> */
     shared: value => (ರ‿ರ.config && ರ‿ರ.config.settings.data != value.id ? FN.menu.add(value) : Promise.resolve(value))
       .then(value => FN.action.start(_.defaults(FN.file(value), ರ‿ರ.config.settings))),
 
   };
-  /* <-- Open Functions --> */
+  /* <!-- Open Functions --> */
       
       
-  /* <-- Background | Refresh Functions --> */
+  /* <!-- Background | Refresh Functions --> */
   FN.background = {
 
     start: interval => {
       
-      /* <-- Close function will terminate previous timeout function (also used with Router State clearing) --> */
+      /* <!-- Close function will terminate previous timeout function (also used with Router State clearing) --> */
       if (ರ‿ರ.background && ರ‿ರ.background.close) ರ‿ರ.background.close();
       
       var _refresh = () => {
-        /* <-- Check if modal or editing UI is visible before proceeding --> */
+        /* <!-- Check if modal or editing UI is visible before proceeding --> */
         if ($("div.item div.edit:visible, div.modal.show:visible, .drop-target:visible").length === 0) {
           ಠ_ಠ.Flags.log("Underlying Data Change Detected: RELOADING");
-          /* <-- TODO: Rather brute force! Should update DB silently if change is not on current view... --> */
+          /* <!-- TODO: Rather brute force! Should update DB silently if change is not on current view... --> */
           FN.action.refresh();
         } else {
           ಠ_ಠ.Flags.log("Underlying Data Change Detected: NOT RELOADING (UI Blocking)");
@@ -507,9 +507,9 @@ App = function() {
     },
     
   };
-  /* <-- Background | Refresh Functions --> */
+  /* <!-- Background | Refresh Functions --> */
   
-  /* <-- Background | Refresh Functions --> */
+  /* <!-- Background | Refresh Functions --> */
   FN.setup = {
     
     initial: () => {

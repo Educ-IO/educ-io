@@ -6,7 +6,7 @@ Google_Sheets_Format = (options, factory) => {
   /* <!-- @factory.Colours: Function to create a colours helper object --> */
   /* <!-- REQUIRES: Global Scope: Underscore --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {};
@@ -84,9 +84,9 @@ Google_Sheets_Format = (options, factory) => {
   });
   /* <!-- Internal Functions --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
   return {
 
     align: _align,
@@ -104,5 +104,5 @@ Google_Sheets_Format = (options, factory) => {
     wrap: _wrap,
     
   };
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
 };

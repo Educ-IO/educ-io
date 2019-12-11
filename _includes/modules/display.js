@@ -595,11 +595,11 @@ Display = function() {
           .replace(/\{\{+\s*title\s*}}/gi, options && options.title ? options.title : "Title")
           .replace(/\{\{+\s*close\s*}}/gi, options && options.close ? options.close : "Close");
       },
-      /*
+      /* <!--
       	Options are : {
       		name : name of the document to display,
       	}
-      */
+      --> */
       get: function(options) {
 
         options = _.isString(options) || _.isArray(options) ? {
@@ -618,14 +618,14 @@ Display = function() {
 
       },
 
-      /*
+      /* <!-- 
       	Options are : {
       		name : name of the document to display,
       		target : optional element to append the display to,
       		prepend : optional boolean to prepend doc, rather than append,
       		clear : ooption boolean to clear target first
       	}
-      */
+      --> */
       show: function(options) {
 
         /* <!-- Ensure we have a target object, and that it is wrapped in JQuery --> */
@@ -789,11 +789,9 @@ Display = function() {
 
     },
 
-    /*
-    	Options are : {
-
-    	}
-    */
+    /* <!--
+    	Options are : {}
+    --> */
     confirm: (options, shown) => {
 
       return new Promise((resolve, reject) => {
@@ -821,11 +819,9 @@ Display = function() {
 
     },
 
-    /*
-			Options are : {
-
-			}
-		*/
+    /* <!-- 
+			Options are : {}
+		--> */
     inform: (options, shown) => {
 
       return new Promise((resolve, reject) => {
@@ -850,11 +846,9 @@ Display = function() {
 
     },
 
-    /*
-    	Options are : {
-
-    	}
-    */
+    /* <!-- 
+    	Options are : {}
+    --> */
     modal: (template, options, shown) => {
 
       return new Promise((resolve, reject) => {

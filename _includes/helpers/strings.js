@@ -38,7 +38,7 @@ Strings = () => {
   };
   /* <!-- Numerically Sensible Sort --> */
   
-  /* <-- Deterministic Version of Stringify --> */
+  /* <!-- Deterministic Version of Stringify --> */
   var _stringify = (value, replacer, space, key) => {
 
     var _type = Object.prototype.toString.call(value),
@@ -71,7 +71,7 @@ Strings = () => {
       _array() : _value();
 
   };
-  /* <-- Deterministic Version of Stringify --> */
+  /* <!-- Deterministic Version of Stringify --> */
   
   /* <!-- Internal Functions --> */
 

@@ -8,7 +8,7 @@ Google_API = (options, factory) => {
   /* <!-- REQUIRES: Global Scope: Underscore, quotedPrintable (for emails) --> */
   /* <!-- REQUIRES: Factory Scope: Network helper --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {};
@@ -161,16 +161,16 @@ Google_API = (options, factory) => {
 
       return new Promise((resolve, reject) => {
 
-        if (force || e <= new Date()) { /* Token Expired */
+        if (force || e <= new Date()) { /* <!-- Token Expired --> */
 
-          u(force).then(r => { /* Update token */
+          u(force).then(r => { /* <!-- Update token --> */
 
-            if (r) _init(r.token, r.type, r.expires, r.user, u); /* Non-Null Response, so changes required */
+            if (r) _init(r.token, r.type, r.expires, r.user, u); /* <!-- Non-Null Response, so changes required --> */
             resolve(true);
 
           }).catch(err => reject(err));
 
-        } else { /* Token Fine */
+        } else { /* <!-- Token Fine --> */
 
           resolve(false);
 
@@ -178,11 +178,11 @@ Google_API = (options, factory) => {
 
       });
 
-    })(new Date((expires - 1) * 1000), update); /* 1 second shift in case of network delays! */
+    })(new Date((expires - 1) * 1000), update); /* <!-- 1 second shift in case of network delays! --> */
 
     /* <!-- Pass Token to Network --> */
     _before = ((t, w) => {
-      /* "Authorization: token OAUTH-TOKEN" */
+      /* <!-- "Authorization: token OAUTH-TOKEN" --> */
       return r => {
         if (r.headers) r.headers.Authorization = (w + " " + t);
         return true;
@@ -523,9 +523,9 @@ Google_API = (options, factory) => {
   };
   /* <!-- Internal Functions --> */
 
-  /* === Internal Visibility === */
+  /* <!-- Internal Visibility --> */
 
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
   return {
 
     /* <!-- External Functions --> */
@@ -1209,5 +1209,5 @@ Google_API = (options, factory) => {
     events: () => EVENTS
 
   };
-  /* === External Visibility === */
+  /* <!-- External Visibility --> */
 };
