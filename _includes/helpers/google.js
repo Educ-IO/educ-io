@@ -934,27 +934,46 @@ Google_API = (options, factory) => {
     
     resources: {
       
-      buildings: customer => _list(
-        NETWORKS.admin.get,
-        `directory/v1/customer/${customer || "my_customer"}/resources/buildings`, "buildings", [], {
-          orderBy: "buildingName",
-          fields: "nextPageToken,buildings(buildingId,buildingName,description,coordinates,floorNames,address)"
-        }),
+      buildings: {
+        
+        list: customer => _list(
+          NETWORKS.admin.get,
+          `directory/v1/customer/${customer || "my_customer"}/resources/buildings`, "buildings", [], {
+            orderBy: "buildingName",
+            fields: "nextPageToken,buildings(buildingId,buildingName,description,coordinates,floorNames,address)"
+          }),
+        
+      },
   
-      calendars: (query, customer) => _list(
-        NETWORKS.admin.get,
-        `directory/v1/customer/${customer || "my_customer"}/resources/calendars`, "items", [], {
-          orderBy: "resourceName",
-          query: query || "", 
-          fields: "nextPageToken,items(resourceId,resourceName,generatedResourceName,resourceType,resourceDescription,resourceEmail,capacity,buildingId,floorName,floorSection,resourceCategory,userVisibleDescription),items/featureInstances/feature/name"}),
+      calendars: {
+        
+        list: (query, customer) => _list(
+          NETWORKS.admin.get,
+          `directory/v1/customer/${customer || "my_customer"}/resources/calendars`, "items", [], {
+            orderBy: "resourceName",
+            query: query || "", 
+            fields: "nextPageToken,items(resourceId,resourceName,generatedResourceName,resourceType,resourceDescription,resourceEmail,capacity,buildingId,floorName,floorSection,resourceCategory,userVisibleDescription),items/featureInstances/feature/name"}),
+
+      },
       
-      features: customer => _list(
-        NETWORKS.admin.get,
-        `directory/v1/customer/${customer || "my_customer"}/resources/features`, "features", [], {
-          orderBy: "name",
-          fields: "nextPageToken,features(name)"
-        })
-     
+      features: {
+      
+        list: customer => _list(
+          NETWORKS.admin.get,
+          `directory/v1/customer/${customer || "my_customer"}/resources/features`, "features", [], {
+            orderBy: "name",
+            fields: "nextPageToken,features(name)"
+          }),
+        
+        insert: (name, customer) => _call(NETWORKS.admin.post, `directory/v1/customer/${customer || "my_customer"}/resources/features`, {
+            name: name
+          }, "application/json"),
+        
+        delete: (key, customer) => _call(NETWORKS.admin.delete,
+            `directory/v1/customer/${customer || "my_customer"}/resources/features/${key}`),
+        
+      },
+      
     },
     
     teamDrives: {

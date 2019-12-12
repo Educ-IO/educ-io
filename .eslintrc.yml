@@ -24,6 +24,7 @@ globals:
   jQuery: false
   hello: false
   Handlebars: false
+  uuid: false
   XLSX: false
   XlsxPopulate: false
   saveAs: false

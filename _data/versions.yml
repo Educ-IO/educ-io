@@ -1,4 +1,8 @@
 site :
+  0.1.7c :
+    name : Book v0.0.3d-beta
+    desc : Bug Fixes in Book App
+    numeric : 0.1.7.3
   0.1.7b :
     name : Book v0.0.3c-beta
     desc : Bug Fixes in Book App
@@ -1216,6 +1220,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.3d-beta :
+    name : Bug Fixes for Booking Management
+    type : minor
   0.0.3c-beta :
     name : Bug Fixes for Booking Management
     type : minor

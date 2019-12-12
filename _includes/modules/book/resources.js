@@ -86,7 +86,7 @@ Resources = function(loaded) {
       /* <!-- Create DB Reference --> */
       ಱ.db = new loki("resources.db");
       
-      ಱ.loaded = Promise.all([ಠ_ಠ.Google.resources.calendars(), ಠ_ಠ.Google.resources.features()])
+      ಱ.loaded = Promise.all([ಠ_ಠ.Google.resources.calendars.list(), ಠ_ಠ.Google.resources.features.list()])
         .then(values => {
        
           /* <!-- Resources --> */

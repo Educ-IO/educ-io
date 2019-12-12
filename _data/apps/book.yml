@@ -56,7 +56,9 @@ imports:
   - name: waves-js
     load: last
   - name: objectHash
-    load: last
+    load: lazy
+  - name: uuid
+    load: lazy
   - name: bootstrap-material-datepicker-js
     load: lazy
   - name: filesaver
@@ -267,6 +269,7 @@ menus:
               hash: manage.bookings
               imports:
                 - google
+                - uuid
                 - objectHash
                 - bootstrap-material-datepicker-js
               scopes:
@@ -274,6 +277,7 @@ menus:
                 - https://www.googleapis.com/auth/drive.file
                 - https://www.googleapis.com/auth/calendar
                 - https://www.googleapis.com/auth/calendar.events
+                - https://www.googleapis.com/auth/admin.directory.resource.calendar
                 - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
               auth: google
             - name: Close
@@ -389,6 +393,7 @@ buttons:
   spinner: true
   imports:
       - google
+      - uuid
       - objectHash
       - bootstrap-material-datepicker-js
   scopes:
@@ -396,6 +401,7 @@ buttons:
       - https://www.googleapis.com/auth/drive.file
       - https://www.googleapis.com/auth/calendar
       - https://www.googleapis.com/auth/calendar.events
+      - https://www.googleapis.com/auth/admin.directory.resource.calendar
       - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
   auth: google
 published: false

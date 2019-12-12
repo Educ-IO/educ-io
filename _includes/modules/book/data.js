@@ -51,7 +51,11 @@ Data = (options, factory) => {
         return !!(privilege && privilege.childPrivileges && _.find(privilege.childPrivileges, 
           child => child.serviceName == "calendar" && child.privilegeName == "CALENDAR_RESOURCE"));
       })
-      .catch(e => e.status == 403 ? false : factory.Flags.error("Privileges Error", e).reflect(false));
+      .catch(e => e.status == 403 ? null : factory.Flags.error("Privileges Error", e).reflect(false))
+      .then(result => result === null ? 
+            factory.Google.resources.features.insert(uuid.v4())
+              .then(feature => factory.Google.resources.features.delete(feature.name))
+              .catch(e => e.status == 403 ? null : factory.Flags.error("Feature Privilege Error", e).reflect(false)) : result);
   
   FN.book = {
     
