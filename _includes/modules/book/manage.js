@@ -242,11 +242,10 @@ Manage = (options, factory) => {
     in : (id, event) => (ರ‿ರ.db ? Promise.resolve() : FN.config.current())
                   .then(() => event || FN.get(id))
                   .then(event => FN.log.status("log_in", "Log Returned Resources", factory.Display.doc.get("LOG_IN_INSTRUCTIONS"),
-                             factory.Display.template.get({
+                             factory.Display.template.get(_.extend({
                                 template: "return",
-                                event: event, 
-                                loans: options.state.session.database.loans(event.id)
-                              }), "Confirm Return", FN.log.return(id, event))),
+                                loans: options.state.session.database.loans(event.id),
+                             }, event)), "Confirm Return", FN.log.return(id, event))),
     
     return : (id, event) => data => {
       

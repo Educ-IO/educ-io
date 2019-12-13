@@ -1,0 +1,1 @@
+Please confirm that the following __loaned equipment__ has been __returned__. If it has not, please de-tick the relevant item.

@@ -9,7 +9,6 @@
         </button>
       </div>
       <div class="modal-body">
-        {{#if instructions}}{{{instructions}}}{{/if}}
           {{#unless hide_link}}<p id="link_text" class="text-wrap text-break text-muted"><small class="text-select">{{link}}</small></p>{{/unless}}
             {{~#unless options_bottom}}<div class="d-flex">
               {{> link_options}}
@@ -30,6 +29,7 @@
                 </div>
               </div>
           </div>
+        {{#if instructions}}{{{instructions}}}{{/if}}
       </div>
       <div class="modal-footer">
         {{~#if options_bottom}}{{> link_options grouped="true"}}{{/if~}}

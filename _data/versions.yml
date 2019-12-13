@@ -1,4 +1,8 @@
 site :
+  0.1.7d :
+    name : Book v0.0.3e-beta
+    desc : Bug Fixes in Book and Docket Apps
+    numeric : 0.1.7.4
   0.1.7c :
     name : Book v0.0.3d-beta
     desc : Bug Fixes in Book App
@@ -1052,6 +1056,10 @@ events :
     name : Early testing version
     type : minor
 docket :
+  1.0.8c :
+    name : Bug Fix
+    desc : Fixed Tag Removal regression bug
+    type : minor
   1.0.8b :
     name : Bug Fix
     desc : Fixed Time Period Display Bug
@@ -1220,6 +1228,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.3e-beta :
+    name : Bug Fixes for Booking Management
+    type : minor
   0.0.3d-beta :
     name : Bug Fixes for Booking Management
     type : minor

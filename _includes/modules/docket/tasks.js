@@ -186,9 +186,9 @@ Tasks = (options, factory) => {
       backward: forward ? backward : false,
     }, item))),
   
-    replace : (target, item, group) => FN.hookup(FN.elements.create(item, (group || target).data("display-editable"), (group || target).data("display-wide"),
+    replace : (target, item, group) => (group || target) ? FN.hookup(FN.elements.create(item, (group || target).data("display-editable"), (group || target).data("display-wide"),
                                                                     (group || target).data("display-simple"), (group || target).data("display-forward"),
-                                                                    (group || target).data("display-backward")).replaceAll(target), true),
+                                                                    (group || target).data("display-backward")).replaceAll(target), true) : true,
     
   };
   

@@ -1,0 +1,1 @@
+This code can be scanned (e.g. from your phone screen) when collecting your resource/s to make confirming the loan faster!

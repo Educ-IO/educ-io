@@ -23,7 +23,7 @@
           {{#if _action}}</a>{{/if}}
         {{else}}
           {{#if editable}}{{#unless IS_COMPLETE}}<a class="d-none d-md-flex float-left text-very-faded pr-1 align-items-center" role="button" aria-label="Edit Tags" href="#edit.tags{{#exists $loki}}.{{ $loki }}{{/exists}}"><i class="material-icons d-flex">add_box</i></a>{{/unless}}{{/if}}
-          {{#if BADGES}}<div class="mt-1 mt-sm-0{{#if IS_COMPLETE}} o-25{{/if}}">{{#each BADGES}}{{> badge text=this last=@last search=(concat "search.tags." this) remove=(concat "remove.tags." ../$loki "." this)}}{{/each}}</div>{{/if}}
+          {{#if BADGES}}<div class="mt-1 mt-sm-0{{#if IS_COMPLETE}} o-25{{/if}}">{{#each BADGES}}{{> badge text=this last=@last search=(concat "search.tags." (encode this)) remove=(concat "remove.tag." ../$loki "." (encode this))}}{{/each}}</div>{{/if}}
         {{/if~}}
         {{~#if (all _icon _link)}}<a role="button" aria-label="View" href="{{_link}}" target="_blank" class="d-none d-md-flex float-left text-very-faded pr-1"><i class="material-icons d-flex">{{_icon}}</i></a>{{/if~}}
         {{~#if IS_COMPLETE}}<del class="text-muted text-faded" data-toggle="tooltip" data-html="true" data-trigger="hover" title="<i class='material-icons mr-1 d-block text-success'>thumb_up</i><b>Completed</b> item">{{/if~}}{{~#if DISPLAY}}{{{DISPLAY}}}{{else}}{{~#if DETAILS}}{{DETAILS}}{{else}}{{this}}{{/if}}{{/if~}}{{~#if IS_COMPLETE}}</del>{{/if~}}

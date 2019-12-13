@@ -49,7 +49,7 @@ Link = (options, factory) => {
     id: options.id,
     target: options.target,
     title: options.title,
-    instructions: factory.Display.doc.get(options.instructions),
+    instructions: options.instructions ? factory.Display.doc.get(options.instructions) : "",
     large: options.large,
     hide_link: options.hide_link,
     force_qr: options.force_qr,
