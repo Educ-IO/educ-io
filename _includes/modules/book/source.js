@@ -1,4 +1,4 @@
-Data = (options, factory) => {
+Source = (options, factory) => {
   "use strict";
 
   /* <!-- MODULE: Provides an interface to provide common functionality --> */

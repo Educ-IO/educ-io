@@ -49,7 +49,7 @@ Render = (options, factory) => {
       target: factory.container
     });
       
-  FN.search = (template, selectable, simple, target) => value => options.functions.data.resources(value)
+  FN.search = (template, selectable, simple, target) => value => options.functions.source.resources(value)
       .then(data => {
     
         /* <!-- Retain Collapsed / Show status between searches--> */

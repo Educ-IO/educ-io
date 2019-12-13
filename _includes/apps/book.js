@@ -90,7 +90,7 @@ App = function() {
           application: ಱ
         }
       };
-     _.each(["Data", "Calendar", "Process", "Render", "Bookings", "Diary", "Manage"], 
+     _.each(["Source", "Calendar", "Process", "Render", "Bookings", "Diary", "Manage"], 
             module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Create Schema Reference --> */

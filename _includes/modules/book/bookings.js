@@ -42,7 +42,7 @@ Bookings = (options, factory) => {
       var _time = _val.match(EXTRACT.time);
       if (!_time || _time.length === 0) return FN.action.indeterminate(element), false;
 
-      return options.functions.data.date(_time[1]);
+      return options.functions.source.date(_time[1]);
 
     },
 
@@ -85,7 +85,7 @@ Bookings = (options, factory) => {
       
       factory.Flags.log("Selected Resource Group with ID:", id);
       
-      options.functions.data.children(id).then(children => {
+      options.functions.source.children(id).then(children => {
         
          /* <!-- Create Last Updater Function --> */
         ರ‿ರ.last = ((id, name, children) => silent => {
@@ -94,14 +94,14 @@ Bookings = (options, factory) => {
               _renderer = options.functions.render.group("group", name),
               _rendered;
               
-          return options.functions.data.busy(_resources).then(results => {
+          return options.functions.source.busy(_resources).then(results => {
 
             var _update = number => {
               
               var _periods = options.functions.process.busy(results.calendars, _resources.length - number);
               
               /* <!-- Update Booker Function --> */
-              ರ‿ರ.book = options.functions.data.book.group(factory.me.email, results.calendars, number);
+              ರ‿ರ.book = options.functions.source.book.group(factory.me.email, results.calendars, number);
               
               FN.hookup.book(options.functions.process.available(_periods))(_rendered);
               
@@ -113,7 +113,7 @@ Bookings = (options, factory) => {
                 _periods = options.functions.process.busy(results.calendars, _resources.length - 1);
             
             /* <!-- Create Booker Function --> */
-            ರ‿ರ.book = options.functions.data.book.group(factory.me.email, results.calendars, 1);
+            ರ‿ರ.book = options.functions.source.book.group(factory.me.email, results.calendars, 1);
             
             _render(_periods);
             
@@ -136,7 +136,7 @@ Bookings = (options, factory) => {
       /* <!-- Create Last Updater Function --> */
       ರ‿ರ.last = ((id, name) => silent => {
         var _renderer = options.functions.render.events("events", name);
-        return options.functions.data.events(id)
+        return options.functions.source.events(id)
           .then(data => {
             var _events = options.functions.process.me(data, id),
               _periods = options.functions.process.periods(data),
@@ -153,7 +153,7 @@ Bookings = (options, factory) => {
       })(id, name);
       
       /* <!-- Create Booker Function --> */
-      ರ‿ರ.book = options.functions.data.book.one(factory.me.email, id);
+      ರ‿ರ.book = options.functions.source.book.one(factory.me.email, id);
 
       ರ‿ರ.last();
       
@@ -255,7 +255,7 @@ Bookings = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
     
-    new: () => options.functions.data.resources()
+    new: () => options.functions.source.resources()
       .then(options.functions.render.view("book", options.id, "Resources", "book.create"))
       .then(FN.hookup.resource)
       .then(FN.hookup.search),

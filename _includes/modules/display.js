@@ -873,7 +873,7 @@ Display = function() {
               });
 
               var _form = dialog.find("form"),
-                _values = ಠ_ಠ.Data && ಠ_ಠ.Data.dehydrate ? ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form) : _form.serializeArray();
+                _values = ಠ_ಠ.Data ? ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form) : _form.serializeArray();
               if (!ಠ_ಠ.Data) _.each(_form.find("input:indeterminate"), el => _values.push({
                 name: el.name,
                 value: "all"

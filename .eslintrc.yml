@@ -129,6 +129,7 @@ globals:
   Diary: true
   Manage: true
   Resources: true
+  Source: true
   States: true
   Action: true
   Create: true

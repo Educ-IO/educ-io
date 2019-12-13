@@ -101,7 +101,7 @@ modules:
   - book/query
   - book/schema
   - book/database
-  - book/data
+  - book/source
   - book/calendar
   - book/process
   - book/render

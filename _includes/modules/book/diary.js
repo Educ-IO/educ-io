@@ -38,7 +38,7 @@ Diary = (options, factory) => {
   
   FN.log = events => ((events.length > 0 ? factory.Flags.log("Loaded Events:", events) : false), events);
   
-  FN.load = render => options.functions.data.events(factory.me.email)
+  FN.load = render => options.functions.source.events(factory.me.email)
                           .then(FN.process.booking)
                           .then(FN.process.events)
                           .then(FN.log)

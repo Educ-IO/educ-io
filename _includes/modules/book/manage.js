@@ -61,7 +61,7 @@ Manage = (options, factory) => {
       return (source ? Promise.resolve(source) : ರ‿ರ.admin === true ? Promise.resolve(ರ‿ರ.list[ರ‿ರ.list.push({
         id : events[0].calendar,
         manager : true
-      }) - 1]) : options.functions.data.calendar(events[0].calendar)
+      }) - 1]) : options.functions.source.calendar(events[0].calendar)
                     .catch(e => e.status == 404 ? {id: events[0].calendar} : factory.Flags.error("Calendar List Error", e))
         /* <!-- This only works for calendars added to a users calendar! --> */
         .then(calendar => calendar ? ರ‿ರ.list[ರ‿ರ.list.push({
@@ -73,7 +73,7 @@ Manage = (options, factory) => {
         })).then(calendar => _.map(events, event => _.tap(event, event => event.manageable = calendar.manager)));
     };
   
-  FN.admin = () => ರ‿ರ.admin === undefined ? options.functions.data.admin().then(admin => ರ‿ರ.admin = admin) : Promise.resolve(ರ‿ರ.admin),
+  FN.admin = () => ರ‿ರ.admin === undefined ? options.functions.source.admin().then(admin => ರ‿ರ.admin = admin) : Promise.resolve(ರ‿ರ.admin),
     
   FN.event = event => {
     event.what = options.functions.calendar.resources(event);
@@ -103,11 +103,11 @@ Manage = (options, factory) => {
   
   FN.process = (calendar, events) => _.map(events, event => _.tap(event, event => event.calendar = calendar)),
   
-  FN.refresh = () => Promise.all(_.map(ರ‿ರ.calendars, calendar => options.functions.data.events(calendar.id)
+  FN.refresh = () => Promise.all(_.map(ರ‿ರ.calendars, calendar => options.functions.source.events(calendar.id)
                                .then(events => FN.process(calendar.id, events))))
         .then(results => _.flatten(results))
         .then(FN.access)
-        .then(events => options.functions.render.table(options.id)(FN.populate.events(options.functions.data.dedupe(ರ‿ರ.data = events))))
+        .then(events => options.functions.render.table(options.id)(FN.populate.events(options.functions.source.dedupe(ರ‿ರ.data = events))))
         .then(factory.Main.busy("Loading Bookings"));
   
   FN.confirm = {
@@ -344,13 +344,13 @@ Manage = (options, factory) => {
       factory.Flags.log(`${toggled ? "Toggled" : "DE-Toggled"} Resource with ID:`, id || group);
       factory.Flags.log("Selected Calendars:", ರ‿ರ.calendars);
       
-      (toggled ? options.functions.data.events(id).then(events => events && events.length > 0 ? 
+      (toggled ? options.functions.source.events(id).then(events => events && events.length > 0 ? 
             ರ‿ರ.data.concat(FN.process(id, events)) : ರ‿ರ.data) :
         Promise.resolve(_.reject(ರ‿ರ.data, event => event.calendar == id)))
       .then(FN.access)
       .then(data => {
         factory.Flags.log("Calendar Events:", data);
-        options.functions.render.table(options.id)(FN.populate.events(options.functions.data.dedupe(ರ‿ರ.data = data)));
+        options.functions.render.table(options.id)(FN.populate.events(options.functions.source.dedupe(ರ‿ರ.data = data)));
       })
       .then(factory.Main.busy("Loading Bookings"));
     },
@@ -382,14 +382,14 @@ Manage = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
     
-    booking: (calendar, id) => options.functions.data.event(calendar, id)
+    booking: (calendar, id) => options.functions.source.event(calendar, id)
       .then(event => options.state.application.resources.safe()
             .then(() => factory.Main.authorise([SCOPE_DRIVE_APPDATA, SCOPE_DRIVE_FILE]))
             .then(result => result === true ? FN.booking(event) : false)),
     
     bookings: () => FN.admin()
       .then(FN.empty)
-      .then(options.functions.data.resources)
+      .then(options.functions.source.resources)
       .then(options.functions.render.view("manage", options.id, "Manage", "manage", true, true))
       .then(FN.hookup.toggle)
       .then(FN.hookup.resource)
