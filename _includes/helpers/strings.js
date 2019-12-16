@@ -36,6 +36,8 @@ Strings = () => {
     return names_2.length > names_1.length ? _sort(names_2, names_1)*-1 : _sort(names_1, names_2);
     
   };
+  
+  var _property = property => _sorter(!property || _.isFunction(property) ? property : value => value ? value[property] : null);
   /* <!-- Numerically Sensible Sort --> */
   
   /* <!-- Deterministic Version of Stringify --> */
@@ -151,7 +153,9 @@ Strings = () => {
 
     },
     
-    sort: property => _sorter(!property || _.isFunction(property) ? property : value => value ? value[property] : null),
+    sort: _property,
+    
+    sorter: property => values => values && values.sort ? values.sort(_property(property)) : values,
     
     stringify: _stringify,
     /* <!-- External Functions --> */

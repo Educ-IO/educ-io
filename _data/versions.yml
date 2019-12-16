@@ -1,4 +1,8 @@
 site :
+  0.1.7f:
+    name : Book v0.0.4-beta
+    desc : Book App Released
+    numeric : 0.1.7.6
   0.1.7e :
     name : Book v0.0.3f-beta
     desc : Bug Fixes in Book App

@@ -22,6 +22,7 @@
         {{#each features}}<span class="badge badge-highlight badge-pill{{#unless @last}} mr-1{{/unless}}">{{this}}</span>{{/each}}
       </div>{{/if}}
       {{#if details}}<small>{{details}}</small>{{/if}}{{/unless~}}
+      {{~#if location}}<div class="small d-flex align-items-center"><i class="material-icons small text-secondary mr-1" data-toggle="tooltip" data-html="true" title="<strong>Location</strong> of this resource.">my_location</i><span class="o-50 text-info small">{{location}}</span></div>{{/if~}}
     </div>
     {{#if icon}}<i class="material-icons md-18 text-light bg-dark p-1 rounded" data-toggle="tooltip" data-html="true" title="<strong>Type:</strong> {{type}}">{{icon}}</i>{{/if}}
   </div>

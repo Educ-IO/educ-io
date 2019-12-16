@@ -120,7 +120,8 @@ Source = (options, factory) => {
 
   FN.resources = search => options.state.application.resources.safe()
       .then(resources => resources.find(search))
-      .then(options.functions.process.resources);
+      .then(options.functions.process.resources)
+      .then(factory.Strings().sorter("name"));
   
   FN.children = parent => options.state.application.resources.safe()
       .then(resources => resources.children(parent));

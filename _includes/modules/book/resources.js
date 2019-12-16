@@ -40,7 +40,15 @@ Resources = function(loaded) {
                     type == "PHOTO CAMERA" ? "photo_camera" :
                     type == "VIDEO CAMERA" ? "videocam" :
                     type == "LENS" ? "lens" :
-                    type == "MICROPHONE" ? "mic" : "device_unknown",
+                    type == "MICROPHONE" ? "mic" : 
+                    type == "MICROPHONE BOOM" ? "build" : 
+                    type == "HEADPHONE" ? "hearing" : 
+                    type == "BATTERY" ? "battery_charging_full" :
+                    type == "CASE" ? "work" :
+                    type == "RIG" ? "straighten" :
+                    type == "TRIPOD" ? "device_hub" :
+                    type == "TRIPOD HEAD" ? "device_hub" :
+                    type == "AUDIO RECORDER" ? "audiotrack" : "device_unknown",
     
     resources : data => FN.populate.db("resources", {
         unique: ["id", "email"],
@@ -53,6 +61,7 @@ Resources = function(loaded) {
         type: value.resourceType,
         category: value.resourceCategory,
         icon: value.resourceType ? FN.populate.icon(value.resourceType.toUpperCase().trim()) : false,
+        location: `${value.buildingId ? value.buildingId : ""}${value.buildingId && value.floorName ? "\\" : ""}${value.floorName ? `Floor ${value.floorName}` : ""}${(value.buildingId || value.floorName) && value.floorSection ? "\\" : ""}${value.floorSection ? value.floorSection : ""}`,
         description: value.resourceDescription,
         details: value.userVisibleDescription,
         parent: EXTRACT(_.chain(value.featureInstances)
