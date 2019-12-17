@@ -1,8 +1,8 @@
 site :
-  0.1.7f:
+  0.1.7g:
     name : Book v0.0.4-beta
-    desc : Book App Released
-    numeric : 0.1.7.6
+    desc : Book App Provisional Released
+    numeric : 0.1.7.7
   0.1.7e :
     name : Book v0.0.3f-beta
     desc : Bug Fixes in Book App
@@ -1236,6 +1236,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.4-beta :
+    name : First release version
+    type : minor
   0.0.3f-beta :
     name : Bug Fix for Data / Dialog Module
     type : minor
