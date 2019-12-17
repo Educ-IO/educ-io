@@ -83,7 +83,9 @@ Signatures = (ಠ_ಠ, stringify, replacer, elevate) => {
       .then(comments => Promise.all(
         _.map(comments, comment => FN.signature.verify(comment.signature, data)
           .then(valid => FN.signature.parse(file, comment, valid)))))
-      .then(signatures => _.tap(signatures, signatures => ಠ_ಠ.Flags.log(`File: ${file.id}`, signatures)))
+      .then(signatures => _.tap(signatures, signatures => {
+          ಠ_ಠ.Flags.log(`File: ${file.id}`, signatures);
+        }))
       .catch(e => ಠ_ಠ.Flags.error("Loading Comments", e).negative()),
 
     verify: (signature, data) => FN.helper.crypto.importKey("raw",

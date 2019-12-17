@@ -82,12 +82,12 @@ Filters = (options, factory) => {
         "$regex": [RegExp.escape(value), "i"]
       };
     } else if (value.startsWith(LTE[0]) || value.startsWith(LTE[1])) {
-      value = value.substr(LTE[0]).trim();
+      value = value.substr(LTE[0].length).trim();
       if (value) _filter = {
         "$lte": value.toLowerCase() == NOW ? new Date() : value
       };
     } else if (value.startsWith(GTE[0]) || value.startsWith(GTE[1])) {
-      value = value.substr(GTE[0]).trim();
+      value = value.substr(GTE[0].length).trim();
       if (value) _filter = {
         "$gte": value.toLowerCase() == NOW ? new Date() : value
       };
@@ -131,7 +131,11 @@ Filters = (options, factory) => {
       }
     } else if (value == VALUED) {
       _filter = {
-        "$in" : [undefined, null, ""]
+        "$or": [{
+          "$in" : [undefined, null, ""]  
+        }, {
+          "$size" : 0  
+        }]
       };
     } else if (value) {
       _filter = (value.toLowerCase() == PAST || value.toLowerCase() == FUTURE || value.toLowerCase() == TODAY) ? {

@@ -1,5 +1,9 @@
 site :
-  0.1.7g:
+  0.1.7h :
+    name : Reflect v0.0.7l-beta
+    desc : Reflect Analysis Filter Bug Fixes
+    numeric : 0.1.7.8
+  0.1.7g :
     name : Book v0.0.4-beta
     desc : Book App Provisional Released
     numeric : 0.1.7.7
@@ -968,6 +972,10 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.7l-beta :
+    name : Bug Fixes
+    desc : Analysis Filtering Bug Fixes
+    type : minor
   0.0.7k-beta :
     name : Overview Save
     desc : Forms can now include overview users

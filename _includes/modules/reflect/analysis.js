@@ -66,6 +66,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
     
     standard: report => _.tap(FN.query.slim(report), 
       value => value.signatures = report.signatures ? _.map(report.signatures, signature => ({
+        __class: `o-75 ${signature.valid ? "text-success" : "text-danger"}`,
         Valid: signature.valid ? true : undefined,
         Invalid: signature.valid ? undefined : true,
         By: `${signature.who === true ? "Me" : signature.who}${signature.email ? ` | ${signature.email}`: ""}`,
@@ -397,7 +398,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
     signatures: (target, signatures) => _.each(signatures,
       (signature, index) => target.append(ಠ_ಠ.Display.template.get({
         template: "valid",
-        class: `${index === 0 ? "ml-1 " : ""}signature${signature.valid ? "" : " border border-dark text-danger bg-light p-1"}`,
+        class: `${index === 0 ? "ml-1 " : ""}signature${signature.valid ? "" : " border border-dark rounded text-danger bg-light p-1"}`,
         valid: signature.valid,
         html: true,
         desc: ಠ_ಠ.Display.template.get("signature_summary")(signature).trim(),
@@ -466,7 +467,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
           .catch(e => ಠ_ಠ.Flags.error("Signature Error", e).negative())
           .then(ಠ_ಠ.Display.busy({
             target: _target,
-            class: "loader-tiny loader-light",
+            class: "loader-tiny loader-light mx-1",
             append: true,
             fn: true
           }));

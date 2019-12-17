@@ -391,7 +391,7 @@ Display = function() {
 
         Handlebars.registerHelper("formatYaml", (variable, field) => {
           if (variable !== null && variable !== undefined && window.jsyaml)
-            return jsyaml.safeDump(variable[field] || variable, {
+            return jsyaml.safeDump(_.omit(variable[field] || variable, (value, key) => value === null || value === undefined || key == "__class"), {
               skipInvalid: true
             });
         });
