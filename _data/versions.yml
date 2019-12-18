@@ -1,4 +1,8 @@
 site :
+  0.1.7i :
+    name : Reflect v0.0.7m-beta
+    desc : Analysis Filtering Improvements
+    numeric : 0.1.7.9
   0.1.7h :
     name : Reflect v0.0.7l-beta
     desc : Reflect Analysis Filter Bug Fixes
@@ -972,6 +976,10 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.7m-beta :
+    name : Filtering Improvements
+    desc : Analysis Filtering Improvements
+    type : minor
   0.0.7l-beta :
     name : Bug Fixes
     desc : Analysis Filtering Bug Fixes

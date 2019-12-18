@@ -24,6 +24,7 @@ css:
     - bootstrap/toasts
     - custom/variables
     - custom/notifications
+    - custom/tabs
 imports:
   - name: underscore
     load: first
@@ -193,6 +194,7 @@ templates:
   - reflect/recipients
   - reflect/pill
   - reflect/analyse_header
+  - reflect/analyse_body
   - reflect/dates
   - reflect/report_link
   - reflect/signature_summary

@@ -258,7 +258,9 @@ App = function() {
                   message: ಠ_ಠ.Display.doc.get("ANALYSE_EXPECTED"),
                   validate: value => value,
                   state: {
-                    value: ರ‿ರ.analysis.expected().join("\n")
+                    value: _.map(ರ‿ರ.analysis.expected(), 
+                                 value => value && _.isArray(value) ? value.join("\t") : value)
+                            .join("\n")
                   },
                   action: "Analyse",
                   rows: 8

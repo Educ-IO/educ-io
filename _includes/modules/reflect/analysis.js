@@ -127,7 +127,14 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
 
   /* <!-- Display Functions --> */
   FN.display = {
-
+    
+    wrapper: element => ಠ_ಠ.Display.template.show({
+        template: "analyse_body",
+        classes: ["pt-2"],
+        target: element || ಠ_ಠ.container,
+        clear: true
+      }),
+    
     update: (filter, stage, view) => {
       if (view !== null && view !== undefined) ರ‿ರ.view = view;
       if (ರ‿ರ.table && ರ‿ರ.table.close) ರ‿ರ.table.close();
@@ -138,8 +145,8 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
     },
 
     analysis: (reports, process) => (ರ‿ರ.view ?
-      FN.display[ರ‿ರ.view] : FN.display.summary)(FN.generate.id(), ಠ_ಠ.container.empty(), {
-      classes: ["pt-1"],
+      FN.display[ರ‿ರ.view] : FN.display.summary)(FN.generate.id(), {
+      classes: ["pt-1", "scroller"],
       id: ID,
       header: ಠ_ಠ.Display.template.get("analyse_header")({
         classes: ["pl-3", "pl-xl-4", "pt-2", "pb-0"],
@@ -148,7 +155,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
       }).trim()
     }, reports, target => process ? process(target) : target),
 
-    summary: (id, target, wrapper, reports, after) => {
+    summary: (id, wrapper, reports, after) => {
 
       var _fields = decode.meta.fields(forms),
         _row = _.find(_fields, {
@@ -265,36 +272,38 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
         if (ರ‿ರ.expected.length > 0) {
 
           /* <!-- Filter for missing values only (case insensitive) --> */
-          var _missing = _.filter(
-            ರ‿ರ.expected.slice(),
-            value => {
-              var _regexp = new RegExp(`^${RegExp.escape(value)}$`, "i");
-              return _.every(_reports, (value, key) => key.search(_regexp) == -1);
-            });
+          var _key = (val, index) => _.isArray(val) ? index ? index < val.length ? val[index] : null : val[0] : val,
+              _missing = _.filter(
+                ರ‿ರ.expected.slice(),
+                value => {
+                  var _regexp = new RegExp(`^${RegExp.escape(_key(value))}$`, "i");
+                  return _.every(_reports, (value, key) => key.search(_regexp) == -1);
+                });
 
           ಠ_ಠ.Flags.log("Missing from Analysis:", _missing);
 
           /* <!-- Add details for missing values --> */
           _.each(_missing, missing => {
-
-            _reports[missing] = {
-              name: missing && missing.search(ಠ_ಠ.App.email) >= 0 ?
+            
+            var _address = _key(missing);
+            _reports[_address] = {
+              name: _address && _address.search(ಠ_ಠ.App.email) >= 0 ?
                 ಠ_ಠ.Display.template.get({
                   template: "email",
-                  address: missing.match(ಠ_ಠ.App.email)[0],
+                  address: _address.match(ಠ_ಠ.App.email)[0],
                   subject: "Missing Reflect Report Data",
-                  text: missing
-                }) : missing,
+                  text: _address
+                }) : _address,
               total: null,
               count: null,
               average: null,
             };
 
             /* <!-- Add Contexts --> */
-            _.each(ರ‿ರ.extras, extra => _reports[missing][extra.name.toLowerCase()] = null);
+            _.each(ರ‿ರ.extras, (extra, index) => _reports[_address][extra.name.toLowerCase()] = _key(missing, index + 1));
 
             /* <!-- Add Details --> */
-            _reports[missing].details = null;
+            _reports[_address].details = null;
 
           });
 
@@ -324,7 +333,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
           classes: ["table-hover"],
           collapsed: true,
           wrapper: wrapper,
-        }, target, after);
+        }, FN.display.wrapper(), after);
 
         if (ರ‿ರ.signatures) {
           _.each(reports, report => {
@@ -341,7 +350,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
 
     },
 
-    detail: (id, target, wrapper, reports, after) => {
+    detail: (id, wrapper, reports, after) => {
 
       var _columns = ["ID", "Owner", "Complete", "Form", "When"]
         .concat(ರ‿ರ.signatures ? ["Signatures"] : []),
@@ -359,7 +368,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
         classes: ["table-hover"],
         collapsed: true,
         wrapper: wrapper,
-      }, target, after);
+      }, FN.display.wrapper(), after);
 
     },
 
@@ -398,7 +407,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
     signatures: (target, signatures) => _.each(signatures,
       (signature, index) => target.append(ಠ_ಠ.Display.template.get({
         template: "valid",
-        class: `${index === 0 ? "ml-1 " : ""}signature${signature.valid ? "" : " border border-dark rounded text-danger bg-light p-1"}`,
+        class: `${index === 0 ? "" : "ml-1 "}signature border border-dark rounded p-1${signature.valid ? " bg-success" : " bg-light text-danger"}`,
         valid: signature.valid,
         html: true,
         desc: ಠ_ಠ.Display.template.get("signature_summary")(signature).trim(),
@@ -446,7 +455,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
         /* <!-- Parse incoming list, on new lines --> */
         ರ‿ರ.expected = _.chain(value.split("\n"))
           .flatten()
-          .map(val => val.trim(""))
+          .map(val => val.trim("").split("\t"))
           .compact()
           .value();
 
