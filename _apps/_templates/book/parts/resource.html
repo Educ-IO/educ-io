@@ -15,7 +15,7 @@
           <i class="material-icons md-18" data-listen="#{{replace id '\s' ''}}_children" data-event="show.bs.collapse" style="display: none;">expand_less</i>
         </button>
       </div>
-      {{~#unless selectable}}<div class="resource-group c-pointer d-inline rounded p-1" data-group="{{id}}" data-name="{{either name title}}">{{/unless~}}{{/if~}}
+      {{~#unless selectable}}<div class="resource-group c-pointer d-inline rounded p-1{{#if opaque}} list-group-item-action{{/if}}" data-group="{{id}}" data-name="{{either name title}}">{{/unless~}}{{/if~}}
       <h6 class="{{~#unless children}}font-weight-light {{/unless~}}m-0{{#if (any selectable children)}} d-inline{{/if}}">{{either name title}}</h6>
       {{~#if children}}{{~#unless selectable}}</div>{{/unless~}}{{/if~}}
       {{~#unless simple}}{{#if features}}<div>
@@ -27,8 +27,8 @@
     {{#if icon}}<i class="material-icons md-18 text-light bg-dark p-1 rounded" data-toggle="tooltip" data-html="true" title="<strong>Type:</strong> {{type}}">{{icon}}</i>{{/if}}
   </div>
   {{~#if children}}<div id="{{replace id '\s' ''}}_children" data-group="{{id}}"
-                        class="w-100 list-group list-group-flush list-group-dark resource-list collapse bg-transparent{{#if expanded}} show{{/if}}">
-    {{#each children}}{{> resource this selectable=../selectable simple=../simple class="bg-transparent"}}{{/each}}
+                        class="w-100 list-group list-group-flush list-group-dark resource-list collapse{{#unless opaque}} bg-transparent{{/unless}}{{#if expanded}} show{{/if}}">
+    {{#each children}}{{> resource this selectable=../selectable simple=../simple class=(which ../opaque "" "bg-transparent")}}{{/each}}
   </div>{{/if~}}
 {{#if children}}</div>{{else}}</a>{{/if}}
 {% endraw %}

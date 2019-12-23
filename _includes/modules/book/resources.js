@@ -24,6 +24,35 @@ Resources = function(loaded) {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Functions --> */
+  FN.map = {
+  
+    resource: value => ({
+        id: value.resourceId,
+        title: value.generatedResourceName,
+        name: value.resourceName,
+        email: value.resourceEmail,
+        type: value.resourceType,
+        category: value.resourceCategory,
+        icon: value.resourceType ? FN.populate.icon(value.resourceType.toUpperCase().trim()) : false,
+        location: `${value.buildingId ? value.buildingId : ""}${value.buildingId && value.floorName ? "\\" : ""}${value.floorName ? `Floor ${value.floorName}` : ""}${(value.buildingId || value.floorName) && value.floorSection ? "\\" : ""}${value.floorSection ? value.floorSection : ""}`,
+        description: value.resourceDescription,
+        details: value.userVisibleDescription,
+        parent: EXTRACT(_.chain(value.featureInstances)
+                      .map(FEATURE)
+                      .find(PARENT)
+                      .value()),
+        features: _.chain(value.featureInstances)
+                      .map(FEATURE)
+                      .reject(PARENT)
+                      .value(),
+      }),
+    
+    feature: value => ({
+        name: value.name,
+      }),
+    
+  };
+  
   FN.populate = {
     
     db : (name, schema, data, map) => {
@@ -53,32 +82,11 @@ Resources = function(loaded) {
     resources : data => FN.populate.db("resources", {
         unique: ["id", "email"],
         indices: ["id", "title", "name", "email", "type", "category", "description", "details", "features"]
-      }, data, value => ({
-        id: value.resourceId,
-        title: value.generatedResourceName,
-        name: value.resourceName,
-        email: value.resourceEmail,
-        type: value.resourceType,
-        category: value.resourceCategory,
-        icon: value.resourceType ? FN.populate.icon(value.resourceType.toUpperCase().trim()) : false,
-        location: `${value.buildingId ? value.buildingId : ""}${value.buildingId && value.floorName ? "\\" : ""}${value.floorName ? `Floor ${value.floorName}` : ""}${(value.buildingId || value.floorName) && value.floorSection ? "\\" : ""}${value.floorSection ? value.floorSection : ""}`,
-        description: value.resourceDescription,
-        details: value.userVisibleDescription,
-        parent: EXTRACT(_.chain(value.featureInstances)
-                      .map(FEATURE)
-                      .find(PARENT)
-                      .value()),
-        features: _.chain(value.featureInstances)
-                      .map(FEATURE)
-                      .reject(PARENT)
-                      .value(),
-      })),
+      }, data, FN.map.resource),
     
     features : data => FN.populate.db("features", {
         indices: ["name"]
-      }, data, value => ({
-        name: value.name,
-      })),
+      }, data, FN.map.feature),
     
   };
   /* <!-- Internal Functions --> */
@@ -95,14 +103,19 @@ Resources = function(loaded) {
       /* <!-- Create DB Reference --> */
       ಱ.db = new loki("resources.db");
       
-      ಱ.loaded = Promise.all([ಠ_ಠ.Google.resources.calendars.list(), ಠ_ಠ.Google.resources.features.list()])
+      ಱ.loaded = Promise.all([
+        ಠ_ಠ.Google.resources.calendars.list()
+          .catch(e => e && e.status == 404 ? ಠ_ಠ.Flags.log("No Resource Calendars").negative() : false),
+        ಠ_ಠ.Google.resources.features.list()
+          .catch(e => e && e.status == 404 ? ಠ_ಠ.Flags.log("No Resource Features").negative() : false),
+      ])
         .then(values => {
        
           /* <!-- Resources --> */
-          FN.populate.resources(_.reject(values[0], value => value.resourceCategory == CATEGORY.ROOM));
+          FN.populate.resources(_.reject(values[0] || [], value => value.resourceCategory == CATEGORY.ROOM));
         
           /* <!-- Features --> */
-          FN.populate.features(values[1]);
+          FN.populate.features(values[1] || []);
         
           /* <!-- Mark as Loaded --> */
           ರ‿ರ.loaded = true;
@@ -133,7 +146,37 @@ Resources = function(loaded) {
       .sort(FN.sort)
       .data(),
     
-    get: email => ರ‿ರ.resources.findOne({email: {"$eq": email}})
+    get: email => ರ‿ರ.resources.findOne({email: {"$eq": email}}),
+    
+    parents: () => _.chain(ರ‿ರ.features.chain().data())
+                      .pluck("name")
+                      .filter(PARENT)
+                      .map(value => ({id: value, name: EXTRACT(value)}))
+                      .value(),
+
+    features: () => _.chain(ರ‿ರ.features.chain().data())
+                      .pluck("name")
+                      .reject(PARENT)
+                      .value(),
+    
+    add: {
+    
+      resource: resource => ರ‿ರ.resources.insert(FN.map.resource(resource)),
+      
+      feature: name => ರ‿ರ.features.insert({name: name}),
+      
+    },
+    
+    update: {
+      
+      resource: resource => {
+        var _existing = ರ‿ರ.resources.findOne({email: {"$eq": resource.resourceEmail}}),
+            _new = FN.map.resource(resource);
+        _.each(_new, (value, key) => _existing[key] = value);
+        ರ‿ರ.resources.update(_existing);
+      },
+      
+    }
     
   };
   /* <!-- External Visibility --> */

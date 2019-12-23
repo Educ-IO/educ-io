@@ -4,7 +4,7 @@ The Book app is tightly integrated with Google Calendar. It provides an easier w
 
 ##### Creating Bookings
 
-You can create new or view existing [bookins](#instructions.book) using this app. You can choose whether you want to book just a single resource, or a number of the same type of resources (if resources have been grouped together).
+You can create new or view existing [bookings](#instructions.book) using this app. You can choose whether you want to book just a single resource, or a number of the same type of resources (if resources have been grouped together).
 
 {% include_relative _docs/shared/ICON_EXPLANATION.md icon="event" border=true explanation="Click on buttons like this to view your booking in your Google Calendar" %}
 

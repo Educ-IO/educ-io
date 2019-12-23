@@ -187,6 +187,11 @@ App = function() {
             title: "Managing Bookings ..."
           },
           {
+            match: [/MANAGE/i, /RESOURCES/i],
+            show: "MANAGE_RESOURCES_INSTRUCTIONS",
+            title: "Managing Resources ..."
+          },
+          {
             match: /LOAN/i,
             show: "LOAN_INSTRUCTIONS",
             title: "Loans and Returns ..."
@@ -286,7 +291,9 @@ App = function() {
               },
               resources: {
                 matches: /RESOURCES/i,
-                fn: () => true
+                fn: () => FN.manage.resources()
+                        .then(ಠ_ಠ.Main.busy("Loading Resources"))
+                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.manage.in))
               },
             },
           },
@@ -347,11 +354,42 @@ App = function() {
             }
           },
           
-          remove: {
-            matches: [/REMOVE/i, /TAG/i],
+          add: {
+            matches: /ADD/i,
             state: FN.states.manage.in,
-            length: 1,
-            fn: command => FN.manage.remove(command)
+            routes: {
+              feature: {
+                matches: /FEATURE/i,
+                fn: () => FN.manage.add.feature()
+              },
+              resource: {
+                matches: /RESOURCE/i,
+                fn: () => FN.manage.add.resource()
+              },
+              parent: {
+                matches: /PARENT/i,
+                fn: () => FN.manage.add.parent()
+              },
+            },
+          },
+          
+          remove: {
+            matches: /REMOVE/i,
+            state: FN.states.manage.in,
+            routes: {
+              tag: {
+                matches: /TAG/i,
+                length: 1,
+                fn: command => FN.manage.remove.tag(command)
+              },
+              feature: {
+                matches: /FEATURE/i,
+                length: 2,
+                fn: command => FN.manage.remove.feature(
+                  decodeURIComponent(ಠ_ಠ.Flags.decode(command[0])),
+                  decodeURIComponent(ಠ_ಠ.Flags.decode(command[1])))
+              },
+            },
           },
           
           config: {

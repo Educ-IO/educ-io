@@ -1,5 +1,7 @@
 {% raw %}
-<div class="list-group list-group-flush list-group-dark resource-list bg-transparent">
-  {{#each resources}}{{> resource selectable=../selectable simple=../simple class="bg-transparent"}}{{/each}}
-</div>
+{{~#present resources}}<div class="list-group list-group-flush list-group-dark resource-list{{#unless opaque}} bg-transparent{{/unless}}">
+  {{#each resources}}{{> resource selectable=../selectable simple=../simple opaque=../opaque class=(which ../opaque "" "bg-transparent")}}{{/each}}
+</div>{{else}}
+<h5 class="mt-3"><i class="material-icons md-24 mr-1 text-warning">highlight_off</i><span class="font-weight-light text-muted">No Resources!</span></h5>
+{{/present~}}
 {% endraw %}

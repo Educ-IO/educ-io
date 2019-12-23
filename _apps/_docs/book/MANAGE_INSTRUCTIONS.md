@@ -10,6 +10,10 @@ In the [Google Admin](https://admin.google.com/){:target="_blank" rel="noopener"
 
 This can either be part of an __existing role__, or you can create a __new role__ for this specifically. The permission / privilege required is: Calendar -> All Settings -> Buildings and Resources
 
+##### Managing Resources
+
+You can create new or edit existing [resources](#instructions.manage.resources) using this app, as well as using the [Google Admin](https://admin.google.com/){:target="_blank" rel="noopener"} console.
+
 ##### Managing Bookings
 
 If the user who has made the booking has a shortcut QR code, you can scan this into the 'Scan QR Code' text entry box, or directly into the browser address bar. This will take you directly to being able to log the details of which equipment is being loaned or returned.

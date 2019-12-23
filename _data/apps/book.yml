@@ -85,6 +85,7 @@ helpers:
   - colours
   - saad
   - config
+  - data
 modules:
   - flags
   - controller
@@ -123,6 +124,7 @@ templates:
   - recent
   - help
   - notify
+  - text
   - shared/control_icon
   - shared/control_button
   - shared/filters
@@ -141,6 +143,7 @@ templates:
   - book/parts/all
   - book/parts/confirmation
   - book/parts/availability
+  - book/parts/feature
   - book/tables/custom_properties
   - book/tables/custom_resource
   - book/tables/rows
@@ -149,9 +152,11 @@ templates:
   - book/views/book
   - book/views/diary
   - book/views/manage
+  - book/views/calendars
   - book/components/loan
   - book/components/return
   - book/dialogs/generic
+  - book/dialogs/edit
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -166,6 +171,7 @@ docs:
   - book/TUTORIALS
   - book/BOOK_INSTRUCTIONS
   - book/MANAGE_INSTRUCTIONS
+  - book/MANAGE_RESOURCES_INSTRUCTIONS
   - book/FAILED_BOOK
   - book/SUCCESSFUL_BOOK
   - book/SUCCESSFUL_GROUP_BOOK
@@ -177,6 +183,10 @@ docs:
   - book/LOG_IN_INSTRUCTIONS
   - book/LOG_OUT_INSTRUCTIONS
   - book/CLEAR_CONFIGURATION
+  - book/ADD_INSTRUCTIONS
+  - book/EDIT_INSTRUCTIONS
+  - book/ADD_PARENT_INSTRUCTIONS
+  - book/ADD_FEATURE_INSTRUCTIONS
 scopes:
   google:
     - scope: email
@@ -251,6 +261,7 @@ menus:
             auth: google
             toggle:
               - diary
+            divider: true
           - name: Close
             desc: Return to App Start
             hash: close
@@ -280,6 +291,17 @@ menus:
                 - https://www.googleapis.com/auth/admin.directory.resource.calendar
                 - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
               auth: google
+            - name: Resources
+              desc: Manage resources
+              hash: manage.resources
+              imports:
+                - uuid
+              scopes:
+                - https://www.googleapis.com/auth/calendar
+                - https://www.googleapis.com/auth/admin.directory.resource.calendar
+                - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
+              auth: google
+              divider: true
             - name: Close
               desc: Return to App Start
               hash: close
@@ -380,8 +402,6 @@ buttons:
     imports:
       - clipboard
       - bootstrap-material-datepicker-js
-    imports:
-      - bootstrap-material-datepicker-js
     auth: google
   - name: About
     desc: More details about creating a Booking
@@ -404,4 +424,18 @@ buttons:
       - https://www.googleapis.com/auth/admin.directory.resource.calendar
       - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
   auth: google
+  buttons:
+  - name: Resources
+    desc: Manage Resources for your G-Suite Domain
+    hash: manage.resources
+    imports:
+      - uuid
+    scopes:
+      - https://www.googleapis.com/auth/calendar
+      - https://www.googleapis.com/auth/admin.directory.resource.calendar
+      - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
+    auth: google
+  - name: About
+    desc: More details about managing Resources and Bookings
+    hash: instructions.manage
 published: false

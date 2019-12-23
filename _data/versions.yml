@@ -1,4 +1,8 @@
 site :
+  0.1.7j :
+    name : Book v0.0.4a-beta
+    desc : Book App Provisional Released
+    numeric : 0.1.7.10
   0.1.7i :
     name : Reflect v0.0.7m-beta
     desc : Analysis Filtering Improvements
@@ -1252,6 +1256,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.4a-beta :
+    name : Resource Management
+    type : minor
   0.0.4-beta :
     name : First release version
     type : minor

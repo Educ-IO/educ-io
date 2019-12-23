@@ -1,0 +1,90 @@
+{% raw %}
+<div id="{{id}}" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-light">
+        <div class="flex-column">
+          <h5 class="modal-title" id="modal_options_title">{{title}}</h5>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{~#if instructions}}{{{ instructions }}}{{/if~}}
+        <form class="needs-validation mt-3" novalidate>
+          
+					<div class="row">
+            <div class="form-group col-lg-4 px-4 px-md-3">
+							<label for="{{#if id}}{{id}}_{{/if}}name">Name</label>
+							<button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}name" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<input id="{{#if id}}{{id}}_{{/if}}name" data-output-field="Name" type="text" class="form-control required" tabindex="1"{{#if state}}{{#exists state.name}} value="{{state.name}}"{{/exists}}{{/if}} required/>
+							<small class="form-text text-muted"></small>
+						</div>
+            <div class="form-group col-lg-4 px-4 px-md-3">
+              <label for="{{#if id}}{{id}}_{{/if}}type">Type</label>
+              <input id="{{#if id}}{{id}}_{{/if}}type" name="Type" type="text" class="form-control" tabindex="2"{{#if state}}{{#exists state.type}} value="{{state.type}}"{{/exists}}{{/if}}/>
+              <small class="form-text text-muted"></small>
+						</div>
+            <div class="form-group col-lg-4 px-4 px-md-3">
+              <label for="{{#if id}}{{id}}_{{/if}}parent">Parent</label>
+              <div class="input-group">
+                <select class="form-control custom-select" id="{{#if id}}{{id}}_{{/if}}parent" data-output-field="Parent" tabindex="3">
+                  <option value=""{{#if state}}{{#unless state.parent}} selected{{/unless}}{{else}} selected{{/if}}></option>
+                  {{#each parents}}<option value="{{id}}" {{#if ../state}}{{#is name ../state.parent}} selected{{/is}}{{/if}}>{{name}}</option>{{/each}}
+                </select>
+                <div class="input-group-append">
+                  {{> control_button b_large="true" b_icon_large="true" b_class="btn-success" b_command="add.parent"
+                    b_tooltip="Add New Parent" b_icon="add_circle_outline" b_icon_type="light" }}
+                </div>
+              </div>
+              <small class="form-text text-muted"></small>
+						</div>
+					</div>
+          
+          <div class="row">
+            <div class="form-group col-xl-6 px-4 px-md-3">
+							<label for="{{#if id}}{{id}}_{{/if}}description">Description</label>
+							<button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}description" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<textarea id="{{#if id}}{{id}}_{{/if}}description" data-output-field="Description" class="form-control resizable" tabindex="4" rows="1">{{#if state}}{{#exists state.description}}{{state.description}}{{/exists}}{{/if}}</textarea>
+							<small class="form-text text-muted"></small>
+						</div>
+            <div class="form-group col-xl-6 px-4 px-md-3">
+							<label for="{{#if id}}{{id}}_{{/if}}user_description">User Visible Description</label>
+							<button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}user_description" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<textarea id="{{#if id}}{{id}}_{{/if}}user_description" data-output-field="User Description" class="form-control resizable" tabindex="5" rows="1">{{#if state}}{{#exists state.user_description}}{{state.user_description}}{{/exists}}{{/if}}</textarea>
+							<small class="form-text text-muted"></small>
+						</div>
+					</div>
+          
+          <div class="row">
+            <div class="col-xl-8 d-flex align-items-center">
+              <div data-output-field="Features" class="d-flex align-items-center">
+                {{#if state}}{{~#present state.features}}{{#each state.features}}{{> feature name=this id=../state.id}}{{/each}}{{/present~}}{{/if}}
+              </div>
+            </div>
+            <div class="col-xl-4">
+              <div class="input-group">
+                <select class="form-control custom-select" data-action="feature" id="{{#if id}}{{id}}_{{/if}}select_feature" tabindex="6">
+                  <option class="text-secondary" value="">New Feature ...</option>
+                  {{#each features}}<option value="{{this}}">{{this}}</option>{{/each}}
+                </select>
+                <div class="input-group-append">
+                  {{> control_button b_large="true" b_icon_large="true" b_class="btn-success" b_command="add.feature"
+                    b_tooltip="Add Feature" b_icon="add_circle_outline" b_icon_type="light" }}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {{#if state}}{{#exists state.id}}<input data-output-field="ID" type="hidden" type="text" value="{{state.id}}"/>{{/exists}}{{/if}}
+				</form>
+			</div>
+      <div class="modal-footer">
+				<button type="button" class="btn btn-outline-secondary btn-flat" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">{{confirm}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endraw %}

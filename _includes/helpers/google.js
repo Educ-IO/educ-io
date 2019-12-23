@@ -947,6 +947,8 @@ Google_API = (options, factory) => {
   
       calendars: {
         
+        insert: (resource, customer) => _call(NETWORKS.admin.post, `directory/v1/customer/${customer || "my_customer"}/resources/calendars`, resource, "application/json"),
+        
         list: (query, customer) => _list(
           NETWORKS.admin.get,
           `directory/v1/customer/${customer || "my_customer"}/resources/calendars`, "items", [], {
@@ -954,6 +956,8 @@ Google_API = (options, factory) => {
             query: query || "", 
             fields: "nextPageToken,items(resourceId,resourceName,generatedResourceName,resourceType,resourceDescription,resourceEmail,capacity,buildingId,floorName,floorSection,resourceCategory,userVisibleDescription),items/featureInstances/feature/name"}),
 
+        update: (id, resource, customer) => _call(NETWORKS.admin.patch, `directory/v1/customer/${customer || "my_customer"}/resources/calendars/${encodeURIComponent(id)}`, resource, "application/json"),
+        
       },
       
       features: {

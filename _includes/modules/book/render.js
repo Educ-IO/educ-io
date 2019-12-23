@@ -36,18 +36,21 @@ Render = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Published Functions --> */
-  FN.view = (template, id, title, instructions, selectable, simple) => data => factory.Display.template.show({
+  FN.simple = (template, id, title, subtitle, instructions, extras, target) => factory.Display.template.show(_.extend({
       template: template,
       id: id,
       title: title,
-      subtitle: options.state.session.current.format(options.format),
-      data: data,
-      selectable: selectable,
-      simple: simple,
+      subtitle: subtitle,
       instructions: instructions,
       clear: true,
-      target: factory.container
-    });
+      target: target || factory.container
+    }, extras));
+  
+  FN.view = (template, id, title, instructions, selectable, simple) => data => FN.simple(template, id, title, options.state.session.current.format(options.format), instructions, {
+    data: data,
+    selectable: selectable,
+    simple: simple,
+  });
       
   FN.search = (template, selectable, simple, target) => value => options.functions.source.resources(value)
       .then(data => {

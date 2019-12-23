@@ -37,6 +37,8 @@ Hookup = (options, factory) => {
   
   var _resource = items => items.off("click.resource").on("click.resource", options.action.resource);
   
+  var _edit = items => items.off("click.resource").on("click.resource", options.action.edit);
+  
   var _event = items => factory.Flags.log("Existing Booking Items:", items);
   
   var _number = (items, fn) => items.off("change.number").on("change.number", _debounce.number(fn));
@@ -48,11 +50,20 @@ Hookup = (options, factory) => {
   FN.toggle = parent => (_toggle(parent.find("input.custom-control-input")), parent);
     
   FN.resource = parent => (_resource(parent.find("a.resource-item, div.resource-group")), parent);
-    
+  
+  FN.edit = parent => (_edit(parent.find("a.resource-item, div.resource-group")), parent);
+  
   FN.search = parent => (parent.find("input.search")
       .off("input.search")
-      .on("input.search", _debounce.search), parent);
-
+      .on("input.search", _debounce.search)
+      .off("keydown.search")
+      .on("keydown.search", e => {
+        if (((typeof e.keyCode != "undefined" && e.keyCode) ? e.keyCode : e.which) === 27) {
+          e.preventDefault(); /* <!-- Escape Key Pressed --> */
+          $(e.target || e.currentTarget).val("").trigger("input");
+        }
+      }), parent);
+        
   FN.shortcut = parent => (parent.find("input.shortcut")
       .off("keyup.shortcut")
       .on("keyup.shortcut", options.action.shortcut), parent);
