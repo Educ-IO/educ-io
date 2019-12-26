@@ -958,6 +958,9 @@ Google_API = (options, factory) => {
 
         update: (id, resource, customer) => _call(NETWORKS.admin.patch, `directory/v1/customer/${customer || "my_customer"}/resources/calendars/${encodeURIComponent(id)}`, resource, "application/json"),
         
+        delete: (id, customer) => _call(NETWORKS.admin.delete,
+            `directory/v1/customer/${customer || "my_customer"}/resources/calendars/${encodeURIComponent(id)}`),
+        
       },
       
       features: {

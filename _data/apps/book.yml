@@ -144,10 +144,10 @@ templates:
   - book/parts/confirmation
   - book/parts/availability
   - book/parts/feature
+  - book/parts/parent
   - book/tables/custom_properties
   - book/tables/custom_resource
   - book/tables/rows
-  - book/forms/confirm
   - book/forms/create
   - book/views/book
   - book/views/diary
@@ -187,6 +187,7 @@ docs:
   - book/EDIT_INSTRUCTIONS
   - book/ADD_PARENT_INSTRUCTIONS
   - book/ADD_FEATURE_INSTRUCTIONS
+  - book/DELETE_RESOURCE
 scopes:
   google:
     - scope: email

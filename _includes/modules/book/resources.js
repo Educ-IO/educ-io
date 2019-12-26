@@ -20,7 +20,8 @@ Resources = function(loaded) {
         },
         FEATURE = value => value.feature.name.trim(),
         PARENT = value => REGEXES.PARENT.test(value),
-        EXTRACT = value => value ? (match => match ? match[1] : match)(REGEXES.PARENT.exec(value)) : value;
+        EXTRACT = value => value ? (match => match ? match[1] : match)(REGEXES.PARENT.exec(value)) : value,
+        FORMAT = value => `PARENT:${value}`;
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Functions --> */
@@ -41,6 +42,11 @@ Resources = function(loaded) {
                       .map(FEATURE)
                       .find(PARENT)
                       .value()),
+        parents: _.chain(value.featureInstances)
+                      .map(FEATURE)
+                      .filter(PARENT)
+                      .map(EXTRACT)
+                      .value(),
         features: _.chain(value.featureInstances)
                       .map(FEATURE)
                       .reject(PARENT)
@@ -135,6 +141,10 @@ Resources = function(loaded) {
     
     safe: () => ಱ.loaded,
     
+    extract: EXTRACT,
+    
+    format: FORMAT,
+    
     find: search => {
       var ret = ರ‿ರ.resources.chain();
       if (search) ret = ret.find({title: {"$regex": [RegExp.escape(search), "i"]}});
@@ -142,7 +152,7 @@ Resources = function(loaded) {
     },
     
     children: parent => ರ‿ರ.resources.chain()
-      .find({parent: {"$regex": [RegExp.escape(parent), "i"]}})
+      .find({parents: {"$contains": parent}})
       .sort(FN.sort)
       .data(),
     
@@ -176,7 +186,15 @@ Resources = function(loaded) {
         ರ‿ರ.resources.update(_existing);
       },
       
-    }
+    },
+    
+    remove: {
+    
+      resource: id => ರ‿ರ.resources.remove(ರ‿ರ.resources.findOne({id: {"$eq": id}})),
+      
+      feature: value => ರ‿ರ.features.remove(ರ‿ರ.features.findOne({name: {"$eq": value}})),
+      
+    },
     
   };
   /* <!-- External Visibility --> */

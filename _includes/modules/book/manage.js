@@ -67,24 +67,24 @@ Manage = (options, factory) => {
     resourceType: data.Type ? data.Type.Value : "",
     userVisibleDescription: data["User Description"] ? data["User Description"].Value : "",
     featureInstances: _.map((data.Features ? _.isArray(data.Features.Values) ? data.Features.Values : [data.Features.Values] : [])
-                            .concat(data.Parent ? [data.Parent.Value] : []), value => ({
-                              feature: {
-                                name: value,
-                              },
-                            })),
+      .concat(data.Parents ? _.isArray(data.Parents.Values) ? data.Parents.Values : [data.Parents.Values] : []), value => ({
+        feature: {
+          name: value,
+        },
+      })),
   });
-  
+
   FN.resources = () => FN.admin()
-      .then(FN.empty)
-      .then(options.functions.source.resources)
-      .then(resources => options.functions.render.simple("calendars", options.id.manage, "Resources", "", "manage.resources", {
-        data: resources,
-        selectable: (ರ‿ರ.selectable = false),
-        simple: (ರ‿ರ.simple = false)
-      }))
-      .then(FN.hookup.edit)
-      .then(FN.hookup.search)
-      .then(() => $("#search_Text").focus());
+    .then(FN.empty)
+    .then(options.functions.source.resources)
+    .then(resources => options.functions.render.simple("calendars", options.id.manage, "Resources", "", "manage.resources", {
+      data: resources,
+      selectable: (ರ‿ರ.selectable = false),
+      simple: (ರ‿ರ.simple = false)
+    }))
+    .then(FN.hookup.edit)
+    .then(FN.hookup.search)
+    .then(() => $("#search_Text").focus());
 
   FN.access = events => {
 
@@ -366,6 +366,41 @@ Manage = (options, factory) => {
     /* <!-- Toggle selector should favour target --> */
     target: e => $(e.target || e.currentTarget),
 
+    add: (action, field, template, id, title, message, add) => () => {
+
+      var _select = $(`select[data-action='${action}']`),
+        _value = _select.children("option:selected"),
+        _add = (name, display) => {
+          var _fields = $(`[data-output-field='${field}']`);
+          if (!_.find(_fields.children("span.badge"),
+              field => String.equal($(field).children("span").text(), display, true))) {
+            _fields.append(factory.Display.template.get({
+              template: template,
+              id: $("input[type='hidden'][data-output-field='ID']").val(),
+              name: name,
+              display: display
+            }));
+            _select.val("");
+          }
+        };
+
+      _value && _value.val() ? _add(_value.val(), _value.text()) : options.state.application.resources.safe()
+        .then(resources => factory.Display.text({
+          id: id,
+          title: title,
+          message: factory.Display.doc.get(message),
+          validate: value => value,
+          simple: true
+        }).then(name => {
+          if (!name) return name;
+          add(name, (value, display) => $("<option />", {
+            value: value,
+            text: display
+          }).appendTo($(`select[data-action='${action}']`)), resources).then(value => _add(value.name, value.display));
+        }).catch(e => e ? factory.Flags.error("Adding Error", e) : null));
+
+    },
+
     search: e => options.functions.render.search("resources", ರ‿ರ.selectable, ರ‿ರ.simple)(FN.action.target(e).val())
       .then(FN.hookup.toggle)
       .then(ರ‿ರ.selectable ? FN.hookup.resource : FN.hookup.edit),
@@ -383,39 +418,59 @@ Manage = (options, factory) => {
       var _dialog = factory.Dialog({}, factory);
       return group ?
         Promise.resolve(true) :
-        options.state.application.resources.safe().then(resources => factory.Display.modal("edit", _.extend({
-          target: factory.container,
-          id: options.id.edit,
-          title: "Edit Resource",
-          instructions: factory.Display.doc.get("EDIT_INSTRUCTIONS"),
-          confirm: "Save",
-          handlers: {
-            clear: _dialog.handlers.clear,
-          }
-        }, {
-          parents: resources.parents(),
-          features: resources.features(),
-          state: {
-            id: resource.id,
-            name: resource.name || "",
-            type: resource.category || "",
-            description: resource.description || "",
-            user_description: resource.details || "",
-            parent: resource.parent || "",
-            features: resource.features || [],
-          }
-        }), dialog => {
-          factory.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {
-            trigger: "hover"
+        options.state.application.resources.safe().then(resources => {
+          var _parents = resources.parents();
+          return factory.Display.modal("edit", _.extend({
+            target: factory.container,
+            id: options.id.edit,
+            title: "Edit Resource",
+            instructions: factory.Display.doc.get("EDIT_INSTRUCTIONS"),
+            confirm: "Save",
+            handlers: {
+              clear: _dialog.handlers.clear,
+            },
+            actions: [{
+              text: "Delete",
+              handler: (data, dialog) => factory.Display.confirm({
+                  id: "delete_Resource",
+                  target: factory.container,
+                  message: factory.Display.doc.get("DELETE_RESOURCE"),
+                  action: "Delete"
+                })
+                .then(confirm => confirm && data.ID ? (dialog.modal("hide"), factory.Google.resources.calendars.delete(data.ID.Value)
+                  .then(result => result === true ? (resources.remove.resource(data.ID.Value), FN.resources()) : result)
+                  .then(factory.Main.busy("Deleting Resource"))) : false)
+                .catch(e => e ? factory.Flags.error("Resource Delete Error", e) : false)
+            }],
+          }, {
+            parents: _parents,
+            features: resources.features(),
+            state: {
+              id: resource.id,
+              name: resource.name || "",
+              type: resource.type || "",
+              description: resource.description || "",
+              user_description: resource.details || "",
+              parent: resource.parent || "",
+              parents: resource.parents ? _.map(resource.parents, parent => _.find(_parents, value => value.name == parent)) : [],
+              features: resource.features ? _.map(resource.features, feature => ({
+                name: feature,
+                display: feature
+              })) : [],
+            }
+          }), dialog => {
+            factory.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {
+              trigger: "hover"
+            });
+            _dialog.handlers.keyboard.enter(dialog);
+          }).then(data => {
+            if (data === undefined) return;
+            factory.Flags.log("Data returned from Edit Dialog:", data);
+            return factory.Google.resources.calendars.update(data.ID.Value, FN.resource(data))
+              .then(result => result ? (resources.update.resource(result), FN.resources()) : result)
+              .then(factory.Main.busy("Updating Resource"));
           });
-          _dialog.handlers.keyboard.enter(dialog);
-        }).then(data => {
-          if (data === undefined) return;
-          factory.Flags.log("Data returned from Edit Dialog:", data);
-          return factory.Google.resources.calendars.update(data.ID.Value, FN.resource(data))
-            .then(result => result ? (resources.update.resource(result), FN.resources()) : result)
-            .then(factory.Main.busy("Updating Resource"));
-        }));
+        });
     },
 
     toggle: e => {
@@ -505,67 +560,40 @@ Manage = (options, factory) => {
         }));
       },
 
-      parent: () => factory.Display.text({
-          id: options.id.parent,
-          title: "Parent / Group Name",
-          message: factory.Display.doc.get("ADD_PARENT_INSTRUCTIONS"),
-          validate: value => value,
-          simple: true
-        }).then(name => name ? options.state.application.resources.safe()
-          .then(resources => {
-            if (!_.find(resources.parents(), parent => parent.name == name)) {
-              return factory.Google.resources.features.insert(`PARENT:${name}`)
-                .then(feature => {
-                  var _select = $("select[data-output-field='Parent']");
-                  _select.children("option").removeAttr("selected");
-                  $("<option />", {
-                      value: feature.name,
-                      text: name
-                    })
-                    .appendTo(_select)
-                    .attr("selected", "selected");
-                  resources.add.feature(feature.name);
-                });
-            }
-          }) : name)
-        .catch(e => e ? factory.Flags.error("Feature Adding Error", e) : null),
+      parent: FN.action.add("parent", "Parents", "parent", options.id.parent, "Parent / Group Name", "ADD_PARENT_INSTRUCTIONS",
+        (name, add, resources) => {
+          var _existing = _.find(resources.parents(), parent => String.equal(parent.name, name, true));
+          return (_existing ? Promise.resolve({
+            name: _existing.id,
+            display: _existing.name
+          }) : factory.Google.resources.features.insert(name = resources.format(name)).then(parent => {
+            var _name = parent.name,
+              _display = resources.extract(parent.name);
+            add(_name, _display);
+            resources.add.feature(_name);
+            return {
+              name: _name,
+              display: _display
+            };
+          }));
+        }),
 
-      feature: () => {
+      feature: FN.action.add("feature", "Features", "feature", options.id.feature, "Feature Name", "ADD_FEATURE_INSTRUCTIONS",
+        (name, add, resources) => {
+          var _existing = _.find(resources.features(), feature => String.equal(feature, name, true));
+          return (_existing ? Promise.resolve({
+            name: _existing,
+            display: _existing
+          }) : factory.Google.resources.features.insert(name).then(feature => {
+            add(feature.name, feature.name);
+            resources.add.feature(feature.name);
+            return {
+              name: feature.name,
+              display: feature.name
+            };
+          }));
+        }),
 
-        var _feature = $("select[data-action='feature'] option:selected").val(),
-          _add = feature => {
-            var _fields = $("[data-output-field='Features']");
-            if (!_.find(_fields.children("span.badge"), field => String.equal($(field).children("span").text(), feature, true))) {
-              _fields.append(factory.Display.template.get({
-                template: "feature",
-                id: $("input[type='hidden'][data-output-field='ID']").val(),
-                name: feature
-              }));
-            }
-          };
-
-        _feature ? _add(_feature) : options.state.application.resources.safe()
-          .then(resources => factory.Display.text({
-            id: options.id.feature,
-            title: "Feature Name",
-            message: factory.Display.doc.get("ADD_FEATURE_INSTRUCTIONS"),
-            validate: value => value,
-            simple: true
-          }).then(name => {
-            if (!name) return name;
-            var _existing = _.find(resources.features(), feature => String.equal(feature, name, true));
-            (_existing ? Promise.resolve(_existing) : factory.Google.resources.features.insert(name).then(feature => {
-              $("<option />", {
-                value: feature.name,
-                text: feature.name
-              }).appendTo($("select[data-action='feature']"));
-              resources.add.feature(feature.name);
-              return feature.name;
-            }))
-            .then(name => _add(name));
-          }).catch(e => e ? factory.Flags.error("Feature Adding Error", e) : null));
-
-      },
     },
 
     booking: (calendar, id) => options.functions.source.event(calendar, id)
@@ -594,6 +622,8 @@ Manage = (options, factory) => {
       tag: FN.confirm.remove,
 
       feature: (id, feature) => $(`[data-id='${id}'][data-feature='${feature}']`).remove(),
+
+      parent: (id, parent) => $(`[data-id='${id}'][data-parent='${parent}']`).remove(),
 
     },
 

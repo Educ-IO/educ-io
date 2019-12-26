@@ -167,14 +167,16 @@ Process = (options, factory) => {
   FN.available = periods => _.filter(periods, period => period.title === undefined);
       
   FN.resources = resources => _.reduce(resources, (memo, resource) => {
-    if (resource.parent) {
-      var _parent = _.find(memo, value => String.equal(value.id, resource.parent, true));
-      if (!_parent) memo.push(_parent = {
-        id: resource.parent,
-        name: resource.parent,
-        children: [],
+    if (resource.parents && resource.parents.length > 0) {
+      _.each(resource.parents, parent => {
+        var _parent = _.find(memo, value => String.equal(value.id, parent, true));
+        if (!_parent) memo.push(_parent = {
+          id: parent,
+          name: parent,
+          children: [],
+        });
+        _parent.children.push(resource);  
       });
-      _parent.children.push(resource);
     } else {
       memo.push(resource);
     }

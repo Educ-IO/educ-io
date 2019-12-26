@@ -78,7 +78,8 @@ Data = (options, factory) => {
       value = el => {
         var simple = el => {
           var _type = el.data("output-type") || el.prop("type") || "string",
-            _val = (el[0].type == "range" && el.data("value") === false) ? null :
+            _val = el.data("data") ? el.data("data") : 
+            (el[0].type == "range" && el.data("value") === false) ? null :
             (el[0].type == "checkbox" && el.is("input:indeterminate")) ?
             el.data("output-always") ? "" : "all" :
             (el[0].type == "checkbox" || el[0].type == "radio") ? el.prop("checked") :

@@ -247,7 +247,7 @@ Display = function() {
           if (_action.indexOf("actions_") === 0) {
             _action = $(e.target).data("action").split("_");
             if (_action[0] == "actions") options.actions[_action[1]].handler(handler ?
-              handler() : dialog.find("form").serializeArray());
+              handler() : ಠ_ಠ.Data ? ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(dialog.find("form")) : dialog.find("form").serializeArray(), dialog);
           } else if (options.handlers && options.handlers[_action]) {
             options.handlers[_action](_target, dialog, options);
           }

@@ -389,6 +389,13 @@ App = function() {
                   decodeURIComponent(ಠ_ಠ.Flags.decode(command[0])),
                   decodeURIComponent(ಠ_ಠ.Flags.decode(command[1])))
               },
+              parent: {
+                matches: /PARENT/i,
+                length: 2,
+                fn: command => FN.manage.remove.parent(
+                  decodeURIComponent(ಠ_ಠ.Flags.decode(command[0])),
+                  decodeURIComponent(ಠ_ಠ.Flags.decode(command[1])))
+              },
             },
           },
           
