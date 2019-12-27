@@ -1,6 +1,6 @@
 ###### Booking Status
 
-A booking can have either have __no status__ (e.g. nothing has yet been loaned) or be marked as either __loaned__ or __returned__.A
+A booking can have either have __no status__ (e.g. nothing has yet been loaned) or be marked as either <span class="badge badge-danger ml-1 mr-1">LOANED</span> or <span class="badge badge-success ml-1 mr-1">RETURNED</span>.
 
 This allows you to keep track of whether a resource has been collected or not.
 

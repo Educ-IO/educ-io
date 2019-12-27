@@ -2,10 +2,10 @@
 layout: page
 ---
 {{ content }}
-{% capture tutorials %}{%- include tutorials.html app=page.app mode="expanded" -%}{% endcapture %}
+{% capture tutorials %}{%- include tutorials.html app=page.for mode="expanded" -%}{% endcapture %}
 {% capture cases %}
 - - -
-#### Use Cases
+#### Use Cases / Tutorials
 {% endcapture %}
 {% if tutorials and tutorials.size > 0 %}
 {{ cases | markdownify }}

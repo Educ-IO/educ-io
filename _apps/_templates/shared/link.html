@@ -9,7 +9,7 @@
         </button>
       </div>
       <div class="modal-body">
-          {{#unless hide_link}}<p id="link_text" class="text-wrap text-break text-muted"><small class="text-select">{{link}}</small></p>{{/unless}}
+          <p id="link_text" class="text-wrap text-break text-muted{{#if hide_link}} d-none{{/if}}"><small class="text-select">{{link}}</small></p>
             {{~#unless options_bottom}}<div class="d-flex">
               {{> link_options}}
             </div>{{/unless~}}

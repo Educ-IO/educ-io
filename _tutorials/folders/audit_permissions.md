@@ -14,15 +14,15 @@ Auditing refers to a process of loading and verifying the sharing permissions of
 #### Icon Key
 {:.pt-2 .pb-1}
 
-+ <i class="material-icons md-1" title="Owner">pets</i> - An __owner__ of an item who is not you
-+ <i class="material-icons text-success md-1" title="Owned by you">cloud_done</i> - You are the __owner__ of this item (or Team Drive Organiser)
-+ <i class="material-icons md-1" title="">mood</i> - Permission is for __you__
-+ <i class="material-icons md-1" title="">face</i> - Permission is for an __individual__ (e.g. not your primary email address)
-+ <i class="material-icons md-1" title="Group">group</i> - Permission is for a __group__
-+ <i class="material-icons md-1" title="Entire Domain">domain</i> - Permission is for an entire __organisation__ / __domain__
-+ <i class="material-icons md-1" title="Whole World">public</i> - Permission is for anyone
-+ <i class="material-icons md-1" title="Can Edit">mode_edit</i> - Permission is to __write__ to the item (no icon implies just read or comment rights)
-+ <i class="material-icons md-1 text-danger" title="Searchable without link!">new_releases</i> - Item can be found via __searching__ (__no__ link required)
++ <i class="material-icons md-1 small" title="Owner">pets</i> - An __owner__ of an item who is not you
++ <i class="material-icons text-success md-1 small" title="Owned by you">cloud_done</i> - You are the __owner__ of this item (or Team Drive Organiser)
++ <i class="material-icons md-1 small" title="">mood</i> - Permission is for __you__
++ <i class="material-icons md-1 small" title="">face</i> - Permission is for an __individual__ (e.g. not your primary email address)
++ <i class="material-icons md-1 small" title="Group">group</i> - Permission is for a __group__
++ <i class="material-icons md-1 small" title="Entire Domain">domain</i> - Permission is for an entire __organisation__ / __domain__
++ <i class="material-icons md-1 small" title="Whole World">public</i> - Permission is for anyone
++ <i class="material-icons md-1 small" title="Can Edit">mode_edit</i> - Permission is to __write__ to the item (no icon implies just read or comment rights)
++ <i class="material-icons md-1 text-danger small" title="Searchable without link!">new_releases</i> - Item can be found via __searching__ (__no__ link required)
 
 Items that are [tagged]({% link _tutorials/folders/tagging_data.md %}) with <span class="custom-property badge badge-danger ml-1 mr-1" title="">Confidentiality - High</span> or <span class="custom-property badge badge-warning ml-1 mr-1" title="">Confidentiality - Medium</span> will have the following permissions highlighted:
 

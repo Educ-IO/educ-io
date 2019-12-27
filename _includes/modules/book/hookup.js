@@ -51,7 +51,7 @@ Hookup = (options, factory) => {
     
   FN.resource = parent => (_resource(parent.find("a.resource-item, div.resource-group")), parent);
   
-  FN.edit = parent => (_edit(parent.find("a.resource-item, div.resource-group")), parent);
+  FN.edit = parent => (_edit(parent.find("a.resource-item")), parent);
   
   FN.search = parent => (parent.find("input.search")
       .off("input.search")

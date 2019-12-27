@@ -222,7 +222,8 @@ Main = function() {
     if (start) start();
 
     /* <!-- Call Router Initially (if required) | Default Hash = #! --> */
-    Promise.resolve(ಠ_ಠ.Flags && ಠ_ಠ.Flags.initial() ? ಠ_ಠ.Flags.route(ಠ_ಠ.Flags.initial(), _route) : window.location.hash ? router() : null)
+    var _initial = ಠ_ಠ.Flags ? ಠ_ಠ.Flags.initial() : null;
+    Promise.resolve(ಠ_ಠ.Flags && _initial ? ಠ_ಠ.Flags.route(_initial, _route) : window.location.hash ? router() : null)
       /* <!-- Module Finally | After all initial routes --> */
       .then(() => quiet === true ? false : _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m].finally) ? 
                                    ಠ_ಠ[m].finally.call(ಠ_ಠ) : false));

@@ -16,7 +16,7 @@ A search needs to start from an __initial folder__. This can be any folder, a Te
 
 ![Search Dialog Screenshot][1]{:class="img-fluid img-thumbnail mx-auto d-block"}
 
-The search dialog box (shown above) allows you to __fully customise__ your search, or use one of the __shortcut buttons__ to pre-fill some of the parameters for you. You can mix and match by entering some of your own parameters, and use the shortcut buttons to fill in others. If you wish to __lock__ a particular field to ensure it is not overridden when you press a shortcut, you can click on the <i class="material-icons md-1">lock_open</i> / <i class="material-icons md-1">lock</i> icons above the field.
+The search dialog box (shown above) allows you to __fully customise__ your search, or use one of the __shortcut buttons__ to pre-fill some of the parameters for you. You can mix and match by entering some of your own parameters, and use the shortcut buttons to fill in others. If you wish to __lock__ a particular field to ensure it is not overridden when you press a shortcut, you can click on the <i class="material-icons md-1 small">lock_open</i> / <i class="material-icons md-1 small">lock</i> icons above the field.
 
 + __Names__ - This will return items with names that contain the strings you enter in this box. If you want to search for more than one name simultaneously (using an __OR__ operator), then enter the strings on separate lines.
 + __Visibility__ - This will control what items are returned by the search by filtering by their sharing visibility. If you wish to search only files shared with you, ensure you tick '_Search Entire Drive_' first, as folders are excluded in this type of search.

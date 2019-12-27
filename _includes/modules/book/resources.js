@@ -38,10 +38,6 @@ Resources = function(loaded) {
         location: `${value.buildingId ? value.buildingId : ""}${value.buildingId && value.floorName ? "\\" : ""}${value.floorName ? `Floor ${value.floorName}` : ""}${(value.buildingId || value.floorName) && value.floorSection ? "\\" : ""}${value.floorSection ? value.floorSection : ""}`,
         description: value.resourceDescription,
         details: value.userVisibleDescription,
-        parent: EXTRACT(_.chain(value.featureInstances)
-                      .map(FEATURE)
-                      .find(PARENT)
-                      .value()),
         parents: _.chain(value.featureInstances)
                       .map(FEATURE)
                       .filter(PARENT)
@@ -147,7 +143,10 @@ Resources = function(loaded) {
     
     find: search => {
       var ret = ರ‿ರ.resources.chain();
-      if (search) ret = ret.find({title: {"$regex": [RegExp.escape(search), "i"]}});
+      if (search) ret = ret.find({"$or": [
+        {title: {"$regex": [RegExp.escape(search), "i"]}},
+        {features: {"$regex": [RegExp.escape(search), "i"]}}
+      ]});
       return ret.sort(FN.sort).data();
     },
     

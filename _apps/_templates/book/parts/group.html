@@ -8,18 +8,18 @@
     </div>
     
     <div id="availability" class="progress w-100">{{> availability}}</div>
-    <small id="availability_Help" class="form-text text-muted">The availability bar represents the whole day, with black/red parts of the bar showing when the number of resources you require are <strong>not available</strong>.</small>
+    <small id="availability_Help" class="d-none d-md-block form-text text-muted">The availability bar represents the whole day, with black/red parts of the bar showing when the number of resources you require are <strong>not available</strong>.</small>
     
     {{~#is max "gt" 1}}<div class="w-100 mt-2 mt-xl-3">
       <h4 class="d-inline mr-2"><span id="number_Required_Value" class="badge badge-dark">1</span></h4><label for="number_Required">How many {{name}} required?</label>
       <input type="range" class="custom-range" min="1" max="{{max}}" value="1" id="number_Required" data-targets="#number_Required_Value">  
     </div>{{/is~}}
     
-  </div><hr />
+  </div><hr class="d-none d-md-block"/>
   
-  <div class="row my-2 my-xl-3">
+  <div class="row my-2 my-xl-3 mb-3">
     
-    <div class="mb-1">
+    <div class="mb-1 d-none d-md-block">
       <h5 class="m-0 font-weight-light">Book <span class="font-weight-normal text-dark">{{name}}</span></h5>
     </div>
     

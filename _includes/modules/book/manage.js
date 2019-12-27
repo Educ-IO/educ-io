@@ -314,12 +314,13 @@ Manage = (options, factory) => {
   };
 
   FN.shortcut = (command, complete) => {
-    if (command) {
-      factory.Flags.log("RUN SHORTCUT", command);
-      if (command.indexOf("#") >= 0) {
-        var _command = command.split("#");
-        window.location.hash = _command[_command.length - 1];
-      }
+    if (!command) return;
+    factory.Flags.log("RUN SHORTCUT", command);
+    var _command = command.indexOf("?") >= 0 ? command.split("?") :
+        command.indexOf("#") >= 0 ? command.split("#") :
+        null;
+    if (_command) {
+      window.location.hash = _command[_command.length - 1];
       complete();
     }
   };

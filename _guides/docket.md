@@ -26,7 +26,7 @@ This is anything that __needs to get done__. A task is entered on a particular d
 
 ##### Events
 
-Events are an item which is entered with a time. Past events __do not roll over__ to the current date, because they are specific to that single moment. This is ideal for meetings, appointments or reminders to take a call. Events are marked by a small <i class="material-icons md-1">schedule</i> icon but can be treated very similarly to tasks.
+Events are an item which is entered with a time. Past events __do not roll over__ to the current date, because they are specific to that single moment. This is ideal for meetings, appointments or reminders to take a call. Events are marked by a small <i class="material-icons md-1 small">schedule</i> icon but can be treated very similarly to tasks.
 
 #### Display and Tags
 

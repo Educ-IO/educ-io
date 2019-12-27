@@ -27,7 +27,7 @@ You can also use __your own tags__, to help manage __any information__ you need 
 #### Editing Tags
 {:.pt-2 .pb-1}
 
-Tags can be edited, added or removed using the __Folders__ interface, using the <i class="material-icons md-1 bg-dark text-light p-1">create</i> button link for individual items, or the __Tag__ command (_Results_ menu) to perform bulk tagging operations.
+Tags can be edited, added or removed using the __Folders__ interface, using the <i class="material-icons md-1 bg-dark text-light p-1 small">create</i> button link for individual items, or the __Tag__ command (_Results_ menu) to perform bulk tagging operations.
 
 ![Tag Items Dialog Screenshot][1]{:class="img-fluid img-thumbnail mx-auto d-block"}
 
@@ -36,7 +36,7 @@ The tag dialog (shown above) has a series of shortcut buttons for our pre-define
 #### Searching for Tags
 {:.pt-2 .pb-1}
 
-Using our [search]({% link _tutorials/folders/advanced_searching.md %}) tools, you can easily search for tags that correspond to particular names/values. If you want to find all items (in your Drive) that have the same name/value tag, you can also click on the <i class="material-icons md-1">search</i> icon within the tag as a __search shortcut__. If you click on the × icon (right-hand side of the tag), you will be prompted to remove the tag from the item.
+Using our [search]({% link _tutorials/folders/advanced_searching.md %}) tools, you can easily search for tags that correspond to particular names/values. If you want to find all items (in your Drive) that have the same name/value tag, you can also click on the <i class="material-icons md-1 small">search</i> icon within the tag as a __search shortcut__. If you click on the × icon (right-hand side of the tag), you will be prompted to remove the tag from the item.
 
 If you are using the __review__ and __reviewed__ tags to get track of which documents need periodic review, items that are overdue reviews will be highlighted in a light red in __Folders__. You can also search for documents needing reviews using a shortcut button in the __search__ dialog.
 

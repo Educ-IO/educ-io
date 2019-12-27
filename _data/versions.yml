@@ -1,5 +1,9 @@
 site :
   0.1.7k :
+    name : Book v0.0.4c-beta
+    desc : Book App Provisional Released
+    numeric : 0.1.7.12
+  0.1.7k :
     name : Book v0.0.4b-beta
     desc : Book App Provisional Released
     numeric : 0.1.7.11
@@ -1260,6 +1264,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.4c-beta :
+    name : Updated Narrow Screen Layouts and Help Documentation
+    type : minor
   0.0.4b-beta :
     name : Resource Management (Creation and Deletion)
     type : minor

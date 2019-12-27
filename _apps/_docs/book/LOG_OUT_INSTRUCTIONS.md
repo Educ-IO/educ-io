@@ -1,1 +1,1 @@
-Please record the __serial numbers__ / __identifiers__ of any returned equipment here.
+Please record the __serial numbers__ / __identifiers__ of any loaned equipment here.

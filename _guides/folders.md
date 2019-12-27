@@ -36,9 +36,9 @@ To _refine_ your __current view__, you can sort and filter by clicking on the co
 
 Various icons are also shown to make common actions just a click away:
 
-+ <i class="material-icons md-1">cloud</i> / <i class="material-icons md-1">cloud_off</i> - Indicates if an item is shared or not, _clicking_ will __audit__ the sharing permissions of the item.
++ <i class="material-icons md-1 small">cloud</i> / <i class="material-icons md-1 small">cloud_off</i> - Indicates if an item is shared or not, _clicking_ will __audit__ the sharing permissions of the item.
 + ★ / ☆ - Indicates if an item is starred or not, _clicking_ will either __star__ or __un-star__ the item
-+ <i class="material-icons md-1">delete_forever</i> - _Clicking_ on the rubbish bin / trashcan will __delete__ this item from Google Drive
++ <i class="material-icons md-1 small">delete_forever</i> - _Clicking_ on the rubbish bin / trashcan will __delete__ this item from Google Drive
 + ⇗ - Clicking on an link with this icon will open the item in another of our Apps, or an external tool
 
 ##### Searching

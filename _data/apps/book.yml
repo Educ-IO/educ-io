@@ -56,7 +56,7 @@ imports:
   - name: waves-js
     load: last
   - name: objectHash
-    load: lazy
+    load: last
   - name: uuid
     load: lazy
   - name: bootstrap-material-datepicker-js
@@ -282,7 +282,6 @@ menus:
               imports:
                 - google
                 - uuid
-                - objectHash
                 - bootstrap-material-datepicker-js
               scopes:
                 - https://www.googleapis.com/auth/drive.appdata
@@ -415,7 +414,6 @@ buttons:
   imports:
       - google
       - uuid
-      - objectHash
       - bootstrap-material-datepicker-js
   scopes:
       - https://www.googleapis.com/auth/drive.appdata

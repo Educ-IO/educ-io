@@ -55,7 +55,13 @@ Flags = function() {
 
     _oauth = (_url.param("oauth") || _url.fparam("oauth"));
     
-    _initial = (_url.param("i") || _url.fparam("i"));
+    _initial = (() => {
+      var _value = _url.param("i") || _url.fparam("i");
+      if (!_value) {
+        _value = _url.param("I") || _url.fparam("I");
+      }
+      return _value;
+    })();
 
     _option = (_url.param("option") === "" || _url.fparam("option") === "");
 
