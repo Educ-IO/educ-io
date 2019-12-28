@@ -117,7 +117,7 @@ scopes:
       request: lazy
 keys:
   google:
-      general: AIzaSyAgVBaTI_-73Jw6jvFuPQJpXmz1rvb_JAs
+      general: 
       oauth: 68211839161-18e036rj3aubkblkjudk3bbtsjkslvv1.apps.googleusercontent.com
 menus:
   - name: Publish

@@ -765,7 +765,7 @@ Data = function() {
                       .that.equals(option.class.endsWith("paper") ? "Paper" : "Offline");
                     expect(_item.find("span[data-output-name='Type']").text())
                       .to.be.a("string")
-                      .that.equals(state.type);
+                      .that.equals(state.type.trim());
                   });
                 }
 

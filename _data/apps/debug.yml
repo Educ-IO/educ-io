@@ -157,7 +157,7 @@ scopes:
       request: lazy
 keys:
   google:
-      general: AIzaSyCjzmLYLXdUlRsSkvVb7BSv1638qmFERvk
+      general: 
       oauth: 685325083823-ht0iv9sa3d09op75e46r3bag1io447vl.apps.googleusercontent.com
 menus:
   - name: Options

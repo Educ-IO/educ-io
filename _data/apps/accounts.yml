@@ -127,7 +127,7 @@ scopes:
       request: login
 keys:
   google:
-      general: AIzaSyC87WAInVCLR1Filuy_bclGajFFGQlVJSQ
+      general: 
       oauth: 740623674895-qo8s1af5d5aufl6v1uqrfr38tulia1r5.apps.googleusercontent.com
 menus:
   - name: Accounts

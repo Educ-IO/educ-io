@@ -140,7 +140,7 @@ scopes:
       request: login
 keys:
   google:
-      general: AIzaSyCjAdVf9euxOuyO89tzAY7NDtD_mjmHOEI
+      general: 
       oauth: 875988173253-44ge8q6egcddepnpkgjd560ksg2k9lct.apps.googleusercontent.com
 menus:
   - name: Calendars

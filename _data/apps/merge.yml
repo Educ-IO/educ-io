@@ -143,7 +143,7 @@ scopes:
       request: lazy
 keys:
   google:
-      general: AIzaSyACPqbocW3AgV_wP4wCkhzmU7S_ASQtcNs
+      general: 
       oauth: 51509082175-cjimvgm2eo78evoqu2fokfmm3amai5sg.apps.googleusercontent.com
 menus:
   - name: Merges

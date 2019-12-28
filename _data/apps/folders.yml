@@ -156,7 +156,7 @@ scopes:
       request: lazy
 keys:
   google:
-      general: AIzaSyAWBZZmDitrJkyaP8NaJg7MqAZNzOA0Vls
+      general: 
       oauth: 90081862912-skjj4r2j0hv0en9ssu63h1rfjs5125mn.apps.googleusercontent.com
 menus:
   - name: Folders

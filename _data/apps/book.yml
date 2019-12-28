@@ -10,7 +10,7 @@
 #########################################
 
 name: Book
-desc: Easily manage, loan and track your G-Suite resources
+desc: Easily manage, loan and track your G-Suite calendar resources
 link: /book/
 colour: db6300
 logo: images/book_logo.svg
@@ -437,4 +437,4 @@ buttons:
   - name: About
     desc: More details about managing Resources and Bookings
     hash: instructions.manage
-published: false
+published: true

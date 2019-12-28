@@ -1,4 +1,8 @@
 site :
+  0.1.8 :
+    name : Book v0.0.5-beta
+    desc : Book App Released
+    numeric : 0.1.8.0
   0.1.7k :
     name : Book v0.0.4c-beta
     desc : Book App Provisional Released
@@ -1264,6 +1268,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.5-beta :
+    name : Book App Approved and Released
+    type : minor
   0.0.4c-beta :
     name : Updated Narrow Screen Layouts and Help Documentation
     type : minor

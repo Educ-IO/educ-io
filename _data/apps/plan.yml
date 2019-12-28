@@ -117,7 +117,7 @@ scopes:
       request: lazy
 keys:
   google:
-      general: AIzaSyB4U1Z3WYhbL0JT0Vhi_3nDu4xiKM_VZVE
+      general: 
       oauth: 798064376263-lcneurf9d9vfa3hfjp6j1625jm2mqp64.apps.googleusercontent.com
 menus:
   - name: Plan

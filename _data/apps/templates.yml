@@ -101,7 +101,7 @@ scopes:
       request: login
 keys:
   google:
-      general: AIzaSyBHBiKwqf4yAdMnUZgxOCZSOuIS7_Y1RKw
+      general: 
       oauth: 157665340338-6tq6c951cvj05b5mg46bbftahnmb0iqk.apps.googleusercontent.com
 menus:
   - name: Settings

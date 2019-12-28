@@ -119,7 +119,7 @@ scopes:
       request: lazy
 keys:
   google:
-      general: AIzaSyATcTyy5atrw6hl2iUtt1EA-o_xVOGfXVA
+      general: 
       oauth: 894090436889-a4kond8cjov44miilvm2gs7q4bboarup.apps.googleusercontent.com
 menus:
   - name: Settings

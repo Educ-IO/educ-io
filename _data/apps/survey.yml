@@ -115,7 +115,7 @@ scopes:
       request: lazy
 keys:
   google:
-      general: AIzaSyAOjFi_-u-GUL1AgfLiDJxcupL1rE4Vdk0
+      general: 
       oauth: 704582607588-dsej4vspkij0a17g4ceh7i9v1tqq0q76.apps.googleusercontent.com
 menus:
   - name: Survey

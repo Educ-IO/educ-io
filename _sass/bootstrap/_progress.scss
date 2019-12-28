@@ -24,6 +24,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
   color: $progress-bar-color;
   text-align: center;
   white-space: nowrap;
@@ -41,9 +42,11 @@
     -webkit-animation: progress-bar-stripes $progress-bar-animation-timing;
             animation: progress-bar-stripes $progress-bar-animation-timing;
 
-    @media (prefers-reduced-motion: reduce) {
-      -webkit-animation: none;
-              animation: none;
+    @if $enable-prefers-reduced-motion-media-query {
+      @media (prefers-reduced-motion: reduce) {
+        -webkit-animation: none;
+                animation: none;
+      }
     }
   }
 }

@@ -297,7 +297,7 @@ scopes:
       reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
 keys:
   google:
-      general: AIzaSyDCjK2aSKu9CAb3lCXxegwy-G9VTdNBAak
+      general: 
       oauth: 969160887251-lnkpkhpet6ojgtkposr49f0uuubbbpq2.apps.googleusercontent.com
 menus:
   - name: Report

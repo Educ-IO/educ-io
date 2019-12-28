@@ -173,7 +173,7 @@ scopes:
       request: lazy
 keys:
   google:
-      general: AIzaSyAnA6HobNGSG5BheqjmH8-ltY483OiFZWA
+      general: 
       oauth: 413873384033-o7ip66i3qhm5q80cksnce0v0vi4qij6l.apps.googleusercontent.com
 menus:
   - name: Sheet
@@ -252,7 +252,7 @@ menus:
             imports:
               - xlsx
               - xlsxpopulate
-              - filesave
+              - filesaver
               - base64
               - clipboard
   - name: Settings
