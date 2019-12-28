@@ -107,7 +107,7 @@ Render = (options, factory) => {
         data: data,
         headers: _headers(),
       }, {
-        classes: ["table-hover"],
+        classes: ["table-hover", "table-responsive-md"],
         filters: {},
         inverted_Filters: {},
         sorts: {},

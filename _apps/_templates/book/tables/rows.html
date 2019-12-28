@@ -15,12 +15,12 @@
     <span>{{who}}</span>
   {{/present~}}</td>
   <td class="align-middle bg-secondary">
-    <div class="d-flex align-items-center">
+    <div class="d-flex flex-column flex-md-row align-items-center">
       {{#present properties}}{{> custom_properties properties=properties id=id manageable=manageable}}{{/present}}
       {{~#if manageable}}
-      <div class="ml-auto">
+      <div class="ml-md-auto">
         {{~#if (any (absent properties) (all (is properties.STATUS "!=" "LOANED") (is properties.STATUS "!=" "RETURNED")))}}
-          <div class="btn-group mr-1">
+          <div class="btn-group mr-md-1">
             {{> control_button b_tiny="true" b_class="btn-action" b_icon="directions_run" b_text="Loan"
                 b_command=(concat "confirm.loan." id) }}
             {{> control_button b_tiny="true" b_class="btn-action dropdown-toggle dropdown-toggle-split d-flex" b_toggle="dropdown" }}
@@ -34,7 +34,7 @@
           </div>
         {{/if~}}
         {{~#if (all (present properties) (is properties.STATUS "LOANED"))}}
-          <div class="btn-group mr-1">
+          <div class="btn-group mr-md-1">
             {{> control_button b_tiny="true" b_class="btn-action" b_icon="home" b_text="Return"
                 b_command=(concat "confirm.return." id) }}
             {{> control_button b_tiny="true" b_class="btn-action dropdown-toggle dropdown-toggle-split d-flex" b_toggle="dropdown" }}

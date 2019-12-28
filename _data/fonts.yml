@@ -5,3 +5,7 @@
 "Material Icons":
   safe: "Material+Icons"
   for: [view, folders, reflect, merge, cover, grades, tiles, poll, docket, accounts, events, book, debug, _extensions/cloudysky.md, _extensions/show.md, test.md, home.md, _guides/book.md, _guides/docket.md, _guides/folders.md, _tutorials/folders/advanced_searching.md, _tutorials/folders/tagging_data.md, _tutorials/folders/audit_permissions.md]
+"Economica":
+  safe: "Economica"
+  weights: "400,700"
+  for: [home.md]

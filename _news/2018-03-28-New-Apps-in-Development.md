@@ -4,8 +4,29 @@ layout: page
 published: true
 support: true
 lead: New __tool releases__ in the pipeline
-date: 2018-12-02
+date: 2018-06-01
 ---
+
+* * *
+{:.pb-2}
+
+{% include {{ site.data.apps.book.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em;  margin-left: 0.5em;"}
+
+#### Book __[Released!](/book){:.text-light}__{:.float-right .badge .badge-primary .ml-2}
+
+{{site.data.apps.book.desc}}
+{:.alert .alert-secondary}
+
+Turn Google Calendar into an efficient __equipment booking__ system.
+
++ Fully web-based, __no__ new systems, __no__ new servers, __no__ new logins, __no__ extra costs.
++ Works on __mobile__ browsers, meaning faster loan and collection of resources
++ Easily book __multiple resources__ of the same type (great for class or group sets)
++ Log __loan details__ to help audit where you equipment has been!
++ Generate __QR codes__ for quicker booking confirmations and loans
+
+* * *
+{:.pb-2}
 
 {% include {{ site.data.apps.events.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
 
@@ -61,7 +82,7 @@ __Reflect__ allows you to record your achievements on a regular basis, collect a
 * * *
 {:.pb-2}
 
-{% include {{ site.data.apps.merge.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em;  margin-left: 0.5em;"}
+{% include {{ site.data.apps.merge.logo}} %}{:.logo .float-left style="margin-top: -0.25em; margin-right: 0.25em; margin-left: 0.5em;"}
 
 #### Merge
 

@@ -52,7 +52,7 @@
             <div class="col-xl-12 d-flex align-items-center bg-light mb-2">
               <span class="font-weight-bold">Parent/s</span>
             </div>   
-            <div class="col-xl-8 d-flex align-items-center">
+            <div class="col-xl-8 d-flex align-items-center mb-2 mb-xl-0">
               <div data-output-field="Parents" class="d-flex align-items-center">
                 {{#if state}}{{~#present state.parents}}{{#each state.parents}}{{> parent display=name name=id id=../state.id}}{{/each}}{{/present~}}{{/if}}
               </div>
@@ -75,7 +75,7 @@
             <div class="col-xl-12 d-flex align-items-center bg-light mb-2">
               <span class="font-weight-bold">Feature/s</span>
             </div> 
-            <div class="col-xl-8 d-flex align-items-center">
+            <div class="col-xl-8 d-flex align-items-center mb-2 mb-xl-0">
               <div data-output-field="Features" class="d-flex align-items-center">
                 {{#if state}}{{~#present state.features}}{{#each state.features}}{{> feature name=this id=../state.id}}{{/each}}{{/present~}}{{/if}}
               </div>

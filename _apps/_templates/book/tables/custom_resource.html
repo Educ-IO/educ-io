@@ -1,6 +1,6 @@
 {% raw %}
 <div class="d-flex align-items-centre{{#unless @last}} mb-1{{/unless}}">
-  {{#if icon}}<i class="material-icons md-1 text-light bg-secondary p-1 rounded mr-1" data-toggle="tooltip" data-html="true" title="<strong>Type:</strong> {{type}}">{{icon}}</i>{{/if}}
+  {{#if icon}}<i class="material-icons md-1 text-light bg-secondary p-1 rounded mr-1 d-none d-md-block" data-toggle="tooltip" data-html="true" title="<strong>Type:</strong> {{type}}">{{icon}}</i>{{/if}}
   <span class="font-weight-light">{{either name title}}</span>
   {{~> confirmation class="md-1 p-1" declined="true" ~}}
 </div>

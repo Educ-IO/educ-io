@@ -1,4 +1,8 @@
 site :
+  0.1.8a :
+    name : Book v0.0.5a-beta
+    desc : Visual Improvements for Mobile Users
+    numeric : 0.1.8.1
   0.1.8 :
     name : Book v0.0.5-beta
     desc : Book App Released
@@ -1268,6 +1272,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.5a-beta :
+    name : Visual Spacing Improvements for small screen widths
+    type : minor
   0.0.5-beta :
     name : Book App Approved and Released
     type : minor
