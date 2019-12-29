@@ -21,6 +21,15 @@ h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading {
 	color: darken($colour-highlight, 15%) !important;
 }
 
+btn.identity, a.identity, .btn.identity {
+  letter-spacing: $font-spacing-identity;
+  word-spacing: $word-spacing-identity;
+  font-family: $font-identity, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  &.btn-lg {
+    font-size: larger !important;
+  }
+}
+
 .navbar-brand, .brand {
   text-transform: uppercase;
 }

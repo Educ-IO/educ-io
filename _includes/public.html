@@ -7,8 +7,8 @@
 			<p class="lead">{{ app.desc | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</p>
 			{% raw %}{{content}}{% endraw %}
 			<div class="d-flex flex-column flex-md-row lead mb-3 mt-2">
-				<a id="get_Started" href="{{ include.start }}" class="btn btn-lg btn-action mr-md-3 mt-2 waves-effect"><div class="loading float-left"><div class="spinner"></div></div>Get started</a>
-				<a href="/support/" class="btn btn-lg btn-outline-success mt-2 waves-effect">Support</a>
+				<a id="get_Started" href="{{ include.start }}" class="btn btn-lg btn-action mr-md-3 mt-2 waves-effect identity"><div class="loading float-left"><div class="spinner"></div></div>Get started</a>
+				<a href="/support/" class="btn btn-lg btn-outline-success mt-2 waves-effect font-weight-bold identity">Support</a>
 			</div>
 			{% unless include.simple %}<p class="text-muted mb-0">{% assign _app = app.name | downcase %}
 				{% if site.data.versions[_app] %}Current app version is <a href="{{site.baseurl}}changes/?highlight={{ app.name | downcase }}">{% assign _app = app.name | downcase %}{{ site.data.versions[_app].first[0] }}</a>. {% endif %}To find out more about the <strong>permissions</strong> this app requires, and how they are used, have a look at its <a href="{{site.baseurl}}scopes/?highlight={{ app.name | downcase }}">scopes</a> and our <a href="{{site.baseurl}}about/?highlight=privacy">privacy policy</a>.

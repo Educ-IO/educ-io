@@ -17,9 +17,9 @@
     </div>
     
     <div class="d-flex flex-column flex-md-row lead mb-3">
-    	<a href="#apps" class="btn btn-lg btn-primary mr-md-3 mt-2 text-uppercase smooth-scroll d-none d-md-block" title="Straight to our tools!">Our Apps</a>
-      <a href="/support/" class="btn btn-lg btn-success mr-md-3 mt-2 text-uppercase" title="{{ site.support }}">Support</a>
-      <a href="/about/" class="btn btn-lg btn-normal mt-2 text-uppercase" title="About this site and our approach">More About Us</a>
+    	<a href="#apps" class="btn btn-lg btn-primary mr-md-3 mt-2 text-uppercase smooth-scroll d-none d-md-block identity font-weight-bold" title="Straight to our tools!">Our Apps</a>
+      <a href="/support/" class="btn btn-lg btn-success mr-md-3 mt-2 text-uppercase identity" title="{{ site.support }}">Support</a>
+      <a href="/about/" class="btn btn-lg btn-normal mt-2 text-uppercase identity" title="About this site and our approach">More About Us</a>
     </div>
     
     <div class="mt-lg-4 pt-lg-4">{% include headlines.html %}</div>
@@ -30,16 +30,16 @@
 	<hr />
 	<div id="apps" class="border-exagerate d-flex flex-row flex-wrap mx-1 my-2 pt-2 border border-white">
 		{% for app in apps %}{% capture c %}{% cycle 'odd', 'even' %}{% endcapture %}{% capture t %}btn-{% if app.info %}info{% elsif c == 'odd' %}primary{% else %}secondary{% endif %}{% endcapture %}{% capture i %}{{ app.name | replace: '_', '' | replace: '`', '' | replace: '?', '' | replace: '!', '' | replace: ' ', '' | downcase }}{% endcapture %}
-			<div class="d-flex flex-column col-12 col-md-4 py-2 px-3 p-md-4{% if c == 'odd' %} bg-light border-0{% endif %} border border-white rounded">
+			<div class="d-flex flex-column col-12 col-md-4 py-2 px-3 py-md-4 px-md-3{% if c == 'odd' %} bg-light border-0{% endif %} border border-white rounded">
         <div>
-          {% if app.learn %}<a id="title_{{ i }}" class="no-underline" href="{{ app.learn }}"{% if app.ext %} target="_new"{% endif %}>{% endif %}<h3{% if app.colour %} style="color: #{{ app.colour }} !important;"{% endif %}>{{ app.name }}</h3>{% if app.learn %}</a>{% endif %}
+          {% if app.learn %}<a id="title_{{ i }}" class="no-underline identity" href="{{ app.learn }}"{% if app.ext %} target="_new"{% endif %}>{% endif %}<h3{% if app.colour %} style="color: #{{ app.colour }} !important;"{% endif %} class="{% if c == 'odd' %}bg-white{% else %}bg-light{% endif %} py-1 px-2 border rounded">{{ app.name }}</h3>{% if app.learn %}</a>{% endif %}
         </div>
     		<div class="mt-auto mb-auto">
           {{ app.desc | markdownify }}
         </div>
         <div class="d-flex flex-wrap justify-content-between">
-          <a id="open_{{ i }}" class="btn {{ t }}{% if app.learn %} mb-1 mb-lg-2{% endif %} text-uppercase" href="{{ app.link }}"{% if app.ext %} target="_new"{% endif %}>{% if app.action %}{{ app.action }}{% else %}<strong>Open</strong> {{ app.name }}{% endif %}</a>
-				{% if app.learn %}<a id="learn_{{ i }}" class="btn mb-1 mb-lg-2 text-uppercase" href="{{ app.learn }}"{% if app.ext %} target="_new"{% endif %}>Learn more</a>{% endif %}
+          <a id="open_{{ i }}" class="btn {{ t }} mb-1 mb-lg-2 text-uppercase identity" href="{{ app.link }}"{% if app.ext %} target="_new"{% endif %}>{% if app.action %}{{ app.action }}{% else %}<strong>Open</strong> {{ app.name }}{% endif %}</a>
+				{% if app.learn %}<a id="learn_{{ i }}" class="btn mb-1 mb-lg-2 text-uppercase identity" href="{{ app.learn }}"{% if app.ext %} target="_new"{% endif %}>Learn more</a>{% endif %}
         </div>
   		</div>
 		{% endfor %}

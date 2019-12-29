@@ -12,7 +12,7 @@
       <div class="carousel-background border rounded w-100" alt="Headline {{ forloop.index }}">
         <div class="row align-items-center justify-content-center">
           <div class="col col-8 col-lg-10 text-center py-4 py-md-3">
-            <h5><a href="{{ post.url }}">{% if post.headline %}{{ post.headline }}{% else %}{{ post.title }}{% endif %}</a></h5>
+            <h4><a href="{{ post.url }}" class="identity">{% if post.headline %}{{ post.headline }}{% else %}{{ post.title }}{% endif %}</a></h4>
             <p class="d-none d-lg-block">{% if post.app %}{{ site.data.apps[post.app].desc | markdownify }}{% elsif post.lead %}{{ post.lead | markdownify }}{% else %}{{ post.content | strip_html | truncatewords: 16 , "  .." }}{% endif %}</p>
           </div>
         </div>

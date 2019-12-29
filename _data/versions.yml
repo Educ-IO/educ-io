@@ -1,4 +1,8 @@
 site :
+  0.1.8b :
+    name : Site v0.1.8b
+    desc : Visual Improvements for Site
+    numeric : 0.1.8.2
   0.1.8a :
     name : Book v0.0.5a-beta
     desc : Visual Improvements for Mobile Users
