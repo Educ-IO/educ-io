@@ -69,6 +69,7 @@ helpers:
   - fields
   - dialog
   - colours
+  - handlebars
 modules:
   - flags
   - controller

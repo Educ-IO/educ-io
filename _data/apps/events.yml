@@ -71,6 +71,8 @@ helpers:
   - strings
   - dialog
   - link
+  - handlebars
+  - url
 modules:
   - flags
   - controller

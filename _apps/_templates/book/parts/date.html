@@ -20,6 +20,10 @@
       	b_class="btn-success btn-sm mr-md-1 mb-1 mb-md-0"
         b_tooltip=add b_icon="add_circle_outline"
     		b_icon_type="light" b_command=(either add_command "add") }}{{/if~}}
+    {{~#if remove}}{{> control_button b_large="true" b_icon_large="true"
+      	b_class="btn-danger btn-sm mr-md-1 mb-1 mb-md-0"
+        b_tooltip=remove b_icon="remove_circle_outline"
+    		b_icon_type="light" b_command=(either remove_command "remove") }}{{/if~}}
     {{~#if instructions}}<a href="#instructions.{{instructions}}" class="d-flex text-decoration-none mb-1 mb-md-0">
       <i class="material-icons md-24 mb-0 mr-md-3 text-light bg-dark p-1 rounded">help_outline</i>
     </a>{{/if~}}

@@ -90,6 +90,8 @@ helpers:
   - saver
   - saad
   - config
+  - handlebars
+  - url
 modules:
   - flags
   - controller

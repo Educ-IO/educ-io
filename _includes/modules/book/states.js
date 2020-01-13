@@ -9,11 +9,17 @@ States = () => {
   const STATE_BOOK = "book",
     STATE_DIARY = "diary",
     STATE_MANAGE = "manage",
+    STATE_MANAGE_BOOKINGS = "manage-bookings",
+    STATE_MANAGE_RESOURCES = "manage-resoources",
+    STATE_MANAGE_PERMISSIONS = "manage-permissions",
+    STATE_MANAGE_NOTIFICATIONS = "manage-notifications",
     STATE_ANALYSIS = "analysis",
     STATE_ANALYSIS_SUMMARY = "analysis-summary",
     STATE_ANALYSIS_DETAIL = "analysis-detail",
     STATE_CONFIG = "config",
-    STATES = [STATE_BOOK, STATE_MANAGE, STATE_DIARY, STATE_ANALYSIS, STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL, STATE_CONFIG];
+    STATES = [STATE_BOOK, STATE_DIARY, STATE_CONFIG, 
+              STATE_MANAGE, STATE_MANAGE_BOOKINGS, STATE_MANAGE_RESOURCES, STATE_MANAGE_PERMISSIONS, STATE_MANAGE_NOTIFICATIONS, 
+              STATE_ANALYSIS, STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -57,9 +63,14 @@ States = () => {
     
     manage : {
       in : STATE_MANAGE,
+      bookings : STATE_MANAGE_BOOKINGS,
+      resources : STATE_MANAGE_RESOURCES,
+      permissions : STATE_MANAGE_PERMISSIONS,
+      notifications : STATE_MANAGE_NOTIFICATIONS
     },
     
-    views : [STATE_ANALYSIS, STATE_BOOK, STATE_DIARY, STATE_MANAGE],
+    views : [STATE_ANALYSIS, STATE_BOOK, STATE_DIARY, 
+             STATE_MANAGE, STATE_MANAGE_BOOKINGS, STATE_MANAGE_RESOURCES, STATE_MANAGE_PERMISSIONS, STATE_MANAGE_NOTIFICATIONS],
     
   };
   /* <!-- External Visibility --> */

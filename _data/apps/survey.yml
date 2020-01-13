@@ -48,6 +48,7 @@ helpers:
   - network
   - google
   - css
+  - handlebars
 modules:
   - flags
   - controller

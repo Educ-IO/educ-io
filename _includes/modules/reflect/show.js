@@ -35,7 +35,7 @@ Show = (options, factory) => {
       _form = _shown.find("form"),
       _fields = factory.Fields({
         me: factory.me ? factory.me.full_name : undefined,
-        templater: options => factory.Display.template.process($(factory.Display.template.get(options))),
+        templater: options => factory.Display.template.get(options, true),
         list_upload_content: "Evidence",
         list_web_content: "Evidence",
         forms: options.state.application.forms

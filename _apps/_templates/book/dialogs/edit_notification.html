@@ -1,0 +1,40 @@
+{% raw %}
+<div id="{{id}}" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-light">
+        <div class="flex-column">
+          <h5 class="modal-title" id="modal_options_title">{{title}}</h5>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{~#if instructions}}{{{ instructions }}}{{/if~}}
+        <form class="needs-validation mt-3" novalidate>
+          
+					<div class="row">
+            <div class="container col-12 px-4 px-md-3">
+              <div class="form-group row">
+                <label for="{{#if id}}{{id}}_{{/if}}type" class="col-sm-2 col-form-label">Type</label>
+                <div class="col-sm-10">
+                  <select class="form-control custom-select" data-output-field="Type" id="{{#if id}}{{id}}_{{/if}}select_type" tabindex="1">
+                    {{#each types}}<option value="{{id}}"{{~#exists disables}} data-disables="#{{#if ../id}}{{../id}}_{{/if}}{{disables}}"{{/exists~}}{{#if ../state}}{{#exists ../state.type}}{{#is ../state.type id}} selected{{/is}}{{/exists}}{{/if}}>{{name}}</option>{{/each}}
+                  </select>
+                </div>
+              </div>
+						</div>
+					</div>
+
+				</form>
+			</div>
+      <div class="modal-footer">
+				<button type="button" class="btn btn-outline-secondary btn-flat" data-dismiss="modal">Close</button>
+        {{# if actions}}{{#each actions}}{{> control_button b_class="btn-outline-danger" b_id=id b_action=(concat "actions_" @index) b_title=desc b_text=text }}{{/each}}{{/if}}
+        <button type="button" class="btn btn-primary" data-dismiss="modal">{{confirm}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endraw %}

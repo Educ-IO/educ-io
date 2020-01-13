@@ -17,6 +17,14 @@ info: true
 colour: d3861b
 action: Find out more
 versions:
+  1.0.5 :
+    name : Bug Fix
+    desc : Fixed Google Fonts Issue
+    type : minor
+  1.0.4 :
+    name : Bug Fix
+    desc : Changes to Fonts in Google Slides means that screenshots are now font-less :(
+    type : minor
   1.0.1 :
     name : Keyboard Shortcuts
     desc : Added Keyboard shortcuts to make control even easier!

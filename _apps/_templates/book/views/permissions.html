@@ -1,0 +1,11 @@
+{% raw %}
+<div {{#if id}}id="{{id}}" {{/if}}class="container-fluid pt-lg-1 mvh-100">
+
+  {{> date dateless=true add="Add new Permission" add_command="add.permission" remove="Remove Permission" remove_command="remove.permission"}}
+  
+  {{> search placeholder="Search Resources"}}
+  
+  <div id="resources">{{#if data}}{{> resources resources=data opaque=false}}{{/if}}</div>
+  
+</div>
+{% endraw %}

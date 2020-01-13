@@ -26,6 +26,9 @@ Process = (options, factory) => {
 
         _target.html(factory.Display.doc.get("NO_SIGNATURES"));
         _target.parents(".card").find(".card-header h5").html("Signatures");
+        
+        /* <!-- Exit Signed State --> */
+        factory.Display.state().exit(options.functions.states.report.signed);
 
       },
       _display = signatures => {
@@ -62,6 +65,11 @@ Process = (options, factory) => {
             class: "ml-2 text-success",
           }));
 
+        /* <!-- Enter / Exit Signed State --> */
+        _.find(signatures, signature => signature.who === true) ?
+          factory.Display.state().enter(options.functions.states.report.signed) :
+          factory.Display.state().exit(options.functions.states.report.signed);
+        
       };
 
     if (options.state.session.file) options.state.application.signatures.list(options.state.session.file, _data)

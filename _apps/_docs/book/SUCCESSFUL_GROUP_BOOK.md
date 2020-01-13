@@ -1,1 +1,1 @@
-The resource/s have been booked.
+The request for resource/s has been submitted.

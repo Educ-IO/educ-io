@@ -46,7 +46,7 @@ Action = (options, factory) => {
         }
       }, null, true)
       .then(factory.Main.busy("Revoking"))
-      .then(uploaded => uploaded ? options.functions.load.filed(uploaded) : false));
+      .then(uploaded => uploaded ? options.functions.load.file(uploaded) : false));
 
   FN.screenshot = element => (window.html2canvas ?
       html2canvas(_.tap(element, () => window.scrollTo(0, 0)), {

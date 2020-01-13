@@ -10,7 +10,7 @@ Main = function() {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "Dates", "App"];
+  var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "Dates", "App"], _helpers = ["Url", "Handlebars"];
   /* <!-- Internal Variables --> */
 
   /* <!-- Plumbing Functions --> */
@@ -283,7 +283,7 @@ Main = function() {
       ಠ_ಠ.Google.me().then(user => {
 
         user.available = true;
-        user.display_name = (u => () => ಠ_ಠ.Display.username(u.name))(user);
+        user.display_name = (u => () => ಠ_ಠ.handlebars.username(u.name))(user);
         user.full_name = (u => () => `${u.display_name()} (${u.email})`)(user);
 
         route_LoggedIn(ಠ_ಠ.me = user);
@@ -401,6 +401,9 @@ Main = function() {
         ಠ_ಠ.Flags = flags;
         _default = (ಠ_ಠ.SETUP.SINGLE_PAGE || ಠ_ಠ.Flags.page()) ? "page" : "popup";
 
+        /* <!-- Helper Creations --> */
+        _helpers.forEach(h => ಠ_ಠ[h] && ಠ_ಠ._isF(ಠ_ಠ[h]) ? ಠ_ಠ[h.toLowerCase()] = ಠ_ಠ[h]({}, ಠ_ಠ) : false);
+        
         /* <!-- Module Starts --> */
         _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m].start) ? ಠ_ಠ[m].start.call(ಠ_ಠ) : false);
 

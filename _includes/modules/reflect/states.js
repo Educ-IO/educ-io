@@ -10,10 +10,12 @@ States = () => {
     STATE_FORM_OPENED = "opened-form",
     STATE_REPORT_OPENED = "opened-report",
     STATE_REPORT_SIGNABLE = "signable-report",
+    STATE_REPORT_SIGNED = "signed-report",
     STATE_REPORT_EDITABLE = "editable-report",
     STATE_TRACKER_OPENED = "opened-tracker",
     STATE_SCALE_OPENED = "opened-scale",
     STATE_REPORT_COMPLETE = "report-complete",
+    STATE_REPORT_REVOCABLE = "report-revocable",
     STATE_ANALYSIS = "analysis",
     STATE_ANALYSIS_SUMMARY = "analysis-summary",
     STATE_ANALYSIS_DETAIL = "analysis-detail",
@@ -25,6 +27,7 @@ States = () => {
     STATE_ANALYSIS_VERIFY = "analysis-verify",
     STATES = [STATE_FILE_LOADED, STATE_FORM_OPENED, STATE_TRACKER_OPENED,
       STATE_REPORT_COMPLETE, STATE_REPORT_OPENED, STATE_REPORT_SIGNABLE, STATE_REPORT_EDITABLE,
+      STATE_REPORT_REVOCABLE, STATE_REPORT_SIGNED,
       STATE_SCALE_OPENED, STATE_ANALYSIS, STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL,
       STATE_ANALYSIS_ALL, STATE_ANALYSIS_MINE, STATE_ANALYSIS_SHARED,
       STATE_ANALYSIS_ANY, STATE_ANALYSIS_COMPLETE, STATE_ANALYSIS_VERIFY
@@ -75,8 +78,10 @@ States = () => {
     report : {
       opened : STATE_REPORT_OPENED,
       signable : STATE_REPORT_SIGNABLE,
+      signed : STATE_REPORT_SIGNED,
       editable : STATE_REPORT_EDITABLE,
       complete : STATE_REPORT_COMPLETE,
+      revocable : STATE_REPORT_REVOCABLE,
     },
       
     scale : {

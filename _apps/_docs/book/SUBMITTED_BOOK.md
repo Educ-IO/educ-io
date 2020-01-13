@@ -1,0 +1,1 @@
+The resource [booking]({% raw %}{{content}}{% endraw %}){:target="_blank"} request has been submitted.

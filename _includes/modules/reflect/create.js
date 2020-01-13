@@ -79,7 +79,8 @@ Create = (options, factory) => {
   FN.report = (name, actions, form, process, owner, permissions) => options.functions.show.report(name, [options.functions.states.report.opened]
       .concat(!actions || (actions.editable && !actions.completed) ? [options.functions.states.report.editable] : [])
       .concat(actions && actions.signable ? [options.functions.states.report.signable] : [])
-      .concat(actions && actions.completed ? [options.functions.states.report.complete] : []),
+      .concat(actions && actions.completed ? [options.functions.states.report.complete] : [])
+      .concat(actions && actions.editable && actions.completed ? [options.functions.states.report.revocable] : []),
     form, process, actions, owner, permissions);
 
   FN.form = name => FN.generic(options.functions.edit.form, name ?

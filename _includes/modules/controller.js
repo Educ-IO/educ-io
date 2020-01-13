@@ -6,6 +6,7 @@ Controller = function() {
   if (this && this._isF && this._isF(this.Controller)) return new this.Controller().initialise(this);
 
   /* <!-- Internal Constants --> */
+  const MODULES = ["Flags", "Display", "Service", "Main"];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -150,10 +151,7 @@ Controller = function() {
       ಠ_ಠ = container;
 
       /* <!-- Initialise Objects --> */
-      if (ಠ_ಠ.Flags) ಠ_ಠ.Flags();
-      if (ಠ_ಠ.Display) ಠ_ಠ.Display();
-      if (ಠ_ಠ.Service) ಠ_ಠ.Service();
-      if (ಠ_ಠ.Main) ಠ_ಠ.Main();
+      MODULES.forEach(module => ಠ_ಠ[module] ? ಠ_ಠ[module]() : false);
 
       /* <!-- Set Container Reference to this --> */
       container.Controller = this;

@@ -867,6 +867,23 @@ Google_API = (options, factory) => {
 
       },
       
+      permissions: {
+        
+        create: (id, data) => _call(NETWORKS.general.post, `calendar/v3/calendars/${encodeURIComponent(id)}/acl`, data, "application/json"),
+        
+        delete: (id, rule) => _call(NETWORKS.general.delete, `calendar/v3/calendars/${encodeURIComponent(id)}/acl/${rule}`),
+        
+        get: (id, rule) => _call(NETWORKS.general.get, `calendar/v3/calendars/${encodeURIComponent(id)}/acl/${rule}`),
+        
+        list: id => _list(NETWORKS.general.get, `calendar/v3/calendars/${encodeURIComponent(id)}/acl`, "items", [], {
+          maxResults: 250,
+          showDeleted: false,
+        }),
+        
+        update: (id, rule, data) => _call(NETWORKS.general.patch, `calendar/v3/calendars/${encodeURIComponent(id)}/acl/${rule}`, data, "application/json"),
+        
+      },
+      
       busy: (ids, start, end, zone) => {
         var _limit = 50,
             _action = identifiers => _call(NETWORKS.general.post, "calendar/v3/freeBusy", {
@@ -891,10 +908,19 @@ Google_API = (options, factory) => {
           fields: "id,summary,summaryOverride,description,accessRole",
         }),
       
+      add: (id, data) => _call(NETWORKS.general.post, "https://www.googleapis.com/calendar/v3/users/me/calendarList",
+                               data ? _.defaults({id: id}, data) : {id: id}, "application/json"),
+      
       list: () => _list(
         NETWORKS.general.get, "calendar/v3/users/me/calendarList", "items", [], {
           orderBy: "summary",
           fields: "kind,nextPageToken,items(id,summary,summaryOverride,description,accessRole)",
+        }),
+      
+      update: (id, data) => _call(NETWORKS.general.patch, `calendar/v3/users/me/calendarList/${encodeURIComponent(id)}`, data, "application/json"),
+      
+      notifications: id  => _call(NETWORKS.general.get, `calendar/v3/users/me/calendarList/${encodeURIComponent(id)}`, {
+          fields: "id,notificationSettings",
         }),
 
     },

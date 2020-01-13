@@ -192,6 +192,16 @@ App = function() {
             title: "Managing Resources ..."
           },
           {
+            match: [/MANAGE/i, /PERMISSIONS/i],
+            show: "MANAGE_PERMISSIONS_INSTRUCTIONS",
+            title: "Managing Permissions ..."
+          },
+          {
+            match: [/MANAGE/i, /NOTIFICATIONS/i],
+            show: "MANAGE_NOTIFICATIONS_INSTRUCTIONS",
+            title: "Managing Notifications ..."
+          },
+          {
             match: /LOAN/i,
             show: "LOAN_INSTRUCTIONS",
             title: "Loans and Returns ..."
@@ -279,7 +289,7 @@ App = function() {
                         .then(ಠ_ಠ.Main.busy("Loading Bookings"))
                         .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.diary.in))
           },
-          
+
           manage: {
             matches: /MANAGE/i,
             routes: {
@@ -287,13 +297,25 @@ App = function() {
                 matches: /BOOKINGS/i,
                 fn: () => FN.manage.bookings()
                         .then(ಠ_ಠ.Main.busy("Loading Resources"))
-                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.manage.in))
+                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.bookings]))
               },
               resources: {
                 matches: /RESOURCES/i,
                 fn: () => FN.manage.resources()
                         .then(ಠ_ಠ.Main.busy("Loading Resources"))
-                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.manage.in))
+                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.resources]))
+              },
+              permissions: {
+                matches: /PERMISSIONS/i,
+                fn: () => FN.manage.permissions()
+                        .then(ಠ_ಠ.Main.busy("Loading Resources"))
+                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.permissions]))
+              },
+              notifications: {
+                matches: /NOTIFICATIONS/i,
+                fn: () => FN.manage.notifications()
+                        .then(ಠ_ಠ.Main.busy("Loading Resources"))
+                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.notifications]))
               },
             },
           },
@@ -348,8 +370,8 @@ App = function() {
                 qr_size: 480,
                 title: "Booking Shortcut",
                 data: {
-                  c: ಠ_ಠ.Flags.decode(commands[0]),
-                  e: ಠ_ಠ.Flags.decode(commands[1])
+                  c: ಠ_ಠ.url.decode(commands[0]),
+                  e: ಠ_ಠ.url.decode(commands[1])
                 }}, ಠ_ಠ).generate();
             }
           },
@@ -370,6 +392,14 @@ App = function() {
                 matches: /PARENT/i,
                 fn: () => FN.manage.add.parent()
               },
+              permission: {
+                matches: /PERMISSION/i,
+                fn: () => FN.manage.add.permission()
+              },
+              notification: {
+                matches: /NOTIFICATION/i,
+                fn: () => FN.manage.add.notification()
+              },
             },
           },
           
@@ -386,15 +416,37 @@ App = function() {
                 matches: /FEATURE/i,
                 length: 2,
                 fn: command => FN.manage.remove.feature(
-                  decodeURIComponent(ಠ_ಠ.Flags.decode(command[0])),
-                  decodeURIComponent(ಠ_ಠ.Flags.decode(command[1])))
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[0])),
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[1])))
               },
               parent: {
                 matches: /PARENT/i,
                 length: 2,
                 fn: command => FN.manage.remove.parent(
-                  decodeURIComponent(ಠ_ಠ.Flags.decode(command[0])),
-                  decodeURIComponent(ಠ_ಠ.Flags.decode(command[1])))
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[0])),
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[1])))
+              },
+              specific_permission: {
+                matches: /PERMISSION/i,
+                length: 2,
+                fn: command => FN.manage.remove.permission(
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[0])),
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[1])))
+              },
+              permission: {
+                matches: /PERMISSION/i,
+                fn: () => FN.manage.remove.permission()
+              },
+              specific_notification: {
+                matches: /NOTIFICATION/i,
+                length: 2,
+                fn: command => FN.manage.remove.notification(
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[0])),
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[1])))
+              },
+              notification: {
+                matches: /NOTIFICATION/i,
+                fn: () => FN.manage.remove.notification()
               },
             },
           },

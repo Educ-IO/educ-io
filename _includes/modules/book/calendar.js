@@ -72,7 +72,7 @@ Calendar = (options, factory) => {
   };
   
   FN.who = event => event.organizer ? 
-              event.organizer.displayName ? factory.Display.username(event.organizer.displayName) :
+              event.organizer.displayName ? factory.handlebars.username(event.organizer.displayName) :
               event.organizer.email : "";
   /* <!-- Public Functions --> */
 

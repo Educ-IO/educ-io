@@ -12,10 +12,75 @@ Manage = (options, factory) => {
         edit: "EDIT_RESOURCE",
         add: "ADD_RESOURCE",
         parent: "PARENT_NAME",
-        feature: "FEATURE_NAME"
+        feature: "FEATURE_NAME",
+        permission: "PERMISSION",
+        notification: "NOTIFICATION"
       },
       loaned: "LOANED",
       returned: "RETURNED",
+      notifications: {
+        types: [
+          {
+            id: "eventCreation",
+            name: "When Bookings are Created"
+          },
+          {
+            id: "eventChange",
+            name: "When Bookings are Changed"
+          },
+          {
+            id: "eventCancellation",
+            name: "When Bookings are Cancelled"
+          },
+          {
+            id: "agenda",
+            name: "Daily Summary of Bookings"
+          },
+        ],
+      },
+      permissions: {
+        types: [
+          {
+            id: "default",
+            name: "Public Access",
+            disables: "value"
+          },
+          {
+            id: "user",
+            name: "User Access",
+          },
+          {
+            id: "group",
+            name: "Group Access",
+          },
+          {
+            id: "domain",
+            name: "Domain Access",
+          },
+        ],
+        roles: [
+          {
+            id: "none",
+            name: "No Access",
+          },
+          {
+            id: "freeBusyReader",
+            name: "Access to Free/Busy Information",
+          },
+          {
+            id: "reader",
+            name: "Read Access to Events",
+          },
+          {
+            id: "writer",
+            name: "Write Access to Calendar Events",
+          },
+          {
+            id: "owner",
+            name: "Owner Access to Resource Calendar",
+          },
+        ],
+      }
     },
     FN = {};
   /* <!-- Internal Constants --> */
@@ -34,6 +99,7 @@ Manage = (options, factory) => {
       calendars: [],
       data: [],
       list: [],
+      dialog: factory.Dialog({}, factory),
     },
     /* <!-- State --> */
     ಱ = {
@@ -41,6 +107,193 @@ Manage = (options, factory) => {
     }; /* <!-- Persistant --> */
   /* <!-- Internal Variables --> */
 
+  /* <!-- Notification Function --> */
+  FN.notification = (title, instructions, command, success) => factory.Display.modal("edit_notification", {
+            target: factory.container,
+            id: options.id.notification,
+            title: title,
+            instructions: factory.Display.doc.get({
+                        name: instructions,
+                        content: !ರ‿ರ.calendars || !ರ‿ರ.calendars.length ? 
+                          "NO Resources Selected" : `${ರ‿ರ.calendars.length} Resource${ರ‿ರ.calendars.length > 1 ? "s" : ""} Selected`
+                      }),
+            confirm: command,
+            types: options.notifications.types
+          }, dialog => {
+            factory.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {
+              trigger: "hover"
+            });
+            ರ‿ರ.dialog.handlers.keyboard.enter(dialog);
+          }).then(data => data ? success(data) : false);
+  /* <!-- Notification Function --> */
+  
+  /* <!-- Permission Function --> */
+  FN.permission = (roles, types, role, type, title, instructions, success) => factory.Display.modal("edit_permission", _.extend({
+            target: factory.container,
+            id: options.id.permission,
+            title: title,
+            instructions: factory.Display.doc.get({
+                        name: instructions,
+                        content: !ರ‿ರ.calendars || !ರ‿ರ.calendars.length ? 
+                          "NO Resources Selected" : `${ರ‿ರ.calendars.length} Resource${ರ‿ರ.calendars.length > 1 ? "s" : ""} Selected`
+                      }),
+            confirm: "Save",
+            handlers: {
+              clear: ರ‿ರ.dialog.handlers.clear,
+            },
+          }, {
+            roles: roles,
+            types: types,
+            state: {
+              role: role,
+              type: type,
+            }
+          }), dialog => {
+            factory.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {
+              trigger: "hover"
+            });
+            ರ‿ರ.dialog.handlers.selected(dialog);
+            ರ‿ರ.dialog.handlers.keyboard.enter(dialog);
+          }).then(data => {
+            if (data === undefined || !ರ‿ರ.calendars || !ರ‿ರ.calendars.length) return;
+            factory.Flags.log("Data returned from Permission Dialog:", data);
+            var _acl = {
+              role : data.Role.Value,
+              scope : {
+                type : data.Type.Value,
+                value : data.Value && data.Role.Value != "default" ? data.Value.Value : ""
+              }
+            };
+            return Promise.all(_.map(ರ‿ರ.calendars, calendar => factory.Google.calendar.permissions.create(calendar.id, _acl)
+                .then(result => result && success ? success(result, calendar) : result)))
+              .then(factory.Main.busy("Updating Permissions"));
+            
+          });
+  /* <!-- Permission Function --> */
+  
+  /* <!-- Add Functions --> */
+  FN.add = {
+    
+    notification: () => FN.notification("Create Notification", "CREATE_NOTIFICATION_INSTRUCTIONS", "Save",
+      data => Promise.all(_.map(ರ‿ರ.calendars, calendar => {
+      
+        var _absent = $(`[data-id='${calendar.id}'][data-type='absent']`),
+            _holder = $(`[data-id="${calendar.id}"] .content-holder .notifications-holder`),
+            _add = ((id, type) => result => {
+              _absent.length > 0 ? _absent.remove() : false;
+              return result ? 
+                (_holder.length > 0 ? _holder : $(`[data-id="${id}"] .content-holder`)).prepend(factory.Display.template.get({
+                  template: "notification",
+                  calendar: id,
+                  addition: _holder.length > 0,
+                  notifications: [{
+                    method: "email",
+                    type: type,
+                  }],
+                }, true)) : false;
+            })(calendar.id, data.Type.Value);
+      
+        return _absent.length > 0 ?
+          factory.Google.calendars.add(calendar.id, {
+            hidden: true,
+            notificationSettings: {
+              notifications: [{
+                method: "email",
+                type: data.Type.Value,
+              }]
+            }}).then(_add) : 
+            factory.Google.calendars.notifications(calendar.id).then(notifications => (notifications.notificationSettings && 
+              _.find(notifications.notificationSettings.notifications, notification => notification.type == data.Type.Value)) ?
+                Promise.resolve() :
+                factory.Google.calendars.update(calendar.id, {
+                  notificationSettings: {
+                    notifications: [{
+                      method: "email",
+                      type: data.Type.Value,
+                    }].concat(notifications.notificationSettings ? notifications.notificationSettings.notifications : [])
+                  }}).then(_add));
+    })).then(factory.Main.busy("Updating Notifications"))),
+    
+    permission: () => FN.permission(options.permissions.roles, options.permissions.types, "writer", "group", 
+                                      "Create Permission", "CREATE_PERMISSION_INSTRUCTIONS",
+                                   (result, calendar) => $(`[data-id="${calendar.id}"] .permissions-holder`)
+                                      .prepend(factory.Display.template.get(_.extend({
+                                        template: "perm",
+                                        calendar: calendar.id,
+                                      }, result), true))),
+    
+  };
+  /* <!-- Add Functions --> */
+  
+  /* <!-- Remove Functions --> */
+  FN.remove = {
+    
+    notification: (calendar, type) => factory.Google.calendars.notifications(calendar)
+      .then(factory.Main.busy("Loading Notifications"))
+      .then(notifications => {
+        return factory.Display.confirm({
+          id: "delete_Notification",
+          target: factory.container,
+          message: factory.Display.doc.get({
+                        name: "CONFIRM_NOTIFICATION_DELETE",
+                        content: type
+                      }),
+          enter: true,
+          action: "Remove"
+        })
+        .then(confirm => confirm ? 
+              factory.Google.calendars.update(calendar, {
+                notificationSettings: {
+                  notifications: _.reject(notifications.notificationSettings.notifications, notification => notification.type == type)
+                }
+              })
+                .then(factory.Main.busy("Deleting Notification"))
+                .then(result => result ? $(document.getElementById(`${calendar}.${type}`)).remove() : false) : false);
+      }),
+    
+    notifications: () => FN.notification("Remove Notification", "DELETE_NOTIFICATION_INSTRUCTIONS", "Remove",
+      data => Promise.all(_.map(ರ‿ರ.calendars, calendar => $(`[data-id='${calendar.id}'][data-type='absent']`).length > 0 ? 
+          Promise.resolve() : 
+          factory.Google.calendars.notifications(calendar.id)
+            .then(notifications => (notifications.notificationSettings && 
+              _.find(notifications.notificationSettings.notifications, notification => notification.type == data.Type.Value)) ?
+                factory.Google.calendars.update(calendar.id, {
+                    notificationSettings: {
+                      notifications: _.reject(notifications.notificationSettings.notifications, 
+                                              notification => notification.type == data.Type.Value)
+                    }
+                  }).then(result => result ? $(document.getElementById(`${calendar.id}.${data.Type.Value}`)).remove() : false) :
+                Promise.resolve())
+      )).then(factory.Main.busy("Deleting Notifications"))),
+    
+    permission: (calendar, id) => factory.Google.calendar.permissions.get(calendar, id)
+      .then(factory.Main.busy("Loading Rule"))
+      .then(permission => {
+        if (!permission) return;
+        return factory.Display.confirm({
+          id: "delete_Permission",
+          target: factory.container,
+          message: factory.Display.doc.get({
+                        name: "CONFIRM_PERMISSION_DELETE",
+                        content: `${permission.scope.value} (Role: ${permission.role})`
+                      }),
+          enter: true,
+          action: "Delete"
+        })
+        .then(confirm => confirm ? 
+              factory.Google.calendar.permissions.delete(calendar, id)
+                .then(factory.Main.busy("Deleting Rule"))
+                .then(result => result ? $(document.getElementById(`${calendar}.${id}`)).remove() : false) : 
+              false);
+      }),
+    
+    permissions: () => FN.permission(_.filter(options.permissions.roles, role => role.id == "none"), options.permissions.types, "none",
+                        "group", "Remove Permission", "DELETE_PERMISSION_INSTRUCTIONS", 
+                        (result, calendar) => $(`[data-id="${calendar.id}"] .permissions-holder [data-id="${result.id}"]`).remove()),
+    
+  };
+  /* <!-- Remove Functions --> */
+  
   /* <!-- Helper Functions --> */
   FN.loader = () => ({
     mime: factory.Google.files.natives()[1],
@@ -56,6 +309,12 @@ Manage = (options, factory) => {
   }, FN.loader());
 
   FN.empty = () => "";
+  
+  FN.detoggle = resources => {
+    _.each(resources, resource => resource.toggled ? delete resource.toggled : resource.children ? FN.detoggle(resource.children) : null);
+    ರ‿ರ.calendars = [];
+    return resources;
+  };
   /* <!-- Helper Functions --> */
 
   /* <!-- Internal Functions --> */
@@ -86,6 +345,23 @@ Manage = (options, factory) => {
     .then(FN.hookup.search)
     .then(() => $("#search_Text").focus());
 
+  FN.simple = (template, name, help) => options.functions.source.resources()
+    .then(FN.detoggle)
+    .then(resources => options.functions.render.simple(template, options.id.manage, name, "", help, {
+      data: resources,
+      selectable: (ರ‿ರ.selectable = true),
+      simple: (ರ‿ರ.simple = true),
+      all: (ರ‿ರ.all = true)
+    }))
+    .then(FN.hookup.toggle)
+    .then(FN.hookup.resource)
+    .then(FN.hookup.search)
+    .then(() => $("#search_Text").focus());
+  
+  FN.permissions = () => FN.simple("permissions", "Permissions", "manage.permissions");
+  
+  FN.notifications = () => FN.simple("notifications", "Notifications", "manage.notifications");
+  
   FN.access = events => {
 
     if (!events || events.length === 0) return Promise.resolve(events);
@@ -317,8 +593,8 @@ Manage = (options, factory) => {
     if (!command) return;
     factory.Flags.log("RUN SHORTCUT", command);
     var _command = command.indexOf("?") >= 0 ? command.split("?") :
-        command.indexOf("#") >= 0 ? command.split("#") :
-        null;
+      command.indexOf("#") >= 0 ? command.split("#") :
+      null;
     if (_command) {
       window.location.hash = _command[_command.length - 1];
       complete();
@@ -402,7 +678,7 @@ Manage = (options, factory) => {
 
     },
 
-    search: e => options.functions.render.search("resources", ರ‿ರ.selectable, ರ‿ರ.simple)(FN.action.target(e).val())
+    search: e => options.functions.render.search("resources", ರ‿ರ.selectable, ರ‿ರ.simple, ರ‿ರ.all)(FN.action.target(e).val())
       .then(FN.hookup.toggle)
       .then(ರ‿ರ.selectable ? FN.hookup.resource : FN.hookup.edit),
 
@@ -416,7 +692,6 @@ Manage = (options, factory) => {
 
       factory.Flags.log("Editing Resource:", resource);
 
-      var _dialog = factory.Dialog({}, factory);
       return group ?
         Promise.resolve(true) :
         options.state.application.resources.safe().then(resources => {
@@ -428,7 +703,7 @@ Manage = (options, factory) => {
             instructions: factory.Display.doc.get("EDIT_INSTRUCTIONS"),
             confirm: "Save",
             handlers: {
-              clear: _dialog.handlers.clear,
+              clear: ರ‿ರ.dialog.handlers.clear,
             },
             actions: [{
               text: "Delete",
@@ -463,7 +738,7 @@ Manage = (options, factory) => {
             factory.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {
               trigger: "hover"
             });
-            _dialog.handlers.keyboard.enter(dialog);
+            ರ‿ರ.dialog.handlers.keyboard.enter(dialog);
           }).then(data => {
             if (data === undefined) return;
             factory.Flags.log("Data returned from Edit Dialog:", data);
@@ -475,47 +750,119 @@ Manage = (options, factory) => {
     },
 
     toggle: e => {
+
       var target = FN.action.target(e),
-        id = target.data("id"),
-        group = target.data("group"),
-        name = target.data("name"),
-        toggled = target.prop("checked");
+        parent = target.parents(".list-group"),
+        checks = parent.find("input.custom-control-input[type='checkbox']");
 
-      (options.state.application.resources.get(id || group).toggled = toggled) ? ರ‿ರ.calendars.push({
-        id: id,
-        name: name
-      }): ರ‿ರ.calendars = _.reject(ರ‿ರ.calendars, calendar => calendar.id == id);
+      var added = [],
+        removed = [];
 
-      factory.Flags.log(`${toggled ? "Toggled" : "DE-Toggled"} Resource with ID:`, id || group);
+      _.each(checks, check => {
+        
+        check = $(check);
+        var id = check.data("id") || check.data("group"),
+          name = check.data("name"),
+          toggled = check.prop("checked"),
+          resource = options.state.application.resources.get(id);
+
+        if ((!resource.toggled && toggled) || (resource.toggled && !toggled))(resource.toggled = toggled) ?
+          (added.push(id), ರ‿ರ.calendars.push({
+            id: id,
+            name: name
+          })) :
+          (removed.push(id), ರ‿ರ.calendars = _.reject(ರ‿ರ.calendars, calendar => calendar.id == id));
+
+      });
+
+      if (added.length > 0) factory.Flags.log("Toggled Resources:", added);
+      if (removed.length > 0) factory.Flags.log("DE-Toggled Resources:", removed);
       factory.Flags.log("Selected Calendars:", ರ‿ರ.calendars);
 
-      (toggled ? options.functions.source.events(id).then(events => events && events.length > 0 ?
-          ರ‿ರ.data.concat(FN.process(id, events)) : ರ‿ರ.data) :
-        Promise.resolve(_.reject(ರ‿ರ.data, event => event.calendar == id)))
-      .then(FN.access)
-        .then(data => {
-          factory.Flags.log("Calendar Events:", data);
-          options.functions.render.table(options.id.manage)(FN.populate.events(options.functions.source.dedupe(ರ‿ರ.data = data)));
-        })
-        .then(factory.Main.busy("Loading Bookings"));
+      if (factory.Display.state().in(options.functions.states.manage.bookings)) {
+
+        var _get = id => options.functions.source.events(id).then(events => FN.process(id, events)),
+            _added = data => added.length > 2 ?
+            options.functions.source.busy(added)
+              .then(busy => Promise.all(_.map(_.chain(busy.calendars).pairs().filter(value => value[1] && value[1].busy && value[1].busy.length).map(value => value[0]).value(), _get))
+              .then(sets => data.concat(_.chain(sets).flatten().compact().value()))) : 
+                Promise.all(_.map(added, _get)).then(sets => data.concat(_.chain(sets).flatten().compact().value())),
+                  _removed = data => _.reject(data, event => removed.indexOf(event.calendar) >= 0);
+       
+        Promise.resolve(ರ‿ರ.data)
+          .then(data => added.length ? _added(data) : data)
+          .then(data => removed.length ? _removed(data) : data)
+          .then(FN.access)
+          .then(data => {
+            factory.Flags.log("Calendar Events:", data);
+            options.functions.render.table(options.id.manage)(FN.populate.events(options.functions.source.dedupe(ರ‿ರ.data = data)));
+          })
+          .then(factory.Main.busy("Loading Bookings"));
+
+      } else if (factory.Display.state().in(options.functions.states.manage.permissions)) {
+
+        if (removed.length) _.each(removed, calendar => $(`[data-id='${calendar}'] div.content-holder div.permissions-holder`).remove());
+
+        added.length ? Promise.resolve(added)
+          .then(calendars => Promise.all(_.map(calendars, 
+            calendar => options.functions.source.permissions(calendar)
+              .then(permissions => {
+                var _row = $(`[data-id='${calendar}'] div.content-holder`);
+                _row.find("div.permissions-holder").remove();
+                _row.prepend(factory.Display.template.get({
+                  template: "perms",
+                  id: calendar,
+                  permissions: permissions,
+                }, true));
+              }))))
+          .then(factory.Main.busy("Loading Permissions")) : 
+        factory.Flags.log("No Calendars Toggled");
+      
+      } else if (factory.Display.state().in(options.functions.states.manage.notifications)) {
+       
+        if (removed.length) _.each(removed, calendar => $(`[data-id='${calendar}'] div.content-holder div.notifications-holder`).remove());
+        
+        added.length ? Promise.resolve(added)
+          .then(calendars => Promise.all(_.map(calendars, 
+            calendar => options.functions.source.notifications(calendar)
+              .then(notification => {
+                var _row = $(`[data-id='${calendar}'] div.content-holder`);
+                _row.find("div.notifications-holder").remove();
+                if (notification === false) {
+                  _row.prepend(factory.Display.template.get({
+                    template: "absent",
+                    calendar: calendar,
+                  }, true));
+                } else if (notification && notification.notificationSettings) {
+                  _row.prepend(factory.Display.template.get({
+                    template: "notification",
+                    calendar: calendar,
+                    notifications: notification.notificationSettings.notifications
+                  }, true));
+                }
+              }))))
+          .then(factory.Main.busy("Loading Notifications")) : 
+        factory.Flags.log("No Calendars Toggled");
+        
+      }
+
     },
 
     shortcut: e => {
-
       if (e.keyCode === 13) {
         var _target = FN.action.target(e);
         FN.shortcut(_target.val(), () => _target.val(""));
       }
-
     },
 
     resource: e => {
       var target = FN.action.target(e);
       if (!target.is("input.custom-control-input, label.custom-control-label")) {
         e.preventDefault();
-        var _checkbox = (target.is(".resource-item") ?
-          target : target.parents(".resource-item")).find("input.custom-control-input");
-        _checkbox.prop("checked", !_checkbox.prop("checked")).change();
+        _.chain((target.is(".resource-group-header") ? target.parents(".list-group") : target.is(".resource-group, .resource-group-name") ? target.parents(".list-group-item") : target.is(".resource-item") ?
+          target : target.parents(".resource-item")).find("input.custom-control-input"))
+        .map(checkbox => $(checkbox))
+        .each(checkbox => checkbox.prop("checked", !checkbox.prop("checked")).change());
       }
     }
   };
@@ -532,7 +879,6 @@ Manage = (options, factory) => {
     add: {
 
       resource: () => {
-        var _dialog = factory.Dialog({}, factory);
         return options.state.application.resources.safe().then(resources => factory.Display.modal("edit", {
           target: factory.container,
           id: options.id.add,
@@ -540,7 +886,7 @@ Manage = (options, factory) => {
           instructions: factory.Display.doc.get("ADD_INSTRUCTIONS"),
           confirm: "Add",
           handlers: {
-            clear: _dialog.handlers.clear,
+            clear: ರ‿ರ.dialog.handlers.clear,
           },
           parents: resources.parents(),
           features: resources.features(),
@@ -551,7 +897,7 @@ Manage = (options, factory) => {
           factory.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {
             trigger: "hover"
           });
-          _dialog.handlers.keyboard.enter(dialog);
+          ರ‿ರ.dialog.handlers.keyboard.enter(dialog);
         }).then(data => {
           if (data === undefined || !data.Name) return;
           factory.Flags.log("Data returned from Add Dialog:", data);
@@ -595,6 +941,10 @@ Manage = (options, factory) => {
           }));
         }),
 
+      permission: FN.add.permission,
+      
+      notification: FN.add.notification,
+      
     },
 
     booking: (calendar, id) => options.functions.source.event(calendar, id)
@@ -605,12 +955,17 @@ Manage = (options, factory) => {
     bookings: () => FN.admin()
       .then(FN.empty)
       .then(options.functions.source.resources)
-      .then(options.functions.render.view("manage", options.id.manage, "Manage", "manage", ರ‿ರ.selectable = true, ರ‿ರ.simple = true))
+      .then(FN.detoggle)
+      .then(options.functions.render.view("manage", options.id.manage, "Manage", "manage", ರ‿ರ.selectable = true, ರ‿ರ.simple = true, ರ‿ರ.all = true))
       .then(FN.hookup.toggle)
       .then(FN.hookup.resource)
       .then(FN.hookup.search)
       .then(FN.hookup.shortcut)
       .then(() => $("#shortcut_Text").focus()),
+
+    notifications: FN.notifications,
+    
+    permissions: FN.permissions,
 
     in: (id, log) => log ? FN.log.in(id) : FN.confirm.in(id),
 
@@ -625,6 +980,10 @@ Manage = (options, factory) => {
       feature: (id, feature) => $(`[data-id='${id}'][data-feature='${feature}']`).remove(),
 
       parent: (id, parent) => $(`[data-id='${id}'][data-parent='${parent}']`).remove(),
+      
+      permission: (calendar, id) => calendar && id ? FN.remove.permission(calendar, id) : FN.remove.permissions(),
+      
+      notification: (calendar, type) => calendar && type ? FN.remove.notification(calendar, type) : FN.remove.notifications(),
 
     },
 

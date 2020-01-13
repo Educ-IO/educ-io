@@ -195,15 +195,18 @@ Bookings = (options, factory) => {
           factory.Flags.log("Booking Form Result:", result);
           if (!result) return;
           return ರ‿ರ.book(form.serializeArray())
-            .then(result => result && options.functions.calendar.confirmed(result) !== null ?
+            .then(result => {
+               var _confirmed = options.functions.calendar.confirmed(result);
+               return result && _confirmed !== null ?
                       _.isArray(result) ?
-                        options.state.application.notify.success(`${result.length} Resource${result.length > 1 ? "s" : ""} Booked`, factory.Display.doc.get({
-                          name: "SUCCESSFUL_GROUP_BOOK"
+                        options.state.application.notify.success(`${_confirmed ? "" : "Request for "}${result.length} Resource${result.length > 1 ? "s" : ""} ${_confirmed ? "Booked" : "Submitted"}`, factory.Display.doc.get({
+                          name: _confirmed ? "SUCCESSFUL_GROUP_BOOK" : "SUBMITTED_GROUP_BOOK"
                         })) :
-                      options.state.application.notify.success("Resource Booked", factory.Display.doc.get({
-                        name: "SUCCESSFUL_BOOK",
+                      options.state.application.notify.success(`Resource ${_confirmed ? "Booked" : "Request Submitted"}`, factory.Display.doc.get({
+                        name: _confirmed ? "SUCCESSFUL_BOOK" : "SUBMITTED_BOOK",
                         content: result.htmlLink
-                      })) : result)
+                      })) : result;
+            })
             .catch(e => options.state.application.notify.actions.error(e, 
                                                            "Booking Failed", "FAILED_BOOK"))
             .then(() => factory.App.delay(1000).then(() => ರ‿ರ.last(true)));
@@ -223,10 +226,16 @@ Bookings = (options, factory) => {
       var target = FN.action.target(e);
       var id = target.data("id"),
           group = target.data("group"),
-          name = target.data("name");
+          name = target.data("name"),
+          parent = target.parents(".list-group");
       
-      target.parents(".list-group").find("div.resource-group.active, a.resource-item.active").removeClass("active");
-      target.addClass("active");
+      parent.find("div.list-group-item.active a.text-light").removeClass("text-light").addClass("text-dark");
+      parent.find("div.resource-group.active, div.list-group-item.active").removeClass("active");
+      if (target.is(".resource-item")) {
+        target.closest("div.list-group-item").addClass("active").find("a.text-dark").removeClass("text-dark").addClass("text-light");
+      } else {
+        target.addClass("active");
+      }
       
       return id ? FN.display.resource(id, name, target) : group ? FN.display.group(group, name, target) : false;
     },

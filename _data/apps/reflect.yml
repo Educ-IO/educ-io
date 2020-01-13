@@ -94,6 +94,8 @@ helpers:
   - notify
   - saver
   - colours
+  - handlebars
+  - url
 modules:
   - flags
   - controller
@@ -332,6 +334,12 @@ menus:
             disabled_until:
               - signable-report
             auth: google
+          - name: Repudiate
+            desc: Remove Signature from this Report
+            hash: sign.report.remove
+            disabled_until:
+              - signed-report
+            auth: google
           - name: Edit
             desc: Edit this Report
             hash: edit.report
@@ -398,7 +406,7 @@ menus:
             desc: Revoke Report Completion
             hash: revoke
             disabled_until:
-              - report-complete
+              - report-revocable
             auth: google
           - name: Validate
             desc: Validate Report

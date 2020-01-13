@@ -20,7 +20,7 @@
     {{~#present properties}}<div class="d-flex">{{> custom_properties properties=properties}}</div>{{/present~}}
   </div>{{/if~}}
   {{#if created}}<div class="card-footer px-2 text-muted text-right">
-    <span class="font-weight-light">Booked</span><span class="pl-2 text-light o-75">{{fromNow created}}</span>
+    <span class="font-weight-light">Booked</span><span data-toggle="tooltip" data-html="true" title="<strong>Created:</strong> {{isoDate created}}" class="pl-2 text-light o-75">{{fromNow created}}</span>
   </div>{{/if}}
 </div>
 {% endraw %}

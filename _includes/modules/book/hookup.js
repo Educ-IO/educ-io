@@ -29,6 +29,8 @@ Hookup = (options, factory) => {
     
     toggle : _.debounce(options.action.toggle, options.delay * 4),
     
+    generic : fn => _.debounce(fn, options.delay * 4),
+    
   };
   /* <!-- Debounce Functions --> */
   

@@ -72,6 +72,8 @@ helpers:
   - saver
   - filters
   - link
+  - handlebars
+  - url
 modules:
   - flags
   - controller

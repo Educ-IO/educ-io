@@ -398,12 +398,14 @@ App = function() {
                 routes: {
                   remove: {
                     matches: /REMOVE/i,
+                    state: FN.states.report.signed,
                     length: 0,
                     fn: () => ಱ.signatures.remove(ರ‿ರ.file)
                       .then(result => result ? FN.process.signatures() : false)
                   },
                   sign: {
                     length: 0,
+                    state: FN.states.report.signable,
                     fn: () => ಱ.signatures.sign.report(ರ‿ರ.file, FN.action.dehydrate().data)
                       .then(() => FN.process.signatures())
                   },
@@ -420,7 +422,7 @@ App = function() {
 
           revoke: {
             matches: /REVOKE/i,
-            state: FN.states.report.complete,
+            state: FN.states.report.revocable,
             fn: () => FN.action.revoke()
           },
 

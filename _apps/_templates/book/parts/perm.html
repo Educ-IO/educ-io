@@ -1,0 +1,10 @@
+{% raw %}
+<div id="{{calendar}}.{{id}}" data-id="{{id}}" class="mr-2 mt-1 px-1 d-inline-flex justify-content-center align-items-center border rounded {{#if class}}{{class}}{{else}}text-muted border-secondary{{/if}}">
+  <i class="material-icons md-1" data-toggle="tooltip" data-html="true" title="Type: <strong>{{#is role 'owner'}}Owner{{else}}{{#is scope.type 'group'}}Group{{/is}}{{#is scope.type 'user'}}Individual User{{/is}}{{#is scope.type 'domain'}}Entire Domain{{/is}}{{#is scope.type 'default'}}Whole World{{/is}}{{/is}}</strong>">{{#is scope.type 'user'}}{{#is role 'owner'}}pets{{else}}{{#if me}}mood{{else}}face{{/if}}{{/is}}{{/is}}{{#is scope.type 'group'}}group{{/is}}{{#is scope.type 'domain'}}domain{{/is}}{{#is scope.type 'default'}}public{{/is}}</i>
+  {{~#is role 'writer'}}<i class="material-icons pl-1 md-1" data-toggle="tooltip" data-html="true" title="Can <strong>Edit</strong>">mode_edit</i>{{/is~}}
+  {{~#is role 'reader'}}<i class="material-icons pl-1 md-1" data-toggle="tooltip" data-html="true" title="Can <strong>Read</strong>">visibility</i>{{/is~}}
+  {{~#is role 'freeBusyReader'}}<i class="material-icons pl-1 md-1" data-toggle="tooltip" data-html="true" title="Can Read <strong>Free/Busy</strong> Information Only">timelapse</i>{{/is~}}
+  {{~#exists scope.value}}<span class="px-1">{{#is scope.value calendar}}Resource{{else}}{{scope.value}}{{/is}}</span>{{/exists~}}
+  {{~#unless (is role 'owner')}}<a role="button" style="font-size:1.2rem;" class="close d-inline-flex pl-1" aria-label="Remove" href="#remove.permission.{{encode calendar}}.{{encode id}}" title="Remove Permission"><span aria-hidden="true">×</span></a>{{/unless~}}
+</div>
+{% endraw %}

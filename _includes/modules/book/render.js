@@ -46,13 +46,14 @@ Render = (options, factory) => {
       target: target || factory.container
     }, extras));
   
-  FN.view = (template, id, title, instructions, selectable, simple) => data => FN.simple(template, id, title, options.state.session.current.format(options.format), instructions, {
+  FN.view = (template, id, title, instructions, selectable, simple, all) => data => FN.simple(template, id, title, options.state.session.current.format(options.format), instructions, {
     data: data,
     selectable: selectable,
     simple: simple,
+    all: all
   });
       
-  FN.search = (template, selectable, simple, target) => value => options.functions.source.resources(value)
+  FN.search = (template, selectable, simple, all, target) => value => options.functions.source.resources(value)
       .then(data => {
     
         /* <!-- Retain Collapsed / Show status between searches--> */
@@ -70,6 +71,7 @@ Render = (options, factory) => {
           resources: data,
           selectable: selectable,
           simple: simple,
+          all: all,
           clear: true,
           target: _target
         });

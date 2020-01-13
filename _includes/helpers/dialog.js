@@ -100,6 +100,33 @@ Dialog = (options, factory) => {
       }
 
     },
+    
+    selected: dialog => {
+      
+      _.each(dialog.find("select"), el => {
+        
+        var _el = $(el), _disables = _el.find("option[data-disables]");
+        
+        if (_disables.length) {
+          
+          var _all = [], _selected = {};
+          _.each(_disables, option => {
+            var _option = $(option),
+                _disable = _option.data("disables");
+            if (_all.indexOf(_disable) < 0) _all.push(_disable);
+            _selected[_option.val()] = _disable;
+          });
+          
+          _el.off("change.disables").on("change.disables", e => {
+            _.each(_all, val => dialog.find(val).prop("disabled", false).removeClass("disabled"));
+            dialog.find(_selected[e.target.value]).prop("disabled", true).addClass("disabled");
+          });
+          
+        }
+      
+      });
+      
+    },
 
     extract: regexes => (target, dialog) => {
 
@@ -182,7 +209,8 @@ Dialog = (options, factory) => {
 
       /* <!-- Handle Enter on textbox to Add --> */
       dialog.find("input[data-action='add']")
-        .keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? e.preventDefault() || $(e.currentTarget).siblings("button[data-action='add']").click() : null).focus();
+        .keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? 
+                    e.preventDefault() || $(e.currentTarget).siblings("button[data-action='add']").click() : null).focus();
       
     }
 

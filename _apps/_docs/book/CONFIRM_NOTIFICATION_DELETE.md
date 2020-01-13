@@ -1,0 +1,1 @@
+Please confirm that you wish to __delete__ the notification for: _{% raw %}{{content}}{% endraw %}_

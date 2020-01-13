@@ -23,7 +23,7 @@ globals:
   $: false
   jQuery: false
   hello: false
-  Handlebars: false
+  Handlebars: true
   uuid: false
   XLSX: false
   XlsxPopulate: false
@@ -147,6 +147,7 @@ globals:
   Show: true
   Hookup: true
   Render: true
+  Url: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

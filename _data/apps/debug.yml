@@ -79,6 +79,7 @@ helpers:
   - saad
   - colours
   - strings
+  - handlebars
 modules:
   - flags
   - controller

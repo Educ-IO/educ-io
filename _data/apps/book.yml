@@ -86,6 +86,8 @@ helpers:
   - saad
   - config
   - data
+  - handlebars
+  - url
 modules:
   - flags
   - controller
@@ -136,6 +138,8 @@ templates:
   - book/parts/date
   - book/parts/resource
   - book/parts/resources
+  - book/parts/perm
+  - book/parts/perms
   - book/parts/search
   - book/parts/event
   - book/parts/events
@@ -145,6 +149,8 @@ templates:
   - book/parts/availability
   - book/parts/feature
   - book/parts/parent
+  - book/parts/notification
+  - book/parts/absent
   - book/tables/custom_properties
   - book/tables/custom_resource
   - book/tables/rows
@@ -153,10 +159,14 @@ templates:
   - book/views/diary
   - book/views/manage
   - book/views/calendars
+  - book/views/permissions
+  - book/views/notifications
   - book/components/loan
   - book/components/return
   - book/dialogs/generic
   - book/dialogs/edit
+  - book/dialogs/edit_permission
+  - book/dialogs/edit_notification
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -172,9 +182,12 @@ docs:
   - book/BOOK_INSTRUCTIONS
   - book/MANAGE_INSTRUCTIONS
   - book/MANAGE_RESOURCES_INSTRUCTIONS
+  - book/MANAGE_PERMISSIONS_INSTRUCTIONS
   - book/FAILED_BOOK
   - book/SUCCESSFUL_BOOK
   - book/SUCCESSFUL_GROUP_BOOK
+  - book/SUBMITTED_BOOK
+  - book/SUBMITTED_GROUP_BOOK
   - book/CREATE_INSTRUCTIONS
   - book/VIEW_INSTRUCTIONS
   - book/SHORTCUT_INSTRUCTIONS
@@ -188,6 +201,12 @@ docs:
   - book/ADD_PARENT_INSTRUCTIONS
   - book/ADD_FEATURE_INSTRUCTIONS
   - book/DELETE_RESOURCE
+  - book/CONFIRM_PERMISSION_DELETE
+  - book/CREATE_PERMISSION_INSTRUCTIONS
+  - book/DELETE_PERMISSION_INSTRUCTIONS
+  - book/CONFIRM_NOTIFICATION_DELETE
+  - book/CREATE_NOTIFICATION_INSTRUCTIONS
+  - book/DELETE_NOTIFICATION_INSTRUCTIONS
 scopes:
   google:
     - scope: email
@@ -300,6 +319,21 @@ menus:
                 - https://www.googleapis.com/auth/calendar
                 - https://www.googleapis.com/auth/admin.directory.resource.calendar
                 - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
+              auth: google
+              divider: true
+            - name: Permissions
+              desc: Manage permissions on resource calendars
+              hash: manage.permissions
+              scopes:
+                - https://www.googleapis.com/auth/calendar
+                - https://www.googleapis.com/auth/admin.directory.resource.calendar
+              auth: google
+            - name: Notifications
+              desc: Manage notifications on resource calendars
+              hash: manage.notifications
+              scopes:
+                - https://www.googleapis.com/auth/calendar
+                - https://www.googleapis.com/auth/admin.directory.resource.calendar
               auth: google
               divider: true
             - name: Close
@@ -433,6 +467,20 @@ buttons:
       - https://www.googleapis.com/auth/calendar
       - https://www.googleapis.com/auth/admin.directory.resource.calendar
       - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
+    auth: google
+  - name: Permissions
+    desc: Manage permissions on resource calendars
+    hash: manage.permissions
+    scopes:
+      - https://www.googleapis.com/auth/calendar
+      - https://www.googleapis.com/auth/admin.directory.resource.calendar
+    auth: google
+  - name: Notifications
+    desc: Manage notifications on resource calendars
+    hash: manage.notifications
+    scopes:
+      - https://www.googleapis.com/auth/calendar
+      - https://www.googleapis.com/auth/admin.directory.resource.calendar
     auth: google
   - name: About
     desc: More details about managing Resources and Bookings

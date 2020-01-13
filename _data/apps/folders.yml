@@ -63,6 +63,8 @@ helpers:
   - fields
   - filters
   - dialog
+  - handlebars
+  - url
 modules:
   - flags
   - controller

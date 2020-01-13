@@ -1,0 +1,11 @@
+{% raw %}
+<div {{#if id}}id="{{id}}" {{/if}}class="container-fluid pt-lg-1 mvh-100">
+
+  {{> date dateless=true add="Add new Notification" add_command="add.notification" remove="Remove Notification" remove_command="remove.notification"}}
+  
+  {{> search placeholder="Search Resources"}}
+  
+  <div id="resources">{{#if data}}{{> resources resources=data opaque=true}}{{/if}}</div>
+  
+</div>
+{% endraw %}

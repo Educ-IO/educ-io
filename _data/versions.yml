@@ -1,4 +1,8 @@
 site :
+  0.1.9 :
+    name : Book v0.0.6-beta
+    desc : Resource Calendar Permission and Notification Management
+    numeric : 0.1.9.0
   0.1.8c :
     name : Site v0.1.8c
     desc : Visual Improvements for Site
@@ -1276,6 +1280,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.6-beta :
+    name : Resource Calendar Permission and Notification Management
+    type : major
   0.0.5a-beta :
     name : Visual Spacing Improvements for small screen widths
     type : minor

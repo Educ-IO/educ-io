@@ -37,7 +37,8 @@ Source = (options, factory) => {
           end: {
             dateTime: end.format(),
           },
-          attendees: _.isArray(resources) ? _.map(resources, _attendee) : [_attendee(resources)],            
+          attendees: _.isArray(resources) ? _.map(resources, _attendee) : [_attendee(resources)],
+          conferenceData: null
         };
     if (details) _event.summary = details;
     return factory.Google.calendar.events.create(calendar, _event);
@@ -100,6 +101,11 @@ Source = (options, factory) => {
   };
   
   FN.calendar = calendar => factory.Google.calendars.get(calendar);
+  
+  FN.permissions = calendar => factory.Google.calendar.permissions.list(calendar);
+  
+  FN.notifications = calendar => factory.Google.calendars.notifications(calendar)
+                                  .catch(e => e && e.status == 404 ? false : factory.Flags.error("Calendar List Error", e));
   
   FN.date = time => factory.Dates.parse(time, ["ha", "hh:mma", "HH:mm", "HH:mm:ss"]).set({
       "year": options.state.session.current.year(),

@@ -58,6 +58,7 @@ helpers:
   - fields
   - data
   - filters
+  - handlebars
 modules:
   - flags
   - controller
