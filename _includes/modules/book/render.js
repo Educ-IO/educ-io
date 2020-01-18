@@ -85,11 +85,13 @@ Render = (options, factory) => {
       target: target || factory.container.find("#availability")
   });
   
-  FN.group = (template, name, target) => (periods, max) => factory.Display.template.show({
+  FN.group = (template, name, value, target) => (periods, max) => factory.Display.template.show({
       template: template,
       name: name,
       max: max,
       periods: periods,
+      value: value === null || value === undefined ? null : value,
+      extend: true,
       clear: true,
       target: target || factory.container.find("#details")
   });
@@ -99,6 +101,7 @@ Render = (options, factory) => {
       name: name,
       events: events,
       periods: periods,
+      extend: true,
       clear: true,
       target: target || factory.container.find("#details")
   });

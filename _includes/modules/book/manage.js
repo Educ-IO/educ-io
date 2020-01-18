@@ -128,7 +128,7 @@ Manage = (options, factory) => {
   /* <!-- Notification Function --> */
   
   /* <!-- Permission Function --> */
-  FN.permission = (roles, types, role, type, title, instructions, success) => factory.Display.modal("edit_permission", _.extend({
+  FN.permission = (roles, types, role, type, title, instructions, action, notify, success) => factory.Display.modal("edit_permission", _.extend({
             target: factory.container,
             id: options.id.permission,
             title: title,
@@ -137,7 +137,8 @@ Manage = (options, factory) => {
                         content: !ರ‿ರ.calendars || !ರ‿ರ.calendars.length ? 
                           "NO Resources Selected" : `${ರ‿ರ.calendars.length} Resource${ರ‿ರ.calendars.length > 1 ? "s" : ""} Selected`
                       }),
-            confirm: "Save",
+            confirm: action,
+            notify: notify,
             handlers: {
               clear: ರ‿ರ.dialog.handlers.clear,
             },
@@ -163,8 +164,8 @@ Manage = (options, factory) => {
                 type : data.Type.Value,
                 value : data.Value && data.Role.Value != "default" ? data.Value.Value : ""
               }
-            };
-            return Promise.all(_.map(ರ‿ರ.calendars, calendar => factory.Google.calendar.permissions.create(calendar.id, _acl)
+            }, _notify = data.Notify && data.Notify.Value;
+            return Promise.all(_.map(ರ‿ರ.calendars, calendar => factory.Google.calendar.permissions.create(calendar.id, _acl, _notify)
                 .then(result => result && success ? success(result, calendar) : result)))
               .then(factory.Main.busy("Updating Permissions"));
             
@@ -215,7 +216,7 @@ Manage = (options, factory) => {
     })).then(factory.Main.busy("Updating Notifications"))),
     
     permission: () => FN.permission(options.permissions.roles, options.permissions.types, "writer", "group", 
-                                      "Create Permission", "CREATE_PERMISSION_INSTRUCTIONS",
+                                      "Create Permission", "CREATE_PERMISSION_INSTRUCTIONS", "Save", true,
                                    (result, calendar) => $(`[data-id="${calendar.id}"] .permissions-holder`)
                                       .prepend(factory.Display.template.get(_.extend({
                                         template: "perm",
@@ -288,7 +289,7 @@ Manage = (options, factory) => {
       }),
     
     permissions: () => FN.permission(_.filter(options.permissions.roles, role => role.id == "none"), options.permissions.types, "none",
-                        "group", "Remove Permission", "DELETE_PERMISSION_INSTRUCTIONS", 
+                        "group", "Remove Permission", "DELETE_PERMISSION_INSTRUCTIONS", "Remove", false,
                         (result, calendar) => $(`[data-id="${calendar.id}"] .permissions-holder [data-id="${result.id}"]`).remove()),
     
   };

@@ -1,0 +1,7 @@
+@import "variables/general";
+@import "variables/elevation";
+@import "variables/dialogs";
+
+.modal-content {
+  box-shadow: map-get($dialog-elevation-shadow, shadow);
+}

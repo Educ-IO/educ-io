@@ -7,7 +7,8 @@ Process = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
-      format: "HH:mm"
+      format: "HH:mm",
+      margin: 0.9975,
     },
     FN = {};
   /* <!-- Internal Constants --> */
@@ -22,9 +23,9 @@ Process = (options, factory) => {
   /* <!-- Internal Functions --> */
   var _mine = event => event.organizer && event.organizer.email == factory.me.email;
   
-  var _period = date => date.hour() + (date.minute() / 60);
+  var _period = (date, from) => date.hour() + (Math.floor(factory.Dates.duration(date.diff(from)).asDays()) * 24) + (date.minute() / 60);
   /* <!-- Internal Functions --> */
-  
+
   /* <!-- Public Functions --> */
   FN.me = (events, calendar) => _.chain(events)
                     .filter(_mine)
@@ -35,59 +36,70 @@ Process = (options, factory) => {
                     })
                     .value();
 
-  FN.periods = events => _.chain(events).reduce((memo, event, index) => {
+  FN.periods = (events, from, until) => {
 
-    var _convert = value => value / 24 * 100,
-      _from = factory.Dates.parse(event.start.dateTime || event.start),
-      _until = factory.Dates.parse(event.end.dateTime || event.end),
-      _start = _period(_from),
-      _end = _until.date() > _from.date() ? 24 : _period(_until),
-      _width = _convert(_end - _start);
+    var _hours = Math.ceil(factory.Dates.duration(until.diff(from)).asHours()),
+        _base = 24,
+        _multi = _hours >_base;
+    
+    return _.chain(events).reduce((memo, event, index) => {
 
-    if (_width > 0) {
+      var _convert = value => value / _hours * 100,
+        _from = factory.Dates.parse(event.start.dateTime || event.start),
+        _until = factory.Dates.parse(event.end.dateTime || event.end),
+        _start = !_multi && _from.date() < _until.date() && _from.date() < from.date() ? 0 : _period(_from, from),
+        _end = _multi && _until.date() > from.date() ? 
+                (_base * (_until.date() - from.date())) + (_until.date() > until.date() ? _base : _period(_until, _until.clone().startOf("day"))) : 
+                _period(_until, from),
+        _width = _convert(_end - _start);
 
-      /* <!-- Resize / Remove Previous Spacer --> */
-      var _last = _convert(_start - memo[memo.length - 1].start);
-      _last <= 0 ? memo.pop() : (memo[memo.length - 1].width = _last,
-        memo[memo.length - 1].time = options.functions.calendar.times(memo[memo.length - 1].from, _from),
-        memo[memo.length - 1].until = _from);
+      if (_width > 0) {
 
-      /* <!-- Add Current Event --> */
-      memo.push({
-        title: event.summary || "",
-        time: options.functions.calendar.times(_from, _until),
-        organiser: event.organizer ? event.organizer.displayName || event.organizer.email : "",
-        width: _width
-      });
+        /* <!-- Resize / Remove Previous Spacer --> */
+        var _last = _convert(_start - memo[memo.length - 1].start);
+        _last <= 0 ? memo.pop() : (memo[memo.length - 1].width = _last,
+          memo[memo.length - 1].time = options.functions.calendar.times(memo[memo.length - 1].from, _from, _multi),
+          memo[memo.length - 1].until = _from);
 
-      /* <!-- Add Spacer, but only if we aren't within about 3 mins of the end of day --> */
-      if (_end < 23.95) memo.push({
-        from: _until,
-        start: _end,
-        width: _convert(24 - _end),
-      });
+        /* <!-- Add Current Event --> */
+        memo.push({
+          title: event.summary || "",
+          time: options.functions.calendar.times(!_multi && _from.date() < from.date() ? from : _from, _until, _multi),
+          organiser: event.organizer ? event.organizer.displayName || event.organizer.email : "",
+          width: _width,
+          from: _from,
+          start: _end,
+        });
+ 
+        /* <!-- Add Spacer, but only if we aren't within about 3 mins of the end of period --> */
+        if (_end < (_hours * options.margin)) memo.push({
+          from: _until,
+          start: _end,
+          width: _convert(_hours - _end),
+        });
 
-      /* <!-- Final Free Period of the Day --> */
-      if (index == events.length - 1 && memo[memo.length - 1].from) {
-        var _final = memo[memo.length - 1];
-        _final.until = _final.from.clone().endOf("day");
-        _final.time = options.functions.calendar.times(_final.from, _final.until);
+        /* <!-- Final Free Period of the Day --> */
+        if (_end == _base || (index == events.length - 1 && memo[memo.length - 1].from)) {
+          var _final = memo[memo.length - 1];
+          _final.until = _multi ? until.clone().endOf("day") : _final.from.clone().endOf("day");
+          _final.time = options.functions.calendar.times(!_multi && _final.from.date() < from.date() ? from : _final.from, _final.until, _multi);
+        }
+
       }
 
-    }
+      return memo;
 
-    return memo;
-
-  }, [{
-    from: options.state.session.current,
-    until: factory.Dates.parse(options.state.session.current).add(1, "day"),
-    start: 0,
-    width: 100,
-  }]).each((event, index, events) => {
-      if (index > 0 && event.title !== undefined && events[index - 1].title !== undefined && !events[index - 1].class) event.class = "danger";
-    }).value();
-
-  FN.busy = (calendars, tolerance) => {
+    }, [{
+      from: from,
+      until: until,
+      start: 0,
+      width: 100,
+    }]).each((event, index, events) => {
+        if (index > 0 && event.title !== undefined && events[index - 1].title !== undefined && !events[index - 1].class) event.class = "danger";
+      }).value();
+  };
+  
+  FN.busy = (calendars, tolerance, from, until) => {
     
     var _all = _.reduce(calendars, (memo, calendar, key) => {
     
@@ -160,7 +172,7 @@ Process = (options, factory) => {
     }, []);
     
     /* <!-- Filter by Busy periods below the tolerance threshold (e.g. has enough resources) --> */
-    return FN.periods(_.chain(_all).reject(busy => busy.resources.length <= tolerance).sortBy("end").sortBy("start").value());
+    return FN.periods(_.chain(_all).reject(busy => busy.resources.length <= tolerance).sortBy("end").sortBy("start").value(), from, until);
     
   };
   

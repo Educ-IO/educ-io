@@ -7,7 +7,11 @@ Source = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
-    span : "day"
+    span : "day",
+    formats : {
+      date: "D/M",
+      time: ["ha", "hh:mma", "HH:mm", "HH:mm:ss"]
+    }
   }, FN = {};
   /* <!-- Internal Constants --> */
 
@@ -19,7 +23,10 @@ Source = (options, factory) => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _date = (data, field) => FN.date(_.find(data, data => data.name == field).value);
+  
+  
+  var _date = (data, field, extra) => FN.date(_.find(data, data => data.name == field).value, 
+                                              extra ? (value => value ? value.value : null)(_.find(data, data => data.name == extra)) : null);
   
   var _text = (data, field) => (value => value && value.value ? value.value : "")(_.find(data, data => data.name == field));
   
@@ -46,6 +53,8 @@ Source = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
+  FN.formats = () => options.formats;
+  
   FN.admin = () => factory.Google.admin.privileges()
       .then(privileges => {
         var privilege = _.find(privileges.items, item => item.serviceName == "calendar");
@@ -64,7 +73,7 @@ Source = (options, factory) => {
       factory.Flags.log("Booking Data:", data);
       return _book(calendar, id, 
                    _date(data, "from"),
-                   _date(data, "until"),
+                   _date(data, "until", "until-date"),
                    _text(data, "details")
                   );
     },
@@ -72,7 +81,7 @@ Source = (options, factory) => {
     group: (calendar, resources, number) => data => {
 
       var _from = _date(data, "from"),
-          _until = _date(data, "until"),
+          _until = _date(data, "until", "until-date"),
           _details = _text(data, "details");
       
       var _count = number,
@@ -107,22 +116,34 @@ Source = (options, factory) => {
   FN.notifications = calendar => factory.Google.calendars.notifications(calendar)
                                   .catch(e => e && e.status == 404 ? false : factory.Flags.error("Calendar List Error", e));
   
-  FN.date = time => factory.Dates.parse(time, ["ha", "hh:mma", "HH:mm", "HH:mm:ss"]).set({
-      "year": options.state.session.current.year(),
-      "month": options.state.session.current.month(),
-      "date": options.state.session.current.date(),
-    });
+  FN.date = (time, date) => {
+    var _date = options.state.session.current.clone();
+    if (date) {
+      var __date = factory.Dates.parse(date, options.formats.date);
+      _date.set({
+        "year": __date.month() < _date.month() ? _date.year() + 1 : _date.year(),
+        "month": __date.month(),
+        "date": __date.date(),
+      });
+    }
+    return factory.Dates.parse(time, options.formats.time).set({
+      "year": _date.year(),
+      "month": _date.month(),
+      "date": _date.date(),
+    }); 
+  };
   
   FN.dedupe = events => _.uniq(events, false, "id");
   
   FN.event = (calendar, id) => factory.Google.calendar.events.get(calendar, id);
   
-  FN.busy = resources => factory.Google.calendar.busy(resources, 
-                            factory.Dates.parse(options.state.session.current).startOf(options.span),
-                            factory.Dates.parse(options.state.session.current).endOf(options.span)),
+  FN.start = () => factory.Dates.parse(options.state.session.current).startOf(options.span);
   
-  FN.events = calendar => factory.Google.calendar.list(calendar, options.state.session.current.toDate(),
-      factory.Dates.parse(options.state.session.current).add(1, options.span).toDate());
+  FN.end = extend => factory.Dates.parse(options.state.session.current).add(extend ? extend : 0, options.span).endOf(options.span);
+  
+  FN.busy = (resources, extend) => factory.Google.calendar.busy(resources, FN.start(), FN.end(extend)),
+  
+  FN.events = (calendar, extend) => factory.Google.calendar.list(calendar, FN.start(), FN.end(extend));
 
   FN.resources = search => options.state.application.resources.safe()
       .then(resources => resources.find(search))

@@ -7,7 +7,11 @@ Calendar = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
-      format: "HH:mm"
+      format : {
+        short : "HH:mm",
+        long : "Do | HH:mm",
+        display : "[<strong>]Do, MMM[</strong>] | HH:mm",
+      }
     },
     FN = {};
   /* <!-- Internal Constants --> */
@@ -45,12 +49,17 @@ Calendar = (options, factory) => {
   
   FN.date = event => factory.Dates.parse(event.start.date || event.start.dateTime).startOf("day"),
     
-  FN.times = (from, until) => `${from.format(options.format)} - ${until.format(options.format)}`;
+  FN.times = (from, until, dates, display) => `${from.format(dates ? display ? options.format.display : options.format.long : options.format.short)} - ${until.format(dates && (from.year() !== until.year() || from.dayOfYear() !== until.dayOfYear()) ? display ? options.format.display : options.format.long : options.format.short)}`;
 
   FN.time = event => {
       event.confirmed = FN.confirmed(event),
       event.time = event.start.dateTime ? FN.times(factory.Dates.parse(event.start.dateTime),
         factory.Dates.parse(event.end.dateTime)) : "00:00 - 23:59";
+      event.dates = event.start.dateTime ? FN.times(factory.Dates.parse(event.start.dateTime),
+        factory.Dates.parse(event.end.dateTime), true, true) : "All Day";
+      event.duration = (event.start.dateTime ? 
+                        moment.duration(factory.Dates.parse(event.end.dateTime).diff(factory.Dates.parse(event.start.dateTime))) : 
+                        moment.duration(1, "days")).humanize();
       event.created = event.created ? factory.Dates.parse(event.created) : event.created;
       event.updated = event.updated ? factory.Dates.parse(event.updated) : event.updated;
       return event.time;

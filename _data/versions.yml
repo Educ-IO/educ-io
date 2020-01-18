@@ -1,4 +1,8 @@
 site :
+  0.1.9a :
+    name : Book v0.0.6a-beta
+    desc : Multi-Day Booking Support in Book App
+    numeric : 0.1.9.1
   0.1.9 :
     name : Book v0.0.6-beta
     desc : Resource Calendar Permission and Notification Management
@@ -1280,6 +1284,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.6a-beta :
+    name : Multi-Day Booking Support
+    type : minor
   0.0.6-beta :
     name : Resource Calendar Permission and Notification Management
     type : major

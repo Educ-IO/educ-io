@@ -468,6 +468,7 @@ buttons:
       - https://www.googleapis.com/auth/admin.directory.resource.calendar
       - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
     auth: google
+    divider: true
   - name: Permissions
     desc: Manage permissions on resource calendars
     hash: manage.permissions
@@ -482,6 +483,7 @@ buttons:
       - https://www.googleapis.com/auth/calendar
       - https://www.googleapis.com/auth/admin.directory.resource.calendar
     auth: google
+    divider: true
   - name: About
     desc: More details about managing Resources and Bookings
     hash: instructions.manage

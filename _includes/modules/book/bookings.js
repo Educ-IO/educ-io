@@ -11,7 +11,7 @@ Bookings = (options, factory) => {
       background: {
         accept: "bg-success-light",
         reject: "bg-danger-light"
-      }
+      },
     },
     EXTRACT = {
       time: /(?:^|\s)((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))(?:[.!?]?)(?:\s|$)/i,
@@ -28,13 +28,15 @@ Bookings = (options, factory) => {
   /* <!-- Internal Options --> */
 
   /* <!-- Internal Variables --> */
-  var ರ‿ರ = {}; /* <!-- State --> */
+  var ರ‿ರ = {
+    extend: 0,
+  }; /* <!-- State --> */
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
   FN.check = {
 
-    extract: element => {
+    extract: (element, date) => {
 
       var _val = element.val();
       if (!_val) return FN.action.indeterminate(element), false;
@@ -42,14 +44,14 @@ Bookings = (options, factory) => {
       var _time = _val.match(EXTRACT.time);
       if (!_time || _time.length === 0) return FN.action.indeterminate(element), false;
 
-      return options.functions.source.date(_time[1]);
+      return options.functions.source.date(_time[1], date);
 
     },
 
     time: periods => input => {
 
       var _action = input.data("action"),
-        _time = FN.check.extract(input);
+        _time = FN.check.extract(input, _action == "end" ? input.siblings("input[readonly]").val() : null);
 
       /* <!-- Verify this time is valid --> */
       if (!_time || !_time.isValid()) return;
@@ -64,7 +66,7 @@ Bookings = (options, factory) => {
 
       /* <!-- Get partner time (e.g. start or end) --> */
       var _partner = input.siblings(`input[data-action='${_action == "start" ? "end" : "start"}']`),
-        _other = FN.check.extract(_partner);
+        _other = FN.check.extract(_partner, _action == "start" ? input.siblings("input[readonly]").val() : null);
 
       /* <!-- Verify partner time is valid (in the same period of availability) --> */
       if (!_other || !_other.isValid()) return;
@@ -81,49 +83,64 @@ Bookings = (options, factory) => {
   
   FN.display = {
     
+    extension: extend => rendered => rendered.find(".until-date")
+                                     .toggleClass("d-none", !extend)
+                                     .val(extend ? options.functions.source.end(extend).format(options.functions.source.formats().date) : ""),
+    
     group : (id, name) => {
       
       factory.Flags.log("Selected Resource Group with ID:", id);
       
+      var _number = 1;
+      
       options.functions.source.children(id).then(children => {
         
-         /* <!-- Create Last Updater Function --> */
-        ರ‿ರ.last = ((id, name, children) => silent => {
+        /* <!-- Create Last Updater Function --> */
+        ರ‿ರ.last = ((id, name, children) => (silent, extend) => {
+          
+          factory.Display.tidy();
           
           var _resources = _.pluck(children, "email"),
-              _renderer = options.functions.render.group("group", name),
+              _renderer = options.functions.render.group("group", name, _number),
               _rendered;
               
-          return options.functions.source.busy(_resources).then(results => {
+          return options.functions.source.busy(_resources, extend)
+            .then(results => {
+            
+              var _update = number => {
 
-            var _update = number => {
-              
-              var _periods = options.functions.process.busy(results.calendars, _resources.length - number);
-              
-              /* <!-- Update Booker Function --> */
-              ರ‿ರ.book = options.functions.source.book.group(factory.me.email, results.calendars, number);
-              
-              FN.hookup.book(options.functions.process.available(_periods))(_rendered);
-              
-              return options.functions.render.availability(_periods);
-            }, 
-            _render = periods => Promise.resolve(_rendered = _renderer(periods, _resources.length))
-                  .then(FN.hookup.number(_update))
-                  .then(FN.hookup.book(options.functions.process.available(periods))),
-                _periods = options.functions.process.busy(results.calendars, _resources.length - 1);
+                _number = number;
+                
+                var _periods = options.functions.process.busy(results.calendars, _resources.length - number, 
+                                                                options.functions.source.start(), options.functions.source.end(extend));
+
+                /* <!-- Update Booker Function --> */
+                ರ‿ರ.book = options.functions.source.book.group(factory.me.email, results.calendars, number);
+
+                FN.hookup.book(options.functions.process.available(_periods))(_rendered);
+
+                return options.functions.render.availability(_periods);
+              }, 
+              _render = periods => Promise.resolve(_rendered = _renderer(periods, _resources.length))
+                    .then(FN.hookup.number(_update))
+                    .then(FN.hookup.book(options.functions.process.available(periods))),
+                  _periods = options.functions.process.busy(results.calendars, _resources.length - _number,
+                                                              options.functions.source.start(), options.functions.source.end(extend));
+
+              /* <!-- Create Booker Function --> */
+              ರ‿ರ.book = options.functions.source.book.group(factory.me.email, results.calendars, _number);
+
+              /* <!-- Set Date Until Visibility / Value --> */
+              _render(_periods).then(FN.display.extension(extend));
             
-            /* <!-- Create Booker Function --> */
-            ರ‿ರ.book = options.functions.source.book.group(factory.me.email, results.calendars, 1);
-            
-            _render(_periods);
-            
-          })
+            })
             .catch(e => factory.Flags.error("Busy Retrieval Error", e))
             .then(silent ? true : factory.Main.busy("Checking Availability"));
           
         })(id, name, children);
 
-        ರ‿ರ.last();
+        /* <!-- Reset Extension Period --> */
+        ರ‿ರ.last(false, ರ‿ರ.extend = 0);
         
       });
       
@@ -134,18 +151,20 @@ Bookings = (options, factory) => {
       factory.Flags.log("Selected Resource with ID:", id);
 
       /* <!-- Create Last Updater Function --> */
-      ರ‿ರ.last = ((id, name) => silent => {
+      ರ‿ರ.last = ((id, name) => (silent, extend) => {
+        factory.Display.tidy();
         var _renderer = options.functions.render.events("events", name);
-        return options.functions.source.events(id)
+        return options.functions.source.events(id, extend)
           .then(data => {
             var _events = options.functions.process.me(data, id),
-              _periods = options.functions.process.periods(data),
-              _book = FN.hookup.book(options.functions.process.available(_periods));
+                _periods = options.functions.process.periods(data, options.functions.source.start(), options.functions.source.end(extend)),
+                _book = FN.hookup.book(options.functions.process.available(_periods));
             factory.Flags.log("Periods for the Day / Resource:", _periods);
             if (_events && _events.length > 0) factory.Flags.log("Loaded Events:", _events);
             return Promise.resolve(_renderer(_events, _periods))
               .then(FN.hookup.event)
-              .then(_book);
+              .then(_book)
+              .then(FN.display.extension(extend));
           })
           .catch(e => factory.Flags.error("Events Retrieval Error", e))
           .then(silent ? true : factory.Main.busy("Checking Availability"));
@@ -155,7 +174,8 @@ Bookings = (options, factory) => {
       /* <!-- Create Booker Function --> */
       ರ‿ರ.book = options.functions.source.book.one(factory.me.email, id);
 
-      ರ‿ರ.last();
+      /* <!-- Reset Extension Period --> */
+      ರ‿ರ.last(false, ರ‿ರ.extend = 0);
       
     },
     
@@ -209,7 +229,7 @@ Bookings = (options, factory) => {
             })
             .catch(e => options.state.application.notify.actions.error(e, 
                                                            "Booking Failed", "FAILED_BOOK"))
-            .then(() => factory.App.delay(1000).then(() => ರ‿ರ.last(true)));
+            .then(() => factory.App.delay(1000).then(() => ರ‿ರ.last(true, ರ‿ರ.extend)));
         })
         .catch(e => factory.Flags.error("Booking Error", e))
         .then(factory.Main.busy("Booking")),
@@ -264,12 +284,14 @@ Bookings = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
     
+    extend: () => ರ‿ರ.last ? ರ‿ರ.last(false, ರ‿ರ.extend += 1) : false,
+    
     new: () => options.functions.source.resources()
       .then(options.functions.render.view("book", options.id, "Resources", "book.create"))
       .then(FN.hookup.resource)
       .then(FN.hookup.search),
 
-    refresh: options.functions.render.refresh(options.id, () => ರ‿ರ.last ? ರ‿ರ.last() : false),
+    refresh: options.functions.render.refresh(options.id, () => ರ‿ರ.last ? ರ‿ರ.last(false, ರ‿ರ.extend = 0) : false),
 
   };
   /* <!-- External Visibility --> */

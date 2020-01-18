@@ -376,7 +376,7 @@ App = function() {
         route: (handled, command) => {
 
           if (handled) return;
-
+          
           if ((/TEST/i).test(command)) {
 
             if (ರ‿ರ.folder) ರ‿ರ.folder.test(

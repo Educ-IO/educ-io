@@ -869,7 +869,8 @@ Google_API = (options, factory) => {
       
       permissions: {
         
-        create: (id, data) => _call(NETWORKS.general.post, `calendar/v3/calendars/${encodeURIComponent(id)}/acl`, data, "application/json"),
+        create: (id, data, notify) => _call(NETWORKS.general.post, 
+          `calendar/v3/calendars/${encodeURIComponent(id)}/acl?sendNotifications=${notify ? "true" : "false"}`, data, "application/json"),
         
         delete: (id, rule) => _call(NETWORKS.general.delete, `calendar/v3/calendars/${encodeURIComponent(id)}/acl/${rule}`),
         

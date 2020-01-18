@@ -264,6 +264,11 @@ App = function() {
                   }
                 }
               },
+              extend: {
+                matches: /EXTEND/i,
+                state: FN.states.book.in,
+                fn: () => FN.bookings.extend(),
+              }
             }
           },
           
@@ -528,6 +533,8 @@ App = function() {
     persistent: ಱ,
     
     delay: ms => new Promise(resolve => setTimeout(resolve, ms)),
+    
+    fn: FN,
 		
 	};
 
