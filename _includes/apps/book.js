@@ -283,16 +283,18 @@ App = function() {
             matches: /BOOK/i,
             keys: ["b", "B"],
             fn: () => FN.bookings.new()
-                        .then(ಠ_ಠ.Main.busy("Loading Resources"))
                         .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.book.in))
+                        .catch(e => ಠ_ಠ.Flags.error("Book View Error", e))
+                        .then(ಠ_ಠ.Main.busy("Loading Resources", true))
           },
           
           all: {
             matches: /DIARY/i,
             keys: ["d", "D", "v", "V"],
             fn: () => FN.diary.all()
-                        .then(ಠ_ಠ.Main.busy("Loading Bookings"))
                         .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.diary.in))
+                        .catch(e => ಠ_ಠ.Flags.error("Diary View Error", e))
+                        .then(ಠ_ಠ.Main.busy("Loading Bookings", true))
           },
 
           manage: {
@@ -301,26 +303,30 @@ App = function() {
               bookings: {
                 matches: /BOOKINGS/i,
                 fn: () => FN.manage.bookings()
-                        .then(ಠ_ಠ.Main.busy("Loading Resources"))
-                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.bookings]))
+                            .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.bookings]))
+                            .catch(e => ಠ_ಠ.Flags.error("Booking Management View Error", e))
+                            .then(ಠ_ಠ.Main.busy("Loading Resources", true))
               },
               resources: {
                 matches: /RESOURCES/i,
                 fn: () => FN.manage.resources()
-                        .then(ಠ_ಠ.Main.busy("Loading Resources"))
-                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.resources]))
+                            .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.resources]))
+                            .catch(e => ಠ_ಠ.Flags.error("Resource Management View Error", e))
+                            .then(ಠ_ಠ.Main.busy("Loading Resources", true))
               },
               permissions: {
                 matches: /PERMISSIONS/i,
                 fn: () => FN.manage.permissions()
-                        .then(ಠ_ಠ.Main.busy("Loading Resources"))
-                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.permissions]))
+                            .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.permissions]))
+                            .catch(e => ಠ_ಠ.Flags.error("Permission Management View Error", e))
+                            .then(ಠ_ಠ.Main.busy("Loading Resources", true))
               },
               notifications: {
                 matches: /NOTIFICATIONS/i,
                 fn: () => FN.manage.notifications()
-                        .then(ಠ_ಠ.Main.busy("Loading Resources"))
-                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.notifications]))
+                            .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.notifications]))
+                            .catch(e => ಠ_ಠ.Flags.error("Notification Management View Error", e))
+                            .then(ಠ_ಠ.Main.busy("Loading Resources", true))
               },
             },
           },

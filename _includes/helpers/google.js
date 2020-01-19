@@ -909,8 +909,10 @@ Google_API = (options, factory) => {
           fields: "id,summary,summaryOverride,description,accessRole",
         }),
       
-      add: (id, data) => _call(NETWORKS.general.post, "https://www.googleapis.com/calendar/v3/users/me/calendarList",
+      add: (id, data) => _call(NETWORKS.general.post, "calendar/v3/users/me/calendarList",
                                data ? _.defaults({id: id}, data) : {id: id}, "application/json"),
+      
+      remove: id => _call(NETWORKS.general.delete, `calendar/v3/users/me/calendarList/${encodeURIComponent(id)}`),
       
       list: () => _list(
         NETWORKS.general.get, "calendar/v3/users/me/calendarList", "items", [], {

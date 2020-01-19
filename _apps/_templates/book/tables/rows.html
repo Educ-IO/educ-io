@@ -14,7 +14,7 @@
   <td class="align-middle">{{~#present who}}
     <span>{{who}}</span>
   {{/present~}}</td>
-  <td class="align-middle bg-secondary">
+  <td class="align-middle{{~#if manageable}} bg-secondary{{/if~}}">
     <div class="d-flex flex-column flex-md-row align-items-center">
       {{#present properties}}{{> custom_properties properties=properties id=id manageable=manageable}}{{/present}}
       {{~#if manageable}}

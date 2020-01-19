@@ -318,6 +318,53 @@ Manage = (options, factory) => {
   };
   /* <!-- Helper Functions --> */
 
+  /* <!-- View Functions --> */
+  FN.view = {
+    
+     simple : (template, name, help) => options.functions.source.resources()
+      .then(FN.detoggle)
+      .then(resources => options.functions.render.simple(template, options.id.manage, name, "", help, {
+        data: resources,
+        selectable: (ರ‿ರ.selectable = true),
+        simple: (ರ‿ರ.simple = true),
+        all: (ರ‿ರ.all = true)
+      }))
+      .then(FN.hookup.toggle)
+      .then(FN.hookup.resource)
+      .then(FN.hookup.search)
+      .then(() => $("#search_Text").focus()),
+    
+    bookings : () => FN.admin()
+      .then(FN.empty)
+      .then(options.functions.source.resources)
+      .then(FN.detoggle)
+      .then(options.functions.render.view("manage", options.id.manage, "Bookings", "manage",
+                                            ರ‿ರ.selectable = true, ರ‿ರ.simple = true, ರ‿ರ.all = true))
+      .then(FN.hookup.toggle)
+      .then(FN.hookup.resource)
+      .then(FN.hookup.search)
+      .then(FN.hookup.shortcut)
+      .then(() => $("#shortcut_Text").focus()),
+    
+    permissions : () => FN.view.simple("permissions", "Permissions", "manage.permissions"),
+  
+    notifications : () => FN.view.simple("notifications", "Notifications", "manage.notifications"),
+    
+    resources : () => FN.admin()
+      .then(FN.empty)
+      .then(options.functions.source.resources)
+      .then(resources => options.functions.render.simple("calendars", options.id.manage, "Resources", "", "manage.resources", {
+        data: resources,
+        selectable: (ರ‿ರ.selectable = false),
+        simple: (ರ‿ರ.simple = false)
+      }))
+      .then(FN.hookup.edit)
+      .then(FN.hookup.search)
+      .then(() => $("#search_Text").focus()),
+    
+  };
+  /* <!-- View Functions --> */
+  
   /* <!-- Internal Functions --> */
   FN.resource = data => ({
     resourceId: data.ID.Value,
@@ -334,66 +381,44 @@ Manage = (options, factory) => {
       })),
   });
 
-  FN.resources = () => FN.admin()
-    .then(FN.empty)
-    .then(options.functions.source.resources)
-    .then(resources => options.functions.render.simple("calendars", options.id.manage, "Resources", "", "manage.resources", {
-      data: resources,
-      selectable: (ರ‿ರ.selectable = false),
-      simple: (ರ‿ರ.simple = false)
-    }))
-    .then(FN.hookup.edit)
-    .then(FN.hookup.search)
-    .then(() => $("#search_Text").focus());
-
-  FN.simple = (template, name, help) => options.functions.source.resources()
-    .then(FN.detoggle)
-    .then(resources => options.functions.render.simple(template, options.id.manage, name, "", help, {
-      data: resources,
-      selectable: (ರ‿ರ.selectable = true),
-      simple: (ರ‿ರ.simple = true),
-      all: (ರ‿ರ.all = true)
-    }))
-    .then(FN.hookup.toggle)
-    .then(FN.hookup.resource)
-    .then(FN.hookup.search)
-    .then(() => $("#search_Text").focus());
-  
-  FN.permissions = () => FN.simple("permissions", "Permissions", "manage.permissions");
-  
-  FN.notifications = () => FN.simple("notifications", "Notifications", "manage.notifications");
-  
   FN.access = events => {
 
+    /* <!-- TODO: Sequential map to check writer/owner rights per calendar? --> */
     if (!events || events.length === 0) return Promise.resolve(events);
+    
+    var _return = (id, manager) => ರ‿ರ.list[ರ‿ರ.list.push({
+        id: id,
+        manager: manager
+      }) - 1],
+        _check = id => factory.Google.calendars.add(id, {hidden: true})
+          .then(calendar => {
+            factory.Google.calendars.remove(calendar.id);
+            return _return(calendar.id, calendar.accessRole == "writer" || calendar.accessRole == "owner");
+          });
+    
     var source = _.find(ರ‿ರ.list, item => item.id == events[0].calendar);
 
-    return (source ? Promise.resolve(source) : ರ‿ರ.admin === true ? Promise.resolve(ರ‿ರ.list[ರ‿ರ.list.push({
-        id: events[0].calendar,
-        manager: true
-      }) - 1]) : options.functions.source.calendar(events[0].calendar)
-      .catch(e => e.status == 404 ? {
-        id: events[0].calendar
-      } : factory.Flags.error("Calendar List Error", e))
-      /* <!-- This only works for calendars added to a users calendar! --> */
-      .then(calendar => calendar ? ರ‿ರ.list[ರ‿ರ.list.push({
-        id: calendar.id,
-        manager: calendar.accessRole == "writer" || calendar.accessRole == "owner"
-      }) - 1] : {
-        id: events[0].calendar,
-        manager: false
-      })).then(calendar => _.map(events, event => _.tap(event, event => event.manageable = calendar.manager)));
+    return (source ? 
+              Promise.resolve(source) : 
+              ರ‿ರ.admin === true ? 
+                Promise.resolve(_return(events[0].calendar, true)) : 
+                  /* <!-- This only works for calendars added to a users calendar! --> */
+                  options.functions.source.calendar(events[0].calendar)
+                    .then(calendar => _return(calendar.id, calendar.accessRole == "writer" || calendar.accessRole == "owner"))
+                    .catch(e => e.status == 404 ? _check(events[0].calendar) : _return(events[0].calendar, false)))
+      .then(calendar => _.map(events, event => _.tap(event, event => event.manageable = calendar.manager)));
+    
   };
 
-  FN.admin = () => ರ‿ರ.admin === undefined ? options.functions.source.admin().then(admin => ರ‿ರ.admin = admin) : Promise.resolve(ರ‿ರ.admin),
+  FN.admin = () => ರ‿ರ.admin === undefined ? options.functions.source.admin().then(admin => ರ‿ರ.admin = admin) : Promise.resolve(ರ‿ರ.admin);
 
-    FN.event = event => {
-      event.what = options.functions.calendar.resources(event);
-      event.who = options.functions.calendar.who(event);
-      event.when = options.functions.calendar.time(event);
-      event.date = options.functions.calendar.date(event);
-      return event;
-    };
+  FN.event = event => {
+    event.what = options.functions.calendar.resources(event);
+    event.who = options.functions.calendar.who(event);
+    event.when = options.functions.calendar.time(event);
+    event.date = options.functions.calendar.date(event);
+    return event;
+  };
 
   FN.get = id => ರ‿ರ.events.findOne({
     id: {
@@ -417,10 +442,10 @@ Manage = (options, factory) => {
     .catch(e => factory.Flags.error("Event Patch Error", e))
     .then(factory.Main.busy("Updating Booking"));
 
-  FN.process = (calendar, events) => _.map(events, event => _.tap(event, event => event.calendar = calendar)),
+  FN.process = (calendar, events) => _.map(events, event => _.tap(event, event => event.calendar = calendar));
 
-    FN.refresh = () => Promise.all(_.map(ರ‿ರ.calendars, calendar => options.functions.source.events(calendar.id)
-      .then(events => FN.process(calendar.id, events))))
+  FN.refresh = () => options.functions.source.busy(_.pluck(ರ‿ರ.calendars, "id"))
+    .then(busy => Promise.all(_.map(_.chain(busy.calendars).pairs().filter(value => value[1] && value[1].busy && value[1].busy.length).map(value => value[0]).value(), calendar => options.functions.source.events(calendar).then(events => FN.process(calendar, events)))))
     .then(results => _.flatten(results))
     .then(FN.access)
     .then(events => options.functions.render.table(options.id.manage)(FN.populate.events(options.functions.source.dedupe(ರ‿ರ.data = events))))
@@ -715,7 +740,7 @@ Manage = (options, factory) => {
                   action: "Delete"
                 })
                 .then(confirm => confirm && data.ID ? (dialog.modal("hide"), factory.Google.resources.calendars.delete(data.ID.Value)
-                  .then(result => result === true ? (resources.remove.resource(data.ID.Value), FN.resources()) : result)
+                  .then(result => result === true ? (resources.remove.resource(data.ID.Value), FN.view.resources()) : result)
                   .then(factory.Main.busy("Deleting Resource"))) : false)
                 .catch(e => e ? factory.Flags.error("Resource Delete Error", e) : false)
             }],
@@ -744,7 +769,7 @@ Manage = (options, factory) => {
             if (data === undefined) return;
             factory.Flags.log("Data returned from Edit Dialog:", data);
             return factory.Google.resources.calendars.update(data.ID.Value, FN.resource(data))
-              .then(result => result ? (resources.update.resource(result), FN.resources()) : result)
+              .then(result => result ? (resources.update.resource(result), FN.view.resources()) : result)
               .then(factory.Main.busy("Updating Resource"));
           });
         });
@@ -903,7 +928,7 @@ Manage = (options, factory) => {
           if (data === undefined || !data.Name) return;
           factory.Flags.log("Data returned from Add Dialog:", data);
           return factory.Google.resources.calendars.insert(FN.resource(data))
-            .then(result => result ? (resources.add.resource(result), FN.resources()) : result)
+            .then(result => result ? (resources.add.resource(result), FN.view.resources()) : result)
             .then(factory.Main.busy("Creating Resource"));
         }));
       },
@@ -953,20 +978,11 @@ Manage = (options, factory) => {
         .then(() => factory.Main.authorise([SCOPE_DRIVE_APPDATA, SCOPE_DRIVE_FILE]))
         .then(result => result === true ? FN.booking(event) : false)),
 
-    bookings: () => FN.admin()
-      .then(FN.empty)
-      .then(options.functions.source.resources)
-      .then(FN.detoggle)
-      .then(options.functions.render.view("manage", options.id.manage, "Manage", "manage", ರ‿ರ.selectable = true, ರ‿ರ.simple = true, ರ‿ರ.all = true))
-      .then(FN.hookup.toggle)
-      .then(FN.hookup.resource)
-      .then(FN.hookup.search)
-      .then(FN.hookup.shortcut)
-      .then(() => $("#shortcut_Text").focus()),
+    bookings: FN.view.bookings,
 
-    notifications: FN.notifications,
+    notifications: FN.view.notifications,
     
-    permissions: FN.permissions,
+    permissions: FN.view.permissions,
 
     in: (id, log) => log ? FN.log.in(id) : FN.confirm.in(id),
 
@@ -988,7 +1004,7 @@ Manage = (options, factory) => {
 
     },
 
-    resources: FN.resources,
+    resources: FN.view.resources,
 
   };
   /* <!-- External Visibility --> */

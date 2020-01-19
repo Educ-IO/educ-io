@@ -287,7 +287,7 @@ Bookings = (options, factory) => {
     extend: () => ರ‿ರ.last ? ರ‿ರ.last(false, ರ‿ರ.extend += 1) : false,
     
     new: () => options.functions.source.resources()
-      .then(options.functions.render.view("book", options.id, "Resources", "book.create"))
+      .then(options.functions.render.view("book", options.id, "Book for", "book.create"))
       .then(FN.hookup.resource)
       .then(FN.hookup.search),
 

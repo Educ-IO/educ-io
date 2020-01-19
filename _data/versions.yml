@@ -1,4 +1,8 @@
 site :
+  0.1.9b :
+    name : Book v0.0.6b-beta
+    desc : Book App Bug-Fixes
+    numeric : 0.1.9.2
   0.1.9a :
     name : Book v0.0.6a-beta
     desc : Multi-Day Booking Support in Book App
@@ -1284,6 +1288,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.6b-beta :
+    name : Bug Fixes
+    type : minor
   0.0.6a-beta :
     name : Multi-Day Booking Support
     type : minor

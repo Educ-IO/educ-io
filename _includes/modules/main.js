@@ -16,8 +16,8 @@ Main = function() {
   /* <!-- Plumbing Functions --> */
 
   /* <!-- TODO: Overlapping busy calls can cause issues, so we check that it is function --> */
-  const BUSY = status => _.wrap(ಠ_ಠ.Display.busy({
-    target: ಠ_ಠ.container,
+  const BUSY = (status, full) => _.wrap(ಠ_ಠ.Display.busy({
+    target: full ? ಠ_ಠ.container.parent() : ಠ_ಠ.container,
     status: status,
     fn: true
   }), (busy, value) => _.tap(value, () => _.isFunction(busy) ? busy() : false));
