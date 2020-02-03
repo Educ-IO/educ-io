@@ -30,6 +30,10 @@ App = function() {
     STATES = [STATE_OPENED, STATE_MONTH, STATE_EVENT, STATE_SEARCH, STATE_PROPERTY, STATE_DISPLAY];
   /* <!-- Internal Constants --> */
 
+  /* <!-- Scope Constants --> */
+  const SCOPE_CALENDARS = "https://www.googleapis.com/auth/calendar";
+  /* <!-- Scope Constants --> */
+  
   /* <!-- Internal Variables --> */
   var ಠ_ಠ, DB, _id, _table, _current, _query, _event, _property, _value;
   /* <!-- Internal Variables --> */
@@ -138,24 +142,27 @@ App = function() {
         action: "update"
       }) : false,
 
-    patch: (calendar, event, property, value) => new Promise((resolve, reject) => {
+    patch: (calendar, event, property, value) => ಠ_ಠ.Main.authorise(SCOPE_CALENDARS)
+        .then(result => new Promise((resolve, reject) => {
+          if (result === true) {
+            var _properties = {};
+            _properties[property] = value;
+            var _data = {
+              extendedProperties: {
+                shared: _properties
+              }
+            };
 
-      var _properties = {};
-      _properties[property] = value;
-      var _data = {
-        extendedProperties: {
-          shared: _properties
-        }
-      };
-
-      ಠ_ಠ.Google.calendar.events.update(calendar, event, _data)
-        .then(event => {
-          _tags.update();
-          resolve(event);
-        })
-        .catch(e => ಠ_ಠ.Flags.error("Patch Error", e) && reject(e));
-
-    }),
+            ಠ_ಠ.Google.calendar.events.update(calendar, event, _data)
+              .then(event => {
+                _tags.update();
+                resolve(event);
+              })
+              .catch(e => ಠ_ಠ.Flags.error("Patch Error", e) && reject(e));        
+          } else {
+            reject();
+          }
+    })),
 
     add: (id, event) => new Promise((resolve, reject) => {
 
@@ -220,7 +227,6 @@ App = function() {
     }),
 
   };
-
 
   /* <!-- Open, Load and Display --> */
   var _display = (id, events, parameters) => {

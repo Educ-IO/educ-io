@@ -11,9 +11,13 @@ for: book
 
 In G-Suite, users can have administrative privileges. These can be found in the [Google Admin console](https://support.google.com/a/answer/172176){:target="_blank" rel="noopener"}. Any __Super Admin__ or __Services Admin__ has the ability to create or edit Google Calendar Resources.
 
-However, it is rarely a good idea to grant more privileges than are necessary, as this can often lead to users making inadvertent or accidental changes. Therefore, it is sensible to create your own admin user 'type'. This can be called something like __Resources Admin__ and needs to have the __Calendar__ -> __All Settings__ -> __Buildings and Resources__ privilege assigned to it. This will alow users who are part of this role to create, delete and manage resources. It will also allow those users to manage bookings associated with these resources.However
+However, it is rarely a good idea to grant more privileges than are necessary, as this can often lead to users making inadvertent or accidental changes. Therefore, it is sensible to create your own admin user 'type'. This can be called something like __Resources Admin__ and needs to have the __Calendar__ -> __All Settings__ -> __Buildings and Resources__ privilege assigned to it. This will alow users who are part of this role to create, delete and manage resources.
 
 If you would prefer to grant __particular users__ access to manage the bookings for a __subset of resources__, this can be done from Google Calendar itself. Add the relevant __Resource Calendar__ to your calendar list, and then go to __Settings__ -> __Share with specific people__. You need to grant at least the __Make Changes to Events__ privilege to the users you would like to manage bookings.
+
+#### Permissions
+{:.pb-1}
+To manage bookings (e.g mark them as loaned and returned), __edit__ permissions on the relevant resource calendars are required. These can be granted in bulk using our app, simple click __Manage__ --> __Permissions__. Alternatively, then can be set manually within Google Calendar. In both cases, a G-Suite Super-Admin is required (initially) to set these permissions.
 
 #### Notifications
 {:.pb-1}

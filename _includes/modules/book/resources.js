@@ -14,17 +14,32 @@ Resources = function(loaded) {
   /* <!-- Internal Constants --> */
   const REGEXES = {
           PARENT : /parent\s*:\s*([a-zA-Z]+[\s\S]*)/i,
+          BUNDLE : /bundle\s*:\s*([a-zA-Z]+[\s\S]*)\|~\|(\d+)\|~\|(\d+)/i,
         },
         CATEGORY = {
           ROOM : "CONFERENCE_ROOM",
         },
-        FEATURE = value => value.feature.name.trim(),
-        PARENT = value => REGEXES.PARENT.test(value),
-        EXTRACT = value => value ? (match => match ? match[1] : match)(REGEXES.PARENT.exec(value)) : value,
-        FORMAT = value => `PARENT:${value}`;
+        TESTS = {
+          PARENT : value => REGEXES.PARENT.test(value),
+          BUNDLE : value => REGEXES.BUNDLE.test(value)
+        },
+        EXTRACTS = {
+          PARENT : value => value ? (match => match ? match[1] : match)(REGEXES.PARENT.exec(value)) : value,
+          BUNDLE : value => value ? (match => match ? {
+            id : value,
+            name : match[1],
+            sequence : match.length >= 3 ? parseInt(match[2], 10) : null,
+            quantity : match.length >= 4 ? parseInt(match[3], 10) : null,
+          } : match)(REGEXES.BUNDLE.exec(value)) : value
+        },
+        FORMATS = {
+          PARENT : value => `PARENT:${value}`,
+          BUNDLE : (name, sequence, quantity) => `BUNDLE:${name}${sequence ? `|~|${sequence}` : ""}${quantity ? `|~|${quantity}`: ""}`
+        },
+        FEATURE = value => value.feature.name.trim();
   /* <!-- Internal Constants --> */
 
-  /* <!-- Internal Functions --> */
+  /* <!-- Map Functions --> */
   FN.map = {
   
     resource: value => ({
@@ -38,14 +53,20 @@ Resources = function(loaded) {
         location: `${value.buildingId ? value.buildingId : ""}${value.buildingId && value.floorName ? "\\" : ""}${value.floorName ? `Floor ${value.floorName}` : ""}${(value.buildingId || value.floorName) && value.floorSection ? "\\" : ""}${value.floorSection ? value.floorSection : ""}`,
         description: value.resourceDescription,
         details: value.userVisibleDescription,
+        bundles: _.chain(value.featureInstances)
+                      .map(FEATURE)
+                      .filter(TESTS.BUNDLE)
+                      .map(EXTRACTS.BUNDLE)
+                      .value(),
         parents: _.chain(value.featureInstances)
                       .map(FEATURE)
-                      .filter(PARENT)
-                      .map(EXTRACT)
+                      .filter(TESTS.PARENT)
+                      .map(EXTRACTS.PARENT)
                       .value(),
         features: _.chain(value.featureInstances)
                       .map(FEATURE)
-                      .reject(PARENT)
+                      .reject(TESTS.BUNDLE)
+                      .reject(TESTS.PARENT)
                       .value(),
       }),
     
@@ -54,10 +75,13 @@ Resources = function(loaded) {
       }),
     
   };
+  /* <!-- Map Functions --> */
   
+  /* <!-- Populate Functions --> */
   FN.populate = {
     
     db : (name, schema, data, map) => {
+      if (ರ‿ರ[name]) ಱ.db.removeCollection(name);
       ರ‿ರ[name] = ಱ.db.addCollection(name, schema);
       ರ‿ರ[name].clear({
         removeIndices: false
@@ -91,8 +115,111 @@ Resources = function(loaded) {
       }, data, FN.map.feature),
     
   };
-  /* <!-- Internal Functions --> */
+  /* <!-- Populate Functions --> */
 
+  /* <!-- Find Functions --> */
+  FN.find = {
+    
+    bundles: search => {
+      var ret = ರ‿ರ.features.chain();
+      if (search) ret = ret.find({name: {"$regex": [RegExp.escape(search), "i"]}});
+      return _.chain(ret.sort(FN.sort).data())
+                    .pluck("name")
+                    .filter(TESTS.BUNDLE)
+                    .map(EXTRACTS.BUNDLE)
+                    .pluck("name")
+                    .uniq()
+                    .value();
+    },
+      
+    resources: search => {
+      var ret = ರ‿ರ.resources.chain();
+      if (search) ret = ret.find({"$or": [
+        {title: {"$regex": [RegExp.escape(search), "i"]}},
+        {features: {"$regex": [RegExp.escape(search), "i"]}},
+        {parents: {"$regex": [RegExp.escape(search), "i"]}}
+      ]});
+      return ret.sort(FN.sort).data();
+    },
+    
+  };
+  /* <!-- Find Functions --> */
+  
+  /* <!-- Get Functions --> */
+  FN.get = {
+    
+    children: parent => ರ‿ರ.resources.chain()
+      .find({parents: {"$contains": parent}})
+      .sort(FN.sort)
+      .data(),
+    
+    resource: identifier => ರ‿ರ.resources.findOne({"$or": [
+      {id: {"$eq": identifier}},
+      {email: {"$eq": identifier}}
+    ]}),
+    
+    parents: () => _.chain(ರ‿ರ.features.chain().data())
+                      .pluck("name")
+                      .filter(TESTS.PARENT)
+                      .map(value => ({id: value, name: EXTRACTS.PARENT(value)}))
+                      .value(),
+
+    bundles: () => _.chain(ರ‿ರ.features.chain().data())
+                      .pluck("name")
+                      .filter(TESTS.BUNDLE)
+                      .map(EXTRACTS.BUNDLE)
+                      .value(),
+    
+    features: () => _.chain(ರ‿ರ.features.chain().data())
+                      .pluck("name")
+                      .reject(TESTS.BUNDLE)
+                      .reject(TESTS.PARENT)
+                      .value(),
+    
+  };
+  /* <!-- Get Functions --> */
+  
+  /* <!-- Other Functions --> */
+  FN.parse = data => ({
+      resourceId: data.ID.Value,
+      resourceName: data.Name.Value,
+      resourceCategory: "OTHER",
+      resourceDescription: data.Description ? data.Description.Value : "",
+      resourceType: data.Type ? data.Type.Value : "",
+      userVisibleDescription: data["User Description"] ? data["User Description"].Value : "",
+      featureInstances: _.map((data.Features ? _.isArray(data.Features.Values) ? data.Features.Values : [data.Features.Values] : [])
+        .concat(data.Parents ? _.isArray(data.Parents.Values) ? data.Parents.Values : [data.Parents.Values] : [])
+        .concat(data.Bundles ? _.isArray(data.Bundles.Values) ? data.Bundles.Values : [data.Bundles.Values] : []), value => ({
+          feature: {
+            name: value,
+          },
+        })),
+    });
+  /* <!-- Other Functions --> */
+  
+  /* <!-- Load Functions --> */
+  FN.load = (loaded, context) => Promise.all([
+        ಠ_ಠ.Google.resources.calendars.list()
+          .catch(e => e && e.status == 404 ? ಠ_ಠ.Flags.log("No Resource Calendars").negative() : false),
+        ಠ_ಠ.Google.resources.features.list()
+          .catch(e => e && e.status == 404 ? ಠ_ಠ.Flags.log("No Resource Features").negative() : false),
+      ])
+      .then(values => {
+
+        /* <!-- Resources --> */
+        FN.populate.resources(_.reject(values[0] || [], value => value.resourceCategory == CATEGORY.ROOM));
+
+        /* <!-- Features --> */
+        FN.populate.features(values[1] || []);
+
+        /* <!-- Mark as Loaded --> */
+        ರ‿ರ.loaded = true;
+        if (loaded && _.isFunction(loaded)) loaded();
+        return context;
+
+      });
+  /* <!-- Load Functions --> */
+  
   /* <!-- External Visibility --> */
   return {
 
@@ -105,29 +232,12 @@ Resources = function(loaded) {
       /* <!-- Create DB Reference --> */
       ಱ.db = new loki("resources.db");
       
-      ಱ.loaded = Promise.all([
-        ಠ_ಠ.Google.resources.calendars.list()
-          .catch(e => e && e.status == 404 ? ಠ_ಠ.Flags.log("No Resource Calendars").negative() : false),
-        ಠ_ಠ.Google.resources.features.list()
-          .catch(e => e && e.status == 404 ? ಠ_ಠ.Flags.log("No Resource Features").negative() : false),
-      ])
-        .then(values => {
-       
-          /* <!-- Resources --> */
-          FN.populate.resources(_.reject(values[0] || [], value => value.resourceCategory == CATEGORY.ROOM));
-        
-          /* <!-- Features --> */
-          FN.populate.features(values[1] || []);
-        
-          /* <!-- Mark as Loaded --> */
-          ರ‿ರ.loaded = true;
-          if (loaded && _.isFunction(loaded)) loaded();
-          return this;
-        
-        });
-      
+      /* <!-- Create Resource String Sorter --> */
       FN.sort = ಠ_ಠ.Strings().sort("name");
-
+      
+      /* <!-- Start the loading process --> */
+      ಱ.loaded = FN.load(loaded, this);
+      
       /* <!-- Return for Chaining --> */
       return this;
 
@@ -137,36 +247,33 @@ Resources = function(loaded) {
     
     safe: () => ಱ.loaded,
     
-    extract: EXTRACT,
-    
-    format: FORMAT,
-    
-    find: search => {
-      var ret = ರ‿ರ.resources.chain();
-      if (search) ret = ret.find({"$or": [
-        {title: {"$regex": [RegExp.escape(search), "i"]}},
-        {features: {"$regex": [RegExp.escape(search), "i"]}}
-      ]});
-      return ret.sort(FN.sort).data();
+    extract : {
+      parent : EXTRACTS.PARENT,
+      bundle : EXTRACTS.BUNDLE,
     },
     
-    children: parent => ರ‿ರ.resources.chain()
-      .find({parents: {"$contains": parent}})
-      .sort(FN.sort)
-      .data(),
+    format : {
+      parent : FORMATS.PARENT,
+      bundle : FORMATS.BUNDLE,
+    },
     
-    get: email => ರ‿ರ.resources.findOne({email: {"$eq": email}}),
+    find: {
+      
+      bundles: FN.find.bundles,
+      
+      resources: FN.find.resources,
+      
+    },
     
-    parents: () => _.chain(ರ‿ರ.features.chain().data())
-                      .pluck("name")
-                      .filter(PARENT)
-                      .map(value => ({id: value, name: EXTRACT(value)}))
-                      .value(),
+    children: FN.get.children,
+    
+    get: FN.get.resource,
+    
+    parents: FN.get.parents,
 
-    features: () => _.chain(ರ‿ರ.features.chain().data())
-                      .pluck("name")
-                      .reject(PARENT)
-                      .value(),
+    bundles: FN.get.bundles,
+    
+    features: FN.get.features,
     
     add: {
     
@@ -194,6 +301,10 @@ Resources = function(loaded) {
       feature: value => ರ‿ರ.features.remove(ರ‿ರ.features.findOne({name: {"$eq": value}})),
       
     },
+    
+    parse: FN.parse,
+    
+    reload: FN.load
     
   };
   /* <!-- External Visibility --> */

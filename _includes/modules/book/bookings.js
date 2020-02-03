@@ -193,7 +193,7 @@ Bookings = (options, factory) => {
       if (fn) fn(_value);
     },
     
-    search: e => options.functions.render.search("resources")(FN.action.target(e).val())
+    search: e => options.functions.render.search.resources(FN.action.target(e).val(), "resources")
                     .then(FN.hookup.resource),
     
     validate: form => {
@@ -287,7 +287,7 @@ Bookings = (options, factory) => {
     extend: () => ರ‿ರ.last ? ರ‿ರ.last(false, ರ‿ರ.extend += 1) : false,
     
     new: () => options.functions.source.resources()
-      .then(options.functions.render.view("book", options.id, "Book for", "book.create"))
+      .then(resources => options.functions.render.view("book", options.id, "Book for", options.state.session.current, "book.create", {data: resources}))
       .then(FN.hookup.resource)
       .then(FN.hookup.search),
 

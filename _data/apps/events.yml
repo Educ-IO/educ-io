@@ -136,10 +136,18 @@ scopes:
       name: View your basic profile info
       reason: In order to display your name on the navigation menu, once you have signed in.
       request: login
+    - scope: https://www.googleapis.com/auth/calendar.readonly
+      name: View your calendars
+      reason: In order to display a list of your calendars, this permission is required.
+      request: login
+    - scope: https://www.googleapis.com/auth/calendar.events.readonly
+      name: View events on all your calendars
+      reason: In order to display calendar events, this permission is required.
+      request: login
     - scope: https://www.googleapis.com/auth/calendar
       name: Manage your calendars
       reason: In order to display and manage events from your Google Calendars.
-      request: login
+      request: lazy
 keys:
   google:
       general: 

@@ -51,8 +51,8 @@ Diary = (options, factory) => {
 
   /* <!-- External Visibility --> */
   return {
-
-    all: () => FN.load(options.functions.render.view("diary", options.id, "Bookings", "book.view")),
+    
+    all: () => FN.load(events => options.functions.render.view("diary", options.id, "Bookings", options.state.session.current, "book.view", {data: events})),
 
     refresh: options.functions.render.refresh(options.id,
               () => FN.load(options.functions.render.events("all", "Events"))),

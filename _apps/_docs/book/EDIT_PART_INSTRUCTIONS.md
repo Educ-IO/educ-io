@@ -1,0 +1,1 @@
+Please __toggle__ the resources that can form this __part__ of the bundle. Then, click the __Save__ button to confirm your choices.

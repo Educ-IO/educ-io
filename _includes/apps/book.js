@@ -1,33 +1,34 @@
 App = function() {
-	"use strict";
+  "use strict";
 
-	/* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
+  /* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
 
-	/* <!-- Returns an instance of this if required --> */
-	if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
+  /* <!-- Returns an instance of this if required --> */
+  if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
-	/* <!-- Internal Constants --> */
+  /* <!-- Internal Constants --> */
   const FN = {},
-        DATE_FORMAT = "YYYY-MM-DD";
-	/* <!-- Internal Constants --> */
+    DATE_FORMAT = "YYYY-MM-DD";
+  /* <!-- Internal Constants --> */
 
-	/* <!-- Internal Variables --> */
+  /* <!-- Internal Variables --> */
   var ಠ_ಠ, /* <!-- Context --> */
-    ರ‿ರ = {}, /* <!-- State --> */
+    ರ‿ರ = {},
+    /* <!-- State --> */
     ಱ = {}; /* <!-- Persistant State --> */
   /* <!-- Internal Variables --> */
 
-	/* <!-- Internal Functions --> */
-  
+  /* <!-- Internal Functions --> */
+
   /* <!-- Initial Loading Notification Functions --> */
   FN.loading = () => $("a.btn.needs-resources, button.needs-resources").addClass("loader");
   FN.loaded = () => $("a.btn.needs-resources, button.needs-resources").removeClass("loader");
-  
+
   /* <!-- Change base date --> */
-  FN.refresh = () => ಠ_ಠ.Display.state().in(FN.states.book.in) ? FN.bookings.refresh() : 
-                     ಠ_ಠ.Display.state().in(FN.states.diary.in) ? FN.diary.refresh() :
-                     ಠ_ಠ.Display.state().in(FN.states.manage.in) ? FN.manage.refresh() : false;
-  
+  FN.refresh = () => ಠ_ಠ.Display.state().in(FN.states.book.in) ? FN.bookings.refresh() :
+    ಠ_ಠ.Display.state().in(FN.states.diary.in) ? FN.diary.refresh() :
+    ಠ_ಠ.Display.state().in(FN.states.manage.in) ? FN.manage.refresh() : false;
+
   FN.jump = () => {
 
     var _id = "ctrl_Jump";
@@ -58,27 +59,27 @@ App = function() {
     _input.dblclick();
 
   };
-  
+
   FN.date = value => {
     if (value.year() != ರ‿ರ.current.year() ||
-        value.month() != ರ‿ರ.current.month() ||
-        value.date() != ರ‿ರ.current.date()) {
+      value.month() != ರ‿ರ.current.month() ||
+      value.date() != ರ‿ರ.current.date()) {
       ರ‿ರ.current = value;
       FN.refresh();
     }
   };
-  
+
   /* <!-- Setup Functions Functions --> */
   FN.setup = {
 
     /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
     now: () => {
-      
+
       /* <!-- Set Up / Create the States Module --> */
       FN.states = ಠ_ಠ.States(ಠ_ಠ);
-      
+
     },
-    
+
     /* <!-- Start App after fully loaded (but BEFORE routing or authentication) --> */
     initial: () => {
 
@@ -90,18 +91,18 @@ App = function() {
           application: ಱ
         }
       };
-     _.each(["Source", "Calendar", "Process", "Render", "Bookings", "Diary", "Manage"], 
-            module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Source", "Calendar", "Process", "Render", "Bookings", "Diary", "Log", "Access", "Populate", "Manage"],
+        module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Create Schema Reference --> */
       ಱ.schema = ಠ_ಠ.Schema().latest();
-      
+
       /* <!-- Setup Notification Helper --> */
       ಱ.notify = ಠ_ಠ.Notify({
         id: "book_Notify",
         autohide: true,
       }, ಠ_ಠ);
-      
+
       /* <!-- Get Config Helper --> */
       ಱ.config = ಠ_ಠ.Config({
         fields: {
@@ -109,13 +110,13 @@ App = function() {
         },
         state: FN.states.config
       }, ಠ_ಠ);
-      
+
       /* <!-- Create Query Reference --> */
       ಱ.query = ಠ_ಠ.Query(ಱ, ಠ_ಠ);
-      
+
       /* <!-- Create Database Reference --> */
       ರ‿ರ.database = ಠ_ಠ.Database(ಱ, ಠ_ಠ);
-      
+
     },
 
     /* <!-- App is ready for action - e.g. is authenticated but no initial routing done! --> */
@@ -131,37 +132,36 @@ App = function() {
 
       /* <!-- Sets the currently focussed date | Done here as this is called when app restarts etc. --> */
       ರ‿ರ.current = ಠ_ಠ.Dates.now().startOf("day");
-      
+
       if (!ಱ.resources || !ಱ.resources.loaded()) FN.loading();
 
     },
 
   };
-	/* <!-- Internal Functions --> */
+  /* <!-- Internal Functions --> */
 
-	/* <!-- External Visibility --> */
-	return {
+  /* <!-- External Visibility --> */
+  return {
 
-		/* <!-- External Functions --> */
-		initialise: function(container) {
+    /* <!-- External Functions --> */
+    initialise: function(container) {
 
-			/* <!-- Get a reference to the Container --> */
-			ಠ_ಠ = container;
+      /* <!-- Get a reference to the Container --> */
+      ಠ_ಠ = container;
 
-			/* <!-- Set Container Reference to this --> */
-			container.App = this;
-			
+      /* <!-- Set Container Reference to this --> */
+      container.App = this;
+
       /* <!-- Initial Setup Call --> */
       FN.setup.now();
-      
-			/* <!-- Set Up the Default Router --> */
+
+      /* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
         name: "Book",
         state: ರ‿ರ,
         states: FN.states.all,
         start: FN.setup.routed,
-        instructions: [
-          {
+        instructions: [{
             match: /BOOK/i,
             show: "BOOK_INSTRUCTIONS",
             title: "Booking a Resource ..."
@@ -202,13 +202,18 @@ App = function() {
             title: "Managing Notifications ..."
           },
           {
+            match: [/MANAGE/i, /BUNDLES/i],
+            show: "MANAGE_BUNDLES_INSTRUCTIONS",
+            title: "Managing Bundles ..."
+          },
+          {
             match: /LOAN/i,
             show: "LOAN_INSTRUCTIONS",
             title: "Loans and Returns ..."
           },
         ],
         routes: {
-          
+
           booking: {
             matches: /BOOKING/i,
             state: "authenticated",
@@ -220,10 +225,10 @@ App = function() {
               } catch (e) {
                 ಠ_ಠ.Flags.error("Failed to Parse Booking Params", e ? e : "No Inner Error");
               }
-              
+
             }
           },
-          
+
           date: {
             matches: /DATE/i,
             state: FN.states.dated,
@@ -271,30 +276,30 @@ App = function() {
               }
             }
           },
-          
+
           refresh: {
             matches: /REFRESH/i,
             state: FN.states.data,
             keys: ["r", "R"],
             fn: () => FN.refresh(),
           },
-          
+
           book: {
             matches: /BOOK/i,
             keys: ["b", "B"],
             fn: () => FN.bookings.new()
-                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.book.in))
-                        .catch(e => ಠ_ಠ.Flags.error("Book View Error", e))
-                        .then(ಠ_ಠ.Main.busy("Loading Resources", true))
+              .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.book.in))
+              .catch(e => ಠ_ಠ.Flags.error("Book View Error", e))
+              .then(ಠ_ಠ.Main.busy("Loading Resources", true))
           },
-          
+
           all: {
             matches: /DIARY/i,
             keys: ["d", "D", "v", "V"],
             fn: () => FN.diary.all()
-                        .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.diary.in))
-                        .catch(e => ಠ_ಠ.Flags.error("Diary View Error", e))
-                        .then(ಠ_ಠ.Main.busy("Loading Bookings", true))
+              .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.diary.in))
+              .catch(e => ಠ_ಠ.Flags.error("Diary View Error", e))
+              .then(ಠ_ಠ.Main.busy("Loading Bookings", true))
           },
 
           manage: {
@@ -303,34 +308,61 @@ App = function() {
               bookings: {
                 matches: /BOOKINGS/i,
                 fn: () => FN.manage.bookings()
-                            .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.bookings]))
-                            .catch(e => ಠ_ಠ.Flags.error("Booking Management View Error", e))
-                            .then(ಠ_ಠ.Main.busy("Loading Resources", true))
+                  .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.bookings]))
+                  .catch(e => ಠ_ಠ.Flags.error("Booking Management View Error", e))
+                  .then(ಠ_ಠ.Main.busy("Loading Resources", true))
               },
               resources: {
                 matches: /RESOURCES/i,
                 fn: () => FN.manage.resources()
-                            .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.resources]))
-                            .catch(e => ಠ_ಠ.Flags.error("Resource Management View Error", e))
-                            .then(ಠ_ಠ.Main.busy("Loading Resources", true))
+                  .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.resources]))
+                  .catch(e => ಠ_ಠ.Flags.error("Resource Management View Error", e))
+                  .then(ಠ_ಠ.Main.busy("Loading Resources", true))
+              },
+              bundles: {
+                matches: /BUNDLES/i,
+                fn: () => FN.manage.bundles()
+                  .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.bundles.in]))
+                  .catch(e => ಠ_ಠ.Flags.error("Bundle Management View Error", e))
+                  .then(ಠ_ಠ.Main.busy("Loading Resources", true))
               },
               permissions: {
                 matches: /PERMISSIONS/i,
                 fn: () => FN.manage.permissions()
-                            .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.permissions]))
-                            .catch(e => ಠ_ಠ.Flags.error("Permission Management View Error", e))
-                            .then(ಠ_ಠ.Main.busy("Loading Resources", true))
+                  .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.permissions]))
+                  .catch(e => ಠ_ಠ.Flags.error("Permission Management View Error", e))
+                  .then(ಠ_ಠ.Main.busy("Loading Resources", true))
               },
               notifications: {
                 matches: /NOTIFICATIONS/i,
                 fn: () => FN.manage.notifications()
-                            .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.notifications]))
-                            .catch(e => ಠ_ಠ.Flags.error("Notification Management View Error", e))
-                            .then(ಠ_ಠ.Main.busy("Loading Resources", true))
+                  .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.notifications]))
+                  .catch(e => ಠ_ಠ.Flags.error("Notification Management View Error", e))
+                  .then(ಠ_ಠ.Main.busy("Loading Resources", true))
               },
+              save: {
+                matches: /SAVE/i,
+                state: FN.states.manage.in,
+                fn: () => FN.manage.save()
+                  .catch(e => e ? ಠ_ಠ.Flags.error("Management Save Error", e).negative() : false)
+                  .then(result => result && ಠ_ಠ.Display.state().in(FN.states.manage.bundles.in) ?
+                       (ಠ_ಠ.Display.state().exit([FN.states.manage.bundles.bundle, FN.states.manage.bundles.part]), FN.manage.bundles()) : result)
+                  .then(ಠ_ಠ.Display.tidy)
+                  .then(ಠ_ಠ.Main.busy("Saving", true))
+              },
+              delete: {
+                matches: /DELETE/i,
+                state: FN.states.manage.in,
+                fn: () => FN.manage.delete()
+                  .catch(e => e ? ಠ_ಠ.Flags.error("Management Delete Error", e).negative() : false)
+                  .then(result => result && ಠ_ಠ.Display.state().in(FN.states.manage.bundles.in) ?
+                       (ಠ_ಠ.Display.state().exit([FN.states.manage.bundles.bundle, FN.states.manage.bundles.part]), FN.manage.bundles()) : result)
+                  .then(ಠ_ಠ.Display.tidy)
+              }
             },
+
           },
-          
+
           confirm: {
             matches: /CONFIRM/i,
             state: FN.states.manage.in,
@@ -347,7 +379,7 @@ App = function() {
               },
             },
           },
-          
+
           log: {
             matches: /LOG/i,
             state: FN.states.manage.in,
@@ -364,7 +396,7 @@ App = function() {
               },
             },
           },
-          
+
           code: {
             matches: /CODE/i,
             state: FN.states.bookings,
@@ -373,7 +405,8 @@ App = function() {
               ಠ_ಠ.Link({
                 app: "book",
                 route: "booking",
-                persistent: false, /* <!-- UK/US Keyboard Language Mapping Issues --> */
+                persistent: false,
+                /* <!-- UK/US Keyboard Language Mapping Issues --> */
                 hide_link: true,
                 hide_shorten: true,
                 force_qr: true,
@@ -383,10 +416,11 @@ App = function() {
                 data: {
                   c: ಠ_ಠ.url.decode(commands[0]),
                   e: ಠ_ಠ.url.decode(commands[1])
-                }}, ಠ_ಠ).generate();
+                }
+              }, ಠ_ಠ).generate();
             }
           },
-          
+
           add: {
             matches: /ADD/i,
             state: FN.states.manage.in,
@@ -411,9 +445,20 @@ App = function() {
                 matches: /NOTIFICATION/i,
                 fn: () => FN.manage.add.notification()
               },
+              bundle: {
+                matches: /BUNDLE/i,
+                state: FN.states.manage.bundles.in,
+                fn: () => FN.manage.add.bundle()
+                  .then(() => ಠ_ಠ.Display.state().change(FN.states.views, [FN.states.manage.in, FN.states.manage.bundles.in, FN.states.manage.bundles.bundle]))
+              },
+              part: {
+                matches: /PART/i,
+                state: FN.states.manage.bundles.bundle,
+                fn: () => FN.manage.add.part()
+              },
             },
           },
-          
+
           remove: {
             matches: /REMOVE/i,
             state: FN.states.manage.in,
@@ -421,7 +466,7 @@ App = function() {
               tag: {
                 matches: /TAG/i,
                 length: 1,
-                fn: command => FN.manage.remove.tag(command)
+                fn: command => FN.manage.remove.tag(decodeURIComponent(command))
               },
               feature: {
                 matches: /FEATURE/i,
@@ -459,13 +504,39 @@ App = function() {
                 matches: /NOTIFICATION/i,
                 fn: () => FN.manage.remove.notification()
               },
+              part: {
+                matches: /PART/i,
+                length: 1,
+                state: FN.states.manage.bundles.bundle,
+                fn: command => FN.manage.remove.part(decodeURIComponent(command))
+              },
             },
           },
-          
+
+          edit: {
+            matches: /EDIT/i,
+            state: FN.states.manage.in,
+            routes: {
+              part: {
+                matches: /PART/i,
+                length: {
+                  min: 2,
+                  max: 3
+                },
+                state: FN.states.manage.bundles.bundle,
+                fn: command => FN.manage.add.part(
+                  decodeURIComponent(command[0]),
+                  decodeURIComponent(command[1]),
+                  command.length === 3 ? decodeURIComponent(command[2]) : null
+                )
+              },
+            }
+          },
+
           config: {
             matches: /CONFIG/i,
             routes: {
-              
+
               clear: {
                 matches: /CLEAR/i,
                 fn: () => ಠ_ಠ.Display.confirm({
@@ -475,16 +546,16 @@ App = function() {
                     action: "Clear"
                   })
                   .then(confirm => confirm ?
-                     ಱ.config.clear()
-                        .then(ಠ_ಠ.Main.busy("Clearing Config"))
-                        .then(cleared => cleared ?
-                          ಠ_ಠ.Display.state().exit(FN.states.views, FN.states.config) && ಠ_ಠ.Router.run()
-                              : false) : false)
+                    ಱ.config.clear()
+                    .then(ಠ_ಠ.Main.busy("Clearing Config"))
+                    .then(cleared => cleared ?
+                      ಠ_ಠ.Display.state().exit(FN.states.views, FN.states.config) && ಠ_ಠ.Router.run() :
+                      false) : false)
                   .catch(e => e ?
                     ಠ_ಠ.Flags.error("Clear Config Error", e) : ಠ_ಠ.Flags.log("Clear Config Cancelled"))
-                  
+
               },
-              
+
               show: {
                 matches: /SHOW/i,
                 fn: () => {
@@ -500,7 +571,7 @@ App = function() {
                     }) : config);
                 }
               },
-              
+
               download: {
                 matches: /DOWNLOAD/i,
                 fn: () => {
@@ -508,7 +579,7 @@ App = function() {
                     .then(ಱ.config.load)
                     .then(ಠ_ಠ.Main.busy("Loading Config"))
                     .then(config => ಠ_ಠ.Saver({}, ಠ_ಠ)
-                          .save(JSON.stringify(config.settings, null, 2), "docket-config.json", "application/json"));
+                      .save(JSON.stringify(config.settings, null, 2), "docket-config.json", "application/json"));
                 }
               },
             },
@@ -521,11 +592,11 @@ App = function() {
         }
       });
 
-			/* <!-- Return for Chaining --> */
-			return this;
+      /* <!-- Return for Chaining --> */
+      return this;
 
-		},
-    
+    },
+
     start: FN.setup.initial,
 
     ready: FN.setup.session,
@@ -537,11 +608,11 @@ App = function() {
     state: ರ‿ರ,
 
     persistent: ಱ,
-    
+
     delay: ms => new Promise(resolve => setTimeout(resolve, ms)),
-    
+
     fn: FN,
-		
-	};
+
+  };
 
 };

@@ -194,6 +194,39 @@ Process = (options, factory) => {
     }
     return memo;
   }, []);
+  
+  FN.bundles = (bundles, resources, all) => _.reduce(bundles, (memo, bundle) => {
+    var _resources = _.filter(resources, resource => _.find(resource.bundles, resBundle => String.equal(resBundle.name, bundle, true)));
+    if (all || (_resources && _resources.length > 0)) memo.push({
+        id: bundle,
+        name: bundle,
+        children: all ? 
+          _.reduce(_.filter(all, allBundle => String.equal(allBundle.name, bundle, true)), (memo, childBundle) => {
+            var _child = memo.length < childBundle.sequence ? memo[memo.push({
+                sequence : childBundle.sequence,
+                quantity : childBundle.quantity,
+                children : []
+              }) - 1] : memo[childBundle.sequence - 1];
+            var _childResources = _.filter(resources, resource => _.find(resource.bundles, 
+              resBundle => String.equal(resBundle.name, bundle, true) && resBundle.sequence == childBundle.sequence && resBundle.quantity == childBundle.quantity));
+            if (_childResources && _childResources.length > 0) Array.prototype.push.apply(_child.children, _childResources);
+            return memo;
+          }, []) : 
+          _.reduce(_resources, (memo, resource) => {
+            var _bundles = _.filter(resource.bundles, resBundle => String.equal(resBundle.name, bundle, true));
+            _.each(_bundles, _bundle => {
+              var _child = memo.length < _bundle.sequence ? memo[memo.push({
+                sequence : _bundle.sequence,
+                quantity : _bundle.quantity,
+                children : []
+              }) - 1] : memo[_bundle.sequence - 1];
+              _child.children.push(resource);
+            });
+            return memo;
+          }, []),
+      });
+    return memo;
+  }, []);
   /* <!-- Public Functions --> */
 
   /* <!-- Initial Calls --> */

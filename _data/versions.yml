@@ -1,4 +1,8 @@
 site :
+  0.1.9c :
+    name : Book v0.0.7-beta
+    desc : Book App Bundle Management Tools
+    numeric : 0.1.9.3
   0.1.9b :
     name : Book v0.0.6b-beta
     desc : Book App Bug-Fixes
@@ -1288,6 +1292,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.7-beta :
+    name : Resource Bundle Management
+    type : minor
   0.0.6b-beta :
     name : Bug Fixes
     type : minor

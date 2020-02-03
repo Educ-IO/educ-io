@@ -1,5 +1,5 @@
 {% raw %}
-{{#if (any children header)}}<div class="list-group-item px-0 py-2" data-group="{{id}}">{{else}}<div class="{{#if class}}{{class}} {{/if}}list-group-item list-group-item-action{{#if simple}} py-2{{#if selectable}} pl-2{{/if}}{{else}} py-2 px-3{{/if}}"
+{{#if (any children header)}}<div class="list-group-item px-0 py-{{#if condensed}}1{{else}}2{{/if}}{{#unless opaque}} bg-transparent{{/unless}}" data-group="{{id}}" data-output-field="{{id}}">{{else}}<div class="{{#if class}}{{class}} {{/if}}list-group-item list-group-item-action{{#if simple}} py-{{#if condensed}}1{{else}}2{{/if}}{{#if selectable}} pl-2{{/if}}{{else}} py-{{#if condensed}}1{{else}}2{{/if}} px-3{{/if}}{{#unless opaque}} bg-transparent{{/unless}}"
    data-id="{{email}}" data-name="{{either name title}}">{{/if}}
   <div class="d-flex w-100 justify-content-between align-items-center{{#if children}} mb-2{{/if}}">
     {{#unless (any children header)}}<a href="#" class="resource-item flex-grow-1 text-decoration-none text-dark"
@@ -7,24 +7,24 @@
       <div class="{{~#if children}}d-flex align-items-center{{/if~}}">
         {{~#if (all selectable email)}}<div class="custom-control custom-switch d-inline">
           <input type="checkbox" class="custom-control-input" id="select_{{replace id '\s' ''}}" data-id="{{email}}"
-                 data-name="{{either name title}}"{{#if toggled}} checked{{/if}}>
+                 data-name="{{either name title}}"{{#if toggled}} checked{{/if}} data-output-name="{{id}}">
           <label class="custom-control-label" for="select_{{replace id '\s' ''}}"></label>
         </div>{{/if~}}
         {{~#if children}}<div class="d-inline mr-2">
-          <button class="btn btn-link d-inline-flex text-decoration-none collapsed py-1 px-2 rounded" type="button" data-toggle="collapse"
+          <button class="btn btn-link d-inline-flex text-decoration-none py-1 px-2 rounded{{#unless expanded}} collapsed{{/unless}}" type="button" data-toggle="collapse"
                   data-target="#{{replace id '\s' ''}}_children" aria-expanded="false" aria-controls="{{replace id '\s' ''}}_children">
-            <i class="material-icons md-18" data-listen="#{{replace id '\s' ''}}_children" data-event="hide.bs.collapse">expand_more</i>
-            <i class="material-icons md-18" data-listen="#{{replace id '\s' ''}}_children" data-event="show.bs.collapse" style="display: none;">expand_less</i>
+            <i class="material-icons md-18" data-listen="#{{replace id '\s' ''}}_children" data-event="hide.bs.collapse"{{#if expanded}} style="display: none;"{{/if}}>expand_more</i>
+            <i class="material-icons md-18" data-listen="#{{replace id '\s' ''}}_children" data-event="show.bs.collapse"{{#unless expanded}} style="display: none;"{{/unless}}>expand_less</i>
           </button>
         </div>{{/if~}}
         {{~#if (any children header)}}<div class="resource-group rounded p-1 {{#if children}}d-inline{{else}}resource-group-header px-2 bg-primary text-light{{/if}} {{#unless actionable}}c-pointer{{#if opaque}} list-group-item-action{{/if}}{{/unless}}" data-group="{{id}}" data-name="{{either name title}}">{{/if~}}
         <h6 class="{{~#unless (any children header)}}font-weight-light {{else}}resource-group-name {{#if header}}resource-group-header {{/if}}{{/unless~}}m-0{{#if (any selectable children)}} d-inline{{/if}}">{{either name title}}</h6>
         {{~#if (any children header)}}</div>{{/if~}}
-        {{~#unless simple}}{{#if features}}<div>
+        {{~#unless (any simple condensed)}}{{#if features}}<div>
           {{#each features}}<span class="badge badge-highlight badge-pill{{#unless @last}} mr-1{{/unless}}">{{this}}</span>{{/each}}
         </div>{{/if}}
         {{#if details}}<small>{{details}}</small>{{/if}}{{/unless~}}
-        {{~#if location}}<div class="small d-flex align-items-center"><i class="material-icons small text-secondary mr-1" data-toggle="tooltip" data-html="true" title="<strong>Location</strong> of this resource.">my_location</i><span class="o-50 text-info small">{{location}}</span></div>{{/if~}}
+        {{~#unless condensed}}{{~#if location}}<div class="small d-flex align-items-center"><i class="material-icons small text-secondary mr-1" data-toggle="tooltip" data-html="true" title="<strong>Location</strong> of this resource.">my_location</i><span class="o-50 text-info small">{{location}}</span></div>{{/if~}}{{/unless~}}
       </div>
     {{#unless (any children header)}}</a>{{/unless}}
     <div class="content-holder d-flex align-items-center">
@@ -33,7 +33,7 @@
   </div>
   {{~#if children}}<div id="{{replace id '\s' ''}}_children" data-group="{{id}}"
                         class="w-100 list-group list-group-flush list-group-dark resource-list collapse{{#unless opaque}} bg-transparent{{/unless}}{{#if expanded}} show{{/if}}">
-    {{#each children}}{{> resource this selectable=../selectable simple=../simple actionable=../actionable class=(which ../opaque "" "bg-transparent")}}{{/each}}
+    {{#each children}}{{> resource this selectable=../selectable simple=../simple actionable=../actionable condensed=../condensed class=(which ../opaque "" "bg-transparent")}}{{/each}}
   </div>{{/if~}}
 </div>
 {% endraw %}

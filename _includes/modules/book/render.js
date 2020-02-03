@@ -35,48 +35,63 @@ Render = (options, factory) => {
   }));
   /* <!-- Internal Functions --> */
   
-  /* <!-- Published Functions --> */
-  FN.simple = (template, id, title, subtitle, instructions, extras, target) => factory.Display.template.show(_.extend({
+  /* <!-- Published Functions --> */  
+  FN.view = (template, id, title, subtitle, instructions, extras, target) => factory.Display.template.show(_.extend({
       template: template,
       id: id,
       title: title,
-      subtitle: subtitle,
+      subtitle: subtitle && subtitle.format ? subtitle.format(options.format) : subtitle,
       instructions: instructions,
       clear: true,
       target: target || factory.container
     }, extras));
   
-  FN.view = (template, id, title, instructions, selectable, simple, all) => data => FN.simple(template, id, title, options.state.session.current.format(options.format), instructions, {
-    data: data,
-    selectable: selectable,
-    simple: simple,
-    all: all
-  });
-      
-  FN.search = (template, selectable, simple, all, target) => value => options.functions.source.resources(value)
-      .then(data => {
+  FN.search = {
     
-        /* <!-- Retain Collapsed / Show status between searches--> */
-        var _target = target || factory.container.find("#resources"),
-            _collapse = _.map(_target.find(".collapse"), element => $(element).data("group")),
-            _show = _.map(_target.find(".show"), element => $(element).data("group"));
-        _.each(data, resource => {
-          if (resource.children) resource.expanded = _show.indexOf(resource.id) >= 0 ? 
-            true : _collapse.indexOf(resource.id) >= 0 ? false : resource.expanded;
-        });
-        
-        /* <!-- Display Search Results --> */
-        return factory.Display.template.show({
+    collapse: (target, id, name, list) => {
+      
+      /* <!-- Retain Collapsed / Show status between searches--> */
+      var _target = target || factory.container.find(`#${id}`),
+          _collapse = _.map(_target.find(".collapse"), element => $(element).data(name)),
+          _show = _.map(_target.find(".show"), element => $(element).data(name));
+
+      var _recurse = (list, parent) => _.each(list, (item, index) => {
+        if (item.children) {
+          var _id = item.id || `${parent}_${index}`;
+          item.expanded = _show.indexOf(_id) >= 0 ? 
+            true : _collapse.indexOf(_id) >= 0 ? false : item.expanded;
+          if (item.expanded) _recurse(item.children, _id);
+        }
+      });
+
+      _recurse(list);
+      
+      return _target;
+    },
+    
+    resources: (value, template, selectable, simple, all, target) => options.functions.source.resources(value)
+      .then(resources => factory.Display.template.show({
           template: template,
-          resources: data,
+          resources: resources,
           selectable: selectable,
           simple: simple,
           all: all,
           clear: true,
-          target: _target
-        });
+          target: FN.search.collapse(target, "resources", "group", resources)
+        })),
     
-  });
+    bundles: (value, all, template, target) => options.functions.source.bundles(value, all)
+      .then(bundles => factory.Display.template.show({
+          template: template,
+          instructions: true,
+          bundles: bundles,
+          opaque: false,
+          actionable: true,
+          clear: true,
+          target: FN.search.collapse(target, "bundles", "group", bundles)
+        })),
+    
+  };
   
   FN.availability = (periods, target) => factory.Display.template.show({
       template: "availability",

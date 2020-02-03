@@ -23,8 +23,6 @@ Source = (options, factory) => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  
-  
   var _date = (data, field, extra) => FN.date(_.find(data, data => data.name == field).value, 
                                               extra ? (value => value ? value.value : null)(_.find(data, data => data.name == extra)) : null);
   
@@ -146,8 +144,12 @@ Source = (options, factory) => {
   FN.events = (calendar, extend) => factory.Google.calendar.list(calendar, FN.start(), FN.end(extend));
 
   FN.resources = search => options.state.application.resources.safe()
-      .then(resources => resources.find(search))
+      .then(resources => resources.find.resources(search))
       .then(options.functions.process.resources)
+      .then(factory.Strings().sorter("name"));
+  
+  FN.bundles = (search, all) => options.state.application.resources.safe()
+      .then(resources => options.functions.process.bundles(resources.find.bundles(search), resources.find.resources(), all ? resources.bundles() : null))
       .then(factory.Strings().sorter("name"));
   
   FN.children = parent => options.state.application.resources.safe()

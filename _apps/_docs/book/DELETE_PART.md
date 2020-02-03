@@ -1,0 +1,1 @@
+Please __confirm__ that you wish to delete this bundle part: _{% raw %}{{content}}{% endraw %}_

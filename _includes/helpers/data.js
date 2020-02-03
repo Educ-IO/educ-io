@@ -98,7 +98,7 @@ Data = (options, factory) => {
           /* <!-- DEBUG: Log Return Value --> */
           if (DEBUG) LOG(`Returning Simple Value: ${JSON.stringify(_val)} of type ${_type} from element`, el);
 
-          /* <!-- TODO: Handle Parsing of types here --> */
+          /* <!-- TODO: Handle Further Parsing of types here --> */
           return _val !== "" ?
             _type == "date" ? factory.Dates.parse(_val) :
             _type == "datetime" ? _val :

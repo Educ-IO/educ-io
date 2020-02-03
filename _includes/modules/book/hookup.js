@@ -53,7 +53,7 @@ Hookup = (options, factory) => {
     
   FN.resource = parent => (_resource(parent.find("a.resource-item, div.resource-group")), parent);
   
-  FN.edit = parent => (_edit(parent.find("a.resource-item")), parent);
+  FN.edit = parent => (_edit(parent.find("a.resource-item, .actionable[data-bundle]")), parent);
   
   FN.search = parent => (parent.find("input.search")
       .off("input.search")
@@ -80,6 +80,8 @@ Hookup = (options, factory) => {
         .on("click.book", options.action.book), parent);
 
   FN.event = parent => (_event(parent.find("div.existing-booking")), parent);
+  
+  FN.focus = id => () => $(`#${id}`).focus();
   /* <!-- Public Functions --> */
 
   /* <!-- Initial Calls --> */

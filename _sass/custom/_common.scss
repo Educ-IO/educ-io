@@ -235,6 +235,16 @@ em.kb-shortcut, strong.kb-shortcut {
 }
 // -- Other Backgrounds -- //
 
+// -- Other Borders -- //
+.border-emphasis {
+  border-color: $colour-emphasis !important; 
+}
+
+.border-light-emphasis {
+  border-color: $colour-light-emphasis !important; 
+}
+// -- Other Borders -- //
+
 // -- Opacities -- //
 .o-10 {
   opacity: 0.1;

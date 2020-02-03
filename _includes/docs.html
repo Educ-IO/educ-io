@@ -1,16 +1,5 @@
 <!-- Application Page Docs -->
-{% assign docs = false %}
-
-{% if page.docs %}
-  {% assign docs = page.docs %}
-{% elsif layout.docs %}
-  {% assign docs = layout.docs %}
-{% elsif page.app and page.app != "" and site.data.apps[page.app].docs %}
-  {% assign docs = site.data.apps[page.app].docs %}
-{% endif %}
-
-{% if docs %}
-
+{% assign docs = false %}{% if page.docs %}{% assign docs = page.docs %}{% elsif layout.docs %}{% assign docs = layout.docs %}{% elsif page.app and page.app != "" and site.data.apps[page.app].docs %}{% assign docs = site.data.apps[page.app].docs %}{% endif %}{% if docs %}
   {% raw %}
   <script id="__doc__MODAL" type="text/template"  data-src="docs" data-type="modal">
     <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="__doc_modal_title" aria-hidden="true" data-doc="{{doc}}">
@@ -33,13 +22,5 @@
     </div>
   </script>
   {% endraw %}
-
-  {% for doc in docs %}
-
-    {% capture markdown %}{% include_relative _docs/{{ doc }}.md %}{% endcapture %}
-
-    <script id="__doc__{% if doc contains '/' %}{{ doc | split: '/' | last }}{% else %}{{ doc }}{% endif %}" type="text/template"  data-src="docs">{{ markdown | markdownify | strip }}</script>
-
-  {% endfor %}
-
-{% endif %}
+  {% for doc in docs %}{% capture markdown %}{% include_relative _docs/{{ doc }}.md %}{% endcapture %}
+    <script id="__doc__{% if doc contains '/' %}{{ doc | split: '/' | last }}{% else %}{{ doc }}{% endif %}" type="text/template"  data-src="docs">{{ markdown | markdownify | strip }}</script>{% endfor %}{% endif %}

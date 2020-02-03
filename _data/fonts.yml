@@ -1,6 +1,6 @@
 "Cabin Sketch":
   safe: "Cabin+Sketch"
-  weights: "700"
+  weights: "400,700"
   for: [all]
 "Material Icons":
   safe: "Material+Icons"
@@ -8,4 +8,4 @@
 "Economica":
   safe: "Economica"
   weights: "400,700"
-  for: [accounts, blocks, book, cover, docket, events, folders, grades, merge, plan, publish, reflect, survey, templates, view, home.md]
+  for: [accounts, blocks, book, cover, docket, events, folders, grades, merge, plan, publish, reflect, survey, templates, view, debug, home.md]

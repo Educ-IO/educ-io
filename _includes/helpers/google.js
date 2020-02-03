@@ -976,6 +976,10 @@ Google_API = (options, factory) => {
   
       calendars: {
         
+        get: (id, customer) => _call(NETWORKS.admin.get, `directory/v1/customer/${customer || "my_customer"}/resources/calendars/${encodeURIComponent(id)}`, {
+          fields: "*",
+        }),
+        
         insert: (resource, customer) => _call(NETWORKS.admin.post, `directory/v1/customer/${customer || "my_customer"}/resources/calendars`, resource, "application/json"),
         
         list: (query, customer) => _list(
@@ -1007,6 +1011,10 @@ Google_API = (options, factory) => {
         
         delete: (key, customer) => _call(NETWORKS.admin.delete,
             `directory/v1/customer/${customer || "my_customer"}/resources/features/${key}`),
+        
+        rename: (old_name, new_name, customer) => _call(NETWORKS.admin.post, `directory/v1/customer/${customer || "my_customer"}/resources/features/${encodeURIComponent(old_name)}/rename`, {
+            newName: new_name
+          }, "application/json"),
         
       },
       

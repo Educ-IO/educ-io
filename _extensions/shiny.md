@@ -18,6 +18,9 @@ __Ironically__ named for it's _minimalistic approach_ because `simple solutions`
 
 {% capture text %}
 
+On the 16th January, 2020 Google [announced](https://blog.chromium.org/2020/01/moving-forward-from-chrome-apps.html) that support for Chrome Apps will be removed by __June 2022__. Whilst this is quite a way in the future, we have already begun the process of implementing __Shiny Shiny__ as a [progressive web-app](https://developers.chrome.com/apps/migration). We have also contacted Google to seek clarification about how support for __secure testing environments__ and __kiosk modes__ will be available going forward. Updates will be posted here when we get them!
+{:class="alert alert-warning" :role="alert"}
+
 #### Instructions
 {:class="border border-left-0 border-right-0 border-top-0 mt-2 pb-1"}
 

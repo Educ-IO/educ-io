@@ -140,10 +140,14 @@ Display = function() {
 
   var _listen = element => {
     _.each(element.find("[data-listen]"), input => {
-      var _this = $(input);
-      element.find(_this.data("listen")).off(_this.data("event")).on(_this.data("event"), () => {
-        _this.show(500).siblings("[data-listen]").hide(500);
-      });
+      var _this = $(input),
+          _selector = _this.data("listen"),
+          _event = _this.data("event");
+      ((trigger, selector, event) => {
+        element.find(selector).off(event).on(event, e => {
+          if ($(e.target).is(selector)) trigger.show(500).siblings("[data-listen]").hide(500);
+        }); 
+      })(_this, _selector, _event);
     });
     return element;
   };
@@ -342,7 +346,7 @@ Display = function() {
         var _element = options.clear === true ? _target(options).empty() : _target(options);
         var _return = _process($(this.get(options)));
 
-        return options.prepend === true ? _return.prependTo(_element) : _return.appendTo(_element);
+        return options.replace === true ? _return.replaceAll(_element) : options.prepend === true ? _return.prependTo(_element) : _return.appendTo(_element);
 
       },
 

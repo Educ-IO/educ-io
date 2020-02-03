@@ -113,6 +113,9 @@ modules:
   - book/bookings
   - book/diary
   - book/manage
+  - book/log
+  - book/access
+  - book/populate
 scripts: 
   - extends/regex
   - extends/array
@@ -135,9 +138,14 @@ templates:
   - shared/link
   - shared/link_options
   - emails/email_standard
+  - book/badges/bundle-badge
+  - book/badges/feature-badge
+  - book/badges/parent-badge
+  - book/lists/bundle
+  - book/lists/bundles
+  - book/lists/resource
+  - book/lists/resources  
   - book/parts/date
-  - book/parts/resource
-  - book/parts/resources
   - book/parts/perm
   - book/parts/perms
   - book/parts/search
@@ -147,10 +155,11 @@ templates:
   - book/parts/all
   - book/parts/confirmation
   - book/parts/availability
-  - book/parts/feature
-  - book/parts/parent
   - book/parts/notification
   - book/parts/absent
+  - book/parts/details
+  - book/parts/part
+  - book/parts/editable_part
   - book/tables/custom_properties
   - book/tables/custom_resource
   - book/tables/rows
@@ -158,15 +167,18 @@ templates:
   - book/views/book
   - book/views/diary
   - book/views/manage
+  - book/views/bundler
   - book/views/calendars
   - book/views/permissions
   - book/views/notifications
   - book/components/loan
   - book/components/return
+  - book/dialogs/dialog
   - book/dialogs/generic
   - book/dialogs/edit
   - book/dialogs/edit_permission
   - book/dialogs/edit_notification
+  - book/dialogs/edit_part
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -183,6 +195,7 @@ docs:
   - book/MANAGE_INSTRUCTIONS
   - book/MANAGE_RESOURCES_INSTRUCTIONS
   - book/MANAGE_PERMISSIONS_INSTRUCTIONS
+  - book/MANAGE_BUNDLES_INSTRUCTIONS
   - book/FAILED_BOOK
   - book/SUCCESSFUL_BOOK
   - book/SUCCESSFUL_GROUP_BOOK
@@ -201,12 +214,17 @@ docs:
   - book/ADD_PARENT_INSTRUCTIONS
   - book/ADD_FEATURE_INSTRUCTIONS
   - book/DELETE_RESOURCE
+  - book/DELETE_BUNDLE
+  - book/DELETE_PART
   - book/CONFIRM_PERMISSION_DELETE
   - book/CREATE_PERMISSION_INSTRUCTIONS
   - book/DELETE_PERMISSION_INSTRUCTIONS
   - book/CONFIRM_NOTIFICATION_DELETE
   - book/CREATE_NOTIFICATION_INSTRUCTIONS
   - book/DELETE_NOTIFICATION_INSTRUCTIONS
+  - book/EDIT_PART_INSTRUCTIONS
+  - book/EDIT_BUNDLE_INSTRUCTIONS
+  - book/ADD_PART_INSTRUCTIONS
 scopes:
   google:
     - scope: email
@@ -272,6 +290,15 @@ menus:
             auth: google
             toggle:
               - book
+          - name: Bundle
+            desc: Book a Resource Bundle
+            hash: bundle
+            imports:
+              - bootstrap-material-datepicker-js
+            auth: google
+            toggle:
+              - bundle
+            visibility: debug
           - name: View
             desc: View All Existing Bookings
             hash: diary
@@ -287,6 +314,7 @@ menus:
             hash: close
             disabled_until:
               - book
+              - bundle
               - diary
               
   - name: Manage
@@ -310,6 +338,9 @@ menus:
                 - https://www.googleapis.com/auth/admin.directory.resource.calendar
                 - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
               auth: google
+              toggle:
+                - manage-bookings
+              divider: true
             - name: Resources
               desc: Manage resources
               hash: manage.resources
@@ -320,6 +351,20 @@ menus:
                 - https://www.googleapis.com/auth/admin.directory.resource.calendar
                 - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
               auth: google
+              toggle:
+                - manage-resources
+            - name: Bundles
+              desc: Manage Bundles
+              hash: manage.bundles
+              imports:
+                - uuid
+              scopes:
+                - https://www.googleapis.com/auth/calendar
+                - https://www.googleapis.com/auth/admin.directory.resource.calendar
+                - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
+              auth: google
+              toggle:
+                - manage-bundles
               divider: true
             - name: Permissions
               desc: Manage permissions on resource calendars
@@ -328,6 +373,8 @@ menus:
                 - https://www.googleapis.com/auth/calendar
                 - https://www.googleapis.com/auth/admin.directory.resource.calendar
               auth: google
+              toggle:
+                - manage-permissions
             - name: Notifications
               desc: Manage notifications on resource calendars
               hash: manage.notifications
@@ -335,6 +382,8 @@ menus:
                 - https://www.googleapis.com/auth/calendar
                 - https://www.googleapis.com/auth/admin.directory.resource.calendar
               auth: google
+              toggle:
+                - manage-notifications
               divider: true
             - name: Close
               desc: Return to App Start
@@ -437,6 +486,13 @@ buttons:
       - clipboard
       - bootstrap-material-datepicker-js
     auth: google
+  - name: Bundle
+    desc: Book a Resource Bundle
+    hash: bundle
+    imports:
+      - bootstrap-material-datepicker-js
+    auth: google
+    visibility: debug
   - name: About
     desc: More details about creating a Booking
     hash: instructions.book
@@ -461,6 +517,16 @@ buttons:
   - name: Resources
     desc: Manage Resources for your G-Suite Domain
     hash: manage.resources
+    imports:
+      - uuid
+    scopes:
+      - https://www.googleapis.com/auth/calendar
+      - https://www.googleapis.com/auth/admin.directory.resource.calendar
+      - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
+    auth: google
+  - name: Bundles
+    desc: Manage Resource Bundles for your G-Suite Domain
+    hash: manage.bundles
     imports:
       - uuid
     scopes:
