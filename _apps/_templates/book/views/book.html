@@ -7,9 +7,13 @@
     
     <div class="col-12 col-lg-5 col-xl-4 px-0 px-md-3">
       
-      {{> search placeholder="Search Resources"}}
+      {{~#if resource}}{{> search placeholder="Search Resources"}}
       
-      <div id="resources">{{> resources resources=data selectable=selectable simple=simple}}</div>
+      <div id="resources">{{#if data}}{{> resources resources=data opaque=false selectable=selectable simple=simple}}{{/if}}</div>{{/if~}}
+      
+      {{~#if bundle}}{{> search placeholder="Search Bundles"}}
+  
+      <div id="bundles">{{#if data}}{{> bundles bundles=data opaque=false selectable=selectable simple=simple}}{{/if}}</div>{{/if~}}
 
     </div>
     

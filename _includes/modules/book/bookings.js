@@ -157,13 +157,12 @@ Bookings = (options, factory) => {
         return options.functions.source.events(id, extend)
           .then(data => {
             var _events = options.functions.process.me(data, id),
-                _periods = options.functions.process.periods(data, options.functions.source.start(), options.functions.source.end(extend)),
-                _book = FN.hookup.book(options.functions.process.available(_periods));
-            factory.Flags.log("Periods for the Day / Resource:", _periods);
+                _periods = options.functions.process.periods(data, options.functions.source.start(), options.functions.source.end(extend));
+            factory.Flags.log("Periods for the Resource:", _periods);
             if (_events && _events.length > 0) factory.Flags.log("Loaded Events:", _events);
             return Promise.resolve(_renderer(_events, _periods))
               .then(FN.hookup.event)
-              .then(_book)
+              .then(FN.hookup.book(options.functions.process.available(_periods)))
               .then(FN.display.extension(extend));
           })
           .catch(e => factory.Flags.error("Events Retrieval Error", e))
@@ -179,6 +178,45 @@ Bookings = (options, factory) => {
       
     },
     
+    bundle : name => {
+      
+      factory.Flags.log("Selected Bundle with Name:", name);
+      
+      /* <!-- Create Last Updater Function --> */
+      ರ‿ರ.last = (name => (silent, extend) => {
+        factory.Display.tidy();
+        var _renderer = options.functions.render.events("events", name);
+        
+        return options.functions.source.bundles(name)
+        
+          .then(bundles => _.find(bundles, bundle => bundle.name == name))
+          .then(bundle => (factory.Flags.log("Selected Bundle for Booking:", bundle), bundle))
+          .then(bundle => options.functions.source.busy(_.chain(bundle.children).reduce((memo, part) => memo.concat(_.map(part.children, "email")),
+                                                                                        []).uniq().value(), extend)
+            .then(results => {
+              /* <!-- Create Booker Function --> */
+              ರ‿ರ.book = options.functions.source.book.bundle(factory.me.email, bundle, results.calendars);
+          
+              return _.map(bundle.children, part => options.functions.process.busy(_.filter(results.calendars,
+                                    (cal, key) => _.find(part.children, resource => resource.email == key)), part.children.length - part.quantity,
+                                                                 options.functions.source.start(), options.functions.source.end(extend)));
+            })
+            .then(all => (factory.Flags.log("All Availabilities for Bundle:", all), all))
+            .then(options.functions.process.integrate)
+            .then(periods => (factory.Flags.log("Periods for the Bundle:", periods), periods))
+            .then(periods => Promise.resolve(_renderer(null, periods, `${bundle.name} Booking`))
+                .then(FN.hookup.book(options.functions.process.available(periods)))
+                .then(FN.display.extension(extend))))
+          .catch(e => factory.Flags.error("Bundle Busy / Events Retrieval Error", e).negative())
+          .then(silent ? true : factory.Main.busy("Checking Availability"));
+
+      })(name);
+     
+      /* <!-- Reset Extension Period --> */
+      ರ‿ರ.last(false, ರ‿ರ.extend = 0);
+      
+    }
+    
   };
   
   FN.action = {
@@ -193,8 +231,17 @@ Bookings = (options, factory) => {
       if (fn) fn(_value);
     },
     
-    search: e => options.functions.render.search.resources(FN.action.target(e).val(), "resources")
-                    .then(FN.hookup.resource),
+    search: e => (factory.Display.state().in(options.functions.states.bundle.in) ? FN.action.searching.bundles : FN.action.searching.resources)(FN.action.target(e).val()),
+
+    searching: {
+
+      resources: value => options.functions.render.search.resources(value, "resources")
+        .then(FN.hookup.resource),
+
+      bundles: value => options.functions.render.search.bundles(value, false, "bundles", false, true)
+        .then(FN.hookup.resource),
+
+    },
     
     validate: form => {
       var _result = form[0].checkValidity() !== false;
@@ -219,16 +266,16 @@ Bookings = (options, factory) => {
                var _confirmed = options.functions.calendar.confirmed(result);
                return result && _confirmed !== null ?
                       _.isArray(result) ?
-                        options.state.application.notify.success(`${_confirmed ? "" : "Request for "}${result.length} Resource${result.length > 1 ? "s" : ""} ${_confirmed ? "Booked" : "Submitted"}`, factory.Display.doc.get({
-                          name: _confirmed ? "SUCCESSFUL_GROUP_BOOK" : "SUBMITTED_GROUP_BOOK"
-                        })) :
-                      options.state.application.notify.success(`Resource ${_confirmed ? "Booked" : "Request Submitted"}`, factory.Display.doc.get({
-                        name: _confirmed ? "SUCCESSFUL_BOOK" : "SUBMITTED_BOOK",
-                        content: result.htmlLink
-                      })) : result;
+                        options.state.application.notify.success(`${_confirmed ? "" : "Request for "}${result.length} Resource${result.length > 1 ? "s" : ""} ${_confirmed ? "Booked" : "Submitted"}`,
+                          factory.Display.doc.get({
+                            name: _confirmed ? "SUCCESSFUL_GROUP_BOOK" : "SUBMITTED_GROUP_BOOK"
+                          })) :
+                        options.state.application.notify.success(`Resource ${_confirmed ? "Booked" : "Request Submitted"}`, factory.Display.doc.get({
+                          name: _confirmed ? "SUCCESSFUL_BOOK" : "SUBMITTED_BOOK",
+                          content: result.htmlLink
+                        })) : result;
             })
-            .catch(e => options.state.application.notify.actions.error(e, 
-                                                           "Booking Failed", "FAILED_BOOK"))
+            .catch(e => options.state.application.notify.actions.error(e, "Booking Failed", "FAILED_BOOK"))
             .then(() => factory.App.delay(1000).then(() => ರ‿ರ.last(true, ರ‿ರ.extend)));
         })
         .catch(e => factory.Flags.error("Booking Error", e))
@@ -247,17 +294,18 @@ Bookings = (options, factory) => {
       var id = target.data("id"),
           group = target.data("group"),
           name = target.data("name"),
+          bundle = target.data("bundle"),
           parent = target.parents(".list-group");
       
       parent.find("div.list-group-item.active a.text-light").removeClass("text-light").addClass("text-dark");
-      parent.find("div.resource-group.active, div.list-group-item.active").removeClass("active");
+      parent.find("div.resource-group.active, div.list-group-item.active, div.actionable.active").removeClass("active");
       if (target.is(".resource-item")) {
         target.closest("div.list-group-item").addClass("active").find("a.text-dark").removeClass("text-dark").addClass("text-light");
       } else {
         target.addClass("active");
       }
       
-      return id ? FN.display.resource(id, name, target) : group ? FN.display.group(group, name, target) : false;
+      return id ? FN.display.resource(id, name) : group ? FN.display.group(group, name) : bundle ? FN.display.bundle(bundle) : false;
     },
     
     check: periods => e => FN.check.time(periods)(FN.action.target(e)),
@@ -284,13 +332,20 @@ Bookings = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
     
-    extend: () => ರ‿ರ.last ? ರ‿ರ.last(false, ರ‿ರ.extend += 1) : false,
+    extend: () => ರ‿ರ.last ? (factory.Display.tidy(), ರ‿ರ.last(false, ರ‿ರ.extend += 1)) : false,
     
     new: () => options.functions.source.resources()
-      .then(resources => options.functions.render.view("book", options.id, "Book for", options.state.session.current, "book.create", {data: resources}))
+      .then(resources => options.functions.render.view("book", options.id, "Book for", options.state.session.current, "book.create", {resource: true, data: resources}))
       .then(FN.hookup.resource)
-      .then(FN.hookup.search),
+      .then(FN.hookup.search)
+      .then(() => delete ರ‿ರ.last),
 
+    bundle: () => options.functions.source.bundles()
+      .then(bundles => options.functions.render.view("book", options.id, "Book for", options.state.session.current, "book.bundle", {bundle: true, simple: true, data: bundles}))
+      .then(FN.hookup.resource)
+      .then(FN.hookup.search)
+      .then(() => delete ರ‿ರ.last),
+    
     refresh: options.functions.render.refresh(options.id, () => ರ‿ರ.last ? ರ‿ರ.last(false, ರ‿ರ.extend = 0) : false),
 
   };

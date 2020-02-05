@@ -51,7 +51,7 @@ Hookup = (options, factory) => {
     
   FN.toggle = parent => (_toggle(parent.find("input.custom-control-input")), parent);
     
-  FN.resource = parent => (_resource(parent.find("a.resource-item, div.resource-group")), parent);
+  FN.resource = parent => (_resource(parent.find("a.resource-item, div.resource-group, .actionable[data-bundle]")), parent);
   
   FN.edit = parent => (_edit(parent.find("a.resource-item, .actionable[data-bundle]")), parent);
   

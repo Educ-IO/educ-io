@@ -1,4 +1,8 @@
 site :
+  0.1.9d :
+    name : Book v0.0.8-beta
+    desc : Resources Bundles in Book App
+    numeric : 0.1.9.4
   0.1.9c :
     name : Book v0.0.7-beta
     desc : Book App Bundle Management Tools
@@ -1292,6 +1296,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.8-beta :
+    name : Ability to Book Bundles of Resources
+    type : major
   0.0.7-beta :
     name : Resource Bundle Management
     type : minor

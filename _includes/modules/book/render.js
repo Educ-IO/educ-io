@@ -80,13 +80,14 @@ Render = (options, factory) => {
           target: FN.search.collapse(target, "resources", "group", resources)
         })),
     
-    bundles: (value, all, template, target) => options.functions.source.bundles(value, all)
+    bundles: (value, all, template, actionable, simple, target) => options.functions.source.bundles(value, all)
       .then(bundles => factory.Display.template.show({
           template: template,
           instructions: true,
           bundles: bundles,
           opaque: false,
-          actionable: true,
+          actionable: actionable,
+          simple: simple,
           clear: true,
           target: FN.search.collapse(target, "bundles", "group", bundles)
         })),
@@ -111,11 +112,12 @@ Render = (options, factory) => {
       target: target || factory.container.find("#details")
   });
   
-  FN.events = (template, name, target) => (events, periods) => factory.Display.template.show({
+  FN.events = (template, name, target) => (events, periods, text) => factory.Display.template.show({
       template: template,
       name: name,
       events: events,
       periods: periods,
+      text: text,
       extend: true,
       clear: true,
       target: target || factory.container.find("#details")

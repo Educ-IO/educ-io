@@ -25,7 +25,7 @@ App = function() {
   FN.loaded = () => $("a.btn.needs-resources, button.needs-resources").removeClass("loader");
 
   /* <!-- Change base date --> */
-  FN.refresh = () => ಠ_ಠ.Display.state().in(FN.states.book.in) ? FN.bookings.refresh() :
+  FN.refresh = () => ಠ_ಠ.Display.state().in([FN.states.book.in, FN.states.bundle.in], true) ? FN.bookings.refresh() :
     ಠ_ಠ.Display.state().in(FN.states.diary.in) ? FN.diary.refresh() :
     ಠ_ಠ.Display.state().in(FN.states.manage.in) ? FN.manage.refresh() : false;
 
@@ -177,6 +177,11 @@ App = function() {
             title: "Viewing existing Bookings ..."
           },
           {
+            match: [/BOOK/i, /BUNDLE/i],
+            show: "BUNDLE_INSTRUCTIONS",
+            title: "Book a Resource Bundle ..."
+          },
+          {
             match: /SHORTCUTS/i,
             show: "SHORTCUT_INSTRUCTIONS",
             title: "Shortcuts ..."
@@ -271,7 +276,7 @@ App = function() {
               },
               extend: {
                 matches: /EXTEND/i,
-                state: FN.states.book.in,
+                state: [FN.states.book.in, FN.states.bundle.in],
                 fn: () => FN.bookings.extend(),
               }
             }
@@ -293,6 +298,14 @@ App = function() {
               .then(ಠ_ಠ.Main.busy("Loading Resources", true))
           },
 
+          bundle: {
+            matches: /BUNDLE/i,
+            fn: () => FN.bookings.bundle()
+              .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.bundle.in))
+              .catch(e => ಠ_ಠ.Flags.error("Bundle View Error", e))
+              .then(ಠ_ಠ.Main.busy("Loading Resources", true))
+          },
+          
           all: {
             matches: /DIARY/i,
             keys: ["d", "D", "v", "V"],
@@ -520,14 +533,15 @@ App = function() {
               part: {
                 matches: /PART/i,
                 length: {
-                  min: 2,
-                  max: 3
+                  min: 3,
+                  max: 4
                 },
                 state: FN.states.manage.bundles.bundle,
                 fn: command => FN.manage.add.part(
                   decodeURIComponent(command[0]),
                   decodeURIComponent(command[1]),
-                  command.length === 3 ? decodeURIComponent(command[2]) : null
+                  decodeURIComponent(command[2]),
+                  command.length === 4 ? decodeURIComponent(command[3]) : null
                 )
               },
             }

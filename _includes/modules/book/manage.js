@@ -183,7 +183,7 @@ Manage = (options, factory) => {
         .then(ರ‿ರ.toggleable ? FN.hookup.toggle : _.constant)
         .then(ರ‿ರ.selectable ? FN.hookup.resource : FN.hookup.edit),
 
-      bundles: value => options.functions.render.search.bundles(value, true, "bundles").then(FN.hookup.edit),
+      bundles: value => options.functions.render.search.bundles(value, true, "bundles", true).then(FN.hookup.edit),
 
     },
 
@@ -594,7 +594,7 @@ Manage = (options, factory) => {
       return FN.action.editing.bundle(_target);
     },
 
-    part: (sequence, quantity, previous) => factory.Display.modal("edit_part", {
+    part: (sequence, quantity, total, previous) => factory.Display.modal("edit_part", {
       target: factory.container,
       id: options.id.add,
       title: sequence ? "Edit Bundle Part" : "Add New Bundle Part",
@@ -602,6 +602,7 @@ Manage = (options, factory) => {
       confirm: sequence ? "Update" : "Add",
       quantity: quantity ? quantity : 1,
       sequence: sequence,
+      total: total,
       previous: previous,
       end: $("#bundle div.part").length + (sequence ? 0 : 1),
     }, FN.action.dialog).then(data => {
@@ -634,6 +635,7 @@ Manage = (options, factory) => {
             sequence: _seq + _diff,
             quantity: _el.data("quantity"),
             previous: _el.data("previous"),
+            children: _el.data("total") ? Array(parseInt(_el.data("total"), 10)) : [],
             replace: true,
             target: _el,
           });
@@ -643,6 +645,7 @@ Manage = (options, factory) => {
         template: "editable_part",
         sequence: data.Sequence.Value,
         quantity: data.Quantity.Value,
+        children: data.Total ? Array(data.Total.Value) : [],
         target: _target
       }, data.ID ? {
         previous: data.Previous ? data.Previous.Value : null,

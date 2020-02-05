@@ -36,6 +36,68 @@ Process = (options, factory) => {
                     })
                     .value();
 
+  FN.integrate = all => _.reduce(all, (memo, periods) => {
+      if (memo.length === 0) {
+        _.each(periods, period => {
+          if (period.title !== undefined) {
+            period.title = "Not Available";
+            period.organiser = "N/A";
+          }
+        });
+        return periods;  
+      } else {
+        return _.reduce(periods, (memo, period) => {
+          if (period.title !== undefined) { /* <!-- This is a period of unavailability --> */
+            
+            period.title = "Not Available";
+            period.organiser = "N/A";
+            
+            if (period.width < 100) {
+              
+              /* <!-- Removed any contained existing periods --> */
+              memo = _.reject(memo, existing => existing.start >= period.start && 
+                              (existing.end === undefined && period.end === undefined || 
+                                (existing.end && period.end && existing.end <= period.end)));
+              
+              /* <!-- Get Insertion Position --> */
+              var insert = Math.max(_.findIndex(memo, existing => existing.start >= period.start), 0);
+              
+              /* <!-- Insert in at specified position --> */
+              memo.splice(insert, 0, period);
+              
+              if (insert > 0) { /* <!-- Adjust Previous if required --> */
+                memo[insert - 1].end = period.start;
+                memo[insert - 1].until = period.from;
+                memo[insert - 1].width = period.start_pos - memo[insert - 1].start_pos;
+                if (period.time && memo[insert - 1].time)
+                      memo[insert - 1].time = `${memo[insert - 1].time.split(" - ")[0]} - ${period.time.split(" - ")[0]}`;
+              }
+              if (insert < memo.length - 1) { /* <!-- Adjust Next if required --> */
+                if (memo[insert + 1].start < period.start) { /* <!-- Need to split across the newly inserted period --> */
+                  var _new = _.clone(memo[insert + 1]);
+                  _new.end = period.start;
+                  _new.until = period.from;
+                  _new.width = period.start_pos - _new.start_pos;
+                  if (period.time && _new.time)
+                      _new.time = `${_new.time.split(" - ")[0]} - ${period.time.split(" - ")[0]}`;
+                  memo.splice(insert, 0, _new);
+                  insert += 1;
+                }
+                memo[insert + 1].start = period.end;
+                memo[insert + 1].from = period.until;
+                memo[insert + 1].width = (memo[insert + 1].end_pos || 100) - period.end_pos;
+                if (period.time && memo[insert + 1].time)
+                      memo[insert + 1].time = `${period.time.split(" - ")[1]} - ${memo[insert + 1].time.split(" - ")[1]}`;
+              }
+            } else {
+              memo = [period];
+            }
+          }
+          return memo;
+        }, memo);
+      }
+    }, []),
+    
   FN.periods = (events, from, until) => {
 
     var _hours = Math.ceil(factory.Dates.duration(until.diff(from)).asHours()),
@@ -59,7 +121,7 @@ Process = (options, factory) => {
         var _last = _convert(_start - memo[memo.length - 1].start);
         _last <= 0 ? memo.pop() : (memo[memo.length - 1].width = _last,
           memo[memo.length - 1].time = options.functions.calendar.times(memo[memo.length - 1].from, _from, _multi),
-          memo[memo.length - 1].until = _from);
+          memo[memo.length - 1].until = _from, memo[memo.length - 1].end = _start, memo[memo.length - 1].end_pos = _convert(_start));
 
         /* <!-- Add Current Event --> */
         memo.push({
@@ -68,13 +130,18 @@ Process = (options, factory) => {
           organiser: event.organizer ? event.organizer.displayName || event.organizer.email : "",
           width: _width,
           from: _from,
-          start: _end,
+          until: _until,
+          start: _start,
+          start_pos: _convert(_start),
+          end: _end,
+          end_pos: _convert(_end)
         });
  
         /* <!-- Add Spacer, but only if we aren't within about 3 mins of the end of period --> */
         if (_end < (_hours * options.margin)) memo.push({
           from: _until,
           start: _end,
+          start_pos: _convert(_end),
           width: _convert(_hours - _end),
         });
 
@@ -92,7 +159,9 @@ Process = (options, factory) => {
     }, [{
       from: from,
       until: until,
+      time: options.functions.calendar.times(from, until, _multi),
       start: 0,
+      start_pos: 0,
       width: 100,
     }]).each((event, index, events) => {
         if (index > 0 && event.title !== undefined && events[index - 1].title !== undefined && !events[index - 1].class) event.class = "danger";
@@ -172,7 +241,16 @@ Process = (options, factory) => {
     }, []);
     
     /* <!-- Filter by Busy periods below the tolerance threshold (e.g. has enough resources) --> */
-    return FN.periods(_.chain(_all).reject(busy => busy.resources.length <= tolerance).sortBy("end").sortBy("start").value(), from, until);
+    return tolerance < 0 ? [{
+          title: "NO AVAILABILITY",
+          time: "Start - End",
+          organiser: "",
+          start: 0,
+          start_pos: 0,
+          width: 100,
+          from: from,
+          until: until,
+        }] : FN.periods(_.chain(_all).reject(busy => busy.resources.length <= tolerance).sortBy("end").sortBy("start").value(), from, until);
     
   };
   
@@ -200,13 +278,13 @@ Process = (options, factory) => {
     if (all || (_resources && _resources.length > 0)) memo.push({
         id: bundle,
         name: bundle,
-        children: all ? 
+        children: (all ? 
           _.reduce(_.filter(all, allBundle => String.equal(allBundle.name, bundle, true)), (memo, childBundle) => {
-            var _child = memo.length < childBundle.sequence ? memo[memo.push({
+            var _child = _.find(memo, child => child.sequence == childBundle.sequence) || memo[memo.push({
                 sequence : childBundle.sequence,
                 quantity : childBundle.quantity,
                 children : []
-              }) - 1] : memo[childBundle.sequence - 1];
+              }) - 1];
             var _childResources = _.filter(resources, resource => _.find(resource.bundles, 
               resBundle => String.equal(resBundle.name, bundle, true) && resBundle.sequence == childBundle.sequence && resBundle.quantity == childBundle.quantity));
             if (_childResources && _childResources.length > 0) Array.prototype.push.apply(_child.children, _childResources);
@@ -215,15 +293,15 @@ Process = (options, factory) => {
           _.reduce(_resources, (memo, resource) => {
             var _bundles = _.filter(resource.bundles, resBundle => String.equal(resBundle.name, bundle, true));
             _.each(_bundles, _bundle => {
-              var _child = memo.length < _bundle.sequence ? memo[memo.push({
+              var _child = _.find(memo, child => child.sequence == _bundle.sequence) || memo[memo.push({
                 sequence : _bundle.sequence,
                 quantity : _bundle.quantity,
                 children : []
-              }) - 1] : memo[_bundle.sequence - 1];
+              }) - 1];
               _child.children.push(resource);
             });
             return memo;
-          }, []),
+          }, [])).sort((a, b) => a.sequence - b.sequence),
       });
     return memo;
   }, []);

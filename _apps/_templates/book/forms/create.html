@@ -8,7 +8,7 @@
         <div class="input-group-prepend d-none d-lg-flex" data-toggle="tooltip" data-html="true" title="You can enter the <strong>title</strong> of your booking here, which will be visible to <strong>all users</strong> of the system at your G-Suite domain.">
           <span class="input-group-text align-self-stretch"><i class="material-icons h-100 d-inline-flex md-18">notes</i></span>
         </div>
-        <input type="text" class="form-control mb-1 mb-md-0" id="txtDetails" name="details" placeholder="Details">
+        <input type="text" class="form-control mb-1 mb-md-0" id="txtDetails" name="details" placeholder="Details"{{#present text}} value="{{text}}"{{/present}}>
       </div>
     </div>
 

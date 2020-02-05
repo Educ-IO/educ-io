@@ -192,9 +192,11 @@ docs:
   - book/INSTRUCTIONS
   - book/TUTORIALS
   - book/BOOK_INSTRUCTIONS
+  - book/BUNDLE_INSTRUCTIONS
   - book/MANAGE_INSTRUCTIONS
   - book/MANAGE_RESOURCES_INSTRUCTIONS
   - book/MANAGE_PERMISSIONS_INSTRUCTIONS
+  - book/MANAGE_NOTIFICATIONS_INSTRUCTIONS
   - book/MANAGE_BUNDLES_INSTRUCTIONS
   - book/FAILED_BOOK
   - book/SUCCESSFUL_BOOK
@@ -298,7 +300,6 @@ menus:
             auth: google
             toggle:
               - bundle
-            visibility: debug
           - name: View
             desc: View All Existing Bookings
             hash: diary
@@ -479,6 +480,12 @@ buttons:
   loading: Loading G-Suite Resources
   auth: google
   buttons:
+  - name: Book Bundle
+    desc: Book a Resource Bundle
+    hash: bundle
+    imports:
+      - bootstrap-material-datepicker-js
+    auth: google
   - name: View Existing
     desc: View all your existing bookings
     hash: diary
@@ -486,13 +493,6 @@ buttons:
       - clipboard
       - bootstrap-material-datepicker-js
     auth: google
-  - name: Bundle
-    desc: Book a Resource Bundle
-    hash: bundle
-    imports:
-      - bootstrap-material-datepicker-js
-    auth: google
-    visibility: debug
   - name: About
     desc: More details about creating a Booking
     hash: instructions.book

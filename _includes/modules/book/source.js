@@ -48,6 +48,25 @@ Source = (options, factory) => {
     if (details) _event.summary = details;
     return factory.Google.calendar.events.create(calendar, _event);
   };
+  
+  var _group = (number, resources, from, until) => _.reduce(resources, (memo, resource, id) => {
+      if (number > 0) {
+        /* <!-- We don't yet have all the bookings we need --> */
+        if (!resource.busy || resource.busy.length === 0) {
+          /* <!-- Resource is definitely free --> */
+          memo.push(id);
+          number -= 1;
+        } else {
+          /* <!-- Check if resource is available --> */
+          var _busy = _.find(resource.busy, busy => from.isSameOrBefore(busy.end) && until.isSameOrAfter(busy.start));
+          if (!_busy) {
+            number -= 1;
+            memo.push(id);
+          }
+        }
+      } 
+      return memo;
+    }, []);
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
@@ -77,32 +96,18 @@ Source = (options, factory) => {
     },
     
     group: (calendar, resources, number) => data => {
-
+      factory.Flags.log("Booking Data:", data);
+      var _from = _date(data, "from"),
+          _until = _date(data, "until", "until-date");
+      return _book(calendar, _group(number, resources, _from, _until),  _from, _until, _text(data, "details"));
+    },
+    
+    bundle: (calendar, bundle, resources) => data => {
+      factory.Flags.log("Booking Data:", data);
       var _from = _date(data, "from"),
           _until = _date(data, "until", "until-date"),
-          _details = _text(data, "details");
-      
-      var _count = number,
-          _resources = _.reduce(resources, (memo, resource, id) => {
-            if (_count > 0) {
-              /* <!-- We don't yet have all the bookings we need --> */
-              if (!resource.busy || resource.busy.length === 0) {
-                /* <!-- Resource is definitely free --> */
-                memo.push(id);
-                _count -= 1;
-              } else {
-                /* <!-- Check if resource is available --> */
-                var _busy = _.find(resource.busy, busy => _from.isSameOrBefore(busy.end) && _until.isSameOrAfter(busy.start));
-                if (!_busy) {
-                  _count -= 1;
-                  memo.push(id);
-                }
-              }
-            } 
-            return memo;
-          }, []);
-      
-      return _book(calendar, _resources, _from, _until, _details);
+          _resources = _.chain(bundle.children).reduce((memo, part) => memo.concat(_group(part.quantity, _.pick(resources, _.pluck(part.children, "email")), _from, _until)), []).uniq().value();
+      return _book(calendar, _resources,  _from, _until, _text(data, "details"));
     },
     
   };
