@@ -2,6 +2,8 @@
 layout: page
 title: Support
 permalink: /support/
+helpers:
+  - handlebars
 modules:
   - controller
   - service
