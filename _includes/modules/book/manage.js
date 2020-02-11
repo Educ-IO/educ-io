@@ -780,12 +780,11 @@ Manage = (options, factory) => {
             STATUS: status
           }
         }
-      }))
-      .then(updated => {
+      }).then(updated => {
         event.properties = updated.extendedProperties && updated.extendedProperties.private ? updated.extendedProperties.private : {};
         options.functions.populate.update(event);
         return event;
-      })
+      }))
       .catch(e => factory.Flags.error("Event Patch Error", e))
       .then(factory.Main.busy("Updating Booking"))
       .then(event => event ?
