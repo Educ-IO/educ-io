@@ -69,8 +69,6 @@ Link = (options, factory) => {
     details: _.escape(JSON.stringify(options.data, null, 4)),
   }, dialog => {
 
-    dialog.find(`#${options.id}_QRCOPY`).attr("data-clipboard-text", _link);
-
     var _clip = () => {
       if (_clipboard) _clipboard.destroy();
       if (window.ClipboardJS) _clipboard = new window.ClipboardJS(`#${options.id} .copy-trigger`, {

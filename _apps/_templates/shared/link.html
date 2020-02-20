@@ -9,7 +9,7 @@
         </button>
       </div>
       <div class="modal-body">
-          <p id="{{id}}_LINK" class="text-wrap text-break text-muted{{#if hide_link}} d-none{{/if}}"><small class="text-select">{{link}}</small></p>
+          <p class="text-wrap text-break text-muted{{#if hide_link}} d-none{{/if}}"><small id="{{id}}_LINK" class="text-select">{{link}}</small></p>
             {{~#unless options_bottom}}<div class="d-flex">
               {{> link_options}}
             </div>{{/unless~}}
@@ -31,7 +31,7 @@
                 </div>
               </div>
           </div>
-        {{#if instructions}}{{{instructions}}}{{/if}}
+        {{#if instructions}}<div class="mt-2">{{{instructions}}}</div>{{/if}}
       </div>
       <div class="modal-footer">
         {{~#if offer_persistent}}{{> control_button b_class=(which currently_persistent "btn-success" "btn-outline-success") b_id=(concat id "_PERSISTENT") b_action="persistent" 

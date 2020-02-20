@@ -1,8 +1,8 @@
 site :
-  0.1.9g :
+  0.1.9h :
     name : Reflect 0.0.7n-beta and Book v0.0.8b-beta
     desc : New Features
-    numeric : 0.1.9.7
+    numeric : 0.1.9.8
   0.1.9f :
     name : Site 0.1.9f
     desc : Bug Fix
