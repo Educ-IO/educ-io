@@ -17,7 +17,7 @@ Helper = (options, factory) => {
   /* <!-- Internal Variables --> */
   /* <!-- Internal Variables --> */
 
-  /* <!-- Internal Functions --> */
+  /* <!-- Public Functions --> */
   FN.span = dates => {
     var _today = factory.Dates.now(),
       _past = _today.clone();
@@ -31,17 +31,36 @@ Helper = (options, factory) => {
     dates.to = _today.endOf("day");
     return dates;
   };
-  /* <!-- Internal Functions --> */
+  
+  FN.headers = fields => _.map(fields, f => f.title ? {
+      name: f.title,
+      display: f.id
+    } : f.id); 
+  /* <!-- Public Functions --> */
+  
+  /* <!-- File Functions --> */
+  FN.file = file => ({
+    
+    complete : () => file.appProperties.COMPLETE,
+    
+    owner : {
+      
+      display : () => file.ownedByMe ? "Me" : file.owners && file.owners.length > 0 ?
+      `${file.owners[0].displayName}${file.owners[0].emailAddress ? ` (${file.owners[0].emailAddress})` : ""}` : "",
+    
+      email : all => file.owners && file.owners.length > 0 ? all ? _.pluck(file.owners, "emailAddress") : file.owners[0].emailAddress : all ? [] : "",
+      
+    },
+    
+    url : () => `${factory.Flags.full()}${factory.Flags.dir()}/#google,load.${file.id}`
+    
+  });
+  /* <!-- File Functions --> */
 
   /* <!-- Initial Calls --> */
 
   /* <!-- External Visibility --> */
-  return {
-    
-    span : FN.span,
-    
-    
-  };
+  return FN;
   /* <!-- External Visibility --> */
 
 };

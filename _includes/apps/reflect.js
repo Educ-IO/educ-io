@@ -74,7 +74,7 @@ App = function() {
         }
       };
      _.each(["Decode", "Scales", "Elicit", "Helper", "Show", "Edit", "Create",
-              "Prompt", "Process", "Action", "Export", "Load", "Save"], 
+              "Prompt", "Process", "Action", "Export", "Load", "Save", "Query"], 
                 module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
       
     },
@@ -234,7 +234,8 @@ App = function() {
             options: {
               full: true, 
             },
-            success: value => FN.load.file(value.result)
+            success: value => FN.load.file(value.result, 
+                                 value.command && _.isArray(value.command) && value.command.length > 1 ? value.command.slice(1) : null)
               .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e).negative())
               .then(ಠ_ಠ.Main.busy("Loading")),
           },
@@ -616,12 +617,47 @@ App = function() {
             }
           },
 
+          query: {
+            matches: /QUERY/i,
+            routes: {
+              report: {
+                matches: /REPORT/i,
+                state: FN.states.report.opened,
+                length: 2,
+                fn: command => FN.query.report(
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[0])),
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[1])),
+                  ಠ_ಠ.Main.elevator(SCOPE_FULL_DRIVE))
+              },
+              reply: {
+                matches: /REPLY/i,
+                state: FN.states.report.opened,
+                length: 3,
+                fn: command => FN.query.reply(
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[0])),
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[1])),
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[2])),
+                  ಠ_ಠ.Main.elevator(SCOPE_FULL_DRIVE))
+              },
+              resolve: {
+                matches: /RESOLVE/i,
+                state: FN.states.report.opened,
+                length: 3,
+                fn: command => FN.query.resolve(
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[0])),
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[1])),
+                  decodeURIComponent(ಠ_ಠ.url.decode(command[2])),
+                  ಠ_ಠ.Main.elevator(SCOPE_FULL_DRIVE))
+              }
+            }
+          },
+          
           test: {
             matches: /TEST/i,
             length: 0,
             state: FN.states.report.opened,
             keys: ["t", "T"],
-            fn: () => ಱ.notify.success("Testing Notification", "Here is some <b>HTML</b> body text for testing. Some of it is <em>italic</em>, and some <u>underlined</u> or <s>striked through</s>.", 100000)
+            fn: () => ಱ.notify.success("Testing Notifications", "Here is some <b>HTML</b> body text for testing. Some of it is <em>italic</em>, and some <u>underlined</u> or <s>striked through</s>.", 100000)
           },
 
           overview: {

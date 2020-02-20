@@ -10,7 +10,7 @@ Main = function() {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "Dates", "App"], _helpers = ["Url", "Handlebars"];
+  var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "Dates", "App"], _helpers = ["Url", "Handlebars"], _last;
   /* <!-- Internal Variables --> */
 
   /* <!-- Plumbing Functions --> */
@@ -217,13 +217,14 @@ Main = function() {
   var router = () => ಠ_ಠ.Flags ? ಠ_ಠ.Flags.change(_route) : false;
 
   var setupRouter = (start, quiet) => {
-
+    
     /* <!-- Route Start --> */
     if (start) start();
 
     /* <!-- Call Router Initially (if required) | Default Hash = #! --> */
     var _initial = ಠ_ಠ.Flags ? ಠ_ಠ.Flags.initial() : null;
-    Promise.resolve(ಠ_ಠ.Flags && _initial ? ಠ_ಠ.Flags.route(_initial, _route) : window.location.hash ? router() : null)
+    
+    Promise.resolve(ಠ_ಠ.Flags && _last != _initial && (_last = _initial) ? ಠ_ಠ.Flags.route(_initial, _route) : window.location.hash ? router() : null)
       /* <!-- Module Finally | After all initial routes --> */
       .then(() => quiet === true ? false : _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m].finally) ? 
                                    ಠ_ಠ[m].finally.call(ಠ_ಠ) : false));

@@ -100,6 +100,12 @@ a.app-logo svg {
 }
 // -- Outline Letter Logo -- //
 
+// -- User Select -- //
+.select-none {
+  @include user-select(none);
+}
+// -- User Select -- //
+
 // -- Opacity -- //
 .transition-opacity {
   will-change: opacity;
@@ -226,6 +232,10 @@ em.kb-shortcut, strong.kb-shortcut {
 // -- Action Backgrounds -- //
 
 // -- Other Backgrounds -- //
+.bg-warning-light {
+	background-color: $colour-light-warning !important;
+}
+
 .bg-success-light {
 	background-color: $colour-light-success !important;
 }

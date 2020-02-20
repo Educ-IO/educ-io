@@ -1,0 +1,27 @@
+{% raw %}
+{{#> dialog action=(either action "Send") class="modal-xl" tabindex=1}}
+<form>
+  <textarea data-output-field="Message" class="form-control form-control-lg w-100 resizable" rows="2" tabindex="1" required="required" placeholder="{{placeholder}}"></textarea>
+  {{#if resolve}}<div class="d-flex justify-content-end mt-1"><div class="custom-control custom-checkbox mr-2 mt-1">
+    <input id="{{concat ../id '_RESOLVED'}}" data-output-field="Resolved" type="checkbox"
+           class="custom-control-input"{{#if resolve}} checked{{/if}}>
+    <label class="custom-control-label" for="{{concat ../id '_RESOLVED'}}">Question Resolved?</label>	
+  </div></div>{{/if}}
+  {{#if email}}{{{email}}}{{/if}}
+  {{#if emails}}{{> recipients id=(concat id "_EMAILS") values=emails readonly=(either readonly false) class="px-4 pb-2"}}{{/if}}
+  {{#if existing}}<input data-output-field="ID" type="hidden" value="{{existing}}"/>{{/if}}
+</form>
+<div class="card mt-2 bg-light">
+  <div class="card-header border-bottom-0 d-flex align-items-center">
+    <h5 class="mb-0 d-inline">Details from Report</h5>
+    <a class="d-inline-flex text-decoration-none ml-auto" data-toggle="collapse" href="#question_field_details" aria-expanded="false" aria-controls="question_field_details" title="Show / Hide this block">
+      <i class="material-icons md-18" data-listen="#question_field_details" data-event="hide.bs.collapse">expand_more</i>
+      <i style="display: none;" class="material-icons md-18" data-listen="#question_field_details" data-event="show.bs.collapse">expand_less</i>
+    </a>
+  </div>
+  <div id="question_field_details" class="collapse" role="tabpanel" aria-labelledby="question_field_details">
+    <div class="card-body pb-0" data-output="field"></div>
+  </div>
+</div>
+{{/dialog}}
+{% endraw %}

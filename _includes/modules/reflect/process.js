@@ -18,10 +18,94 @@ Process = (options, factory) => {
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
-  FN.signatures = () => {
+  FN.additions = (file, actions) => factory.Google.files.comments(file).list()
+      .then(comments => Promise.all([
+        FN.signatures(options.functions.action.dehydrate().data, comments),
+        FN.questions(actions, comments)
+      ]));
+  
+  FN.display = {
+    
+    questions : (actions, questions) => _.each(_.groupBy(questions, 
+                    question => `[data-group='${question.about.group}'][data-field='${question.about.field}'], [data-id='${question.about.group}'] [data-id='${question.about.field}']`), 
+      (questions, field) => {
+        var _field = options.state.session.form.find(field).first();
+        _.each(questions, question => {
+          question.reply = actions.editable;
+          question.resolve = actions.editable || (actions.signable && question.who === true);
+        });      
+        return _field.hasClass("questioned") ?
+          (_field = _field.find(".questions"), _.map(questions, question => _field.append(factory.Display.template.get(_.extend({
+              template: "question_details",
+            }, question), true)))) : 
+          _field.addClass("questioned border border-warning rounded p-1")
+            .append(factory.Display.template.get({
+              template: "questions_holder",
+              questions: questions,
+              target: field,
+            }, true));
+      }),
 
-    var _data = options.functions.action.dehydrate().data,
-      _target = options.state.session.form.find(".signatures").empty(),
+    replies : (question, replies) => {
+      var _field = options.state.session.form.find(`.question[data-id='${question}']`).first(),
+          _replies = _field.find(".replies");
+      _replies.length === 0 ?
+        _field.append(factory.Display.template.get({
+          template: "replies_holder",
+          replies: replies,
+        }, true)) : _.each(replies, reply => _replies.append(factory.Display.template.get(_.extend({
+          template: "reply_details"
+        }, reply), true)));
+    },
+    
+    signatures : (target, signatures) => {
+
+      options.state.session.signatures = signatures.length;
+      factory.Display.template.show({
+        template: "count",
+        name: "Signatures",
+        count: signatures.length,
+        clear: true,
+        target: target.parents(".card").find(".card-header h5")
+      });
+
+      _.each(signatures, signature => {
+        signature.template = "signature";
+        target.append(factory.Display.template.get(signature));
+      });
+
+      var _invalid = _.filter(signatures, signature => signature.valid === false).length > 0;
+      target.parents(".card").find(".card-header .count")
+        .append(factory.Display.template.get(_invalid == signatures.length ? {
+          template: "valid",
+          class: "ml-2 text-danger",
+          valid: false,
+          desc: "All signatures are invalid / out of date!"
+        } : _invalid > 0 ? {
+          template: "valid",
+          class: "ml-2 text-warning",
+          valid: false,
+          desc: "Some signatures are invalid / out of date!"
+        } : {
+          template: "valid",
+          valid: true,
+          class: "ml-2 text-success",
+        }));
+
+      /* <!-- Enter / Exit Signed State --> */
+      _.find(signatures, signature => signature.who === true) ?
+        factory.Display.state().enter(options.functions.states.report.signed) :
+        factory.Display.state().exit(options.functions.states.report.signed);
+
+    },
+    
+  },
+    
+  FN.questions = (actions, comments) => options.functions.query.list(options.state.session.file, comments)
+      .then(questions => questions && questions.length > 0 ? FN.display.questions(actions, questions) : null);
+  
+  FN.signatures = (data, comments) => {
+    var _target = options.state.session.form.find(".signatures").empty(),
       _none = () => {
 
         _target.html(factory.Display.doc.get("NO_SIGNATURES"));
@@ -30,50 +114,10 @@ Process = (options, factory) => {
         /* <!-- Exit Signed State --> */
         factory.Display.state().exit(options.functions.states.report.signed);
 
-      },
-      _display = signatures => {
-
-        options.state.session.signatures = signatures.length;
-        factory.Display.template.show({
-          template: "count",
-          name: "Signatures",
-          count: signatures.length,
-          clear: true,
-          target: _target.parents(".card").find(".card-header h5")
-        });
-
-        _.each(signatures, signature => {
-          signature.template = "signature";
-          _target.append(factory.Display.template.get(signature));
-        });
-
-        var _invalid = _.filter(signatures, signature => signature.valid === false).length > 0;
-        _target.parents(".card").find(".card-header .count")
-          .append(factory.Display.template.get(_invalid == signatures.length ? {
-            template: "valid",
-            class: "ml-2 text-danger",
-            valid: false,
-            desc: "All signatures are invalid / out of date!"
-          } : _invalid > 0 ? {
-            template: "valid",
-            class: "ml-2 text-warning",
-            valid: false,
-            desc: "Some signatures are invalid / out of date!"
-          } : {
-            template: "valid",
-            valid: true,
-            class: "ml-2 text-success",
-          }));
-
-        /* <!-- Enter / Exit Signed State --> */
-        _.find(signatures, signature => signature.who === true) ?
-          factory.Display.state().enter(options.functions.states.report.signed) :
-          factory.Display.state().exit(options.functions.states.report.signed);
-        
       };
-
-    if (options.state.session.file) options.state.application.signatures.list(options.state.session.file, _data)
-      .then(signatures => signatures && signatures.length > 0 ? _display(signatures) : _none());
+    
+    return options.state.application.signatures.list(options.state.session.file, data || options.functions.action.dehydrate().data, comments)
+        .then(signatures => signatures && signatures.length > 0 ? FN.display.signatures(_target, signatures) : _none());
 
   };
 
@@ -85,12 +129,19 @@ Process = (options, factory) => {
     options.functions.create.load(_.tap(data, data =>
         factory.Flags.log(`Loaded Report File: ${JSON.stringify(data, options.functions.replacers.regex, 2)}`)).form,
       form => {
-        var _return = (options.state.session.form = factory.Data({}, factory).rehydrate(form, data.report));
+        var _return = (options.state.session.actions = actions, options.state.session.form = factory.Data({}, factory).rehydrate(form, data.report));
         /* <!-- Re-wire up refreshed (e.g. List) events --> */
         options.state.application.fields.refresh(_return);
         return _return;
       }, actions, owner, permissions);
-    return FN.signatures();
+    
+    /* <!-- If the form is marked as completed, or not editable/signable then only show signatures --> */
+    return options.state.session.file ? 
+        actions.completed || !(actions.editable || actions.signable) ?
+          FN.signatures() : 
+          FN.additions(options.state.session.file, actions) : 
+        null;
+    
   };
 
   FN.form = (data, actions) => {
@@ -147,7 +198,7 @@ Process = (options, factory) => {
         }))
         .then(reports => {
           options.state.session.analysis = factory.Analysis(factory, forms, reports, expected, 
-                                            options.state.application.signatures, options.functions.decode);
+                                            options.state.application.signatures, options.functions.decode, options.functions.helper);
           factory.Display.state()
             .change(options.functions.states.all, options.functions.states.analysis.in)
             .protect("a.jump").on("JUMP");

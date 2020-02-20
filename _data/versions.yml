@@ -1,4 +1,8 @@
 site :
+  0.1.9g :
+    name : Reflect 0.0.7n-beta and Book v0.0.8b-beta
+    desc : New Features
+    numeric : 0.1.9.7
   0.1.9f :
     name : Site 0.1.9f
     desc : Bug Fix
@@ -1024,6 +1028,10 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.7n-beta :
+    name : Report Questions
+    desc : Allow Asking and Answering of Questions in Reports
+    type : minor
   0.0.7m-beta :
     name : Filtering Improvements
     desc : Analysis Filtering Improvements
@@ -1300,6 +1308,9 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.8b-beta :
+    name : Persistent QR Code Links
+    type : minor
   0.0.8a-beta :
     name : Visual Bug Fix
     type : major

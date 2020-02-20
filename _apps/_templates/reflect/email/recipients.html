@@ -1,5 +1,5 @@
 {% raw %}
-<div id="{{id}}" class="row px-4 pt-1 pb-3" data-output-field="Email">
+<div id="{{id}}" class="row {{#if class}}{{class}}{{else}}px-4 pt-1 pb-3{{/if}}" data-output-field="Email">
   {{#each values}}
   	{{> pill type="bright" value=this readonly=../readonly }}
   {{/each}}

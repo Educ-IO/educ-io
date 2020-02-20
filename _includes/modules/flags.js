@@ -208,7 +208,7 @@ Flags = function() {
           change: function(router) {
 
             var command = window.location.hash;
-
+            
             if (command) {
 
               if (command.indexOf("#") === 0) command = command.substring(1);

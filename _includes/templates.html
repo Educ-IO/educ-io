@@ -1,6 +1,6 @@
 {% assign templates = false %}{% if page.templates %}{% assign templates = page.templates %}{% elsif layout.templates %}{% assign templates = layout.templates %}{% elsif page.app and page.app != "" and site.data.apps[page.app].templates %}{% assign templates = site.data.apps[page.app].templates %}{% endif %}
 {% if templates %}{% if jekyll.environment == site.debug %}{% for template in templates %}
-<script id="__template__{{  template | split: '/' | last }}" type="text/x-handlebars-template"  data-src="templates">{% include_relative _templates/{{ template }}.html %}</script>{% endfor %}
+<script id="__template__{{  template | split: '/' | last }}" type="text/x-handlebars-template" data-src="templates">{% include_relative _templates/{{ template }}.html %}</script>{% endfor %}
 {% else %}
 <script type="text/javascript" charset="utf-8"  data-src="templates">
   {{ site.app.namespace }}.templates = function() {

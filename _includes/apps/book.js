@@ -419,7 +419,8 @@ App = function() {
                 app: "book",
                 route: "booking",
                 persistent: false,
-                /* <!-- UK/US Keyboard Language Mapping Issues --> */
+                offer_persistent: true,
+                /* <!-- UK/US Keyboard Language Mapping Issues for # --> */
                 hide_link: true,
                 hide_shorten: true,
                 force_qr: true,

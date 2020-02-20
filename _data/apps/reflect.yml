@@ -131,6 +131,7 @@ modules:
   - reflect/export
   - reflect/load
   - reflect/save
+  - reflect/query
   - reflect/templates/form_master
   - reflect/templates/uk_teachers_reflective
   - reflect/templates/volunteering
@@ -185,24 +186,31 @@ templates:
   - fields/field_range
   - fields/field_responses
   - emails/email_standard
-  - reflect/heading
-  - reflect/group
-  - reflect/form
-  - reflect/signature
-  - reflect/tracker
-  - reflect/count
-  - reflect/valid
-  - reflect/send
-  - reflect/recipients
-  - reflect/pill
-  - reflect/analyse_header
-  - reflect/analyse_body
-  - reflect/dates
-  - reflect/report_link
-  - reflect/signature_summary
-  - reflect/meta
-  - reflect/scale
-  - reflect/tag
+  - reflect/dialogs/dialog
+  - reflect/dialogs/send
+  - reflect/dialogs/dates
+  - reflect/dialogs/scale
+  - reflect/dialogs/question
+  - reflect/forms/form
+  - reflect/forms/heading
+  - reflect/forms/group
+  - reflect/forms/query
+  - reflect/analysis/analyse_header
+  - reflect/analysis/analyse_body
+  - reflect/analysis/report_link
+  - reflect/tracking/tracker
+  - reflect/signatures/signature_summary
+  - reflect/signatures/signature
+  - reflect/parts/count
+  - reflect/parts/meta
+  - reflect/parts/pill
+  - reflect/parts/valid
+  - reflect/parts/tag
+  - reflect/questions/questions_holder
+  - reflect/questions/question_details
+  - reflect/questions/replies_holder
+  - reflect/questions/reply_details
+  - reflect/email/recipients
 docs:
   - shared/JUMP
   - shared/HELP
@@ -260,6 +268,10 @@ docs:
   - reflect/EMAIL_ACTION_OPEN_REPORT
   - reflect/TRACKER_CHOOSE
   - reflect/TRACKER_SCALE
+  - reflect/SEND_QUESTION
+  - reflect/SEND_QUESTION_EMAIL
+  - reflect/SEND_REPLY
+  - reflect/SEND_REPLY_EMAIL
 scopes:
   google:
     - scope: email

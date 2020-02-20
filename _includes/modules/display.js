@@ -62,6 +62,24 @@ Display = function() {
     }));
   };
   
+  var _hover = (e, toggle) => {
+    var _this = $(e.currentTarget),
+        _targets = _this.data("targets"),
+        _value = _this.data("value"),
+        _first = _this.data("first");
+    if (!_targets || !_value) return;
+    _first ? 
+      $(_targets).first().toggleClass(_value, toggle) : 
+      $(_targets).each((i, el) => {
+        var _el = $(el);
+        _el.toggleClass(_value, toggle);
+      });
+  };
+  
+  var _hovers = targets => targets
+    .off("mouseenter.hover").on("mouseenter.hover", e => _hover(e, true))
+    .off("mouseleave.hover").on("mouseleave.hover", e => _hover(e, false));
+  
   var _expands = targets => targets.off("click.expand").on("click.expand", e => {
     e.preventDefault();
     e.stopPropagation();
@@ -132,9 +150,10 @@ Display = function() {
   var _template = (name, raw) => ಠ_ಠ.handlebars ? ಠ_ಠ.handlebars.template(name, raw) : null;
   
   var _visuals = value => {
-    _popovers(value.find("[data-toggle='popover']").add(value.filter("[data-toggle='popover']")));
-    _tooltips(value.find("[data-toggle='tooltip']").add(value.filter("[data-toggle='tooltip']")));
-    _expands(value.find("[data-toggle='expand']").add(value.filter("[data-toggle='expand']")));
+    _popovers(value.find("[data-toggle='popover'], [data-popover='true']").add(value.filter("[data-toggle='popover'], [data-popover='true']")));
+    _tooltips(value.find("[data-toggle='tooltip'], [data-tooltip='true']").add(value.filter("[data-toggle='tooltip'], [data-tooltip='true']")));
+    _expands(value.find("[data-toggle='expand'], [data-expand='true']").add(value.filter("[data-toggle='expand'], [data-expand='true']")));
+    _hovers(value.find("[data-toggle='hover'], [data-hover='true']").add(value.filter("[data-toggle='hover'], [data-hover='true']")));
     return value;
   };
 
@@ -761,7 +780,7 @@ Display = function() {
         _target(options).append(_modalise(dialog, reject));
         
         dialog.find("a.dropdown-item").on("click.toggler", (e) => $(e.target).closest(".input-group-append, .input-group-prepend").children("button")[0].innerText = e.target.innerText);
-        dialog.find("a[data-toggle='tooltip']").tooltip({
+        dialog.find("a[data-toggle='tooltip'], a[data-tooltip='true']").tooltip({
           animation: false,
           trigger: "hover",
           placement: _placement
@@ -940,7 +959,7 @@ Display = function() {
         
         _target(options).append(_modalise(dialog, reject));
         
-        dialog.find("a[data-toggle='tooltip']").tooltip({
+        dialog.find("a[data-toggle='tooltip'], a[data-tooltip='true']").tooltip({
           animation: false,
           trigger: "hover",
           placement: _placement

@@ -1,4 +1,4 @@
-Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
+Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode, helper) => {
   "use strict";
   /* <!-- MODULE: Provides an analysis of a form/s reports --> */
   /* <!-- PARAMETERS: Receives the global app context, the forms being analysed and the report data submitted --> */
@@ -27,36 +27,17 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
 
   /* <!-- Internal Functions --> */
 
-  /* <!-- Helper Functions --> */
-  FN.helper = {
-
-    complete: file => file.appProperties.COMPLETE,
-
-    owner: file => file.ownedByMe ? "Me" : file.owners && file.owners.length > 0 ?
-      `${file.owners[0].displayName}${file.owners[0].emailAddress ? ` (${file.owners[0].emailAddress})` : EMPTY}` : EMPTY,
-
-    url: file => `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${file.id}`,
-
-    headers: fields => _.map(fields, f => f.title ? {
-      name: f.title,
-      display: f.id
-    } : f.id),
-
-  };
-  /* <!-- Helper Functions --> */
-
-
   /* <!-- Query Functions --> */
   FN.query = {
 
-    slim: report => ({
+    slim: (report, helper) => ({
       id: ಠ_ಠ.Display.template.get("hyperlink")({
-        url: FN.helper.url(report.file),
+        url: helper.url(),
         text: report.file.id,
         blank: true
       }).trim(),
-      owner: FN.helper.owner(report.file),
-      complete: FN.helper.complete(report.file),
+      owner: helper.owner.display(),
+      complete: helper.complete(),
       form: report.title,
       when: {
         Created: ಠ_ಠ.Dates.parse(report.file.createdTime).format("llll"),
@@ -64,7 +45,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
       }
     }),
     
-    standard: report => _.tap(FN.query.slim(report), 
+    standard: (report, helper) => _.tap(FN.query.slim(report, helper), 
       value => value.signatures = report.signatures ? _.map(report.signatures, signature => ({
         __class: `o-75 ${signature.valid ? "text-success" : "text-danger"}`,
         Valid: signature.valid ? true : undefined,
@@ -113,7 +94,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
         removeIndices: true
       });
 
-      var _values = _.map(reports, report => _.extend(query ? query(report) : {},
+      var _values = _.map(reports, report => _.extend(query ? query(report, helper.file(report.file)) : {},
         decode.meta.properties(report.file, fields, true)));
 
       _data.insert(_values);
@@ -169,20 +150,23 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
         }),
         _values = _.reject(_fields, "type");
 
-      ರ‿ರ.extras = FN.helper.headers(_contexts);
+      ರ‿ರ.extras = helper.headers(_contexts);
 
       if (_row && _column && _values) {
 
         var _all = [_row, _column].concat(_contexts).concat(_values),
           _reports = _.reduce(_.map(reports,
-              report => _.extend(decode.meta.properties(report.file, _all, true), {
-                __id: report.file.id,
-                __created: ಠ_ಠ.Dates.parse(report.file.createdTime).format("MMM D, YYYY HH:mm"),
-                __modified: ಠ_ಠ.Dates.parse(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
-                __owner: FN.helper.owner(report.file),
-                __link: FN.helper.url(report.file),
-                __complete: FN.helper.complete(report.file),
-              })),
+              report => {
+                var _helper = helper.file(report.file);
+                return _.extend(decode.meta.properties(report.file, _all, true), {
+                  __id: report.file.id,
+                  __created: ಠ_ಠ.Dates.parse(report.file.createdTime).format("MMM D, YYYY HH:mm"),
+                  __modified: ಠ_ಠ.Dates.parse(report.file.modifiedTime).format("MMM D, YYYY HH:mm"),
+                  __owner: _helper.owner.display(),
+                  __link: _helper.url(),
+                  __complete: _helper.complete(),
+                });
+              }),
             (memo, data) => {
               var _key = data[(_row.title || _row.id).toLowerCase()],
                 _name = _key;
@@ -355,7 +339,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
       var _columns = ["ID", "Owner", "Complete", "Form", "When"]
         .concat(ರ‿ರ.signatures ? ["Signatures"] : []),
         _fields = decode.meta.fields(forms),
-        _headers = FN.generate.headers(_columns.concat(FN.helper.headers(_fields))),
+        _headers = FN.generate.headers(_columns.concat(helper.headers(_fields))),
         _data = FN.generate.data(id, _columns, _fields, reports, 
                                   ರ‿ರ.signatures ? FN.query.standard : FN.query.slim);
 
@@ -394,8 +378,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode) => {
 
     any: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage = () => true),
 
-    complete: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage = report =>
-      FN.helper.complete(report.file)),
+    complete: () => FN.display.update(ರ‿ರ.filter, ರ‿ರ.stage = report => helper.file(report.file).complete()),
 
   };
   /* <!-- Stage Functions --> */

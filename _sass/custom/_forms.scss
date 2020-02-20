@@ -35,8 +35,7 @@ form {
     height: 16px;
     border-radius: 8px;
     background: rgba(0,0,0,0.26);
-    -webkit-transition: background 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-    transition: background 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    @include transition(background 0.28s cubic-bezier(0.4, 0, 0.2, 1));
     vertical-align: middle;
     cursor: pointer;
     margin-top: 4px;
@@ -52,8 +51,7 @@ form {
     background: #fafafa;
     box-shadow: 0 4px 8px rgba(0,0,0,0.28);
     border-radius: 50%;
-    -webkit-transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-    transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    @include transition(left 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1));
   }
 
   .material-switch:active::before {
@@ -97,4 +95,12 @@ form {
     display: none !important;
   }
   
+  .queryable-block {
+    will-change: background-color;
+    @include transition(background 0.2s ease-in-out);
+  }
+  
+  .queryable-trigger:hover {
+    opacity: 1;
+  }
 }

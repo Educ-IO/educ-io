@@ -19,6 +19,7 @@ Link = (options, factory) => {
     app: "app",
     route: "view",
     persistent: false,
+    offer_persistent: false,
     dialog: "link",
     large: false,
     hide_link: false,
@@ -38,12 +39,18 @@ Link = (options, factory) => {
 
   /* <!-- Internal Variables --> */
   options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
-  var _link = factory.Flags.full(`${options.app.toLowerCase()}/${options.persistent ? "?i=" : "#"}google,${options.route.toLowerCase()}.${factory.Strings().base64.encode(JSON.stringify(options.data))}`);
-  var _clipboard;
   /* <!-- Internal Variables --> */
 
+  /* <!-- Generate Functions --> */
+  var _create = (name, persistent, route, data) => factory.Flags.full(`${name}/${persistent ? "?i=" : "#"}google,${route}.${factory.Strings().base64.encode(JSON.stringify(data))}`);
+  /* <!-- Generate Functions --> */
+  
+  /* <!-- Stateful Variables --> */
+  var _clipboard, _link = _create(options.app.toLowerCase(), options.persistent, options.route.toLowerCase(), options.data);
+  /* <!-- Stateful Variables --> */
+  
   /* <!-- Internal Functions --> */
-  var _qr = () => `${options.qr_url}?cht=qr&chs=${options.qr_size}x${options.qr_size}&choe=${options.qr_encoding}&chld=${options.qr_tolerance}&chl=${encodeURIComponent(_link)}`;
+  var _qr = link => `${options.qr_url}?cht=qr&chs=${options.qr_size}x${options.qr_size}&choe=${options.qr_encoding}&chld=${options.qr_tolerance}&chl=${encodeURIComponent(link)}`;
   
   var _generate = () => factory.Display.modal(options.dialog, {
     id: options.id,
@@ -55,30 +62,57 @@ Link = (options, factory) => {
     force_qr: options.force_qr,
     options_bottom: options.options_bottom,
     hide_shorten: options.hide_shorten,
+    offer_persistent: options.offer_persistent,
+    currently_persistent: options.persistent,
     link: _link,
-    qr_link: _qr,
+    qr_link: _qr(_link),
     details: _.escape(JSON.stringify(options.data, null, 4)),
   }, dialog => {
 
-    dialog.find("#link_copy").attr("data-clipboard-text", _link);
+    dialog.find(`#${options.id}_QRCOPY`).attr("data-clipboard-text", _link);
 
-    if (window.ClipboardJS) _clipboard = new window.ClipboardJS("#generate_link .copy-trigger", {
-      container: dialog[0]
+    var _clip = () => {
+      if (_clipboard) _clipboard.destroy();
+      if (window.ClipboardJS) _clipboard = new window.ClipboardJS(`#${options.id} .copy-trigger`, {
+        container: dialog[0]
+      });
+    },
+    _update = link => {
+      var img = _qr(link);
+      dialog.find(`#${options.id}_LINK`).text(link);
+      dialog.find(`#${options.id}_LINKTEST`).attr("href", link);
+      dialog.find(`#${options.id}_LINKCOPY`).attr("data-clipboard-text", link);
+      dialog.find(`#${options.id}_QRCOPY`).attr("data-clipboard-text", img);
+      dialog.find(`#${options.id}_QRCODE`).attr("src", img);
+      _clip();
+    };
+    
+    _clip();
+    
+    if (!options.hide_shorten) dialog.find(`#${options.id}_LINKSHORTEN`).one("click.shorten", () => {
+      factory.Display.tidy();
+      factory.Google.url.insert(_link).then(url => _update(_link = url.id)).catch(e => factory.Flags.error("Link Shorten Failure", e ? e : "No Inner Error"));
+    });
+    
+    if (options.offer_persistent) dialog.find("button[data-action='persistent']").on("click.persistent", e => {
+      factory.Display.tidy();
+      var _target = $(e.target || e.currentTarget),
+          _change = (add, remove, link) => {
+            _target.addClass(add).removeClass(remove);
+            _update(_link = link);
+          },
+          _make = persistent => _create(options.app.toLowerCase(), persistent, options.route.toLowerCase(), options.data);
+      _target.hasClass("btn-outline-success") ? 
+        _change("btn-success", "btn-outline-success", _make(true)) : 
+        _change("btn-outline-success", "btn-success", _make(false));
     });
 
-    if (!options.hide_shorten) dialog.find("#link_shorten").one("click.shorten", () => {
-      factory.Google.url.insert(_link).then(url => {
-        _link = url.id;
-        var _qr = _qr();
-        dialog.find("#link_text").text(_link);
-        dialog.find("#qr_copy").attr("data-clipboard-text", _qr);
-        dialog.find("#qr_code").attr("src", _qr);
-      }).catch(e => factory.Flags.error("Link Shorten Failure", e ? e : "No Inner Error"));
-    });
+    $(`#${options.id}_QR`).on("show.bs.collapse", () => $(`#${options.id}_DETAILS`).collapse("hide"));
+    $(`#${options.id}_DETAILS`).on("show.bs.collapse", () => $(`#${options.id}_QR`).collapse("hide"));
 
-    $("#qr").on("show.bs.collapse", () => $("#details").collapse("hide"));
-    $("#details").on("show.bs.collapse", () => $("#qr").collapse("hide"));
-
+    /* <!-- Process Dialog Template --> */
+    factory.Display.template.process(dialog);
+    
   }).then(() => {
     if (_clipboard) _clipboard.destroy();
   });

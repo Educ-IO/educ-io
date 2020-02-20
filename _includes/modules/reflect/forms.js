@@ -85,7 +85,8 @@ Forms = function(loaded) {
         _headers.push(group.id);
         var fields = [];
         for (var field_Id in group.fields) {
-          var field = _.clone(group.fields[field_Id]);
+          var field = _.clone(group.fields[field_Id]),
+              readonly = field.readonly;
           field.id = field_Id;
           if (editable === false || completed === true) field.readonly = true;
           if (field.order === undefined) field.order = ++_order;
@@ -94,7 +95,16 @@ Forms = function(loaded) {
             field.markers = PROCESS(_scale.scale);
           }
           try {
-            fields.push(ಠ_ಠ.Display.template.get(field));
+            var _field = ಠ_ಠ.Display.template.get(field);
+            if (!readonly && !completed && !editable && signable) { /* <!-- Selectable / For Questions --> */
+              _field = ಠ_ಠ.Display.template.get({
+                name: "query",
+                group: group_Id,
+                field: field_Id,
+                content: _field
+              });
+            }
+            fields.push(_field);
           } catch (e) {
             ಠ_ಠ.Flags.error(`Error rendering template for field: ${field.id} | ${field.template}`, e);
           }

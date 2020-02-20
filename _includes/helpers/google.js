@@ -773,7 +773,7 @@ Google_API = (options, factory) => {
 
       comments: file => {
 
-        const FIELDS = "kind,id,createdTime,modifiedTime,author,content,anchor,deleted,resolved";
+        const FIELDS = "kind,id,createdTime,modifiedTime,author,htmlContent,content,anchor,deleted,resolved,replies";
 
         var fn = {
 
@@ -788,6 +788,12 @@ Google_API = (options, factory) => {
               content: content,
             })),
 
+          resolve: (id, content) => _call(NETWORKS.general.patch,
+            `drive/v3/files/${file && file.id ? file.id : file}/comments/${id}?fields=${FIELDS}`, STRIP_NULLS({
+              content: content,
+              resolved: true,
+            })),
+          
           delete: id => _call(NETWORKS.general.delete,
             `drive/v3/files/${file && file.id ? file.id : file}/comments/${id}`),
 
@@ -795,13 +801,49 @@ Google_API = (options, factory) => {
             `drive/v3/files/${file && file.id ? file.id : file}/comments`, "comments", [], STRIP_NULLS({
               fields: `kind,nextPageToken,comments(${FIELDS})`
             })),
+          
+          replies: (comment) => {
+        
+            const FIELDS = "kind,id,createdTime,modifiedTime,author,htmlContent,content,deleted,action";
+
+            var fn = {
+
+              create: (content, resolved, reopened) => _call(NETWORKS.general.post,
+                `drive/v3/files/${file && file.id ? file.id : file}/comments/${comment}/replies?fields=${FIELDS}`, STRIP_NULLS({
+                  content: content,
+                  action: resolved ? "resolve" : reopened ? "reopen" : null,
+                })),
+
+              update: (id, content) => _call(NETWORKS.general.patch,
+                `drive/v3/files/${file && file.id ? file.id : file}/comments/${comment}/replies/${id}?fields=${FIELDS}`, STRIP_NULLS({
+                  content: content,
+                })),
+
+              delete: id => _call(NETWORKS.general.delete,
+                `drive/v3/files/${file && file.id ? file.id : file}/comments/${comment}/replies/${id}`),
+
+              list: () => _list(NETWORKS.general.get,
+                `drive/v3/files/${file && file.id ? file.id : file}/comments/${comment}/replies`, "replies", [], STRIP_NULLS({
+                  fields: `kind,nextPageToken,comments(${FIELDS})`,
+              })),
+
+              resolve: () => _call(NETWORKS.general.post,
+                `drive/v3/files/${file && file.id ? file.id : file}/comments/${comment}/replies?fields=${FIELDS}`, {
+                  action: "resolve",
+                }),
+
+            };
+
+            return fn;
+            
+          },
 
         };
 
         return fn;
 
       },
-
+      
       revisions: file => {
 
         const FIELDS = "kind,id,mimeType,modifiedTime,md5Checksum,size";

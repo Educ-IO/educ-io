@@ -66,11 +66,11 @@ Signatures = (ಠ_ಠ, stringify, replacer, elevate) => {
       valid: valid,
       who: comment.author.me ? true : comment.author.displayName,
       email: comment.author.emailAddress,
-      when: ಠ_ಠ.Dates.parse(comment.modifiedTime).fromNow(),
+      when: ಠ_ಠ.Dates.parse(comment.resolved ? comment.createdTime : comment.modifiedTime).fromNow(),
       link: `${ಠ_ಠ.Flags.full()}${ಠ_ಠ.Flags.dir()}/#google,load.${file.id}`
     }),
 
-    list: (file, data) => ಠ_ಠ.Google.files.comments(file).list()
+    list: (file, data, comments) => (comments ? Promise.resolve(comments) : ಠ_ಠ.Google.files.comments(file).list())
       .then(comments => _.filter(comments, comment => {
         var _signature, _set = signature => {
           comment.signature = JSON.parse(signature[0]);
