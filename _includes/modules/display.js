@@ -234,7 +234,7 @@ Display = function() {
 
   };
   /* <!-- Internal Functions --> */
-
+  
   /* <!-- External Visibility --> */
   return {
 
@@ -1132,6 +1132,73 @@ Display = function() {
       };
 
     },
+    
+    status: (function() {
+      
+      
+      
+      var _get = () => $(".navbar-status > .btn-outline-status");
+      
+      var _set = {
+        
+        details : (status, title, details) => (title && details ? status.popover("dispose").popover({
+                  title: title,
+                  content: details,
+                  trigger: "click",
+                  html: /<\/?[a-z][\s\S]*>/i.test(details),
+                }) : null, status),
+      
+        text : (status, text) => (text ? status.find(".text").text(text) : null, status),
+        
+      };
+      
+      var _hide = {
+        
+        icons : status => (status.find(".material-icons").addClass("d-none"), status),
+        
+        status : status => {
+          var _status = (status || _get()).removeClass("loader").css("opacity", 0)
+            .one("transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd", () => {
+              _status.addClass("d-none");
+              _hide.icons(_status);
+              _status.find(".text").text("");
+              _status.popover("dispose");    
+            });
+        },
+        
+      };
+      
+      var _show = (text, title, details, working) => {
+        var _status = _get().removeClass("d-none").css("opacity", 1);
+        if (working) _status.addClass("loader");
+        _set.text(_hide.icons(_status), text);
+        _set.details(_status, title, details);
+        return _status;
+      };
+      
+      return {
+        
+        working: (text, title, details) => {
+          var _status = _show(text, title, details, true);
+          return (result, text, title, details, hide) => {
+            _set.text(_hide.icons(_status), text).removeClass("loader");
+            _set.details(_status, title, details);
+            _status.find(`.material-icons.result-${result ? "success" : "failure"}`).removeClass("d-none");
+            if (hide) _.delay(() => _hide.status(_status), _.isNumber(hide) ? hide : 15000);
+          };
+        },
+
+        show: (text, title, details) => {
+          _show(text, title, details);
+        },
+
+        hide: () => {
+          _hide.status();
+        }
+        
+      };
+      
+    })(),
     /* <!-- External Functions --> */
 
   };

@@ -40,11 +40,11 @@
       b_text=(either button.text "") b_tooltip=(either button.tooltip "") disabled=readonly }}{{/if~}}
     {{~#if scale}}{{> control_button b_class="btn-info flex-column justify-content-center align-items-center" b_tooltip=(either scale.tooltip "Open Scale") b_id=(concat id "_SCALE_LG") b_icon="dns" b_icon_type="light" b_icon_centered=true b_expand="scale" b_target=scale.name b_value=(either scale.title "Scale") b_details=scale.instructions b_field=scale.field b_action=scale.action disabled=readonly }}{{/if~}}
     {{#if prefix}}{{#if options}}{{> control_button b_id=(concat id "_TYPE_LG")
-    b_class="btn-dark complex-list-type dropdown-toggle btn-wrap mw-150p" b_icon_centered="true"
-    b_default=prefix b_text=prefix b_toggle="dropdown" disabled=readonly b_icon="" }}
+      b_class="btn-dark complex-list-type dropdown-toggle btn-wrap mw-150p" b_icon_centered="true"
+      b_default=prefix b_text=prefix b_toggle="dropdown" disabled=readonly b_icon="" wrap=true }}
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{id}}_TYPE_LG">
       {{#each options}}
-      <a class="dropdown-item{{#if readonly}} disabled{{/if}}" href="#" data-targets="{{../id}}_TYPE_LG"
+      <a class="dropdown-item{{#if readonly}} disabled{{/if}}" href="#" data-targets="{{../id}}_TYPE_LG||{{../id}}_TYPE_SM"
          data-value="{{val "" value this}}">{{val "" name this}}</a>
       {{/each}}
     </div>
@@ -71,10 +71,10 @@
     {{#if prefix}}{{#if options}}<div class="btn-group" role="group">
     {{> control_button b_small="true" b_id=(concat id "_TYPE_SM")
     	b_class="btn-dark complex-list-type dropdown-toggle btn-wrap" b_icon_centered="true"
-    	b_default=prefix b_text=prefix b_toggle="dropdown" disabled=readonly }}
+    	b_default=prefix b_text=prefix b_toggle="dropdown" disabled=readonly wrap=true }}
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{id}}_TYPE_SM">
       {{#each options}}
-      <a class="dropdown-item{{#if ../readonly}} disabled{{/if}}" href="#" data-targets="{{../id}}_TYPE_SM"
+      <a class="dropdown-item{{#if ../readonly}} disabled{{/if}}" href="#" data-targets="{{../id}}_TYPE_SM||{{../id}}_TYPE_LG"
          data-value="{{val "" value this}}">{{val "" name this}}</a>
       {{/each}}
     </div>

@@ -338,20 +338,6 @@ menus:
             desc: Import a saved Report from a file
             hash: import.report
             shortcut: "i"
-            divider: true
-
-          - name: Sign
-            desc: Sign this Report
-            hash: sign.report
-            disabled_until:
-              - signable-report
-            auth: google
-          - name: Repudiate
-            desc: Remove Signature from this Report
-            hash: sign.report.remove
-            disabled_until:
-              - signed-report
-            auth: google
           - name: Edit
             desc: Edit this Report
             hash: edit.report
@@ -359,14 +345,35 @@ menus:
               - editable-report
             auth: google
             visibility: debug
+          - name: Export
+            desc: Export this Report by downloading the data
+            hash: save.report.export
+            disabled_until:
+              - opened-report
+            auth: google
+            imports:
+              - filesaver
+            divider: true
+
           - name: Save
             desc: Save this Report
             hash: save.report
-            shortcut: "s"
+            shortcut: "shift+s"
             imports:
               - html2canvas
             disabled_until:
               - editable-report
+            auth: google
+          - name: Autosave
+            desc: Turn on Autosave for this Report
+            hash: save.report.auto
+            shortcut: "a"
+            imports:
+              - html2canvas
+            disabled_until:
+              - editable-report
+            toggle:
+              - autosave-report
             auth: google
           - name: Save As
             desc: Save this as a New (named) Report
@@ -386,6 +393,22 @@ menus:
             ext: true
             data:
               link: report
+            divider: true
+            
+          - name: Sign
+            desc: Sign this Report
+            hash: sign.report
+            disabled_until:
+              - signable-report
+            auth: google
+          - name: Repudiate
+            desc: Remove Signature from this Report
+            hash: sign.report.remove
+            disabled_until:
+              - signed-report
+            auth: google
+            divider: true
+            
           - name: Send
             desc: Send this Report for Signing
             hash: send.report
@@ -404,15 +427,6 @@ menus:
               - editable-report
             auth: google
             divider: true
-
-          - name: Export
-            desc: Export this Report by downloading the data
-            hash: save.report.export
-            disabled_until:
-              - opened-report
-            auth: google
-            imports:
-              - filesaver
 
           - name: Revoke
             desc: Revoke Report Completion

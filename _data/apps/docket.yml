@@ -246,6 +246,7 @@ keys:
       oauth: 100010371662-2msrdi93d6e6asc8o6h208tc7tlgc5kn.apps.googleusercontent.com
 menus:
   - name: Database
+    short_name: DB
     groups:
       all:
         commands:

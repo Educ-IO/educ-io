@@ -33,10 +33,11 @@ Load = (options, factory) => {
       },
       owner: file.ownedByMe ? null : file.owners && file.owners.length > 0 ? file.owners[0] : null,
       permissions: file.permissions ? _.reject(file.permissions, permission => permission.deleted || permission.role == "owner") : [],
+      updated: factory.Dates.parse(file.modifiedByMeTime || file.modifiedTime)
     }))
     .then(value =>
       factory.Google.files.is(options.functions.files.type.report)(file) ?
-        options.functions.process.report(value.content, value.actions, value.owner, value.permissions) :
+        options.functions.process.report(value.content, value.actions, value.owner, value.permissions, value.updated) :
         factory.Google.files.is(options.functions.files.type.form)(file) ?
           options.functions.process.form(value.content, value.actions) :
           factory.Google.files.is(options.functions.files.type.analysis)(file) ?

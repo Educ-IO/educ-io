@@ -20,10 +20,10 @@ Show = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Display Functions --> */
-  FN.report = (name, state, form, process, actions, owner, permissions) => {
+  FN.report = (name, state, form, process, actions, owner, permissions, updated) => {
     
     var _initial = form ?
-      options.state.application.forms.create(name, form, actions.editable, actions.signable, actions.completed, null, owner, permissions) :
+      options.state.application.forms.create(name, form, actions.editable, actions.signable, actions.completed, null, owner, permissions, updated) :
       options.state.application.forms.get(name, true, false),
       _return = _initial.form;
     options.state.session.template = _initial.template;

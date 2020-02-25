@@ -121,7 +121,7 @@ Process = (options, factory) => {
 
   };
 
-  FN.report = (data, actions, owner, permissions) => {
+  FN.report = (data, actions, owner, permissions, updated) => {
 
     /* <!-- Set Loaded Report Link in Nav Menu --> */
     if (options.state.session.file) $("nav a[data-link='report']").prop("href", `https://drive.google.com/file/d/${options.state.session.file.id}/view`);
@@ -133,7 +133,7 @@ Process = (options, factory) => {
         /* <!-- Re-wire up refreshed (e.g. List) events --> */
         options.state.application.fields.refresh(_return);
         return _return;
-      }, actions, owner, permissions);
+      }, actions, owner, permissions, updated);
     
     /* <!-- If the form is marked as completed, or not editable/signable then only show signatures --> */
     return options.state.session.file ? 

@@ -28,6 +28,10 @@
       </a>
     </div>{{/if}}
 		
+    {{~#if editable}}<div class="last-updated{{~#unless updated}} d-none{{/unless}}">
+      <h6 class="mb-{{~#if (any owner respondent)}}1{{else}}0{{/if}} text-muted small"><i class="material-icons md-1 align-self-center mr-1 text-background">update</i><strong>Last Updated</strong>: <span class="text-secondary o-75 text">{{#if updated}}{{updated}}{{/if}}</span></h6>
+    </div>{{/if~}}
+    
     {{~#if (any owner respondent)}}<div class="d-flex flex-column flex-xl-row justify-content-between">
       {{#if owner}}<h6 class="mb-0 text-muted small"><i class="material-icons md-1 align-self-center mr-1 text-background">dashboard</i><strong>Form</strong> owned by: <span class="text-primary">{{owner}}</span></h6>{{/if}}
       {{#if respondent}}<h6 class="mb-0 text-muted small"><i class="material-icons md-1 align-self-center mr-1 text-background">assignment</i><strong>Report</strong> owned by: <span class="text-primary">{{respondent}}</span></h6>{{/if}}

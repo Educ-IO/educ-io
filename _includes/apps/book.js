@@ -32,7 +32,7 @@ App = function() {
   FN.jump = () => {
 
     var _id = "ctrl_Jump";
-    ಠ_ಠ.container.find(`#${_id}`).remove();
+    _.each([`#${_id}`, ".dtp"], selector => $(selector).remove());
     var _input = $("<input />", {
       id: _id,
       type: "hidden",

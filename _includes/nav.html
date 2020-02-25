@@ -4,6 +4,18 @@
     <span class="navbar-toggler-icon"></span>
   </button>
 
+  {%- if page.app -%}<div class="navbar-status d-md-none o-50" data-toggle="tooltip" data-placement="bottom" data-trigger="hover" title="App Status Display for Background Tasks">
+    <button type="button" class="btn btn-outline-status rounded waves-effect loader-small loader-dark d-none" style="opacity: 0;">
+      <span class="loading float-left">
+        <span class="d-block spinner"></span>
+      </span>
+      <i class="material-icons md-1 ml-2 float-right result result-success font-weight-bold d-none">check</i>
+      <i class="material-icons md-1 ml-2 float-right result result-failure d-none">error</i>
+      <span class="text ml-1"></span>
+      <span class="sr-only">App Status Display for Background Tasks</span>
+    </button>
+  </div>{%- endif -%}
+  
   <a class="navbar-brand logo jump" href="/" data-toggle="tooltip" title="Return to Home Page and App List"><span class="sr-only css-sensitive">Return to Home Page and App List</span>{% include images/letter.svg %}</a>
 
   <div class="collapse navbar-collapse" id="main_Nav">
@@ -59,8 +71,20 @@
 
     </ul>
 
-    {% if page.app or page.login %}
+    {%- if page.app or page.login -%}
 
+    <div class="navbar-status mr-2 o-50" data-toggle="tooltip" data-placement="bottom" data-trigger="hover" title="App Status Display for Background Tasks">
+      <button type="button" class="btn btn-outline-status rounded waves-effect loader-small loader-dark d-none" style="opacity: 0;">
+        <span class="loading float-left">
+          <span class="d-block spinner"></span>
+        </span>
+        <i class="material-icons md-1 ml-2 float-right result result-success font-weight-bold d-none">check</i>
+        <i class="material-icons md-1 ml-2 float-right result result-failure d-none">error</i>
+        <span class="text ml-1"></span>
+        <span class="sr-only">App Status Display for Background Tasks</span>
+      </button>
+    </div>
+    
     <div id="auth_processing" class="form-inline mt-2 mt-md-0 text-muted font-weight-light waiting" style="display: none;">Checking</div>
 
     <form id="sign_out" class="form-inline mt-2 mt-md-0" style="display: none;">
@@ -77,7 +101,7 @@
         <span class="d-none d-lg-inline">Sign in with Google</span><span class="d-inline d-lg-none">Sign In</span></a>
 
     </form>
-    {% endif %}
+    {%- endif -%}
 
   </div>
 

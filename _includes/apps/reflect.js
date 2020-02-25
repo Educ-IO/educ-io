@@ -210,7 +210,7 @@ App = function() {
               team: false,
               full: true,
             }),
-            success: value => FN.load.file(value.result)
+            success: value => ಱ.forms.safe().then(() => FN.load.file(value.result))
               .then(() => FN.action.recent(value.result, true))
               .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e).negative())
               .then(ಠ_ಠ.Main.busy("Opening Report")),
@@ -234,8 +234,8 @@ App = function() {
             options: {
               full: true, 
             },
-            success: value => FN.load.file(value.result, 
-                                 value.command && _.isArray(value.command) && value.command.length > 1 ? value.command.slice(1) : null)
+            success: value => ಱ.forms.safe().then(() => FN.load.file(value.result, 
+                                 value.command && _.isArray(value.command) && value.command.length > 1 ? value.command.slice(1) : null))
               .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e).negative())
               .then(ಠ_ಠ.Main.busy("Loading")),
           },
@@ -446,6 +446,13 @@ App = function() {
                 matches: /REPORT/i,
                 state: FN.states.report.opened,
                 routes: {
+                  autosave: {
+                    state: FN.states.report.editable,
+                    matches: /AUTO/i,
+                    keys: ["a", "A"],
+                    fn: () => FN.save.autosave(ಠ_ಠ.Display.state().in(FN.states.report.autosave))
+                      .then(result => result ? ಠ_ಠ.Display.state().enter(FN.states.report.autosave) : ಠ_ಠ.Display.state().exit(FN.states.report.autosave))
+                  },
                   clone: {
                     matches: /CLONE/i,
                     fn: () => FN.save.report(true)

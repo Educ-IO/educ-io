@@ -1,4 +1,8 @@
 site :
+  0.1.9i :
+    name : Reflect 0.0.7m-beta
+    desc : Optional Report Autosaving
+    numeric : 0.1.9.9
   0.1.9h :
     name : Reflect 0.0.7n-beta and Book v0.0.8b-beta
     desc : New Features
@@ -1028,6 +1032,10 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.7m-beta :
+    name : Report Autosave
+    desc : Optional Autosaving of Reports
+    type : minor
   0.0.7n-beta :
     name : Report Questions
     desc : Allow Asking and Answering of Questions in Reports

@@ -2,6 +2,9 @@ h1, h2, h3, h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading, .navb
 	letter-spacing: $font-spacing-heading;
 	font-family: $font-heading, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	font-weight: $font-weight-heading;
+  &.popover-header {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+  }
 	em {
 		color: lighten($colour-highlight, 5%) !important;
 		font-style: normal;
@@ -15,6 +18,9 @@ h1, h2, h3, h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading, .navb
 
 h1, h2, h3, .navbar-brand, a.navbar-brand  {
 	color: $colour-highlight !important;
+  &.popover-header {
+    color: $colour-general-verylight !important;
+  }
 }
 
 h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading {

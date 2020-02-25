@@ -67,7 +67,7 @@ Forms = function(loaded) {
       value;
   };
 
-  var _create = (id, template, editable, signable, completed, preview, respondent, permissions) => {
+  var _create = (id, template, editable, signable, completed, preview, respondent, permissions, updated) => {
 
     if (id && template) {
 
@@ -132,6 +132,7 @@ Forms = function(loaded) {
         fields: groups.join("\n").trim(),
         owner: _file ? _owner(_file) : "",
         respondent: respondent ? _user(respondent) : "",
+        updated: updated ? updated.fromNow() : false,
         permissions: permissions && permissions.length > 0 ? permissions : "",
         editable: editable,
         signable: signable,
@@ -209,7 +210,7 @@ Forms = function(loaded) {
         return memo;
       }, {});
       
-      ಱ.loaded = ಠ_ಠ.Google.files.type(_types, "domain,user,allTeamDrives")                      
+      ಱ.loaded = ಠ_ಠ.Google.files.type(_types, "domain,user,allTeamDrives")
           .then(files => Promise.all(_.map(files, file => ಠ_ಠ.Google.files.download(file.id)
             .then(loaded => ಠ_ಠ.Google.reader().promiseAsText(loaded))
             .then(content => {
@@ -294,9 +295,9 @@ Forms = function(loaded) {
       } : null;
     },
 
-    create: (id, template, editable, signable, completed, preview, respondent, permissions) => ({
+    create: (id, template, editable, signable, completed, preview, respondent, permissions, updated) => ({
       template: template,
-      form: _create(id, template, editable, signable, completed, preview, respondent, permissions)
+      form: _create(id, template, editable, signable, completed, preview, respondent, permissions, updated)
     }),
 
     scale: name => _get(name, ರ‿ರ.cache.scales),

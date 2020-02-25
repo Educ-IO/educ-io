@@ -6,8 +6,9 @@ Save = (options, factory) => {
   /* <!-- REQUIRES: Global Scope: JQuery, Underscore | App Scope: Display --> */
 
   /* <!-- Internal Constants --> */
-  const DEFAULTS = {},
-        FN = {};
+  const DEFAULTS = {
+    autosave: 5000
+  }, FN = {};
   const INDEX = "index",
         PATH = "path",
         TRANSFORM = "transform",
@@ -21,7 +22,57 @@ Save = (options, factory) => {
   /* <!-- Internal Variables --> */
   /* <!-- Internal Variables --> */
   
+  /* <!-- Internal State Variable --> */
+  var ರ‿ರ = {
+    observer : null
+  };
   /* <!-- Internal Functions --> */
+  FN.background = _.debounce(() => {
+    var _busy = factory.Display.status.working("Saving");
+    return FN.report(false, null, true).then(result => {
+      _busy(!!result, result === true ? "Up to Date" : result ? "Saved" : "Save Failed", null, null, true);
+      if (result && result !== true) options.functions.process.signatures();
+    });
+  }, options.autosave);
+  
+  FN.changed = e => {
+    
+    if (_.isArray(e) && e.length > 0) {
+      /* <!-- Mutation Event Triggered --> */
+      e = _.reject(e, mutation => (mutation.addedNodes.length == 1 && mutation.addedNodes[0].nodeName == "DIV" && mutation.addedNodes[0].classList.value.indexOf("waves-ripple") === 0) ||
+               (mutation.removedNodes.length == 1 && mutation.removedNodes[0].nodeName == "DIV" && mutation.removedNodes[0].classList.value.indexOf("waves-ripple") === 0));
+      if (e.length > 0 && options.state.session.file) FN.background();
+      
+    } else {
+      /* <!-- Change Event Triggered --> */
+      FN.background();
+    }
+    
+  };
+  
+  FN.autosave = enabled => {
+    
+    enabled = !enabled;
+    
+    enabled ? 
+      options.state.session.form.find("[data-holder-field], [data-output-name]").on("change.autosave", FN.changed) : 
+      options.state.session.form.find("[data-holder-field], [data-output-name]").off("change.autosave");
+
+    if (window && window.MutationObserver) {
+      if (!ರ‿ರ.observer) ರ‿ರ.observer = new MutationObserver(FN.changed);
+      enabled ? 
+        ರ‿ರ.observer.observe(options.state.session.form.find("form")[0], {
+                childList : true,
+                subtree : true,
+                attributes : false,
+                characterData : false
+              }) : ರ‿ರ.observer.disconnect();
+    }
+
+    return Promise.resolve(enabled);
+    
+  };
+  
   FN.analysis = () => Promise.resolve(JSON.stringify(_.extend(options.state.session.definition, {
       expected: options.state.session.analysis.expected(),
     }), options.functions.replacers.saving))
@@ -48,8 +99,8 @@ Save = (options, factory) => {
       })
       .then(options.state.application.notify.actions.save("NOTIFY_SAVE_FORM_SUCCESS")));
 
-  FN.report = (force, dehydrated) => options.functions.action.get(dehydrated, true)
-    .then(saving => (!options.state.session.signatures || !options.functions.dirty(saving.data.report) ?
+  FN.report = (force, dehydrated, quiet) => options.functions.action.get(dehydrated, true)
+    .then(saving => (!options.state.session.signatures || !options.functions.dirty(saving.data.report) || quiet ?
         Promise.resolve(true) : factory.Display.confirm({
           id: "confirm_Save",
           target: factory.container,
@@ -59,6 +110,7 @@ Save = (options, factory) => {
         }))
       .then(result => {
         return result !== true ? false :
+          !options.functions.dirty(saving.data.report) && quiet ? true : 
           options.functions.action.screenshot($("form[role='form'][data-name]")[0])
           .then(result => {
             return (force ? factory.Display.text({
@@ -108,10 +160,13 @@ Save = (options, factory) => {
                 });
             });
           })
-          .then(uploaded => factory.Flags.log("Saved:", uploaded).reflect(uploaded))
-          .catch(e => factory.Flags.error("Save Error", e).negative())
-          .then(factory.Main.busy("Saving Report"))
-          .then(options.state.application.notify.actions.save("NOTIFY_SAVE_REPORT_SUCCESS"));
+          .then(uploaded => uploaded && uploaded !== true ? 
+                (options.state.session.form.find(".last-updated").removeClass("d-none").find(".text").text(factory.Dates.parse(uploaded.modifiedByMeTime).fromNow()), 
+                  factory.Flags.log("Saved:", uploaded).reflect(uploaded)) : 
+                uploaded)
+          .catch(e => quiet ? false : factory.Flags.error("Save Error", e).negative())
+          .then(quiet ? value => value : factory.Main.busy("Saving Report"))
+          .then(quiet ? value => value : options.state.application.notify.actions.save("NOTIFY_SAVE_REPORT_SUCCESS"));
       }).catch(() => factory.Flags.log("Save Cancelled").negative()));
   /* <!-- Internal Functions --> */
   
