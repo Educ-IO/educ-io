@@ -52,7 +52,7 @@ App = function() {
       if (window.underscoreDeepExtend && window._) _.mixin({
         "deepExtend": underscoreDeepExtend(_)
       });
-
+      
       ಱ.strings = ಠ_ಠ.Strings();
 
       ಱ.notify = ಠ_ಠ.Notify({
@@ -95,24 +95,13 @@ App = function() {
       ಱ.trackers = ಠ_ಠ.Trackers({
         forms: ಱ.forms,
         type: FN.files.type.tracker,
+        title: FN.files.title,
         replacer: FN.replacers.regex,
         choose: FN.prompt.choose,
-        scale: () => FN.prompt.choose(
-            ಱ.forms.selection("scales", "Scale"),
-            "Create a Tracker ...", "TRACKER_SCALE", false)
-          .then(scale => scale ? ಱ.forms.scale(scale.value) : false)
-          .then(scale => scale ? ಠ_ಠ.Display.text({
-            id: "file_name",
-            title: "File Name",
-            simple: true
-          }).then(title => title ? {
-            name: title,
-            scale: scale,
-            file: FN.files.title(title, FN.files.type.tracker, true)
-          } : false) : false),
       }, ಠ_ಠ);
-
+      
       ಱ.evidence = ಠ_ಠ.Evidence({
+        fields: ಱ.fields,
         forms: ಱ.forms,
         trackers: ಱ.trackers
       }, ಠ_ಠ);
@@ -213,7 +202,7 @@ App = function() {
             success: value => ಱ.forms.safe().then(() => FN.load.file(value.result))
               .then(() => FN.action.recent(value.result, true))
               .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e).negative())
-              .then(ಠ_ಠ.Main.busy("Opening Report")),
+              .then(ಠ_ಠ.Main.busy("Opening File")),
           },
 
           import: {
@@ -618,8 +607,8 @@ App = function() {
               report: {
                 matches: /CREATE/i,
                 length: 0,
-                fn: () => (ರ‿ರ.tracker ? Promise.resolve(ರ‿ರ.tracker) : ಱ.trackers.choose())
-                  .then(tracker => tracker ? ಱ.evidence.add(tracker) : false)
+                fn: () => ಱ.forms.safe().then(() => (ರ‿ರ.tracker ? Promise.resolve(ರ‿ರ.tracker) : ಱ.trackers.choose())
+                  .then(tracker => tracker ? ಱ.evidence.add(tracker) : false))
               }
             }
           },

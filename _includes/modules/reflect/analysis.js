@@ -403,12 +403,9 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode, helper) => {
   };
   /* <!-- Append Functions --> */
 
-
-
   /* <!-- Initial Run --> */
   ರ‿ರ.table = FN.display.analysis(reports);
   /* <!-- Initial Run --> */
-
 
   /* <!-- External Visibility --> */
   return {

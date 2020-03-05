@@ -328,12 +328,16 @@ Fields = (options, factory) => {
       var _this = $(e.currentTarget),
         _targets = _this.data("targets"),
         _value = _this.data("value");
+      
       if (_targets && _value) {
-        e.preventDefault();
-        _targets = _targets.indexOf("||") > 0 ? _targets.split("||") : [_targets];
-        var _selector = _.reduce(_targets, (memo, id) => `${memo ? `${memo}, `: ""}#${id}, #${id}:first-child`, ""),
-            _elements = form.find(_selector);
-        _.each(_elements, element => (element = $(element)).html(element.html().replace(element.text(), _value)));
+        var _process = _.reduce(["g-picker", "g-file", "web", "paper", "offline"], (memo, css_class) => !memo || _this.hasClass(css_class) ? false : memo, true);
+        if (_process) {
+          e.preventDefault();
+          _targets = _targets.indexOf("||") > 0 ? _targets.split("||") : [_targets];
+          var _selector = _.reduce(_targets, (memo, id) => `${memo ? `${memo}, `: ""}#${id}, #${id}:first-child`, ""),
+              _elements = form.find(_selector);
+          _.each(_elements, element => (element = $(element)).html(element.html().replace(element.text(), _value))); 
+        }
       }
     });
 
@@ -429,7 +433,7 @@ Fields = (options, factory) => {
     var _handlers = {
 
       default: e => $(_.tap(e, e => e.preventDefault()).currentTarget).parents(options.list_holder),
-
+      
       add: (value, list, check) => {
 
         if (check !== false) {
@@ -514,7 +518,7 @@ Fields = (options, factory) => {
           });
         }).catch(e => e ? factory.Flags.error("Displaying File Upload Prompt", e) :
           factory.Flags.log("File Upload Cancelled"));
-        _upload(_handlers.default(e));
+        _upload(_handlers.default(e)).then();
       },
 
       web: e => {

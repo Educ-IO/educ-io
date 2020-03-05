@@ -154,10 +154,24 @@ Process = (options, factory) => {
     
   };
 
-  FN.tracker = (data, editable) => ({
+  FN.tracker = (data, editable) => Promise.resolve({
     data: data,
     editable: editable
-  }); /* <!-- TODO: Process Tracker Loading --> */
+  }).then(value => {
+    
+    factory.Flags.log("LOADED TRACKER", value);
+    
+    editable ?
+      options.state.session.tracking = factory.Tracking(data, options, factory) :
+      options.state.session.portfolio = factory.Portfolio(data, options, factory);
+    
+    factory.Display.state()
+            .change(options.functions.states.all, 
+                    [options.functions.states.tracker.in, options.functions.states.tracker.opened]
+                      .concat([editable ? options.functions.states.tracking.in : options.functions.states.evidence.in]))
+            .protect("a.jump").on("JUMP");
+    
+  });
 
   FN.analysis = (forms, mine, full, dates, expected) => Promise.resolve(_.map(forms, form => ({
     id: form.id,

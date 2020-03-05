@@ -11,7 +11,7 @@ __Ω__UK_Teachers_Standards = {
       name: "Expectations",
       details: "Set high expectations which inspire, motivate and challenge pupils",
       colour: "#dfcce6",
-      critera: [
+      criteria: [
         {
           name: "Developing / Met",
           value: 1,
@@ -30,6 +30,7 @@ __Ω__UK_Teachers_Standards = {
         {
           number: 1,
           details: "Establish a safe and stimulating environment for pupils, rooted in mutual respect.",
+          criteria: true,
         }, {
           number: 2,
           details: "Set goals that stretch and challenge pupils of all backgrounds, abilities and dispositions.",
@@ -49,7 +50,7 @@ __Ω__UK_Teachers_Standards = {
       details: "Promote good progress and outcomes by pupils",
       colour: "#d0e1dc",
       evidence: false,
-      critera: [{
+      criteria: [{
         name: "Developing / Met",
         value: 1,
         __details__: "__Accountable__ for the __attainment__, __progress__ and __outcomes__ of pupils and take some responsibility for this.  Short- and medium-term planning and teaching demonstrate some understanding of, and provision for, pupil progression taking into account prior achievement. Support pupils in reflecting on their learning and identifying their progress and emerging learning needs. When planning lessons, devise __suitable opportunities__ for learners to evaluate and improve their performance. Able to explain how effective teaching strategies are informed by an understanding of how pupils learn and offer a rationale for choices made in the context of practice.  Plan teaching and learning activities that encourage independent and autonomous learning.  As a consequence all groups of pupils make at least __satisfactory progress__."
@@ -94,7 +95,7 @@ __Ω__UK_Teachers_Standards = {
       details: "Demonstrate good subject and curriculum knowledge",
       colour: "#d3d9de",
       evidence: false,
-      critera: [{
+      criteria: [{
         name: "Developing / Met",
         value: 1,
         __details__: "__Sufficiently secure knowledge__ and understanding of the relevant subject/curriculum areas to teach effectively in the age phase for which they are training to teach. Understand how learning progresses within and across the subject/curriculum age phases they are training to teach, in relation to the development of key concepts and of learners’ common misconceptions. Able to __respond appropriately to subject-specific questions__ learners ask and they use subject-specific language accurately and consistently in order to help learners develop knowledge, understanding and skills in the subject. Recognise the need to extend and update their subject and pedagogical knowledge as a key element of continuing professional development and have shown ability and readiness to do so.  Demonstrate an understanding of the need to promote high standards of communication, reading and writing for all learners and begin to build this into lessons."
@@ -139,7 +140,7 @@ __Ω__UK_Teachers_Standards = {
       details: "Plan and teach well structured lessons",
       colour: "#e8f2d0",
       evidence: false,
-      critera: [{
+      criteria: [{
         name: "Developing / Met",
         value: 1,
         __details__: "Employ a __range of teaching strategies__ and resources. Plan individual lessons that are appropriately structured to support pupils in developing their knowledge, skills, understanding, interest and positive attitudes.  Maintain the pace of the learning during and teaching, able to respond flexibly to what is happening in the classroom and have confidence to adapt teaching in order to respond to the needs of the learners.  Create an environment in which the learners are __usually engaged__. Understand how homework or other out-of-class work can sustain learners’ progress and __consolidate learning__, and can design and set __appropriate tasks__. Review and reflect on their own planning and teaching to prepare future activities and tasks that build on and sustain progression in pupils’ learning. Work collaboratively with colleagues, where appropriate, to adapt and/or develop the school’s medium-term plans, schemes of work and curriculum frameworks."
@@ -184,7 +185,7 @@ __Ω__UK_Teachers_Standards = {
       details: "Adapt teaching to respond to the strengths and needs of all pupils",
       colour: "#fcd0de",
       evidence: false,
-      critera: [{
+      criteria: [{
         name: "Developing / Met",
         value: 1,
         __details__: "Know the pupils well enough to __recognise the different needs__ and strengths of individuals and groups and begin to __adapt teaching__ to address those needs and strengths so that learners are supported towards achieving their potential. Aware of a range of factors that are __potential barriers to achievement__ and understand how colleagues use a range of strategies to reduce these barriers.  Begin to deploy these strategies themselves, working alongside other colleagues and support staff as appropriate. Show __awareness__ of how children and young people develop and take account of this in teaching. Some understanding of the challenges and opportunities of teaching in a diverse society. __Developing understanding__ of the needs of all pupils and are able to articulate distinctive teaching approaches and strategies needed to engage and support pupils with particular needs, including EAL and SEND. When the opportunity arises use these successfully and evaluate the impact of the adaptations employed, on the progress of individual learners."
@@ -225,7 +226,7 @@ __Ω__UK_Teachers_Standards = {
       details: "Make accurate and productive use of assessment",
       colour: "#feead4",
       evidence: false,
-      critera: [{
+      criteria: [{
         name: "Developing / Met",
         value: 1,
         __details__: "__Secure understanding__ of the __statutory assessment requirements__ for the subject/curriculum. Able to make __broadly accurate assessments__ against national benchmarks. Planning is characterised by the use of a range of __formative__ and __summative__ assessment strategies, designed to support pupils in making progress. Deploy these strategies effectively in lessons, both to evaluate the impact of teaching on the progress of learners and as a basis for modifying teaching and classroom practice when necessary.  Understand how school- and pupil-level summative data are used to set targets for groups and individuals, and use that knowledge to __monitor progress__. Monitor pupil progress and maintain accurate records, setting new targets for individuals and groups. __Mark__ pupils’ work __constructively__ and provide __appropriate oral feedback__ to pupils to help them to make progress."
@@ -266,7 +267,7 @@ __Ω__UK_Teachers_Standards = {
       details: "Manage behaviour effectively to ensure a good and safe learning environment",
       colour: "#d4fef2",
       evidence: false,
-      critera: [{
+      criteria: [{
         name: "Developing / Met",
         value: 1,
         __details__: "Understand the school’s framework for behaviour and apply rules and routines __consistently__ and __fairly__. Set __high expectations__ and use a range of strategies to promote positive behaviour. Able to apply these appropriately, in the context of the school’s policy of using sanctions and rewards, __including praise__, in order to create an environment supportive of learning. Understand when to seek __additional support__ in addressing the needs of pupils when significantly challenging behaviour is demonstrated. Recognise that planning appropriate lessons that challenge learners, teaching using a variety of strategies that address pupils’ needs and employing appropriate assessment strategies will all contribute to successful behaviour management. Show understanding of how barriers to learning can impact on pupil behaviour and have begun to __apply strategies to address these__, working alongside colleagues and support staff as appropriate. Understand that behaviour management is __context-dependent__ and are able to articulate which factors may contribute to more challenging behaviour being exhibited within their classes."
@@ -307,7 +308,7 @@ __Ω__UK_Teachers_Standards = {
       details: "Fulfil wider professional responsibilities",
       colour: "#c1dae5",
       evidence: false,
-      critera: [{
+      criteria: [{
         name: "Developing / Met",
         value: 1,
         __details__: "Understand and support the ethos of the school and show an __inclination to contribute__ to the wider life of the school in appropriate ways.  Build effective professional relationships with various colleagues and have the skills required to work collaboratively. __Communicate__ with and direct any support staff deployed in their lessons, to assist in supporting the progress and achievement of individuals and of groups of pupils. Understand when to ask for information and advice from specialist staff about individual pupils with specific needs.  __Seek out__ and be __responsive__ to __advice__ from colleagues. In evaluating personal practice, able to identify subsequent or ongoing personal professional development targets and identify opportunities to address and meet these targets.  Recognise the importance of __communicating with parents__ and carers in supporting pupils’ achievement and monitoring pupils’ well-being. Communicate effectively at set points in the school year, including at parents’ evenings and through __written reports__. Understand the need to communicate at other points in response to individual pupils’ emergent needs."
@@ -352,7 +353,7 @@ __Ω__UK_Teachers_Standards = {
       details: "Personal and professional conduct",
       colour: "#dfdfdf",
       evidence: false,
-      critera: [{
+      criteria: [{
         name: "Met",
         value: 1,
         __details__: "__Commitment__ to the teaching profession, able to __develop appropriate professional relationships__ with colleagues and pupils. Have regard to the need to __safeguard pupils’ well-being__, in accordance with __statutory provisions__. Understand that by law that schools are required to teach a broad and balanced curriculum and are beginning to develop learners’ wider understanding of social and cultural __diversity__. Willing to assume an appropriate degree of responsibility for the implementation of __workplace policies__ in the different settings. __Adhere__ to school policies and practices, including those for __attendance__ and __punctuality__. Broad understanding of their __statutory professional responsibilities__, including the requirement to promote equal opportunities and to provide reasonable adjustments for pupils with disabilities, as provided for in current equality legislation. Aware of the __professional duties__ of teachers as set out in the statutory School Teachers’ Pay and Conditions document."

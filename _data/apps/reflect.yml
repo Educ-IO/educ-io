@@ -121,7 +121,9 @@ modules:
   - reflect/forms
   - reflect/signatures
   - reflect/trackers
+  - reflect/tracking
   - reflect/evidence
+  - reflect/portfolio
   - reflect/show
   - reflect/edit
   - reflect/create
@@ -191,6 +193,7 @@ templates:
   - reflect/dialogs/dates
   - reflect/dialogs/scale
   - reflect/dialogs/question
+  - reflect/dialogs/evidence
   - reflect/forms/form
   - reflect/forms/heading
   - reflect/forms/group
@@ -268,10 +271,12 @@ docs:
   - reflect/EMAIL_ACTION_OPEN_REPORT
   - reflect/TRACKER_CHOOSE
   - reflect/TRACKER_SCALE
+  - reflect/TRACKER_NAME
   - reflect/SEND_QUESTION
   - reflect/SEND_QUESTION_EMAIL
   - reflect/SEND_REPLY
   - reflect/SEND_REPLY_EMAIL
+  - reflect/LOG_EVIDENCE
 scopes:
   google:
     - scope: email
@@ -625,6 +630,30 @@ menus:
           - name: Create Scale
             hash: create.scale
             auth: google
+  - name: Tracking
+    disabled_until:
+      - tracking
+    groups:
+      all:
+        commands:
+          - name: Something
+            desc: View Tracking Something
+            hash: tracking.something
+            toggle:
+              - tracking-something
+            divider: true
+  - name: Evidence
+    disabled_until:
+      - evidence
+    groups:
+      all:
+        commands:
+          - name: Something
+            desc: View Evidence Something
+            hash: evidence.something
+            toggle:
+              - evidence-something
+            divider: true            
   - name: About
     short_name: Help
     groups:

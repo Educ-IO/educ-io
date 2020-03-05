@@ -139,7 +139,9 @@ Prompt = (options, factory) => {
     instructions: [factory.Display.doc.get({
       name: "CREATE",
       content: folder ? folder : "Google Drive"
-    })].concat(_.map(actions, action => factory.Display.doc.get(action.doc))).join("\n"),
+    })].concat(_.map(actions, action => action.docs ? 
+                     _.map(action.docs, doc => factory.Display.doc.get(doc)).join("\n") : 
+                     factory.Display.doc.get(action.doc))).join("\n"),
     actions: actions,
     large: true
   }).then(result => {
@@ -185,8 +187,8 @@ Prompt = (options, factory) => {
     name: "Tracker",
     desc: "Create Tracker",
     command: "tracker",
-    doc: "CREATE_TRACKER",
-    options: options.state.application.forms.selection("scales", "Scale")
+    docs: ["CREATE_TRACKER", "TRACKER_SCALE"],
+    options: options.state.application.forms.selection("scales", "Scale"),
   });
   /* <!-- Internal Functions --> */
   

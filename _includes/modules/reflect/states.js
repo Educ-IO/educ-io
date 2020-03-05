@@ -13,7 +13,10 @@ States = () => {
     STATE_REPORT_SIGNED = "signed-report",
     STATE_REPORT_EDITABLE = "editable-report",
     STATE_REPORT_AUTOSAVE = "autosave-report",
+    STATE_TRACKER = "tracker",
     STATE_TRACKER_OPENED = "opened-tracker",
+    STATE_TRACKING = "tracking",
+    STATE_EVIDENCE = "evidence",
     STATE_SCALE_OPENED = "opened-scale",
     STATE_REPORT_COMPLETE = "report-complete",
     STATE_REPORT_REVOCABLE = "report-revocable",
@@ -26,12 +29,13 @@ States = () => {
     STATE_ANALYSIS_ANY = "analysis-stage-any",
     STATE_ANALYSIS_COMPLETE = "analysis-stage-complete",
     STATE_ANALYSIS_VERIFY = "analysis-verify",
-    STATES = [STATE_FILE_LOADED, STATE_FORM_OPENED, STATE_TRACKER_OPENED,
+    STATES = [STATE_FILE_LOADED, STATE_FORM_OPENED, STATE_TRACKER, STATE_TRACKER_OPENED,
       STATE_REPORT_COMPLETE, STATE_REPORT_OPENED, STATE_REPORT_SIGNABLE, STATE_REPORT_EDITABLE,
       STATE_REPORT_REVOCABLE, STATE_REPORT_SIGNED, STATE_REPORT_AUTOSAVE,
       STATE_SCALE_OPENED, STATE_ANALYSIS, STATE_ANALYSIS_SUMMARY, STATE_ANALYSIS_DETAIL,
       STATE_ANALYSIS_ALL, STATE_ANALYSIS_MINE, STATE_ANALYSIS_SHARED,
-      STATE_ANALYSIS_ANY, STATE_ANALYSIS_COMPLETE, STATE_ANALYSIS_VERIFY
+      STATE_ANALYSIS_ANY, STATE_ANALYSIS_COMPLETE, STATE_ANALYSIS_VERIFY,
+      STATE_TRACKING, STATE_EVIDENCE,
     ];
   /* <!-- Internal Constants --> */
 
@@ -91,8 +95,17 @@ States = () => {
     },  
     
     tracker : {
+      in : STATE_TRACKER,
       opened : STATE_TRACKER_OPENED,
     },
+    
+    tracking : {
+      in : STATE_TRACKING,
+    },
+    
+    evidence : {
+      in : STATE_EVIDENCE,
+    }
     
   };
   /* <!-- External Visibility --> */

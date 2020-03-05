@@ -94,7 +94,7 @@ Create = (options, factory) => {
       factory.Display.state().enter(options.functions.states.scale.opened).protect("a.jump").on("JUMP") : null)
     .catch(e => e ? factory.Flags.error("Displaying Scale Create Prompt", e).negative() : false);
 
-  FN.tracker = name => name ? options.state.application.trackers.create(name) : false;
+  FN.tracker = (scale, details) => scale ? options.state.application.trackers.create(scale, details) : false;
   /* <!-- Internal Functions --> */
   
   /* <!-- Initial Calls --> */

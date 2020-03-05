@@ -149,31 +149,53 @@ __Σ__UK_Teachers_Reflective =  {
       }
     },
     previous : {
-      template: "group",
-      name: "Previous Reports",
-      __help__: "If you have __created previous reports__, you can choose to review the targets contained within them, marking those that you feel have been completed (together with the evidence supporting this).",
+      template : "group",
+      name : "Looking Back",
+      __help__ : "Please review your previous targets, either by filling them in manually - or loading them from a previous report.\n\nOnce you have added a target, you can respond with details of how it was met. If you would like to submit evidence to support your responses (e.g. Lesson Observations etc.) then use the evidence drop-down to select/upload your evidence.",
       fields : {
         past_targets : {
-          template: "field_complex",
-          title: "Targets from Previous Reports",
-          field: "Previous Targets",
-          prefix: "Evidence",
-          icon: "grade",
-          required: false,
-          type : "Evaluation",
-          list_template : "field_items",
-          list_field: "Evaluations",
-          items_details : "Further details about how this was met",
-          options: [
-            {name : "From Google Drive", value: "drive", class: "g-picker"},
-            {name : "From File", value: "file", class: "g-file"},
-            {name : "From Web", value: "web", class: "web"},
-            {name : "Offline / Paper", value: "paper", class: "paper", divider: true},
+          template : "field_responses",
+          title : "Review Previous Targets",
+          field : "Previous Targets",
+          type : "Response",
+          icon : "grade",
+          list_field : "Responses",
+          list_extend : {
+            prefix : "Evidence",
+            options : [
+              {name : "From Google Drive", value : "drive", class : "g-picker"},
+              {name : "From File", value : "file", class : "g-file"},
+              {name : "From Web", value : "web", class : "web"},
+              {name : "Offline / Paper", value : "paper", class : "paper", divider : true}
+            ]
+          },
+          rows : 1,
+          required : true,
+          min : 0,
+          max : 5,
+          add_template : "response_item",
+          add_prefix : "Evidence",
+          add_options : [
+            {name : "From Google Drive", value : "drive", class : "g-picker"},
+            {name : "From File", value : "file", class : "g-file"},
+            {name : "From Web", value : "web", class : "web"},
+            {name : "Offline / Paper", value : "paper", class : "paper", divider : true}
           ],
+          button : {
+            icon : "folder_open",
+            action : "load",
+            field : "scale_targets",
+            details : "",
+            item : "",
+            tooltip : "Load from Previous Report"
+          },
+          __valid__ : "Everything looks __good__!",
+          __invalid__ : "Please enter between __0__ and __5 responses__ before completion.",
+          __help__ : "",
           __meta: {
             references: "future_targets",
           }
-        },
+        }
       }
     },
     forward : {

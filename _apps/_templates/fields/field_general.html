@@ -27,7 +27,7 @@
      {{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
   {{#unless naked}}<label class="{{which wide 'col-12' 'col-md-3'}} col-form-label"
          for="{{id}}">{{{val "" title field}}}</label>{{/unless}}
-  <div class="{{which wide 'col-12' 'col-md-9'}}">
+  <div class="{{which wide 'col-12' 'col-md-9'}}{{#if holder_class}} {{holder_class}}{{/if}}">
 		{{> @partial-block }}
   	{{#if help}}
     <div id="{{id}}_HELP" 

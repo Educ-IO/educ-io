@@ -18,6 +18,45 @@ Scales = (options, factory) => {
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
+  var _reducer = (memo, value, key) => {
+                    if (key !== "Value" && value && value.Value === true) {
+                      memo.push(_.keys(value).length == 1 ? key :
+                        _.map(_.reduce(value, _reducer, []), (value, i) => i === 0 ? `${key} - ${value}` : value).join("; "));
+                    }
+                    return memo;
+                  };
+  
+  var _display = (element, field) => values => {
+    element.data("selected", _.isEmpty(values) ? null : values);
+    element.children("span.d-inline").remove();
+    if (_.isEmpty(values)) {
+      element.children("i.material-icons").removeClass("d-none");
+    } else {
+      element.find("i.material-icons").addClass("d-none");
+      _.each(values[field].Values ? _.reduce(values[field].Values, _reducer, []): [], 
+              detail => element.append(factory.Display.template.get({
+                template: "tag",
+                detail: detail
+              })));
+    }
+  };
+  /* <!-- Internal Functions --> */
+  
+  /* <!-- Public Functions --> */
+  FN.modal = (scale, title, field, instructions, action, selected, success) => factory.Display.modal("scale", {
+            id: "dialog_Scale",
+            markers: options.state.application.forms.process(scale.scale),
+            title: title,
+            field: field,
+            instructions: instructions,
+            action: action,
+            wide: true
+          }, dialog => {
+            if (!selected) return;
+            var _form = options.state.application.fields.on(dialog.find("form"));
+            factory.Data({}, factory).rehydrate(_form, selected || {});
+          }).then(values => values && success ? success(values) : false); /* <!-- Action Button Clicked (e.g. not dismissed) --> */
+  
   FN.hookup = form => {
       
     form.find("button[data-expand='scale'],a[data-expand='scale']")
@@ -29,50 +68,15 @@ Scales = (options, factory) => {
             _action = _this.data("action"),
             _title = _this.data("value"),
             _instructions = _this.data("details"),
+            _selected = _this.data("selected"),
             _scale = options.state.application.forms.scale(_name);
 
-        if (_scale) return factory.Display.modal("scale", {
-            id: "dialog_Scale",
-            markers: options.state.application.forms.process(_scale.scale),
-            title: _title,
-            field: _field,
-            instructions: _instructions,
-            action: _action,
-            wide: true
-          }, dialog => {
-            var _form = options.state.application.fields.on(dialog.find("form")),
-                _selected = _this.data("selected");
-            factory.Data({}, factory).rehydrate(_form, _selected || {});
-          }).then(values => {
-
-            /* <!-- Action Button Clicked (e.g. not dismissed) --> */
-            if (values) {
-              _this.data("selected", _.isEmpty(values) ? null : values);
-              _this.children("span.d-inline").remove();
-              if (_.isEmpty(values)) {
-                _this.children("i.material-icons").removeClass("d-none");
-              } else {
-                _this.find("i.material-icons").addClass("d-none");
-                var _reducer = (memo, value, key) => {
-                    if (key !== "Value" && value && value.Value === true) {
-                      memo.push(_.keys(value).length == 1 ? key :
-                        _.map(_.reduce(value, _reducer, []), (value, i) => i === 0 ? `${key} - ${value}` : value).join("; "));
-                    }
-                    return memo;
-                  };
-                var _details = values.Standards.Values ? _.reduce(values.Standards.Values, _reducer, []): [];
-                _.each(_details, detail => _this.append(factory.Display.template.get({
-                    template: "tag",
-                    detail: detail
-                  })));
-              }
-            }
-          });
+        return _scale ? FN.modal(_scale, _title, _field, _instructions, _action, _selected, _display(_this)) : false;
 
       });
       
   };
-  /* <!-- Internal Functions --> */
+  /* <!-- Public Functions --> */
   
   /* <!-- Initial Calls --> */
 

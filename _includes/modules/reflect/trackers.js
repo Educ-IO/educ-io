@@ -30,13 +30,38 @@ Trackers = (options, factory) => {
     
   };
   
+  FN.prompt = {
+  
+    name : scale => factory.Display.text({
+              id: "file_name",
+              title: "File Name",
+              message: factory.Display.doc.get("TRACKER_NAME"),
+              state: {
+                value: `${scale.title} | ${factory.Dates.now().format("YYYY-MM-DD")}`
+              },
+              simple: true
+            }),
+    
+  };
+  
   FN.create = {
     
     tracker : (scale, name, file) => {
     
-      var _tracker = {
+      _.omit(scale, "criteria");
+      
+      var _omit = values => _.map(values, value => {
+        var _value = _.omit(value, "criteria");
+        if (_value.children && _value.children.length > 0) _value.children = _omit(_value.children);
+        return _value;
+      }), _tracker = {
         name: name,
-        scale: scale,
+        scale: {
+            name: scale.name,
+            title: scale.title,
+            type: scale.type,
+            scale: _omit(scale.scale)
+        },
         tracker: _new(),
       }, _file;
 
@@ -55,7 +80,12 @@ Trackers = (options, factory) => {
 
     },
     
-    scale : () => options.scale().then(value => value ? FN.create.tracker(value.scale, value.name, value.file) : false),
+    named : scale => scale ? FN.prompt.name(scale).then(name => name ? FN.create.tracker(scale, name, options.title(name, options.type, true)) : false) : false,
+    
+    scale : () => options.forms.safe()
+          .then(forms => options.choose(forms.selection("scales", "Scale"), "Create a Tracker ...", "TRACKER_SCALE", false)
+            .then(scale => scale ? forms.scale(scale.value) : false)
+            .then(FN.create.named)),
       
   },
   
@@ -95,6 +125,10 @@ Trackers = (options, factory) => {
     
     choose: () => FN.get.all().then(files => files && files.length ? FN.choose.one(files) : FN.create.scale()),
   
+    create: scale => options.forms.safe()
+          .then(forms => forms.scale(scale))
+          .then(FN.create.named),
+    
   };
   /* <!-- External Visibility --> */
 

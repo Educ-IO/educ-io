@@ -151,6 +151,8 @@ globals:
   Access: true
   Log: true
   Populate: true
+  Tracking: true
+  Portfolio: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

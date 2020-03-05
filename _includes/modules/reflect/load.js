@@ -18,13 +18,14 @@ Load = (options, factory) => {
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
-  FN.file = (file, locations) => factory.Google.files.download((options.state.session.file = file).id)
-    .then(loaded => factory.Google.reader().promiseAsText(loaded))
-    .then(content => ({
+  FN.process = (file, content) => ({
       content: file.mimeType === options.functions.files.type.report ?
         _.tap(JSON.parse(content),
           data => options.state.session.hash = new Hashes.MD5().hex(options.state.application.strings.stringify(data.report,
-            options.functions.replacers.signing))) : file.mimeType === options.functions.files.type.analysis ? JSON.parse(content) : content,
+            options.functions.replacers.signing))) : 
+        file.mimeType === options.functions.files.type.analysis ? JSON.parse(content) : 
+        file.mimeType === options.functions.files.type.tracker ? JSON.parse(content) : 
+        content,
       actions: {
         editable: (file.capabilities && file.capabilities.canEdit),
         signable: file.capabilities && file.capabilities.canComment,
@@ -34,18 +35,34 @@ Load = (options, factory) => {
       owner: file.ownedByMe ? null : file.owners && file.owners.length > 0 ? file.owners[0] : null,
       permissions: file.permissions ? _.reject(file.permissions, permission => permission.deleted || permission.role == "owner") : [],
       updated: factory.Dates.parse(file.modifiedByMeTime || file.modifiedTime)
-    }))
-    .then(value =>
-      factory.Google.files.is(options.functions.files.type.report)(file) ?
-        options.functions.process.report(value.content, value.actions, value.owner, value.permissions, value.updated) :
-        factory.Google.files.is(options.functions.files.type.form)(file) ?
-          options.functions.process.form(value.content, value.actions) :
-          factory.Google.files.is(options.functions.files.type.analysis)(file) ?
-            options.functions.process.analysis(value.content.forms, value.content.mine,
-            value.content.full, value.content.dates ? _.tap(value.content.dates, options.functions.helper.span) : value.content.dates, value.content.expected)
-      .then(() => factory.Display.state()
-        .enter([options.functions.states.analysis.summary, options.functions.states.analysis.reports.all, options.functions.states.analysis.stages.any])) :
-      Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id} | ${file.mimeType}`))
+    });
+  
+  FN.load = {
+    
+    analysis : loaded => options.functions.process.analysis(loaded.content.forms, loaded.content.mine, loaded.content.full, 
+      loaded.content.dates ? _.tap(loaded.content.dates, options.functions.helper.span) : loaded.content.dates, loaded.content.expected)
+        .then(() => factory.Display.state().enter([
+          options.functions.states.analysis.summary,
+          options.functions.states.analysis.reports.all,
+          options.functions.states.analysis.stages.any
+        ])),
+    
+    form : loaded => options.functions.process.form(loaded.content, loaded.actions),
+    
+    report : loaded => options.functions.process.report(loaded.content, loaded.actions, loaded.owner, loaded.permissions, loaded.updated),
+
+    tracker : loaded => options.functions.process.tracker(loaded.content, loaded.actions.editable),
+    
+  };
+  
+  FN.file = (file, locations) => factory.Google.files.download((options.state.session.file = file).id)
+    .then(loaded => factory.Google.reader().promiseAsText(loaded))
+    .then(content => FN.process(file, content))
+    .then(value => factory.Google.files.is(options.functions.files.type.report)(file) ? FN.load.report(value) :
+      factory.Google.files.is(options.functions.files.type.form)(file) ? FN.load.form(value) :
+        factory.Google.files.is(options.functions.files.type.analysis)(file) ? FN.load.analysis(value) :
+          factory.Google.files.is(options.functions.files.type.tracker)(file) ? FN.load.tracker(value) :
+            Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id} | ${file.mimeType}`))
     .then(value => _.tap(value, () => {
       factory.Display.state().enter(options.functions.states.file.loaded);
       /* <!-- Scroll to Location if Supplied --> */
@@ -62,7 +79,11 @@ Load = (options, factory) => {
   /* <!-- Initial Calls --> */
 
   /* <!-- External Visibility --> */
-  return FN;
+  return {
+    
+    file: FN.file,
+    
+  };
   /* <!-- External Visibility --> */
   
 };
