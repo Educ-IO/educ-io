@@ -12,7 +12,7 @@ __Σ__Volunteering = {
           template: "field_textual",
           title: "Your Name",
           field: "Name",
-          help: "Who completed this volunteering period? [EXAMPLE CHANGE]",
+          help: "Who completed this volunteering period?",
           icon: "face",
           default: "me",
           large: true,
