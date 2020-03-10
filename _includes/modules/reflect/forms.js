@@ -6,11 +6,11 @@ Forms = function(loaded) {
 
   /* <!-- Internal Variables --> */
   var ಠ_ಠ, /* <!-- Context --> */
-    ರ‿ರ = {
-      loaded: false,
-    },
-    /* <!-- State --> */
-    ಱ = {}; /* <!-- Persistant --> */
+      ರ‿ರ = {
+        loaded: false,
+      },
+      /* <!-- State --> */
+      ಱ = {}; /* <!-- Persistant --> */
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Constants --> */

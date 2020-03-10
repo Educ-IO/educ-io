@@ -9,8 +9,7 @@ App = function() {
   }
 
   /* <!-- Internal Constants --> */
-  const EMAIL = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi,
-    FN = {};
+  const FN = {};
 
   const SCOPE_FULL_DRIVE = "https://www.googleapis.com/auth/drive";
   /* <!-- Internal Constants --> */
@@ -22,9 +21,6 @@ App = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  
-  /* <!-- Is Report Dirty (e.g. has unsaved changes) Function --> */
-  FN.dirty = report => !ರ‿ರ.hash || ರ‿ರ.hash !== new Hashes.MD5().hex(ಱ.strings.stringify(report, FN.replacers.signing));
   
   /* <!-- Mark Forms loading / loaded --> */
   FN.loading = () => $("#createRelectiveReport").addClass("loader");
@@ -74,7 +70,7 @@ App = function() {
         }
       };
      _.each(["Decode", "Scales", "Elicit", "Helper", "Show", "Edit", "Create",
-              "Prompt", "Process", "Action", "Export", "Load", "Save", "Query"], 
+              "Prompt", "Process", "Action", "Export", "Load", "Save", "Query", "Update"], 
                 module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
       
     },
@@ -405,11 +401,6 @@ App = function() {
             }
           },
 
-          scales: {
-            matches: /SCALES/i,
-            fn: () => EMAIL ? false : false
-          },
-
           revoke: {
             matches: /REVOKE/i,
             state: FN.states.report.revocable,
@@ -685,8 +676,6 @@ App = function() {
     state: ರ‿ರ,
 
     persistent: ಱ,
-
-    email: EMAIL,
 
   };
 

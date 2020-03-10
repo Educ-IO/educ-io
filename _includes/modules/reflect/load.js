@@ -18,13 +18,30 @@ Load = (options, factory) => {
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
+  FN.parse = {
+    
+    analysis : content => JSON.parse(content),
+    
+    form : content => content,
+      
+    report : content => _.tap(JSON.parse(content), options.functions.update.hash),
+
+    review : content => JSON.parse(content),
+
+    scale : content => content,
+
+    tracker : content => JSON.parse(content),
+    
+  };
+  
   FN.process = (file, content) => ({
-      content: file.mimeType === options.functions.files.type.report ?
-        _.tap(JSON.parse(content),
-          data => options.state.session.hash = new Hashes.MD5().hex(options.state.application.strings.stringify(data.report,
-            options.functions.replacers.signing))) : 
-        file.mimeType === options.functions.files.type.analysis ? JSON.parse(content) : 
-        file.mimeType === options.functions.files.type.tracker ? JSON.parse(content) : 
+      content: 
+        file.mimeType === options.functions.files.type.analysis ? FN.parse.analysis(content) : 
+        file.mimeType === options.functions.files.type.form ? FN.parse.form(content) : 
+        file.mimeType === options.functions.files.type.report ? FN.parse.report(content) :
+        file.mimeType === options.functions.files.type.review ? FN.parse.review(content) :
+        file.mimeType === options.functions.files.type.scale ? FN.parse.scale(content) :
+        file.mimeType === options.functions.files.type.tracker ? FN.parse.tracker(content) : 
         content,
       actions: {
         editable: (file.capabilities && file.capabilities.canEdit),
@@ -49,7 +66,8 @@ Load = (options, factory) => {
     
     form : loaded => options.functions.process.form(loaded.content, loaded.actions),
     
-    report : loaded => options.functions.process.report(loaded.content, loaded.actions, loaded.owner, loaded.permissions, loaded.updated),
+    report : loaded => options.functions.update.changes(loaded.content.form, loaded.actions.editable)
+      .then(() => options.functions.process.report(loaded.content, loaded.actions, loaded.owner, loaded.permissions, loaded.updated)),
 
     tracker : loaded => options.functions.process.tracker(loaded.content, loaded.actions.editable),
     

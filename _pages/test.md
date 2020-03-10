@@ -2,6 +2,8 @@
 layout: page
 title: Browser Test
 permalink: /test/
+helpers:
+  - handlebars
 modules:
   - controller
   - service

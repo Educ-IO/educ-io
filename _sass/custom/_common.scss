@@ -243,6 +243,10 @@ em.kb-shortcut, strong.kb-shortcut {
 .bg-danger-light {
 	background-color: $colour-light-danger !important;
 }
+
+.bg-very-light {
+	background-color: transparentize($light, 0.5) !important;
+}
 // -- Other Backgrounds -- //
 
 // -- Other Borders -- //

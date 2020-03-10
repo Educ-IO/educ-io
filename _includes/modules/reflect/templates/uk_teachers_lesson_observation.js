@@ -122,7 +122,7 @@ __Σ__UK_Teachers_Lesson_Observation =  {
           prefix: "Standard",
           icon: "gps_fixed",
           list_field: "Targets",
-          __help__: "Please enter __appropriate targets__, and (optionally) the __teachers' standard__ to which they apply (TS 1-7 & 8.3 only).  \n\nThen save them to the list below using the __green__ add button.",
+          __help__: "Please enter __appropriate targets__, and (optionally) the __teachers' standard__ to which they apply (TS 1-7 & 8.3 only).\n\nThen save them to the list below using the __green__ add button.",
           options: [
             "TS1 - Expectations",
             "TS2 - Outcomes",

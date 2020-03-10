@@ -210,7 +210,8 @@ Handlebars = (options, factory) => {
         if (typeof variable === "undefined" ||
           variable === null ||
           (variable.constructor === Object && Object.keys(variable).length === 0) ||
-          (variable.constructor === Array && variable.length === 0)) {
+          (variable.constructor === Array && variable.length === 0) ||
+          ((typeof variable === "string" || variable instanceof String) && variable == "")) {
           return options.fn ? options.fn(this) : true;
         } else {
           return options.inverse ? options.inverse(this) : false;
@@ -221,7 +222,8 @@ Handlebars = (options, factory) => {
         if (typeof variable !== "undefined" &&
           variable !== null &&
           !(variable.constructor === Object && Object.keys(variable).length === 0) &&
-          !(variable.constructor === Array && variable.length === 0)) {
+          !(variable.constructor === Array && variable.length === 0) && 
+          !((typeof variable === "string" || variable instanceof String) && variable == "")) {
           return options.fn ? options.fn(this) : true;
         } else {
           return options.inverse ? options.inverse(this) : false;

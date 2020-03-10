@@ -7,14 +7,14 @@ Replacers = () => {
 
   /* <!-- Internal Constants --> */
   const REGEX_REPLACER = (key, value) => value && typeof value === "object" &&
-    value.constructor === RegExp ? value.source : value,
+      value.constructor === RegExp ? value.source : value,
     SAVING_REPLACER = (key, value) => key && key === "__extends" ?
-    undefined : REGEX_REPLACER(key, value),
+      undefined : REGEX_REPLACER(key, value),
     EDITING_REPLACER = (key, value) => key && key.indexOf("$") === 0 ?
-    undefined : REGEX_REPLACER(key, value),
+      undefined : REGEX_REPLACER(key, value),
     SIGNING_REPLACER = (key, value) => key &&
-    (key === "__order" || key === "__type" || key === "__meta") ?
-    undefined : EDITING_REPLACER(key, value);
+      (key === "__order" || key === "__type" || key === "__meta") ?
+        undefined : EDITING_REPLACER(key, value);
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */

@@ -22,7 +22,7 @@ Process = (options, factory) => {
       .then(comments => Promise.all([
         FN.signatures(options.functions.action.dehydrate().data, comments),
         FN.questions(actions, comments)
-      ]));
+      ])).then(() => null); /* <!-- Return NULL to match output of signatures (otherwise session form is wrongly set) --> */
   
   FN.display = {
     

@@ -65,8 +65,7 @@ Page = function() {
   /* <!-- Internal Functions --> */
 
   /* <!-- Internal Variables --> */
-  var ಠ_ಠ;
-  var FEATURES = [{
+  var ಠ_ಠ, FEATURES = [{
       name: "Events",
       desc: "Javascript Custom Events",
       url: "https://caniuse.com/#feat=customevent",
@@ -641,14 +640,15 @@ Page = function() {
             if (features[i].required && !features[i].result) status = false;
 
           /* <!-- Show the Features --> */
-          $(ಠ_ಠ.Display.template.get({
+          var _results = ಠ_ಠ.Display.template.get({
             status: {
               message: status ? "PASSED" : "FAILED",
               class: status ? "text-success" : "text-danger"
             },
             template: "status",
             items: features
-          })).insertAfter("p.preamble");
+          });
+          $(_results).insertAfter("p.preamble");
 
         },
         count = 0;

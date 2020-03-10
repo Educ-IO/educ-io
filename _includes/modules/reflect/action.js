@@ -88,7 +88,7 @@ Action = (options, factory) => {
 
   FN.get = (value, force) => Promise.resolve(value ? value : FN.dehydrate())
     .then(factory.Main.busy("Getting Report"))
-    .then(dehydrated => !force && options.functions.dirty(dehydrated.data.report) ?
+    .then(dehydrated => !force && options.functions.update.dirty.report(dehydrated.data.report) ?
       options.functions.save.report(false, dehydrated).then(() => dehydrated) : dehydrated);
 
   FN.edit = () => Promise.resolve(FN.dehydrate())

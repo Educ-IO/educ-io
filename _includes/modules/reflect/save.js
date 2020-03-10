@@ -100,7 +100,7 @@ Save = (options, factory) => {
       .then(options.state.application.notify.actions.save("NOTIFY_SAVE_FORM_SUCCESS")));
 
   FN.report = (force, dehydrated, quiet) => options.functions.action.get(dehydrated, true)
-    .then(saving => (!options.state.session.signatures || !options.functions.dirty(saving.data.report) || quiet ?
+    .then(saving => (!options.state.session.signatures || !options.functions.update.dirty.report(saving.data.report) || quiet ?
         Promise.resolve(true) : factory.Display.confirm({
           id: "confirm_Save",
           target: factory.container,
@@ -110,7 +110,7 @@ Save = (options, factory) => {
         }))
       .then(result => {
         return result !== true ? false :
-          !options.functions.dirty(saving.data.report) && quiet ? true : 
+          !options.functions.update.dirty.report(saving.data.report) && quiet ? true : 
           options.functions.action.screenshot($("form[role='form'][data-name]")[0])
           .then(result => {
             return (force ? factory.Display.text({
@@ -151,8 +151,7 @@ Save = (options, factory) => {
               return factory.Google.files.upload.apply(this, [_meta, _data, _mime].concat(_new || force ? [] : [null, options.state.session.file.id, true]))
                 .then(uploaded => {
                   if (uploaded) {
-                    options.state.session.hash = new Hashes.MD5()
-                      .hex(options.state.application.strings.stringify(saving.data.report, options.functions.replacers.signing));
+                    options.functions.update.hash(saving.data);
                     factory.Display.state().enter(options.functions.states.file.loaded);
                     options.functions.action.recent(uploaded);
                   }

@@ -68,6 +68,8 @@ imports:
     load: last
   - name: yaml
     load: last
+  - name: deep-diff
+    load: last
   - name: xlsxpopulate
     load: lazy
   - name: filesaver
@@ -134,6 +136,7 @@ modules:
   - reflect/load
   - reflect/save
   - reflect/query
+  - reflect/update
   - reflect/templates/form_master
   - reflect/templates/uk_teachers_reflective
   - reflect/templates/volunteering

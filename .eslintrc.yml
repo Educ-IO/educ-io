@@ -53,6 +53,7 @@ globals:
   quotedPrintable: false
   jsyaml: false
   d3: false
+  DeepDiff: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -153,6 +154,7 @@ globals:
   Populate: true
   Tracking: true
   Portfolio: true
+  Update: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

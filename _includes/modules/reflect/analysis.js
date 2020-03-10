@@ -172,8 +172,8 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode, helper) => {
                 _name = _key;
               if (!_key) {
                 _key = MISSING;
-              } else if (_key.search(ಠ_ಠ.App.email) >= 0) {
-                _key = _key.match(ಠ_ಠ.App.email)[0];
+              } else if (_key.search(decode.email) >= 0) {
+                _key = _key.match(decode.email)[0];
               }
               if (!memo[_key = _key.toLowerCase()]) {
 
@@ -271,10 +271,10 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode, helper) => {
             
             var _address = _key(missing);
             _reports[_address] = {
-              name: _address && _address.search(ಠ_ಠ.App.email) >= 0 ?
+              name: _address && _address.search(decode.email) >= 0 ?
                 ಠ_ಠ.Display.template.get({
                   template: "email",
-                  address: _address.match(ಠ_ಠ.App.email)[0],
+                  address: _address.match(decode.email)[0],
                   subject: "Missing Reflect Report Data",
                   text: _address
                 }) : _address,
