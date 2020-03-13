@@ -67,7 +67,13 @@ Load = (options, factory) => {
     form : loaded => options.functions.process.form(loaded.content, loaded.actions),
     
     report : loaded => options.functions.update.changes(loaded.content.form, loaded.actions.editable)
-      .then(() => options.functions.process.report(loaded.content, loaded.actions, loaded.owner, loaded.permissions, loaded.updated)),
+      .then(form => {
+        if (form !== true && form !== false) {
+          factory.Flags.log("Updated Form:", form);
+          loaded.content.form = form;
+        }
+        return options.functions.process.report(loaded.content, loaded.actions, loaded.owner, loaded.permissions, loaded.updated);
+      }),
 
     tracker : loaded => options.functions.process.tracker(loaded.content, loaded.actions.editable),
     

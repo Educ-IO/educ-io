@@ -236,12 +236,24 @@ em.kb-shortcut, strong.kb-shortcut {
 	background-color: $colour-light-warning !important;
 }
 
+.bg-warning-lighter {
+  background-color: transparentize($colour-light-warning, 0.5) !important;
+}
+
 .bg-success-light {
 	background-color: $colour-light-success !important;
 }
 
+.bg-success-lighter {
+	background-color: transparentize($colour-light-success, 0.5) !important;
+}
+
 .bg-danger-light {
 	background-color: $colour-light-danger !important;
+}
+
+.bg-danger-lighter {
+	background-color: transparentize($colour-light-danger, 0.5) !important;
 }
 
 .bg-very-light {

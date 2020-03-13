@@ -1,4 +1,8 @@
 site :
+  0.1.9m :
+    name : Reflect v0.0.7o-beta
+    desc : Report Form Updates
+    numeric : 0.1.9.13
   0.1.9l :
     name : Site 0.1.9l
     desc : Bug Fixes
@@ -1040,6 +1044,10 @@ folders :
     name : Early testing version
     type : minor
 reflect :
+  0.0.7o-beta :
+    name : Report Form Upgrades
+    desc : Ability to Upgrade a Form
+    type : minor
   0.0.7m-beta :
     name : Report Autosave
     desc : Optional Autosaving of Reports

@@ -197,6 +197,7 @@ templates:
   - reflect/dialogs/scale
   - reflect/dialogs/question
   - reflect/dialogs/evidence
+  - reflect/dialogs/changes
   - reflect/forms/form
   - reflect/forms/heading
   - reflect/forms/group
@@ -212,6 +213,7 @@ templates:
   - reflect/parts/pill
   - reflect/parts/valid
   - reflect/parts/tag
+  - reflect/parts/change
   - reflect/questions/questions_holder
   - reflect/questions/question_details
   - reflect/questions/replies_holder
@@ -280,6 +282,7 @@ docs:
   - reflect/SEND_REPLY
   - reflect/SEND_REPLY_EMAIL
   - reflect/LOG_EVIDENCE
+  - reflect/REVIEW_FORM_CHANGES
 scopes:
   google:
     - scope: email

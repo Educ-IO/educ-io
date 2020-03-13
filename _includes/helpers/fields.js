@@ -301,6 +301,7 @@ Fields = (options, factory) => {
 
   };
 
+  
   var _radio = form => {
 
     /* <!-- Wire up radio fields --> */
@@ -364,6 +365,22 @@ Fields = (options, factory) => {
 
   };
 
+  var _change = form => {
+
+    /* <!-- Wire up event / change listeners --> */
+    form.find("input[type='checkbox'][data-for][data-on][data-off]")
+      .off("change.change").on("change.change", e => {
+        var _this = $(e.currentTarget),
+            _on = _this.data("on"),
+            _off = _this.data("off"),
+            _target = $(_this.data("for"));
+        _this.prop("checked") === true ? 
+          _target.removeClass(_off).addClass(_on) :
+          _target.removeClass(_on).addClass(_off);
+      });
+
+  };
+  
   var _dim = form => {
 
     /* <!-- Wire up event / visibility listeners --> */
@@ -810,7 +827,7 @@ Fields = (options, factory) => {
       _numerical, _erase, _radio, _menus,
       _complex, _reveal, _dim, _me, _datetime,
       _spans, _list, _doc, _updates, _range,
-      _toggles, _load
+      _toggles, _load, _change
     ];
     STEPS.refresh = [_list],
     STEPS.last = [_deletes, _autosize];
