@@ -107,12 +107,11 @@ Controller = function() {
         deferreds.push(_include(input.url, is_css ? "style" : "script", input.id));
       } else {
         deferreds.push(window.fetch(input.url, {
-          mode: input.mode ? input.mode : "cors",
-          integrity: input.integrity ? input.integrity : ""
-        }).then(res => {
-          return [res.text(), input.id, input.url, is_css, is_fonts, input.map === true, input.overrides];
-        }).then(promises => {
-          return Promise.all(promises).then(resolved => {
+            mode: input.mode ? input.mode : "cors",
+            integrity: input.integrity ? input.integrity : ""
+          })
+          .then(res => [res.text(), input.id, input.url, is_css, is_fonts, input.map === true, input.overrides])
+          .then(promises => Promise.all(promises).then(resolved => {
             resources.push({
               text: resolved[0],
               id: resolved[1],
@@ -122,8 +121,9 @@ Controller = function() {
               map: resolved[5],
               overrides: resolved[6]
             });
-          });
-        }));
+          }))
+         .catch(e => err("ERROR LOADING RESOURCE:", e))
+        );
       }
     });
 
