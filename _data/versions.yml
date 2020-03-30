@@ -1,4 +1,8 @@
 site :
+  0.1.9o :
+    name : Site 0.1.9o
+    desc : Preparation for new Classes App
+    numeric : 0.1.9.15
   0.1.9n :
     name : Site 0.1.9n
     desc : Bug Fixes

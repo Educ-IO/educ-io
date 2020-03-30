@@ -49,18 +49,34 @@ App = function() {
         "deepExtend": underscoreDeepExtend(_)
       });
       
-      ಱ.strings = ಠ_ಠ.Strings();
-
-      ಱ.notify = ಠ_ಠ.Notify({
-        id: "reflect_Notify",
-        autohide: true,
-      }, ಠ_ಠ);
+      /* <!-- Setup Helpers --> */
+      _.each([{
+        name: "Strings"
+      }, {
+        name: "Tabulate"
+      }, {
+        name: "Notify",
+        options: {
+          id: "reflect_Notify",
+          autohide: true,
+        }
+      },{
+          name: "Exporter",
+          options: {
+            state: {
+              application: ಱ
+            }
+          }
+        }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
 
       /* <!-- Setup Showdown --> */
       ಱ.showdown = new showdown.Converter({
         strikethrough: true
       });
 
+      /* <!-- Get Window Title --> */
+      ಱ.title = window.document.title;
+      
       /* <!-- Setup Function Modules --> */
       var _options = {
         functions: FN,
@@ -70,7 +86,7 @@ App = function() {
         }
       };
      _.each(["Decode", "Scales", "Elicit", "Helper", "Show", "Edit", "Create",
-              "Prompt", "Process", "Action", "Export", "Load", "Save", "Query", "Update"], 
+              "Prompt", "Process", "Action", "Export", "Load", "Save", "Query", "Update", "Table"], 
                 module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
       
     },
@@ -92,14 +108,21 @@ App = function() {
         forms: ಱ.forms,
         type: FN.files.type.tracker,
         title: FN.files.title,
-        replacer: FN.replacers.regex,
         choose: FN.prompt.choose,
+        functions: FN,
+        state: {
+          session: ರ‿ರ,
+        }
       }, ಠ_ಠ);
       
       ಱ.evidence = ಠ_ಠ.Evidence({
         fields: ಱ.fields,
         forms: ಱ.forms,
-        trackers: ಱ.trackers
+        trackers: ಱ.trackers,
+        functions: FN,
+        state: {
+          session: ರ‿ರ,
+        }
       }, ಠ_ಠ);
 
     },
@@ -107,6 +130,9 @@ App = function() {
     routed: () => {
 
       ಠ_ಠ.Flags.log("Router is Started", "Routed");
+      
+      /* <!-- Reset Window Title (if required) --> */
+      if (window.document.title != ಱ.title) window.document.title = ಱ.title;
 
       if (!ಱ.forms || !ಱ.forms.loaded()) FN.loading();
 
@@ -326,22 +352,22 @@ App = function() {
                   csv: {
                     matches: /CSV/i,
                     length: 0,
-                    fn: () => FN.export.analysis("csv"),
+                    fn: () => ಱ.exporter.export(ರ‿ರ.analysis.table(), "csv", ರ‿ರ.analysis.title())
                   },
                   excel: {
                     matches: /EXCEL/i,
                     length: 0,
-                    fn: () => FN.export.analysis("xlsx"),
+                    fn: () => ಱ.exporter.export(ರ‿ರ.analysis.table(), "xlsx", ರ‿ರ.analysis.title(), "Analysis")
                   },
                   markdown: {
                     matches: /MARKDOWN/i,
                     length: 0,
-                    fn: () => FN.export.analysis("md"),
+                    fn: () => ಱ.exporter.export(ರ‿ರ.analysis.table(), "md", ರ‿ರ.analysis.title())
                   },
                   sheets: {
                     matches: /SHEETS/i,
                     length: 0,
-                    fn: () => FN.export.analysis("sheets"),
+                    fn: () => ಱ.exporter.export(ರ‿ರ.analysis.table(), "sheets", ರ‿ರ.analysis.title(), "Analysis", "NOTIFY_SAVE_ANALYSIS_SUCCESS")
                   },
                 }
               },
@@ -599,7 +625,7 @@ App = function() {
                 matches: /CREATE/i,
                 length: 0,
                 fn: () => ಱ.forms.safe().then(() => (ರ‿ರ.tracker ? Promise.resolve(ರ‿ರ.tracker) : ಱ.trackers.choose())
-                  .then(tracker => tracker ? ಱ.evidence.add(tracker) : false))
+                  .then(tracker => tracker ? ಱ.evidence.add(tracker).then(() => delete ರ‿ರ.file) : false))
               }
             }
           },

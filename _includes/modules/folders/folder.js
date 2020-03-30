@@ -19,7 +19,8 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
     _last,
     _tallyCache = tally ? tally : {},
     _team = team,
-    _searches = {};
+    _searches = {},
+    _user = ಠ_ಠ.Google.user();
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Objects --> */
@@ -392,12 +393,13 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
     } : ಠ_ಠ.Google.files.in("application/x.educ-io.folders")(v) ? {
       name: "Folders",
       desc: "Open in Folders",
-      url: "/folders/#google,load." + v.id + ".lazy"
+      url: "/folders/#google,load." + v.id
     } : ಠ_ಠ.Google.files.in("application/x.educ-io.reflect")(v) ? {
       name: "Reflect",
       desc: "Open in Reflect",
-      url: "/reflect/#google,load." + v.id + ".lazy"
-    } : null
+      url: "/reflect/#google,load." + v.id
+    } : null,
+    user: _user
   });
 
   var _dialogSaveHandler = (id, prefix, field, mime, decode, encode) => values => {

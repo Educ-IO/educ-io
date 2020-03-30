@@ -251,8 +251,8 @@ Handlebars = (options, factory) => {
           "gt": (a, b) => a > b,
           "<=": (a, b) => a <= b,
           "lte": (a, b) => a <= b,
-          ">=": (a, b) => a = b,
-          "gte": (a, b) => a = b,
+          ">=": (a, b) => a >= b,
+          "gte": (a, b) => a >= b,
           "~=": (a, b) => a == b || a && b && a.toUpperCase() == b.toUpperCase(),
           "typeof": (a, b) => typeof a == b,
           "and": (a, b) => a && b,
@@ -288,6 +288,8 @@ Handlebars = (options, factory) => {
         return _b[_a] ? _b[_a] : _default ? _default : "";
       });
 
+      Handlebars.registerHelper("length", variable => !variable || !variable.length ? 0 : variable.length);
+      
       Handlebars.registerHelper("which", (which, a, b) => which ? a : b);
 
       Handlebars.registerHelper("add", (add, a, b) => add ? a + b : a);

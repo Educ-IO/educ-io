@@ -35,21 +35,33 @@ Filters = (options, factory) => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Methods --> */
+  var _createMagicFilter = filter => filter.$magic == PAST ? {
+          "$lt": new Date()
+        } : filter.$magic == FUTURE ? {
+          "$gt": new Date()
+        } : filter.$magic == TODAY ? {
+          "$between": [factory.Dates.now().startOf("day"), factory.Dates.now().endOf("day")]
+        } : filter;
+  
+  var _createFilter = filter => filter.$magic ? _createMagicFilter(filter) : filter;
+  
   var _createQuery = (filters, join) => {
     var _query, _join = join ? join : "$and";
     _.map(_.keys(filters), field => {
-      var _condition = {};
-      if (filters[field].$magic) {
-        _condition[field] = filters[field].$magic == PAST ? {
-          "$lt": new Date()
-        } : filters[field].$magic == FUTURE ? {
-          "$gt": new Date()
-        } : filters[field].$magic == TODAY ? {
-          "$between": [factory.Dates.now().startOf("day"), factory.Dates.now().endOf("day")]
-        } : filters[field];
+      
+      var _condition;
+      if (options.complex) {
+        var _condition_Normal = {}, _condition_Complex = {};
+        _condition_Normal[field] = _createFilter(filters[field]);
+        _condition_Complex[options.complex == true ? `$$${field}` : `${options.complex}${field}`] = _createFilter(filters[field]);
+        _condition = {
+          "$or" : [_condition_Normal, _condition_Complex],
+        };
       } else {
-        _condition[field] = filters[field];
+        _condition = {};
+        _condition[field] = _createFilter(filters[field]);
       }
+      
       if (!_query) {
         _query = _condition;
       } else {
@@ -146,9 +158,11 @@ Filters = (options, factory) => {
     }
     if (_filter) {
       if (_invert) {
+        /* <!-- Add / Or for $fields here? --> */
         options.inverted[field] = _filter;
         delete options.normal[field];
       } else {
+        /* <!-- Add / Or for $fields here? --> */
         options.normal[field] = _filter;
         delete options.inverted[field];
       }
@@ -178,11 +192,14 @@ Filters = (options, factory) => {
     filter: rows => {
       if (!_.isEmpty(options.inverted)) {
         var _inversion = _createQuery(options.inverted, "$or");
+        factory.Flags.log("Inverted Rows Query:", _inversion);
         var _exclude = new Set(rows.copy().find(_inversion).data().map(v => v.$loki));
         rows = rows.where(v => !_exclude.has(v.$loki));
-      }
+      } 
       if (!_.isEmpty(options.normal)) {
-        rows = rows.find(_createQuery(options.normal));
+        var _query = _createQuery(options.normal);
+        factory.Flags.log("Normal Rows Query:", _query);
+        rows = rows.find(_query);
       }
       return rows;
     },

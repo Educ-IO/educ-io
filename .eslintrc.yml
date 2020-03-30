@@ -155,6 +155,13 @@ globals:
   Tracking: true
   Portfolio: true
   Update: true
+  Exporter: true
+  Tabulate: true
+  Overview: true
+  People: true
+  Roster: true
+  Usage: true
+  iSAMS_API: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

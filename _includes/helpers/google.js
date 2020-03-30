@@ -99,8 +99,8 @@ Google_API = (options, factory) => {
   const CLASSROOM_URL = {
     name: "classroom",
     url: "https://classroom.googleapis.com/",
-    rate: 1,
-    concurrent: 1,
+    rate: 4,
+    concurrent: 8,
     timeout: 30000,
   };
   const URLS = [GENERAL_URL, PERMISSIONS_URL, SHEETS_URL, SCRIPTS_URL, ADMIN_URL, CLASSROOM_URL];
@@ -153,6 +153,10 @@ Google_API = (options, factory) => {
   }, {});
   /* <!-- Network Variables --> */
 
+  /* <!-- User Variables --> */
+  var _user;
+  /* <!-- User Variables --> */
+  
   /* <!-- Internal Functions --> */
   var _init = (token, type, expires, user, update) => {
 
@@ -192,6 +196,9 @@ Google_API = (options, factory) => {
 
     _token = (t => () => t)(token);
 
+    /* <!-- Store User Number (used for thumbnail calls etc.) --> */
+    _user = user;
+    
     /* <!-- Before Network Call : Request Authorisation Closure --> */
     _.each(NETWORKS, network => {
       network.before(_before);
@@ -218,10 +225,10 @@ Google_API = (options, factory) => {
 
         method(url, data).then(value => {
 
-          list = list.concat(value[property]);
+          list = value[property] ? list.concat(value[property]) : list;
 
           value.nextPageToken ?
-            _list(method, url, property, list, data, value.nextPageToken).then(list => resolve(list)) : resolve(list);
+            _list(method, url, property, list, data, value.nextPageToken).then(list => resolve(_.compact(list))) : resolve(_.compact(list));
 
         }).catch(e => reject(e));
 
@@ -542,6 +549,8 @@ Google_API = (options, factory) => {
 
     },
 
+    user: () => _user,
+    
     networks: () => _.map(NETWORKS, network => network.details()),
 
     /* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
@@ -972,29 +981,136 @@ Google_API = (options, factory) => {
 
     classrooms: {
 
-      list: state => _list(
+      list: (state, fields) => _list(
         NETWORKS.classroom.get, "/v1/courses", "courses", [], {
           courseStates: state || "ACTIVE",
-          fields: "nextPageToken,courses(id,name,section,description,calendarId,teacherFolder)",
+          fields: `${fields && fields === true ? "*" : `nextPageToken,courses(${fields ? fields.join(",") : "id,name,section,description,calendarId,teacherFolder"})`}`,
         }),
 
-      work: classroom => {
+      person: person => _call(NETWORKS.classroom.get, `v1/userProfiles/${encodeURIComponent(person)}`, {
+          fields: "id,name,verifiedTeacher",
+        }),
+      
+      guardians: (student, state, fields) => _list(
+        NETWORKS.classroom.get, `v1/userProfiles/${encodeURIComponent(student)}/guardianInvitations`, "guardianInvitations", [], {
+          states: state || "COMPLETE",
+          fields: `${fields && fields === true ? "*" : `nextPageToken,guardianInvitations(${fields ? fields.join(",") : "invitationId,invitedEmailAddress,state,creationTime"})`}`,
+        }),
 
-        var _id = classroom && classroom.id ? classroom.id : classroom,
-          _url = `v1/courses/${_id}/courseWork`;
-
+      classroom: classroom => {
+        
+        var _id = classroom && classroom.$id ? classroom.$id : classroom && classroom.id ? classroom.id : classroom;
+        
         return {
+          
+          announcements: () => {
+          
+            var _url = `v1/courses/${encodeURIComponent(_id)}/announcements`,
+                _fields = "id,text,materials,creationTime,updateTime,scheduledTime,assigneeMode,alternateLink,creatorUserId";
+            
+            return {
+              
+              list: state => _list(
+                NETWORKS.classroom.get, _url, "announcements", [], {
+                  announcementStates: state || "PUBLISHED",
+                  orderBy: "updateTime",
+                  fields: `nextPageToken,announcements(${_fields})`,
+                }),
+            
+              };
+            
+          },
+          
+          invitations: () => {
+          
+            var _url = "v1/invitations",
+                _fields = "id,userId,role";
+            
+            return {
+              
+              list: fields => _list(
+                NETWORKS.classroom.get, _url, "invitations", [], STRIP_NULLS({
+                  courseId: _id,
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,invitations(${fields ? fields.join(",") : _fields})`
+                })),
+            
+              };
+            
+          },
+          
+          students: () => {
+            
+            var _url = `v1/courses/${encodeURIComponent(_id)}/students`,
+                _fields = "userId,profile(id,name),studentWorkFolder";
+            
+            return {
 
-          list: state => _list(
-            NETWORKS.classroom.get, _url, "courseWork", [], {
-              courseWorkStates: state || "PUBLISHED",
-              orderBy: "dueDate",
-              fields: "nextPageToken,courseWork(id,title,dueDate,dueTime,workType,alternateLink)",
-            }),
+              add: (student, code) => _call(NETWORKS.classroom.post, code ? `${_url}?enrollmentCode=${encodeURIComponent(code)}`: _url,
+                               {"userId": student}, "application/json"),
+              
+              remove: student => _call(NETWORKS.classroom.delete, `${_url}/${encodeURIComponent(student)}`),
+              
+              invite: student => _call(NETWORKS.classroom.post, "v1/invitations", {
+                "courseId": _id.toString(), 
+                "userId": student,
+                "role": "STUDENT"
+              }, "application/json"),
+              
+              list: () => _list(NETWORKS.classroom.get, _url, "students", [], {
+                fields: `nextPageToken,students(${_fields})`
+              }),
 
+            };
+            
+          },
+          
+          teachers: () => {
+            
+            var _url = `v1/courses/${encodeURIComponent(_id)}/teachers`,
+                _fields = "userId,profile(id,name,verifiedTeacher)";
+            
+            return {
+
+              add: teacher => _call(NETWORKS.classroom.post, _url, {"userId": teacher}, "application/json"),
+              
+              remove: teacher => _call(NETWORKS.classroom.delete, `${_url}/${encodeURIComponent(teacher)}`),
+              
+              invite: teacher => _call(NETWORKS.classroom.post, "v1/invitations", {
+                "courseId": _id.toString(),
+                "userId": teacher,
+                "role": "TEACHER"
+              }, "application/json"),
+              
+              list: () => _list(NETWORKS.classroom.get, _url, "teachers", [], {
+                fields: `nextPageToken,teachers(${_fields})`
+              }),
+
+            };
+            
+          },
+          
+          work: () => {
+          
+            var _url = `v1/courses/${_id}/courseWork`,
+                _fields = "id,title,creationTime,updateTime,scheduledTime,assigneeMode,dueDate,dueTime,workType,alternateLink,creatorUserId";
+
+            return {
+
+              list: state => _list(
+                NETWORKS.classroom.get, _url, "courseWork", [], {
+                  courseWorkStates: state || "PUBLISHED",
+                  orderBy: "dueDate",
+                  fields: `nextPageToken,courseWork(${_fields})`,
+                }),
+
+            };
+
+          }
+          
         };
+        
+      }
 
-      },
     },
 
     admin: {

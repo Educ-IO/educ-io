@@ -1,0 +1,1 @@
+Please confirm that you wish to remove <strong>${_student.profile.name.fullName}</strong> as a student from the classroom: <strong>${_class.name}</strong>

@@ -20,6 +20,19 @@ Evidence = (options, factory) => {
   /* <!-- Internal State Variable --> */
   
   /* <!-- Internal Functions --> */
+  FN.decode = values => values,
+    
+  FN.store = tracker => ({
+    
+    add : evidence => {
+      tracker.tracker.evidence.push({
+        when: factory.Dates.now().format(),
+        details: evidence
+      });
+      return options.functions.save.tracker(tracker, null, true);
+    },
+    
+  });
   /* <!-- Internal Functions --> */
   
   /* <!-- Display Functions --> */
@@ -57,7 +70,7 @@ Evidence = (options, factory) => {
               markers: options.forms.process(tracker.scale.scale),  
             },
           }, dialog => options.fields.on(dialog.find("form")))
-        .then(values => values ? factory.Flags.log("LOGGING EVIDENCE", values) : false); /* <!-- Action Button Clicked (e.g. not dismissed) --> */
+        .then(values => values ? FN.store(tracker).add(FN.decode(values)) : false); /* <!-- Action Button Clicked (e.g. not dismissed) --> */
         
     };
   /* <!-- Main Functions --> */

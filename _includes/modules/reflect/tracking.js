@@ -7,8 +7,11 @@ Tracking = (tracker, options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
-    id : "tracking"
-  }, FN = {};
+          id : "tracking"
+        }, 
+        FN = {},
+        DB = new loki("tracking.db"),
+        HIDDEN = ["Count"];
   /* <!-- Internal Constants --> */
   
   /* <!-- Internal Variables --> */
@@ -22,18 +25,59 @@ Tracking = (tracker, options, factory) => {
   /* <!-- Internal Functions --> */
   /* <!-- Internal Functions --> */
   
+  /* <!-- Generate Functions --> */
+  FN.data = () => {
+    
+    var _data = DB.addCollection(options.id, {
+      unique: ["id"],
+      indices: _.map(([], a => a)
+        .concat(_.map("fields", field => field.title || field.id)),
+        index => index.toLowerCase())
+    });
+
+    _data.clear({
+      removeIndices: true
+    });
+
+    _data.insert([]);
+
+    return _data;
+
+  };
+  /* <!-- Generate Functions --> */
+  
   /* <!-- Display Functions --> */
   FN.display = {
     
-    tracking : tracker => {
-      factory.Display.template.show({
-        template: "analyse_body",
+    body: element => factory.Display.template.show({
+        template: "tracker_body",
         classes: ["pt-2"],
-        target: factory.container,
+        target: element || factory.container,
         clear: true
-      });
-      factory.Flags.log("LOADING TRACKING", tracker);
-      return true;  
+      }),
+    
+    wrapper: () => ({
+      classes: ["pt-1", "scroller"],
+      id: options.id,
+      header: factory.Display.template.get("tracker_header")({
+        classes: ["pl-3", "pl-xl-4", "pt-2", "pb-0"],
+        title: "Tracking",
+        subtitle: tracker.name || tracker.scale.name
+      }).trim()
+    }),
+    
+    tracking : tracker => {
+      
+      return factory.Datatable(factory, {
+          id: `${options.id}_TABLE`,
+          name: options.id,
+          data: [] || tracker, /* <!-- TODO: Remove this! --> */
+          headers: options.state.application.tabulate.headers([], HIDDEN),
+        }, {
+          classes: ["table-hover"],
+          collapsed: true,
+          wrapper: FN.display.wrapper(),
+        }, FN.display.body());
     },
     
   };

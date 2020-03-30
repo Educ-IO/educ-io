@@ -94,9 +94,9 @@ templates:
   - shared/tab-links
   - shared/tab-list
   - shared/tab-tabs
-  - shared/filters
-  - shared/table
-  - shared/datatable
+  - shared/tabular/filters
+  - shared/tabular/table
+  - shared/tabular/datatable
   - shared/breadcrumbs
   - shared/control_icon
   - shared/control_button

@@ -212,7 +212,7 @@ Process = (options, factory) => {
         }))
         .then(reports => {
           options.state.session.analysis = factory.Analysis(factory, forms, reports, expected, 
-                                            options.state.application.signatures, options.functions.decode, options.functions.helper);
+                          options.state.application.signatures, options.functions.decode, options.functions.helper, options.state.application.tabulate);
           factory.Display.state()
             .change(options.functions.states.all, options.functions.states.analysis.in)
             .protect("a.jump").on("JUMP");

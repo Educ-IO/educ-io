@@ -132,11 +132,12 @@ templates:
   - text
   - shared/control_icon
   - shared/control_button
-  - shared/filters
-  - shared/datatable
-  - shared/table
+  - shared/tabular/filters
+  - shared/tabular/datatable
+  - shared/tabular/table
   - shared/link
   - shared/link_options
+  - shared/dialogs/dialog
   - emails/email_standard
   - book/badges/bundle-badge
   - book/badges/feature-badge
@@ -173,7 +174,6 @@ templates:
   - book/views/notifications
   - book/components/loan
   - book/components/return
-  - book/dialogs/dialog
   - book/dialogs/generic
   - book/dialogs/edit
   - book/dialogs/edit_permission

@@ -79,25 +79,28 @@ Load = (options, factory) => {
     
   };
   
-  FN.file = (file, locations) => factory.Google.files.download((options.state.session.file = file).id)
-    .then(loaded => factory.Google.reader().promiseAsText(loaded))
-    .then(content => FN.process(file, content))
-    .then(value => factory.Google.files.is(options.functions.files.type.report)(file) ? FN.load.report(value) :
-      factory.Google.files.is(options.functions.files.type.form)(file) ? FN.load.form(value) :
-        factory.Google.files.is(options.functions.files.type.analysis)(file) ? FN.load.analysis(value) :
-          factory.Google.files.is(options.functions.files.type.tracker)(file) ? FN.load.tracker(value) :
-            Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id} | ${file.mimeType}`))
-    .then(value => _.tap(value, () => {
-      factory.Display.state().enter(options.functions.states.file.loaded);
-      /* <!-- Scroll to Location if Supplied --> */
-      if (!locations || locations.length === 0) return;
-      var _target = $(_.map(locations, location => `[data-id='${location}']`).join());
-      if (_target.length > 0) Element.prototype.scrollIntoView ? _target[0].scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                    inline: "nearest"
-                  }) : $([document.documentElement, document.body]).scrollTop(_target.offset().top);
-    }));
+  FN.file = (file, locations) => {
+    window.document.title = file.properties && file.properties.TITLE ? file.properties.TITLE : options.state.application.title;
+    return factory.Google.files.download((options.state.session.file = file).id)
+      .then(loaded => factory.Google.reader().promiseAsText(loaded))
+      .then(content => FN.process(file, content))
+      .then(value => factory.Google.files.is(options.functions.files.type.report)(file) ? FN.load.report(value) :
+        factory.Google.files.is(options.functions.files.type.form)(file) ? FN.load.form(value) :
+          factory.Google.files.is(options.functions.files.type.analysis)(file) ? FN.load.analysis(value) :
+            factory.Google.files.is(options.functions.files.type.tracker)(file) ? FN.load.tracker(value) :
+              Promise.reject(`Supplied ID is not a recognised Reflect File Type: ${file.id} | ${file.mimeType}`))
+      .then(value => _.tap(value, () => {
+        factory.Display.state().enter(options.functions.states.file.loaded);
+        /* <!-- Scroll to Location if Supplied --> */
+        if (!locations || locations.length === 0) return;
+        var _target = $(_.map(locations, location => `[data-id='${location}']`).join());
+        if (_target.length > 0) Element.prototype.scrollIntoView ? _target[0].scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                      inline: "nearest"
+                    }) : $([document.documentElement, document.body]).scrollTop(_target.offset().top);
+      }));
+  };
   /* <!-- Internal Functions --> */
   
   /* <!-- Initial Calls --> */

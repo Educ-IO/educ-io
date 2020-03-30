@@ -99,9 +99,9 @@ templates:
   - text
   - shared/control_icon
   - shared/control_button
-  - shared/filters
-  - shared/datatable
-  - shared/table
+  - shared/tabular/filters
+  - shared/tabular/datatable
+  - shared/tabular/table
   - shared/control_icon
   - shared/control_button
   - shared/populate_buttons

@@ -35,7 +35,7 @@ Helper = (options, factory) => {
   FN.headers = fields => _.map(fields, f => f.title ? {
       name: f.title,
       display: f.id
-    } : f.id); 
+    } : f.id);
   /* <!-- Public Functions --> */
   
   /* <!-- File Functions --> */

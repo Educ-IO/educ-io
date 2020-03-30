@@ -181,20 +181,21 @@ Data = (options, factory) => {
       /* <!-- DEBUG: Log Dehydrating --> */
       if (DEBUG) LOG(`Field has name = ${_name} and order = ${_order}:`);
 
+      /* <!-- Integrate Values --> */
       if (_name && _valid(_field)) values[_name] = (_.has(values, _name) ? {
-        Values: _.extend(_field, values[_name].Values),
-        __order: values[_name].Order === false ? _order : values[_name].Order,
-        __type: values[_name].Type === false ? _type : values[_name].Type
-      } : _.isObject(_field) && !(_field._isAMomentObject || (window.dayjs && dayjs.isDayjs(_field))) ? {
-        Values: _field[MAGIC] ? _field[MAGIC] : _field,
-        __order: _order,
-        __type: _type
-      } : {
-        Value: _field,
-        __order: _order,
-        __type: _type
-      });
-
+          Values: _.extend(_field, values[_name].Values),
+          __order: values[_name].Order === false ? _order : values[_name].Order,
+          __type: values[_name].Type === false ? _type : values[_name].Type
+        } : _.isObject(_field) && !(_field._isAMomentObject || (window.dayjs && dayjs.isDayjs(_field))) ? {
+          Values: _field[MAGIC] ? _field[MAGIC] : _field,
+          __order: _order,
+          __type: _type
+        } : {
+          Value: _field,
+          __order: _order,
+          __type: _type
+        });
+       
       /* <!-- DEBUG: Log Dehydrating Value --> */
       if (DEBUG) LOG(`Returning Values Object = ${JSON.stringify(values)}`);
 

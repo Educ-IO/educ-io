@@ -97,7 +97,11 @@ Router = function() {
       _.isFunction(_options.routes[name]) ?
       _.defaults({
         fn: routes[name]
-      }, route) : _.defaults(routes[name], route) : route);
+      }, route) : _.defaults(routes[name], route) : route),
+    REQUIRES = requires => ಠ_ಠ.Controller.load(_.map(_.isString(requires) ? 
+                                                     [requires] : 
+                                                     requires, required => ಠ_ಠ.IMPORTS.LOAD_LAZY[required])),
+    SCOPES = scopes => ಠ_ಠ.Main.authorise(_.isArray(scopes) ? scopes : [scopes]);
   /* <!-- Internal Setup Constants --> */
 
   /* <!-- Internal Functions --> */  
@@ -158,8 +162,14 @@ Router = function() {
           .catch(route.failure ? route.failure :
             e => e ?
             ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative() : false) : l_result;
-      };
-
+      },
+      _shortcut = (route, debug, name, key) => () => (!route.state || ಠ_ಠ.Display.state().in(route.state, route.all ? false : true)) ? 
+                (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && 
+                  (Promise.all([
+                    route.requires ? REQUIRES(route.requires) : Promise.resolve(),
+                    route.scopes ? SCOPES(route.scopes) : Promise.resolve()
+                  ]))
+                  .then(() => _execute(route, null)) : false;
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -382,10 +392,7 @@ Router = function() {
           /* <!-- Bind Shortcut key/s if required --> */
           if (route.keys && (!route.length || route.length === 0)) {
             route.keys = _.isArray(route.keys) ? route.keys : [route.keys];
-            _.each(route.keys, key => window.Mousetrap.bind(key, ((route, debug, name) => () => (!route.state || ಠ_ಠ.Display.state().in(route.state, route.all ? false : true)) ? 
-                (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && (route.requires ? 
-                  ಠ_ಠ.Controller.load(_.map(_.isString(route.requires) ? [route.requires] : route.requires, required => ಠ_ಠ.IMPORTS.LOAD_LAZY[required])) : 
-                  Promise.resolve()).then(() => _execute(route, null)) : false)(route, debug, name)));
+            _.each(route.keys, key => window.Mousetrap.bind(key, (_shortcut)(route, debug, name, key)));
           }
         }) : true;
         _touch = debug => window.Hammer ? _.each(_options.routes, (route, name) => {

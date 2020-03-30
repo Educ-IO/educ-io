@@ -15,6 +15,8 @@ Display = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var _string = value => typeof value === "string" || value instanceof String;
+
   var _commarise = value => {
     var s = (value += "").split("."),
       a = s[0],
@@ -309,12 +311,12 @@ Display = function() {
       --> */
       get: function(options) {
 
-        options = _.isString(options) || _.isArray(options) ? {
+        options = _string(options) || Array.isArray(options) ? {
           name: options
         } : options;
 
         var _get = name => $("#__doc__" + name)[0].innerText;
-        var _doc = _.isArray(options.name) ?
+        var _doc = Array.isArray(options.name) ?
           _.reduce(options.name, (doc, name) => `${doc}\n\n${_get(name)}`, "") :
           _get(options.name);
 
@@ -354,8 +356,8 @@ Display = function() {
 
       get: (options, process) => {
 
-        var _return = (_ && _.isString(options)) ? _template(options) : _template(options.template ? options.template : options.name)(options);
-        return process ? _process($(_return)) : _return;
+        var _return = _string(options) ? _template(options) : _template(options.template ? options.template : options.name)(options);
+        return process ? _string(options) ? options => _process($($.parseHTML(_return(options)))) : _process($(_return)) : _return;
         
       },
 
@@ -437,7 +439,7 @@ Display = function() {
       return new Promise((resolve, reject) => {
 
         if (!options) return reject();
-        options = _.isString(options) ? {
+        options = _string(options) ? {
           title: ಠ_ಠ.Flags.dir().toUpperCase(),
           content: options
         } : options;
@@ -477,7 +479,7 @@ Display = function() {
 
       if (options && options.status) {
         _status = _loader.find(".status");
-        if (_.isString(options.status)) {
+        if (_string(options.status)) {
           /* <!-- Status is a string, so display it	--> */
           _status.text(options.status);
         } else {
@@ -1045,7 +1047,7 @@ Display = function() {
       };
 
       var _enter = names => {
-        names = _arrayize(names, _.isString);
+        names = _arrayize(names, _string);
         _.each(names, name => {
           if (_add(name)) _toggle(name, true);
         });
@@ -1070,7 +1072,7 @@ Display = function() {
       };
 
       var _exit = names => {
-        names = _arrayize(names, _.isString);
+        names = _arrayize(names, _string);
         _.each(names, name => {
           var a;
           if (_remove(name)) _toggle(name, false) &&
@@ -1101,7 +1103,7 @@ Display = function() {
       };
 
       var _in = (names, or) => {
-        names = _arrayize(names, _.isString);
+        names = _arrayize(names, _string);
         var all = _all();
         return (or ? _.some : _.every)(names, name => all.indexOf(name) >= 0);
       };
@@ -1124,7 +1126,7 @@ Display = function() {
 
         toggle: names => {
           var all = _all();
-          _arrayize(names, _.isString)
+          _arrayize(names, _string)
             .forEach(name => all.indexOf(name) >= 0 ? _exit(name) : _enter(name));
           return _in(names);
         }
@@ -1134,8 +1136,6 @@ Display = function() {
     },
     
     status: (function() {
-      
-      
       
       var _get = () => $(".navbar-status > .btn-outline-status");
       

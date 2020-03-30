@@ -207,7 +207,10 @@ Network = options => {
 				Promise.race([_fetch.then(r => {
 					clearTimeout(_timeout);
 					return r;
-				}), new Promise((resolve, reject) => _timeout = setTimeout(() => reject(new Error("Request Timed Out (after " + options.timeout + "ms) to : " + url)), options.timeout))]) : 
+				}).catch(e => {
+          clearTimeout(_timeout);
+          return Promise.reject(e);
+        }), new Promise((resolve, reject) => _timeout = setTimeout(() => reject(new Error("Request Timed Out (after " + options.timeout + "ms) to : " + url)), options.timeout))]) : 
 				_fetch;
 			
 		};

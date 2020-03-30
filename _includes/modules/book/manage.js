@@ -95,7 +95,7 @@ Manage = (options, factory) => {
       id: options.id.notification,
       title: title,
       instructions: FN.instructions(instructions),
-      confirm: command,
+      action: command,
       types: options.notifications.types
     }, FN.action.dialog).then(data => data ? success(data) : false);
   /* <!-- Notification Function --> */
@@ -106,7 +106,7 @@ Manage = (options, factory) => {
       id: options.id.permission,
       title: title,
       instructions: FN.instructions(instructions),
-      confirm: action,
+      action: action,
       notify: notify,
       handlers: {clear: ರ‿ರ.dialog.handlers.clear},
       roles: roles,
@@ -208,7 +208,7 @@ Manage = (options, factory) => {
           id: options.id.edit,
           title: "Edit Resource",
           instructions: factory.Display.doc.get("EDIT_INSTRUCTIONS"),
-          confirm: "Save",
+          action: "Save",
           handlers: {clear: ರ‿ರ.dialog.handlers.clear},
           actions: [{
             text: "Delete",
@@ -494,7 +494,7 @@ Manage = (options, factory) => {
       id: options.id.add,
       title: "Add New Resource",
       instructions: factory.Display.doc.get("ADD_INSTRUCTIONS"),
-      confirm: "Add",
+      action: "Add",
       handlers: {clear: ರ‿ರ.dialog.handlers.clear},
       parents: resources.parents(),
       features: resources.features(),
@@ -599,7 +599,7 @@ Manage = (options, factory) => {
       id: options.id.add,
       title: sequence ? "Edit Bundle Part" : "Add New Bundle Part",
       instructions: factory.Display.doc.get("ADD_PART_INSTRUCTIONS"),
-      confirm: sequence ? "Update" : "Add",
+      action: sequence ? "Update" : "Add",
       quantity: quantity ? quantity : 1,
       sequence: sequence,
       total: total,
@@ -809,7 +809,7 @@ Manage = (options, factory) => {
       title: title,
       instructions: instructions,
       content: content,
-      confirm: confirm,
+      action: confirm,
     }, dialog => {
       FN.action.dialog(dialog);
       dialog.find("input[type='text']").first().focus();

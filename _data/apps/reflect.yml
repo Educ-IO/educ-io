@@ -98,6 +98,8 @@ helpers:
   - colours
   - handlebars
   - url
+  - tabulate
+  - exporter
 modules:
   - flags
   - controller
@@ -165,14 +167,17 @@ templates:
   - shared/toggle_button
   - shared/list_item
   - shared/response_item
-  - shared/filters
-  - shared/table
-  - shared/datatable
-  - shared/rows
-  - shared/cell
+  - shared/tabular/filters
+  - shared/tabular/table
+  - shared/tabular/datatable
+  - shared/tabular/rows
+  - shared/tabular/cell
+  - shared/tabular/table_header
+  - shared/tabular/table_body
   - shared/hyperlink
   - shared/email
   - shared/permission
+  - shared/dialogs/dialog
   - fields/field_validation
   - fields/field_general
   - fields/field_additions
@@ -191,7 +196,6 @@ templates:
   - fields/field_range
   - fields/field_responses
   - emails/email_standard
-  - reflect/dialogs/dialog
   - reflect/dialogs/send
   - reflect/dialogs/dates
   - reflect/dialogs/scale
@@ -205,7 +209,8 @@ templates:
   - reflect/analysis/analyse_header
   - reflect/analysis/analyse_body
   - reflect/analysis/report_link
-  - reflect/tracking/tracker
+  - reflect/tracking/tracker_body
+  - reflect/tracking/tracker_header
   - reflect/signatures/signature_summary
   - reflect/signatures/signature
   - reflect/parts/count
@@ -226,7 +231,6 @@ docs:
   - shared/HELP_INDETERMINATE
   - shared/HELP_UNAVAILABLE
   - shared/FILTERS
-  - shared/HEADERS
   - emails/EMAIL_STANDARD
   - reflect/PUBLIC
   - reflect/FEATURES
@@ -273,6 +277,7 @@ docs:
   - reflect/NOTIFY_SHARE_REPORT_FAILED
   - reflect/NOTIFY_SEND_SUCCESS
   - reflect/NOTIFY_SENT_EMAIL
+  - reflect/NOTIFY_SAVE_TRACKER_SUCCESS
   - reflect/EMAIL_ACTION_OPEN_REPORT
   - reflect/TRACKER_CHOOSE
   - reflect/TRACKER_SCALE
@@ -648,6 +653,10 @@ menus:
             toggle:
               - tracking-something
             divider: true
+            
+          - name: Close
+            desc: Close this Tracking
+            hash: close
   - name: Evidence
     disabled_until:
       - evidence

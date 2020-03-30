@@ -1,4 +1,4 @@
-Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode, helper) => {
+Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode, helper, table) => {
   "use strict";
   /* <!-- MODULE: Provides an analysis of a form/s reports --> */
   /* <!-- PARAMETERS: Receives the global app context, the forms being analysed and the report data submitted --> */
@@ -240,14 +240,12 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode, helper) => {
               return memo;
             }, {}),
           _columns = ["Name", "Total", "Count", "Average"].concat(ರ‿ರ.extras).concat(["Details"]),
-          _headers = FN.generate.headers(_columns);
+          _headers = table.headers(_columns, HIDDEN);
 
         /* <!-- Clean Up Analysis Objects --> */
         _.each(_reports, value => {
           value.details = _.sortBy(value.details, value => value.key + "_" + value.value);
-          if (_.isArray(value.name)) value.name = {
-            name: value.name.sort()
-          };
+          if (_.isArray(value.name)) value.name = value.name.sort();
           if (value.total) value.average = (value.total / value.__count);
           delete value.__count;
         });
@@ -277,7 +275,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode, helper) => {
                   address: _address.match(decode.email)[0],
                   subject: "Missing Reflect Report Data",
                   text: _address
-                }) : _address,
+                }).trim() : _address,
               total: null,
               count: null,
               average: null,
@@ -339,7 +337,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode, helper) => {
       var _columns = ["ID", "Owner", "Complete", "Form", "When"]
         .concat(ರ‿ರ.signatures ? ["Signatures"] : []),
         _fields = decode.meta.fields(forms),
-        _headers = FN.generate.headers(_columns.concat(helper.headers(_fields))),
+        _headers = table.headers(_columns.concat(helper.headers(_fields)), HIDDEN),
         _data = FN.generate.data(id, _columns, _fields, reports, 
                                   ರ‿ರ.signatures ? FN.query.standard : FN.query.slim);
 

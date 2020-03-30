@@ -14,6 +14,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
       template: "rows",
       filters: {},
       inverted_Filters: {},
+      complex: false,
       sorts: {},
       classes: [],
       wrapper_Classes: [],
@@ -54,7 +55,8 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     /* <!-- Get 'Default' Filters and Searches if applicable --> */
     _filters = ಠ_ಠ.Filters({
       normal: options.filters,
-      inverted: options.inverted_Filters
+      inverted: options.inverted_Filters,
+      complex: options.complex
     }, ಠ_ಠ);
     _sorts = options.sorts;
 
@@ -535,7 +537,16 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     values: filtered => {
       var _html = filtered ? $(_createDisplayTable()) : $(_createDefaultTable());
       var _return = [_.map(_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray(), el => el.textContent.trim())];
-      _html.find("tbody tr").each((i, el) => _return.push(_.map($(el).find("td").toArray(), el => el.textContent.trim())));
+      _html.find("tbody tr").each((i, el) => _return.push(_.map($(el).find("td").toArray(), el => {
+        var _el = $(el);
+        if (_el.children().length > 0) {
+          _el = _el.clone();
+          _el.find(".no-export").remove();
+          return _el.text();
+        } else {
+          return el.textContent.trim();
+        }
+      })));
       return _return;
     },
 
@@ -581,7 +592,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
     markdown: values => {
 
-      var output = "|---\n";
+      var output = "";
 
       if (values && values.length > 0) {
 
@@ -589,20 +600,20 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
         const max = _width(values),
           escape = value => value ? value.replace(/\|/g, "\\|") : "",
-          process = (row, value, index) => `${row}${index > 0 ? ` | ${escape(value)}` : escape(value)}`;
+          process = (row, value, index) => `${row}${index > 0 ? " " : ""}| ${escape(value)}`;
 
         /* <!-- Output Header Row --> */
         var headers = values.shift(),
           length = _.isArray(headers) ? headers.length : 1;
         headers = headers.concat(max > length ?
           _.map(_.range(max - length), () => "") : []);
-        output += `${_.reduce(headers, process, "")}\n`;
+        output += `${_.reduce(headers, process, "")} |\n`;
 
         /* <!-- Output Separator Row --> */
-        output += `${_.times(headers.length, () => "|:-").join("")}\n"`;
+        output += `${_.times(headers.length, () => "|:- ").join("")} |\n`;
 
         /* <!-- Output Value Rows --> */
-        if (values.length > 0) output += _.map(values, values => _.reduce(values, process, "")).join("\n");
+        if (values.length > 0) output += _.map(values, values => `${_.reduce(values, process, "")} |`).join("\n");
 
       }
 
@@ -613,6 +624,10 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     width: _width,
 
     expand: _expand,
+    
+    index: name => target.find(`#${_name} thead th[data-field='${name.toLowerCase()}']`).data("index"),
+    
+    table: () => target.find(`table#${_name}`),
 
   };
   /* <!-- External Visibility --> */

@@ -74,6 +74,8 @@ Dates = function() {
       
     },
     
+    available: () => !!(window.moment || window.dayjs),
+    
     formats: _formats,
     
     locale: _locale,

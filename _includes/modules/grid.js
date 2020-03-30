@@ -139,7 +139,7 @@ Grid = (ಠ_ಠ, data, options) => {
 		options.process.hides ? _hide(hide) : false;
 		options.process.blanks ? _blanks() : false;
 		options.process.headers ? _headers(rows) : false;
-		options.process.dates && moment ? _dates() : false;
+		options.process.dates && ಠ_ಠ.Dates && ಠ_ಠ.Dates.available() ? _dates() : false;
 		options.process.values ? _values() : false;
 		
 	}

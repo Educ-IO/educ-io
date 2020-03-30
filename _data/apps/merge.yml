@@ -86,19 +86,18 @@ templates:
   - loader
   - recent
   - help
-  - shared/filters
   - shared/control_icon
   - shared/control_button
   - shared/populate_buttons
   - shared/tab-links
   - shared/tab-list
   - shared/tab-tabs
-  - shared/filters
-  - shared/table
-  - shared/rows
-  - shared/cell
-  - shared/datatable
-  - shared/headers
+  - shared/tabular/filters
+  - shared/tabular/table
+  - shared/tabular/rows
+  - shared/tabular/cell
+  - shared/tabular/datatable
+  - shared/dialogs/headers
   - fields/field_validation
   - fields/field_general
   - fields/field_numeric

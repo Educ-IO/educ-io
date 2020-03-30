@@ -18,7 +18,7 @@ Classes = (options, factory) => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _load = classes => Promise.all(_.map(classes, course => factory.Google.classrooms.work(course).list()
+  var _load = classes => Promise.all(_.map(classes, course => factory.Google.classrooms.classroom(course).work().list()
           .then(results => _.each(results, result => result ?
             result._title = `COURSE: ${course.name}` : null))))
         .then(_.flatten)

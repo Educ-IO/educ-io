@@ -111,12 +111,12 @@ templates:
   - shared/tab-links
   - shared/tab-list
   - shared/tab-tabs
-  - shared/filters
-  - shared/table
-  - shared/rows
-  - shared/cell
-  - shared/datatable
-  - shared/headers
+  - shared/tabular/filters
+  - shared/tabular/table
+  - shared/tabular/rows
+  - shared/tabular/cell
+  - shared/tabular/datatable
+  - shared/dialogs/headers
   - shared/link
   - shared/link_options
   - fields/field_validation

@@ -26,7 +26,7 @@ Trackers = (options, factory) => {
                       .catch(e => factory.Flags.error("Trackers Finding Error", e).negative())
                       .then(factory.Main.busy("Looking for Existing Trackers")),
     
-    one : file => file ? factory.Google.files.download(_.isString(file) ? file : file.id) : false,
+    one : file => file ? factory.Google.files.download(_.isString(file) ? file : (options.state.session.file = file).id) : false,
     
   };
   
@@ -63,20 +63,11 @@ Trackers = (options, factory) => {
             scale: _omit(scale.scale)
         },
         tracker: _new(),
-      }, _file;
+      };
 
       factory.Flags.log("CREATED TRACKER", _tracker);
 
-      factory.Google.files.upload({
-              name: file 
-            }, JSON.stringify(_tracker, options.replacer, 2), options.type)
-        .then(factory.Main.busy("Creating"))
-        .then(uploaded => {
-          _file = uploaded;
-          factory.Flags.log("Uploaded File", _file);
-        });
-
-      return _tracker;
+      return options.functions.save.tracker(_tracker, file, true).then(() => _tracker);
 
     },
     
