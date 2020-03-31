@@ -9,7 +9,9 @@
         </button>
       </div>
       <div class="modal-body">
-        {{#if message}}<p>{{{message}}}</p>{{/if}}
+        {{~#if message~}}
+          {{#unless (startsWith message "<p>")}}<p>{{/unless}}{{{message}}}{{#unless (startsWith message "<p>")}}</p>{{/unless}}
+        {{~/if~}}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-outline-secondary btn-flat waves-effect" data-dismiss="modal">{{#if close}}{{close}}{{else}}Close{{/if}}</button>

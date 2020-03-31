@@ -10,7 +10,7 @@
 ###############################################################
 
 name: Classes
-desc: An admin tool to __monitor__, __configure__ and report on all your Google Classrooms.
+desc: An admin tool to __monitor__, __configure__ and __report on__ all your Google Classrooms.
 link: /classes/
 colour: 3b6b00
 logo: images/classes_logo.svg
@@ -147,8 +147,10 @@ docs:
   - classes/INVITE_TEACHERS
   - classes/REMOVE_STUDENTS
   - classes/REMOVE_TEACHERS
-  - classes/REMOVE_STUDENT
-  - classes/REMOVE_TEACHER
+  - classes/REMOVE
+  - classes/STUDENT
+  - classes/TEACHER
+  - classes/CLASSROOM
 scopes:
   google:
     - scope: email
@@ -269,7 +271,6 @@ menus:
             desc: Close this Overview
             hash: close
   - name: Classes
-    visibility: debug
     disabled_until:
       - overview
     groups:

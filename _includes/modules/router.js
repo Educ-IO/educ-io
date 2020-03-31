@@ -487,12 +487,14 @@ Router = function() {
               _match(route, command) && _check(route, STRIP(command, (route.__length = route.matches.length))));
 
           /* <!-- Execute the route if available --> */
-          _route && _route.fn ? (_executions.local = _execute(_route, command)) === false ?
-            (_handled = false) : true : (_handled = false);
+          _route && _route.fn ? (_executions.local = (_route.requires || _route.scopes ? Promise.all([
+                    _route.requires ? REQUIRES(_route.requires) : Promise.resolve(),
+                    _route.scopes ? SCOPES(_route.scopes) : Promise.resolve()
+                  ]).then(() => _execute(_route, command)) : _execute(_route, command))) === false ?
+                    (_handled = false) : true : (_handled = false);
 
           /* <!-- Log is available, so debug log --> */
-          if (_handled && _debug)
-            ಠ_ಠ.Flags.log(`Routed to: ${STR(_route)} with: ${STR(command)}`);
+          if (_handled && _debug) ಠ_ಠ.Flags.log(`Routed to: ${STR(_route)} with: ${STR(command)}`);
 
         }
 

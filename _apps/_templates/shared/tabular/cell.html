@@ -11,7 +11,7 @@
 	{{~else if (all (exists text) (exists url) (all text url))~}}
     <a class="text-left wrap-text small mw-25" href="{{url}}" target="_blank" data-toggle="tooltip" data-trigger="hover" title="{{either title 'Open in New Tab'}}" data-type="out">{{text}}</a>
   {{~else if (all (any (present $id) (present id)) (present text))~}}
-    <span data-id="{{either $id id}}" {{#present type}} data-type="{{type}}"{{/present}} {{#present parent}} data-parent="{{parent}}"{{/present}}>{{text}}{{~#if (any removable $removable)}}<a role="button" class="close float-right no-export" aria-label="Close" href="#remove{{#present type}}.{{type}}{{/present}}{{#present parent}}.{{parent}}{{/present}}.{{either $id id}}" data-toggle="tooltip" data-trigger="hover" title="Remove"><span aria-hidden="true">&times;</span></a>{{/if~}}</span>
+    <span data-id="{{either $id id}}" {{#present type}} data-type="{{type}}"{{/present}} {{#present parent}} data-parent="{{parent}}"{{/present}}>{{~#if (any removable $removable)}}<a role="button" class="close float-right no-export" aria-label="Close" href="#remove{{#present type}}.{{type}}{{/present}}{{#present parent}}.{{parent}}{{/present}}.{{either $id id}}" data-toggle="tooltip" data-trigger="hover" title="{{either title 'Remove'}}"><span aria-hidden="true">&times;</span></a>{{/if~}}{{text}}</span>
   {{~else~}}
     <div style="white-space: pre;"{{#if this}}{{#if __class}} class="{{__class}}"{{/if}}{{/if}}>{{#if this}}{{#present this}}{{formatYaml this @key}}{{/present}}{{/if}}</div>
 	{{~/if~}}

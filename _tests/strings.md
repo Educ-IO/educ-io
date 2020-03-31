@@ -10,4 +10,4 @@ tests:
     desc: Test Deterministic Stringify
     function: stringify
 ---
-To verify the functionality of the __strings help__, which includes a sensible sort (numerically sensitive) and a deterministic conversion of objects to strings (essential for apps like __Relect__ to function correctly).
+To verify the functionality of the __strings helper__, which includes a sensible sort (numerically sensitive) and a deterministic conversion of objects to strings (essential for apps like __Relect__ to function correctly).

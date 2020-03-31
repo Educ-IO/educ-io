@@ -22,7 +22,7 @@ Usage = (options, factory) => {
   /* <!-- Internal Functions --> */
   FN.column = name => options.state.session.table.index(name);
   
-  FN.badge = duration => {
+  FN.colour = duration => {
     var _days = duration.valueOf() / 1000 / 60 / 60 / 24;
     return _days >= 21 ? "danger" :
       _days >= 7 ? "warning" : "success";
@@ -33,27 +33,25 @@ Usage = (options, factory) => {
     _existing >= 0 ? usage[_existing] = data : usage.push(data);
   };
   
-  FN.members = (usage, id, key, value, badge, suffix) => FN.add(usage, {
+  FN.badge = (usage, id, key, title, value, badge) => FN.add(usage, {
       id: id,
       key: key,
       type: key.toLowerCase(),
-      title: value === 0 ? `There are <strong>no</strong> students${suffix ? ` ${suffix}`: ""} in this class` : 
-        value === 1 ? `There is <strong>one</strong> student${suffix ? ` ${suffix}`: ""} in this class` :
-          `There are <strong>${value}</strong> students${suffix ? ` ${suffix}`: ""} in this class`,
+      title: title,
       value: value,
       badge: badge
     });
   
-  FN.update = (usage, id, key, date, type, text, creator) => FN.add(usage, {
-    id: id,
-    key: key,
-    type: key.toLowerCase(),
-    title: `Last Updated ${type}<br /><strong>${date.format("LLL")}</strong>${text && creator ? `<br /><em>${text}</em> | <strong>${creator}<strong>`: ""}`,
-    value: date.fromNow(),
-    badge: FN.badge(0 - date.diff())
-  });
+  FN.members = (usage, id, key, value, badge, suffix, name) => FN.badge(usage, id, key, value === 0 ?
+      `There are <strong>no</strong> ${name || "student"}s${suffix ? ` ${suffix}`: ""} in this class` : 
+        value === 1 ? `There is <strong>one</strong> ${name || "student"}${suffix ? ` ${suffix}`: ""} in this class` :
+          `There are <strong>${value}</strong> ${name || "student"}s${suffix ? ` ${suffix}`: ""} in this class`, value, badge);
   
-  FN.type = (types, type) => types === null || types === undefined || types == type || _.indexOf(types, type) >= 0;
+  FN.update = (usage, id, key, date, type, text, creator) => FN.badge(usage, id, key,
+      `Last Updated ${type}<br /><strong>${date.format("LLL")}</strong>${text && creator ? `<br /><em>${text}</em> | <strong>${creator}<strong>`: ""}`,
+      date.fromNow(), FN.colour(0 - date.diff()));
+  
+  FN.type = (types, type, force) => (!force && types === null) || (!force && types === undefined) || types == type || _.indexOf(types, type) >= 0;
   
   FN.usage = (id, targets, types) => Promise.resolve(options.functions.populate.get(id))
     .then(classroom => classroom ? Promise.all([
@@ -61,6 +59,7 @@ Usage = (options, factory) => {
         FN.type(types, "announcements") ? options.functions.classes.announcements(classroom) : Promise.resolve(true),
         FN.type(types, "work") ? options.functions.classes.work(classroom) : Promise.resolve(true),
         FN.type(types, "invitations") ? options.functions.classes.invitations(classroom) : Promise.resolve(true),
+        FN.type(types, "teachers", true) ? options.functions.people.teachers(classroom) : Promise.resolve(true),
       ]).then(results => {
     
         /* <!-- Log Classroom Usage --> */
@@ -84,14 +83,25 @@ Usage = (options, factory) => {
           FN.update(classroom.usage, `${id}_usage_announcement`, "Classwork", factory.Dates.parse(classroom.$work[0].updateTime),
                     "Classwork", classroom.$work[0].title, classroom.$work[0].creator.text || classroom.$work[0].creator);
 
-        /* <!-- Add Student Invitations --> */
-        if (results[3] !== true && classroom.$invitations && classroom.$invitations.students && classroom.$invitations.students.length > 0)
-          FN.members(classroom.usage, `${id}_usage_invites`, "Invites", classroom.$invitations.students.length, "light", "(invited)");
-    
+        /* <!-- Add Invitations --> */
+        if (results[3] !== true && classroom.$invitations) {
+          
+          /* <!-- Add Student Invitations --> */
+          if (classroom.$invitations.students && classroom.$invitations.students.length > 0)
+            FN.members(classroom.usage, `${id}_usage_invites_student`, "Invited Students", classroom.$invitations.students.length, "light", "(invited)");
+          
+          /* <!-- Add Staff Invitations --> */
+          if (classroom.$invitations.teachers && classroom.$invitations.teachers.length > 0)
+            FN.members(classroom.usage, `${id}_usage_invites_teachers`, "Invited Teachers", classroom.$invitations.teachers.length, 
+                       "light", "(invited)", "teacher");
+          
+        }
+        
         /* <!-- Update the class object, and call for a visual update --> */
         options.functions.populate.update(classroom);
       
         /* <!-- Remove the loader to inform that loading has completed --> */
+        if (results[4] !== true) targets.teachers.empty().append(factory.Display.template.get("cell", true)(classroom.teachers));
         targets.students.empty().append(factory.Display.template.get("cell", true)(classroom.students));
         targets.usage.empty().append(factory.Display.template.get("cell", true)(classroom.usage));
     

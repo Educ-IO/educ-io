@@ -18,6 +18,8 @@ team:
   apps:
     - blocks
     - book
+    - classes
+    - data
     - reflect
     - survey
 school:

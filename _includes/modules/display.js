@@ -320,9 +320,14 @@ Display = function() {
           _.reduce(options.name, (doc, name) => `${doc}\n\n${_get(name)}`, "") :
           _get(options.name);
 
-        var _return = options.wrapper ? this.wrap(options.wrapper, _doc, options) : options.content !== undefined ?
-          _doc.replace(/\{\{+\s*content\s*}}/gi, options.content) : _doc;
-
+        var _return = options.content !== undefined ?
+          _doc.replace(/\{\{+\s*content\s*}}/gi, options.content) : 
+          options.data !== undefined ?
+            _.reduce(_.keys(options.data), (doc, key) => doc.replace(new RegExp(`\{\{+\s*${key}\s*}}`, "gi"), options.data[key]), _doc) :
+            _doc;
+        
+        _return = options.wrapper ? this.wrap(options.wrapper, _return, options) : _return;
+            
         return options.plain ? $(_return).text() : _return;
 
       },

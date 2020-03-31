@@ -53,6 +53,7 @@ People = (options, factory) => {
               text : person.profile.name.fullName,
               parent : parent,
               type : type,
+              title: "Remove this Person from the Class",
               $removable : removable
             });
             return memo;

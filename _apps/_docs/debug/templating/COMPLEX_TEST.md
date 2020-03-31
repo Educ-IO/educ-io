@@ -1,0 +1,1 @@
+This is a test with multiple variables: a:__{% raw %}{{a}}{% endraw %}__ ¦ b:_{% raw %}{{b}}{% endraw %}_ ¦ c:{% raw %}{{c}}{% endraw %}

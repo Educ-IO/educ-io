@@ -138,6 +138,9 @@ docs:
   - debug/FEATURES
   - debug/TESTS
   - debug/RUN_ALL
+  - debug/templating/SIMPLE_TEST
+  - debug/templating/FORMAT_TEST
+  - debug/templating/COMPLEX_TEST
 scopes:
   google:
     - scope: email

@@ -31,21 +31,23 @@ Roster = (options, factory) => {
                     }),
                     action: action,
                     rows: options.rows
-                  }).then(values => !values ? false : _.map(values.split("\n"), value => value.trim()));
+                  }).then(values => !values ? false : _.chain(values.split("\n")).map(value => value.trim()).compact().value());
   
-  FN.confirm = (id, message, content, action) => factory.Display.confirm({
+  FN.confirm = (id, message, person, classroom, action) => factory.Display.confirm({
                     id: id,
-                    message: factory.Display.doc.get({
-                      name: message,
-                      content: content
-                    }),
+                    message: [
+                      factory.Display.doc.get("REMOVE"),
+                      factory.Display.doc.get({
+                        name: message,
+                        content: person
+                      }),
+                      factory.Display.doc.get({
+                        name: "CLASSROOM",
+                        content: classroom
+                      })
+                    ].trim().join("\n"),
                     action: action,
                   });
-  
-  /*  courseId: "64711657825"
-      id: "NjQ3MTE2NTc4MjUqNzMyNTUxNzcwMTha"
-      role: "STUDENT" */
-  
   /* <!-- Internal Functions --> */
   
   /* <!-- Initial Calls --> */
@@ -61,7 +63,7 @@ Roster = (options, factory) => {
                                           .then(api => Promise.all(_.map(students, student => api.add(student, classroom.code)
                                                          .catch(e => factory.Flags.error("Add Student Error", e).negative()))))))
                                       .then(factory.Main.busy("Adding Students", true)) : false)
-                  .catch(e => e ? factory.Flags.error("Add Students Error", e) : factory.Flags.log("Add Students Cancelled")),
+                  .catch(e => (e ? factory.Flags.error("Add Students Error", e) : factory.Flags.log("Add Students Cancelled")).negative()),
       
       teachers : classrooms => FN.prompt("add_Teachers", "Add Teachers", "ADD_TEACHERS", FN.classes(classrooms), "Add")
                                 .then(teachers => teachers ? Promise.all(_.map(classrooms, 
@@ -69,7 +71,7 @@ Roster = (options, factory) => {
                                           .then(api => Promise.all(_.map(teachers, teacher => api.add(teacher)
                                                          .catch(e => factory.Flags.error("Add Teacher Error", e).negative()))))))
                                       .then(factory.Main.busy("Adding Teachers", true)) : false)
-                  .catch(e => e ? factory.Flags.error("Add Teachers Error", e) : factory.Flags.log("Add Teachers Cancelled")),
+                  .catch(e => (e ? factory.Flags.error("Add Teachers Error", e) : factory.Flags.log("Add Teachers Cancelled")).negative()),
       
     },
     
@@ -81,7 +83,7 @@ Roster = (options, factory) => {
                                           .then(api => Promise.all(_.map(students, student => api.invite(student)
                                                          .catch(e => factory.Flags.error("Invite Student Error", e).negative()))))))
                                       .then(factory.Main.busy("Inviting Students", true)) : false)
-                  .catch(e => e ? factory.Flags.error("Invite Students Error", e) : factory.Flags.log("Invite Students Cancelled")),
+                  .catch(e => (e ? factory.Flags.error("Invite Students Error", e) : factory.Flags.log("Invite Students Cancelled")).negative()),
       
       teachers : classrooms => FN.prompt("invite_Teachers", "Invite Teachers", "INVITE_TEACHERS", FN.classes(classrooms), "Invite")
                                 .then(teachers => teachers ? Promise.all(_.map(classrooms, 
@@ -89,7 +91,7 @@ Roster = (options, factory) => {
                                           .then(api => Promise.all(_.map(teachers, teacher => api.invite(teacher)
                                                          .catch(e => factory.Flags.error("Invite Teacher Error", e).negative()))))))
                                       .then(factory.Main.busy("Inviting Teachers", true)) : false)
-                  .catch(e => e ? factory.Flags.error("Invite Teachers Error", e) : factory.Flags.log("Invite Teachers Cancelled")),
+                  .catch(e => (e ? factory.Flags.error("Invite Teachers Error", e) : factory.Flags.log("Invite Teachers Cancelled")).negative()),
       
     },
     
@@ -97,11 +99,12 @@ Roster = (options, factory) => {
       
       student : (classroom, person) => {
         person = _.find(classroom.$students, student => student.profile.id == person);
-        return FN.confirm("remove_Student", "REMOVE_STUDENT", "", "Remove")
+        return FN.confirm("remove_Student", "STUDENT", person.profile.name.fullName,
+                            `${classroom.name} (Owned By: ${classroom.owner.text})`, "Remove")
                 .then(confirm => confirm ? 
                       factory.Google.classrooms.classroom(classroom).students().remove(person.profile.id)
                         .then(factory.Main.busy("Removing Student", true)) : false)
-                .catch(e => e ? factory.Flags.error("Student Removal Error", e) : factory.Flags.log("Student Removal Cancelled"));
+                .catch(e => (e ? factory.Flags.error("Student Removal Error", e) : factory.Flags.log("Student Removal Cancelled")).negative());
       },
       
       students : classrooms => FN.prompt("remove_Students", "Remove Students", "REMOVE_STUDENTS", FN.classes(classrooms), "Remove")
@@ -110,15 +113,16 @@ Roster = (options, factory) => {
                                           .then(api => Promise.all(_.map(students, student => api.remove(student)
                                                          .catch(e => factory.Flags.error("Remove Student Error", e).negative()))))))
                                       .then(factory.Main.busy("Removing Students", true)) : false)
-                  .catch(e => e ? factory.Flags.error("Remove Students Error", e) : factory.Flags.log("Remove Students Cancelled")),
+                  .catch(e => (e ? factory.Flags.error("Remove Students Error", e) : factory.Flags.log("Remove Students Cancelled")).negative()),
       
       teacher : (classroom, person) => {
         person = _.find(classroom.$teachers, teacher => teacher.profile.id == person);
-        return FN.confirm("remove_Teacher", "REMOVE_TEACHER", "", "Remove")
+        return FN.confirm("remove_Teacher", "TEACHER", person.profile.name.fullName,
+                            `${classroom.name} (Owned By: ${classroom.owner.text})`, "Remove")
                 .then(confirm => confirm ? 
                       factory.Google.classrooms.classroom(classroom).teachers().remove(person.profile.id)
                         .then(factory.Main.busy("Removing Teacher", true)) : false)
-                .catch(e => e ? factory.Flags.error("Teacher Removal Error", e) : factory.Flags.log("Teacher Removal Cancelled"));
+                .catch(e => (e ? factory.Flags.error("Teacher Removal Error", e) : factory.Flags.log("Teacher Removal Cancelled")).negative());
       },
       
       teachers : classrooms => FN.prompt("remove_Teachers", "Remove Teachers", "REMOVE_TEACHERS", FN.classes(classrooms), "Remove")
@@ -127,7 +131,7 @@ Roster = (options, factory) => {
                                           .then(api => Promise.all(_.map(teachers, teacher => api.remove(teacher)
                                                          .catch(e => factory.Flags.error("Remove Teacher Error", e).negative()))))))
                                       .then(factory.Main.busy("Removing Teachers", true)) : false)
-                  .catch(e => e ? factory.Flags.error("Remove Teachers Error", e) : factory.Flags.log("Remove Teachers Cancelled")),
+                  .catch(e => (e ? factory.Flags.error("Remove Teachers Error", e) : factory.Flags.log("Remove Teachers Cancelled")).negative()),
       
     }
     

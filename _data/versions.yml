@@ -1,8 +1,8 @@
 site :
-  0.1.9o :
-    name : Site 0.1.9o
+  0.1.9p :
+    name : Site 0.1.9p
     desc : Preparation for new Classes App
-    numeric : 0.1.9.15
+    numeric : 0.1.9.16
   0.1.9n :
     name : Site 0.1.9n
     desc : Bug Fixes
@@ -1410,6 +1410,10 @@ book :
     name : Early testing version
     type : minor
 blocks :
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+classes :
   0.0.1-alpha :
     name : Early testing version
     type : minor

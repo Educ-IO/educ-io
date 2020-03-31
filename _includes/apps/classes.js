@@ -173,6 +173,13 @@ App = function() {
                   force: {
                     matches: /FORCE/i,
                     length: 0,
+                    requires: "d3",
+                    scopes: [
+                      "https://www.googleapis.com/auth/classroom.announcements.readonly",
+                      "https://www.googleapis.com/auth/classroom.topics.readonly",
+                      "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
+                      "https://www.googleapis.com/auth/classroom.guardianlinks.students.readonly",
+                    ],
                     keys: ["alt+u", "alt+U"],
                     fn: () => FN.usage.generate(true)
                                 .then(() => ಠ_ಠ.Display.state().enter(FN.states.overview.usage)),
@@ -229,7 +236,11 @@ App = function() {
                 state: FN.states.overview.in,
                 length: 0,
                 scopes: "https://www.googleapis.com/auth/classroom.rosters",
+                /* <!-- Error 409 : ALREADY_EXISTS = Returns false --> */
                 fn: () => FN.roster.add.students(_.map(ರ‿ರ.table.table().find("tbody tr[data-id]").toArray(), el => FN.populate.get($(el).data("id"))))
+                            .then(results => (ಠ_ಠ.Flags.log("Student Additions", results), 
+                                              _.each(results, result => result && (result = _.compact(result)).length > 0 && result[0].courseId ? 
+                                                    FN.usage.update(result[0].courseId, true, "students") : null)))
               },
               
               teachers: {
@@ -237,7 +248,11 @@ App = function() {
                 state: FN.states.overview.in,
                 length: 0,
                 scopes: "https://www.googleapis.com/auth/classroom.rosters",
+                /* <!-- Error 409 : ALREADY_EXISTS = Returns false --> */
                 fn: () => FN.roster.add.teachers(_.map(ರ‿ರ.table.table().find("tbody tr[data-id]").toArray(), el => FN.populate.get($(el).data("id"))))
+                            .then(results => (ಠ_ಠ.Flags.log("Teachers Additions", results), 
+                                              _.each(results, result => result && (result = _.compact(result)).length > 0 && result[0].courseId ? 
+                                                    FN.usage.update(result[0].courseId, true, "teachers") : null)))
               },
               
             }
@@ -258,7 +273,7 @@ App = function() {
                 /* <!-- Error 409 : ALREADY_EXISTS = Returns false --> */
                 fn: () => FN.roster.invite.students(_.map(ರ‿ರ.table.table().find("tbody tr[data-id]").toArray(), el => FN.populate.get($(el).data("id"))))
                             .then(results => (ಠ_ಠ.Flags.log("Student Invitations", results), 
-                                              _.each(results, result => result && result.length > 0 && result[0].courseId ? 
+                                              _.each(results, result => result && (result = _.compact(result)).length > 0 && result[0].courseId ? 
                                                     FN.usage.update(result[0].courseId, true, "invitations") : null)))
               },
               
@@ -270,7 +285,7 @@ App = function() {
                 /* <!-- Error 409 : ALREADY_EXISTS = Returns false --> */
                 fn: () => FN.roster.invite.teachers(_.map(ರ‿ರ.table.table().find("tbody tr[data-id]").toArray(), el => FN.populate.get($(el).data("id"))))
                             .then(results => (ಠ_ಠ.Flags.log("Teacher Invitations", results), 
-                                              _.each(results, result => result && result.length > 0 && result[0].courseId ? 
+                                              _.each(results, result => result && (result = _.compact(result)).length > 0 && result[0].courseId ? 
                                                     FN.usage.update(result[0].courseId, true, "invitations") : null)))
               },
               
@@ -291,6 +306,7 @@ App = function() {
                 length: 2,
                 scopes: "https://www.googleapis.com/auth/classroom.rosters",
                 fn: commands => FN.roster.remove.student(FN.populate.get(commands[0]), commands[1])
+                                  .then(result => (ಠ_ಠ.Flags.log("Student Removal", result), result ? FN.usage.update(commands[0], true, "students") : result))
               },
               
               students: {
@@ -311,6 +327,7 @@ App = function() {
                 length: 2,
                 scopes: "https://www.googleapis.com/auth/classroom.rosters",
                 fn: commands => FN.roster.remove.teacher(FN.populate.get(commands[0]), commands[1])
+                                  .then(result => (ಠ_ಠ.Flags.log("Teacher Removal", result), result ? FN.usage.update(commands[0], true, "teachers") : result))
               },
               
               teachers: {

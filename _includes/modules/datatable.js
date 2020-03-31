@@ -533,20 +533,22 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     name: () => table.name,
 
     data: () => _getData(),
-
+    
     values: filtered => {
+      
       var _html = filtered ? $(_createDisplayTable()) : $(_createDefaultTable());
       var _return = [_.map(_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray(), el => el.textContent.trim())];
-      _html.find("tbody tr").each((i, el) => _return.push(_.map($(el).find("td").toArray(), el => {
-        var _el = $(el);
-        if (_el.children().length > 0) {
-          _el = _el.clone();
-          _el.find(".no-export").remove();
-          return _el.text();
-        } else {
-          return el.textContent.trim();
-        }
-      })));
+      
+      var _clean = el => {
+        if (el.find(".no-export").length > 0) (el = el.clone()).find(".no-export").remove();
+        if (el.find("hr, br").length > 0) (el = el.clone()).find("hr, br").replaceWith("\n");
+        return el;
+      }, _extract = el => (el.find(".badge, [data-id], [data-type]").length > 0) ?
+          _.map(el.find(".badge, [data-id], [data-type]").toArray(), el => _extract($(el))).join("\n") :
+          el.length > 0 ? el[0].textContent.trim() : "";
+      
+      _html.find("tbody tr").each((i, el) => _return.push(_.map($(el).find("td").toArray(), el => _extract(_clean($(el))))));
+      
       return _return;
     },
 
@@ -599,7 +601,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
         /* <!-- Basic Constants --> */
 
         const max = _width(values),
-          escape = value => value ? value.replace(/\|/g, "\\|") : "",
+          escape = value => value ? value.replace(/[\n\r]/g, "; ").replace(/\|/g, "¦") : "",
           process = (row, value, index) => `${row}${index > 0 ? " " : ""}| ${escape(value)}`;
 
         /* <!-- Output Header Row --> */
