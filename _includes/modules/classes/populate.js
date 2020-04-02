@@ -34,6 +34,9 @@ Populate = (options, factory) => {
       $students: value.$students || [], /* <!-- Full Students Objects --> */
       $$students: value.$$students || [], /* <!-- Student Names (for searching) --> */
       $invitations: value.$invitations || [], /* <!-- Full Invitation Objects --> */
+      $announcements: value.$announcements || [], /* <!-- Full Announcement Objects --> */
+      $topics: value.$topics || [], /* <!-- Full Topic Objects --> */
+      $work: value.$work || [], /* <!-- Full Course Work Objects --> */
       id: {
         text: value.id,
         url: value.alternateLink,

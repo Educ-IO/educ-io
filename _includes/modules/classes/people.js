@@ -32,7 +32,11 @@ People = (options, factory) => {
       .catch(() => null)
       .then(guardians => (ರ‿ರ.guardians[key] = guardians && guardians.length > 0 && guardians[0] ? guardians : null));
   
-  FN.generic = (list, property, output) => Promise.all(_.map(_.chain(list).pluck(property).compact().uniq().value(), FN.person))
+  FN.generic = (list, property, output, singular, plural, action) => {
+    var processed = 0;
+    return Promise.all(_.map(_.chain(list).pluck(property).compact().uniq().value(), id => FN.person(id)
+                             .then(person => (singular && plural ? factory.Main.event(options.functions.events.load.progress, 
+                                 factory.Main.message(processed += 1, singular, plural, action || "processed")) : null, person))))
       .then(people => {
         _.each(people, person => person && person.name ? 
                 _.chain(list).filter(value => value[property] == person.id).each(value => value[output] = {
@@ -41,6 +45,7 @@ People = (options, factory) => {
                 }) : null);
         return list;
       });
+  };
   
   FN.process = people => (_.each(_.isArray(people) ? people : [people], 
                                 person => person.userId ? ರ‿ರ.cache[person.userId] = person.profile : ರ‿ರ.cache[person.id] = person), people);
@@ -61,7 +66,7 @@ People = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.classes = classrooms => FN.generic(classrooms, "ownerId", "owner");
+  FN.classes = classrooms => FN.generic(classrooms, "ownerId", "owner", "owner", "owners", "retrieved");
   
   FN.posts = posts => FN.generic(posts, "creatorUserId", "creator");
   
@@ -72,8 +77,15 @@ People = (options, factory) => {
       .then(() => students);
   };
   
-  FN.teachers = classrooms => Promise.all(_.map(_.isArray(classrooms) ? classrooms : [classrooms], 
+  FN.teachers = classrooms => {
+    var processed = 0;
+    return Promise.all(_.map(_.isArray(classrooms) ? classrooms : [classrooms], 
     classroom => factory.Google.classrooms.classroom(classroom.$id || classroom.id).teachers().list()
+          .then(teachers => (
+            factory.Main.event(options.functions.events.load.progress, 
+                               factory.Main.message(processed += 1, "class", "classes", "processed")),
+            teachers
+          ))
           .then(FN.process)
           .then(teachers => (
             classroom.$teachers = teachers,
@@ -82,6 +94,7 @@ People = (options, factory) => {
             teachers
           ))
           .catch(e => (factory.Flags.error("Teachers Error", e), null)))).then(() => classrooms);
+  };
   
   FN.students = (classrooms, guardians) => Promise.all(_.map(_.isArray(classrooms) ? classrooms : [classrooms], 
     classroom => factory.Google.classrooms.classroom(classroom.$id || classroom.id).students().list()

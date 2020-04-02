@@ -16,11 +16,20 @@ Main = function() {
   /* <!-- Plumbing Functions --> */
 
   /* <!-- TODO: Overlapping busy calls can cause issues, so we check that it is function --> */
-  const BUSY = (status, full) => _.wrap(ಠ_ಠ.Display.busy({
+  const BUSY = (status, full, event, initial) => _.wrap(ಠ_ಠ.Display.busy({
     target: full ? ಠ_ಠ.container.parent() : ಠ_ಠ.container,
-    status: status,
+    status: event ? {
+        source: window,
+        event: event,
+        value: status,
+        initial: initial || null,
+      } : status,
     fn: true
   }), (busy, value) => _.tap(value, () => _.isFunction(busy) ? busy() : false));
+  
+  const EVENT = (event, message) => window.dispatchEvent(new CustomEvent(event, _.isObject(message) ? message : {detail : message}));
+  
+  const MESSAGE = (count, singular, plural, action) => `${ಠ_ಠ.Display.commarise(count)} ${count > 1 ? plural : singular} ${action || "loaded"}`;
   
   const PROMPT = (name, map, list) => (_.isFunction(list) ? list() : Promise.resolve(list))
         .catch(e => ಠ_ಠ.Flags.error(`${name} List`, e).negative())
@@ -477,6 +486,10 @@ Main = function() {
     }),
 
     busy: BUSY,
+    
+    event: EVENT,
+    
+    message: MESSAGE,
     
     prompt: PROMPT,
 

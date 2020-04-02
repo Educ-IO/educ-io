@@ -28,8 +28,11 @@ App = function() {
     now: () => {
 
       /* <!-- Set Up / Create the States Module --> */
-      FN.states = ಠ_ಠ.States(ಠ_ಠ);
+      FN.states = ಠ_ಠ.States();
 
+      /* <!-- Set Up / Create the Events Module --> */
+      FN.events = ಠ_ಠ.Events();
+      
     },
 
     /* <!-- Start App after fully loaded (but BEFORE routing or authentication) --> */
@@ -146,13 +149,13 @@ App = function() {
             length: 0,
             keys: ["o", "O"],
             fn: () => FN.overview.display()
-              .then(table => ರ‿ರ.table = table)
-              .then(() => {
-                ಠ_ಠ.Display.state().change(FN.states.views, FN.states.overview.in);
-                if (!ಠ_ಠ.Display.state().in(FN.states.periods.all, true)) ಠ_ಠ.Display.state().enter(FN.states.periods.forever);
-              })
-              .catch(e => ಠ_ಠ.Flags.error("Classes Overview Error", e))
-              .then(ಠ_ಠ.Main.busy("Loading Classes", true)),
+                .then(table => ರ‿ರ.table = table)
+                .then(() => {
+                  ಠ_ಠ.Display.state().change(FN.states.views, FN.states.overview.in);
+                  if (!ಠ_ಠ.Display.state().in(FN.states.periods.all, true)) ಠ_ಠ.Display.state().enter(FN.states.periods.forever);
+                })
+                .catch(e => ಠ_ಠ.Flags.error("Classes Overview Error", e))
+                .then(ಠ_ಠ.Main.busy(message => message || "", true, FN.events.load.progress, "Loading Classes")),
             routes: {
               usage: {
                 matches: /USAGE/i,

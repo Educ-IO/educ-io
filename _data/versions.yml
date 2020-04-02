@@ -1,4 +1,8 @@
 site :
+  0.1.9r :
+    name : Classes v0.0.2-beta
+    desc : Classes App Released!
+    numeric : 0.1.9.17
   0.1.9p :
     name : Site 0.1.9p
     desc : Preparation for new Classes App
@@ -1414,6 +1418,9 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  0.0.2-beta :
+    name : First fully functional release
+    type : major
   0.0.1-alpha :
     name : Early testing version
     type : minor

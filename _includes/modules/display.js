@@ -492,6 +492,7 @@ Display = function() {
           var _source = options.status.source ? options.status.source : window;
           _handler = options.__statusHandler ? options.__statusHandler : e => _status.text(options.status.value ? options.status.value(e.detail) : e.detail);
           _source[_clear ? "removeEventListener" : "addEventListener"](options.status.event, _handler, false);
+          if (options.status.initial && _string(options.status.initial)) _status.text(options.status.initial);
         }
       }
 

@@ -33,11 +33,12 @@ Usage = (options, factory) => {
     _existing >= 0 ? usage[_existing] = data : usage.push(data);
   };
   
-  FN.badge = (usage, id, key, title, value, badge) => FN.add(usage, {
+  FN.badge = (usage, id, key, title, value, badge, details) => FN.add(usage, {
       id: id,
       key: key,
       type: key.toLowerCase(),
       title: title,
+      details: details || undefined,
       value: value,
       badge: badge
     });
@@ -60,6 +61,7 @@ Usage = (options, factory) => {
         FN.type(types, "work") ? options.functions.classes.work(classroom) : Promise.resolve(true),
         FN.type(types, "invitations") ? options.functions.classes.invitations(classroom) : Promise.resolve(true),
         FN.type(types, "teachers", true) ? options.functions.people.teachers(classroom) : Promise.resolve(true),
+        FN.type(types, "topics") ? options.functions.classes.topics(classroom) : Promise.resolve(true),
       ]).then(results => {
     
         /* <!-- Log Classroom Usage --> */
@@ -96,7 +98,11 @@ Usage = (options, factory) => {
                        "light", "(invited)", "teacher");
           
         }
-        
+    
+        /* <!-- Add Topics --> */
+        if (results[5] !== true && classroom.$topics && classroom.$topics.length > 0)
+          FN.badge(classroom.usage, `${id}_usage_topics`, "Topics", "", classroom.$topics.length, "info", _.reduce(classroom.$topics, (memo, topic) => `${memo ? `${memo}<hr class='my-1'/>` : ""}<strong>${topic.name}</strong><br /><em class='text-muted'>Last Updated</em>: ${factory.Dates.parse(topic.updateTime).format("LLL")}`, ""));
+
         /* <!-- Update the class object, and call for a visual update --> */
         options.functions.populate.update(classroom);
       

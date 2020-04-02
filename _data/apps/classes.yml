@@ -95,6 +95,7 @@ modules:
   - grid
   - headers
   - classes/states
+  - classes/events
   - classes/populate
   - classes/people
   - classes/classes
@@ -391,4 +392,4 @@ buttons:
   - name: About
     desc: More details about this view
     hash: instructions.overview
-published: false
+published: true

@@ -1010,11 +1010,11 @@ Google_API = (options, factory) => {
             
             return {
               
-              list: state => _list(
+              list: (state, fields) => _list(
                 NETWORKS.classroom.get, _url, "announcements", [], {
                   announcementStates: state || "PUBLISHED",
                   orderBy: "updateTime",
-                  fields: `nextPageToken,announcements(${_fields})`,
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,announcements(${fields ? fields.join(",") : _fields})`,
                 }),
             
               };
@@ -1031,7 +1031,7 @@ Google_API = (options, factory) => {
               list: fields => _list(
                 NETWORKS.classroom.get, _url, "invitations", [], STRIP_NULLS({
                   courseId: _id,
-                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,invitations(${fields ? fields.join(",") : _fields})`
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,invitations(${fields ? fields.join(",") : _fields})`,
                 })),
             
               };
@@ -1056,8 +1056,8 @@ Google_API = (options, factory) => {
                 "role": "STUDENT"
               }, "application/json"),
               
-              list: () => _list(NETWORKS.classroom.get, _url, "students", [], {
-                fields: `nextPageToken,students(${_fields})`
+              list: fields => _list(NETWORKS.classroom.get, _url, "students", [], {
+                fields: fields === true ? "*" : fields === false ? null : `nextPageToken,students(${fields ? fields.join(",") : _fields})`,
               }),
 
             };
@@ -1081,8 +1081,23 @@ Google_API = (options, factory) => {
                 "role": "TEACHER"
               }, "application/json"),
               
-              list: () => _list(NETWORKS.classroom.get, _url, "teachers", [], {
-                fields: `nextPageToken,teachers(${_fields})`
+              list: fields => _list(NETWORKS.classroom.get, _url, "teachers", [], {
+                fields: fields === true ? "*" : fields === false ? null : `nextPageToken,teachers(${fields ? fields.join(",") : _fields})`,
+              }),
+
+            };
+            
+          },
+          
+          topics: () => {
+            
+            var _url = `v1/courses/${encodeURIComponent(_id)}/topics`,
+                _fields = "topicId,name,updateTime";
+            
+            return {
+
+              list: fields => _list(NETWORKS.classroom.get, _url, "topic", [], {
+                fields: fields === true ? "*" : fields === false ? null : `nextPageToken,topic(${fields ? fields.join(",") : _fields})`,
               }),
 
             };
@@ -1096,11 +1111,11 @@ Google_API = (options, factory) => {
 
             return {
 
-              list: state => _list(
+              list: (state, fields) => _list(
                 NETWORKS.classroom.get, _url, "courseWork", [], {
                   courseWorkStates: state || "PUBLISHED",
                   orderBy: "dueDate",
-                  fields: `nextPageToken,courseWork(${_fields})`,
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,courseWork(${fields ? fields.join(",") : _fields})`,
                 }),
 
             };

@@ -22,6 +22,10 @@ Classes = (options, factory) => {
   
   /* <!-- Public Functions --> */
   FN.get = status => factory.Google.classrooms.list(status || "ACTIVE", true)
+    .then(classrooms => (
+        factory.Main.event(options.functions.events.load.progress, factory.Main.message(classrooms.length, "class", "classes")),
+        classrooms
+    ))
     .then(classrooms => _.chain(classrooms).uniq(false, "id").sortBy("creationTime").value().reverse())
     .then(options.functions.people.classes);
   
@@ -43,6 +47,11 @@ Classes = (options, factory) => {
     .then(work => classroom.$work = work)
     .then(options.functions.people.posts)
     .catch(e => (factory.Flags.error("Classroom Work Error", e), null));
+  
+  FN.topics = classroom => factory.Google.classrooms.classroom(classroom.$id || classroom.id).topics().list()
+    .then(topics => _.chain(topics).sortBy("updateTime").value().reverse())
+    .then(topics => classroom.$topics = topics)
+    .catch(e => (factory.Flags.error("Classroom Topics Error", e), null));
   /* <!-- Public Functions --> */
 
   /* <!-- Initial Calls --> */
@@ -57,6 +66,8 @@ Classes = (options, factory) => {
     invitations: FN.invitations,
     
     work : FN.work,
+    
+    topics : FN.topics,
     
   };
   /* <!-- External Visibility --> */
