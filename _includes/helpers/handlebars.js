@@ -5,7 +5,8 @@ Handlebars = (options, factory) => {
   /* <!-- PARAMETERS: Options (see below) --> */
 
   /* <!-- Internal Constants --> */
-  const DEFAULTS = {};
+  const DEFAULTS = {},
+        STRINGS = factory.Strings();
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -240,39 +241,9 @@ Handlebars = (options, factory) => {
             "is" : "===";
         }
 
-        var operators = {
-          "==": (a, b) => a == b,
-          "===": (a, b) => a === b,
-          "!=": (a, b) => a != b,
-          "!==": (a, b) => a !== b,
-          "<": (a, b) => a < b,
-          "lt": (a, b) => a < b,
-          ">": (a, b) => a > b,
-          "gt": (a, b) => a > b,
-          "<=": (a, b) => a <= b,
-          "lte": (a, b) => a <= b,
-          ">=": (a, b) => a >= b,
-          "gte": (a, b) => a >= b,
-          "~=": (a, b) => a == b || a && b && a.toUpperCase() == b.toUpperCase(),
-          "typeof": (a, b) => typeof a == b,
-          "and": (a, b) => a && b,
-          "or": (a, b) => a || b,
-          "is": (a, b) => (a % 2 === 0 ? b.toLowerCase() == "even" : b.toLowerCase() == "odd"),
-          "in": (a, b) => {
-            var _b, _a = String(a);
-            try {
-              _b = JSON.parse(b);
-            } catch (e) {
-              b = {};
-            }
-            return _b[_a];
-          },
-          "eq": (a, b) => _.isEqual(a, b),
-          "neq": (a, b) => !_.isEqual(a, b)
-        };
-
-        if (!operators[operator]) throw new Error(`IS doesn't understand the operator ${operator}`);
-        return operators[operator](v1, v2) ?
+        var fn = STRINGS.operators[operator];
+        if (!fn) throw new Error(`IS doesn't understand the operator ${operator}`);
+        return fn(v1, v2) ?
           options.fn ? options.fn(this) : true :
           options.inverse ? options.inverse(this) : false;
 

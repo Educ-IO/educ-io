@@ -57,6 +57,7 @@ imports:
     load: lazy
 helpers:
   - network
+  - strings
   - google
   - table
   - css

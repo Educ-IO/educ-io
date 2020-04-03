@@ -41,7 +41,7 @@ Tabulate = (options, factory) => {
       hide_now: false,
       hide_initially: hidden && hidden.indexOf && hidden.indexOf(v.name || v) >= 0 ? true : false,
       field: (v.name || v).toLowerCase(),
-      icons: (v.name || v) === "When" || (v.name || v) === "Created" || (v.name || v) === "Updated" ? ["access_time"] : null
+      icons: (v.name || v) === "When" || (v.name || v) === "Created" || (v.name || v) === "Updated" || (v.name || v) === "Due" ? ["access_time"] : null
     }));
   /* <!-- Internal Functions --> */
   

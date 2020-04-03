@@ -247,6 +247,16 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
       });
   };
 
+  var _setSort = field => {
+    if (_sorts[field]) {
+      _sorts[field].is_desc ? delete _sorts[field] : _sorts[field].is_desc = true;
+    } else {
+      _sorts[field] = {
+        is_desc: false
+      };
+    }
+  };
+  
   var _createRows = rows => ಠ_ಠ.Display.template.get(options.template)({
     rows: rows,
     removable: options.removable
@@ -356,15 +366,15 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
 
     /* <!-- Apply Table Sort --> */
     _table.find("a[data-command='sort'], button[data-command='sort']").on("click", e => {
-      var _target = $(e.target);
-      var _field = _target.data("field");
-      if (_sorts[_field]) {
-        _sorts[_field].is_desc ? delete _sorts[_field] : _sorts[_field].is_desc = true;
-      } else {
-        _sorts[_field] = {
-          is_desc: false
-        };
-      }
+      var _target = $(e.target),
+          _field = _target.data("field");
+      
+      /* <!-- Set Underlying Value Sort --> */
+      _setSort(`$$${_field}`);
+      
+      /* <!-- Set Normal Value Sort --> */
+      _setSort(_field);
+      
       _update(true, true, target, null, true);
     });
 

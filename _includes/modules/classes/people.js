@@ -52,6 +52,8 @@ People = (options, factory) => {
   
   FN.simple = people => _.reduce(people, (memo, person) => (person && person.profile ? memo.push(person.profile.name.fullName) : null, memo), []);
   
+  FN.identifiers = people => _.reduce(people, (memo, person) => (person && person.userId ? memo.push(person.userId) : null, memo), []);
+  
   FN.list = (people, parent, type, removable) => _.reduce(people, (memo, person) => {
             if (person && person.profile) memo.push({
               id : person.profile.id,
@@ -90,6 +92,7 @@ People = (options, factory) => {
           .then(teachers => (
             classroom.$teachers = teachers,
             classroom.$$teachers = FN.simple(teachers),
+            classroom.$$$teachers = FN.identifiers(teachers),
             classroom.teachers = FN.list(teachers, classroom.$id || classroom.id, "teacher", true), 
             teachers
           ))
@@ -103,6 +106,7 @@ People = (options, factory) => {
           .then(students => (
             classroom.$students = students,
             classroom.$$students = FN.simple(students),
+            classroom.$$$students = FN.identifiers(students),
             classroom.students = FN.list(students, classroom.$id || classroom.id, "student", true),
             students
           ))

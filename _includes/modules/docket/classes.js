@@ -24,14 +24,7 @@ Classes = (options, factory) => {
         .then(_.flatten)
         .then(_.compact)
         .then(results => _.tap(results, results => _.each(results, result => {
-          result.due = result.dueDate ? factory.Dates.parse(new Date(
-            result.dueDate.year,
-            result.dueDate.month - 1,
-            result.dueDate.day,
-            result.dueTime ? result.dueTime.hours : 0,
-            result.dueTime ? result.dueTime.minutes : 0,
-            result.dueTime && result.dueTime.seconds ? result.dueTime.seconds : 0
-          )) : factory.Dates.now();
+          result.due = factory.Dates.parse(factory.Google.classrooms.due(result));
           if (result.dueTime) {
             result.IS_TIMED = true;
             result.TIME = result.due.format("HH:mm");

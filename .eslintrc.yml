@@ -163,6 +163,7 @@ globals:
   Usage: true
   iSAMS_API: true
   Templating: true
+  Classwork: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

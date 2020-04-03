@@ -63,12 +63,12 @@ imports:
     load: lazy
 helpers:
   - network
+  - strings
   - google
   - table
   - css
   - fields
   - filters
-  - strings
   - dialog
   - link
   - handlebars

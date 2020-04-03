@@ -21,7 +21,7 @@ Classes = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.get = status => factory.Google.classrooms.list(status || "ACTIVE", true)
+  FN.get = (status, since) => factory.Google.classrooms.list(status || "ACTIVE", true, since)
     .then(classrooms => (
         factory.Main.event(options.functions.events.load.progress, factory.Main.message(classrooms.length, "class", "classes")),
         classrooms
@@ -29,7 +29,9 @@ Classes = (options, factory) => {
     .then(classrooms => _.chain(classrooms).uniq(false, "id").sortBy("creationTime").value().reverse())
     .then(options.functions.people.classes);
   
-  FN.announcements = classroom => factory.Google.classrooms.classroom(classroom.$id || classroom.id).announcements().list()
+  FN.announcements = (classroom, all, number) => (all ? 
+      factory.Google.classrooms.classroom(classroom.$id || classroom.id).announcements().list(null, true) : 
+      factory.Google.classrooms.classroom(classroom.$id || classroom.id).announcements().last(number))
     .then(announcements => classroom.$announcements = announcements)
     .then(options.functions.people.posts)
     .catch(e => (factory.Flags.error("Classroom Announcements Error", e), null));
@@ -43,12 +45,16 @@ Classes = (options, factory) => {
     .then(options.functions.people.posts)
     .catch(e => (factory.Flags.error("Classroom Invitations Error", e), null));
   
-  FN.work = classroom => factory.Google.classrooms.classroom(classroom.$id || classroom.id).work().list()
+  FN.work = (classroom, all, number) => (all ?
+       factory.Google.classrooms.classroom(classroom.$id || classroom.id).work().list(null, true) :
+       factory.Google.classrooms.classroom(classroom.$id || classroom.id).work().last(number))
     .then(work => classroom.$work = work)
     .then(options.functions.people.posts)
     .catch(e => (factory.Flags.error("Classroom Work Error", e), null));
   
-  FN.topics = classroom => factory.Google.classrooms.classroom(classroom.$id || classroom.id).topics().list()
+  FN.topics = (classroom, all, number) => (all ?
+       factory.Google.classrooms.classroom(classroom.$id || classroom.id).topics().list(true) :
+       factory.Google.classrooms.classroom(classroom.$id || classroom.id).topics().last(number))
     .then(topics => _.chain(topics).sortBy("updateTime").value().reverse())
     .then(topics => classroom.$topics = topics)
     .catch(e => (factory.Flags.error("Classroom Topics Error", e), null));
@@ -59,7 +65,7 @@ Classes = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
     
-    all : FN.get,
+    all : since => FN.get(null, since),
     
     announcements : FN.announcements,
     

@@ -75,6 +75,7 @@ imports:
     load: lazy
 helpers:
   - network
+  - strings
   - google/sheets/notation
   - google/sheets/metadata
   - google/sheets/grid

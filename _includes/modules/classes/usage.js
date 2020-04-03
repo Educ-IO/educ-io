@@ -19,6 +19,19 @@ Usage = (options, factory) => {
   /* <!-- Internal Variables --> */
   /* <!-- Internal Variables --> */
 
+  /* <!-- Parsing Functions --> */
+  FN.parse = list => _.chain(list)
+          .each(value => value.date = factory.Dates.parse(value.updateTime || value.creationTime))
+          .map(value => ({
+            name: value.name || value.text || value.title,
+            creator: value.creator ? value.creator.text : "",
+            timestamp: value.date,
+            date: value.date.fromNow(),
+            badge: FN.colour(0 - value.date.diff())
+          }))
+          .value();
+  /* <!-- Parsing Functions --> */
+  
   /* <!-- Internal Functions --> */
   FN.column = name => options.state.session.table.index(name);
   
@@ -26,6 +39,11 @@ Usage = (options, factory) => {
     var _days = duration.valueOf() / 1000 / 60 / 60 / 24;
     return _days >= 21 ? "danger" :
       _days >= 7 ? "warning" : "success";
+  };
+  
+  FN.recent = (value, classroom) => {
+    if (!classroom.$usage || classroom.$usage < value) classroom.$usage = value;
+    return value;
   };
   
   FN.add = (usage, data) => {
@@ -61,7 +79,7 @@ Usage = (options, factory) => {
         FN.type(types, "work") ? options.functions.classes.work(classroom) : Promise.resolve(true),
         FN.type(types, "invitations") ? options.functions.classes.invitations(classroom) : Promise.resolve(true),
         FN.type(types, "teachers", true) ? options.functions.people.teachers(classroom) : Promise.resolve(true),
-        FN.type(types, "topics") ? options.functions.classes.topics(classroom) : Promise.resolve(true),
+        FN.type(types, "topics") ? options.functions.classes.topics(classroom, true) : Promise.resolve(true),
       ]).then(results => {
     
         /* <!-- Log Classroom Usage --> */
@@ -76,14 +94,31 @@ Usage = (options, factory) => {
           "dark", "(with invited guardians)");
     
         /* <!-- Add Announcements --> */
-        if (results[1] !== true && classroom.$announcements && classroom.$announcements.length > 0 && classroom.$announcements[0])
-          FN.update(classroom.usage, `${id}_usage_announcement`, "Announcement", factory.Dates.parse(classroom.$announcements[0].updateTime), 
-                    "Announcement", classroom.$announcements[0].text, classroom.$announcements[0].creator.text || classroom.$announcements[0].creator);
+        if (results[1] !== true && classroom.$announcements && classroom.$announcements.length > 0 && classroom.$announcements[0]) {
+          
+          var _teacher = FN.parse(_.filter(classroom.$announcements, announcement => classroom.$$$teachers.indexOf(announcement.creatorUserId) >= 0)),
+              _student = FN.parse(_.filter(classroom.$announcements, announcement => classroom.$$$students.indexOf(announcement.creatorUserId) >= 0));
+          
+          /* <!-- Teacher Announcements --> */
+          if (_teacher.length > 0) {
+            FN.recent(_teacher[0].timestamp, classroom);  
+            FN.badge(classroom.usage, `${id}_usage_announcement_teacher`, "Teacher Announcement", "",
+                    _teacher[0].date, _teacher[0].badge, factory.Display.template.get("popover_announcements")(_teacher)); 
+          }
+
+          /* <!-- Student Announcements --> */
+          if (_student.length > 0) FN.badge(classroom.usage, `${id}_usage_announcement_student`, "Student Announcement", "",
+                    _student[0].date, _student[0].badge, factory.Display.template.get("popover_announcements")(_student));
+          
+        }
 
         /* <!-- Add Work --> */
-        if (results[2] !== true && classroom.$work && classroom.$work.length > 0 && classroom.$work[0])
-          FN.update(classroom.usage, `${id}_usage_announcement`, "Classwork", factory.Dates.parse(classroom.$work[0].updateTime),
-                    "Classwork", classroom.$work[0].title, classroom.$work[0].creator.text || classroom.$work[0].creator);
+        if (results[2] !== true && classroom.$work && classroom.$work.length > 0 && classroom.$work[0]) {
+          var _work = FN.parse(classroom.$work);
+          FN.recent(_work[0].timestamp, classroom);
+          FN.badge(classroom.usage, `${id}_usage_work`, "Classwork", "", _work[0].date,
+                    _work[0].badge, factory.Display.template.get("popover_classworks")(_work));
+        }
 
         /* <!-- Add Invitations --> */
         if (results[3] !== true && classroom.$invitations) {
@@ -101,8 +136,9 @@ Usage = (options, factory) => {
     
         /* <!-- Add Topics --> */
         if (results[5] !== true && classroom.$topics && classroom.$topics.length > 0)
-          FN.badge(classroom.usage, `${id}_usage_topics`, "Topics", "", classroom.$topics.length, "info", _.reduce(classroom.$topics, (memo, topic) => `${memo ? `${memo}<hr class='my-1'/>` : ""}<strong>${topic.name}</strong><br /><em class='text-muted'>Last Updated</em>: ${factory.Dates.parse(topic.updateTime).format("LLL")}`, ""));
-
+          FN.badge(classroom.usage, `${id}_usage_topics`, "Topics", "", classroom.$topics.length, "info", 
+                    factory.Display.template.get("popover_topics")(FN.parse(classroom.$topics)), "");
+        
         /* <!-- Update the class object, and call for a visual update --> */
         options.functions.populate.update(classroom);
       

@@ -64,6 +64,7 @@ imports:
     load: lazy
 helpers:
   - network
+  - strings
   - google/sheets/notation
   - google/sheets/grid
   - google/sheets/format
@@ -76,7 +77,6 @@ helpers:
   - config
   - dialog
   - filters
-  - strings
   - tabulate
   - saver
   - exporter
@@ -102,6 +102,7 @@ modules:
   - classes/overview
   - classes/usage
   - classes/roster
+  - classes/classwork
 scripts: 
   - extends/regex
   - extends/array
@@ -126,6 +127,12 @@ templates:
   - shared/tabular/table_body
   - classes/overview/overview_body
   - classes/overview/overview_header
+  - classes/parts/popover_announcement
+  - classes/parts/popover_announcements
+  - classes/parts/popover_classwork
+  - classes/parts/popover_classworks
+  - classes/parts/popover_topic
+  - classes/parts/popover_topics
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -211,13 +218,19 @@ menus:
   - name: Display
     disabled_while:
       - overview
+      - classwork
     groups:
       all:
         commands:
           - name: Overview
-            desc: Show overview of your classes / classes in your domain
+            desc: Show overview of your classes / classes in your domain (created in the last 12 months)
             hash: overview
             shortcut: "o"
+            imports:
+              - d3
+          - name: All Classes
+            desc: Show overview of all your classes / classes in your domain
+            hash: overview.all
             imports:
               - d3
   - name: Overview
@@ -236,6 +249,14 @@ menus:
               - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
               - https://www.googleapis.com/auth/classroom.guardianlinks.students.readonly
             shortcut: "u"
+          - name: Classwork
+            desc: View Classroom Classwork
+            hash: overview.classwork
+            auth: google
+            scopes:
+              - https://www.googleapis.com/auth/classroom.coursework.students.readonly
+              - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
+            shortcut: "c"
             divider: true
             
           - name: Export to Sheets
@@ -269,8 +290,9 @@ menus:
             divider: true
             
           - name: Close
-            desc: Close this Overview
+            desc: Close this View
             hash: close
+            
   - name: Classes
     disabled_until:
       - overview
@@ -314,6 +336,17 @@ menus:
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.rosters
+              
+  - name: Classwork
+    disabled_until:
+      - classwork
+    groups:
+      all:
+        commands:
+          - name: Close
+            desc: Close this View
+            hash: close
+            
   - name: Periods
     visibility: debug
     disabled_until:
@@ -345,7 +378,9 @@ menus:
             toggle:
               - period-day
             shortcut: "d"
+            
   - name: Settings
+  
   - name: About
     short_name: Help
     groups:
@@ -383,12 +418,20 @@ menus:
               - jshashes
               - fetchjsonp
             auth: google
+              
 buttons:
 - name: Class Overview
-  desc: Generate an overview of all your / your domain Classrooms
+  desc: Show overview of your classes / classes in your domain (created in the last 12 months)
   hash: overview
   auth: google
+  imports:
+    - d3
   buttons:
+  - name: All Classes
+    desc: Show overview of all your classes / classes in your domain
+    hash: overview.all
+    imports:
+      - d3
   - name: About
     desc: More details about this view
     hash: instructions.overview

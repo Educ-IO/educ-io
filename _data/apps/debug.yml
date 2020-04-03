@@ -66,6 +66,7 @@ imports:
     load: lazy
 helpers:
   - network
+  - strings
   - google/sheets/notation
   - google/sheets/metadata
   - google/sheets/grid
@@ -78,7 +79,6 @@ helpers:
   - dialog
   - saad
   - colours
-  - strings
   - handlebars
 modules:
   - flags

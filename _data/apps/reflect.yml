@@ -81,12 +81,12 @@ imports:
 helpers:
   - data
   - network
+  - strings
   - google/sheets/notation
   - google/sheets/grid
   - google/sheets/format
   - google/sheets/properties
   - google
-  - strings
   - fields
   - dialog
   - filters

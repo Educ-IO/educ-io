@@ -1,4 +1,4 @@
-Overview = (options, factory) => {
+Classwork = (options, factory) => {
   "use strict";
 
   /* <!-- MODULE: Provides an interface to provide common functionality --> */
@@ -7,11 +7,11 @@ Overview = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
-      id : "overview",
+      id : "classwork",
       format: "Do MMM",
     },
     FN = {},
-    HIDDEN = ["ID", "Calendar", "State", "Guardians", "Room", "Updated", "Students", "Code", "Folder"];
+    HIDDEN = ["ID", "Type", "Mode", "Description", "Updated"];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -40,24 +40,23 @@ Overview = (options, factory) => {
       id: options.id,
       header: factory.Display.template.get("overview_header")({
         classes: ["pl-3", "pl-xl-4", "pt-2", "pb-0"],
-        title: "Overview",
+        title: "Classwork",
         subtitle: factory.Dates.parse(options.state.session.current).format(options.format)
       }).trim()
     }),
     
-    classes: classes => factory.Datatable(factory, {
+    classwork: classwork => factory.Datatable(factory, {
           id: `${options.id}_TABLE`,
           name: options.id,
-          data: options.functions.populate.classes(classes),
+          data: options.functions.populate.classwork(classwork),
           headers: options.state.application.tabulate.headers(
-            ["ID", "Calendar", "State", "Name", "Section", "Guardians", "Room", "Updated", "Created",
-             "Teachers", "Students", "Code", "Usage", "Folder", "Owner"], HIDDEN),
+            ["ID", "Type", "Mode", "Class", "Title", "Description", "Updated", "Created", "Due", "Creator"], HIDDEN),
         }, {
           classes: ["table-hover"],
           advanced: false,
           collapsed: true,
           removable: true,
-          removable_message: "Remove this Classroom from the Overview",
+          removable_message: "Remove this piece of Classwork from the View",
           wrapper: FN.render.wrapper(),
           complex: true,
         }, FN.render.body()),
@@ -66,12 +65,27 @@ Overview = (options, factory) => {
   /* <!-- Render Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.display = (since) => options.functions.classes.all(since)
-    .then(options.functions.people.teachers)
-    .then(classrooms => {
-      factory.Flags.log("Loaded CLASSES", classrooms);
-      return (ರ‿ರ.table = FN.render.classes(classrooms));
+  FN.display = classrooms => {
+    var processed = 0;
+    return Promise.all(_.map(classrooms, classroom => options.functions.classes.work(classroom, true).then(work => (
+            factory.Main.event(options.functions.events.load.progress, 
+                               factory.Main.message(processed += 1, "class", "classes", "processed")), work))))
+    .then(classworks => _.reduce(classworks, (memo, classwork, index) => _.reduce(classwork, (memo, work) => {
+      memo.push(_.extend(work, {
+        $classroom: classrooms[index].$id,
+        $class: classrooms[index].name,
+        class: {
+          text: classrooms[index].name,
+          title: classrooms[index].id.title,
+          url: classrooms[index].id.url,
+        }}));
+      return memo;
+    }, memo), []))
+    .then(classwork => {
+      factory.Flags.log("Loaded CLASSWORK", classwork);
+      return (ರ‿ರ.table = FN.render.classwork(classwork));
     });
+  };
   /* <!-- Public Functions --> */
 
   /* <!-- Initial Calls --> */
@@ -81,7 +95,7 @@ Overview = (options, factory) => {
     
     display: FN.display,
     
-    remove: id => options.functions.populate.remove(id),
+    remove: id => options.functions.populate.remove(id, "classwork"),
     
     table: () => ರ‿ರ.table,
     

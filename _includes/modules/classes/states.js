@@ -8,6 +8,7 @@ States = () => {
   /* <!-- Internal Constants --> */
   const STATE_OVERVIEW = "overview",
         STATE_OVERVIEW_USAGE = "overview-usage",
+        STATE_CLASSWORK = "classwork",
         STATE_PERIOD_FOREVER = "period-forever",
         STATE_PERIOD_MONTH = "period-month",
         STATE_PERIOD_WEEK = "period-week",
@@ -35,6 +36,10 @@ States = () => {
     
     config : STATE_CONFIG,
     
+    classwork : {
+      in : STATE_CLASSWORK,
+    },
+    
     overview : {
       in : STATE_OVERVIEW,
       usage : STATE_OVERVIEW_USAGE,
@@ -49,7 +54,8 @@ States = () => {
     },
     
     views : [
-      STATE_OVERVIEW
+      STATE_OVERVIEW,
+      STATE_CLASSWORK
     ],
     
   };

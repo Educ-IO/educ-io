@@ -7,7 +7,7 @@ Strings = () => {
 
   /* <!-- Internal Constants --> */
   const REGEX = {
-    NUMERIC : /(\.\d+)|(\d+(\.\d+)?)|([^\d.]+)|(\.\D+)|(\.$)/g
+    NUMERIC: /(\.\d+)|(\d+(\.\d+)?)|([^\d.]+)|(\.\D+)|(\.$)/g
   };
   /* <!-- Internal Constants --> */
 
@@ -15,31 +15,31 @@ Strings = () => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  
+
   /* <!-- Numerically Sensible Sort --> */
-  var _transform = value => REGEX.NUMERIC.test(value) ? 
-      ((value, number) => isNaN(number) ? value : number)(value, Number(value)) : value;
-      
+  var _transform = value => REGEX.NUMERIC.test(value) ?
+    ((value, number) => isNaN(number) ? value : number)(value, Number(value)) : value;
+
   var _compare = (value_1, value_2) => (value_1 = _transform(value_1)) > (value_2 = _transform(value_2)) ?
-      1 : value_1 < value_2 ? -1 : 0;
-  
+    1 : value_1 < value_2 ? -1 : 0;
+
   var _split = value => value ? _.map(value.split(/[\s,]+/), value => value.trim()) : [""];
-  
+
   var _sort = (array_1, array_2) => _.reduce(array_1,
     (result, value, index) => result === 0 ? _compare(value, array_2.length > index ? array_2[index] : "") : result, 0);
-  
+
   var _sorter = getter => (value_1, value_2) => {
-    
+
     var names_1 = _split(getter ? getter(value_1) : value_1),
-        names_2 = _split(getter ? getter(value_2) : value_2);
-    
-    return names_2.length > names_1.length ? _sort(names_2, names_1)*-1 : _sort(names_1, names_2);
-    
+      names_2 = _split(getter ? getter(value_2) : value_2);
+
+    return names_2.length > names_1.length ? _sort(names_2, names_1) * -1 : _sort(names_1, names_2);
+
   };
-  
+
   var _property = property => _sorter(!property || _.isFunction(property) ? property : value => value ? value[property] : null);
   /* <!-- Numerically Sensible Sort --> */
-  
+
   /* <!-- Deterministic Version of Stringify --> */
   var _stringify = (value, replacer, space, key) => {
 
@@ -74,6 +74,39 @@ Strings = () => {
 
   };
   /* <!-- Deterministic Version of Stringify --> */
+
+  /* <!-- Operators --> */
+  var _operators = ({
+    "==": (a, b) => a == b,
+    "===": (a, b) => a === b,
+    "!=": (a, b) => a != b,
+    "!==": (a, b) => a !== b,
+    "<": (a, b) => a < b,
+    "lt": (a, b) => a < b,
+    ">": (a, b) => a > b,
+    "gt": (a, b) => a > b,
+    "<=": (a, b) => a <= b,
+    "lte": (a, b) => a <= b,
+    ">=": (a, b) => a >= b,
+    "gte": (a, b) => a >= b,
+    "~=": (a, b) => a == b || a && b && a.toUpperCase() == b.toUpperCase(),
+    "typeof": (a, b) => typeof a == b,
+    "and": (a, b) => a && b,
+    "or": (a, b) => a || b,
+    "is": (a, b) => (a % 2 === 0 ? b.toLowerCase() == "even" : b.toLowerCase() == "odd"),
+    "in": (a, b) => {
+      var _b, _a = String(a);
+      try {
+        _b = JSON.parse(b);
+      } catch (e) {
+        b = {};
+      }
+      return _b[_a];
+    },
+    "eq": (a, b) => _.isEqual(a, b),
+    "neq": (a, b) => !_.isEqual(a, b)
+  });
+  /* <!-- Operators --> */
   
   /* <!-- Internal Functions --> */
 
@@ -152,12 +185,14 @@ Strings = () => {
         c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")),
 
     },
-    
+
     sort: _property,
-    
+
     sorter: property => values => values && values.sort ? values.sort(_property(property)) : values,
-    
+
     stringify: _stringify,
+
+    operators: _operators,
     /* <!-- External Functions --> */
 
   };
