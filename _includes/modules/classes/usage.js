@@ -6,10 +6,7 @@ Usage = (options, factory) => {
   /* <!-- REQUIRES: Global Scope: JQuery, Underscore | App Scope: Display --> */
 
   /* <!-- Internal Constants --> */
-  const DEFAULTS = {
-      id : "summary",
-    },
-    FN = {};
+  const DEFAULTS = {}, FN = {};
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -18,68 +15,30 @@ Usage = (options, factory) => {
 
   /* <!-- Internal Variables --> */
   /* <!-- Internal Variables --> */
-
-  /* <!-- Parsing Functions --> */
-  FN.parse = list => _.chain(list)
-          .each(value => value.date = factory.Dates.parse(value.updateTime || value.creationTime))
-          .map(value => ({
-            name: value.name || value.text || value.title,
-            creator: value.creator ? value.creator.text : "",
-            timestamp: value.date,
-            date: value.date.fromNow(),
-            badge: FN.colour(0 - value.date.diff())
-          }))
-          .value();
-  /* <!-- Parsing Functions --> */
   
   /* <!-- Internal Functions --> */
-  FN.column = name => options.state.session.table.index(name);
-  
-  FN.colour = duration => {
-    var _days = duration.valueOf() / 1000 / 60 / 60 / 24;
-    return _days >= 21 ? "danger" :
-      _days >= 7 ? "warning" : "success";
-  };
-  
   FN.recent = (value, classroom) => {
     if (!classroom.$usage || classroom.$usage < value) classroom.$usage = value;
     return value;
   };
   
-  FN.add = (usage, data) => {
-    var _existing = _.findIndex(usage, value => value.type == data.type);
-    _existing >= 0 ? usage[_existing] = data : usage.push(data);
-  };
-  
-  FN.badge = (usage, id, key, title, value, badge, details) => FN.add(usage, {
-      id: id,
-      key: key,
-      type: key.toLowerCase(),
-      title: title,
-      details: details || undefined,
-      value: value,
-      badge: badge
-    });
-  
-  FN.members = (usage, id, key, value, badge, suffix, name) => FN.badge(usage, id, key, value === 0 ?
+  FN.members = (usage, id, key, value, badge, suffix, name) => options.functions.common.badge(usage, id, key, value === 0 ?
       `There are <strong>no</strong> ${name || "student"}s${suffix ? ` ${suffix}`: ""} in this class` : 
         value === 1 ? `There is <strong>one</strong> ${name || "student"}${suffix ? ` ${suffix}`: ""} in this class` :
           `There are <strong>${value}</strong> ${name || "student"}s${suffix ? ` ${suffix}`: ""} in this class`, value, badge);
   
-  FN.update = (usage, id, key, date, type, text, creator) => FN.badge(usage, id, key,
+  FN.update = (usage, id, key, date, type, text, creator) => options.functions.common.badge(usage, id, key,
       `Last Updated ${type}<br /><strong>${date.format("LLL")}</strong>${text && creator ? `<br /><em>${text}</em> | <strong>${creator}<strong>`: ""}`,
-      date.fromNow(), FN.colour(0 - date.diff()));
-  
-  FN.type = (types, type, force) => (!force && types === null) || (!force && types === undefined) || types == type || _.indexOf(types, type) >= 0;
+      date.fromNow(), options.functions.common.colour(0 - date.diff()));
   
   FN.usage = (id, targets, types) => Promise.resolve(options.functions.populate.get(id))
     .then(classroom => classroom ? Promise.all([
-        FN.type(types, "students") ? options.functions.people.students(classroom) : Promise.resolve(true),
-        FN.type(types, "announcements") ? options.functions.classes.announcements(classroom) : Promise.resolve(true),
-        FN.type(types, "work") ? options.functions.classes.work(classroom) : Promise.resolve(true),
-        FN.type(types, "invitations") ? options.functions.classes.invitations(classroom) : Promise.resolve(true),
-        FN.type(types, "teachers", true) ? options.functions.people.teachers(classroom) : Promise.resolve(true),
-        FN.type(types, "topics") ? options.functions.classes.topics(classroom, true) : Promise.resolve(true),
+        options.functions.common.type(types, "students") ? options.functions.people.students(classroom) : Promise.resolve(true),
+        options.functions.common.type(types, "announcements") ? options.functions.classes.announcements(classroom) : Promise.resolve(true),
+        options.functions.common.type(types, "work") ? options.functions.classes.work(classroom) : Promise.resolve(true),
+        options.functions.common.type(types, "invitations") ? options.functions.classes.invitations(classroom) : Promise.resolve(true),
+        options.functions.common.type(types, "teachers", true) ? options.functions.people.teachers(classroom) : Promise.resolve(true),
+        options.functions.common.type(types, "topics") ? options.functions.classes.topics(classroom, true) : Promise.resolve(true),
       ]).then(results => {
     
         /* <!-- Log Classroom Usage --> */
@@ -96,27 +55,27 @@ Usage = (options, factory) => {
         /* <!-- Add Announcements --> */
         if (results[1] !== true && classroom.$announcements && classroom.$announcements.length > 0 && classroom.$announcements[0]) {
           
-          var _teacher = FN.parse(_.filter(classroom.$announcements, announcement => classroom.$$$teachers.indexOf(announcement.creatorUserId) >= 0)),
-              _student = FN.parse(_.filter(classroom.$announcements, announcement => classroom.$$$students.indexOf(announcement.creatorUserId) >= 0));
+          var _teacher = options.functions.common.parse(_.filter(classroom.$announcements, announcement => classroom.$$$teachers.indexOf(announcement.creatorUserId) >= 0)),
+              _student = options.functions.common.parse(_.filter(classroom.$announcements, announcement => classroom.$$$students.indexOf(announcement.creatorUserId) >= 0));
           
           /* <!-- Teacher Announcements --> */
           if (_teacher.length > 0) {
             FN.recent(_teacher[0].timestamp, classroom);  
-            FN.badge(classroom.usage, `${id}_usage_announcement_teacher`, "Teacher Announcement", "",
+            options.functions.common.badge(classroom.usage, `${id}_usage_announcement_teacher`, "Teacher Announcement", "",
                     _teacher[0].date, _teacher[0].badge, factory.Display.template.get("popover_announcements")(_teacher)); 
           }
 
           /* <!-- Student Announcements --> */
-          if (_student.length > 0) FN.badge(classroom.usage, `${id}_usage_announcement_student`, "Student Announcement", "",
+          if (_student.length > 0) options.functions.common.badge(classroom.usage, `${id}_usage_announcement_student`, "Student Announcement", "",
                     _student[0].date, _student[0].badge, factory.Display.template.get("popover_announcements")(_student));
           
         }
 
         /* <!-- Add Work --> */
         if (results[2] !== true && classroom.$work && classroom.$work.length > 0 && classroom.$work[0]) {
-          var _work = FN.parse(classroom.$work);
+          var _work = options.functions.common.parse(classroom.$work);
           FN.recent(_work[0].timestamp, classroom);
-          FN.badge(classroom.usage, `${id}_usage_work`, "Classwork", "", _work[0].date,
+          options.functions.common.badge(classroom.usage, `${id}_usage_work`, "Classwork", "", _work[0].date,
                     _work[0].badge, factory.Display.template.get("popover_classworks")(_work));
         }
 
@@ -136,8 +95,8 @@ Usage = (options, factory) => {
     
         /* <!-- Add Topics --> */
         if (results[5] !== true && classroom.$topics && classroom.$topics.length > 0)
-          FN.badge(classroom.usage, `${id}_usage_topics`, "Topics", "", classroom.$topics.length, "info", 
-                    factory.Display.template.get("popover_topics")(FN.parse(classroom.$topics)), "");
+          options.functions.common.badge(classroom.usage, `${id}_usage_topics`, "Topics", "", classroom.$topics.length, "info", 
+                    factory.Display.template.get("popover_topics")(options.functions.common.parse(classroom.$topics)), "");
         
         /* <!-- Update the class object, and call for a visual update --> */
         options.functions.populate.update(classroom);
@@ -150,22 +109,15 @@ Usage = (options, factory) => {
       }) : false);
   /* <!-- Internal Functions --> */
   
-  /* <!-- Render Functions --> */
-  FN.busy = el => el.append($(factory.Display.template.get({
-        name: "loader",
-        size: "small"
-      })));
-  /* <!-- Render Functions --> */
-  
   /* <!-- Generate Functions --> */
   
   /* <!-- Generate Functions --> */
   
   /* <!-- Public Functions --> */
   FN.meta = () => ({
-    students : FN.column("students") + 1,
-    teachers : FN.column("teachers") + 1,
-    usage : FN.column("usage") + 1,
+    students : options.functions.common.column("students") + 1,
+    teachers : options.functions.common.column("teachers") + 1,
+    usage : options.functions.common.column("usage") + 1,
   });
   
   FN.row = (meta, row, force, types) => {
@@ -177,7 +129,7 @@ Usage = (options, factory) => {
     return _usage && (force || _usage.html() == "") ? FN.usage(row.data("id"), {
       students: _students,
       teachers: _teachers,
-      usage: FN.busy(force ? _usage.empty() : _usage),
+      usage: factory.Main.busy_element(force ? _usage.empty() : _usage),
     }, types) : Promise.resolve(null);
     
   };

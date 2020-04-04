@@ -1,10 +1,10 @@
 {% raw %}
 {{#each rows}}
-<tr{{#if (any (present this.$id) (present this.id))}} data-id="{{either this.$id this.id}}"{{/if}}>
+<tr{{#if (any (present this.$id) (present this.id))}} data-id="{{either this.$id this.id}}"{{/if}}{{#if (any (present this.$parent) (present this.parent))}} data-parent="{{either this.$parent this.parent}}"{{/if}}>
   {{#each this}}
   {{~#unless (startsWith @key "$")}}<td>
     {{~> cell ~}}
-    {{~#if (all @last ../../removable)}}<a role="button" class="close float-right no-export" aria-label="Close" href="#{{#present ../$id}}remove.{{../$id}}{{/present}}" data-toggle="tooltip" data-trigger="hover" title="{{either ../../removable_message 'Remove from List'}}"><span aria-hidden="true">&times;</span></a>{{/if~}}
+    {{~#if (all @last ../../removable)}}<a role="button" class="close float-right no-export" aria-label="Close" href="#{{#present ../$id}}remove.{{../$id}}{{/present}}" data-toggle="tooltip" data-trigger="hover" title="{{either ../../removable_message 'Remove Row from List'}}"><span aria-hidden="true">&times;</span></a>{{/if~}}
   </td>{{/unless~}}
   {{/each}}
 </tr>

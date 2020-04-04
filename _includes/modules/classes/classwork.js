@@ -11,7 +11,7 @@ Classwork = (options, factory) => {
       format: "Do MMM",
     },
     FN = {},
-    HIDDEN = ["ID", "Type", "Mode", "Description", "Updated"];
+    HIDDEN = ["ID", "Type", "Mode", "Description", "Updated", "Points"];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -50,7 +50,7 @@ Classwork = (options, factory) => {
           name: options.id,
           data: options.functions.populate.classwork(classwork),
           headers: options.state.application.tabulate.headers(
-            ["ID", "Type", "Mode", "Class", "Title", "Description", "Updated", "Created", "Due", "Creator"], HIDDEN),
+            ["ID", "Type", "Mode", "Class", "Title", "Description", "Updated", "Created", "Due", "Points", "Responses", "Creator"], HIDDEN),
         }, {
           classes: ["table-hover"],
           advanced: false,
@@ -72,8 +72,11 @@ Classwork = (options, factory) => {
                                factory.Main.message(processed += 1, "class", "classes", "processed")), work))))
     .then(classworks => _.reduce(classworks, (memo, classwork, index) => _.reduce(classwork, (memo, work) => {
       memo.push(_.extend(work, {
-        $classroom: classrooms[index].$id,
+        $parent: classrooms[index].$id,
         $class: classrooms[index].name,
+        $populated: {
+          self: factory.Dates.now(),
+        },
         class: {
           text: classrooms[index].name,
           title: classrooms[index].id.title,

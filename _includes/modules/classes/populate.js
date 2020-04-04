@@ -24,11 +24,13 @@ Populate = (options, factory) => {
   /* <!-- Population Functions --> */
   FN.classwork = data => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, "classwork", {
     unique: ["$id"],
-    indices: ["$class", "$classroom", "title", "$$creator"]
+    indices: ["$class", "$parent", "title", "$$creator"]
   }, data, value => ({
     $id: parseInt(value.id, 10),
     $class: value.$class,
-    $classroom: value.$classroom,
+    $parent: value.$parent,
+    $populated: value.$populated || {}, /* <!-- Populated Dates / Times --> */
+    $responses: value.$responses || [], /* <!-- Full Response Objects --> */
     id: {
       text: value.id,
       url: value.alternateLink,
@@ -45,6 +47,9 @@ Populate = (options, factory) => {
     created: value.creationTime ? factory.Dates.parse(value.creationTime) : null,
     $$due: value.dueDate ? factory.Dates.parse(factory.Google.classrooms.due(value, null)).toISOString() : null, 
     due: value.dueDate ? factory.Dates.parse(factory.Google.classrooms.due(value, null)) : null,
+    points: value.maxPoints,
+    $$responses: value.$$responses, /* <!--  (for searching/sorting) --> */
+    responses: value.responses || [],
     $$creator: value.creator ? value.creator.text : null, /* <!-- Creator Name (for searching/sorting) --> */
     creator: value.creator /* <!-- Hidden Column cannot be last! --> */
   }));
@@ -54,6 +59,7 @@ Populate = (options, factory) => {
       indices: ["calendar", "name", "section"]
     }, data, value => ({
       $id: parseInt(value.id, 10),
+      $populated: value.$populated || {}, /* <!-- Populated Dates / Times --> */
       $teachers: value.$teachers || [], /* <!-- Full Teachers Objects --> */
       $$teachers: value.$$teachers || [], /* <!-- Teacher Names (for searching/sorting) --> */
       $$$teachers: value.$$$teachers || [], /* <!-- Teacher IDs (for filtering) --> */
@@ -86,7 +92,7 @@ Populate = (options, factory) => {
       teachers: value.teachers || [],
       students: value.students || [],
       code: value.enrollmentCode,
-      $$usage: value.$usage, /* <!-- Usage Date/Time in ISO Format (for searching/sorting) --> */
+      $$usage: value.$$usage, /* <!-- Usage Date/Time in ISO Format (for searching/sorting) --> */
       usage: value.usage || [],
       folder: value.teacherFolder ? {
         text: value.teacherFolder.id,

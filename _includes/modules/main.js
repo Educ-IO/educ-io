@@ -27,6 +27,11 @@ Main = function() {
     fn: true
   }), (busy, value) => _.tap(value, () => _.isFunction(busy) ? busy() : false));
   
+  const BUSY_ELEMENT = (el, size) => el.append($(ಠ_ಠ.Display.template.get({
+    name: "loader",
+    size: size || "small"
+  })));
+  
   const EVENT = (event, message) => window.dispatchEvent(new CustomEvent(event, _.isObject(message) ? message : {detail : message}));
   
   const MESSAGE = (count, singular, plural, action) => `${ಠ_ಠ.Display.commarise(count)} ${count > 1 ? plural : singular} ${action || "loaded"}`;
@@ -486,6 +491,8 @@ Main = function() {
     }),
 
     busy: BUSY,
+    
+    busy_element: BUSY_ELEMENT,
     
     event: EVENT,
     

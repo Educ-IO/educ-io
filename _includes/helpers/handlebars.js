@@ -300,6 +300,9 @@ Handlebars = (options, factory) => {
         if (typeof(number) === "undefined" || number === null) return null;
         return number + (options && options.hash.inc || 1);
       });
+      
+      Handlebars.registerHelper("truncate", (value, length, ending) =>
+        value && _.isString(value) ? value.length > length ? `${value.substring(0, length - 1)}${ending}` : value : "");
 
       /* <!-- Map all templates as Partials too --> */
       if (Handlebars.templates) Handlebars.partials = Handlebars.templates;

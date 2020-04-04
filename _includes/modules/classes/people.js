@@ -23,14 +23,14 @@ People = (options, factory) => {
 
   /* <!-- Internal Functions --> */
   FN.person = key => ರ‿ರ.cache[key] !== undefined ? 
-    Promise.resolve(ರ‿ರ.cache[key]) : 
-    factory.Google.classrooms.person(key).catch(() => null).then(person => ರ‿ರ.cache[key] = person);
+      Promise.resolve(ರ‿ರ.cache[key]) : 
+      (ರ‿ರ.cache[key] = factory.Google.classrooms.person(key).catch(() => null));
   
   FN.guardian = key => ರ‿ರ.guardians[key] !== undefined ? 
     Promise.resolve(ರ‿ರ.guardians[key]) : 
-    factory.Google.classrooms.guardians(key)
+    (ರ‿ರ.guardians[key] = factory.Google.classrooms.guardians(key)
       .catch(() => null)
-      .then(guardians => (ರ‿ರ.guardians[key] = guardians && guardians.length > 0 && guardians[0] ? guardians : null));
+      .then(guardians => guardians && guardians.length > 0 && guardians[0] ? guardians : null));
   
   FN.generic = (list, property, output, singular, plural, action) => {
     var processed = 0;
@@ -72,6 +72,8 @@ People = (options, factory) => {
   
   FN.posts = posts => FN.generic(posts, "creatorUserId", "creator");
   
+  FN.submissions = submissions => FN.generic(submissions, "userId", "user");
+  
   FN.guardians = students => {
     var _students = _.isArray(students) ? students : [students];
     return Promise.all(_.map(_.chain(_students).pluck("userId").compact().uniq().value(), student => FN.guardian(student)
@@ -89,6 +91,7 @@ People = (options, factory) => {
             teachers
           ))
           .then(FN.process)
+          .then(teachers => (classroom.$populated.teachers = factory.Dates.now(), teachers))
           .then(teachers => (
             classroom.$teachers = teachers,
             classroom.$$teachers = FN.simple(teachers),
@@ -103,6 +106,7 @@ People = (options, factory) => {
     classroom => factory.Google.classrooms.classroom(classroom.$id || classroom.id).students().list()
           .then(options.functions.people.process)
           .then(students => guardians && classroom.guardians ? options.functions.people.guardians(students) : students)
+          .then(students => (classroom.$populated.students = factory.Dates.now(), students))
           .then(students => (
             classroom.$students = students,
             classroom.$$students = FN.simple(students),
@@ -124,9 +128,11 @@ People = (options, factory) => {
     
     posts : FN.posts,
     
-    teachers : FN.teachers,
-    
     students : FN.students,
+    
+    submissions : FN.submissions,
+    
+    teachers : FN.teachers,
     
   };
   /* <!-- External Visibility --> */

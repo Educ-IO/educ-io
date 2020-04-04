@@ -96,6 +96,7 @@ modules:
   - headers
   - classes/states
   - classes/events
+  - classes/common
   - classes/populate
   - classes/people
   - classes/classes
@@ -103,6 +104,7 @@ modules:
   - classes/usage
   - classes/roster
   - classes/classwork
+  - classes/responses
 scripts: 
   - extends/regex
   - extends/array
@@ -133,6 +135,8 @@ templates:
   - classes/parts/popover_classworks
   - classes/parts/popover_topic
   - classes/parts/popover_topics
+  - classes/parts/popover_response
+  - classes/parts/popover_responses
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -148,7 +152,7 @@ docs:
   - classes/OVERVIEW_INSTRUCTIONS
   - classes/OVERVIEW_EXPORT_INSTRUCTIONS
   - classes/NOTIFY_SAVE_FAILED
-  - classes/NOTIFY_EXPORT_OVERVIEW_SUCCESS
+  - classes/NOTIFY_EXPORT_VIEW_SUCCESS
   - classes/ADD_STUDENTS
   - classes/ADD_TEACHERS
   - classes/INVITE_STUDENTS
@@ -343,6 +347,14 @@ menus:
     groups:
       all:
         commands:
+          - name: Responses
+            desc: View Details of Classwork Responses (e.g. Student Submissions)
+            hash: classwork.responses
+            auth: google
+            scopes:
+              - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
+            shortcut: "s"
+            divider: true
           - name: Close
             desc: Close this View
             hash: close

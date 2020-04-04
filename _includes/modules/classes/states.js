@@ -9,12 +9,16 @@ States = () => {
   const STATE_OVERVIEW = "overview",
         STATE_OVERVIEW_USAGE = "overview-usage",
         STATE_CLASSWORK = "classwork",
+        STATE_CLASSWORK_RESPONSES = "classwork-responses",
         STATE_PERIOD_FOREVER = "period-forever",
         STATE_PERIOD_MONTH = "period-month",
         STATE_PERIOD_WEEK = "period-week",
         STATE_PERIOD_DAY = "period-day",
         STATE_CONFIG = "config",
-        STATES = [STATE_OVERVIEW, STATE_OVERVIEW_USAGE, STATE_CONFIG, STATE_PERIOD_FOREVER, STATE_PERIOD_MONTH, STATE_PERIOD_WEEK, STATE_PERIOD_DAY];
+        STATES = [STATE_OVERVIEW, STATE_OVERVIEW_USAGE, 
+                  STATE_CLASSWORK, STATE_CLASSWORK_RESPONSES,
+                  STATE_CONFIG, 
+                  STATE_PERIOD_FOREVER, STATE_PERIOD_MONTH, STATE_PERIOD_WEEK, STATE_PERIOD_DAY];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -38,6 +42,7 @@ States = () => {
     
     classwork : {
       in : STATE_CLASSWORK,
+      responses : STATE_CLASSWORK_RESPONSES,
     },
     
     overview : {

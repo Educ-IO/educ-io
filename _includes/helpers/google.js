@@ -1163,6 +1163,40 @@ Google_API = (options, factory) => {
 
             };
 
+          },
+          
+          submissions: work => {
+        
+            var _work = work && work.$id ? work.$id : work && work.id ? work.id : work,
+                _url = `v1/courses/${_id}/courseWork/${_work}/studentSubmissions`,
+                _fields = "id,userId,creationTime,updateTime,state,late,draftGrade,assignedGrade,alternateLink",
+                _params = (states, late, fields) => STRIP_NULLS({
+                  states: states || null,
+                  late: late || null,
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,studentSubmissions(${fields ? fields.join(",") : _fields})`,
+                });
+        
+            return {
+              
+              /* <!-- STATES Enum --> */
+              /* <!-- NEW	= The student has never accessed this submission. Attachments are not returned and timestamps is not set. --> */
+              /* <!-- CREATED	= Has been created.. --> */
+              /* <!-- TURNED_IN	= Has been turned in to the teacher. --> */
+              /* <!-- RETURNED	= Has been returned to the student. --> */
+              /* <!-- RECLAIMED_BY_STUDENT	= Student chose to "unsubmit" the assignment. --> */
+              
+              /* <!-- LATE Enum --> */
+              /* <!-- LATE_ONLY = Return Student Submissions where late is true. --> */
+              /* <!-- NOT_LATE_ONLY = Return Student Submissions where late is false. --> */
+              
+              last: (states, late, fields, number) => _call(NETWORKS.classroom.get, _url, _.extend( _params(states, late, fields), {
+                pageSize: number || 5
+              })).then(value => value ? value.studentSubmissions : value),
+              
+              list: (states, late, fields) => _list(NETWORKS.classroom.get, _url, "studentSubmissions", [], _params(states, late, fields)),
+              
+            };
+            
           }
           
         };

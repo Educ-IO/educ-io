@@ -24,6 +24,18 @@ App = function() {
     
   };
   
+  FN.export = {
+    
+    file : () => ಠ_ಠ.Display.state().in(FN.states.overview.in) ? "Google Classroom Overview" :
+                  ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? "Google Classwork Overview" : 
+                  "Overview",
+    
+    table : () => ಠ_ಠ.Display.state().in(FN.states.overview.in) ? "Classes" :
+                  ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? "Classwork" : 
+                  "Data",
+    
+  };
+  
   FN.view = {
     
     overview : since => FN.overview.display(since)
@@ -92,7 +104,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Populate", "People", "Classes", "Overview", "Usage", "Roster", "Classwork"],
+      _.each(["Common", "Populate", "People", "Classes", "Overview", "Usage", "Roster", "Classwork", "Responses"],
         module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
     },
@@ -227,31 +239,31 @@ App = function() {
               
               export: {
                 matches: /EXPORT/i,
-                state: FN.states.overview.in,
+                state: FN.states.views,
                 routes: {
                   
                   sheets: {
                     matches: /SHEETS/i,
                     length: 0,
-                    fn: () => ಱ.exporter.export(FN.overview.table(), "sheets", "Google Classroom Overview", "Classes", "NOTIFY_EXPORT_OVERVIEW_SUCCESS")
+                    fn: () => ಱ.exporter.export(ರ‿ರ.table, "sheets", FN.export.file(), FN.export.table(), "NOTIFY_EXPORT_VIEW_SUCCESS")
                   },
                   
                   excel: {
                     matches: /EXCEL/i,
                     length: 0,
-                    fn: () => ಱ.exporter.export(FN.overview.table(), "xlsx", "Google Classroom Overview", "Classes")
+                    fn: () => ಱ.exporter.export(ರ‿ರ.table, "xlsx", FN.export.file(), FN.export.table())
                   },
                   
                   csv: {
                     matches: /CSV/i,
                     length: 0,
-                    fn: () => ಱ.exporter.export(FN.overview.table(), "csv", "Google Classroom Overview", "Classes")
+                    fn: () => ಱ.exporter.export(ರ‿ರ.table, "csv", FN.export.file())
                   },
                   
                   markdown: {
                     matches: /MARKDOWN/i,
                     length: 0,
-                    fn: () => ಱ.exporter.export(FN.overview.table(), "md", "Google Classroom Overview", "Classes")
+                    fn: () => ಱ.exporter.export(ರ‿ರ.table, "md", FN.export.file())
                   }
                   
                 }
@@ -388,6 +400,24 @@ App = function() {
             
           },
 
+          classwork: {
+            matches: /CLASSWORK/i,
+            state: FN.states.classwork.in,
+            
+            routes : {
+              responses: {
+                matches: /RESPONSES/i,
+                length: 0,
+                keys: ["s", "S"],
+                scopes: [
+                  "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
+                ],
+                fn: () => FN.responses.generate()
+                            .then(() => ಠ_ಠ.Display.state().enter(FN.states.classwork.responses))
+              }
+            }
+          },
+          
           period: {
             matches: /PERIOD/i,
             state: FN.states.views,
