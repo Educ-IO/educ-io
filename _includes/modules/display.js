@@ -304,22 +304,28 @@ Display = function() {
           .replace(/\{\{+\s*title\s*}}/gi, options && options.title ? options.title : "Title")
           .replace(/\{\{+\s*close\s*}}/gi, options && options.close ? options.close : "Close");
       },
+      
       /* <!--
       	Options are : {
       		name : name of the document to display,
       	}
       --> */
-      get: function(options) {
+      get: function(options, content, trim) {
 
         options = _string(options) || Array.isArray(options) ? {
           name: options
         } : options;
+        if (content && _string(content)) options.content = content;
+        if (trim) options.trim = trim;
 
         var _get = name => $("#__doc__" + name)[0].innerText;
         var _doc = Array.isArray(options.name) ?
           _.reduce(options.name, (doc, name) => `${doc}\n\n${_get(name)}`, "") :
           _get(options.name);
 
+        /* <!-- Trim Start / End <p> tags (if required) --> */
+        if (options.trim) _doc = _doc.replace(/^<\/?p>|<\/?p>$/gi, "");
+        
         var _return = options.content !== undefined ?
           _doc.replace(/\{\{+\s*content\s*}}/gi, options.content) : 
           options.data !== undefined ?

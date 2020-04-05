@@ -1,3 +1,3 @@
 {% raw %}
-<div class="container-fluid{{#if class}} {{class}}{{/if}}{{#if classes}}{{#each classes}} {{this}}{{/each}}{{/if}}"></div>
+<div {{#exists id}}id="{{id}}" {{/exists}}class="container-fluid{{#if class}} {{class}}{{/if}}{{#if classes}}{{#each classes}} {{this}}{{/each}}{{/if}}"></div>
 {% endraw %}

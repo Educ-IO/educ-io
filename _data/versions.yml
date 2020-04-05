@@ -1,8 +1,8 @@
 site :
-  0.1.9t :
-    name : Classes v0.0.3b-beta
+  0.1.9u :
+    name : Classes v0.0.3c-beta
     desc : Bug Fixes and Improvements
-    numeric : 0.1.9.19
+    numeric : 0.1.9.20
   0.1.9s :
     name : Classes v0.0.3-beta
     desc : Bug Fixes and Improvements
@@ -1426,7 +1426,7 @@ blocks :
     name : Early testing version
     type : minor
 classes :
-  0.0.3b-beta :
+  0.0.3c-beta :
     name : Bug Fixes and Improvements
     type : minor
   0.0.3-beta :

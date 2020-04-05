@@ -82,7 +82,8 @@ People = (options, factory) => {
   };
   
   FN.teachers = classrooms => {
-    var processed = 0;
+    var processed = 0,
+        loaded = factory.Dates.now().toISOString();
     return Promise.all(_.map(_.isArray(classrooms) ? classrooms : [classrooms], 
     classroom => factory.Google.classrooms.classroom(classroom.$id || classroom.id).teachers().list()
           .then(teachers => (
@@ -91,7 +92,9 @@ People = (options, factory) => {
             teachers
           ))
           .then(FN.process)
-          .then(teachers => (classroom.$populated.teachers = factory.Dates.now(), teachers))
+          .then(teachers => (classroom.fetched.teachers = loaded, 
+                             classroom.$$fetched = loaded > classroom.$$fetched ? loaded : classroom.$$fetched, 
+                             teachers))
           .then(teachers => (
             classroom.$teachers = teachers,
             classroom.$$teachers = FN.simple(teachers),
@@ -102,11 +105,16 @@ People = (options, factory) => {
           .catch(e => (factory.Flags.error("Teachers Error", e), null)))).then(() => classrooms);
   };
   
-  FN.students = (classrooms, guardians) => Promise.all(_.map(_.isArray(classrooms) ? classrooms : [classrooms], 
-    classroom => factory.Google.classrooms.classroom(classroom.$id || classroom.id).students().list()
+  FN.students = (classrooms, guardians) => {
+    
+    var loaded = factory.Dates.now().toISOString();
+    return Promise.all(_.map(_.isArray(classrooms) ? classrooms : [classrooms], 
+        classroom => factory.Google.classrooms.classroom(classroom.$id || classroom.id).students().list()
           .then(options.functions.people.process)
           .then(students => guardians && classroom.guardians ? options.functions.people.guardians(students) : students)
-          .then(students => (classroom.$populated.students = factory.Dates.now(), students))
+          .then(students => (classroom.fetched.students = loaded,
+                             classroom.$$fetched = loaded > classroom.$$fetched ? loaded : classroom.$$fetched,
+                             students))
           .then(students => (
             classroom.$students = students,
             classroom.$$students = FN.simple(students),
@@ -115,6 +123,7 @@ People = (options, factory) => {
             students
           ))
           .catch(e => (factory.Flags.error("Students Error", e), null)))).then(() => classrooms);
+  };
   /* <!-- Public Functions --> */
 
   /* <!-- Initial Calls --> */

@@ -1,4 +1,4 @@
-Responses = (options, factory) => {
+Submissions = (options, factory) => {
   "use strict";
 
   /* <!-- MODULE: Provides an interface to provide common functionality --> */
@@ -17,23 +17,23 @@ Responses = (options, factory) => {
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
-  FN.responses = (classroom, id, targets) => Promise.all([
+  FN.submissions = (classroom, id, targets) => Promise.all([
       Promise.resolve(options.functions.populate.get(classroom)),
       Promise.resolve(options.functions.populate.get(id, "classwork"))
     ])
     .then(data => {
       var classroom = data[0],
           work = data[1];
-      return classroom && work ? options.functions.classes.responses(data[0], data[1], true)
-        .then(responses => {
-          factory.Flags.log("Classwork Responses:", responses);
-          var _all = _.reduce(responses, (memo, response) => {
-            response.max = work.points;
-            memo[response.state].responses.push(response);
-            memo[response.state].value += 1;
-            if (response.late) {
+      return classroom && work ? options.functions.classes.submissions(data[0], data[1], true)
+        .then(submissions => {
+          factory.Flags.log("Classwork Submissions:", submissions);
+          var _all = _.reduce(submissions, (memo, submission) => {
+            submission.max = work.points;
+            memo[submission.state].submissions.push(submission);
+            memo[submission.state].value += 1;
+            if (submission.late) {
               memo.LATE.value += 1;
-              memo.LATE.responses.push(response);
+              memo.LATE.submissions.push(submission);
             }
             return memo;
           }, {
@@ -41,50 +41,50 @@ Responses = (options, factory) => {
               key : "New",
               value : 0,
               badge : "light",
-              responses : []
+              submissions : []
             },
             CREATED : {
               key : "Created",
               value : 0,
               badge : "dark",
-              responses : []
+              submissions : []
             },
             TURNED_IN : {
               key : "Turned In",
               value : 0,
               badge : "primary",
-              responses : []
+              submissions : []
             },
             RETURNED : {
               key : "Returned",
               value : 0,
               badge : "success",
-              responses : []
+              submissions : []
             },
             RECLAIMED_BY_STUDENT : {
               key : "Reclaimed",
               value : 0,
               badge : "warning",
-              responses : []
+              submissions : []
             },
             LATE : {
               key : "Late",
               value : 0,
               badge : "danger",
-              responses : []
+              submissions : []
             }
           });
         
           /* <!-- Add all significant data --> */
           _.each(_all, (value, key) => value.value > 0 ? 
-                 options.functions.common.badge(work.responses, `${id}_responses_${key.toLowerCase()}`, value.key, "",  value.value, value.badge,
-                    factory.Display.template.get("popover_responses")(options.functions.common.parse(value.responses))) : null);
+                 options.functions.common.badge(work.submissions, `${id}_submissions_${key.toLowerCase()}`, value.key, "",  value.value, value.badge,
+                    factory.Display.template.get("popover_submissions")(options.functions.common.parse(value.submissions))) : null);
 
           /* <!-- Update the classwork object, and call for a visual update --> */
           options.functions.populate.update(work, "classwork");
 
           /* <!-- Remove the loader to inform that loading has completed --> */
-          targets.responses.empty().append(factory.Display.template.get("cell", true)(work.responses));
+          _.each(["submissions", "fetched"], value => targets[value].empty().append(factory.Display.template.get("cell", true)(work[value])));
         
         }) : null;
     });
@@ -96,15 +96,18 @@ Responses = (options, factory) => {
   
   /* <!-- Public Functions --> */
   FN.meta = () => ({
-    responses : options.state.session.table.index("responses") + 1,
+    fetched:  options.functions.common.column("fetched") + 1,
+    submissions :  options.functions.common.column("submissions") + 1,
   });
   
   FN.row = (meta, row, force, types) => {
     
-    var _responses = row.find(`td:nth-child(${meta.responses})`).first();
+    var _submissions = row.find(`td:nth-child(${meta.submissions})`).first(),
+        _fetched = row.find(`td:nth-child(${meta.fetched})`).first();
     
-    return _responses && (force || _responses.html() == "") ? FN.responses(row.data("parent"), row.data("id"), {
-      responses: factory.Main.busy_element(force ? _responses.empty() : _responses),
+    return _submissions && (force || _submissions.html() == "") ? FN.submissions(row.data("parent"), row.data("id"), {
+      submissions: factory.Main.busy_element(force ? _submissions.empty() : _submissions),
+      fetched: _fetched
     }, types) : Promise.resolve(null);
     
   };

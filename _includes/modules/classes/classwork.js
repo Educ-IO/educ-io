@@ -11,7 +11,7 @@ Classwork = (options, factory) => {
       format: "Do MMM",
     },
     FN = {},
-    HIDDEN = ["ID", "Type", "Mode", "Description", "Updated", "Points"];
+    HIDDEN = ["ID", "Type", "Mode", "Fetched", "Description", "Updated", "Points"];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -41,7 +41,16 @@ Classwork = (options, factory) => {
       header: factory.Display.template.get("overview_header")({
         classes: ["pl-3", "pl-xl-4", "pt-2", "pb-0"],
         title: "Classwork",
-        subtitle: factory.Dates.parse(options.state.session.current).format(options.format)
+        subtitle: ರ‿ರ.since ? 
+          factory.Display.doc.get("OVERVIEW_CLASSWORK_SUBTITLE", 
+            humanizeDuration(factory.Dates.parse(options.state.session.current) - ರ‿ರ.since, {largest: 1}), true) : null,
+        details: factory.Display.doc.get({
+          name: "OVERVIEW_DETAILS",
+          data: {
+            since: ರ‿ರ.since.format(options.format),
+            current: factory.Dates.parse(options.state.session.current).format(options.format),
+          }
+        }),
       }).trim()
     }),
     
@@ -50,7 +59,8 @@ Classwork = (options, factory) => {
           name: options.id,
           data: options.functions.populate.classwork(classwork),
           headers: options.state.application.tabulate.headers(
-            ["ID", "Type", "Mode", "Class", "Title", "Description", "Updated", "Created", "Due", "Points", "Responses", "Creator"], HIDDEN),
+            ["ID", "Type", "Mode", "Class", "Fetched", "Title", "Description", "Updated", "Created", "Due", "Points", "Submissions", "Creator"],
+            HIDDEN),
         }, {
           classes: ["table-hover"],
           advanced: false,
@@ -65,17 +75,19 @@ Classwork = (options, factory) => {
   /* <!-- Render Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.display = classrooms => {
-    var processed = 0;
-    return Promise.all(_.map(classrooms, classroom => options.functions.classes.work(classroom, true).then(work => (
+  FN.display = (classrooms, since) => {
+    var processed = 0,
+        loaded = factory.Dates.now().toISOString();
+    return Promise.all(_.map(ರ‿ರ.classrooms = classrooms, classroom => options.functions.classes.work(classroom, true).then(work => (
             factory.Main.event(options.functions.events.load.progress, 
                                factory.Main.message(processed += 1, "class", "classes", "processed")), work))))
     .then(classworks => _.reduce(classworks, (memo, classwork, index) => _.reduce(classwork, (memo, work) => {
       memo.push(_.extend(work, {
         $parent: classrooms[index].$id,
         $class: classrooms[index].name,
-        $populated: {
-          self: factory.Dates.now(),
+        $$fetched: loaded,
+        fetched: {
+          self: loaded,
         },
         class: {
           text: classrooms[index].name,
@@ -86,6 +98,7 @@ Classwork = (options, factory) => {
     }, memo), []))
     .then(classwork => {
       factory.Flags.log("Loaded CLASSWORK", classwork);
+      since ? ರ‿ರ.since = factory.Dates.parse(since) : delete ರ‿ರ.since;
       return (ರ‿ರ.table = FN.render.classwork(classwork));
     });
   };
@@ -97,6 +110,8 @@ Classwork = (options, factory) => {
   return {
     
     display: FN.display,
+    
+    refresh: () => FN.display(ರ‿ರ.classrooms, ರ‿ರ.since ? ರ‿ರ.since.toISOString() : null),
     
     remove: id => options.functions.populate.remove(id, "classwork"),
     

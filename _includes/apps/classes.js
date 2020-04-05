@@ -38,14 +38,34 @@ App = function() {
   
   FN.view = {
     
-    overview : since => FN.overview.display(since)
+    generic : (fn, state, messages) => fn()
       .then(table => ರ‿ರ.table = table)
       .then(() => {
-        ಠ_ಠ.Display.state().change(FN.states.views, FN.states.overview.in);
+        ಠ_ಠ.Display.state().change(FN.states.views, [state, FN.states.view]);
         if (!ಠ_ಠ.Display.state().in(FN.states.periods.all, true)) ಠ_ಠ.Display.state().enter(FN.states.periods.forever);
       })
-      .catch(e => ಠ_ಠ.Flags.error("Classes Overview Error", e))
-      .then(ಠ_ಠ.Main.busy(message => message || "", true, FN.events.load.progress, "Loading Classes")),
+      .catch(e => ಠ_ಠ.Flags.error(messages.error, e))
+      .then(ಠ_ಠ.Main.busy(message => message || "", true, FN.events.load.progress, messages.loading)),
+    
+    overview : since => FN.view.generic(() => FN.overview.display(since), FN.states.overview.in, {
+                                          error : "Classes Overview Error",
+                                          loading : since ? "Loading Classes" : "Loading All Classes"
+                                        }),
+    
+    classwork : since => (ಠ_ಠ.Display.state().in(FN.states.overview.in) ? FN.overview.detach() : Promise.resolve(true))
+      .then(() => FN.view.generic(() => FN.classwork.display(FN.current.classes(), since), FN.states.classwork.in, {
+                                          error : "Classwork View Error",
+                                          loading : since ? "Loading Classwork" : "Loading All Classwork"
+                                        })),
+
+    refresh : () => (
+        ಠ_ಠ.Display.state().in(FN.states.overview.in) ? FN.overview.refresh() :
+        ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? FN.classwork.refresh() : 
+        Promise.resolve(false)
+      )
+        .then(table => table === false ? delete ರ‿ರ.table : ರ‿ರ.table = table)
+        .catch(e => ಠ_ಠ.Flags.error("Refresh Error", e))
+        .then(ಠ_ಠ.Main.busy("Refreshing", true))
     
   };
   /* <!-- Internal Functions --> */
@@ -104,7 +124,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Common", "Populate", "People", "Classes", "Overview", "Usage", "Roster", "Classwork", "Responses"],
+      _.each(["Common", "Populate", "People", "Classes", "Overview", "Usage", "Roster", "Classwork", "Submissions"],
         module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
     },
@@ -164,12 +184,10 @@ App = function() {
 
           refresh: {
             matches: /REFRESH/i,
-            state: "authenticated",
+            state: FN.states.views,
             length: 0,
             keys: ["r", "R"],
-            fn: () => (ಠ_ಠ.Display.state().in(FN.states.overview.in) ? FN.overview.display().then(table => ರ‿ರ.table = table) : Promise.resolve(false))
-              .catch(e => ಠ_ಠ.Flags.error("Refresh Error", e))
-              .then(ಠ_ಠ.Main.busy("Refreshing", true)),
+            fn: () => FN.view.refresh()
           },
           
           overview: {
@@ -184,6 +202,7 @@ App = function() {
               all: {
                 matches: /ALL/i,
                 length: 0,
+                keys: ["ctrl+alt+o", "ctrl+alt+O"],
                 fn: () => FN.view.overview(),
               },
               
@@ -196,11 +215,43 @@ App = function() {
                   "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
                   "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                 ],
-                fn: () => FN.classwork.display(FN.current.classes())
-                            .then(table => ರ‿ರ.table = table)
-                            .then(() => ಠ_ಠ.Display.state().change(FN.states.views, FN.states.classwork.in))
-                            .catch(e => ಠ_ಠ.Flags.error("Classwork View Error", e))
-                            .then(ಠ_ಠ.Main.busy(message => message || "", true, FN.events.load.progress, "Loading Classwork")),
+                fn: () => FN.view.classwork(ಠ_ಠ.Dates.now().add(-1, "years").toISOString()),
+                
+                routes: {
+                  
+                  all: {
+                    matches: /ALL/i,
+                    length: 0,
+                    keys: ["ctrl+alt+c", "ctrl+alt+C"],
+                    scopes: [
+                      "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
+                      "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
+                    ],
+                    fn: () => FN.view.classwork(),
+                  },
+                  
+                  submissions: {
+                    matches: /SUBMISSIONS/i,
+                    state: FN.states.classwork.in,
+                    length: 0,
+                    keys: ["s", "S"],
+                    scopes: [
+                      "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
+                    ],
+                    fn: () => FN.submissions.generate()
+                                .then(() => ಠ_ಠ.Display.state().enter(FN.states.classwork.submissions))
+                  },
+                  
+                  close: {
+                    matches: /CLOSE/i,
+                    state: FN.states.classwork.in,
+                    length: 0,
+                    fn: () => FN.overview.attach()
+                      .then(table => ರ‿ರ.table = table)
+                      .then(() => ಠ_ಠ.Display.state().change([FN.states.classwork.in, FN.states.classwork.submissions], FN.states.overview.in))
+                  },
+                  
+                }
               },
               
               usage: {
@@ -217,6 +268,7 @@ App = function() {
                 ],
                 fn: () => FN.usage.generate()
                             .then(() => ಠ_ಠ.Display.state().enter(FN.states.overview.usage)),
+                
                 routes: {
                   
                   force: {
@@ -398,24 +450,6 @@ App = function() {
               
             }
             
-          },
-
-          classwork: {
-            matches: /CLASSWORK/i,
-            state: FN.states.classwork.in,
-            
-            routes : {
-              responses: {
-                matches: /RESPONSES/i,
-                length: 0,
-                keys: ["s", "S"],
-                scopes: [
-                  "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
-                ],
-                fn: () => FN.responses.generate()
-                            .then(() => ಠ_ಠ.Display.state().enter(FN.states.classwork.responses))
-              }
-            }
           },
           
           period: {

@@ -108,7 +108,9 @@ a.app-logo svg {
 
 // -- Opacity -- //
 .transition-opacity {
-  will-change: opacity;
+  // -- Breaks Z-Index Overlays -- //
+  // -- will-change: opacity; -- //
+  will-change: auto;
   transition-property: opacity;
   transition-duration: 0.2s;
 }

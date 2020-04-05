@@ -50,9 +50,13 @@ imports:
     load: last
   - name: day
     load: last
+  - name: humanize-duration
+    load: last
   - name: waves-css
     load: last
   - name: waves-js
+    load: last
+  - name: yaml
     load: last
   - name: xlsxpopulate
     load: lazy
@@ -104,7 +108,7 @@ modules:
   - classes/usage
   - classes/roster
   - classes/classwork
-  - classes/responses
+  - classes/submissions
 scripts: 
   - extends/regex
   - extends/array
@@ -135,8 +139,8 @@ templates:
   - classes/parts/popover_classworks
   - classes/parts/popover_topic
   - classes/parts/popover_topics
-  - classes/parts/popover_response
-  - classes/parts/popover_responses
+  - classes/parts/popover_submission
+  - classes/parts/popover_submissions
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -163,6 +167,9 @@ docs:
   - classes/STUDENT
   - classes/TEACHER
   - classes/CLASSROOM
+  - classes/OVERVIEW_DETAILS
+  - classes/OVERVIEW_CLASSES_SUBTITLE
+  - classes/OVERVIEW_CLASSWORK_SUBTITLE
 scopes:
   google:
     - scope: email
@@ -235,8 +242,10 @@ menus:
           - name: All Classes
             desc: Show overview of all your classes / classes in your domain
             hash: overview.all
+            shortcut: "ctrl+alt+o"
             imports:
               - d3
+
   - name: Overview
     disabled_until:
       - overview
@@ -254,39 +263,23 @@ menus:
               - https://www.googleapis.com/auth/classroom.guardianlinks.students.readonly
             shortcut: "u"
           - name: Classwork
-            desc: View Classroom Classwork
+            desc: View Classroom Classwork (created in the last 12 months)
             hash: overview.classwork
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.coursework.students.readonly
               - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
             shortcut: "c"
-            divider: true
-            
-          - name: Export to Sheets
-            desc: Export Classroom Data to Google Sheets
-            hash: overview.export.sheets
+          - name: All Classwork
+            desc: View All Classroom Classwork (created in the last 12 months)
+            hash: overview.classwork.all
             auth: google
             scopes:
-              - https://www.googleapis.com/auth/drive.file
-          - name: Download as CSV
-            desc: Download Classroom Data as a Comma Separated Values (CSV) File
-            hash: overview.export.csv
-            imports:
-              - filesaver
-          - name: Download as Excel
-            desc: Download Classroom Data as a Microsoft Excel File
-            hash: overview.export.excel
-            imports:
-              - xlsxpopulate
-              - filesaver
-          - name: Download as Markdown
-            desc: Download Classroom Data as a Markdown Table
-            hash: overview.export.markdown
-            imports:
-              - filesaver
+              - https://www.googleapis.com/auth/classroom.coursework.students.readonly
+              - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
+            shortcut: "ctrl+alt+c"
             divider: true
-          
+            
           - name: Refresh
             desc: Refresh Classroom Overview
             hash: refresh
@@ -294,9 +287,9 @@ menus:
             divider: true
             
           - name: Close
-            desc: Close this View
+            desc: Close this Overwiew
             hash: close
-            
+          
   - name: Classes
     disabled_until:
       - overview
@@ -347,22 +340,51 @@ menus:
     groups:
       all:
         commands:
-          - name: Responses
-            desc: View Details of Classwork Responses (e.g. Student Submissions)
-            hash: classwork.responses
+          - name: Submissions
+            desc: View Details of Classwork Submissions (e.g. Student Responses)
+            hash: overview.classwork.submissions
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
             shortcut: "s"
             divider: true
           - name: Close
-            desc: Close this View
-            hash: close
+            desc: Close this Classwork View
+            hash: overview.classwork.close
             
+  - name: Export
+    disabled_until:
+      - view
+    groups:
+      all:
+        commands:
+          - name: Export to Sheets
+            desc: Export Classroom Data to Google Sheets
+            hash: overview.export.sheets
+            auth: google
+            scopes:
+              - https://www.googleapis.com/auth/drive.file
+          - name: Download as CSV
+            desc: Download Classroom Data as a Comma Separated Values (CSV) File
+            hash: overview.export.csv
+            imports:
+              - filesaver
+          - name: Download as Excel
+            desc: Download Classroom Data as a Microsoft Excel File
+            hash: overview.export.excel
+            imports:
+              - xlsxpopulate
+              - filesaver
+          - name: Download as Markdown
+            desc: Download Classroom Data as a Markdown Table
+            hash: overview.export.markdown
+            imports:
+              - filesaver
+
   - name: Periods
     visibility: debug
     disabled_until:
-      - overview
+      - view
     groups:
       all:
         commands:

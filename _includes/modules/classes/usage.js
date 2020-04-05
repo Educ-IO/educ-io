@@ -12,7 +12,7 @@ Usage = (options, factory) => {
   /* <!-- Internal Options --> */
   options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Options --> */
-
+  
   /* <!-- Internal Variables --> */
   /* <!-- Internal Variables --> */
   
@@ -102,10 +102,9 @@ Usage = (options, factory) => {
         options.functions.populate.update(classroom);
       
         /* <!-- Remove the loader to inform that loading has completed --> */
-        if (results[4] !== true) targets.teachers.empty().append(factory.Display.template.get("cell", true)(classroom.teachers));
-        targets.students.empty().append(factory.Display.template.get("cell", true)(classroom.students));
-        targets.usage.empty().append(factory.Display.template.get("cell", true)(classroom.usage));
-    
+        _.each(["teachers", "students", "usage", "fetched"], 
+               value => targets[value].empty().append(factory.Display.template.get("cell", true)(classroom[value])));
+        
       }) : false);
   /* <!-- Internal Functions --> */
   
@@ -115,6 +114,7 @@ Usage = (options, factory) => {
   
   /* <!-- Public Functions --> */
   FN.meta = () => ({
+    fetched: options.functions.common.column("fetched") + 1,
     students : options.functions.common.column("students") + 1,
     teachers : options.functions.common.column("teachers") + 1,
     usage : options.functions.common.column("usage") + 1,
@@ -124,11 +124,13 @@ Usage = (options, factory) => {
     
     var _students = row.find(`td:nth-child(${meta.students})`).first(),
         _teachers = row.find(`td:nth-child(${meta.teachers})`).first(),
+        _fetched = row.find(`td:nth-child(${meta.fetched})`).first(),
         _usage = row.find(`td:nth-child(${meta.usage})`).first();
     
     return _usage && (force || _usage.html() == "") ? FN.usage(row.data("id"), {
       students: _students,
       teachers: _teachers,
+      fetched: _fetched,
       usage: factory.Main.busy_element(force ? _usage.empty() : _usage),
     }, types) : Promise.resolve(null);
     

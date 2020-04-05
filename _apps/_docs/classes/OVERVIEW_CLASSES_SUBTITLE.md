@@ -1,0 +1,1 @@
+Classes created over the past __{% raw %}{{content}}{% endraw %}__

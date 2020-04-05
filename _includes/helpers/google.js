@@ -1159,7 +1159,11 @@ Google_API = (options, factory) => {
                 pageSize: number || 5
               })).then(value => value ? value.courseWork : value),
               
-              list: (state, fields) => _list(NETWORKS.classroom.get, _url, "courseWork", [], _params(state, fields)),
+              list: (state, fields, since) => _list(NETWORKS.classroom.get, _url, "courseWork", [], _params(state, fields), null, since ? {
+                operator : "gte",
+                property : "creationTime",
+                value : since
+              } : null),
 
             };
 

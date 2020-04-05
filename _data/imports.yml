@@ -1934,3 +1934,25 @@ deep-diff:
       crossorigin: anonymous
       bulk: 4.6
       id: __deepdiff
+
+humanize-duration:
+  name: Javascript Deep Diff
+  desc: Javascript utility for calculating deep difference, capturing changes, and applying changes across objects; for nodejs and the browser.
+  url: https://cdnjs.com/libraries/humanize-duration
+  project: https://github.com/EvanHahn/HumanizeDuration.js
+  version: 3.22.0
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/humanize-duration/3.22.0/humanize-duration.min.js
+      integrity: sha256-APMsCgCCD20Ub3Pq1NFgQHx6p0S9EGJa8fMZ3rljUzU=
+      crossorigin: anonymous
+      map: true
+      bulk: 17.1
+      id: __humanizeduration
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/humanize-duration/3.22.0/humanize-duration.js
+      integrity: sha256-Z5wiKzZQ+tqI2UCs959aLg4LPDPwz3mWJVnNfUAbToY=
+      crossorigin: anonymous
+      bulk: 29.8
+      id: __humanizeduration

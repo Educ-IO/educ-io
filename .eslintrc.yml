@@ -54,6 +54,7 @@ globals:
   jsyaml: false
   d3: false
   DeepDiff: false
+  humanizeDuration: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -165,7 +166,7 @@ globals:
   Templating: true
   Classwork: true
   Common: true
-  Responses: true
+  Submissions: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

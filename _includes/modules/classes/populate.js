@@ -29,8 +29,7 @@ Populate = (options, factory) => {
     $id: parseInt(value.id, 10),
     $class: value.$class,
     $parent: value.$parent,
-    $populated: value.$populated || {}, /* <!-- Populated Dates / Times --> */
-    $responses: value.$responses || [], /* <!-- Full Response Objects --> */
+    $submissions: value.$submissions || [], /* <!-- Full Response Objects --> */
     id: {
       text: value.id,
       url: value.alternateLink,
@@ -39,6 +38,8 @@ Populate = (options, factory) => {
     type: value.workType,
     mode: value.assigneeMode,
     class: value.class,
+    $$fetched: value.$$fetched, /* <!-- Fetched Date/Time in ISO Format (for searching/sorting) --> */
+    fetched: value.fetched || {}, /* <!-- Fetched & Populated Dates / Times --> */
     title: value.title,
     description: value.description,
     $$updated: value.updateTime, /* <!-- Updated Date/Time in ISO Format (for searching/sorting) --> */
@@ -48,8 +49,8 @@ Populate = (options, factory) => {
     $$due: value.dueDate ? factory.Dates.parse(factory.Google.classrooms.due(value, null)).toISOString() : null, 
     due: value.dueDate ? factory.Dates.parse(factory.Google.classrooms.due(value, null)) : null,
     points: value.maxPoints,
-    $$responses: value.$$responses, /* <!--  (for searching/sorting) --> */
-    responses: value.responses || [],
+    $$submissions: value.$$submissions, /* <!--  (for searching/sorting) --> */
+    submissions: value.submissions || [],
     $$creator: value.creator ? value.creator.text : null, /* <!-- Creator Name (for searching/sorting) --> */
     creator: value.creator /* <!-- Hidden Column cannot be last! --> */
   }));
@@ -59,7 +60,6 @@ Populate = (options, factory) => {
       indices: ["calendar", "name", "section"]
     }, data, value => ({
       $id: parseInt(value.id, 10),
-      $populated: value.$populated || {}, /* <!-- Populated Dates / Times --> */
       $teachers: value.$teachers || [], /* <!-- Full Teachers Objects --> */
       $$teachers: value.$$teachers || [], /* <!-- Teacher Names (for searching/sorting) --> */
       $$$teachers: value.$$$teachers || [], /* <!-- Teacher IDs (for filtering) --> */
@@ -82,6 +82,8 @@ Populate = (options, factory) => {
       },
       state: value.courseState,
       name: value.name,
+      $$fetched: value.$$fetched, /* <!-- Fetched Date/Time in ISO Format (for searching/sorting) --> */
+      fetched: value.fetched || {}, /* <!-- Fetched & Populated Dates / Times --> */
       section: value.section,
       guardians: value.guardiansEnabled,
       room: value.room,
