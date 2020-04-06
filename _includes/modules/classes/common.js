@@ -6,7 +6,9 @@ Common = (options, factory) => {
   /* <!-- REQUIRES: Global Scope: JQuery, Underscore | App Scope: Display --> */
 
   /* <!-- Internal Constants --> */
-  const DEFAULTS = {},
+  const DEFAULTS = {
+    stale: 15
+  },
         FN = {};
   /* <!-- Internal Constants --> */
 
@@ -59,6 +61,8 @@ Common = (options, factory) => {
                     value.shortAnswerSubmission ? value.shortAnswerSubmission.answer : "", 
         }))
         .value();
+  
+  FN.stale = (classroom, type) => !classroom.fetched || !classroom.fetched[type] || (0 - factory.Dates.parse(classroom.fetched[type]).diff()) > (1000 * 60 * options.stale);
   
   FN.type = (types, type, force) => (!force && types === null) || (!force && types === undefined) || types == type || _.indexOf(types, type) >= 0;
   /* <!-- Public Functions --> */

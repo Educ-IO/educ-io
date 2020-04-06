@@ -42,7 +42,7 @@ Usage = (options, factory) => {
       ]).then(results => {
     
         /* <!-- Log Classroom Usage --> */
-        factory.Flags.log(`Usage for Classroom [${id}]`, classroom);
+        factory.Flags.log(`Usage for Classroom [${id}]`, results);
     
         /* <!-- Add Student Numbers --> */
         if (results[0] !== true) FN.members(classroom.usage, `${id}_usage_students`, "Students", classroom.$students.length, "primary");

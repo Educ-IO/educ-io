@@ -49,6 +49,9 @@ Populate = (options, factory) => {
     $$due: value.dueDate ? factory.Dates.parse(factory.Google.classrooms.due(value, null)).toISOString() : null, 
     due: value.dueDate ? factory.Dates.parse(factory.Google.classrooms.due(value, null)) : null,
     points: value.maxPoints,
+    min: value.calculated ? value.calculated.min : null,
+    avg: value.calculated ? value.calculated.avg : null,
+    max: value.calculated ? value.calculated.max : null,
     $$submissions: value.$$submissions, /* <!--  (for searching/sorting) --> */
     submissions: value.submissions || [],
     $$creator: value.creator ? value.creator.text : null, /* <!-- Creator Name (for searching/sorting) --> */
@@ -96,6 +99,8 @@ Populate = (options, factory) => {
       code: value.enrollmentCode,
       $$usage: value.$$usage, /* <!-- Usage Date/Time in ISO Format (for searching/sorting) --> */
       usage: value.usage || [],
+      $$engagement: value.$$engagement, /* <!-- Engagement as String/Number (for searching/sorting) --> */
+      engagement: value.engagement || [],
       folder: value.teacherFolder ? {
         text: value.teacherFolder.id,
         url: `/folders/#load.${value.teacherFolder.id}`,

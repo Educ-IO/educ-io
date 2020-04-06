@@ -27,7 +27,15 @@ Submissions = (options, factory) => {
       return classroom && work ? options.functions.classes.submissions(data[0], data[1], true)
         .then(submissions => {
           factory.Flags.log("Classwork Submissions:", submissions);
+          work.calculated = {
+            all: [],
+            min: null,
+            avg: null,
+            max : null
+          };
           var _all = _.reduce(submissions, (memo, submission) => {
+            if (submission.assignedGrade !== undefined || submission.draftGrade !== undefined)
+              work.calculated.all.push(submission.assignedGrade || submission.draftGrade);
             submission.max = work.points;
             memo[submission.state].submissions.push(submission);
             memo[submission.state].value += 1;
@@ -75,16 +83,28 @@ Submissions = (options, factory) => {
             }
           });
         
+          /* <!-- Calculate Grade Values --> */
+          if (work.calculated.all.length > 0) {
+            work.calculated.min = _.min(work.calculated.all);
+            work.calculated.max = _.max(work.calculated.all);
+            work.calculated.avg = Math.preciseRound(_.reduce(work.calculated.all, 
+                                                             (total, value) => total + value, 0) / work.calculated.all.length, 2);
+          }
+        
           /* <!-- Add all significant data --> */
           _.each(_all, (value, key) => value.value > 0 ? 
-                 options.functions.common.badge(work.submissions, `${id}_submissions_${key.toLowerCase()}`, value.key, "",  value.value, value.badge,
-                    factory.Display.template.get("popover_submissions")(options.functions.common.parse(value.submissions))) : null);
+            options.functions.common.badge(work.submissions, `${id}_submissions_${key.toLowerCase()}`, value.key, "",  value.value,
+            value.badge, factory.Display.template.get("popover_submissions")(options.functions.common.parse(value.submissions))) : null);
 
           /* <!-- Update the classwork object, and call for a visual update --> */
           options.functions.populate.update(work, "classwork");
 
           /* <!-- Remove the loader to inform that loading has completed --> */
-          _.each(["submissions", "fetched"], value => targets[value].empty().append(factory.Display.template.get("cell", true)(work[value])));
+          _.each(["min", "avg", "max"], 
+                 value => targets[value].empty().append(factory.Display.template.get("cell", true)(work.calculated[value])));
+        
+          _.each(["submissions", "fetched"], 
+                 value => targets[value].empty().append(factory.Display.template.get("cell", true)(work[value])));
         
         }) : null;
     });
@@ -97,17 +117,26 @@ Submissions = (options, factory) => {
   /* <!-- Public Functions --> */
   FN.meta = () => ({
     fetched:  options.functions.common.column("fetched") + 1,
+    min: options.functions.common.column("min") + 1,
+    avg: options.functions.common.column("avg") + 1,
+    max: options.functions.common.column("max") + 1,
     submissions :  options.functions.common.column("submissions") + 1,
   });
   
   FN.row = (meta, row, force, types) => {
     
     var _submissions = row.find(`td:nth-child(${meta.submissions})`).first(),
+        _min = row.find(`td:nth-child(${meta.min})`).first(),
+        _avg = row.find(`td:nth-child(${meta.avg})`).first(),
+        _max = row.find(`td:nth-child(${meta.max})`).first(),
         _fetched = row.find(`td:nth-child(${meta.fetched})`).first();
     
     return _submissions && (force || _submissions.html() == "") ? FN.submissions(row.data("parent"), row.data("id"), {
-      submissions: factory.Main.busy_element(force ? _submissions.empty() : _submissions),
-      fetched: _fetched
+      submissions : factory.Main.busy_element(force ? _submissions.empty() : _submissions),
+      min : _min,
+      avg : _avg,
+      max : _max,
+      fetched : _fetched
     }, types) : Promise.resolve(null);
     
   };

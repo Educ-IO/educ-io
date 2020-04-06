@@ -44,10 +44,10 @@ Overview = (options, factory) => {
         classes: ["pl-3", "pl-xl-4", "pt-2", "pb-0"],
         title: "Overview",
         subtitle: ರ‿ರ.since ? 
-          factory.Display.doc.get("OVERVIEW_CLASSES_SUBTITLE", 
+          factory.Display.doc.get("CLASSES_SUBTITLE", 
             humanizeDuration(factory.Dates.parse(options.state.session.current) - ರ‿ರ.since, {largest: 1}), true) : null,
         details: factory.Display.doc.get({
-          name: "OVERVIEW_DETAILS",
+          name: "VIEW_DETAILS",
           data: {
             since: ರ‿ರ.since.format(options.format),
             current: factory.Dates.parse(options.state.session.current).format(options.format),
@@ -62,7 +62,7 @@ Overview = (options, factory) => {
           data: options.functions.populate.classes(classes),
           headers: options.state.application.tabulate.headers(
             ["ID", "Calendar", "State", "Name", "Fetched", "Section", "Guardians", "Room", "Updated", "Created",
-             "Teachers", "Students", "Code", "Usage", "Folder", "Owner"], HIDDEN),
+             "Teachers", "Students", "Code", "Usage", "Engagement", "Folder", "Owner"], HIDDEN),
         }, {
           classes: ["table-hover"],
           advanced: false,

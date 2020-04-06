@@ -1,0 +1,1 @@
+!function(){var a=Handlebars.template;(Handlebars.templates=Handlebars.templates||{}).classwork_body=a({compiler:[7,">= 4.0.0"],main:function(a,e,t,r,l){var s;return null!=(s=a.invokePartial(r.table_body,e,{name:"table_body",data:l,helpers:t,partials:r,decorators:a.decorators}))?s:""},usePartial:!0,useData:!0})}();

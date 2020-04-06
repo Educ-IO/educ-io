@@ -167,6 +167,7 @@ globals:
   Classwork: true
   Common: true
   Submissions: true
+  Engagement: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

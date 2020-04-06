@@ -231,7 +231,7 @@ Google_API = (options, factory) => {
           var _filtered = true,
               _value = value[property];
           
-          if (filter) {
+          if (filter && _value) {
             /* <!-- Run the filter if present --> */
             var _fn = STRINGS.operators[filter.operator],
                 _length = _value.length;
@@ -1047,7 +1047,11 @@ Google_API = (options, factory) => {
                 pageSize: number || 5
               })).then(value => value ? value.announcements : value),
               
-              list: (state, fields) => _list(NETWORKS.classroom.get, _url, "announcements", [], _params(state, fields)),
+              list: (state, fields, since) => _list(NETWORKS.classroom.get, _url, "announcements", [], _params(state, fields), null, since ? {
+                operator : "gte",
+                property : "creationTime",
+                value : since
+              } : null),
             
             };
             

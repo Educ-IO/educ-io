@@ -9,6 +9,7 @@ States = () => {
   const STATE_VIEW = "view",
         STATE_OVERVIEW = "overview",
         STATE_OVERVIEW_USAGE = "overview-usage",
+        STATE_OVERVIEW_ENGAGEMENT = "overview-engagement",
         STATE_CLASSWORK = "classwork",
         STATE_CLASSWORK_SUBMISSIONS = "classwork-submissions",
         STATE_PERIOD_FOREVER = "period-forever",
@@ -16,7 +17,7 @@ States = () => {
         STATE_PERIOD_WEEK = "period-week",
         STATE_PERIOD_DAY = "period-day",
         STATE_CONFIG = "config",
-        STATES = [STATE_OVERVIEW, STATE_OVERVIEW_USAGE, 
+        STATES = [STATE_OVERVIEW, STATE_OVERVIEW_USAGE, STATE_OVERVIEW_ENGAGEMENT,
                   STATE_CLASSWORK, STATE_CLASSWORK_SUBMISSIONS,
                   STATE_CONFIG, 
                   STATE_PERIOD_FOREVER, STATE_PERIOD_MONTH, STATE_PERIOD_WEEK, STATE_PERIOD_DAY];
@@ -49,6 +50,7 @@ States = () => {
     overview : {
       in : STATE_OVERVIEW,
       usage : STATE_OVERVIEW_USAGE,
+      engagement : STATE_OVERVIEW_ENGAGEMENT,
     },
     
     periods: {

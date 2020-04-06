@@ -1,0 +1,1 @@
+{% raw %}{{period}}{% endraw %}: __{% raw %}{{value}}{% endraw %}__{:.font-weight-bold} / {% raw %}{{total}}{% endraw %}

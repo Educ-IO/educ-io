@@ -34,8 +34,8 @@ Classes = (options, factory) => {
     }).sortBy("creationTime").value().reverse())
     .then(options.functions.people.classes);
           
-  FN.announcements = (classroom, all, number) => (all ? 
-      factory.Google.classrooms.classroom(classroom.$id || classroom.id).announcements().list(null, true) : 
+  FN.announcements = (classroom, all, number, since) => (all ? 
+      factory.Google.classrooms.classroom(classroom.$id || classroom.id).announcements().list(null, true, since) : 
       factory.Google.classrooms.classroom(classroom.$id || classroom.id).announcements().last(null, null, number))
     .then(options.functions.people.posts)
     .then(announcements => (classroom.fetched.announcements = factory.Dates.now().toISOString(),
@@ -60,6 +60,21 @@ Classes = (options, factory) => {
        factory.Google.classrooms.classroom(classroom.$id || classroom.id).work().list(null, true, since) :
        factory.Google.classrooms.classroom(classroom.$id || classroom.id).work().last(null, null, number))
     .then(options.functions.people.posts)
+    .then(work => {
+      var loaded = factory.Dates.now().toISOString();
+      return _.map(work, value => _.extend(value, {
+        $parent: classroom.$id,
+        $class: classroom.name,
+        $$fetched: loaded,
+        fetched: {
+          self: loaded,
+        },
+        class: {
+          text: classroom.name,
+          title: classroom.id.title,
+          url: classroom.id.url,
+        }}));
+    })
     .then(work => (classroom.fetched.work = factory.Dates.now().toISOString(),
                    classroom.$$fetched = classroom.fetched.work > classroom.$$fetched ? classroom.fetched.work : classroom.$$fetched,
                    work))

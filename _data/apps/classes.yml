@@ -106,12 +106,14 @@ modules:
   - classes/classes
   - classes/overview
   - classes/usage
+  - classes/engagement
   - classes/roster
   - classes/classwork
   - classes/submissions
 scripts: 
   - extends/regex
   - extends/array
+  - extends/math
 templates:
   - options
   - choose
@@ -133,6 +135,8 @@ templates:
   - shared/tabular/table_body
   - classes/overview/overview_body
   - classes/overview/overview_header
+  - classes/overview/classwork_body
+  - classes/overview/classwork_header
   - classes/parts/popover_announcement
   - classes/parts/popover_announcements
   - classes/parts/popover_classwork
@@ -141,6 +145,8 @@ templates:
   - classes/parts/popover_topics
   - classes/parts/popover_submission
   - classes/parts/popover_submissions
+  - classes/parts/popover_person
+  - classes/parts/popover_people
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -154,7 +160,7 @@ docs:
   - classes/INSTRUCTIONS
   - classes/TUTORIALS
   - classes/OVERVIEW_INSTRUCTIONS
-  - classes/OVERVIEW_EXPORT_INSTRUCTIONS
+  - classes/VIEW_EXPORT_INSTRUCTIONS
   - classes/NOTIFY_SAVE_FAILED
   - classes/NOTIFY_EXPORT_VIEW_SUCCESS
   - classes/ADD_STUDENTS
@@ -167,9 +173,10 @@ docs:
   - classes/STUDENT
   - classes/TEACHER
   - classes/CLASSROOM
-  - classes/OVERVIEW_DETAILS
-  - classes/OVERVIEW_CLASSES_SUBTITLE
-  - classes/OVERVIEW_CLASSWORK_SUBTITLE
+  - classes/VIEW_DETAILS
+  - classes/CLASSES_SUBTITLE
+  - classes/CLASSWORK_SUBTITLE
+  - classes/ENGAGEMENT_PERIOD
 scopes:
   google:
     - scope: email
@@ -253,7 +260,7 @@ menus:
       all:
         commands:
           - name: Usage
-            desc: View Details of Classroom Usage
+            desc: Generate Classroom Usage Details
             hash: overview.usage
             auth: google
             scopes:
@@ -262,6 +269,17 @@ menus:
               - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
               - https://www.googleapis.com/auth/classroom.guardianlinks.students.readonly
             shortcut: "u"
+          - name: Engagement
+            desc: Generate Classroom Engagement Details
+            hash: overview.engagement
+            auth: google
+            scopes:
+              - https://www.googleapis.com/auth/classroom.announcements.readonly
+              - https://www.googleapis.com/auth/classroom.topics.readonly
+              - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
+            shortcut: "e"
+            divider: true
+            
           - name: Classwork
             desc: View Classroom Classwork (created in the last 12 months)
             hash: overview.classwork
@@ -360,24 +378,24 @@ menus:
         commands:
           - name: Export to Sheets
             desc: Export Classroom Data to Google Sheets
-            hash: overview.export.sheets
+            hash: export.sheets
             auth: google
             scopes:
               - https://www.googleapis.com/auth/drive.file
           - name: Download as CSV
             desc: Download Classroom Data as a Comma Separated Values (CSV) File
-            hash: overview.export.csv
+            hash: export.csv
             imports:
               - filesaver
           - name: Download as Excel
             desc: Download Classroom Data as a Microsoft Excel File
-            hash: overview.export.excel
+            hash: export.excel
             imports:
               - xlsxpopulate
               - filesaver
           - name: Download as Markdown
             desc: Download Classroom Data as a Markdown Table
-            hash: overview.export.markdown
+            hash: export.markdown
             imports:
               - filesaver
 
