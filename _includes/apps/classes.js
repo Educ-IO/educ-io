@@ -197,7 +197,7 @@ App = function() {
             state: "authenticated",
             length: 0,
             keys: ["o", "O"],
-            fn: () => FN.view.overview(ಠ_ಠ.Dates.now().add(-1, "years").toISOString()),
+            fn: () => FN.view.overview(ಠ_ಠ.Dates.now().add(-370, "days").toISOString()),
 
             routes: {
 
@@ -217,7 +217,7 @@ App = function() {
                   "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
                   "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                 ],
-                fn: () => FN.view.classwork(ಠ_ಠ.Dates.now().add(-1, "years").toISOString()),
+                fn: () => FN.view.classwork(ಠ_ಠ.Dates.now().add(-370, "days").toISOString()),
 
                 routes: {
 

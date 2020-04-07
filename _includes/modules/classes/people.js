@@ -54,15 +54,20 @@ People = (options, factory) => {
   
   FN.identifiers = people => _.reduce(people, (memo, person) => (person && person.userId ? memo.push(person.userId) : null, memo), []);
   
-  FN.list = (people, parent, type, removable) => _.reduce(people, (memo, person) => {
-            if (person && person.profile) memo.push({
-              id : person.profile.id,
-              text : person.profile.name.fullName,
-              parent : parent,
-              type : type,
-              title: "Remove this Person from the Class",
-              $removable : removable
-            });
+  FN.list = (people, parent, type, removable, children) => _.reduce(people, (memo, person) => {
+            if (person && person.profile) {
+              var _person = {
+                id : person.profile.id,
+                text : person.profile.name.fullName,
+                parent : parent,
+                type : type,
+                title: "Remove this Person from the Class",
+                children: [],
+                $removable : removable
+              };
+              if (children) _person.children = children === true ? [] : children;
+              memo.push(_person);
+            } 
             return memo;
           }, []);
   /* <!-- Internal Functions --> */
@@ -99,7 +104,7 @@ People = (options, factory) => {
             classroom.$teachers = teachers,
             classroom.$$teachers = FN.simple(teachers),
             classroom.$$$teachers = FN.identifiers(teachers),
-            classroom.teachers = FN.list(teachers, classroom.$id || classroom.id, "teacher", true), 
+            classroom.teachers = FN.list(teachers, classroom.$id || classroom.id, "teacher", true, true), 
             teachers
           ))
           .catch(e => (factory.Flags.error("Teachers Error", e), null)))).then(() => classrooms);
@@ -119,7 +124,7 @@ People = (options, factory) => {
             classroom.$students = students,
             classroom.$$students = FN.simple(students),
             classroom.$$$students = FN.identifiers(students),
-            classroom.students = FN.list(students, classroom.$id || classroom.id, "student", true),
+            classroom.students = FN.list(students, classroom.$id || classroom.id, "student", true, true),
             students
           ))
           .catch(e => (factory.Flags.error("Students Error", e), null)))).then(() => classrooms);

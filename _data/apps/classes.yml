@@ -177,6 +177,10 @@ docs:
   - classes/CLASSES_SUBTITLE
   - classes/CLASSWORK_SUBTITLE
   - classes/ENGAGEMENT_PERIOD
+  - classes/STUDENT_WORK_TITLE
+  - classes/STUDENT_ANNOUNCEMENT_TITLE
+  - classes/TEACHER_WORK_TITLE
+  - classes/TEACHER_ANNOUNCEMENT_TITLE
 scopes:
   google:
     - scope: email

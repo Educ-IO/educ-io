@@ -11,7 +11,7 @@ Engagement = (options, factory) => {
       {
         value : 7,
         unit : "days",
-        text : "Last 7 Day"
+        text : "Last 7 Days"
       },
       {
         value : 2,
@@ -31,6 +31,8 @@ Engagement = (options, factory) => {
     ],
     /* <!-- CREATED - Does not mean what we want it to... --> */
     states : ["TURNED_IN", "RETURNED", "RECLAIMED_BY_STUDENT"],
+    /* <!-- Include Announcements in calculating overall engagement stats --> */
+    announcements : true,
   }, FN = {};
   /* <!-- Internal Constants --> */
 
@@ -43,11 +45,53 @@ Engagement = (options, factory) => {
     from : factory.Dates.now().add(0 - options.periods[options.periods.length - 1].value, options.periods[options.periods.length - 1].unit),
     periods : _.map(options.periods, period => _.extend(period, {
       since : factory.Dates.now().add(0 - period.value, period.unit),
-    }))
+    })),
+    titles : {},
   }; /* <!-- State --> */
   /* <!-- Internal Variables --> */
  
   /* <!-- Internal Functions --> */
+  FN.title = (audience, type, period) => {
+    
+    /* <!-- Set up Holders, if required --> */
+    if (!ರ‿ರ.titles[audience]) ರ‿ರ.titles[audience] = {};
+    if (!ರ‿ರ.titles[audience][type]) ರ‿ರ.titles[audience][type] = {};
+    
+    /* <!-- Return or Fetch Document --> */
+    return ರ‿ರ.titles[audience][type][period] || 
+      (ರ‿ರ.titles[audience][type][period] = factory.Display.doc.get(`${audience.toUpperCase()}_${type.toUpperCase()}_TITLE`, period, true));
+    
+  };
+  
+  FN.person = (period, people, user, title, audience, type, badge, faded, icon) => {
+    
+     var _person = _.find(people, person => person.id == user);
+     if (_person) {
+       
+       var _code = `${period.value}${period.unit.substring(0, 1)}`,
+           _id = `${_person.id}_${type}`,
+           _period = _.find(_person.children, child => child.id == _id);
+       
+       if (!_period) _person.children.push(_period = {
+          id : _id,
+          key : title,
+          values : {},
+          badge : badge,
+          icon : icon || type,
+          __class : faded ? "o-50" : null
+        });
+       
+       var _value = _period.values[_code];
+       if (!_value) _value = _period.values[_code] = {
+         value: 0,
+         title: FN.title(audience, type, period.text)
+       };
+       
+       _value.value += 1;
+       
+     }
+  };
+  
   FN.engagement = (id, targets, types) => Promise.resolve(options.functions.populate.get(id))
     .then(classroom => classroom ? Promise.all([
         options.functions.common.type(types, "students", true) || options.functions.common.stale(classroom, "students") ?
@@ -65,10 +109,9 @@ Engagement = (options, factory) => {
         factory.Flags.log(`Engagement for Classroom [${id}]`, results);
     
         if (results[3] && results[3] !== true &&
-            classroom.$students && classroom.$students.length > 0 &&
             classroom.$work && classroom.$work.length > 0) classroom.engagement = _.map(ರ‿ರ.periods, period => {
             
-          /* <!-- Get the From Point, All Students to build a inactive list from, and the filtered list of classwork and announcements --> */
+            /* <!-- Get the From Point, All Students to build a inactive list from, and the filtered list of classwork and announcements --> */
             var _from = period.since.toISOString(),
                 _students = _.clone(classroom.$$$students),
                 _classwork = _.filter(classroom.$work,
@@ -77,13 +120,43 @@ Engagement = (options, factory) => {
                                       announcement => announcement.updateTime >= _from || announcement.creationTime >= _from);
             
             /* <!-- Remove Students from list on inactive who have submitted work --> */
-            _.each(_classwork, work => _.each(work.$submissions || [],
-              submission => _students = options.states.indexOf(submission.state) >= 0 ? _.without(_students, submission.userId) : _students));
+            _.each(_classwork, work => {
+
+              /* <!-- Add to Teacher Classwork Badge --> */
+              FN.person(period, classroom.teachers, work.creatorUserId, "C", "teacher", "work", "dark");
+              
+              _.each(work.$submissions || [], submission => {
+
+                  /* <!-- Only use if the state is in our desired list --> */
+                  if (options.states.indexOf(submission.state) >= 0) {
+
+                    /* <!-- Add to Student Submissions Badge --> */
+                    FN.person(period, classroom.students, submission.userId, "C", "student", "work", "dark", true);
+
+                    /* <!-- Exclude student from our inactive list --> */
+                    _students = _.without(_students, submission.userId);
+
+                  }
+
+                });
+              
+            });
 
             /* <!-- Remove Students from list on inactive who have posted announcements --> */
-            _.each(_announcements, announcement => _students = _.without(_students, announcement.creatorUserId));
+            _.each(_announcements, announcement => {
+                            
+               /* <!-- Add to Teacher Announcements Badge --> */
+               FN.person(period, classroom.teachers, announcement.creatorUserId, "A", "teacher", "announcement");
+              
+               /* <!-- Add to Student Announcements Badge --> */
+               FN.person(period, classroom.students, announcement.creatorUserId, "A", "student", "announcement");
+              
+                /* <!-- Exclude student from our inactive list --> */
+               if (options.announcements) _students = _.without(_students, announcement.creatorUserId);
+              
+            });
           
-            return {
+            return classroom.$students && classroom.$students.length > 0 ? {
               __class : `badge badge-${_students.length === 0 ? "success" : _students.length == classroom.$students.length ?
                           "danger" : _students.length >= (classroom.$students.length / 10) ? "warning" : "light"} font-weight-light`,
               text: factory.Display.doc.get({
@@ -99,7 +172,7 @@ Engagement = (options, factory) => {
               details: _students.length > 0 ? 
                 factory.Display.template.get("popover_people")(_.filter(classroom.$students, student => _students.indexOf(student.userId) >= 0)) :
                 null
-            };
+            } : [];
             
           });
     
