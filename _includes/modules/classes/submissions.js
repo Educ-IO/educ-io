@@ -17,7 +17,7 @@ Submissions = (options, factory) => {
   /* <!-- Internal Variables --> */
   
   /* <!-- Internal Functions --> */
-  FN.submissions = (classroom, id, targets) => Promise.all([
+  FN.submissions = (classroom, id, targets, event) => Promise.all([
       Promise.resolve(options.functions.populate.get(classroom)),
       Promise.resolve(options.functions.populate.get(id, "classwork"))
     ])
@@ -26,6 +26,7 @@ Submissions = (options, factory) => {
           work = data[1];
       return classroom && work ? options.functions.classes.submissions(data[0], data[1], true)
         .then(submissions => {
+          factory.Main.event(event, factory.Main.message(submissions ? submissions.length || 0 : 0, "submission", "submissions"));
           factory.Flags.log("Classwork Submissions:", submissions);
           work.calculated = {
             all: [],
@@ -123,7 +124,7 @@ Submissions = (options, factory) => {
     submissions :  options.functions.common.column("submissions") + 1,
   });
   
-  FN.row = (meta, row, force, types) => {
+  FN.row = (meta, row, force) => {
     
     var _submissions = row.find(`td:nth-child(${meta.submissions})`).first(),
         _min = row.find(`td:nth-child(${meta.min})`).first(),
@@ -131,13 +132,16 @@ Submissions = (options, factory) => {
         _max = row.find(`td:nth-child(${meta.max})`).first(),
         _fetched = row.find(`td:nth-child(${meta.fetched})`).first();
     
-    return _submissions && (force || _submissions.html() == "") ? FN.submissions(row.data("parent"), row.data("id"), {
-      submissions : factory.Main.busy_element(force ? _submissions.empty() : _submissions),
+    var _id = row.data("id"),
+        _event = `${options.functions.events.submissions.progress}-${_id}`;
+        
+    return _submissions && (force || _submissions.html() == "") ? FN.submissions(row.data("parent"), _id, {
       min : _min,
       avg : _avg,
       max : _max,
-      fetched : _fetched
-    }, types) : Promise.resolve(null);
+      fetched : _fetched,
+      submissions : factory.Main.busy_element(force ? _submissions.empty() : _submissions, _event, "Loading Submissions")
+    }, _event) : Promise.resolve(null);
     
   };
   /* <!-- Public Functions --> */

@@ -1,4 +1,8 @@
 site :
+  0.1.9w :
+    name : Classes v0.0.3f-beta
+    desc : Loader Feedback Improvements
+    numeric : 0.1.9.23
   0.1.9v :
     name : Classes v0.0.3e-beta
     desc : Bug Fixes and Improvements
@@ -1426,6 +1430,9 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  0.0.3f-beta :
+    name : Usage and engagement loaders now give better task feedback
+    type : minor
   0.0.3e-beta :
     name : Bug Fixes and Feature Improvements
     type : minor

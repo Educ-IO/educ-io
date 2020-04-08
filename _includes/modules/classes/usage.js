@@ -31,14 +31,26 @@ Usage = (options, factory) => {
       `Last Updated ${type}<br /><strong>${date.format("LLL")}</strong>${text && creator ? `<br /><em>${text}</em> | <strong>${creator}<strong>`: ""}`,
       date.fromNow(), options.functions.common.colour(0 - date.diff()));
   
-  FN.usage = (id, targets, types) => Promise.resolve(options.functions.populate.get(id))
+  FN.usage = (id, targets, types, event) => Promise.resolve(options.functions.populate.get(id))
     .then(classroom => classroom ? Promise.all([
-        options.functions.common.type(types, "students") ? options.functions.people.students(classroom) : Promise.resolve(true),
-        options.functions.common.type(types, "announcements") ? options.functions.classes.announcements(classroom) : Promise.resolve(true),
-        options.functions.common.type(types, "work") ? options.functions.classes.work(classroom) : Promise.resolve(true),
-        options.functions.common.type(types, "invitations") ? options.functions.classes.invitations(classroom) : Promise.resolve(true),
-        options.functions.common.type(types, "teachers", true) ? options.functions.people.teachers(classroom) : Promise.resolve(true),
-        options.functions.common.type(types, "topics") ? options.functions.classes.topics(classroom, true) : Promise.resolve(true),
+        options.functions.common.type(types, "students") ? options.functions.people.students(classroom)
+            .then(value => (factory.Main.event(event, factory.Main.message(classroom.$students.length || 0, "student", "students")), value)) :
+          Promise.resolve(true),
+        options.functions.common.type(types, "announcements") ? options.functions.classes.announcements(classroom)
+            .then(value => (factory.Main.event(event, factory.Main.message(value ? value.length || 0 : 0, "announcement", "announcements")), value)) :
+          Promise.resolve(true),
+        options.functions.common.type(types, "work") ? options.functions.classes.work(classroom)
+            .then(value => (factory.Main.event(event, factory.Main.message(value ? value.length || 0 : 0, "assignment", "assignments")), value)) :
+          Promise.resolve(true),
+        options.functions.common.type(types, "invitations") ? options.functions.classes.invitations(classroom)
+            .then(value => (factory.Main.event(event, factory.Main.message(value ? value.length || 0 : 0, "invitation", "invitations")), value)) :
+          Promise.resolve(true),
+        options.functions.common.type(types, "teachers", true) ? options.functions.people.teachers(classroom)
+            .then(value => (factory.Main.event(event, factory.Main.message(classroom.$teachers.length || 0, "teacher", "teachers")), value)) :
+          Promise.resolve(true),
+        options.functions.common.type(types, "topics") ? options.functions.classes.topics(classroom, true)
+            .then(value => (factory.Main.event(event, factory.Main.message(value ? value.length || 0 : 0, "topic", "topics")), value)) :
+          Promise.resolve(true),
       ]).then(results => {
     
         /* <!-- Log Classroom Usage --> */
@@ -55,8 +67,10 @@ Usage = (options, factory) => {
         /* <!-- Add Announcements --> */
         if (results[1] !== true && classroom.$announcements && classroom.$announcements.length > 0 && classroom.$announcements[0]) {
           
-          var _teacher = options.functions.common.parse(_.filter(classroom.$announcements, announcement => classroom.$$$teachers.indexOf(announcement.creatorUserId) >= 0)),
-              _student = options.functions.common.parse(_.filter(classroom.$announcements, announcement => classroom.$$$students.indexOf(announcement.creatorUserId) >= 0));
+          var _teacher = options.functions.common.parse(_.filter(classroom.$announcements, 
+                                                                 announcement => classroom.$$$teachers.indexOf(announcement.creatorUserId) >= 0)),
+              _student = options.functions.common.parse(_.filter(classroom.$announcements,
+                                                                 announcement => classroom.$$$students.indexOf(announcement.creatorUserId) >= 0));
           
           /* <!-- Teacher Announcements --> */
           if (_teacher.length > 0) {
@@ -127,12 +141,15 @@ Usage = (options, factory) => {
         _fetched = row.find(`td:nth-child(${meta.fetched})`).first(),
         _usage = row.find(`td:nth-child(${meta.usage})`).first();
     
-    return _usage && (force || _usage.html() == "") ? FN.usage(row.data("id"), {
+    var _id = row.data("id"),
+        _event = `${options.functions.events.usage.progress}-${_id}`;
+    
+    return _usage && (force || _usage.html() == "") ? FN.usage(_id, {
       students: _students,
       teachers: _teachers,
       fetched: _fetched,
-      usage: factory.Main.busy_element(force ? _usage.empty() : _usage),
-    }, types) : Promise.resolve(null);
+      usage: factory.Main.busy_element(force ? _usage.empty() : _usage, _event, "Gathering Usage")
+    }, types, _event) : Promise.resolve(null);
     
   };
   

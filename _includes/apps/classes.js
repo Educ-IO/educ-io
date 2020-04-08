@@ -41,7 +41,7 @@ App = function() {
         if (!ಠ_ಠ.Display.state().in(FN.states.periods.all, true)) ಠ_ಠ.Display.state().enter(FN.states.periods.forever);
       })
       .catch(e => ಠ_ಠ.Flags.error(messages.error, e))
-      .then(ಠ_ಠ.Main.busy(message => message || "", true, FN.events.load.progress, messages.loading)),
+      .then(ಠ_ಠ.Main.busy(true, true, FN.events.load.progress, messages.loading)),
 
     overview: since => FN.view.generic(() => FN.overview.display(since), FN.states.overview.in, {
       error: "Classes Overview Error",
@@ -299,7 +299,6 @@ App = function() {
                 requires: "d3",
                 scopes: [
                   "https://www.googleapis.com/auth/classroom.announcements.readonly",
-                  "https://www.googleapis.com/auth/classroom.topics.readonly",
                   "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                 ],
                 fn: () => FN.engagement.generate()
@@ -313,7 +312,6 @@ App = function() {
                     requires: "d3",
                     scopes: [
                       "https://www.googleapis.com/auth/classroom.announcements.readonly",
-                      "https://www.googleapis.com/auth/classroom.topics.readonly",
                       "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                     ],
                     keys: ["ctrl+alt+e", "ctrl+alt+E"],

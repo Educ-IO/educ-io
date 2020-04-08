@@ -92,16 +92,30 @@ Engagement = (options, factory) => {
      }
   };
   
-  FN.engagement = (id, targets, types) => Promise.resolve(options.functions.populate.get(id))
+  FN.engagement = (id, targets, types, event) => Promise.resolve(options.functions.populate.get(id))
     .then(classroom => classroom ? Promise.all([
         options.functions.common.type(types, "students", true) || options.functions.common.stale(classroom, "students") ?
-          options.functions.people.students(classroom) : Promise.resolve(true),
+          options.functions.people.students(classroom)
+            .then(value => (factory.Main.event(event, factory.Main.message(classroom.$students.length || 0, "student", "students")), value)) : 
+          Promise.resolve(true),
         options.functions.common.type(types, "teachers", true) || options.functions.common.stale(classroom, "teachers") ?
-          options.functions.people.teachers(classroom) : Promise.resolve(true),
+          options.functions.people.teachers(classroom)
+            .then(value => (factory.Main.event(event, factory.Main.message(classroom.$teachers.length || 0, "teacher", "teachers")), value)) : 
+          Promise.resolve(true),
         options.functions.common.type(types, "announcements") ? 
-          options.functions.classes.announcements(classroom, true, null, ರ‿ರ.from.toISOString()) : Promise.resolve(true),
+          options.functions.classes.announcements(classroom, true, null, ರ‿ರ.from.toISOString())
+            .then(value => (factory.Main.event(event, factory.Main.message(value ? value.length || 0 : 0, "announcement", "announcements")), value)) : 
+          Promise.resolve(true),
         options.functions.common.type(types, "work") ? options.functions.classes.work(classroom, true, null, ರ‿ರ.from.toISOString())
-          .then(classwork => Promise.all(_.map(classwork, work => options.functions.classes.submissions(classroom, work, true))).then(() => classwork)) : Promise.resolve(true),
+          .then(value => (factory.Main.event(event, factory.Main.message(value ? value.length || 0 : 0, "assignment", "assignments")), value))
+          .then(classwork => {
+            var processed = 0;
+            return Promise.all(_.map(classwork, 
+              work => options.functions.classes.submissions(classroom, work, true)
+               .then(submissions => factory.Main.event(event, factory.Main.message(processed += (submissions ? submissions.length || 0 : 0),
+                                                                                    "submission", "submissions", "processed")))))
+              .then(() => classwork);
+          }) : Promise.resolve(true),
       ]).then(results => {
     
         /* <!-- Log Classroom Engagement --> */
@@ -205,12 +219,15 @@ Engagement = (options, factory) => {
         _fetched = row.find(`td:nth-child(${meta.fetched})`).first(),
         _engagement = row.find(`td:nth-child(${meta.engagement})`).first();
     
-    return _engagement && (force || _engagement.html() == "") ? FN.engagement(row.data("id"), {
+    var _id = row.data("id"),
+        _event = `${options.functions.events.engagement.progress}-${_id}`;
+    
+    return _engagement && (force || _engagement.html() == "") ? FN.engagement(_id, {
       students: _students,
       teachers: _teachers,
       fetched: _fetched,
-      engagement: factory.Main.busy_element(force ? _engagement.empty() : _engagement),
-    }, types) : Promise.resolve(null);
+      engagement: factory.Main.busy_element(force ? _engagement.empty() : _engagement, _event, "Calculating Engagement"),
+    }, types, _event) : Promise.resolve(null);
     
   };
   
