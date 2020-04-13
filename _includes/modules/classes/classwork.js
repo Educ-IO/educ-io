@@ -44,13 +44,14 @@ Classwork = (options, factory) => {
         subtitle: ರ‿ರ.since ? 
           factory.Display.doc.get("CLASSWORK_SUBTITLE", 
             humanizeDuration(factory.Dates.parse(options.state.session.current) - ರ‿ರ.since, {largest: 1}), true) : null,
-        details: factory.Display.doc.get({
+        details: ರ‿ರ.since ? factory.Display.doc.get({
           name: "VIEW_DETAILS",
           data: {
             since: ರ‿ರ.since.format(options.format),
             current: factory.Dates.parse(options.state.session.current).format(options.format),
           }
-        }),
+        }) : null,
+        gradesheet: factory.Display.doc.get("GRADESHEET_TITLE")
       }).trim()
     }),
     
@@ -59,8 +60,12 @@ Classwork = (options, factory) => {
           name: options.id,
           data: options.functions.populate.classwork(classwork),
           headers: options.state.application.tabulate.headers(
-            ["ID", "Type", "Mode", "Class", "Fetched", "Title", "Description", "Updated", "Created", "Due",
-             "Points", "Min", "Avg", "Max", "Submissions", "Creator"], HIDDEN),
+            ["ID", "Type", "Mode", "Class", "Fetched", "Title", "Description", "Updated", "Created", "Due", "Points", "Min", "Avg", "Max",
+             {
+               name: "Submissions",
+               shortcut : "b",
+               help : factory.Display.doc.get("CLASSWORK_SUBMISSIONS_HEADER", null, true)
+             }, "Creator"], HIDDEN),
         }, {
           classes: ["table-hover"],
           advanced: false,
@@ -77,7 +82,9 @@ Classwork = (options, factory) => {
   /* <!-- Public Functions --> */
   FN.display = (classrooms, since) => {
     var processed = 0;
-    return Promise.all(_.map(ರ‿ರ.classrooms = classrooms, classroom => options.functions.classes.work(classroom, true).then(work => (
+    return Promise.all(_.map(ರ‿ರ.classrooms = classrooms, 
+      classroom => (options.functions.common.stale(classroom, "work") ? 
+                    options.functions.classes.work(classroom, true) : Promise.resolve(classroom.$work)).then(work => (
             factory.Main.event(options.functions.events.load.progress, 
                                factory.Main.message(processed += 1, "class", "classes", "processed")), work))))
     .then(classworks => _.reduce(classworks, (memo, classwork) => _.reduce(classwork, (memo, work) => {

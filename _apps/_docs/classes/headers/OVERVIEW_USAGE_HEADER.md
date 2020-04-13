@@ -1,0 +1,1 @@
+Once generated, the usage column gives __basic details__ about recent usage of the classroom (e.g. last teacher / student announcements, classwork etc)

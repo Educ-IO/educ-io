@@ -1,0 +1,1 @@
+Once __engagement__ data is generated, it can be viewed __per-student__ (e.g. one student per-row) rather than __per-classroom__.

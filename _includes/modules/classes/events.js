@@ -17,6 +17,9 @@
     submissions : {
       progress : "classes-events-submissions-progress",
     },
+    gradesheet : {
+      progress : "classes-events-gradesheet-progress",
+    },
   };
   /* <!-- Internal Constants --> */
 

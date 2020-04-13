@@ -21,7 +21,7 @@ Controller = function() {
       els[0].classList.remove(name);
     }
   };
-
+  
   var _inject = function(i, s, o, g, r, a, m) {
     a = s.createElement(o);
     a.setAttribute("id", g.id);
@@ -87,6 +87,63 @@ Controller = function() {
     });
   };
 
+  var _add = function(input, deferreds, resources) {
+    
+    var is_css = !!input.url.match(/(\.|\/)css($|\?\S+)/gi),
+        is_fonts = !!input.url.match(/^https:\/\/fonts\.googleapis\.com\/css/gi);
+    
+    var _dependencies = [];
+
+    if (input.mode == "no-cors") {
+
+      deferreds.push(_include(input.url, is_css ? "style" : "script", input.id, input.dependencies));
+
+    } else {
+
+      deferreds.push(window.fetch(input.url, {
+          mode: input.mode ? input.mode : "cors",
+          integrity: input.integrity ? input.integrity : ""
+        })
+        .then(res => [res.text(), input.id, input.url, is_css, is_fonts, input.map === true, input.overrides])
+        .then(promises => Promise.all(promises).then(resolved => {
+
+          resources.push({
+            text: resolved[0],
+            id: resolved[1],
+            url: resolved[2],
+            css: resolved[3],
+            fonts: resolved[4],
+            map: resolved[5],
+            overrides: resolved[6],
+            dependencies : _dependencies,
+          });
+
+        }))
+       .catch(e => err("ERROR LOADING RESOURCE:", e))
+      );
+
+    }
+    
+    if (input.dependencies && input.dependencies.length > 0) 
+      input.dependencies.forEach(dependency => _add(dependency, deferreds, _dependencies));
+    
+  };
+  
+  var _injector = resource => new Promise(resolve => {
+    if (resource.dependencies && resource.dependencies.length > 0) {
+      var _run = new Promise(r => _inject(window, document, resource.css === true ? "style" : "script", resource, r)).then(() => {
+        var _dependencies = [];
+        resource.dependencies.forEach(d => {
+          _dependencies.push(new Promise(r => _inject(window, document, d.css === true ? "style" : "script", d, r)));
+        });
+        return Promise.all(_dependencies);
+      });
+      _run.then(resolve);
+    } else {
+      _inject(window, document, resource.css === true ? "style" : "script", resource, resolve);  
+    }
+  });
+  
   var _load = function(inputs, promise) {
 
     if (!(inputs && Array.isArray(inputs))) return Promise.reject(new TypeError("`inputs` must be an array"));
@@ -98,41 +155,12 @@ Controller = function() {
 
     inputs = inputs.filter(input => document.getElementById(input.id) == null);
 
-    inputs.forEach(input => {
-
-      var is_css = !!input.url.match(/(\.|\/)css($|\?\S+)/gi);
-      var is_fonts = !!input.url.match(/^https:\/\/fonts\.googleapis\.com\/css/gi);
-
-      if (input.mode == "no-cors") {
-        deferreds.push(_include(input.url, is_css ? "style" : "script", input.id));
-      } else {
-        deferreds.push(window.fetch(input.url, {
-            mode: input.mode ? input.mode : "cors",
-            integrity: input.integrity ? input.integrity : ""
-          })
-          .then(res => [res.text(), input.id, input.url, is_css, is_fonts, input.map === true, input.overrides])
-          .then(promises => Promise.all(promises).then(resolved => {
-            resources.push({
-              text: resolved[0],
-              id: resolved[1],
-              url: resolved[2],
-              css: resolved[3],
-              fonts: resolved[4],
-              map: resolved[5],
-              overrides: resolved[6]
-            });
-          }))
-         .catch(e => err("ERROR LOADING RESOURCE:", e))
-        );
-      }
-    });
+    inputs.forEach(input => _add(input, deferreds, resources));
 
     return Promise.all(deferreds).then(() => {
       resources.forEach(resource => {
         thenables.push({
-          then: resolve => {
-            resource.css === true ? _inject(window, document, "style", resource, resolve) : _inject(window, document, "script", resource, resolve);
-          }
+          then: resolve => _injector(resource).then(resolve)
         });
       });
       return Promise.all(thenables);

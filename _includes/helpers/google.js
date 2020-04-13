@@ -211,7 +211,7 @@ Google_API = (options, factory) => {
 
   var _arrayize = (value, test) => value && test(value) ? [value] : !value ? [] : value;
 
-  var _list = (method, url, property, list, data, next, filter) => {
+  var _list = (method, url, property, list, data, next, filter, progress) => {
  
     return new Promise((resolve, reject) => {
 
@@ -240,6 +240,9 @@ Google_API = (options, factory) => {
           }
           
           list = list ? list.concat(_value) : _value;
+          
+          /* <!-- Raise Event if supplied --> */
+          if (progress && list && list.length) progress(list.length);
 
           value.nextPageToken && _filtered ?
             _list(method, url, property, list, data, value.nextPageToken, filter).then(list => resolve(_.compact(list))) :
@@ -996,7 +999,7 @@ Google_API = (options, factory) => {
 
     classrooms: {
 
-      list: (state, fields, since) => _list(
+      list: (state, fields, since, progress) => _list(
         NETWORKS.classroom.get, "/v1/courses", "courses", [], {
           courseStates: state || "ACTIVE",
           fields: `${fields && fields === true ? "*" : `nextPageToken,courses(${fields ? fields.join(",") : "id,name,section,description,calendarId,teacherFolder,creationTime"})`}`,
@@ -1004,7 +1007,7 @@ Google_API = (options, factory) => {
           operator : "gte",
           property : "creationTime",
           value : since
-        } : null),
+        } : null, progress),
 
       person: person => _call(NETWORKS.classroom.get, `v1/userProfiles/${encodeURIComponent(person)}`, {
           fields: "id,name,verifiedTeacher",

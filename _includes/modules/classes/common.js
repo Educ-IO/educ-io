@@ -8,8 +8,7 @@ Common = (options, factory) => {
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
     stale: 15
-  },
-        FN = {};
+  }, FN = {};
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -62,7 +61,8 @@ Common = (options, factory) => {
         }))
         .value();
   
-  FN.stale = (classroom, type) => !classroom.fetched || !classroom.fetched[type] || (0 - factory.Dates.parse(classroom.fetched[type]).diff()) > (1000 * 60 * options.stale);
+  FN.stale = (classroom, type) => factory.Display.state().in(options.functions.states.file.loaded) ? false :
+    !classroom.fetched || !classroom.fetched[type] || (0 - factory.Dates.parse(classroom.fetched[type]).diff()) > (1000 * 60 * options.stale);
   
   FN.type = (types, type, force) => (!force && types === null) || (!force && types === undefined) || types == type || _.indexOf(types, type) >= 0;
   /* <!-- Public Functions --> */

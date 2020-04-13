@@ -24,7 +24,8 @@ Submissions = (options, factory) => {
     .then(data => {
       var classroom = data[0],
           work = data[1];
-      return classroom && work ? options.functions.classes.submissions(data[0], data[1], true)
+      return classroom && work ? (options.functions.common.stale(work, "submissions") ?
+                                    options.functions.classes.submissions(data[0], data[1], true) : Promise.resolve(work.$submissions))
         .then(submissions => {
           factory.Main.event(event, factory.Main.message(submissions ? submissions.length || 0 : 0, "submission", "submissions"));
           factory.Flags.log("Classwork Submissions:", submissions);

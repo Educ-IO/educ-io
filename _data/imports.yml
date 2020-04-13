@@ -1,4 +1,4 @@
-# Last Updated: 2020-03-08
+# Last Updated: 2020-04-13
 
 localstorage:
   name: localStorage
@@ -210,22 +210,22 @@ jquery_slim:
   desc: This popular library is used to manipulate the DOM, and HTML elements on the page.
   url: https://cdnjs.com/libraries/jquery
   project: http://jquery.com/
-  version: 3.4.1
-  last: 3.3.1
+  version: 3.5.0
+  last: 3.4.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js
-      integrity: sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.slim.min.js
+      integrity: sha256-MlusDLJIP1GRgLrOflUQtshyP0TwT/RHXsI1wWGnQhs=
       crossorigin: anonymous
-      bulk: 69.4
+      bulk: 72.4
       map: true
       id: __jquery
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.js
-      integrity: sha256-BTlTdQO9/fascB1drekrDVkaKd9PkwBymMlHOiG+qLI=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.slim.js
+      integrity: sha256-sCexhaKpAfuqulKjtSY7V9H7QT0TCN90H+Y5NlmqOUE=
       crossorigin: anonymous
-      bulk: 222
+      bulk: 234
       id: __jquery
       
 jquery:
@@ -233,22 +233,22 @@ jquery:
   desc: This popular library is used to manipulate the DOM, and HTML elements on the page.
   url: https://cdnjs.com/libraries/jquery
   project: http://jquery.com/
-  version: 3.4.1
-  last: 3.3.1
+  version: 3.5.0
+  last: 3.4.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
-      integrity: sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js
+      integrity: sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=
       crossorigin: anonymous
-      bulk: 86.1
+      bulk: 89.5
       map: true
       id: __jquery
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
-      integrity: sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.js
+      integrity: sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=
       crossorigin: anonymous
-      bulk: 274
+      bulk: 288
       id: __jquery
 
 tether:
@@ -392,103 +392,114 @@ ace:
   desc: An in-browser text editor.
   url: https://cdnjs.com/libraries/ace
   project: http://ace.ajax.org/
-  version: 1.4.7
-  last: 1.4.6
+  version: 1.4.9
+  last: 1.4.7
   license: BSD
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ace.js
-      integrity: sha256-C7DTYRJLG+B/VEzHGeoPMw699nsTQYPAXHKXZb+q04E=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/ace.min.js
+      integrity: sha256-OvioNmbnZ1Wivd3frKZS/7edQrzE+mqhSm/bZJ+6YdU=
       crossorigin: anonymous
-      bulk: 367
+      bulk: 372
+      map: true
       id: __ace_0
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ext-language_tools.js
-      integrity: sha256-5GsAp93HE/XYlhrUPMw4VBAoawG9n3c7+DbQE4tRwW0=
-      crossorigin: anonymous
-      bulk: 38.2
-      id: __ace_1
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ext-searchbox.js
-      integrity: sha256-mQMqd2xRq2hTPi3HTW2FIkMlcQf1Eb/4RvqpgM40tOs=
-      crossorigin: anonymous
-      bulk: 11.6
-      id: __ace_2
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-css.js
-      integrity: sha256-ejRV6HoEO4cwL/ZQ6sKQynq563ad5yVQMYZX4yQIX3U=
-      crossorigin: anonymous
-      bulk: 20.3
-      id: __ace_3
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-diff.js
-      integrity: sha256-y5Rj5gl60GmbA6DS9y+RxoT0cF7qlvvTrn+0dENLGv8=
-      crossorigin: anonymous
-      bulk: 2.6
-      id: __ace_4
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-html.js
-      integrity: sha256-+LuWQyoA65gA+u1R8aXl/CeNMelII6+kEngEgjYECfI=
-      crossorigin: anonymous
-      bulk: 59.3
-      id: __ace_5
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-javascript.js
-      integrity: sha256-9nVHCZW1SuyhaVgqmPk1XutGn+g/ASVBiVAheioldo4=
-      crossorigin: anonymous
-      bulk: 18.1
-      id: __ace_6
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-markdown.js
-      integrity: sha256-aI+/ySEAjYR8IbKwFTwrIvKFH1R+S9IsumA9w2O1Igw=
-      crossorigin: anonymous
-      bulk: 70.7
-      id: __ace_7
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-yaml.js
-      integrity: sha256-WgdHONNZD/4LA7nlYhFqXqAAvZL4U2vbXDo2g6rWv7s=
-      crossorigin: anonymous
-      bulk: 5
-      id: __ace_8
+      dependencies:
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/ext-language_tools.min.js
+          integrity: sha256-Y9BjjymBeDBEobqSb85ywuBB0kvHtntP8WRoagrvPoY=
+          crossorigin: anonymous
+          bulk: 38.5
+          map: true
+          id: __ace_1
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/ext-searchbox.min.js
+          integrity: sha256-B8qJ2ZWQDuCxnF91y5S3cJiGE5Tu1kovxLNA22PEUkg=
+          crossorigin: anonymous
+          bulk: 11.6
+          map: true
+          id: __ace_2
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-css.min.js
+          integrity: sha256-2tIiM7GEMPI5UiY2z4QcmCUwQdsCDYhoyebEpYc2Axo=
+          crossorigin: anonymous
+          bulk: 20.5
+          map: true
+          id: __ace_3
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-diff.min.js
+          integrity: sha256-3vurJeepz9a5kBdD0bZNuO1zbHQhH1voo6d6LyI9kDY=
+          crossorigin: anonymous
+          bulk: 2.5
+          map: true
+          id: __ace_4
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-html.min.js
+          integrity: sha256-8aEDsT3fJnCq8IGSLFXY8cU/KxmWhTZ9IZuRT9cQx64=
+          crossorigin: anonymous
+          bulk: 60.3
+          map: true
+          id: __ace_5
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-javascript.min.js
+          integrity: sha256-cN39Ofb0/L/HOBScgDuoNefcVF4+MKdAsxXR3g/xyZw=
+          crossorigin: anonymous
+          bulk: 18.3
+          map: true
+          id: __ace_6
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-markdown.min.js
+          integrity: sha256-V4Bk6vyGYkRt0YRA/2C2V0gZIr6U37eZlhFtAT67oh4=
+          crossorigin: anonymous
+          bulk: 72
+          map: true
+          id: __ace_7
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-yaml.min.js
+          integrity: sha256-bHHK15VsLDAwoV3YMrTzO6i3phJrlro5JJxvLAqekws=
+          crossorigin: anonymous
+          bulk: 4.8
+          map: true
+          id: __ace_8
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ace.js
-      integrity: sha256-C7DTYRJLG+B/VEzHGeoPMw699nsTQYPAXHKXZb+q04E=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/ace.js
+      integrity: sha256-CvwZRDTGSAw2IQybkwEsxuHuo7SaVRIX+fofIG6G4Pk=
       crossorigin: anonymous
-      bulk: 367
+      bulk: 379
       id: __ace_0
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ext-language_tools.js
-      integrity: sha256-5GsAp93HE/XYlhrUPMw4VBAoawG9n3c7+DbQE4tRwW0=
-      crossorigin: anonymous
-      bulk: 38.2
-      id: __ace_1
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ext-searchbox.js
-      integrity: sha256-mQMqd2xRq2hTPi3HTW2FIkMlcQf1Eb/4RvqpgM40tOs=
-      crossorigin: anonymous
-      bulk: 11.6
-      id: __ace_2
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-css.js
-      integrity: sha256-ejRV6HoEO4cwL/ZQ6sKQynq563ad5yVQMYZX4yQIX3U=
-      crossorigin: anonymous
-      bulk: 20.3
-      id: __ace_3
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-diff.js
-      integrity: sha256-y5Rj5gl60GmbA6DS9y+RxoT0cF7qlvvTrn+0dENLGv8=
-      crossorigin: anonymous
-      bulk: 2.6
-      id: __ace_4
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-html.js
-      integrity: sha256-+LuWQyoA65gA+u1R8aXl/CeNMelII6+kEngEgjYECfI=
-      crossorigin: anonymous
-      bulk: 59.3
-      id: __ace_5
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-javascript.js
-      integrity: sha256-9nVHCZW1SuyhaVgqmPk1XutGn+g/ASVBiVAheioldo4=
-      crossorigin: anonymous
-      bulk: 18.1
-      id: __ace_6
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-markdown.js
-      integrity: sha256-aI+/ySEAjYR8IbKwFTwrIvKFH1R+S9IsumA9w2O1Igw=
-      crossorigin: anonymous
-      bulk: 70.7
-      id: __ace_7
-    - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/mode-yaml.js
-      integrity: sha256-WgdHONNZD/4LA7nlYhFqXqAAvZL4U2vbXDo2g6rWv7s=
-      crossorigin: anonymous
-      bulk: 5
-      id: __ace_8
-      
+      dependencies:
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/ext-language_tools.js
+          integrity: sha256-xNj+x8dIB2IXQn9AV2nKN+DDNihMY04TIX1v5U/CR5U=
+          crossorigin: anonymous
+          bulk: 39.3
+          id: __ace_1bbb
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/ext-searchbox.js
+          integrity: sha256-mQMqd2xRq2hTPi3HTW2FIkMlcQf1Eb/4RvqpgM40tOs=
+          crossorigin: anonymous
+          bulk: 11.6
+          id: __ace_2
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-css.js
+          integrity: sha256-PW/SMIVYBuVdzCndEo7Datj+TBieX9Zz5E5yJU8g78Y=
+          crossorigin: anonymous
+          bulk: 20.9
+          id: __ace_3
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-diff.js
+          integrity: sha256-c+/q37DjVotyOaWhvbGjCXIQGRq30dMDiU16ppupQeM=
+          crossorigin: anonymous
+          bulk: 2.7
+          id: __ace_4
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-html.js
+          integrity: sha256-SOrs1Ftd8joMsHBGgyOjc+zwZ+esQf+05l3FfqLanks=
+          crossorigin: anonymous
+          bulk: 60.8
+          id: __ace_5
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-javascript.js
+          integrity: sha256-1qGp9XBO+82G1o4wy0HHhSRcQEgwws+Lc79te64neqI=
+          crossorigin: anonymous
+          bulk: 18.6
+          id: __ace_6
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-markdown.js
+          integrity: sha256-0ZB3rlqiHdeZteA+2xCuUwKGgtAagS/e0ANUlWruFyk=
+          crossorigin: anonymous
+          bulk: 72.6
+          id: __ace_7
+        - url: https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/mode-yaml.js
+          integrity: sha256-WgdHONNZD/4LA7nlYhFqXqAAvZL4U2vbXDo2g6rWv7s=
+          crossorigin: anonymous
+          bulk: 5
+          id: __ace_8
+
 xlsx:
   name: JS XLSX
   desc: Import / Output to Legacy Spreadsheet Formats.
@@ -518,6 +529,52 @@ xlsx:
         - replace: var pr=function(e){var r=[],t=10240;for(var a=0;a<e[0].length;++a)if(e[0][a])for(var n=0,i=e[0][a].length;n<i;n+=t)r.push.apply(r,e[0][a].slice(n,n+t));return r};
           with: var pr=function(e){return [].concat.apply([], e[0])};
       id: __xlsx
+      
+xlsx_new:
+  name: JS XLSX
+  desc: Import / Output to Legacy Spreadsheet Formats.
+  url: https://cdnjs.com/libraries/xlsx
+  project: https://github.com/SheetJS/js-xlsx
+  version: 0.15.6
+  last: 0.15.5
+  license: Apache-2.0
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.6/xlsx.full.min.js
+      integrity: sha256-fImCm6IrKW/Y9BpJdSEhgQNnco1ccwp1d7Mhjwn1Zrs=
+      crossorigin: anonymous
+      bulk: 931
+      map: true
+      overrides:
+        - replace: var pr=function(e){var r=[],t=10240;for(var a=0;a<e[0].length;++a)if(e[0][a])for(var n=0,i=e[0][a].length;n<i;n+=t)r.push.apply(r,e[0][a].slice(n,n+t));return r};
+          with: var pr=function(e){return [].concat.apply([], e[0])};
+      id: __xlsx
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.6/xlsx.js
+      integrity: sha256-tLNSErhbEQGRgsJQcYzkVusOc8GDQ66Uuo0dzdVpwRM=
+      crossorigin: anonymous
+      bulk: 714
+      map: true
+      overrides:
+        - replace: var __toBuffer = function(bufs) { var x=[],w=10240; for(var i=0;i<bufs[0].length;++i) if(bufs[0][i]) for(var j=0,L=bufs[0][i].length;j<L;j+=w) x.push.apply(x, bufs[0][i].slice(j,j+w)); return x; };
+          with: var __toBuffer = function(bufs) {return [].concat.apply([], e[0]); };
+      id: __xlsx_0
+      dependencies:
+        - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.6/jszip.js
+          integrity: sha256-T6Npk+Bn5Fz/MpPIEuOXz/xd8qvsNaYWOh+GQlmuFGs=
+          crossorigin: anonymous
+          bulk: 288
+          id: __xlsx_1
+        - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.6/cpexcel.js
+          integrity: sha256-W3rJZOZXlV1xks8sdGPOTRzqRS3Z09PwehXSQXEq0gU=
+          crossorigin: anonymous
+          bulk: 471
+          id: __xlsx_2
+        - url: https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.6/xlsx.extendscript.js
+          integrity: sha256-GLOmDQbjSTMuhgxMb3rLNLE1T5aHkqmlnNmou2g7GCE=
+          crossorigin: anonymous
+          bulk: 328
+          id: __xlsx_3
 
 download:
   name: Download JS
@@ -568,19 +625,19 @@ handlebars:
   desc: Used for HTML Templating in the browser.
   url: https://cdnjs.com/libraries/handlebars.js
   project: http://handlebarsjs.com/
-  version: 4.7.3
-  last: 4.5.3
+  version: 4.7.6
+  last: 4.7.3
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.3/handlebars.runtime.min.js
-      integrity: sha256-88fsOzeDlHdSdzTHIUYGSKEbpoIoDrztJfXL/q3TGh8=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.runtime.min.js
+      integrity: sha256-oBnshSqg34qRKDay1xwLnhcC8DkaECbof2pgCl/MqUA=
       crossorigin: anonymous
       bulk: 20.7
       id: __handlebars
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.3/handlebars.js
-      integrity: sha256-v28e/OFwH4PmlZT+LbqfwlMOE1hImPNesl1Ha52e6pk=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.js
+      integrity: sha256-ZafrO8ZXERYO794Tx1hPaAcdcXNZUNmXufXOSe0Hxj8=
       crossorigin: anonymous
       bulk: 179
       id: __handlebars
@@ -595,14 +652,14 @@ handlebars_full:
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.3/handlebars.min.js
-      integrity: sha256-/PJBs6QWvXijOFIX04kZpLb6ZtSQckdOIavLWKKOgXU=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js
+      integrity: sha256-usTqAE1ywvdMtksWzdeWzD75MsfJN0h0U7y2NtZL3N0=
       crossorigin: anonymous
       bulk: 80.3
       id: __handlebars
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.3/handlebars.js
-      integrity: sha256-v28e/OFwH4PmlZT+LbqfwlMOE1hImPNesl1Ha52e6pk=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.js
+      integrity: sha256-ZafrO8ZXERYO794Tx1hPaAcdcXNZUNmXufXOSe0Hxj8=
       crossorigin: anonymous
       bulk: 179
       id: __handlebars
@@ -813,21 +870,21 @@ jszip:
   desc: Allows Zip / Un-Zipping (compression) of content in the browser.
   url: https://cdnjs.com/libraries/jszip
   project: https://stuk.github.io/jszip/
-  version: 3.2.2
-  last: 3.2.0
+  version: 3.3.0
+  last: 3.2.2
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.2/jszip.min.js
-      integrity: sha256-gy5W5/rXWluWXFRvMWFFMVhocfpBe7Tf4SW2WMfjs4E=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jszip/3.3.0/jszip.min.js
+      integrity: sha256-J0jjrR5bYbE+saHyVcuvt2EIg5JAHN10VWyTHtVJV2E=
       crossorigin: anonymous
-      bulk: 93.6
+      bulk: 95.8
       id: __jszip
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.2/jszip.js
-      integrity: sha256-bBikss7mndcF6KmskR4ihPSlxoyGAxuG4Gf/rzolOTg=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jszip/3.3.0/jszip.js
+      integrity: sha256-5GFC4PzL38spn7LS1Euw/2gLTyVTzj9qSdQAX0CYOek=
       crossorigin: anonymous
-      bulk: 358
+      bulk: 366
       id: __jszip
 
 moment:
@@ -1329,22 +1386,22 @@ maths:
   desc: An extensive math library for JavaScript and Node.js. It features a flexible expression parser and offers an integrated solution to work with numbers, big numbers, complex numbers, units, and matrices.
   url: https://cdnjs.com/libraries/mathjs
   project: http://mathjs.org/
-  version: 6.6.1
-  last: 6.2.5
+  version: 6.6.2
+  last: 6.6.1
   license: Apache-2.0
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.6.1/math.min.js
-      integrity: sha256-GRICDUAZi4ixXD2USKabeCWS1tT0noAuMFauMmXEmHs=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.6.2/math.min.js
+      integrity: sha256-POF7RzH5BTLoRmrAffDQIRqTXGnt4hCrtY97kgDojkc=
       crossorigin: anonymous
-      bulk: 565
+      bulk: 566
       map: true
       id: __maths
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.6.1/math.js
-      integrity: sha256-fXIclevwFTnEkaXhE65/RuJ6Ksdm1j4W2Zhvu1rKMJk=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.6.2/math.js
+      integrity: sha256-RDD0tJqrdeKPreTyBgPnehzI92chxMAtLnKjpdJ7Krk=
       crossorigin: anonymous
-      bulk: 1887
+      bulk: 1877
       id: __maths
       
 objectHash:
@@ -1560,19 +1617,19 @@ day_slim:
   desc: Immutable date library alternative to Moment.js with the same modern API 
   url: https://cdnjs.com/libraries/dayjs
   project: https://github.com/iamkun/dayjs
-  version: 1.8.22
-  last: 1.8.17
+  version: 1.8.24
+  last: 1.8.22
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/dayjs.min.js
-      integrity: sha256-cWonUId5xt6NkGriuU0+9b+pO+LlBm2LKIIzITvRyBI=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/dayjs.min.js
+      integrity: sha256-cWonUId5xt6NkGriuU0+9b+pO+LlBm2LKIIzITvRyBI
       crossorigin: anonymous
       bulk: 6.6
       id: __day
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/dayjs.min.js
-      integrity: sha256-cWonUId5xt6NkGriuU0+9b+pO+LlBm2LKIIzITvRyBI=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/dayjs.min.js
+      integrity: sha256-cWonUId5xt6NkGriuU0+9b+pO+LlBm2LKIIzITvRyBI
       crossorigin: anonymous
       bulk: 6.6
       id: __day
@@ -1582,102 +1639,104 @@ day:
   desc: Immutable date library alternative to Moment.js with the same modern API 
   url: https://cdnjs.com/libraries/dayjs
   project: https://github.com/iamkun/dayjs
-  version: 1.8.22
-  last: 1.8.17
+  version: 1.8.24
+  last: 1.8.22
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/dayjs.min.js
-      integrity: sha256-cWonUId5xt6NkGriuU0+9b+pO+LlBm2LKIIzITvRyBI=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/dayjs.min.js
+      integrity: sha256-cWonUId5xt6NkGriuU0+9b+pO+LlBm2LKIIzITvRyBI
       crossorigin: anonymous
       bulk: 6.6
-      id: __day_1
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/relativeTime.js
-      integrity: sha256-z9VMu9G4xLf13q9mJnbgYdMDHKxwYHzsesT72vNSZGY=
-      crossorigin: anonymous
-      bulk: 1.2
-      id: __day_2
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/isSameOrAfter.js
-      integrity: sha256-gfNwkV2cEIl7pkFJavdkH3q/yeBxkFsTNu4mrZUvIeg=
-      crossorigin: anonymous
-      bulk: 0.307
-      id: __day_3
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/isSameOrBefore.js
-      integrity: sha256-G/G3wr7Ebl7nXX2pPyRRmdyi1vgGLhfrtP3W/4mwr8g=
-      crossorigin: anonymous
-      bulk: 0.31
-      id: __day_4
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/customParseFormat.js
-      integrity: sha256-qbwqgEUxsLZI/JHppDbDbGb0dkbVTG6e71rQ0gzR1ow=
-      crossorigin: anonymous
-      bulk: 2.6
-      id: __day_5
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/advancedFormat.js
-      integrity: sha256-WuXt2S1ReEO9HwIsrwoG5/lJgSjk9eoPRZ5NVBSWF1g=
-      crossorigin: anonymous
-      bulk: 0.915
-      id: __day_6
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/localizedFormat.js
-      integrity: sha256-NHchLqRmCi5MZV1jCVSRPPspKw1Lj1Fwmt3MAlDdiGw=
-      crossorigin: anonymous
-      bulk: 0.723
-      id: __day_7
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/locale/en-gb.js
-      integrity: sha256-0Q7i454zDdZHkPFAuKgpc41erQ5hpbPmX2KRyYlzGJU=
-      crossorigin: anonymous
-      bulk: 1.1
-      id: __day_en-gb
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/locale/en.js
-      integrity: sha256-h9eYnIwLlyyl91LPxFRmhiM7P26QMwusM5RGjp51n0g=
-      crossorigin: anonymous
-      bulk: 0.393
-      id: __day_en
+      id: __day
+      dependencies:
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/relativeTime.js
+          integrity: sha256-MTbguJJvJVSN7DlKb2TDrdE4IJflavLH3Vn/ezfQT6c=
+          crossorigin: anonymous
+          bulk: 1.2
+          id: __day_2
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/isSameOrAfter.js
+          integrity: sha256-gfNwkV2cEIl7pkFJavdkH3q/yeBxkFsTNu4mrZUvIeg=
+          crossorigin: anonymous
+          bulk: 0.307
+          id: __day_3
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/isSameOrBefore.js
+          integrity: sha256-G/G3wr7Ebl7nXX2pPyRRmdyi1vgGLhfrtP3W/4mwr8g=
+          crossorigin: anonymous
+          bulk: 0.31
+          id: __day_4
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/customParseFormat.js
+          integrity: sha256-qbwqgEUxsLZI/JHppDbDbGb0dkbVTG6e71rQ0gzR1ow=
+          crossorigin: anonymous
+          bulk: 2.6
+          id: __day_5
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/advancedFormat.js
+          integrity: sha256-WuXt2S1ReEO9HwIsrwoG5/lJgSjk9eoPRZ5NVBSWF1g=
+          crossorigin: anonymous
+          bulk: 0.915
+          id: __day_6
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/localizedFormat.js
+          integrity: sha256-NHchLqRmCi5MZV1jCVSRPPspKw1Lj1Fwmt3MAlDdiGw=
+          crossorigin: anonymous
+          bulk: 0.723
+          id: __day_7
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/locale/en-gb.js
+          integrity: sha256-0Q7i454zDdZHkPFAuKgpc41erQ5hpbPmX2KRyYlzGJU=
+          crossorigin: anonymous
+          bulk: 1.1
+          id: __day_en-gb
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/locale/en.js
+          integrity: sha256-h9eYnIwLlyyl91LPxFRmhiM7P26QMwusM5RGjp51n0g=
+          crossorigin: anonymous
+          bulk: 0.393
+          id: __day_en
   dev:
     - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/dayjs.min.js
       integrity: sha256-cWonUId5xt6NkGriuU0+9b+pO+LlBm2LKIIzITvRyBI=
       crossorigin: anonymous
       bulk: 6.6
       id: __day_1
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/relativeTime.js
-      integrity: sha256-z9VMu9G4xLf13q9mJnbgYdMDHKxwYHzsesT72vNSZGY=
-      crossorigin: anonymous
-      bulk: 1.2
-      id: __day_2
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/isSameOrAfter.js
-      integrity: sha256-gfNwkV2cEIl7pkFJavdkH3q/yeBxkFsTNu4mrZUvIeg=
-      crossorigin: anonymous
-      bulk: 0.307
-      id: __day_3
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/isSameOrBefore.js
-      integrity: sha256-G/G3wr7Ebl7nXX2pPyRRmdyi1vgGLhfrtP3W/4mwr8g=
-      crossorigin: anonymous
-      bulk: 0.31
-      id: __day_4
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/customParseFormat.js
-      integrity: sha256-qbwqgEUxsLZI/JHppDbDbGb0dkbVTG6e71rQ0gzR1ow=
-      crossorigin: anonymous
-      bulk: 2.6
-      id: __day_5
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/advancedFormat.js
-      integrity: sha256-WuXt2S1ReEO9HwIsrwoG5/lJgSjk9eoPRZ5NVBSWF1g=
-      crossorigin: anonymous
-      bulk: 0.915
-      id: __day_6
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/plugin/localizedFormat.js
-      integrity: sha256-NHchLqRmCi5MZV1jCVSRPPspKw1Lj1Fwmt3MAlDdiGw=
-      crossorigin: anonymous
-      bulk: 0.723
-      id: __day_7
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/locale/en-gb.js
-      integrity: sha256-0Q7i454zDdZHkPFAuKgpc41erQ5hpbPmX2KRyYlzGJU=
-      crossorigin: anonymous
-      bulk: 1.1
-      id: __day_en-gb
-    - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.22/locale/en.js
-      integrity: sha256-h9eYnIwLlyyl91LPxFRmhiM7P26QMwusM5RGjp51n0g=
-      crossorigin: anonymous
-      bulk: 0.393
-      id: __day_en
+      dependencies:
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/relativeTime.js
+          integrity: sha256-MTbguJJvJVSN7DlKb2TDrdE4IJflavLH3Vn/ezfQT6c=
+          crossorigin: anonymous
+          bulk: 1.2
+          id: __day_2
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/isSameOrAfter.js
+          integrity: sha256-gfNwkV2cEIl7pkFJavdkH3q/yeBxkFsTNu4mrZUvIeg=
+          crossorigin: anonymous
+          bulk: 0.307
+          id: __day_3
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/isSameOrBefore.js
+          integrity: sha256-G/G3wr7Ebl7nXX2pPyRRmdyi1vgGLhfrtP3W/4mwr8g=
+          crossorigin: anonymous
+          bulk: 0.31
+          id: __day_4
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/customParseFormat.js
+          integrity: sha256-qbwqgEUxsLZI/JHppDbDbGb0dkbVTG6e71rQ0gzR1ow=
+          crossorigin: anonymous
+          bulk: 2.6
+          id: __day_5
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/advancedFormat.js
+          integrity: sha256-WuXt2S1ReEO9HwIsrwoG5/lJgSjk9eoPRZ5NVBSWF1g=
+          crossorigin: anonymous
+          bulk: 0.915
+          id: __day_6
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/plugin/localizedFormat.js
+          integrity: sha256-NHchLqRmCi5MZV1jCVSRPPspKw1Lj1Fwmt3MAlDdiGw=
+          crossorigin: anonymous
+          bulk: 0.723
+          id: __day_7
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/locale/en-gb.js
+          integrity: sha256-0Q7i454zDdZHkPFAuKgpc41erQ5hpbPmX2KRyYlzGJU=
+          crossorigin: anonymous
+          bulk: 1.1
+          id: __day_en-gb
+        - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.24/locale/en.js
+          integrity: sha256-h9eYnIwLlyyl91LPxFRmhiM7P26QMwusM5RGjp51n0g=
+          crossorigin: anonymous
+          bulk: 0.393
+          id: __day_en
 
 velocity:
   name: Velocity
@@ -1859,19 +1918,19 @@ d3:
   desc: D3.js is a JavaScript library for manipulating documents based on data
   url: https://cdnjs.com/libraries/d3
   project: https://github.com/d3/d3
-  version: 5.15.0
-  last: 5.14.2
+  version: 5.15.1
+  last: 5.15.0
   license: BSD-3-Clause
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/d3/5.15.0/d3.min.js
-      integrity: sha256-m0QmIsBXcOMiETRmpT3qg2IQ/i0qazJA2miCHzOmS1Y=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/d3/5.15.1/d3.min.js
+      integrity: sha256-SQJ/nCYPXFPuqoS56EfnesDBPNiitndOIfN2WdPRi/o=
       crossorigin: anonymous
       bulk: 248
       id: __d3
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/d3/5.15.0/d3.js
-      integrity: sha256-BANs9QteeZKuqwQcdddFZlWLLyUCIke5Nn80f8B5G3g=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/d3/5.15.1/d3.js
+      integrity: sha256-mWfRGFWNO9Xs3K2PoH6lmVzM/XgdMJdYK2g4YPGxtKM=
       crossorigin: anonymous
       bulk: 515
       id: __d3
@@ -1919,20 +1978,23 @@ deep-diff:
   desc: Javascript utility for calculating deep difference, capturing changes, and applying changes across objects; for nodejs and the browser.
   url: https://cdnjs.com/libraries/deep-diff
   project: https://github.com/flitbit/diff
-  version: 0.3.3
+  version: 1.0.2
+  last: 0.3.3
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/deep-diff/0.3.3/deep-diff.min.js
-      integrity: sha256-HjF0m+LnizQpT2wK76/7qGLWJ0mTS6Mzkt+V1LF+rNc=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/deep-diff/1.0.2/deep-diff.min.js
+      integrity: sha256-JMdpHi649WfKQ1KivZAj7c2pbGZfXwdoKn4ShDJH7hM=
       crossorigin: anonymous
-      bulk: 4.6
+      bulk: 5.7
+      map: true
       id: __deepdiff
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/deep-diff/0.3.3/deep-diff.min.js
-      integrity: sha256-HjF0m+LnizQpT2wK76/7qGLWJ0mTS6Mzkt+V1LF+rNc=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/deep-diff/1.0.2/deep-diff.min.js
+      integrity: sha256-JMdpHi649WfKQ1KivZAj7c2pbGZfXwdoKn4ShDJH7hM=
       crossorigin: anonymous
-      bulk: 4.6
+      bulk: 5.7
+      map: true
       id: __deepdiff
 
 humanize-duration:

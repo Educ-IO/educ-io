@@ -1,0 +1,1 @@
+Once generated, the submissions column shows the number of submissions for each piece of coursework - tallied by status and whether or not they were late.

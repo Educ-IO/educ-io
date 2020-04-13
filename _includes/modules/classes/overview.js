@@ -46,23 +46,33 @@ Overview = (options, factory) => {
         subtitle: ರ‿ರ.since ? 
           factory.Display.doc.get("CLASSES_SUBTITLE", 
             humanizeDuration(factory.Dates.parse(options.state.session.current) - ರ‿ರ.since, {largest: 1}), true) : null,
-        details: factory.Display.doc.get({
+        details: ರ‿ರ.since ? factory.Display.doc.get({
           name: "VIEW_DETAILS",
           data: {
             since: ರ‿ರ.since.format(options.format),
             current: factory.Dates.parse(options.state.session.current).format(options.format),
           }
-        }),
+        }) : null,
+        students: factory.Display.doc.get("STUDENTS_TITLE"),
       }).trim()
     }),
     
-    classes: classes => factory.Datatable(factory, {
+    classes: data => factory.Datatable(factory, {
           id: `${options.id}_TABLE`,
           name: options.id,
-          data: options.functions.populate.classes(classes),
+          data: data,
           headers: options.state.application.tabulate.headers(
-            ["ID", "Calendar", "State", "Name", "Fetched", "Section", "Guardians", "Room", "Updated", "Created",
-             "Teachers", "Students", "Code", "Usage", "Engagement", "Folder", "Owner"], HIDDEN),
+            ["ID", "Calendar", "State", "Name", "Fetched", "Section", "Guardians", "Room", "Updated", "Created", "Teachers", "Students", "Code",
+             {
+               name : "Usage",
+               shortcut : "u",
+               help : factory.Display.doc.get("OVERVIEW_USAGE_HEADER", null, true)
+             },
+             {
+               name : "Engagement",
+               shortcut : "e",
+               help : factory.Display.doc.get("OVERVIEW_ENGAGEMENT_HEADER", null, true)
+             }, "Folder", "Owner"], HIDDEN),
         }, {
           classes: ["table-hover"],
           advanced: false,
@@ -82,8 +92,10 @@ Overview = (options, factory) => {
     .then(classrooms => {
       factory.Flags.log("Loaded CLASSES", classrooms);
       since ? ರ‿ರ.since = factory.Dates.parse(since) : delete ರ‿ರ.since;
-      return (ರ‿ರ.table = FN.render.classes(classrooms));
+      return (ರ‿ರ.table = FN.render.classes(options.functions.populate.classes(classrooms)));
     });
+  
+  FN.show = () => ರ‿ರ.table = FN.render.classes(options.functions.populate.all());
   /* <!-- Public Functions --> */
 
   /* <!-- Initial Calls --> */
@@ -92,6 +104,8 @@ Overview = (options, factory) => {
   return {
     
     display: FN.display,
+    
+    show: FN.show,
     
     refresh: () => FN.display(ರ‿ರ.since ? ರ‿ರ.since.toISOString() : null),
     
@@ -108,6 +122,8 @@ Overview = (options, factory) => {
       (element || factory.container).empty().append(ರ‿ರ.body);
       return Promise.resolve(ರ‿ರ.table);
     },
+    
+    since: (since, force) => (since || force ? ರ‿ರ.since = _.isString(since) ? factory.Dates.parse(since) : since : ರ‿ರ.since) ? ರ‿ರ.since.toISOString() : null,
     
   };
   /* <!-- External Visibility --> */

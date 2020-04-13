@@ -9,7 +9,11 @@
         {{else}}
         <a id="heading_{{../id}}_{{@index}}" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" data-placement="top" title="Click to sort by this column">{{val this display name}}</a>
         {{/if}}
-        {{#if icons}}<div class="heading-icons">{{#each icons}}<i class="material-icons text-muted"{{#exists desc}} title="{{desc}}"{{/exists}}>{{#exists icon}}{{icon}}{{else}}{{this}}{{/exists}}</i>{{/each}}</div>{{/if}}
+        {{~#present shortcut~}}<em class="kb-shortcut small ml-2 o-50">{{shortcut}}</em>{{~/present~}}
+        {{#if (any icons help)}}<div class="heading-icons">
+          {{~#each icons~}}{{#present desc}}<span data-toggle="tooltip" data-placement="bottom" data-delay="200" data-html="true" data-trigger="focus" tabindex="0" style="cursor: pointer; pointer-events: auto !important;" title="{{{desc}}}">{{/present}}<i class="material-icons text-muted">{{#exists icon}}{{icon}}{{else}}{{this}}{{/exists}}</i>{{#present desc}}</span>{{/present}}{{~/each~}}
+        {{~#present help~}}<span data-toggle="tooltip" data-placement="bottom" data-delay="200" data-html="true" data-trigger="focus" tabindex="0" style="cursor: pointer; pointer-events: auto !important;" title="{{{help}}}"><i class="material-icons text-muted">help_outline</i></span>{{~/present~}}
+        </div>{{/if}}
       </th>
       {{/each}}
     </tr>

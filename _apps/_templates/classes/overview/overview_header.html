@@ -1,6 +1,19 @@
 {% raw %}
 {{#> table_header}}
-<div class="btn-group btn-group-lg mb-0">
+<div class="btn-group btn-group-lg mb-0 mr-2 d-none d-xl-inline-flex">
+  {{~#if students~}}<span class="tooltip-until-overview-engagement" tabindex="0" data-toggle="tooltip" data-html="true" title="{{{students}}}">{{~/if~}}
+  <a{{#if id}} id="{{id}}_STUDENTS"{{/if}} data-busy="engagement" data-route="overview.students" href="#" role="button" class="btn btn-dark btn-lg d-flex state-overview-engagement disabled" style="border-top-right-radius: 0; border-bottom-right-radius: 0;"><span class="loading float-left"><span class="d-block spinner"></span></span><i class="mr-2 material-icons md-light md-24 align-self-center">how_to_reg</i>Students</a>
+  {{~#if students~}}</span>{{~/if~}}
+  <button type="button" class="btn btn-dark btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+    <a class="dropdown-item" data-route="overview.engagement" href="#">Engagement</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="#instructions.overview.students">About</a>
+  </div>
+</div>
+<div class="btn-group btn-group-lg mb-0 d-none d-xl-inline-flex">
   <a{{#if id}} id="{{id}}_EXPORT"{{/if}} data-route="export.sheets" href="#"
           role="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">save_alt</i>Export</a>
   <button type="button" class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

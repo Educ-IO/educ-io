@@ -37,7 +37,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-outline-secondary btn-flat waves-effect" data-dismiss="modal">Close</button>
         {{#if actions}}{{#each actions}}{{> control_button b_class="btn-outline-info"
-        	b_id=id b_action=(concat "actions_" @index) b_title=desc b_text=text }}{{/each}}{{/if}}
+        	b_id=id b_action=(concat "actions_" @index) b_title=desc b_text=text b_dismiss=(which dismiss "modal" "") }}{{/each}}{{/if}}
         {{#unless (is action "===" false)}}<button type="button" class="btn btn-primary waves-effect"
         	data-dismiss="modal">{{either action "Confirm"}}</button>{{/unless}}
       </div>

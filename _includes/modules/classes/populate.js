@@ -21,6 +21,11 @@ Populate = (options, factory) => {
       }; /* <!-- Persistant --> */
   /* <!-- Internal Variables --> */
   
+  /* <!-- Internal Functions --> */
+  FN.truncate = (length, ending) => value => value && _.isString(value) ? 
+    value.length > length ? `${value.substring(0, length - 1)}${ending}` : value : "";
+  /* <!-- Internal Functions --> */
+  
   /* <!-- Population Functions --> */
   FN.classwork = data => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, "classwork", {
     unique: ["$id"],
@@ -43,9 +48,9 @@ Populate = (options, factory) => {
     title: value.title,
     description: value.description,
     $$updated: value.updateTime, /* <!-- Updated Date/Time in ISO Format (for searching/sorting) --> */
-    updated: value.updateTime ? factory.Dates.parse(value.updateTime) : null,
+    updated: value.updateTime ? factory.Dates.parse(value.updateTime).toDate().toLocaleDateString() : null,
     $$created: value.creationTime, /* <!-- Created Date/Time in ISO Format (for searching/sorting) --> */
-    created: value.creationTime ? factory.Dates.parse(value.creationTime) : null,
+    created: value.creationTime ? factory.Dates.parse(value.creationTime).toDate().toLocaleDateString() : null,
     $$due: value.dueDate ? factory.Dates.parse(factory.Google.classrooms.due(value, null)).toISOString() : null, 
     due: value.dueDate ? factory.Dates.parse(factory.Google.classrooms.due(value, null)) : null,
     points: value.maxPoints,
@@ -83,17 +88,17 @@ Populate = (options, factory) => {
         url: `https://calendar.google.com/render?cid=${value.calendarId}&authuser=${factory.Google.user()}`,
         title: "Open in Calendar"
       },
-      state: value.courseState,
-      name: value.name,
+      state: value.courseState || "",
+      name: value.name || "",
       $$fetched: value.$$fetched, /* <!-- Fetched Date/Time in ISO Format (for searching/sorting) --> */
       fetched: value.fetched || {}, /* <!-- Fetched & Populated Dates / Times --> */
-      section: value.section,
+      section: value.section || "",
       guardians: value.guardiansEnabled,
-      room: value.room,
+      room: value.room || "",
       $$updated: value.updateTime, /* <!-- Updated Date/Time in ISO Format (for searching/sorting) --> */
-      updated: value.updateTime ? factory.Dates.parse(value.updateTime) : null,
+      updated: value.updateTime ? factory.Dates.parse(value.updateTime).toDate().toLocaleDateString() : null,
       $$created: value.creationTime, /* <!-- Created Date/Time in ISO Format (for searching/sorting) --> */
-      created: value.creationTime ? factory.Dates.parse(value.creationTime) : null,
+      created: value.creationTime ? factory.Dates.parse(value.creationTime).toDate().toLocaleDateString() : null,
       teachers: value.teachers || [],
       students: value.students || [],
       code: value.enrollmentCode,
@@ -107,7 +112,52 @@ Populate = (options, factory) => {
         title: "Open in Folders App"
       } : null,
       $$owner: value.owner ? value.owner.text : null, /* <!-- Owner Name (for searching/sorting) --> */
-      owner: value.owner /* <!-- Hidden Column cannot be last! --> */
+      owner: value.owner || "" /* <!-- Hidden Column cannot be last! --> */
+    }));
+  
+  FN.students = data => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, "students", {
+      unique: ["$id"],
+      indices: ["name"]
+    }, data, value => ({
+      $id: parseInt(value.id, 10),
+      $classes: value.$classes || [], /* <!-- Full Class Objects --> */
+      $$classes: value.$$classes || [], /* <!-- Class Names (for searching/sorting) --> */
+      id: {
+        text: value.id,
+        route: `overview.student.${value.id}`,
+        title: "View Student Details"
+      },
+      name: value.name,
+      $$fetched: value.$$fetched, /* <!-- Fetched Date/Time in ISO Format (for searching/sorting) --> */
+      fetched: value.fetched || {}, /* <!-- Fetched & Populated Dates / Times --> */
+      classes: value.classes || [],
+      $$engagement: value.$$engagement, /* <!-- Engagement as String/Number (for searching/sorting) --> */
+      engagement: value.engagement || [],
+      teachers: value.teachers || [],
+    }));
+  
+  FN.details = data => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, "details", {
+      unique: ["$id"],
+      indices: ["type", "state"]
+    }, data, value => ({
+      $id: value.id,
+      id: {
+        text: value.id,
+        url: value.url,
+        title: "Open in Classroom"
+      },
+      class: value.class,
+      $$created: value.created, /* <!-- Created Date/Time in ISO Format (for searching/sorting) --> */
+      created: value.created ? factory.Dates.parse(value.created).toDate().toLocaleDateString() : null,
+      $$updated: value.updated, /* <!-- Updated Date/Time in ISO Format (for searching/sorting) --> */
+      updated: value.updated ? factory.Dates.parse(value.updated).toDate().toLocaleDateString() : null,
+      type: value.type,
+      state: value.state,
+      late: value.late,
+      title: FN.truncate(50, "…")(value.text),
+      answer: FN.truncate(30, "…")(value.answer),
+      max: value.max,
+      grade: value.grade
     }));
   /* <!-- Population Functions --> */
   
@@ -136,6 +186,15 @@ Populate = (options, factory) => {
   
   FN.remove = (value, collection) => FN.collection(collection).remove(FN.get(value.$id || value.id || value, collection));
   /* <!-- Public Functions --> */
+  
+  /* <!-- Load / Save Functions --> */
+  FN.load = json => {
+    _.isString(json) ? ಱ.db.loadJSON(json, {retainDirtyFlags: false}) : ಱ.db.loadJSONObject(json, {retainDirtyFlags: false});
+    _.each(_.pluck(ಱ.db.listCollections(), "name"), collection => ರ‿ರ[collection] = ಱ.db.getCollection(collection));
+  };
+  
+  FN.save = () => ಱ.db.serialize();
+  /* <!-- Load / Save Functions --> */
 
   /* <!-- External Visibility --> */
   return FN;

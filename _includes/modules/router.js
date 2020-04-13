@@ -59,6 +59,18 @@ Router = function() {
           if (options.parent) view.team = false;
           if (options.label) view.setLabel(options.label);
         })]
+      .concat(options.shared_with_me ? [_.tap(new google.picker
+        .DocsView(options ? google.picker.ViewId[options.view] : null)
+        .setMimeTypes(options && options.mime ? options.mime : null)
+        .setSelectFolderEnabled(options && options.folders ? true : false)
+        .setOwnedByMe(false)
+        .setEnableDrives(false)
+        .setParent(options && options.parent !== undefined ?
+          options.parent : (options.parent = "root")),
+        view => {
+          view.team = false;
+          view.setLabel("Shared with Me");
+        })] : [])
       .concat(options.all ? [new google.picker
         .DocsView(options ? google.picker.ViewId[options.view] : null)
         .setMimeTypes(options && options.mime ? options.mime : null)

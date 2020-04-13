@@ -1,0 +1,1 @@
+!function(){var a=Handlebars.template;(Handlebars.templates=Handlebars.templates||{}).popover_class=a({compiler:[7,">= 4.0.0"],main:function(a,e,n,s,l){return"<span>"+a.escapeExpression(a.lambda(null!=e?e.name:e,e))+"</span>\n"},useData:!0})}();

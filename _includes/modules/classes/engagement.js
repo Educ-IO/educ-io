@@ -92,6 +92,125 @@ Engagement = (options, factory) => {
      }
   };
   
+  FN.calculate = {
+    
+    classroom : classroom => _.map(ರ‿ರ.periods, period => {
+            
+        /* <!-- Get the From Point, All Students to build a inactive list from, and the filtered list of classwork and announcements --> */
+        var _from = period.since.toISOString(),
+            _students = _.clone(classroom.$$$students),
+            _classwork = _.filter(classroom.$work,
+                                  work => work.scheduledTime >= _from || work.updateTime >= _from || work.creationTime >= _from),
+            _announcements = _.filter(classroom.$announcements,
+                                  announcement => announcement.updateTime >= _from || announcement.creationTime >= _from);
+
+        /* <!-- Remove Students from list on inactive who have submitted work --> */
+        _.each(_classwork, work => {
+
+          /* <!-- Add to Teacher Classwork Badge --> */
+          FN.person(period, classroom.teachers, work.creatorUserId, "C", "teacher", "work", "dark");
+
+          _.each(work.$submissions || [], submission => {
+
+              /* <!-- Only use if the state is in our desired list --> */
+              if (options.states.indexOf(submission.state) >= 0) {
+
+                /* <!-- Add to Student Submissions Badge --> */
+                FN.person(period, classroom.students, submission.userId, "C", "student", "work", "dark", true);
+
+                /* <!-- Exclude student from our inactive list --> */
+                _students = _.without(_students, submission.userId);
+
+              }
+
+            });
+
+        });
+
+        /* <!-- Remove Students from list on inactive who have posted announcements --> */
+        _.each(_announcements, announcement => {
+
+           /* <!-- Add to Teacher Announcements Badge --> */
+           FN.person(period, classroom.teachers, announcement.creatorUserId, "A", "teacher", "announcement");
+
+           /* <!-- Add to Student Announcements Badge --> */
+           FN.person(period, classroom.students, announcement.creatorUserId, "A", "student", "announcement");
+
+            /* <!-- Exclude student from our inactive list --> */
+           if (options.announcements) _students = _.without(_students, announcement.creatorUserId);
+
+        });
+
+        /* <!-- Return Badge Encapsulating Number of Engaged Students --> */
+        return classroom.$students && classroom.$students.length > 0 ? {
+          $numeric : (classroom.$students.length - _students.length) / classroom.$students.length,
+          __small : true,
+          __class : `badge badge-${_students.length === 0 ? "success" : _students.length == classroom.$students.length ?
+                      "danger" : _students.length >= (classroom.$students.length / 10) ? "warning" : "light"} font-weight-light`,
+          text: factory.Display.doc.get({
+                    name : "ENGAGEMENT_PERIOD",
+                    data : {
+                      period : period.text,
+                      value : classroom.$students.length - _students.length,
+                      total : classroom.$students.length
+                    },
+                    trim : true,
+                  }),
+          title: _students.length > 0 ? "Inactive Students" : "All Students active during the Time Period",
+          details: _students.length > 0 ? 
+            factory.Display.template.get("popover_people")(_.filter(classroom.$students, student => _students.indexOf(student.userId) >= 0)) :
+            null
+        } : [];
+
+      }),
+    
+    student: student => _.map(ರ‿ರ.periods, period => {
+      
+     /* <!-- Get the From Point, All Students to build a inactive list from, and the filtered list of classwork and announcements --> */
+      var _from = period.since.toISOString(),
+          _classes = _.map(student.$$$classes, classroom => classroom.toString()),
+          _classwork = _.chain(student.$classes).map("$work").flatten()
+                          .filter(w => w.scheduledTime >= _from || w.updateTime >= _from || w.creationTime >= _from).value(),
+          _announcements = _.chain(student.$classes).map("$announcements").flatten()
+                          .filter(a => a.creatorUserId == student.id && (a.updateTime >= _from || a.creationTime >= _from)).value();
+
+      /* <!-- Remove Students from list on inactive who have submitted work --> */
+      _.each(_classwork, work => _.each(work.$submissions || [], submission => {
+
+        /* <!-- Only use if the state is in our desired list / Exclude Class from our inactive list --> */
+        if (submission.userId == student.id && options.states.indexOf(submission.state) >= 0) 
+          _classes = _.without(_classes, work.courseId.toString());
+
+      }));
+      
+      /* <!-- Remove Students from list on inactive who have posted announcements / Exclude class from our inactive list--> */
+      if (options.announcements) _.each(_announcements, announcement => _classes = _.without(_classes, announcement.courseId.toString()));
+      
+      /* <!-- Return Badge Encapsulating Number of Engaged Classes --> */
+        return student.$classes && student.$classes.length > 0 ? {
+          $numeric : (student.$classes.length - _classes.length) / student.$classes.length,
+          __small : true,
+          __class : `badge badge-${_classes.length === 0 ? "success" : _classes.length == student.$classes.length ?
+                      "danger" : _classes.length >= (student.$classes.length / 10) ? "warning" : "light"} font-weight-light`,
+          text: factory.Display.doc.get({
+                    name : "ENGAGEMENT_PERIOD",
+                    data : {
+                      period : period.text,
+                      value : student.$classes.length - _classes.length,
+                      total : student.$classes.length
+                    },
+                    trim : true,
+                  }),
+          title: _classes.length > 0 ? "Inactive Classes" : "All Classes active during the Time Period",
+          details: _classes.length > 0 ? 
+            factory.Display.template.get("popover_classes")(_.filter(student.$classes, classroom => _classes.indexOf(classroom.$id.toString()) >= 0)) :
+            null
+        } : [];
+      
+    }),
+    
+  };
+  
   FN.engagement = (id, targets, types, event) => Promise.resolve(options.functions.populate.get(id))
     .then(classroom => classroom ? Promise.all([
         options.functions.common.type(types, "students", true) || options.functions.common.stale(classroom, "students") ?
@@ -122,74 +241,13 @@ Engagement = (options, factory) => {
         factory.Flags.log(`Classroom [${id}]`, classroom);
         factory.Flags.log(`Engagement for Classroom [${id}]`, results);
     
-        if (results[3] && results[3] !== true &&
-            classroom.$work && classroom.$work.length > 0) classroom.engagement = _.map(ರ‿ರ.periods, period => {
-            
-            /* <!-- Get the From Point, All Students to build a inactive list from, and the filtered list of classwork and announcements --> */
-            var _from = period.since.toISOString(),
-                _students = _.clone(classroom.$$$students),
-                _classwork = _.filter(classroom.$work,
-                                      work => work.scheduledTime >= _from || work.updateTime >= _from || work.creationTime >= _from),
-                _announcements = _.filter(classroom.$announcements,
-                                      announcement => announcement.updateTime >= _from || announcement.creationTime >= _from);
-            
-            /* <!-- Remove Students from list on inactive who have submitted work --> */
-            _.each(_classwork, work => {
-
-              /* <!-- Add to Teacher Classwork Badge --> */
-              FN.person(period, classroom.teachers, work.creatorUserId, "C", "teacher", "work", "dark");
-              
-              _.each(work.$submissions || [], submission => {
-
-                  /* <!-- Only use if the state is in our desired list --> */
-                  if (options.states.indexOf(submission.state) >= 0) {
-
-                    /* <!-- Add to Student Submissions Badge --> */
-                    FN.person(period, classroom.students, submission.userId, "C", "student", "work", "dark", true);
-
-                    /* <!-- Exclude student from our inactive list --> */
-                    _students = _.without(_students, submission.userId);
-
-                  }
-
-                });
-              
-            });
-
-            /* <!-- Remove Students from list on inactive who have posted announcements --> */
-            _.each(_announcements, announcement => {
-                            
-               /* <!-- Add to Teacher Announcements Badge --> */
-               FN.person(period, classroom.teachers, announcement.creatorUserId, "A", "teacher", "announcement");
-              
-               /* <!-- Add to Student Announcements Badge --> */
-               FN.person(period, classroom.students, announcement.creatorUserId, "A", "student", "announcement");
-              
-                /* <!-- Exclude student from our inactive list --> */
-               if (options.announcements) _students = _.without(_students, announcement.creatorUserId);
-              
-            });
-          
-            return classroom.$students && classroom.$students.length > 0 ? {
-              __class : `badge badge-${_students.length === 0 ? "success" : _students.length == classroom.$students.length ?
-                          "danger" : _students.length >= (classroom.$students.length / 10) ? "warning" : "light"} font-weight-light`,
-              text: factory.Display.doc.get({
-                        name : "ENGAGEMENT_PERIOD",
-                        data : {
-                          period : period.text,
-                          value : classroom.$students.length - _students.length,
-                          total : classroom.$students.length
-                        },
-                        trim : true,
-                      }),
-              title: _students.length > 0 ? "Inactive Students" : "All Students active during the Time Period",
-              details: _students.length > 0 ? 
-                factory.Display.template.get("popover_people")(_.filter(classroom.$students, student => _students.indexOf(student.userId) >= 0)) :
-                null
-            } : [];
-            
-          });
-    
+        /* <!-- Calculate Engagement --> */
+        if (results[3] && results[3] !== true && classroom.$work && classroom.$work.length > 0) {
+          classroom.engagement =  FN.calculate.classroom(classroom);
+          var _numerics = _.map(classroom.engagement, "$numeric");
+          classroom.$$engagement = Math.preciseRound(_.reduce(_numerics, (total, value) => total + value, 0) / _numerics.length, 2);
+        }
+        
         /* <!-- Update the class object, and call for a visual update --> */
         options.functions.populate.update(classroom);
       
@@ -244,9 +302,16 @@ Engagement = (options, factory) => {
    
     generate: FN.generate,
     
+    student: student => {
+      student.engagement =  FN.calculate.student(student);
+      var _numerics = _.map(student.engagement, "$numeric");
+      student.$$engagement = Math.preciseRound(_.reduce(_numerics, (total, value) => total + value, 0) / _numerics.length, 2);
+      return student;
+    },
+    
     /* <!-- Types - array / string of usage that is used to update the usage (null / false) --> */
     update: (id, force, types) => FN.row(FN.meta(), options.state.session.table.table().find(`tbody tr[data-id='${id}']`), force, types),
-      
+    
   };
   /* <!-- External Visibility --> */
 

@@ -4,7 +4,7 @@ Once you have __signed in__, you can view the classes to which you have access. 
 
 The best place to start when viewing your classrooms is the overview, this can be reached by using the button on the front page, the 'Display' menu at the top or by pressing *o*{:.kb-shortcut}.
 
-{% include_relative _docs/classes/OVERVIEW_INSTRUCTIONS.md %}
+{% include_relative _docs/classes/instructions/OVERVIEW_INSTRUCTIONS.md %}
 
 ##### Usage
 

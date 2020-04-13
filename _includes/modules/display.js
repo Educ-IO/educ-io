@@ -199,6 +199,8 @@ Display = function() {
     _$(".state-" + state).toggleClass("disabled", !toggle);
     _$(".hide-" + state).toggleClass("d-none", toggle);
     _$(".show-" + state).toggleClass("d-none", !toggle);
+    _$(".tooltip-until-" + state).tooltip(toggle ? "disable" : "enable");
+    _$(".tooltip-while-" + state).tooltip(toggle ? "enable" : "disable");
     return true;
   };
 
@@ -913,10 +915,10 @@ Display = function() {
         var files = [], dialog = $(_template("upload")(options));
         
         _target(options).append(_modalise(dialog, reject));
-
+          
         /* <!-- Handle Files Population --> */
         var _populate = () => {
-          var _files = $(_template("files")(files));
+          var _files = $(_template("files")(_.map(files, file => _.pick(file, "type", "name", "lastModifiedDate", "size"))));
           _files.find("a.close").click(e => {
             e.preventDefault();
             files.splice($(e.target).closest("li.list-group-item").index(), 1);

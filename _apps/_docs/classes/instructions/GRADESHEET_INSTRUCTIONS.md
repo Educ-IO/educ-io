@@ -1,0 +1,1 @@
+A __gradesheet__ is a Google Sheets output of all graded submissions.

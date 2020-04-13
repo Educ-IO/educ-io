@@ -1,4 +1,4 @@
-h1, h2, h3, h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading, .navbar-brand, a.navbar-brand, .brand  {
+h1, h2, h3:not(.popover-header), h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading, .navbar-brand, a.navbar-brand, .brand  {
 	letter-spacing: $font-spacing-heading;
 	font-family: $font-heading, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	font-weight: $font-weight-heading;
@@ -16,7 +16,7 @@ h1, h2, h3, h4.dropdown-heading, h5.dropdown-heading, h6.dropdown-heading, .navb
 	}
 }
 
-h1, h2, h3, .navbar-brand, a.navbar-brand  {
+h1, h2, h3:not(.popover-header), .navbar-brand, a.navbar-brand  {
 	color: $colour-highlight !important;
   &.popover-header {
     color: $colour-general-verylight !important;
@@ -48,10 +48,11 @@ a.navbar-brand  {
 em.kb-shortcut {
 	white-space: nowrap !important;
 	font-size: 90%;
+  &.small {font-size: 80% !important;}
 	font-style: normal;
 	text-transform: uppercase;
 	border-radius: 0.2rem;
-	padding: 0 0.2rem;
+	padding: 0.1rem 0.2rem 0.05rem 0.3rem;
 	margin: 0 0.1rem;
 	background-color: $colour-general;
 	color: $colour-background;

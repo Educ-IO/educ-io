@@ -21,13 +21,13 @@
     },{% assign imports = false %}{% if page.imports %}{% assign imports = page.imports %}{% elsif layout.imports %}{% assign imports = layout.imports %}{% elsif page.app and page.app != "" and site.data.apps[page.app].imports %}{% assign imports = site.data.apps[page.app].imports %}{% endif %}
     IMPORTS : {
       {% if imports %}{% assign first_imports = imports | where_exp: "item", "item.load == 'first'" | map: "name" %}{% assign last_imports = imports | where_exp: "item", "item.load == 'last'" | map: "name" %}{% assign after_imports = imports | where_exp: "item", "item.load == 'after'" | map: "name" %}{% assign lazy_imports = imports | where_exp: "item", "item.load == 'lazy'" | map: "name" %}
-      LOAD_FIRST : [{ id: "__fonts", url : "https://fonts.googleapis.com/css?family={{ fonts }}" }{% if first_imports and first_imports.size > 0 %},{% for import in first_imports %}{% include import.html import=import %}{% endfor %}{% endif %}],
-		  {% if last_imports and last_imports.size > 0 %}LOAD_LAST : [{% for import in last_imports %}{% include import.html import=import %}{% endfor %}],{% endif %}
-      {% if after_imports and after_imports.size > 0 %}LOAD_AFTER : [{% for import in after_imports %}{% include import.html import=import %}{% endfor %}],{% endif %}{% else %}
+      LOAD_FIRST : [{ id: "__fonts", url : "https://fonts.googleapis.com/css?family={{ fonts }}" }{% if first_imports and first_imports.size > 0 %},{% for import in first_imports %}{% include imports.html import=import %}{% endfor %}{% endif %}],
+		  {% if last_imports and last_imports.size > 0 %}LOAD_LAST : [{% for import in last_imports %}{% include imports.html import=import %}{% endfor %}],{% endif %}
+      {% if after_imports and after_imports.size > 0 %}LOAD_AFTER : [{% for import in after_imports %}{% include imports.html import=import %}{% endfor %}],{% endif %}{% else %}
       LOAD_AFTER : [{id: "__fonts", url : "https://fonts.googleapis.com/css?family={{ fonts }}"}],
       {% endif %}
       {% if lazy_imports and lazy_imports.size > 0 %}LOAD_LAZY : {
-        {% for import in lazy_imports %} "{{ import }}": {% include import.html import=import %}{% endfor %}
+        {% for import in lazy_imports %} "{{ import }}": {% include imports.html import=import %}{% endfor %}
       },{% endif %}
     },
   };

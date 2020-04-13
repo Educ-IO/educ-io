@@ -1,0 +1,1 @@
+Once generated, the engagement column gives data about how many students in the classroom have been engaged over different time periods. In this context, engaged means having posted on the 'stream' (not replies to posts) or submitted work for an assignment / quiz / question).

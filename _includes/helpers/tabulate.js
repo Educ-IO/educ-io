@@ -31,6 +31,7 @@ Tabulate = (options, factory) => {
   FN.headers = (fields, hidden) => _.map(fields, v => ({
       name: v.name || v,
       display: v.display || null,
+      shortcut: v.shortcut || null,
       hide: function(initial) {
         return !!(this.hide_now || this.hide_always || (initial && this.hide_initially));
       },
@@ -41,7 +42,8 @@ Tabulate = (options, factory) => {
       hide_now: false,
       hide_initially: hidden && hidden.indexOf && hidden.indexOf(v.name || v) >= 0 ? true : false,
       field: (v.name || v).toLowerCase(),
-      icons: (v.name || v) === "When" || (v.name || v) === "Created" || (v.name || v) === "Updated" || (v.name || v) === "Due" ? ["access_time"] : null
+      icons: (v.name || v) === "When" || (v.name || v) === "Created" || (v.name || v) === "Updated" || (v.name || v) === "Due" ? ["access_time"] : null,
+      help: v.help || null,
     }));
   /* <!-- Internal Functions --> */
   

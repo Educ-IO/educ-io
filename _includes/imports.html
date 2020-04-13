@@ -1,0 +1,1 @@
+{% assign import_urls = false %}{% if jekyll.environment == site.debug %}{% assign import_urls = site.data.imports[include.import].dev %}{% else %}{% assign import_urls = site.data.imports[include.import].prod %}{% endif %}{% for import_url in import_urls %}{% include import.html url=import_url %},{% endfor %}

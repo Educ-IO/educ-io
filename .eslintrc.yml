@@ -168,6 +168,9 @@ globals:
   Common: true
   Submissions: true
   Engagement: true
+  Gradesheet: true
+  Students: true
+  Student: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

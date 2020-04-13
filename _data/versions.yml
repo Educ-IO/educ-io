@@ -1,4 +1,8 @@
 site :
+  0.1.9x :
+    name : Classes v0.0.4-beta
+    desc : Extra Analysis Views and Save Feature
+    numeric : 0.1.9.24
   0.1.9w :
     name : Classes v0.0.3f-beta
     desc : Loader Feedback Improvements
@@ -1430,6 +1434,9 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  0.0.4-beta :
+    name : Extra Analysis Views and Save Feature
+    type : major
   0.0.3f-beta :
     name : Usage and engagement loaders now give better task feedback
     type : minor

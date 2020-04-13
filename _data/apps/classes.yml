@@ -110,6 +110,10 @@ modules:
   - classes/roster
   - classes/classwork
   - classes/submissions
+  - classes/gradesheet
+  - classes/students
+  - classes/student
+  - classes/files
 scripts: 
   - extends/regex
   - extends/array
@@ -124,6 +128,8 @@ templates:
   - help
   - notify
   - text
+  - files
+  - upload
   - shared/control_icon
   - shared/control_button
   - shared/tabular/filters
@@ -137,6 +143,10 @@ templates:
   - classes/overview/overview_header
   - classes/overview/classwork_body
   - classes/overview/classwork_header
+  - classes/overview/students_body
+  - classes/overview/students_header
+  - classes/overview/student_body
+  - classes/overview/student_header
   - classes/parts/popover_announcement
   - classes/parts/popover_announcements
   - classes/parts/popover_classwork
@@ -147,6 +157,8 @@ templates:
   - classes/parts/popover_submissions
   - classes/parts/popover_person
   - classes/parts/popover_people
+  - classes/parts/popover_class
+  - classes/parts/popover_classes
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -157,12 +169,10 @@ docs:
   - classes/PUBLIC
   - classes/FEATURES
   - classes/README
-  - classes/INSTRUCTIONS
   - classes/TUTORIALS
-  - classes/OVERVIEW_INSTRUCTIONS
-  - classes/VIEW_EXPORT_INSTRUCTIONS
   - classes/NOTIFY_SAVE_FAILED
   - classes/NOTIFY_EXPORT_VIEW_SUCCESS
+  - classes/NOTIFY_EXPORT_DATA_SUCCESS
   - classes/ADD_STUDENTS
   - classes/ADD_TEACHERS
   - classes/INVITE_STUDENTS
@@ -174,13 +184,29 @@ docs:
   - classes/TEACHER
   - classes/CLASSROOM
   - classes/VIEW_DETAILS
-  - classes/CLASSES_SUBTITLE
-  - classes/CLASSWORK_SUBTITLE
   - classes/ENGAGEMENT_PERIOD
-  - classes/STUDENT_WORK_TITLE
-  - classes/STUDENT_ANNOUNCEMENT_TITLE
-  - classes/TEACHER_WORK_TITLE
-  - classes/TEACHER_ANNOUNCEMENT_TITLE
+  - classes/SAVE_FILE
+  - classes/IMPORT
+  - classes/instructions/INSTRUCTIONS
+  - classes/instructions/OVERVIEW_INSTRUCTIONS
+  - classes/instructions/VIEW_EXPORT_INSTRUCTIONS
+  - classes/instructions/GRADESHEET_INSTRUCTIONS
+  - classes/instructions/STUDENTS_INSTRUCTIONS
+  - classes/instructions/LOAD_INSTRUCTIONS
+  - classes/titles/CLASSES_SUBTITLE
+  - classes/titles/CLASSWORK_SUBTITLE
+  - classes/titles/STUDENT_WORK_TITLE
+  - classes/titles/STUDENT_ANNOUNCEMENT_TITLE
+  - classes/titles/TEACHER_WORK_TITLE
+  - classes/titles/TEACHER_ANNOUNCEMENT_TITLE
+  - classes/titles/GRADESHEET_TITLE
+  - classes/titles/STUDENTS_SUBTITLE
+  - classes/titles/STUDENTS_TITLE
+  - classes/titles/STUDENT_SUBTITLE
+  - classes/headers/OVERVIEW_ENGAGEMENT_HEADER
+  - classes/headers/OVERVIEW_USAGE_HEADER
+  - classes/headers/CLASSWORK_SUBMISSIONS_HEADER
+  - classes/headers/STUDENTS_ENGAGEMENT_HEADER
 scopes:
   google:
     - scope: email
@@ -231,7 +257,11 @@ scopes:
       name: View and manage its own configuration data in your Google Drive
       reason: In order to record your settings in Google Drive.
       request: lazy
-    
+    - scope: https://www.googleapis.com/auth/drive.install
+      name: Special scope used to let users approve installation of an app.
+      reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
+      request: lazy
+      
 keys:
   google:
       general: 
@@ -239,8 +269,7 @@ keys:
 menus:
   - name: Display
     disabled_while:
-      - overview
-      - classwork
+      - view
     groups:
       all:
         commands:
@@ -256,6 +285,20 @@ menus:
             shortcut: "ctrl+alt+o"
             imports:
               - d3
+            divider: true
+          
+          - name: Import
+            desc: Import existing Classes Analysis File
+            hash: import
+          - name: Load
+            desc: Load existing Classes Analysis from Google Drive
+            hash: data.load
+            auth: google
+            scopes:
+              - https://www.googleapis.com/auth/drive.file
+            shortcut: "l"
+            imports:
+              - google
 
   - name: Overview
     disabled_until:
@@ -291,26 +334,48 @@ menus:
             scopes:
               - https://www.googleapis.com/auth/classroom.coursework.students.readonly
               - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
-            shortcut: "c"
+            shortcut: "a"
           - name: All Classwork
-            desc: View All Classroom Classwork (created in the last 12 months)
+            desc: View All Classroom Classwork
             hash: overview.classwork.all
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.coursework.students.readonly
               - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
-            shortcut: "ctrl+alt+c"
+            shortcut: "ctrl+alt+a"
+            divider: true
+            
+          - name: Students
+            desc: View Classroom Engagement by Student
+            hash: overview.students
+            disabled_until:
+              - overview-engagement
+            shortcut: "s"
             divider: true
             
           - name: Refresh
             desc: Refresh Classroom Overview
             hash: refresh
+            disabled_while:
+              - file-loaded
             shortcut: "r"
+          - name: Save
+            desc: Save this Analysis Data to Google Drive
+            hash: data.save
+            disabled_until:
+              - overview-engagement
+            auth: google
+            scopes:
+              - https://www.googleapis.com/auth/drive.file
+            imports:
+              - google
+              - filesaver
             divider: true
-            
+          
           - name: Close
             desc: Close this Overwiew
             hash: close
+            shortcut: "ctrl+alt+c"
           
   - name: Classes
     disabled_until:
@@ -324,18 +389,24 @@ menus:
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.rosters
+            disabled_while:
+              - file-loaded
           - name: Invite Teacher/s
             desc: Invite Teachers to the list of classes shown
             hash: invite.class.teachers
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.rosters
+            disabled_while:
+              - file-loaded
           - name: Remove Teacher/s
             desc: Remove Teachers from the list of classes shown
             hash: remove.class.teachers
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.rosters
+            disabled_while:
+              - file-loaded
             divider: true
           - name: Add Student/s
             desc: Add Students to the list of classes shown
@@ -343,19 +414,36 @@ menus:
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.rosters
+            disabled_while:
+              - file-loaded
           - name: Invite Student/s
             desc: Invite Students to the list of classes shown
             hash: invite.class.students
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.rosters
+            disabled_while:
+              - file-loaded
           - name: Remove Student/s
             desc: Remove Students from the list of classes shown
             hash: remove.class.students
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.rosters
+            disabled_while:
+              - file-loaded
               
+  - name: Students
+    disabled_until:
+      - overview-students
+    groups:
+      all:
+        commands:
+          - name: Close
+            desc: Close this Student View
+            hash: overview.close
+            shortcut: "c"
+            
   - name: Classwork
     disabled_until:
       - classwork
@@ -368,12 +456,36 @@ menus:
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
-            shortcut: "s"
+            shortcut: "b"
             divider: true
           - name: Close
             desc: Close this Classwork View
-            hash: overview.classwork.close
+            hash: overview.close
+            shortcut: "c"
             
+  - name: Gradesheet
+    disabled_until:
+      - classwork-submissions
+    groups:
+      all:
+        commands:
+          - name: Create
+            desc: Create a new Gradesheet / Export of Graded Submissions
+            hash: overview.classwork.submissions.gradesheet.create
+            auth: google
+            scopes:
+              - https://www.googleapis.com/auth/drive.file
+            shortcut: "g"
+          - name: Update
+            desc: Update an existing Gradesheet / Export of Graded Submissions
+            hash: overview.classwork.submissions.gradesheet.update
+            auth: google
+            imports:
+              - google
+            scopes:
+              - https://www.googleapis.com/auth/drive.file
+            shortcut: "ctrl+alt+g"
+
   - name: Export
     disabled_until:
       - view
@@ -452,6 +564,14 @@ menus:
             url: /guides/classes
             desc: A guide to using this app
             divider: true
+          - name: Install
+            desc: Install this app into your Google Drive
+            hash: install
+            auth: google
+            scope: https://www.googleapis.com/auth/drive.install
+            disabled_until:
+              - authenticated
+            visibility: debug
           - name: Permissions
             url: /scopes/?highlight=classes
             desc: Find out about the permissions and scopes that this app uses
@@ -476,19 +596,35 @@ menus:
             auth: google
               
 buttons:
-- name: Class Overview
-  desc: Show overview of your classes / classes in your domain (created in the last 12 months)
-  hash: overview
-  auth: google
-  imports:
-    - d3
-  buttons:
-  - name: All Classes
-    desc: Show overview of all your classes / classes in your domain
-    hash: overview.all
+  - name: Class Overview
+    desc: Show overview of your classes / classes in your domain (created in the last 12 months)
+    hash: overview
+    auth: google
     imports:
       - d3
-  - name: About
-    desc: More details about this view
-    hash: instructions.overview
+    buttons:
+    - name: All Classes
+      desc: Show overview of all your classes / classes in your domain
+      hash: overview.all
+      imports:
+        - d3
+    - name: About
+      desc: More details about this view
+      hash: instructions.overview
+  - name: Load
+    desc: Load existing Classes Analysis from Google Drive
+    hash: data.load
+    auth: google
+    scopes:
+      - https://www.googleapis.com/auth/drive.file
+    imports:
+      - google
+    buttons:
+    - name: Import
+      desc: Import existing Classes Analysis File
+      hash: import
+    - name: About
+      desc: More details about loading existing files
+      hash: instructions.load
+  
 published: true
