@@ -210,6 +210,52 @@ jquery_slim:
   desc: This popular library is used to manipulate the DOM, and HTML elements on the page.
   url: https://cdnjs.com/libraries/jquery
   project: http://jquery.com/
+  version: 3.4.1
+  last: 3.3.1
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js
+      integrity: sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=
+      crossorigin: anonymous
+      bulk: 69.4
+      map: true
+      id: __jquery
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.js
+      integrity: sha256-BTlTdQO9/fascB1drekrDVkaKd9PkwBymMlHOiG+qLI=
+      crossorigin: anonymous
+      bulk: 222
+      id: __jquery
+      
+jquery:
+  name: JQuery
+  desc: This popular library is used to manipulate the DOM, and HTML elements on the page.
+  url: https://cdnjs.com/libraries/jquery
+  project: http://jquery.com/
+  version: 3.4.1
+  last: 3.3.1
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js
+      integrity: sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=
+      crossorigin: anonymous
+      bulk: 86.1
+      map: true
+      id: __jquery
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js
+      integrity: sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=
+      crossorigin: anonymous
+      bulk: 274
+      id: __jquery
+      
+jquery_slim_new:
+  name: JQuery (Slim)
+  desc: This popular library is used to manipulate the DOM, and HTML elements on the page.
+  url: https://cdnjs.com/libraries/jquery
+  project: http://jquery.com/
   version: 3.5.0
   last: 3.4.1
   license: MIT
@@ -228,7 +274,7 @@ jquery_slim:
       bulk: 234
       id: __jquery
       
-jquery:
+jquery_new:
   name: JQuery
   desc: This popular library is used to manipulate the DOM, and HTML elements on the page.
   url: https://cdnjs.com/libraries/jquery
