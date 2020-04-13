@@ -166,7 +166,7 @@ Populate = (options, factory) => {
   /* <!-- Common Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.all = (collection) => FN.collection(collection);
+  FN.all = collection => FN.collection(collection);
 
   FN.get = (id, collection) => FN.collection(collection).findOne({
     "$or" : [

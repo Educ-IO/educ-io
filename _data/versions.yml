@@ -1,8 +1,8 @@
 site :
-  0.1.9y :
-    name : Classes v0.0.4a-beta
+  0.1.9z :
+    name : Classes v0.0.4b-beta
     desc : Extra Analysis Views and Save Feature
-    numeric : 0.1.9.25
+    numeric : 0.1.9.26
   0.1.9w :
     name : Classes v0.0.3f-beta
     desc : Loader Feedback Improvements
@@ -1434,6 +1434,9 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  0.0.4b-beta :
+    name : Bug Fixes
+    type : minor
   0.0.4a-beta :
     name : Extra Analysis Views and Save Feature (JQuery 3.5.0 -> 3.4.1 revert)
     type : major

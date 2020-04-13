@@ -259,23 +259,23 @@ App = function() {
           
           load: {
             options: {
+              busy: true,
               mime: MIME
             },
+            scopes: "https://www.googleapis.com/auth/drive.file",
             success: value => FN.files.parse(value.result)
                 .then(FN.view.table)
-                .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e).negative())
-                .then(ಠ_ಠ.Main.busy("Loading Data")),
+                .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e).negative()),
           },
           
           import: {
-            reset: true,
             success: value => {
               if (value.result && value.result.lastModifiedDate) ರ‿ರ.current = ಠ_ಠ.Dates.parse(value.result.lastModifiedDate).startOf("day");
               return ಠ_ಠ.Google.reader().promiseAsText(value.result)
+                .then(ಠ_ಠ.Main.busy("Loading Classes Data"))
                 .then(FN.files.hydrate)
                 .then(FN.view.table)
-                .catch(e => ಠ_ಠ.Flags.error("Importing Data File", e).negative())
-                .then(ಠ_ಠ.Main.busy("Importing Data"));
+                .catch(e => ಠ_ಠ.Flags.error("Importing Data File", e).negative());
             }
             ,
           },

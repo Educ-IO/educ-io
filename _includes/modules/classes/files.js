@@ -44,13 +44,13 @@ Files = (options, factory) => {
     data: options.functions.populate.save(),
   });
   
-  FN.hydrate = text => {
-    var _hydrated = JSON.parse(text);
-    options.functions.overview.since(_hydrated.since, true);
-    options.functions.populate.load(_hydrated.data);
-    factory.Display.state().enter(options.functions.states.file.loaded);
-    return options.functions.overview.show(options.functions.populate.all());
-  },
+  FN.hydrate = text => Promise.resolve(JSON.parse(text))
+    .then(hydrated => {
+      options.functions.overview.since(hydrated.since, true);
+      options.functions.populate.load(hydrated.data);
+      factory.Display.state().enter(options.functions.states.file.loaded);  
+    })
+    .then(() => options.functions.overview.show(options.functions.populate.all())),
   
   FN.parse = file => {
     options.state.session.current = factory.Dates.parse(file.modifiedTime).startOf("day");

@@ -64,9 +64,7 @@ Router = function() {
         .setMimeTypes(options && options.mime ? options.mime : null)
         .setSelectFolderEnabled(options && options.folders ? true : false)
         .setOwnedByMe(false)
-        .setEnableDrives(false)
-        .setParent(options && options.parent !== undefined ?
-          options.parent : (options.parent = "root")),
+        .setEnableDrives(false),
         view => {
           view.team = false;
           view.setLabel("Shared with Me");
@@ -263,6 +261,7 @@ Router = function() {
             (options && options.wrapper ? 
               options.wrapper(() => ಠ_ಠ.Google.files.get(_id, true, options.full ? true : false)) :
               ಠ_ಠ.Google.files.get(_id, true, options.full ? true : false))
+              .then(options.busy ? ಠ_ಠ.Main.busy("Opening File") : value => value)
               .then(file => {
                 ಠ_ಠ.Flags.log(`Opened Google Drive File: ${_id}`, file);
                 REJECT.MIME(file, options) || REJECT.PROPERTIES(file, options) ?
