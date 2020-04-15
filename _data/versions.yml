@@ -1,8 +1,8 @@
 site :
-  0.1.10a :
-    name : Classes v0.0.4c-beta
+  0.1.10b :
+    name : Classes v0.0.4d-beta
     desc : Extra Analysis View
-    numeric : 0.1.10.1
+    numeric : 0.1.10.2
   0.1.9z :
     name : Classes v0.0.4b-beta
     desc : Extra Analysis Views and Save Feature
@@ -1438,7 +1438,7 @@ blocks :
     name : Early testing version
     type : minor
 classes :
-  v0.0.4c-beta :
+  v0.0.4d-beta :
     name : Extra Analysis View
     type : minor
   0.0.4b-beta :

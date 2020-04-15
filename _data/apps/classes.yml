@@ -455,6 +455,17 @@ menus:
             hash: overview.close
             shortcut: "c"
             
+  - name: Report
+    disabled_until:
+      - overview-report
+    groups:
+      all:
+        commands:
+          - name: Close
+            desc: Close this Report View
+            hash: overview.close
+            shortcut: "c"
+            
   - name: Classwork
     disabled_until:
       - classwork
