@@ -32,6 +32,8 @@ Tabulate = (options, factory) => {
       name: v.name || v,
       display: v.display || null,
       shortcut: v.shortcut || null,
+      export: v.export || null,
+      output: v.output || null,
       hide: function(initial) {
         return !!(this.hide_now || this.hide_always || (initial && this.hide_initially));
       },
@@ -40,9 +42,10 @@ Tabulate = (options, factory) => {
       },
       hide_always: (v.name || v).indexOf("$") === 0 || (v.name || v).indexOf("_") === 0,
       hide_now: false,
-      hide_initially: hidden && hidden.indexOf && hidden.indexOf(v.name || v) >= 0 ? true : false,
+      hide_initially: hidden ? hidden.indexOf ? hidden.indexOf(v.name || v) >= 0 ? true : false : _.isFunction(hidden) ? !!hidden(v.name || v) : false : false,
       field: (v.name || v).toLowerCase(),
-      icons: (v.name || v) === "When" || (v.name || v) === "Created" || (v.name || v) === "Updated" || (v.name || v) === "Due" ? ["access_time"] : null,
+      icons: (v.name || v) === "When" || (v.name || v) === "Created" || (v.name || v) === "Updated" || (v.name || v) === "Due" ? ["access_time"] : 
+        v.icon ? [v.icon] :v.icons || null,
       help: v.help || null,
     }));
   /* <!-- Internal Functions --> */

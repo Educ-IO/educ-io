@@ -51,6 +51,8 @@ Engagement = (options, factory) => {
   /* <!-- Internal Variables --> */
  
   /* <!-- Internal Functions --> */
+  FN.code = period => `${period.value}${period.unit.substring(0, 1)}`;
+  
   FN.title = (audience, type, period) => {
     
     /* <!-- Set up Holders, if required --> */
@@ -68,7 +70,7 @@ Engagement = (options, factory) => {
      var _person = _.find(people, person => person.id == user);
      if (_person) {
        
-       var _code = `${period.value}${period.unit.substring(0, 1)}`,
+       var _code = FN.code(period),
            _id = `${_person.id}_${type}`,
            _period = _.find(_person.children, child => child.id == _id);
        
@@ -301,6 +303,10 @@ Engagement = (options, factory) => {
   return {
    
     generate: FN.generate,
+    
+    periods: () => _.map(options.periods, period => _.extend({
+      code: FN.code(period),
+    }, period)),
     
     student: student => {
       student.engagement =  FN.calculate.student(student);

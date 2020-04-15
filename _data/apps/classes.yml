@@ -114,6 +114,7 @@ modules:
   - classes/students
   - classes/student
   - classes/files
+  - classes/report
 scripts: 
   - extends/regex
   - extends/array
@@ -147,6 +148,8 @@ templates:
   - classes/overview/students_header
   - classes/overview/student_body
   - classes/overview/student_header
+  - classes/overview/report_body
+  - classes/overview/report_header
   - classes/parts/popover_announcement
   - classes/parts/popover_announcements
   - classes/parts/popover_classwork
@@ -193,6 +196,7 @@ docs:
   - classes/instructions/GRADESHEET_INSTRUCTIONS
   - classes/instructions/STUDENTS_INSTRUCTIONS
   - classes/instructions/LOAD_INSTRUCTIONS
+  - classes/instructions/USAGE_INSTRUCTIONS
   - classes/titles/CLASSES_SUBTITLE
   - classes/titles/CLASSWORK_SUBTITLE
   - classes/titles/STUDENT_WORK_TITLE
@@ -203,6 +207,7 @@ docs:
   - classes/titles/STUDENTS_SUBTITLE
   - classes/titles/STUDENTS_TITLE
   - classes/titles/STUDENT_SUBTITLE
+  - classes/titles/REPORT_TITLE
   - classes/headers/OVERVIEW_ENGAGEMENT_HEADER
   - classes/headers/OVERVIEW_USAGE_HEADER
   - classes/headers/CLASSWORK_SUBMISSIONS_HEADER
@@ -345,6 +350,12 @@ menus:
             shortcut: "ctrl+alt+a"
             divider: true
             
+          - name: Report
+            desc: View Classrooms Report (for easy exporting)
+            hash: overview.report
+            disabled_until:
+              - overview-usage
+            shortcut: "r"
           - name: Students
             desc: View Classroom Engagement by Student
             hash: overview.students
@@ -358,7 +369,7 @@ menus:
             hash: refresh
             disabled_while:
               - file-loaded
-            shortcut: "r"
+            shortcut: "ctrl+alt+r"
           - name: Save
             desc: Save this Analysis Data to Google Drive
             hash: data.save

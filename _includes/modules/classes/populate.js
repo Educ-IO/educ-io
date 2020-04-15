@@ -27,7 +27,7 @@ Populate = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Population Functions --> */
-  FN.classwork = data => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, "classwork", {
+  FN.classwork = (data, db) => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, db, {
     unique: ["$id"],
     indices: ["$class", "$parent", "title", "$$creator"]
   }, data, value => ({
@@ -63,7 +63,7 @@ Populate = (options, factory) => {
     creator: value.creator /* <!-- Hidden Column cannot be last! --> */
   }));
   
-  FN.classes = data => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, "classes", {
+  FN.classes = (data, db) => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, db || "classes", {
       unique: ["$id"],
       indices: ["calendar", "name", "section"]
     }, data, value => ({
@@ -93,7 +93,7 @@ Populate = (options, factory) => {
       $$fetched: value.$$fetched, /* <!-- Fetched Date/Time in ISO Format (for searching/sorting) --> */
       fetched: value.fetched || {}, /* <!-- Fetched & Populated Dates / Times --> */
       section: value.section || "",
-      guardians: value.guardiansEnabled,
+      guardians: value.guardiansEnabled ? "Enabled" : "",
       room: value.room || "",
       $$updated: value.updateTime, /* <!-- Updated Date/Time in ISO Format (for searching/sorting) --> */
       updated: value.updateTime ? factory.Dates.parse(value.updateTime).toDate().toLocaleDateString() : null,
@@ -115,7 +115,7 @@ Populate = (options, factory) => {
       owner: value.owner || "" /* <!-- Hidden Column cannot be last! --> */
     }));
   
-  FN.students = data => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, "students", {
+  FN.students = (data, db) => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, db, {
       unique: ["$id"],
       indices: ["name"]
     }, data, value => ({
@@ -132,11 +132,11 @@ Populate = (options, factory) => {
       fetched: value.fetched || {}, /* <!-- Fetched & Populated Dates / Times --> */
       classes: value.classes || [],
       $$engagement: value.$$engagement, /* <!-- Engagement as String/Number (for searching/sorting) --> */
-      engagement: value.engagement || [],
       teachers: value.teachers || [],
+      engagement: value.engagement || [],
     }));
   
-  FN.details = data => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, "details", {
+  FN.details = (data, db) => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, db, {
       unique: ["$id"],
       indices: ["type", "state"]
     }, data, value => ({
@@ -159,6 +159,11 @@ Populate = (options, factory) => {
       max: value.max,
       grade: value.grade
     }));
+  
+  FN.report = (data, db) => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, db, {
+      unique: ["$id"],
+      indices: ["name", "person", "role"]
+    }, data);
   /* <!-- Population Functions --> */
   
   /* <!-- Common Functions --> */
@@ -195,7 +200,11 @@ Populate = (options, factory) => {
   
   FN.save = () => ಱ.db.serialize();
   /* <!-- Load / Save Functions --> */
-
+  
+  /* <!-- Close Function --> */
+  FN.close = collection => collection ? ಱ.db.removeCollection(collection) : false;
+  /* <!-- Close Function --> */
+  
   /* <!-- External Visibility --> */
   return FN;
   /* <!-- External Visibility --> */

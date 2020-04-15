@@ -1,6 +1,18 @@
 {% raw %}
 {{#> table_header}}
 <div class="btn-group btn-group-lg mb-0 mr-2 d-none d-xl-inline-flex">
+  <a{{#if id}} id="{{id}}_USAGE"{{/if}} data-busy="usage" data-route="overview.usage" href="#"
+          role="button" class="btn btn-light btn-lg d-flex"><span class="loading float-left"><span class="d-block spinner"></span></span><i class="mr-2 material-icons md-dark md-24 align-self-center">track_changes</i>Usage</a>
+  <button type="button" class="btn btn-light btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+    {{~#if report~}}<span class="tooltip-until-overview-usage" tabindex="0" data-toggle="tooltip" data-html="true" title="{{{report}}}">{{~/if~}}<a class="dropdown-item state-overview-usage disabled" data-route="overview.report" href="#">Report</a>{{~#if report~}}</span>{{~/if~}}
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="#instructions.overview.usage">About</a>
+  </div>
+</div>
+<div class="btn-group btn-group-lg mb-0 mr-2 d-none d-xl-inline-flex">
   {{~#if students~}}<span class="tooltip-until-overview-engagement" tabindex="0" data-toggle="tooltip" data-html="true" title="{{{students}}}">{{~/if~}}
   <a{{#if id}} id="{{id}}_STUDENTS"{{/if}} data-busy="engagement" data-route="overview.students" href="#" role="button" class="btn btn-dark btn-lg d-flex state-overview-engagement disabled" style="border-top-right-radius: 0; border-bottom-right-radius: 0;"><span class="loading float-left"><span class="d-block spinner"></span></span><i class="mr-2 material-icons md-light md-24 align-self-center">how_to_reg</i>Students</a>
   {{~#if students~}}</span>{{~/if~}}

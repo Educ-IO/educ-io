@@ -9,6 +9,7 @@ Classwork = (options, factory) => {
   const DEFAULTS = {
       id : "classwork",
       format: "Do MMM",
+      db : "classwork",
     },
     FN = {},
     HIDDEN = ["ID", "Type", "Mode", "Fetched", "Description", "Updated", "Points", "Min", "Avg", "Max"];
@@ -58,7 +59,7 @@ Classwork = (options, factory) => {
     classwork: classwork => factory.Datatable(factory, {
           id: `${options.id}_TABLE`,
           name: options.id,
-          data: options.functions.populate.classwork(classwork),
+          data: options.functions.populate.classwork(classwork, options.db),
           headers: options.state.application.tabulate.headers(
             ["ID", "Type", "Mode", "Class", "Fetched", "Title", "Description", "Updated", "Created", "Due", "Points", "Min", "Avg", "Max",
              {
@@ -108,9 +109,11 @@ Classwork = (options, factory) => {
     
     refresh: () => FN.display(ರ‿ರ.classrooms, ರ‿ರ.since ? ರ‿ರ.since.toISOString() : null),
     
-    remove: id => options.functions.populate.remove(id, "classwork"),
+    remove: id => options.functions.populate.remove(id, options.db),
     
     table: () => ರ‿ರ.table,
+    
+    close: () => options.functions.populate.close(options.db),
     
   };
   /* <!-- External Visibility --> */

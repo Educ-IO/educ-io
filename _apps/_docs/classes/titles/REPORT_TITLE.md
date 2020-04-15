@@ -1,0 +1,1 @@
+Once recent __usage__ data is generated, a __report view__ can be accessed for easier exporting.

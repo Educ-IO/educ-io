@@ -547,7 +547,8 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     values: filtered => {
       
       var _html = filtered ? $(_createDisplayTable()) : $(_createDefaultTable());
-      var _return = [_.map(_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray(), el => el.textContent.trim())];
+      var _return = [_.map(_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray(), 
+                           el => el.dataset.export || el.textContent.trim())];
       
       var _clean = el => {
         if (el.find(".no-export").length > 0) (el = el.clone()).find(".no-export").remove();

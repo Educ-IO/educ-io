@@ -8,7 +8,8 @@ Student = (options, factory) => {
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
           id : "student",
-          format: "Do MMM, YYYY",
+          format : "Do MMM, YYYY",
+          db : "details"
         }, 
         FN = {},
         HIDDEN = ["ID", "Created", "State", "Late", "Type"];
@@ -54,7 +55,7 @@ Student = (options, factory) => {
     student: (name, details) => factory.Datatable(factory, {
           id: `${options.id}_TABLE`,
           name: options.id,
-          data: options.functions.populate.details(details),
+          data: options.functions.populate.details(details, options.db),
           headers: options.state.application.tabulate.headers(
             ["ID", "Class", "Created", "Updated", "Type", "State", "Late", "Title", "Answer", "Max", "Grade"], HIDDEN),
         }, {
@@ -142,7 +143,9 @@ Student = (options, factory) => {
       return Promise.resolve(ರ‿ರ.table = FN.render.student(student.name, FN.transform(student)));
     },
     
-    remove: id => options.functions.populate.remove(id, "details"),
+    remove: id => options.functions.populate.remove(id, options.db),
+    
+    close: () => options.functions.populate.close(options.db),
 
   };
   /* <!-- External Visibility --> */

@@ -1,0 +1,1 @@
+Usage shows the most __recent annoucements__ and __classwork__ in each classroom. Once it has been generated, you can switch to a __report view__ which shows usage and enagement data is a spreadsheet friendly format (for easy exporting).

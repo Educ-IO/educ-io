@@ -171,6 +171,7 @@ globals:
   Gradesheet: true
   Students: true
   Student: true
+  Report: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

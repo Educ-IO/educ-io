@@ -8,7 +8,7 @@ App = function() {
 
   /* <!-- Internal Constants --> */
   const FN = {},
-        MIME = "application/x.educ-io.classes-data";
+    MIME = "application/x.educ-io.classes-data";
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
@@ -22,7 +22,7 @@ App = function() {
   FN.current = {
 
     classes: () => _.chain(ರ‿ರ.table.table().find("tbody tr[data-id]").toArray())
-                      .map(el => FN.populate.get($(el).data("id"))).compact().value(),
+      .map(el => FN.populate.get($(el).data("id"))).compact().value(),
 
   };
 
@@ -31,7 +31,7 @@ App = function() {
     file: () => ಠ_ಠ.Display.state().in(FN.states.overview.in) ?
       "Google Classroom Overview" : ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? "Google Classwork Overview" : "Overview",
 
-    table: () => ಠ_ಠ.Display.state().in(FN.states.overview.in) ? 
+    table: () => ಠ_ಠ.Display.state().in(FN.states.overview.in) ?
       "Classes" : ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? "Classwork" : "Data",
 
   };
@@ -43,12 +43,18 @@ App = function() {
       ಠ_ಠ.Display.state().change(FN.states.views.concat(exit ? _.isString(exit) ? [exit] : exit : []), (_.isString(state) ? [state] : state).concat([FN.states.view]));
       if (!ಠ_ಠ.Display.state().in(FN.states.periods.all, true)) ಠ_ಠ.Display.state().enter(FN.states.periods.forever);
     },
-    
-    generic: (fn, state, messages, exit) => fn()
-      .then(table => ರ‿ರ.table = table)
-      .then(FN.view.state(state, exit))
-      .catch(e => ಠ_ಠ.Flags.error(messages.error, e))
-      .then(ಠ_ಠ.Main.busy(true, true, FN.events.load.progress, messages.loading)),
+
+    generic: (fn, state, messages, exit) => {
+      var _busy = ಠ_ಠ.Main.busy(true, true, FN.events.load.progress, messages.loading);
+      return new Promise(resolve => {
+        _.defer(() => fn()
+          .then(table => ರ‿ರ.table = table)
+          .then(FN.view.state(state, exit))
+          .catch(e => ಠ_ಠ.Flags.error(messages.error, e))
+          .then(_busy)
+          .then(value => resolve(value)));
+      });
+    },
 
     overview: since => FN.view.generic(() => FN.overview.display(since), FN.states.overview.in, {
       error: "Classes Overview Error",
@@ -70,31 +76,53 @@ App = function() {
       .catch(e => ಠ_ಠ.Flags.error("Refresh Error", e))
       .then(ಠ_ಠ.Main.busy("Refreshing", true)),
 
+    report: () => (ಠ_ಠ.Display.state().in(FN.states.overview.in) ? FN.overview.detach() : Promise.resolve(true))
+      .then(() => FN.view.generic(() => FN.report.display(FN.overview.since(), FN.current.classes()), FN.states.overview.report, {
+        error: "Report View Error",
+        loading: "Transforming Overview"
+      })),
+
     students: () => (ಠ_ಠ.Display.state().in(FN.states.overview.in) ? FN.overview.detach() : Promise.resolve(true))
       .then(() => FN.view.generic(() => FN.students.display(FN.overview.since(), FN.current.classes()), FN.states.overview.students, {
         error: "Students View Error",
         loading: "Transforming Overview"
       })),
-    
+
     student: id => (ಠ_ಠ.Display.state().in(FN.states.overview.students) ? FN.students.detach() : Promise.resolve(true))
       .then(() => FN.view.generic(() => FN.student.display(FN.overview.since(), FN.populate.get(id, "students")), FN.states.overview.student, {
         error: "Student View Error",
         loading: "Transforming Overview"
       })),
-    
+
     table: table => {
       if (!table) return;
       ರ‿ರ.table = table;
       table.table().find("a.value-remove").hide();
       FN.view.state([FN.states.overview.in, FN.states.overview.engagement, FN.states.overview.usage])();
     },
-    
-    close: () => (ಠ_ಠ.Display.state().in(FN.states.overview.student) ? FN.students.attach() : FN.overview.attach())
-                  .then(table => ರ‿ರ.table = table)
-                  .then(() => (ಠ_ಠ.Display.tidy(), ಠ_ಠ.Display.state().change(
-                    [FN.states.classwork.in, FN.states.classwork.submissions, FN.states.overview.students, FN.states.overview.student],
-                    ಠ_ಠ.Display.state().in(FN.states.overview.student) ? FN.states.overview.students : FN.states.overview.in))),
-    
+
+    close: () => (ಠ_ಠ.Display.state().in(FN.states.overview.student) ? (FN.student.close(), FN.students.attach()) :
+        ಠ_ಠ.Display.state().in(FN.states.overview.report) ? (FN.report.close(), FN.overview.attach()) :
+        ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? (FN.classwork.close(), FN.overview.attach()) :
+        FN.overview.attach())
+      .then(table => ರ‿ರ.table = table)
+      .then(() => (ಠ_ಠ.Display.tidy(), ಠ_ಠ.Display.state().change(
+        [FN.states.classwork.in, FN.states.classwork.submissions, FN.states.overview.report, FN.states.overview.students, FN.states.overview.student],
+        ಠ_ಠ.Display.state().in(FN.states.overview.student) ? FN.states.overview.students : FN.states.overview.in))),
+
+  };
+
+  FN.run = {
+
+    loader: (action, run, state) => {
+      var _button = $(`[role='button'][data-busy='${action}']`).addClass("loader");
+      return run()
+        .then(() => {
+          _button.removeClass("loader");
+          ಠ_ಠ.Display.state().enter(state);
+        });
+    }
+
   };
   /* <!-- Internal Functions --> */
 
@@ -153,7 +181,8 @@ App = function() {
         }
       };
       _.each(["Common", "Populate", "People", "Classes", "Overview", "Usage", "Engagement", "Roster",
-                "Classwork", "Submissions", "Gradesheet", "Students", "Student", "Files"],
+          "Classwork", "Submissions", "Gradesheet", "Students", "Student", "Files", "Report"
+        ],
         module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
     },
@@ -222,6 +251,13 @@ App = function() {
           title: "Exporting the classes overview ..."
         }, {
           match: [
+            /OVERVIEW/i,
+            /USAGE/i
+          ],
+          show: "USAGE_INSTRUCTIONS",
+          title: "Generating Usage Data ..."
+        }, {
+          match: [
             /STUDENT/i,
             /EXPORT/i
           ],
@@ -242,6 +278,13 @@ App = function() {
           show: "VIEW_EXPORT_INSTRUCTIONS",
           title: "Exporting the classwork ..."
         }, {
+          match: [
+            /REPORT/i,
+            /EXPORT/i
+          ],
+          show: "VIEW_EXPORT_INSTRUCTIONS",
+          title: "Exporting the report overview ..."
+        }, {
           match: /OVERVIEW/i,
           show: "OVERVIEW_INSTRUCTIONS",
           title: "What is an overview ..."
@@ -249,14 +292,14 @@ App = function() {
           match: /LOAD/i,
           show: "LOAD_INSTRUCTIONS",
           title: "Loading Existing Classes Data ..."
-        },],
+        }, ],
         routes: {
 
           close: {
-            keys : ["ctrl+alt+c", "ctrl+alt+C"],
-            length : 0,
+            keys: ["ctrl+alt+c", "ctrl+alt+C"],
+            length: 0,
           },
-          
+
           load: {
             options: {
               busy: true,
@@ -264,10 +307,10 @@ App = function() {
             },
             scopes: "https://www.googleapis.com/auth/drive.file",
             success: value => FN.files.parse(value.result)
-                .then(FN.view.table)
-                .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e).negative()),
+              .then(FN.view.table)
+              .catch(e => ಠ_ಠ.Flags.error(`Loading from Google Drive: ${value.result.id}`, e).negative()),
           },
-          
+
           import: {
             success: value => {
               if (value.result && value.result.lastModifiedDate) ರ‿ರ.current = ಠ_ಠ.Dates.parse(value.result.lastModifiedDate).startOf("day");
@@ -276,15 +319,14 @@ App = function() {
                 .then(FN.files.hydrate)
                 .then(FN.view.table)
                 .catch(e => ಠ_ಠ.Flags.error("Importing Data File", e).negative());
-            }
-            ,
+            },
           },
-          
+
           refresh: {
             matches: /REFRESH/i,
             state: FN.states.views,
             length: 0,
-            keys: ["r", "R"],
+            keys: ["ctrl+alt+r", "ctrl+alt+R"],
             fn: () => FN.view.refresh()
           },
 
@@ -303,10 +345,10 @@ App = function() {
                 keys: ["ctrl+alt+o", "ctrl+alt+O"],
                 fn: () => FN.view.overview(),
               },
-              
+
               close: {
                 matches: /CLOSE/i,
-                state: [FN.states.overview.students, FN.states.classwork.in],
+                state: [FN.states.overview.students, FN.states.overview.report, FN.states.classwork.in],
                 length: 0,
                 keys: ["c", "C"],
                 fn: () => FN.view.close()
@@ -346,30 +388,30 @@ App = function() {
                     ],
                     fn: () => FN.submissions.generate()
                       .then(() => ಠ_ಠ.Display.state().enter(FN.states.classwork.submissions)),
-                    
-                    routes : {
-                    
-                      gradesheet : {
-                        
+
+                    routes: {
+
+                      gradesheet: {
+
                         matches: /GRADESHEET/i,
                         state: FN.states.classwork.submissions,
-                        
-                        routes : {
-                        
-                          create : {
+
+                        routes: {
+
+                          create: {
                             matches: /CREATE/i,
                             keys: ["g", "G"],
                             scopes: [
                               "https://www.googleapis.com/auth/drive.file",
                             ],
                             fn: () => FN.gradesheet.create()
-                                        .catch(e => ಠ_ಠ.Flags.error("Gradesheet Creation Error", e))
-                                        .then(ಠ_ಠ.Main.busy(true, true, FN.events.gradesheet.progress, "Creating Gradesheet"))
-                                        .then(() => ಱ.notify.failure("Not Implemented", "Gradesheet functionality not yet complete!", 5000))
-                            
+                              .catch(e => ಠ_ಠ.Flags.error("Gradesheet Creation Error", e))
+                              .then(ಠ_ಠ.Main.busy(true, true, FN.events.gradesheet.progress, "Creating Gradesheet"))
+                              .then(() => ಱ.notify.failure("Not Implemented", "Gradesheet functionality not yet complete!", 5000))
+
                           },
-                          
-                          update : {
+
+                          update: {
                             matches: /UPDATE/i,
                             keys: ["ctrl+alt+g", "ctrl+alt+G"],
                             scopes: [
@@ -377,24 +419,24 @@ App = function() {
                             ],
                             requires: "google",
                             fn: () => ಠ_ಠ.Router.pick.single({
-                              title: "Select a Gradesheet to Update",
-                              view: "FOLDERS",
-                              mime: ಠ_ಠ.Google.files.natives()[1],
-                              folders: true,
-                              all: true,
-                              team: true,
-                              properties: FN.gradesheet.property()
-                            }).then(FN.gradesheet.update)
-                                        .catch(e => e ? ಠ_ಠ.Flags.error("Gradesheet Updating Error", e) :
-                                                ಠ_ಠ.Flags.log("Gradesheet Update Cancelled"))
-                                        .then(ಠ_ಠ.Main.busy(true, true, FN.events.gradesheet.progress, "Updating Gradesheet"))
-                                        .then(() => ಱ.notify.failure("Not Implemented", "Gradesheet functionality not yet complete!", 5000))
+                                title: "Select a Gradesheet to Update",
+                                view: "FOLDERS",
+                                mime: ಠ_ಠ.Google.files.natives()[1],
+                                folders: true,
+                                all: true,
+                                team: true,
+                                properties: FN.gradesheet.property()
+                              }).then(FN.gradesheet.update)
+                              .catch(e => e ? ಠ_ಠ.Flags.error("Gradesheet Updating Error", e) :
+                                ಠ_ಠ.Flags.log("Gradesheet Update Cancelled"))
+                              .then(ಠ_ಠ.Main.busy(true, true, FN.events.gradesheet.progress, "Updating Gradesheet"))
+                              .then(() => ಱ.notify.failure("Not Implemented", "Gradesheet functionality not yet complete!", 5000))
                           },
-                          
+
                         }
-                        
+
                       }
-                      
+
                     }
 
                   },
@@ -414,8 +456,7 @@ App = function() {
                   "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                   "https://www.googleapis.com/auth/classroom.guardianlinks.students.readonly",
                 ],
-                fn: () => FN.usage.generate()
-                  .then(() => ಠ_ಠ.Display.state().enter(FN.states.overview.usage)),
+                fn: () => FN.run.loader("usage", FN.usage.generate, FN.states.overview.usage),
 
                 routes: {
 
@@ -430,8 +471,7 @@ App = function() {
                       "https://www.googleapis.com/auth/classroom.guardianlinks.students.readonly",
                     ],
                     keys: ["ctrl+alt+u", "ctrl+alt+U"],
-                    fn: () => FN.usage.generate(true)
-                      .then(() => ಠ_ಠ.Display.state().enter(FN.states.overview.usage)),
+                    fn: () => FN.run.loader("usage", () => FN.usage.generate(true), FN.states.overview.usage),
                   },
 
                 }
@@ -447,14 +487,7 @@ App = function() {
                   "https://www.googleapis.com/auth/classroom.announcements.readonly",
                   "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                 ],
-                fn: () => {
-                  var _button = $("[role='button'][data-busy='engagement']").addClass("loader");
-                  return FN.engagement.generate()
-                    .then(() => {
-                      _button.removeClass("loader");
-                      ಠ_ಠ.Display.state().enter(FN.states.overview.engagement);
-                    });
-                },
+                fn: () => FN.run.loader("engagement", FN.engagement.generate, FN.states.overview.engagement),
 
                 routes: {
 
@@ -467,11 +500,19 @@ App = function() {
                       "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                     ],
                     keys: ["ctrl+alt+e", "ctrl+alt+E"],
-                    fn: () => FN.engagement.generate(true)
-                      .then(() => ಠ_ಠ.Display.state().enter(FN.states.overview.engagement)),
+                    fn: () => FN.run.loader("engagement", () => FN.usage.generate(true), FN.states.overview.engagement),
                   },
 
                 }
+              },
+
+              report: {
+                matches: /REPORT/i,
+                state: [FN.states.overview.in, FN.states.overview.usage],
+                all: true,
+                length: 0,
+                keys: ["r", "R"],
+                fn: () => FN.view.report(),
               },
 
               students: {
@@ -481,22 +522,22 @@ App = function() {
                 length: 0,
                 keys: ["s", "S"],
                 fn: () => FN.view.students(),
-                
+
               },
-              
+
               student: {
                 matches: /STUDENT/i,
                 state: FN.states.overview.students,
                 length: 1,
                 fn: command => FN.view.student(command),
               },
-              
+
             }
 
           },
 
           export: {
-            
+
             matches: /EXPORT/i,
             state: FN.states.view,
             routes: {
@@ -528,7 +569,7 @@ App = function() {
             }
 
           },
-          
+
           add: {
 
             matches: /ADD/i,
@@ -599,14 +640,15 @@ App = function() {
 
           remove: {
             matches: /REMOVE/i,
-            state: [FN.states.overview.in, FN.states.classwork.in, FN.states.overview.students, FN.states.overview.student],
+            state: [FN.states.overview.in, FN.states.classwork.in, FN.states.overview.report, FN.states.overview.students, FN.states.overview.student],
             length: 1,
             fn: command => {
               ರ‿ರ.table.table().find(`tr[data-id='${command}']`).remove();
               ಠ_ಠ.Display.tidy();
               ಠ_ಠ.Display.state().in(FN.states.overview.in) ? FN.overview.remove(command) :
-                ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? FN.classwork.remove(command) : 
-                ಠ_ಠ.Display.state().in(FN.states.overview.students) ? FN.students.remove(command) : 
+                ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? FN.classwork.remove(command) :
+                ಠ_ಠ.Display.state().in(FN.states.overview.report) ? FN.report.remove(command) :
+                ಠ_ಠ.Display.state().in(FN.states.overview.students) ? FN.students.remove(command) :
                 ಠ_ಠ.Display.state().in(FN.states.overview.student) ? FN.student.remove(command) : false;
             },
             routes: {
@@ -703,7 +745,7 @@ App = function() {
             state: "authenticated",
 
             routes: {
-              
+
               load: {
                 matches: /LOAD/i,
                 length: 0,
@@ -713,7 +755,7 @@ App = function() {
                 requires: "google",
                 fn: () => FN.files.load().then(FN.view.table)
               },
-              
+
               save: {
                 matches: /SAVE/i,
                 length: 0,
@@ -724,11 +766,11 @@ App = function() {
                   "google",
                   "filesaver"
                 ],
-                fn: () => FN.files.save()  
+                fn: () => FN.files.save()
               },
-              
+
             },
-            
+
           },
         },
         route: () => false,

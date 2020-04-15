@@ -9,9 +9,10 @@ Students = (options, factory) => {
   const DEFAULTS = {
           id : "students",
           format: "Do MMM, YYYY",
+          db : "students"
         }, 
         FN = {},
-        HIDDEN = ["Fetched"];
+        HIDDEN = ["Fetched", "Teachers"];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -54,12 +55,12 @@ Students = (options, factory) => {
     students: students => factory.Datatable(factory, {
           id: `${options.id}_TABLE`,
           name: options.id,
-          data: options.functions.populate.students(students),
+          data: options.functions.populate.students(students, options.db),
           headers: options.state.application.tabulate.headers(
-            ["ID", "Name", "Fetched", "Classes", {
+            ["ID", "Name", "Fetched", "Classes", "Teachers", {
               name: "Engagement",
               help : factory.Display.doc.get("STUDENTS_ENGAGEMENT_HEADER", null, true)
-            }, "Teachers"], HIDDEN),
+            }], HIDDEN),
         }, {
           classes: ["table-hover"],
           advanced: false,
@@ -158,7 +159,7 @@ Students = (options, factory) => {
       return Promise.resolve(ರ‿ರ.table = FN.render.students(FN.transform(classes)));
     },
     
-    remove: id => options.functions.populate.remove(id, "students"),
+    remove: id => options.functions.populate.remove(id, options.db),
     
     table: () => ರ‿ರ.table,
     
