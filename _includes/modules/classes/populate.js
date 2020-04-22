@@ -21,11 +21,6 @@ Populate = (options, factory) => {
       }; /* <!-- Persistant --> */
   /* <!-- Internal Variables --> */
   
-  /* <!-- Internal Functions --> */
-  FN.truncate = (length, ending) => value => value && _.isString(value) ? 
-    value.length > length ? `${value.substring(0, length - 1)}${ending}` : value : "";
-  /* <!-- Internal Functions --> */
-  
   /* <!-- Population Functions --> */
   FN.classwork = (data, db) => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, db, {
     unique: ["$id"],
@@ -47,6 +42,8 @@ Populate = (options, factory) => {
     fetched: value.fetched || {}, /* <!-- Fetched & Populated Dates / Times --> */
     title: value.title,
     description: value.description,
+    $topic: value.$topic,
+    topic: value.topic,
     $$updated: value.updateTime, /* <!-- Updated Date/Time in ISO Format (for searching/sorting) --> */
     updated: value.updateTime ? factory.Dates.parse(value.updateTime).toDate().toLocaleDateString() : null,
     $$created: value.creationTime, /* <!-- Created Date/Time in ISO Format (for searching/sorting) --> */
@@ -154,8 +151,8 @@ Populate = (options, factory) => {
       type: value.type,
       state: value.state,
       late: value.late,
-      title: FN.truncate(50, "…")(value.text),
-      answer: FN.truncate(30, "…")(value.answer),
+      title: options.functions.common.truncate(50, "…")(value.text),
+      answer: options.functions.common.truncate(30, "…")(value.answer),
       max: value.max,
       grade: value.grade
     }));

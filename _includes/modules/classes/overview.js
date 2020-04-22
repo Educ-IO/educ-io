@@ -88,7 +88,7 @@ Overview = (options, factory) => {
   /* <!-- Render Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.display = since => options.functions.classes.all(since)
+  FN.display = (since, status) => options.functions.classes.all(since, status)
     .then(options.functions.people.teachers)
     .then(classrooms => {
       factory.Flags.log("Loaded CLASSES", classrooms);

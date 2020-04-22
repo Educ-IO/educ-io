@@ -57,13 +57,13 @@ Google_Sheets_Grid = options => {
 
     columns: (start, end) => ({
 
-      dimension: width => ({
+      dimension: width => width !== null && width !== undefined ? ({
         "range": _dimension("COLUMNS", start, end),
         "properties": {
           "pixelSize": width,
         },
         "fields": "pixelSize"
-      }),
+      }) : _dimension("COLUMNS", start, end),
 
       range: () => _columns(start, end),
 
@@ -75,18 +75,18 @@ Google_Sheets_Grid = options => {
 
     rows: (start, end) => ({
 
-      dimension: height => ({
+      dimension: height => height !== null && height !== undefined ? ({
         "range": _dimension("ROWS", start, end),
         "properties": {
           "pixelSize": height,
         },
         "fields": "pixelSize"
-      }),
+      }) : _dimension("ROWS", start, end),
 
       range: () => _rows(start, end),
 
     }),
-    
+
     sheet: () => options.sheet,
 
   };

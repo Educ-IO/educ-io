@@ -17,7 +17,7 @@ Classes = (options, factory) => {
   /* <!-- Internal Variables --> */
   var _fields = {
     classroom : ["id", "name", "section", "description", "room", "ownerId", "creationTime", "updateTime", "enrollmentCode", "courseState",
-                  "alternateLink", "teacherFolder", "guardiansEnabled", "calendarId"], 
+                  "alternateLink", "teacherFolder", "guardiansEnabled", "calendarId"],
   };
   /* <!-- Internal Variables --> */
 
@@ -25,7 +25,7 @@ Classes = (options, factory) => {
   /* <!-- Internal Functions --> */
 
   /* <!-- Public Functions --> */
-  FN.get = (status, since) => factory.Google.classrooms.list(status || "ACTIVE", _fields.classroom, since,
+  FN.get = (status, since) => factory.Google.classrooms.list(status === false ? null : status || "ACTIVE", _fields.classroom, since,
        count => factory.Main.event(options.functions.events.load.progress, factory.Main.message(count, "class", "classes")))
     .then(classrooms => (
       factory.Main.event(options.functions.events.load.progress, factory.Main.message(classrooms.length, "class", "classes")),
@@ -67,19 +67,28 @@ Classes = (options, factory) => {
     .then(options.functions.people.posts)
     .then(work => {
       var loaded = factory.Dates.now().toISOString();
-      return _.map(work, value => _.extend(value, {
-        $parent: classroom.$id,
-        $class: classroom.name,
-        $$fetched: loaded,
-        fetched: {
-          self: loaded,
-        },
-        class: {
-          text: classroom.name,
+      return _.map(work, value => {
+        var _topic = value.topicId && classroom.$topics && classroom.$topics.length > 0 ?
+            _.find(classroom.$topics, topic => topic.topicId == value.topicId) : null;
+        return _.extend(value, {
+          $parent: classroom.$id,
+          $class: classroom.name,
+          $$fetched: loaded,
+          fetched: {
+            self: loaded,
+          },
+          class: {
+            text: classroom.name,
             title: classroom.id.title,
             url: classroom.id.url,
-        }
-      }));
+          },
+          $topic: _topic ? _topic.name : "",
+          topic: _topic ? {
+            id: _topic.topicId,
+            text: _topic.name,
+          } : "",
+        });
+      });
     })
     .then(work => (classroom.fetched.work = (all ? factory.Dates.now().toISOString() : null),
       classroom.$$fetched = classroom.fetched.work > classroom.$$fetched ? classroom.fetched.work : classroom.$$fetched,
@@ -114,7 +123,7 @@ Classes = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
 
-    all: since => FN.get(null, since),
+    all: (since, status) => FN.get(status, since),
 
     announcements: FN.announcements,
 

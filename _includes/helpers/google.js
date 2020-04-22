@@ -1034,6 +1034,9 @@ Google_API = (options, factory) => {
         
         return {
           
+          update: data => _call(NETWORKS.classroom.patch, `v1/courses/${encodeURIComponent(_id)}?updateMask=${_.keys(data).join(",")}`, 
+                                  data, "application/json"),
+          
           announcements: () => {
           
             var _url = `v1/courses/${encodeURIComponent(_id)}/announcements`,

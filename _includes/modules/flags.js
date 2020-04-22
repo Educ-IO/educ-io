@@ -129,6 +129,8 @@ Flags = function() {
           negative: () => false,
 
           positive: () => true,
+          
+          nothing: () => null,
 
           alert: function() {
             return _alert;

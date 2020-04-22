@@ -73,6 +73,7 @@ helpers:
   - google/sheets/grid
   - google/sheets/format
   - google/sheets/properties
+  - google/sheets/metadata
   - google
   - colours
   - css
@@ -115,6 +116,7 @@ modules:
   - classes/student
   - classes/files
   - classes/report
+  - classes/edit
 scripts: 
   - extends/regex
   - extends/array
@@ -176,6 +178,7 @@ docs:
   - classes/NOTIFY_SAVE_FAILED
   - classes/NOTIFY_EXPORT_VIEW_SUCCESS
   - classes/NOTIFY_EXPORT_DATA_SUCCESS
+  - classes/NOTIFY_EXPORT_GRADESHEET_SUCCESS
   - classes/ADD_STUDENTS
   - classes/ADD_TEACHERS
   - classes/INVITE_STUDENTS
@@ -190,6 +193,8 @@ docs:
   - classes/ENGAGEMENT_PERIOD
   - classes/SAVE_FILE
   - classes/IMPORT
+  - classes/ACTIVATE_CLASSES
+  - classes/ARCHIVE_CLASSES
   - classes/instructions/INSTRUCTIONS
   - classes/instructions/OVERVIEW_INSTRUCTIONS
   - classes/instructions/VIEW_EXPORT_INSTRUCTIONS
@@ -248,11 +253,15 @@ scopes:
       request: lazy
     - scope: https://www.googleapis.com/auth/classroom.guardianlinks.students.readonly
       name: View guardians for students in your Google Classroom classes
-      reason: 
+      reason: In order to calculate how many students in each classroom have guardians attached
       request: lazy
     - scope: https://www.googleapis.com/auth/classroom.rosters
       name: Manage your Google Classroom class rosters
       reason: In order to add/remove Classroom teachers and students
+      request: lazy
+    - scope: https://www.googleapis.com/auth/classroom.courses
+      name: Manage your Google Classroom classes
+      reason: In order to change the Google Classroom course statuses 
       request: lazy
     - scope: https://www.googleapis.com/auth/drive.file
       name: View and manage Google Drive files and folders that you have opened or created with this app
@@ -279,15 +288,20 @@ menus:
       all:
         commands:
           - name: Overview
-            desc: Show overview of your classes / classes in your domain (created in the last 12 months)
+            desc: Show overview of your active classes / classes in your domain (created in the last 12 months)
             hash: overview
             shortcut: "o"
             imports:
               - d3
           - name: All Classes
-            desc: Show overview of all your classes / classes in your domain
+            desc: Show overview of all your active classes / classes in your domain
             hash: overview.all
             shortcut: "ctrl+alt+o"
+            imports:
+              - d3
+          - name: Archived Classes
+            desc: Show overview of all your archived classes / classes in your domain
+            hash: overview.archived
             imports:
               - d3
             divider: true
@@ -337,6 +351,7 @@ menus:
             hash: overview.classwork
             auth: google
             scopes:
+              - https://www.googleapis.com/auth/classroom.topics.readonly
               - https://www.googleapis.com/auth/classroom.coursework.students.readonly
               - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
             shortcut: "a"
@@ -345,6 +360,7 @@ menus:
             hash: overview.classwork.all
             auth: google
             scopes:
+              - https://www.googleapis.com/auth/classroom.topics.readonly
               - https://www.googleapis.com/auth/classroom.coursework.students.readonly
               - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
             shortcut: "ctrl+alt+a"
@@ -394,6 +410,25 @@ menus:
     groups:
       all:
         commands:
+          - name: Archive Classes
+            desc: Archive the list of classes shown
+            hash: edit.archive
+            auth: google
+            scopes:
+              - https://www.googleapis.com/auth/classroom.courses
+            disabled_while:
+              - file-loaded
+            visibility: debug
+          - name: Activate Classes
+            desc: Activate / De-Archive the list of classes shown
+            hash: edit.activate
+            auth: google
+            scopes:
+              - https://www.googleapis.com/auth/classroom.courses
+            disabled_while:
+              - file-loaded
+            visibility: debug
+            divider: true
           - name: Add Teacher/s
             desc: Add Teachers to the list of classes shown
             hash: add.class.teachers
@@ -593,7 +628,6 @@ menus:
             scope: https://www.googleapis.com/auth/drive.install
             disabled_until:
               - authenticated
-            visibility: debug
           - name: Permissions
             url: /scopes/?highlight=classes
             desc: Find out about the permissions and scopes that this app uses
@@ -626,8 +660,13 @@ buttons:
       - d3
     buttons:
     - name: All Classes
-      desc: Show overview of all your classes / classes in your domain
+      desc: Show overview of all your active classes / classes (in your domain if your are a G-Suite Admin)
       hash: overview.all
+      imports:
+        - d3
+    - name: Archived Classes
+      desc: Show overview of all your archived classes / classes in your domain
+      hash: overview.archived
       imports:
         - d3
     - name: About

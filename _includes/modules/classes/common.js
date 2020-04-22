@@ -22,6 +22,9 @@ Common = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
+  FN.truncate = (length, ending) => value => value && _.isString(value) ? 
+    value.length > length ? `${value.substring(0, length - 1)}${ending}` : value : "";
+  
   FN.add = (usage, data) => {
     var _existing = _.findIndex(usage, value => value.type == data.type);
     _existing >= 0 ? usage[_existing] = data : usage.push(data);

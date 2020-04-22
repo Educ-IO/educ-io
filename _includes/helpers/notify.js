@@ -22,13 +22,13 @@ Notify = (options, factory) => {
         text: "text-dark",
         main : "text-danger", 
       },
-      documents: {
-        save: {
-          failed: "NOTIFY_SAVE_FAILED"
-        },
-        send: {
-          success: "NOTIFY_SEND_SUCCESS"
-        }
+    },
+    documents: {
+      save: {
+        failed: "NOTIFY_SAVE_FAILED"
+      },
+      send: {
+        success: "NOTIFY_SEND_SUCCESS"
       }
     }
   };

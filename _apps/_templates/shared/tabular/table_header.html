@@ -1,18 +1,18 @@
 {% raw %}
 <div class="row justify-content-between w-100 mt-1 mt-lg-2">
 
-  <h4 {{#if id}}id="{{id}}" {{/if}}class="d-inline-flex align-self-start col-12{{#if subtitle}}{{#is (length title) 'gte' 10}} col-md-6 col-xl-4{{else}} col-md-4{{/is}}{{else}} col-md-8{{/if}} display-4{{#if classes}}{{#each classes}} {{this}}{{/each}}{{/if}}">
+  <h4 {{#if id}}id="{{id}}" {{/if}}class="d-inline-flex align-self-start col-12{{#if subtitle}}{{#is (length title) 'gte' 10}} col-md-6 col-xl-4{{else}} col-xl-3 col-md-4{{/is}}{{else}} col-md-8{{/if}} display-4{{#if classes}}{{#each classes}} {{this}}{{/each}}{{/if}}">
   	<span class="ml-2 text-muted font-weight-bold small">{{{title}}}</span>
   </h4>
   
-  {{~#if subtitle~}}<div class="{{#is (length subtitle) 'gte' 20}}d-none d-lg-inline-flex{{else}}d-inline-flex{{/is}} flex-column align-self-center col-12{{#is (length title) 'gte' 10}} col-md-6 col-xl-4{{else}} col-md-4{{/is}} ml-3 ml-md-0"{{#if details}} data-toggle="tooltip" data-trigger="hover" data-html="true" title="{{{replace details '"' "'"}}}"{{/if}}>
+  {{~#if subtitle~}}<div class="{{#is (length subtitle) 'gte' 20}}d-none d-lg-inline-flex{{else}}d-inline-flex{{/is}} flex-column align-self-center col-12{{#is (length title) 'gte' 10}} col-md-6 col-xl-4{{else}} col-xl-4 col-md-4{{/is}} ml-3 ml-md-0"{{#if details}} data-toggle="tooltip" data-trigger="hover" data-html="true" title="{{{replace details '"' "'"}}}"{{/if}}>
     {{~#if (any (isArray subtitle) (isObject subtitle))~}}{{#each subtitle}}<h5 class="d-flex m-0 p-1">
   		<span class="font-weight-light">{{{this}}}</span>
   	</h5>{{/each}}
     {{~else~}}<h5 class="d-flex m-0 p-1"><span class="font-weight-light">{{{subtitle}}}</span></h5>{{~/if~}}
   </div>{{/if}}
   
-  <div class="d-inline-flex flex-column align-self-center align-items-xl-end align-items-start col-12{{#if subtitle}}{{#is (length title) 'gte' 10}} col-md-6 col-xl-4{{else}} col-md-4{{/is}}{{else}} col-md-4{{/if}} ml-3 ml-xl-0">
+  <div class="d-inline-flex flex-column align-self-center align-items-xl-end align-items-start col-12{{#if subtitle}}{{#is (length title) 'gte' 10}} col-md-6 col-xl-4{{else}} col-xl-5 col-md-4{{/is}}{{else}} col-md-4{{/if}} ml-3 ml-xl-0">
     <div class="d-inline-flex flex-row">
       {{> @partial-block }}
     </div>

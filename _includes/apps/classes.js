@@ -56,9 +56,9 @@ App = function() {
       });
     },
 
-    overview: since => FN.view.generic(() => FN.overview.display(since), FN.states.overview.in, {
+    overview: (since, status) => FN.view.generic(() => FN.overview.display(since, _.isString(status) ? status.toUpperCase() : status), FN.states.overview.in, {
       error: "Classes Overview Error",
-      loading: since ? "Loading Classes" : "Loading All Classes"
+      loading: since ? "Loading Classes" : status ? `Loading ${status} Classes` : "Loading All Classes"
     }, FN.states.file.loaded),
 
     classwork: since => (ಠ_ಠ.Display.state().in(FN.states.overview.in) ? FN.overview.detach() : Promise.resolve(true))
@@ -181,7 +181,7 @@ App = function() {
         }
       };
       _.each(["Common", "Populate", "People", "Classes", "Overview", "Usage", "Engagement", "Roster",
-          "Classwork", "Submissions", "Gradesheet", "Students", "Student", "Files", "Report"
+          "Classwork", "Submissions", "Gradesheet", "Students", "Student", "Files", "Report", "Edit"
         ],
         module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
@@ -345,6 +345,12 @@ App = function() {
                 keys: ["ctrl+alt+o", "ctrl+alt+O"],
                 fn: () => FN.view.overview(),
               },
+              
+              archived: {
+                matches: /ARCHIVED/i,
+                length: 0,
+                fn: () => FN.view.overview(null, "Archived"),
+              },
 
               close: {
                 matches: /CLOSE/i,
@@ -360,6 +366,7 @@ App = function() {
                 length: 0,
                 keys: ["a", "A"],
                 scopes: [
+                  "https://www.googleapis.com/auth/classroom.topics.readonly",
                   "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
                   "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                 ],
@@ -370,8 +377,9 @@ App = function() {
                   all: {
                     matches: /ALL/i,
                     length: 0,
-                    keys: ["ctrl+alt+w", "ctrl+alt+W"],
+                    keys: ["ctrl+alt+a", "ctrl+alt+A"],
                     scopes: [
+                      "https://www.googleapis.com/auth/classroom.topics.readonly",
                       "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
                       "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                     ],
@@ -386,8 +394,7 @@ App = function() {
                     scopes: [
                       "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                     ],
-                    fn: () => FN.submissions.generate()
-                      .then(() => ಠ_ಠ.Display.state().enter(FN.states.classwork.submissions)),
+                    fn: () => FN.run.loader("submissions", FN.submissions.generate, FN.states.classwork.submissions),
 
                     routes: {
 
@@ -404,10 +411,10 @@ App = function() {
                             scopes: [
                               "https://www.googleapis.com/auth/drive.file",
                             ],
-                            fn: () => FN.gradesheet.create()
-                              .catch(e => ಠ_ಠ.Flags.error("Gradesheet Creation Error", e))
+                            fn: () => FN.gradesheet.create(FN.overview.since())
+                              .catch(e => ಠ_ಠ.Flags.error("Gradesheet Creation Error", e).negative())
                               .then(ಠ_ಠ.Main.busy(true, true, FN.events.gradesheet.progress, "Creating Gradesheet"))
-                              .then(() => ಱ.notify.failure("Not Implemented", "Gradesheet functionality not yet complete!", 5000))
+                              .then(ಱ.notify.actions.save("NOTIFY_EXPORT_GRADESHEET_SUCCESS"))
 
                           },
 
@@ -427,8 +434,8 @@ App = function() {
                                 team: true,
                                 properties: FN.gradesheet.property()
                               }).then(FN.gradesheet.update)
-                              .catch(e => e ? ಠ_ಠ.Flags.error("Gradesheet Updating Error", e) :
-                                ಠ_ಠ.Flags.log("Gradesheet Update Cancelled"))
+                              .catch(e => e ? ಠ_ಠ.Flags.error("Gradesheet Updating Error", e).negative() :
+                                ಠ_ಠ.Flags.log("Gradesheet Update Cancelled").nothing())
                               .then(ಠ_ಠ.Main.busy(true, true, FN.events.gradesheet.progress, "Updating Gradesheet"))
                               .then(() => ಱ.notify.failure("Not Implemented", "Gradesheet functionality not yet complete!", 5000))
                           },
@@ -699,6 +706,35 @@ App = function() {
 
           },
 
+          edit: {
+            
+            matches: /EDIT/i,
+            state: FN.states.overview.in,
+
+            routes: {
+
+              activate: {
+                matches: /ACTIVATE/i,
+                length: 0,
+                scopes: [
+                  "https://www.googleapis.com/auth/classroom.courses",
+                ],
+                fn: () => FN.edit.activate(FN.current.classes()),
+              },
+
+              archive: {
+                matches: /ARCHIVE/i,
+                length: 0,
+                scopes: [
+                  "https://www.googleapis.com/auth/classroom.courses",
+                ],
+                fn: () => FN.edit.archive(FN.current.classes()),
+              },
+
+            }
+
+          },
+          
           period: {
             matches: /PERIOD/i,
             state: FN.states.views,

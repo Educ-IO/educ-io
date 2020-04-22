@@ -85,6 +85,8 @@ Colours = options => {
       "LIGHTGREY": "#D3D3D3",
       "LIGHTGREEN": "#90EE90",
       "LIGHTPINK": "#FFB6C1",
+      "LIGHTHOTPINK": "#FD62FD",
+      "LIGHTRED": "#FFCCCB",
       "LIGHTSALMON": "#FFA07A",
       "LIGHTSEAGREEN": "#20B2AA",
       "LIGHTSKYBLUE": "#87CEFA",
@@ -106,7 +108,10 @@ Colours = options => {
       "MEDIUMSPRINGGREEN": "#00FA9A",
       "MEDIUMTURQUOISE": "#48D1CC",
       "MEDIUMVIOLETRED": "#C71585",
+      "MEDIUMRED": "#E06666",
+      "MEDIUMGREEN": "#6AA84F",
       "MIDNIGHTBLUE": "#191970",
+      "MEDIUMYELLOW": "#FFE599",
       "MINTCREAM": "#F5FFFA",
       "MISTYROSE": "#FFE4E1",
       "MOCCASIN": "#FFE4B5",
@@ -157,7 +162,12 @@ Colours = options => {
       "WHITE": "#FFFFFF",
       "WHITESMOKE": "#F5F5F5",
       "YELLOW": "#FFFF00",
-      "YELLOWGREEN": "#9ACD32"
+      "YELLOWGREEN": "#9ACD32",
+      "VERYLIGHTGREY": "#F3F3F3",
+      "VERYLIGHTGRAY": "#F3F3F3",
+      "VERYDARKGREY": "#525252",
+      "VERYDARKGRAY": "#525252",
+      "ALMOSTBLACK": "#3A3A3A"
     };
   /* <!-- Internal Constants --> */
 

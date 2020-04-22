@@ -1,7 +1,7 @@
 {% raw %}
 {{#> table_header}}
 <div class="btn-group btn-group-lg mb-0 mr-2 d-none d-xl-inline-flex{{#if gradesheet}} tooltip-until-classwork-submissions{{/if}}"{{#if gradesheet}} tabindex="0" data-toggle="tooltip" data-html="true" title="{{{gradesheet}}}"{{/if}}>
-  <a{{#if id}} id="{{id}}_GRADESHEET"{{/if}} data-route="overview.classwork.submissions.gradesheet.create" href="#" role="button" class="btn btn-dark btn-lg d-flex state-classwork-submissions disabled"><i class="mr-2 material-icons md-light md-24 align-self-center">ballot</i>Gradesheet</a>
+  <a{{#if id}} id="{{id}}_GRADESHEET"{{/if}} data-busy="submissions" data-route="overview.classwork.submissions.gradesheet.create" href="#" role="button" class="btn btn-dark btn-lg d-flex state-classwork-submissions disabled"><span class="loading float-left"><span class="d-block spinner"></span></span><i class="mr-2 material-icons md-light md-24 align-self-center">ballot</i>Gradesheet</a>
   <button type="button" class="btn btn-dark btn-lg dropdown-toggle dropdown-toggle-split state-classwork-submissions disabled" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <span class="sr-only">Toggle Dropdown</span>
   </button>

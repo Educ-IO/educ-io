@@ -12,7 +12,7 @@ Classwork = (options, factory) => {
       db : "classwork",
     },
     FN = {},
-    HIDDEN = ["ID", "Type", "Mode", "Fetched", "Description", "Updated", "Points", "Min", "Avg", "Max"];
+    HIDDEN = ["ID", "Type", "Mode", "Fetched", "Description", "Topic", "Updated", "Points", "Min", "Avg", "Max"];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -61,7 +61,7 @@ Classwork = (options, factory) => {
           name: options.id,
           data: options.functions.populate.classwork(classwork, options.db),
           headers: options.state.application.tabulate.headers(
-            ["ID", "Type", "Mode", "Class", "Fetched", "Title", "Description", "Updated", "Created", "Due", "Points", "Min", "Avg", "Max",
+            ["ID", "Type", "Mode", "Class", "Fetched", "Title", "Description", "Topic", "Updated", "Created", "Due", "Points", "Min", "Avg", "Max",
              {
                name: "Submissions",
                shortcut : "b",
@@ -84,7 +84,9 @@ Classwork = (options, factory) => {
   FN.display = (classrooms, since) => {
     var processed = 0;
     return Promise.all(_.map(ರ‿ರ.classrooms = classrooms, 
-      classroom => (options.functions.common.stale(classroom, "work") ? 
+      classroom => (options.functions.common.stale(classroom, "topics") ? 
+                    options.functions.classes.topics(classroom, true) : Promise.resolve(classroom.$topics))
+                             .then(() => options.functions.common.stale(classroom, "work") ? 
                     options.functions.classes.work(classroom, true) : Promise.resolve(classroom.$work)).then(work => (
             factory.Main.event(options.functions.events.load.progress, 
                                factory.Main.message(processed += 1, "class", "classes", "processed")), work))))
