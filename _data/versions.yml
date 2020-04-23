@@ -1,8 +1,8 @@
 site :
-  0.1.10c :
-    name : Classes v0.0.4e-beta
+  0.1.10d :
+    name : Classes v0.0.4f-beta
     desc : Initial Gradesheet Export
-    numeric : 0.1.10.3
+    numeric : 0.1.10.4
   0.1.10b :
     name : Classes v0.0.4d-beta
     desc : Extra Analysis View
@@ -1442,7 +1442,7 @@ blocks :
     name : Early testing version
     type : minor
 classes :
-  v0.0.4e-beta :
+  v0.0.4f-beta :
     name : Initial Gradesheet Export
     type : minor
   v0.0.4d-beta :

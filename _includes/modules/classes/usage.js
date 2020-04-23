@@ -18,7 +18,10 @@ Usage = (options, factory) => {
   
   /* <!-- Internal Functions --> */
   FN.recent = (value, classroom) => {
-    if (!classroom.$usage || classroom.$usage < value) classroom.$usage = value;
+    if (!classroom.$usage || classroom.$usage < value) {
+      classroom.$usage = value;
+       classroom.$$usage = value.format();
+    }
     return value;
   };
   

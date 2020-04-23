@@ -100,6 +100,7 @@ Populate = (options, factory) => {
       students: value.students || [],
       code: value.enrollmentCode,
       $$usage: value.$$usage, /* <!-- Usage Date/Time in ISO Format (for searching/sorting) --> */
+      $usage: value.$usage, /* <!-- Full Date/Time Object for Latest Usage --> */
       usage: value.usage || [],
       $$engagement: value.$$engagement, /* <!-- Engagement as String/Number (for searching/sorting) --> */
       engagement: value.engagement || [],
