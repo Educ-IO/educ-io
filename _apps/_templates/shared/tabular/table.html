@@ -7,7 +7,7 @@
           data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}"{{~#if ../widths}} style="width: {{#with (lookup ../widths @index)}}{{this}}{{/with}}px"{{/if~}}>
         {{#if ../links}}
         <a id="heading_{{../id}}_{{@index}}" href="#" data-targets="#collapse_{{../id}}_{{@index}}" aria-expanded="false"
-           aria-controls="collapse_{{../id}}_{{@index}}"{{#if display}} data-toggle="tooltip" data-placement="bottom" title="{{name}}"{{/if}}{{~#if export}} data-export="{{export}}"{{/if~}}{{~#if output}} data-output="{{output}}"{{/if~}}>{{val this display name}}</a>
+           aria-controls="collapse_{{../id}}_{{@index}}"{{#if display}}{{#unless (startsWith name '__')}} data-toggle="tooltip" data-placement="bottom" title="{{name}}"{{/unless}}{{/if}}{{~#if export}} data-export="{{export}}"{{/if~}}{{~#if output}} data-output="{{output}}"{{/if~}}>{{val this display name}}</a>
         {{else}}
         <a id="heading_{{../id}}_{{@index}}" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" data-placement="top" title="Click to sort by this column"{{~#if export}} data-export="{{export}}"{{/if~}}>{{val this display name}}</a>
         {{/if}}

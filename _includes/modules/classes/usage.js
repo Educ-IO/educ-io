@@ -60,10 +60,10 @@ Usage = (options, factory) => {
         factory.Flags.log(`Usage for Classroom [${id}]`, results);
     
         /* <!-- Add Student Numbers --> */
-        if (results[0] !== true) FN.members(classroom.usage, `${id}_usage_students`, "Students", classroom.$students.length, "primary");
+        if (results[0] !== true) FN.members(classroom.__usage, `${id}_usage_students`, "Students", classroom.$students.length, "primary");
     
         /* <!-- Add Guardian Numbers --> */
-        if (results[0] !== true && classroom.guardians) FN.members(classroom.usage, `${id}_usage_guardians`, "Guardians", 
+        if (results[0] !== true && classroom.guardians) FN.members(classroom.__usage, `${id}_usage_guardians`, "Guardians", 
           _.filter(classroom.$students, student => student.guardians && student.guardians.length > 0).length,
           "dark", "(with invited guardians)");
     
@@ -78,12 +78,12 @@ Usage = (options, factory) => {
           /* <!-- Teacher Announcements --> */
           if (_teacher.length > 0) {
             FN.recent(_teacher[0].timestamp, classroom);  
-            options.functions.common.badge(classroom.usage, `${id}_usage_announcement_teacher`, "Teacher Announcement", "",
+            options.functions.common.badge(classroom.__usage, `${id}_usage_announcement_teacher`, "Teacher Announcement", "",
                     _teacher[0].date, _teacher[0].badge, factory.Display.template.get("popover_announcements")(_teacher)); 
           }
 
           /* <!-- Student Announcements --> */
-          if (_student.length > 0) options.functions.common.badge(classroom.usage, `${id}_usage_announcement_student`, "Student Announcement", "",
+          if (_student.length > 0) options.functions.common.badge(classroom.__usage, `${id}_usage_announcement_student`, "Student Announcement", "",
                     _student[0].date, _student[0].badge, factory.Display.template.get("popover_announcements")(_student));
           
         }
@@ -92,7 +92,7 @@ Usage = (options, factory) => {
         if (results[2] !== true && classroom.$work && classroom.$work.length > 0 && classroom.$work[0]) {
           var _work = options.functions.common.parse(classroom.$work);
           FN.recent(_work[0].timestamp, classroom);
-          options.functions.common.badge(classroom.usage, `${id}_usage_work`, "Classwork", "", _work[0].date,
+          options.functions.common.badge(classroom.__usage, `${id}_usage_work`, "Classwork", "", _work[0].date,
                     _work[0].badge, factory.Display.template.get("popover_classworks")(_work));
         }
 
@@ -101,25 +101,25 @@ Usage = (options, factory) => {
           
           /* <!-- Add Student Invitations --> */
           if (classroom.$invitations.students && classroom.$invitations.students.length > 0)
-            FN.members(classroom.usage, `${id}_usage_invites_student`, "Invited Students", classroom.$invitations.students.length, "light", "(invited)");
+            FN.members(classroom.__usage, `${id}_usage_invites_student`, "Invited Students", classroom.$invitations.students.length, "light", "(invited)");
           
           /* <!-- Add Staff Invitations --> */
           if (classroom.$invitations.teachers && classroom.$invitations.teachers.length > 0)
-            FN.members(classroom.usage, `${id}_usage_invites_teachers`, "Invited Teachers", classroom.$invitations.teachers.length, 
+            FN.members(classroom.__usage, `${id}_usage_invites_teachers`, "Invited Teachers", classroom.$invitations.teachers.length, 
                        "light", "(invited)", "teacher");
           
         }
     
         /* <!-- Add Topics --> */
         if (results[5] !== true && classroom.$topics && classroom.$topics.length > 0)
-          options.functions.common.badge(classroom.usage, `${id}_usage_topics`, "Topics", "", classroom.$topics.length, "info", 
+          options.functions.common.badge(classroom.__usage, `${id}_usage_topics`, "Topics", "", classroom.$topics.length, "info", 
                     factory.Display.template.get("popover_topics")(options.functions.common.parse(classroom.$topics)), "");
         
         /* <!-- Update the class object, and call for a visual update --> */
         options.functions.populate.update(classroom);
       
         /* <!-- Remove the loader to inform that loading has completed --> */
-        _.each(["teachers", "students", "usage", "fetched"], 
+        _.each(["teachers", "students", "__usage", "fetched"], 
                value => targets[value].empty().append(factory.Display.template.get("cell", true)(classroom[value])));
         
       }) : false);
@@ -134,7 +134,7 @@ Usage = (options, factory) => {
     fetched: options.functions.common.column("fetched") + 1,
     students : options.functions.common.column("students") + 1,
     teachers : options.functions.common.column("teachers") + 1,
-    usage : options.functions.common.column("usage") + 1,
+    usage : options.functions.common.column("__usage") + 1,
   });
   
   FN.row = (meta, row, force, types) => {
@@ -151,7 +151,7 @@ Usage = (options, factory) => {
       students: _students,
       teachers: _teachers,
       fetched: _fetched,
-      usage: factory.Main.busy_element(force ? _usage.empty() : _usage, _event, "Gathering Usage")
+      __usage: factory.Main.busy_element(force ? _usage.empty() : _usage, _event, "Gathering Usage")
     }, types, _event) : Promise.resolve(null);
     
   };

@@ -17,7 +17,9 @@ Populate = (options, factory) => {
   var ರ‿ರ = {},
       /* <!-- State --> */
       ಱ = {
-        db: new loki("classes.db"),
+        db: new loki("classes.db", {
+          verbose: factory.Flags.verbose()
+        }),
       }; /* <!-- Persistant --> */
   /* <!-- Internal Variables --> */
   
@@ -101,7 +103,7 @@ Populate = (options, factory) => {
       code: value.enrollmentCode,
       $$usage: value.$$usage, /* <!-- Usage Date/Time in ISO Format (for searching/sorting) --> */
       $usage: value.$usage, /* <!-- Full Date/Time Object for Latest Usage --> */
-      usage: value.usage || [],
+      __usage: value.__usage || [], /* <!-- Prefixed with __ to prevent sorting / searching --> */
       $$engagement: value.$$engagement, /* <!-- Engagement as String/Number (for searching/sorting) --> */
       engagement: value.engagement || [],
       folder: value.teacherFolder ? {
@@ -202,6 +204,9 @@ Populate = (options, factory) => {
   /* <!-- Close Function --> */
   FN.close = collection => collection ? ಱ.db.removeCollection(collection) : false;
   /* <!-- Close Function --> */
+  
+  /* <!-- Debug Access --> */
+  FN.db = () => ಱ.db;
   
   /* <!-- External Visibility --> */
   return FN;

@@ -186,7 +186,8 @@ Engagement = (options, factory) => {
       }));
       
       /* <!-- Remove Students from list on inactive who have posted announcements / Exclude class from our inactive list--> */
-      if (options.announcements) _.each(_announcements, announcement => _classes = _.without(_classes, announcement.courseId.toString()));
+      if (options.announcements) _.each(_announcements, 
+            announcement => _classes = _.without(_classes, announcement.courseId.toString()));
       
       /* <!-- Return Badge Encapsulating Number of Engaged Classes --> */
         return student.$classes && student.$classes.length > 0 ? {
@@ -244,7 +245,8 @@ Engagement = (options, factory) => {
         factory.Flags.log(`Engagement for Classroom [${id}]`, results);
     
         /* <!-- Calculate Engagement --> */
-        if (results[3] && results[3] !== true && classroom.$work && classroom.$work.length > 0) {
+        if (results[3] && results[3] !== true && 
+            ((classroom.$work && classroom.$work.length > 0) || (classroom.$announcements && classroom.$announcements.length > 0))) {
           classroom.engagement =  FN.calculate.classroom(classroom);
           var _numerics = _.map(classroom.engagement, "$numeric");
           classroom.$$engagement = Math.preciseRound(_.reduce(_numerics, (total, value) => total + value, 0) / _numerics.length, 2);

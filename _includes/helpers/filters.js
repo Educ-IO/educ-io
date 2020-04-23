@@ -28,6 +28,7 @@ Filters = (options, factory) => {
     normal: {},
     inverted: {}
   };
+  const COMPLEX = ["$magic", "$regex", "$lte", "$gte", "$lt", "$gt", "$aeq", "$between"];
   /* <!-- Internal Consts --> */
 
   /* <!-- Internal Variables --> */
@@ -46,15 +47,19 @@ Filters = (options, factory) => {
   var _createFilter = filter => filter.$magic ? _createMagicFilter(filter) : filter;
   
   var _createQuery = (filters, join) => {
+    
     var _query, _join = join ? join : "$and";
     _.map(_.keys(filters), field => {
       
       var _condition;
-      if (options.complex) {
+      /* <!-- Only run complex query if we are allowed and the comparator is in the COMPLEX list above --> */
+      if (options.complex && COMPLEX.indexOf(_.keys(filters[field])[0]) >= 0) {
         var _condition_Normal = {}, _condition_Complex = {};
         _condition_Normal[field] = _createFilter(filters[field]);
-        _condition_Complex[options.complex == true ? `$$${field}` : `${options.complex}${field}`] = _createFilter(filters[field]);
-        _condition = {
+        _condition_Complex[options.complex == true ? 
+                           `$$${field.replace(/^_+/, "")}` : 
+                           `${options.complex}${field.replace(/^_+/, "")}`] = _createFilter(filters[field]);
+        _condition = field.indexOf("__") === 0 ? _condition_Complex : {
           "$or" : [_condition_Normal, _condition_Complex],
         };
       } else {
@@ -75,6 +80,7 @@ Filters = (options, factory) => {
       }
     });
     return _query;
+    
   };
 
   var _addFilter = (field, value) => {

@@ -373,7 +373,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
       _setSort(`$$${_field}`);
       
       /* <!-- Set Normal Value Sort --> */
-      _setSort(_field);
+      if (!options.complex || _field.indexOf("__") !== 0) _setSort(_field);
       
       _update(true, true, target, null, true);
     });

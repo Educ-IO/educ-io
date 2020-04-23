@@ -1,4 +1,8 @@
 site :
+  0.1.10e :
+    name : Classes v0.0.4g-beta
+    desc : Bug Fixes and Filtering Improvements
+    numeric : 0.1.10.5
   0.1.10d :
     name : Classes v0.0.4f-beta
     desc : Initial Gradesheet Export
@@ -1442,9 +1446,17 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  v0.0.4g-beta :
+    name : Bug Fixes and Filtering Improvements
+    type : minor
+    changes :
+      - Better date filtering for Classroom Usage (e.g. include/exclude recently used classrooms)
   v0.0.4f-beta :
     name : Initial Gradesheet Export
     type : minor
+    changes :
+      - Export all selected Classwork Grades to Google Sheet (with sparklines and formatting!)
+      - Load Archived Classrooms
   v0.0.4d-beta :
     name : Extra Analysis View
     type : minor

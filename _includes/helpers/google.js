@@ -1040,7 +1040,7 @@ Google_API = (options, factory) => {
           announcements: () => {
           
             var _url = `v1/courses/${encodeURIComponent(_id)}/announcements`,
-                _fields = "id,text,creationTime,updateTime,scheduledTime,alternateLink,creatorUserId",
+                _fields = "id,text,creationTime,updateTime,scheduledTime,alternateLink,creatorUserId,courseId",
                 _params = (state, fields) => STRIP_NULLS({
                   announcementStates: state || "PUBLISHED",
                   orderBy: "updateTime desc",
@@ -1136,7 +1136,7 @@ Google_API = (options, factory) => {
           topics: () => {
             
             var _url = `v1/courses/${encodeURIComponent(_id)}/topics`,
-                _fields = "topicId,name,updateTime",
+                _fields = "topicId,name,updateTime,courseId",
                 _params = fields => STRIP_NULLS({
                   fields: fields === true ? "*" : fields === false ? null : `nextPageToken,topic(${fields ? fields.join(",") : _fields})`,
                 });
@@ -1156,7 +1156,7 @@ Google_API = (options, factory) => {
           work: () => {
           
             var _url = `v1/courses/${_id}/courseWork`,
-                _fields = "id,title,creationTime,updateTime,scheduledTime,assigneeMode,dueDate,dueTime,workType,alternateLink,creatorUserId",
+                _fields = "id,title,creationTime,updateTime,scheduledTime,assigneeMode,dueDate,dueTime,workType,alternateLink,creatorUserId,courseId",
                 _params = (state, fields, order) => STRIP_NULLS({
                   courseWorkStates: state || "PUBLISHED",
                   orderBy: order || "updateTime desc",

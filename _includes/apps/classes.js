@@ -827,6 +827,9 @@ App = function() {
 
     /* <!-- Present Internal State (for debugging etc) --> */
     state: ರ‿ರ,
+    
+    /* <!-- Present Internal Modules / Functions (for debugging etc) --> */
+    fn: FN,
 
     persistent: ಱ,
 

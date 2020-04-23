@@ -40,7 +40,7 @@ Tabulate = (options, factory) => {
       set_hide: function(now, always, initially) {
         this.hide_initially = initially;
       },
-      hide_always: (v.name || v).indexOf("$") === 0 || (v.name || v).indexOf("_") === 0,
+      hide_always: (v.name || v).indexOf("$") === 0,
       hide_now: false,
       hide_initially: hidden ? hidden.indexOf ? hidden.indexOf(v.name || v) >= 0 ? true : false : _.isFunction(hidden) ? !!hidden(v.name || v) : false : false,
       field: (v.name || v).toLowerCase(),

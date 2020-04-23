@@ -65,7 +65,9 @@ Overview = (options, factory) => {
           headers: options.state.application.tabulate.headers(
             ["ID", "Calendar", "State", "Name", "Fetched", "Section", "Guardians", "Room", "Updated", "Created", "Teachers", "Students", "Code",
              {
-               name : "Usage",
+               name : "__Usage",
+               display : "Usage",
+               export : "Usage",
                shortcut : "u",
                help : factory.Display.doc.get("OVERVIEW_USAGE_HEADER", null, true)
              },
