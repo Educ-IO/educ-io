@@ -121,6 +121,7 @@ scripts:
   - extends/regex
   - extends/array
   - extends/math
+  - extends/string
 templates:
   - options
   - choose
@@ -213,6 +214,8 @@ docs:
   - classes/titles/STUDENTS_TITLE
   - classes/titles/STUDENT_SUBTITLE
   - classes/titles/REPORT_TITLE
+  - classes/titles/USAGE_LIMITED_TITLE
+  - classes/titles/USAGE_FORCE_TITLE
   - classes/headers/OVERVIEW_ENGAGEMENT_HEADER
   - classes/headers/OVERVIEW_USAGE_HEADER
   - classes/headers/CLASSWORK_SUBMISSIONS_HEADER
@@ -341,7 +344,6 @@ menus:
             auth: google
             scopes:
               - https://www.googleapis.com/auth/classroom.announcements.readonly
-              - https://www.googleapis.com/auth/classroom.topics.readonly
               - https://www.googleapis.com/auth/classroom.student-submissions.students.readonly
             shortcut: "e"
             divider: true

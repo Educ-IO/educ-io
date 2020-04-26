@@ -10,7 +10,7 @@ Main = function() {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "Dates", "App"], _helpers = ["Url", "Handlebars"], _last;
+  var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "Dates", "App"], _helpers = ["Url", "Handlebars"], _last, _scopes = [];
   /* <!-- Internal Variables --> */
 
   /* <!-- Plumbing Functions --> */
@@ -88,9 +88,9 @@ Main = function() {
   };
   /* <!-- Lightweight Hello Modules --> */
 
-  var google_Success = message => a => ಠ_ಠ.Flags.log(message, a);
+  var google_Success = message => a => (ಠ_ಠ.Flags.log(message, a), true);
 
-  var google_Failure = message => e => ಠ_ಠ.Flags.error(message, e);
+  var google_Failure = message => e => (ಠ_ಠ.Flags.error(message, e), false);
 
   var hello_Login = (force, display, scopes) => {
     ಠ_ಠ.Flags.log(`Calling Hello Login with force=${force} and display=${display} -- [SCOPES = ${scopes}]`);
@@ -131,13 +131,13 @@ Main = function() {
       login("page", true).then(success, failure); /* <!-- TODO: Handle State for Full Page redirects.... --> */
     } else if (e.error && e.error.code && e.error.code == "cancelled") {
       ಠ_ಠ.Flags.log("Cancelled Signing into Google");
+      return false;
     } else {
-      failure(e);
+      return failure(e);
     }
   };
 
-  var google_Initialise = auth => {
-    return ಠ_ಠ.Google_API({}, {
+  var google_Initialise = auth => ಠ_ಠ.Google_API({}, {
       Network: ಠ_ಠ.Network,
       Strings: ಠ_ಠ.Strings
     }).initialise(auth.access_token, auth.token_type, auth.expires, auth.authuser,
@@ -150,8 +150,9 @@ Main = function() {
             user: r.authResponse.authuser
           }) : resolve()).catch(err => reject(err));
         });
-      })(google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")))), ಠ_ಠ.Flags.key() || ಠ_ಠ.SETUP.GOOGLE_KEY, ಠ_ಠ.Flags.oauth() || ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID);
-  };
+      })(google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" ")))),
+                  ಠ_ಠ.Flags.key() || ಠ_ಠ.SETUP.GOOGLE_KEY, ಠ_ಠ.Flags.oauth() || ಠ_ಠ.SETUP.GOOGLE_CLIENT_ID,
+                  auth.scope ? decodeURIComponent(auth.scope).split(" ") : []);
 
   var google_SignIn = () => {
     var _login = google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.join(" "))),
@@ -164,26 +165,37 @@ Main = function() {
 
   var google_SignOut = () => {
     hello.logout(ಠ_ಠ.SETUP.GOOGLE_AUTH).then(function(a) {
+      /* <!-- Reset Scopes --> */
+      _scopes = [];
       /* <!-- Module Cleans --> */
       _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m].clean) ? ಠ_ಠ[m].clean.call(ಠ_ಠ) : false);
       google_Success("Signed out of Google")(a);
     }, google_Failure("Signed out of Google"));
   };
 
-  var google_Authorise = scopes => {
+  var google_Authorise = (scopes, force) => {
 
-    /* <!-- Extra Scope Authorisation --> */
-    var _login = google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.concat(scopes).join(" "))),
-      _action = "Signed into additional Google Scopes",
-      _success = a => {
-        google_Success(_action)(a);
-        if (!a.unchanged) ಠ_ಠ.Google = google_Initialise(a.authResponse);
-        return true;
-      },
-      _failure = google_Failure(_action),
-      _retry = google_Retry(_login, _success, _failure);
-    return _login(_default, false, REFRESH_RACE).then(_success, _retry);
-
+    var __scopes = force ? scopes : _.difference(scopes, _scopes);
+    
+    if (__scopes.length > 0) {
+      /* <!-- Extra Scope Authorisation --> */
+      var _login = google_Login(encodeURIComponent(ಠ_ಠ.SETUP.GOOGLE_SCOPES.concat(_.union(_scopes, __scopes)).join(" "))),
+        _action = "Signed into additional Google Scopes",
+        _success = a => {
+          /* <!-- Cache REQUESTED rather than APPROVED Scopes --> */
+          _scopes = _scopes.concat(__scopes);
+          google_Success(_action)(a);
+          if (!a.unchanged) ಠ_ಠ.Google = google_Initialise(a.authResponse);
+          return true;
+        },
+        _failure = google_Failure(_action),
+        _retry = google_Retry(_login, _success, _failure);
+      return _login(_default, false, REFRESH_RACE).then(_success, _retry).then(BUSY("Authorising", true));
+    } else {
+      ಠ_ಠ.Flags.log("All Scopes already previously requested for authorisation", __scopes);
+      return Promise.resolve(true);
+    }
+    
   };
 
   var _routeIn = () => {
@@ -195,8 +207,16 @@ Main = function() {
 
   var _route = (directive, command) => {
 
+    var _handled;
     ಠ_ಠ.Flags.log("ROUTING", [directive, command]);
-
+    
+    if ((/^@/i).test(command)) {
+      _handled = true;
+      _.isArray(command) ? 
+        command[0] = command[0].substring(1) : 
+        command = command.substring(1);
+    }
+    
     if ((/GOOGLE/i).test(directive)) {
 
       if (!ಠ_ಠ.Google) {
@@ -205,27 +225,25 @@ Main = function() {
         google_SignIn();
         _routeIn = function() {
           _routeIn = function() {
-            if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(true);
+            if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(true, _handled);
           };
-          if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(command);
+          if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(command, _handled);
         };
 
       } else if ((/\|/i).test(directive)) {
 
         /* <!-- Extra Scope Authorisation --> */
-        google_Authorise(directive.split("|")[1].split(";")).then(result => {
-          if (result === true && ಠ_ಠ.App.route) ಠ_ಠ.App.route(command);
-        });
+        google_Authorise(directive.split("|")[1].split(";")).then(result => ಠ_ಠ.App.route ? ಠ_ಠ.App.route(command, _handled, result) : null);
 
       } else {
 
-        if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(command);
+        if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(command, _handled);
 
       }
 
     } else {
 
-      if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(command);
+      if (ಠ_ಠ.App.route) return ಠ_ಠ.App.route(command, _handled);
 
     }
     
@@ -515,7 +533,7 @@ Main = function() {
           }
         })
         .then(result => result && result.retry === true ?
-          google_Authorise(SCOPE)
+          google_Authorise(SCOPE, true)
           .then(result => result === true ? _retry(false) : result) : result);
       return _retry(true);
     },

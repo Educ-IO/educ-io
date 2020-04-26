@@ -176,10 +176,11 @@ Router = function() {
       _shortcut = (route, debug, name, key) => () => (!route.state || ಠ_ಠ.Display.state().in(route.state, route.all ? false : true)) ? 
                 (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && 
                   (Promise.all([
-                    route.requires ? REQUIRES(route.requires) : Promise.resolve(),
-                    route.scopes ? SCOPES(route.scopes) : Promise.resolve()
+                    route.requires ? REQUIRES(route.requires) : Promise.resolve(true),
+                    route.scopes ? SCOPES(route.scopes) : Promise.resolve(true)
                   ]))
-                  .then(() => _execute(route, null)) : false;
+                  .then(results => route.permissive || _.every(results) ? 
+                        _execute(route, null) : (ಠ_ಠ.Flags.log(`Route ${name} is not permissive and preconditions failed:`, results), false)) : false;
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -441,7 +442,9 @@ Router = function() {
 
       })(options);
 
-      return command => {
+      /* <!-- handled_Requires = requires already handled by main --> */
+      /* <!-- handled_Scopes = scopes already handled by main --> */
+      return (command, handled_Requires, handled_Scopes)  => {
 
         var _handled = true, _executions = {};
 
@@ -499,10 +502,14 @@ Router = function() {
 
           /* <!-- Execute the route if available --> */
           _route && _route.fn ? (_executions.local = (_route.requires || _route.scopes ? Promise.all([
-                    _route.requires ? REQUIRES(_route.requires) : Promise.resolve(),
-                    _route.scopes ? SCOPES(_route.scopes) : Promise.resolve()
-                  ]).then(() => _execute(_route, command)) : _execute(_route, command))) === false ?
-                    (_handled = false) : true : (_handled = false);
+                    (handled_Requires === null || handled_Requires === undefined ? (handled_Requires = true) : false) && _route.requires ? 
+                      REQUIRES(_route.requires) : Promise.resolve(handled_Requires),
+                    (handled_Scopes === null || handled_Scopes === undefined ? (handled_Scopes = true) : false) && _route.scopes ?
+                      SCOPES(_route.scopes) : Promise.resolve(handled_Scopes)
+                  ]).then(results => _route.permissive || _.every(results) ? 
+                        _execute(_route, command) : 
+                        (ಠ_ಠ.Flags.log("Route is not permissive and preconditions failed:", results), false)) :
+                      _execute(_route, command))) === false ? (_handled = false) : true : (_handled = false);
 
           /* <!-- Log is available, so debug log --> */
           if (_handled && _debug) ಠ_ಠ.Flags.log(`Routed to: ${STR(_route)} with: ${STR(command)}`);
@@ -516,9 +523,9 @@ Router = function() {
         if (_options.route) _executions.app = _options.route(_handled, command);
 
         return Promise.all([
-            Promise.resolve(_executions.local),
-            Promise.resolve(_executions.app)
-            ]);
+          Promise.resolve(_executions.local),
+          Promise.resolve(_executions.app)
+        ]);
         
       };
 

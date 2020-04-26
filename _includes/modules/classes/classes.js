@@ -39,83 +39,92 @@ Classes = (options, factory) => {
     }).sortBy("creationTime").value().reverse())
     .then(options.functions.people.classes);
 
-  FN.announcements = (classroom, all, number, since) => (all ?
-      factory.Google.classrooms.classroom(classroom.$id || classroom.id).announcements().list(null, true, since) :
-      factory.Google.classrooms.classroom(classroom.$id || classroom.id).announcements().last(null, null, number))
-    .then(options.functions.people.posts)
-    .then(announcements => (classroom.fetched.announcements = (all ? factory.Dates.now().toISOString() : null),
-      classroom.$$fetched = classroom.fetched.announcements > classroom.$$fetched ? classroom.fetched.announcements : classroom.$$fetched,
-      announcements))
-    .then(announcements => classroom.$announcements = announcements)
-    .catch(e => (factory.Flags.error("Classroom Announcements Error", e), null));
+  FN.announcements = (classroom, all, number, since) => {
+    var _announcements = factory.Google.classrooms.classroom(classroom.$id || classroom.id).announcements();
+    return _announcements.authorised() ? (all ? _announcements.list(null, true, since) : _announcements.last(null, null, number))
+      .then(options.functions.people.posts)
+      .then(announcements => (classroom.fetched.announcements = (all ? factory.Dates.now().toISOString() : null),
+        classroom.$$fetched = classroom.fetched.announcements > classroom.$$fetched ? classroom.fetched.announcements : classroom.$$fetched,
+        announcements))
+      .then(announcements => classroom.$announcements = announcements)
+      .catch(e => (factory.Flags.error("Classroom Announcements Error", e), null)) : Promise.resolve([]);
+  };
 
-  FN.invitations = classroom => factory.Google.classrooms.classroom(classroom.$id || classroom.id).invitations().list(false)
-    .then(options.functions.people.posts)
-    .then(invitations => (classroom.fetched.invitations = factory.Dates.now().toISOString(),
-      classroom.$$fetched = classroom.fetched.invitations > classroom.$$fetched ? classroom.fetched.invitations : classroom.$$fetched,
-      invitations))
-    .then(invitations => classroom.$invitations = {
-      owners: _.filter(invitations, invitation => invitation && invitation.role == "OWNER"),
-      students: _.filter(invitations, invitation => invitation && invitation.role == "STUDENT"),
-      teachers: _.filter(invitations, invitation => invitation && invitation.role == "TEACHER")
-    })
-    .catch(e => (factory.Flags.error("Classroom Invitations Error", e), null));
+  FN.invitations = classroom => {
+    var _invitations = factory.Google.classrooms.classroom(classroom.$id || classroom.id).invitations();
+    return _invitations.authorised() ? _invitations.list(false)
+      .then(options.functions.people.posts)
+      .then(invitations => (classroom.fetched.invitations = factory.Dates.now().toISOString(),
+        classroom.$$fetched = classroom.fetched.invitations > classroom.$$fetched ? classroom.fetched.invitations : classroom.$$fetched,
+        invitations))
+      .then(invitations => classroom.$invitations = {
+        owners: _.filter(invitations, invitation => invitation && invitation.role == "OWNER"),
+        students: _.filter(invitations, invitation => invitation && invitation.role == "STUDENT"),
+        teachers: _.filter(invitations, invitation => invitation && invitation.role == "TEACHER")
+      })
+      .catch(e => (factory.Flags.error("Classroom Invitations Error", e), null)) : Promise.resolve([]);
+  };
 
-  FN.work = (classroom, all, number, since) => (all ?
-      factory.Google.classrooms.classroom(classroom.$id || classroom.id).work().list(null, true, since) :
-      factory.Google.classrooms.classroom(classroom.$id || classroom.id).work().last(null, null, number))
-    .then(options.functions.people.posts)
-    .then(work => {
-      var loaded = factory.Dates.now().toISOString();
-      return _.map(work, value => {
-        var _topic = value.topicId && classroom.$topics && classroom.$topics.length > 0 ?
-            _.find(classroom.$topics, topic => topic.topicId == value.topicId) : null;
-        return _.extend(value, {
-          $parent: classroom.$id,
-          $class: classroom.name,
-          $$fetched: loaded,
-          fetched: {
-            self: loaded,
-          },
-          class: {
-            text: classroom.name,
-            title: classroom.id.title,
-            url: classroom.id.url,
-          },
-          $topic: _topic ? _topic.name : "",
-          topic: _topic ? {
-            id: _topic.topicId,
-            text: _topic.name,
-          } : "",
+  FN.work = (classroom, all, number, since) => {
+    var _work = factory.Google.classrooms.classroom(classroom.$id || classroom.id).work();
+    return _work.authorised() ? (all ? _work.list(null, true, since) : _work.last(null, null, number))
+      .then(options.functions.people.posts)
+      .then(work => {
+        var loaded = factory.Dates.now().toISOString();
+        return _.map(work, value => {
+          var _topic = value.topicId && classroom.$topics && classroom.$topics.length > 0 ?
+              _.find(classroom.$topics, topic => topic.topicId == value.topicId) : null;
+          return _.extend(value, {
+            $parent: classroom.$id,
+            $class: classroom.name,
+            $$fetched: loaded,
+            fetched: {
+              self: loaded,
+            },
+            class: {
+              text: classroom.name,
+              title: classroom.id.title,
+              url: classroom.id.url,
+            },
+            $topic: _topic ? _topic.name : "",
+            topic: _topic ? {
+              id: _topic.topicId,
+              text: _topic.name,
+            } : "",
+          });
         });
-      });
-    })
-    .then(work => (classroom.fetched.work = (all ? factory.Dates.now().toISOString() : null),
-      classroom.$$fetched = classroom.fetched.work > classroom.$$fetched ? classroom.fetched.work : classroom.$$fetched,
-      work))
-    .then(work => classroom.$work = work)
-    .catch(e => (factory.Flags.error("Classroom Work Error", e), null));
+      })
+      .then(work => (classroom.fetched.work = (all ? factory.Dates.now().toISOString() : null),
+        classroom.$$fetched = classroom.fetched.work > classroom.$$fetched ? classroom.fetched.work : classroom.$$fetched,
+        work))
+      .then(work => classroom.$work = work)
+      .catch(e => (factory.Flags.error("Classroom Work Error", e), null)) : Promise.resolve([]);                             
+  };
 
-  FN.submissions = (classroom, work, all, number) => (all ?
-      factory.Google.classrooms.classroom(classroom.$id || classroom.id).submissions(work.$id || work.id).list(null, null, true) :
-      factory.Google.classrooms.classroom(classroom.$id || classroom.id).submissions(work.$id || work.id).last(null, null, null, number))
-    .then(options.functions.people.submissions)
-    .then(submissions => (work.fetched.submissions = (all ? factory.Dates.now().toISOString() : null),
-      work.$$fetched = work.fetched.submissions > work.$$fetched ? work.fetched.submissions : work.$$fetched,
-      submissions))
-    .then(submissions => _.chain(submissions).sortBy("updateTime").value().reverse())
-    .then(submissions => work.$submissions = submissions)
-    .catch(e => (factory.Flags.error("Classwork Submissions Error", e), null));
+  FN.submissions = (classroom, work, all, number) => {
+    var _submissions = factory.Google.classrooms.classroom(classroom.$id || classroom.id).submissions(work.$id || work.id);
+    return _submissions.authorised() ? (all ?
+        _submissions.list(null, null, true) :
+        _submissions.last(null, null, null, number))
+      .then(options.functions.people.submissions)
+      .then(submissions => (work.fetched.submissions = (all ? factory.Dates.now().toISOString() : null),
+        work.$$fetched = work.fetched.submissions > work.$$fetched ? work.fetched.submissions : work.$$fetched,
+        submissions))
+      .then(submissions => _.chain(submissions).sortBy("updateTime").value().reverse())
+      .then(submissions => work.$submissions = submissions)
+      .catch(e => (factory.Flags.error("Classwork Submissions Error", e), null)) : Promise.resolve([]);
+  };
 
-  FN.topics = (classroom, all, number) => (all ?
-      factory.Google.classrooms.classroom(classroom.$id || classroom.id).topics().list(true) :
-      factory.Google.classrooms.classroom(classroom.$id || classroom.id).topics().last(null, number))
-    .then(topics => (classroom.fetched.topics = (all ? factory.Dates.now().toISOString() : null),
-      classroom.$$fetched = classroom.fetched.topics > classroom.$$fetched ? classroom.fetched.topics : classroom.$$fetched,
-      topics))
-    .then(topics => _.chain(topics).sortBy("updateTime").value().reverse())
-    .then(topics => classroom.$topics = topics)
-    .catch(e => (factory.Flags.error("Classroom Topics Error", e), null));
+  FN.topics = (classroom, all, number) => {
+    var _topics = factory.Google.classrooms.classroom(classroom.$id || classroom.id).topics();
+    return _topics.authorised() ? (all ? _topics.list(true) : _topics.last(null, number))
+      .then(topics => (classroom.fetched.topics = (all ? factory.Dates.now().toISOString() : null),
+        classroom.$$fetched = classroom.fetched.topics > classroom.$$fetched ? classroom.fetched.topics : classroom.$$fetched,
+        topics))
+      .then(topics => _.chain(topics).sortBy("updateTime").value().reverse())
+      .then(topics => classroom.$topics = topics)
+      .catch(e => (factory.Flags.error("Classroom Topics Error", e), null)) : Promise.resolve([]);
+  };
   /* <!-- Public Functions --> */
 
   /* <!-- Initial Calls --> */

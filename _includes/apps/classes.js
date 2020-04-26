@@ -370,6 +370,7 @@ App = function() {
                   "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
                   "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                 ],
+                permissive: true,
                 fn: () => FN.view.classwork(FN.overview.since()),
 
                 routes: {
@@ -383,9 +384,21 @@ App = function() {
                       "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
                       "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                     ],
+                    permissive: true,
                     fn: () => FN.view.classwork(),
                   },
 
+                  limited: {
+                    matches: /LIMITED/i,
+                    length: 0,
+                    keys: ["shift+ctrl+alt+a", "shift+ctrl+alt+A"],
+                    scopes: [
+                      "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
+                      "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
+                    ],
+                    fn: () => FN.view.classwork(),
+                  },
+                  
                   submissions: {
                     matches: /SUBMISSIONS/i,
                     state: FN.states.classwork.in,
@@ -412,10 +425,10 @@ App = function() {
                               "https://www.googleapis.com/auth/drive.file",
                             ],
                             fn: () => FN.gradesheet.create(FN.overview.since())
-                              .catch(e => ಠ_ಠ.Flags.error("Gradesheet Creation Error", e).negative())
-                              .then(ಠ_ಠ.Main.busy(true, true, FN.events.gradesheet.progress, "Creating Gradesheet"))
-                              .then(ಱ.notify.actions.save("NOTIFY_EXPORT_GRADESHEET_SUCCESS"))
-
+                                .catch(e => ಠ_ಠ.Flags.error("Gradesheet Creation Error", e).negative())
+                                .then(ಠ_ಠ.Main.busy(true, true, FN.events.gradesheet.progress, "Creating Gradesheet"))
+                                .then(ಱ.notify.actions.save("NOTIFY_EXPORT_GRADESHEET_SUCCESS"))
+                            
                           },
 
                           update: {
@@ -463,6 +476,7 @@ App = function() {
                   "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
                   "https://www.googleapis.com/auth/classroom.guardianlinks.students.readonly",
                 ],
+                permissive: true,
                 fn: () => FN.run.loader("usage", FN.usage.generate, FN.states.overview.usage),
 
                 routes: {
@@ -478,6 +492,19 @@ App = function() {
                       "https://www.googleapis.com/auth/classroom.guardianlinks.students.readonly",
                     ],
                     keys: ["ctrl+alt+u", "ctrl+alt+U"],
+                    permissive: true,
+                    fn: () => FN.run.loader("usage", () => FN.usage.generate(true), FN.states.overview.usage),
+                  },
+                  
+                  limited: {
+                    matches: /LIMITED/i,
+                    length: 0,
+                    requires: "d3",
+                    scopes: [
+                      "https://www.googleapis.com/auth/classroom.announcements.readonly",
+                      "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
+                    ],
+                    keys: ["shift+ctrl+alt+u", "shift+ctrl+alt+U"],
                     fn: () => FN.run.loader("usage", () => FN.usage.generate(true), FN.states.overview.usage),
                   },
 
@@ -511,6 +538,7 @@ App = function() {
                   },
 
                 }
+                
               },
 
               report: {
@@ -785,6 +813,7 @@ App = function() {
               load: {
                 matches: /LOAD/i,
                 length: 0,
+                keys: ["l", "L"],
                 scopes: [
                   "https://www.googleapis.com/auth/drive.file",
                 ],

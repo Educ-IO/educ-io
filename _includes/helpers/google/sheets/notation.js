@@ -20,6 +20,8 @@ Google_Sheets_Notation = () => {
   /* <!-- Internal Functions --> */
   var _split = (notation, reference) => reference.replace(notation, "$1,$2").split(",");
 
+  var _sheet = name => name ? `'${name.replace(/'/g, "''")}'` : name;
+  
   var _convertR1C1 = reference => {
     var _match = NOTATIONS.R1.test(reference) ? NOTATIONS.R1 : NOTATIONS.C1.test(reference) ? NOTATIONS.C1 : NOTATIONS.R1C1,
       _parts = _split(_match, reference),
@@ -63,9 +65,9 @@ Google_Sheets_Notation = () => {
       return reference;
     };
   
-  var _grid = (start_Row, end_Row, start_Col, end_Col, zero) => {
+  var _grid = (start_Row, end_Row, start_Col, end_Col, zero, sheet) => {
     var i = zero ? 1 : 0;
-    return _range(`R${start_Row + i}C${start_Col + i}:R${end_Row + i}C${end_Col + i}`, _convertR1C1);
+    return `${sheet ? `${_sheet(sheet)}!` : ""}${_range(`R${start_Row + i}C${start_Col + i}:R${end_Row + i}C${end_Col + i}`, _convertR1C1)}`;
   };
   
   var _gridA1 = (reference, zero) => {
@@ -109,8 +111,10 @@ Google_Sheets_Notation = () => {
     
     columnA1: reference => NOTATIONS.A1.test(reference) ? _convertA1(reference, null, true) : reference,
     
-    convertR1C1: reference => NOTATIONS.R1C1.test(reference) || NOTATIONS.R1.test(reference) || NOTATIONS.C1.test(reference) ? _convertR1C1(reference) : reference
+    convertR1C1: reference => NOTATIONS.R1C1.test(reference) || NOTATIONS.R1.test(reference) || NOTATIONS.C1.test(reference) ? _convertR1C1(reference) : reference,
 
+    sheet: _sheet
+    
   };
   /* <!-- External Visibility --> */
 };

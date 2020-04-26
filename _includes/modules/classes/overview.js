@@ -55,6 +55,8 @@ Overview = (options, factory) => {
         }) : null,
         students: factory.Display.doc.get("STUDENTS_TITLE"),
         report: factory.Display.doc.get("REPORT_TITLE"),
+        limited: factory.Display.doc.get("USAGE_LIMITED_TITLE"),
+        force: factory.Display.doc.get("USAGE_FORCE_TITLE")
       }).trim()
     }),
     

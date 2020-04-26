@@ -28,7 +28,7 @@ People = (options, factory) => {
   
   FN.guardian = key => ರ‿ರ.guardians[key] !== undefined ? 
     Promise.resolve(ರ‿ರ.guardians[key]) : 
-    (ರ‿ರ.guardians[key] = factory.Google.classrooms.guardians(key)
+    (ರ‿ರ.guardians[key] = factory.Google.classrooms.guardians(key).list()
       .catch(() => null)
       .then(guardians => guardians && guardians.length > 0 && guardians[0] ? guardians : null));
   
@@ -81,9 +81,9 @@ People = (options, factory) => {
   
   FN.guardians = students => {
     var _students = _.isArray(students) ? students : [students];
-    return Promise.all(_.map(_.chain(_students).pluck("userId").compact().uniq().value(), student => FN.guardian(student)
+    return factory.Google.classrooms.guardians().authorised() ? Promise.all(_.map(_.chain(_students).pluck("userId").compact().uniq().value(), student => FN.guardian(student)
       .then(guardians => guardians ? _.chain(_students).filter(value => value.userId == student).each(value => value.guardians = guardians) : false)))
-      .then(() => students);
+      .then(() => students) : Promise.resolve(students);
   };
   
   FN.teachers = classrooms => {

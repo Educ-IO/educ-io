@@ -18,7 +18,29 @@ Gradesheet = (options, factory) => {
   const SCHEMAS = [
     {
       key: "CLASSES_SCHEMA_VERSION",
-      value : 1
+      value : 1,
+      keys: {
+        classroom : "CLASSROOM",
+        classwork : "CLASSWORK",
+        topic : "TOPIC",
+        student : "STUDENT",
+      },
+      values : {
+        classwork : (classroom, classwork) => `${classroom.$id}_${classwork.$id}`
+      }
+    },
+    {
+      key: "CLASSES_SCHEMA_VERSION",
+      value : 2,
+      keys: {
+        classroom : "C",
+        classwork : "W",
+        topic : "T",
+        student : "S",
+      },
+      values : {
+        classwork : (classroom, classwork) => `${classroom.$id}_${classwork.$id}`
+      }
     }
   ];
   /* <!-- Internal Constants --> */
@@ -28,13 +50,17 @@ Gradesheet = (options, factory) => {
   /* <!-- Internal Options --> */
 
   /* <!-- Internal Variables --> */
+  var _schema;
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  FN.titles = since => ({
-    name: `Classes | Gradesheet${since ? ` [${factory.Dates.parse(since).format(options.format)}]` : ""}`,
-    tab: `Grades | ${factory.Dates.now().format(options.format)}`
-  });
+  FN.titles = {
+    
+    name : since => `Classes | Gradesheet${since ? ` [${factory.Dates.parse(since).format(options.format)}]` : ""}`,
+    
+    tab : number => `Grades | ${factory.Dates.now().format(options.format)}${number ? ` | ${number}` : ""}`
+    
+  };
   /* <!-- Internal Functions --> */
 
   /* <!-- Row Functions --> */
@@ -74,6 +100,17 @@ Gradesheet = (options, factory) => {
   /* <!-- Sheet Functions --> */
   FN.sheet = {
 
+    create : (name, tab) => factory.Google.sheets.create(name, tab, null, [_.pick(_schema, "key", "value")])
+      .then(sheet => ({
+        sheet: sheet,
+        helpers: FN.helpers(sheet.sheets[0].properties.sheetId),
+      })),
+    
+    add : (id, tab, sheet) => factory.Google.sheets.tab(id, sheet, tab).then(sheet => ({
+        sheet: sheet,
+        helpers: FN.helpers(sheet.sheets[sheet.sheets.length - 1].properties.sheetId),
+      })),
+    
     update: (value, grid, values, input) => factory.Google.sheets.update(value.sheet.spreadsheetId, grid, values, input)
       .then(response => {
         factory.Flags.log(`Updating Values for Sheet: ${value.sheet.spreadsheetId}`, response);
@@ -88,6 +125,12 @@ Gradesheet = (options, factory) => {
         return value;
       }) : Promise.resolve(value),
 
+    values: (value, range, all) => factory.Google.sheets.get(value.sheet.spreadsheetId, all, range)
+      .then(response => {
+        factory.Flags.log(`Values for Sheet: ${value.sheet.spreadsheetId}`, response);
+        value.response = response;
+        return value;
+      })
   };
   /* <!-- Sheet Functions --> */
 
@@ -116,7 +159,7 @@ Gradesheet = (options, factory) => {
   FN.resize = (value, sheet) => FN.sheet.batch(value, _.reduce(sheet.data[0].columnMetadata, (memo, column, index) => {
 
     /* <!-- Only Process Classwork Columns --> */
-    if (column.developerMetadata && _.find(column.developerMetadata, meta => meta.metadataKey == "CLASSWORK") && memo.headers[2].values[index].formattedValue) {
+    if (column.developerMetadata && _.find(column.developerMetadata, meta => meta.metadataKey == _schema.keys.classwork) && memo.headers[2].values[index].formattedValue) {
 
       var _title_Width = memo.headers[0].values[index].formattedValue ? column.pixelSize : 0,
         _topic_Width = memo.headers[1].values[index].formattedValue ? column.pixelSize : 0,
@@ -192,7 +235,7 @@ Gradesheet = (options, factory) => {
       /* <!-- Add Classroom Name or Null is the classroom is the same as the last iteration --> */
       memo.values[0].push(row.classroom.$id != memo.last.classroom ?
         (
-          memo.metadata.push(FN.metadata.columns(value.helpers, _column, "CLASSROOM", row.classroom.$id.toString())),
+          memo.metadata.push(FN.metadata.columns(value.helpers, _column, _schema.keys.classroom, row.classroom.$id.toString())),
           memo.last.classroom = row.classroom.$id,
           row.classroom.name
         ) : null);
@@ -200,13 +243,13 @@ Gradesheet = (options, factory) => {
       /* <!-- Add Topic Name or Null is the topic is the same as the last iteration --> */
       memo.values[1].push(row.classwork.topic && row.classwork.topic.id != memo.last.topic ?
         (
-          memo.metadata.push(FN.metadata.columns(value.helpers, _column, "TOPIC", row.classwork.topic.id.toString())),
+          memo.metadata.push(FN.metadata.columns(value.helpers, _column, _schema.keys.topic, row.classwork.topic.id.toString())),
           memo.last.topic = row.classwork.topic.id,
           row.classwork.$topic
         ) : null);
 
       /* <!-- Push Metadata Keys into holding arrays --> */
-      memo.metadata.push(FN.metadata.columns(value.helpers, _column, "CLASSWORK", `${row.classroom.$id}_${row.classwork.$id}`));
+      memo.metadata.push(FN.metadata.columns(value.helpers, _column, _schema.keys.classwork, _schema.values.classwork(row.classroom, row.classwork)));
 
       /* <!-- Column Indexing --> */
       if (!memo.columns[row.classroom.$id]) memo.columns[row.classroom.$id] = {};
@@ -276,7 +319,7 @@ Gradesheet = (options, factory) => {
         row: memo.row++,
         requests: [{
           "createDeveloperMetadata": value.helpers.meta.rows(memo.row - 1, memo.row).tag({
-            key: "STUDENT",
+            key: _schema.keys.student,
             value: submission.userId,
           })
         }, {
@@ -388,16 +431,13 @@ Gradesheet = (options, factory) => {
   /* <!-- General Functions --> */
 
   /* <!-- Public Functions --> */
-  FN.create = titles => factory.Google.sheets.create(titles.name, titles.tab, null, [_.last(SCHEMAS)].concat())
-    .then(sheet => ({
-      sheet: sheet,
-      helpers: FN.helpers(sheet.sheets[0].properties.sheetId),
-    }))
-    .then(value => FN.sheet.update(value, value.helpers.notation.grid(0, 5, 0, 4, true), [
+  FN.create = (name, tab, id, sheet) => (id ?  FN.sheet.add(id, tab, sheet) : FN.sheet.create(name, tab))
+    .then(value => FN.sheet.update(value, value.helpers.notation.grid(0, 5, 0, 4, true,
+      value.sheet.sheets[value.sheet.sheets.length - 1].properties.title), [
         ["Classrooms ⇨", null, null, null, null],
         ["Students ⬇", null, null, null, "Topics ➡"],
         ["ID", "Name", "Graded⬇", "Average⬇", "Classwork ➡"],
-        [null, null, "=COUNTIF(F4:4, \"<>\")", "=AVERAGEIF(D7:D, \">0\")", "Averages ➡"],
+        [null, null, "=COUNTIF(F4:4, \"<>\")", "=IFERROR(AVERAGEIF(D7:D, \">0\"),)", "Averages ➡"],
         [null, null, null, null, "Standard Deviations ➡"],
         [null, null, null, null, "Points ➡"]
       ], "USER_ENTERED")
@@ -534,30 +574,91 @@ Gradesheet = (options, factory) => {
         value.helpers.format.dimension(value.helpers.grid.rows(3, 6).dimension(20)),
 
       ])));
-  /* <!-- Public Functions --> */
-
-  /* <!-- Initial Calls --> */
-
-  /* <!-- External Visibility --> */
-  return {
-
-    create: since => FN.create(FN.titles(since))
-
-      /* <!-- Process Incoming Data to give requests / values --> */
-      .then(value => _.tap(value, value => {
-        var rows = _.sortBy(FN.rows(), "key");
-        value.classes = _.chain(rows).map(row => row.classroom.$id).uniq().value();
-        value.add = FN.process(value, rows);
-        value.students = FN.students(value, rows, value.add.data.row).students;
+  
+  FN.chunk = rows => {
+        
+        _schema = _.last(SCHEMAS);
+        
+        var _classwork =_.chain(rows).map(row => _schema.values.classwork(row.classroom, row.classwork)).uniq().value(),
+            _classrooms = _.chain(rows).map(row => row.classroom.$id.toString()).uniq().value(),
+            _topics = _.chain(rows).map(row => row.classwork.topic ? row.classwork.topic.id : "").compact().uniq().value(),
+            _students = _.chain(rows)
+              .map(row => row.classwork.$submissions ? _.pluck(row.classwork.$submissions, "userId") : [])
+              .flatten()
+              .uniq()
+              .value();
+       
+        factory.Flags.log("Gradesheet Data ID Lengths", {
+          classrooms : _classrooms.length,
+          topics : _topics.length,
+          classwork : _classwork.length,
+          students : _students.length
+        });
+        
+        var _lengths = {
+          classrooms : (key => _.reduce(_classrooms, 
+                          (memo, value) => memo + (value ? (value.length + key) : 0), 0))(_schema.keys.classroom.length) * 2,
+          topics : (key =>  +_.reduce(_topics,
+                          (memo, value) => memo + (value ? (value.length + key) : 0), 0))(_schema.keys.topic.length),
+          classwork : (key => _.reduce(_classwork, 
+                          (memo, value) => memo + (value ? (value.length + key) : 0), 0))(_schema.keys.classwork.length),
+          students : (key => _.reduce(_students,
+                          (memo, value) => memo + (value ? (value.length + key) : 0), 0))(_schema.keys.student.length),
+        };
+        
+        _lengths.total = _.chain(_lengths).values().reduce((total, value) => total + value, 0).value();
+        
+        factory.Flags.log("Anticipated Meta Data Character Lengths", _lengths);
+       
+        var _max = {
+          classwork : (27 * 26) - 5,
+          metadata : 30000 - (_schema.key.length + _schema.value.toString().length),
+        };
+        
+        if (_classwork.length > _max.classwork)
+          factory.Flags.log(`Length of Classwork Columns (${_classwork.length}) greater than max allowed (${_max.classwork})`);
+        
+        if (_lengths.total > _max.metadata)
+          factory.Flags.log(`Length of Metadata Characters (${_lengths.total}) greater than max allowed (${_max.metadata})`);
+        
+        /* <!-- Work out Approximate Chunk Sizes --> */
+        var _chunk = 1;
+    
+        if (_classwork.length > _max.classwork) {
+          
+          _chunk = Math.ceil(_classwork.length / _max.classwork);
+          var _prediction = chunk => _lengths.students + ((_lengths.classrooms + _lengths.topics + _lengths.classwork) / chunk),
+              _predicted = _prediction(_chunk);
+              
+          while (_predicted > (_max.metadata * 0.9)) _predicted = _prediction(_chunk += 1);
+          
+          factory.Flags.log(`Splitting Classwork Rows (Col Span Limit) into ${_chunk} sheet${_chunk > 1 ? "s" : ""}`);
+          
+        } else if (_lengths.total > _max.metadata) {
+          
+          _chunk = Math.ceil(_lengths.total / (_max.metadata * 0.9));
+          
+          factory.Flags.log(`Splitting Classwork Rows (Metadata Limit) into ${_chunk} sheet${_chunk > 1 ? "s" : ""}`);
+          
+        }
+    
+        return _.chunk(rows, Math.ceil(rows.length / _chunk));
+    
+      };
+  
+  FN.populate = (value, index) => Promise.resolve(_.tap(value, value => {
+        value.classes = _.chain(value.rows).map(row => row.classroom.$id).uniq().value();
+        value.add = FN.process(value, value.rows);
+        value.students = FN.students(value, value.rows, value.add.data.row).students;
       }))
 
       /* <!-- Update Header Cell Values --> */
-      .then(value => FN.sheet.update(value,
-        value.helpers.notation.grid(0, 5, value.add.first, value.add.first + value.add.length, true), value.add.values, "USER_ENTERED"))
+      .then(value => FN.sheet.update(value, value.helpers.notation.grid(0, 5, value.add.first,
+                      value.add.first + value.add.length, true, value.sheet.sheets[index].properties.title), value.add.values, "USER_ENTERED"))
 
-      /* <!-- Add Column Metadata --> */
-      .then(value => FN.sheet.batch(value, 
-                        _.map(value.classes, classroom => FN.metadata.sheet(value.helpers, "CLASSROOM", classroom.toString())).concat(value.add.metadata)))
+      /* <!-- Add Sheet Metadata --> */
+      .then(value => FN.sheet.batch(value, _.map(value.classes, classroom => FN.metadata.sheet(value.helpers,
+                       _schema.keys.classroom, classroom.toString())).concat(value.add.metadata)))
 
       /* <!-- Update Header Cell Formats --> */
       .then(value => FN.sheet.batch(value, []
@@ -604,19 +705,6 @@ Gradesheet = (options, factory) => {
           values: []
         }).values)
 
-        /* <!-- Merge Classroom Name Cells --> */
-        .concat(_.reduce(value.add.values[0], FN.merge(value, 0, 1), {
-          values: []
-        }).values)
-
-        /* <!-- Merge Topic Name Cells --> */
-        .concat(_.reduce(value.add.values[1], FN.merge(value, 1, 2), {
-          values: []
-        }).values)
-
-        /* <!-- Add Notes (as required) --> */
-        .concat(value.add.notes)
-
         /* <!-- Add Bottom Borders (to entire header rows) --> */
         .concat([
 
@@ -631,6 +719,25 @@ Gradesheet = (options, factory) => {
         ])
 
       ))
+  
+       /* <!-- Add Merges --> */
+      .then(value => FN.sheet.batch(value, []
+                                    
+        /* <!-- Merge Classroom Name Cells --> */
+        .concat(_.reduce(value.add.values[0], FN.merge(value, 0, 1), {
+          values: []
+        }).values)
+
+        /* <!-- Merge Topic Name Cells --> */
+        .concat(_.reduce(value.add.values[1], FN.merge(value, 1, 2), {
+          values: []
+        }).values)
+                                    
+      ))
+
+      /* <!-- Add Notes (as required) --> */
+      .then(value => value.add.notes && value.add.notes.length > 0 ?
+            FN.sheet.batch(value, value.add.notes) : value)
 
       /* <!-- Add student rows --> */
       .then(value => FN.sheet.batch(value, _.chain(value.students).values().pluck("requests").flatten().value()))
@@ -648,13 +755,38 @@ Gradesheet = (options, factory) => {
         value.helpers.format.cells(value.helpers.grid.range(2, 3, value.add.first, value.add.first + value.add.length), [
           value.helpers.format.align.horizontal("LEFT"),
         ])
-      ], true))
+      ]))
+  
+      .then(value => FN.sheet.values(value, 
+        `${value.helpers.notation.sheet(value.sheet.sheets[index].properties.title)}!A1:3`, true))
 
       /* <!-- Adjust Autosize to Account for Merges --> */
-      .then(value => FN.resize(value, value.response.updatedSpreadsheet.sheets[0]))
+      /* <!-- Index is Zero as we are just requesting values for a single sheet --> */
+      .then(value => FN.resize(value, value.response.sheets[0]))
 
       /* <!-- Return sheet to caller to signify success --> */
-      .then(value => value.sheet),
+      .then(value => value.sheet);
+  /* <!-- Public Functions --> */
+
+  /* <!-- Initial Calls --> */
+
+  /* <!-- External Visibility --> */
+  return {
+    
+    create: since => Promise.resolve(_.sortBy(FN.rows(), "key"))
+    
+      /* <!-- Check Sizes (will it fit into a spreadsheet, in terms of width and developer metadata) --> */
+      .then(FN.chunk)
+    
+      .then(chunks => FN.create(FN.titles.name(since), FN.titles.tab())
+            
+            .then(value => _.tap(value, value => value.rows = chunks.shift()))
+            
+            .then(value => Promise.all(chunks.length > 0 ?
+                    _.map(chunks, (rows, index) => FN.create(null, FN.titles.tab(index + 1), value.sheet.spreadsheetId, index + 1)
+                      .then(value => _.tap(value, value => value.rows = rows))
+                      .then(value => FN.populate(value, index + 1))) : [])
+                  .then(() => FN.populate(value, 0)))),
 
     property: () => _.object([options.property.name], [options.property.value]),
 

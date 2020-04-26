@@ -81,8 +81,8 @@ Google_API = (options, factory) => {
     url: "https://sheets.googleapis.com/",
     rate: 4,
     /* <!-- 100 per 100 seconds --> */
-    concurrent: 2,
-    timeout: 30000,
+    concurrent: 4,
+    timeout: 120000, /* <!-- Longer Timeout for big sheet operations! --> */
   };
   const SCRIPTS_URL = {
     name: "scripts",
@@ -155,12 +155,12 @@ Google_API = (options, factory) => {
   }, {});
   /* <!-- Network Variables --> */
 
-  /* <!-- User Variables --> */
-  var _user;
-  /* <!-- User Variables --> */
+  /* <!-- User & Scope Variables --> */
+  var _user, _scopes;
+  /* <!-- User & Scope Variables --> */
   
   /* <!-- Internal Functions --> */
-  var _init = (token, type, expires, user, update) => {
+  var _init = (token, type, expires, user, update, scopes) => {
 
     /* <!-- Check Function to ensure token validity --> */
     _check = ((e, u) => force => {
@@ -200,6 +200,9 @@ Google_API = (options, factory) => {
 
     /* <!-- Store User Number (used for thumbnail calls etc.) --> */
     _user = user;
+    
+    /* <!-- Store Scopes --> */
+    _scopes = scopes;
     
     /* <!-- Before Network Call : Request Authorisation Closure --> */
     _.each(NETWORKS, network => {
@@ -546,6 +549,15 @@ Google_API = (options, factory) => {
       `upload/drive/v3/files/${id?`${id}?newRevision=true&`:"?"}uploadType=multipart${TEAM(id, team, false)}${fields ? `&fields=${fields === true ? FIELDS : fields}`:""}`, _payload, "multipart/related; boundary=" + BOUNDARY(), null, "application/binary");
 
   };
+  
+  var _scoped = (scopes, any) => {
+    
+    if (!_scopes || _scopes.length === 0) return false;
+    var _match = scope => _.find(_scopes, value => value && value.equals ? value.equals(scope, true) : value == scope);
+    scopes = _.isArray(scopes) ? scopes : [scopes];
+    return any ? _.some(scopes, _match) : _.every(scopes, _match);
+    
+  };                                         
   /* <!-- Internal Functions --> */
 
   /* <!-- Internal Visibility --> */
@@ -554,13 +566,13 @@ Google_API = (options, factory) => {
   return {
 
     /* <!-- External Functions --> */
-    initialise: function(token, type, expires, user, update, key, client_id) {
+    initialise: function(token, type, expires, user, update, key, client_id, scopes) {
 
       /* <!-- Set the Important Constants --> */
       KEY = key, CLIENT_ID = client_id;
 
       /* <!-- Run the Initialisation --> */
-      _init(token, type, expires, user, update);
+      _init(token, type, expires, user, update, scopes);
 
       /* <!-- Return for Chaining --> */
       return this;
@@ -570,6 +582,8 @@ Google_API = (options, factory) => {
     user: () => _user,
     
     networks: () => _.map(NETWORKS, network => network.details()),
+    
+    scoped: _scoped,
 
     /* <!-- Get Repos for the current user (don't pass parameter) or a named user --> */
     me: () => _call(NETWORKS.general.get, "oauth2/v1/userinfo?alt=json"),
@@ -1013,11 +1027,27 @@ Google_API = (options, factory) => {
           fields: "id,name,verifiedTeacher",
         }),
       
-      guardians: (student, state, fields) => _list(
-        NETWORKS.classroom.get, `v1/userProfiles/${encodeURIComponent(student)}/guardianInvitations`, "guardianInvitations", [], {
-          states: state || "COMPLETE",
-          fields: `${fields && fields === true ? "*" : `nextPageToken,guardianInvitations(${fields ? fields.join(",") : "invitationId,invitedEmailAddress,state,creationTime"})`}`,
-        }),
+      guardians: student => {
+        
+        var _id = student && student.$id ? student.$id : student && student.id ? student.id : student,
+            _url = `v1/userProfiles/${encodeURIComponent(_id)}/guardianInvitations`,
+                _fields = "invitationId,invitedEmailAddress,state,creationTime",
+                _params = (state, fields) => STRIP_NULLS({
+                  states: state || "COMPLETE",
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,announcements(${fields ? fields.join(",") : _fields})`,
+                });
+        
+        return {
+          
+          authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.guardianlinks.students" :
+                                                "https://www.googleapis.com/auth/classroom.guardianlinks.students.readonly"),
+          
+          list : (state, fields) => _list(NETWORKS.classroom.get, _url, "guardianInvitations", [], _params(state, fields)),
+          
+        };
+          
+      },
       
       due: (value, or) => value.dueDate ? new Date(
             value.dueDate.year,
@@ -1049,6 +1079,10 @@ Google_API = (options, factory) => {
             
             return {
               
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.announcements" :
+                                                "https://www.googleapis.com/auth/classroom.announcements.readonly"),
+              
               last: (state, fields, number) => _call(NETWORKS.classroom.get, _url, _.extend( _params(state, fields), {
                 pageSize: number || 5
               })).then(value => value ? value.announcements : value),
@@ -1074,6 +1108,10 @@ Google_API = (options, factory) => {
             
             return {
              
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.rosters" :
+                                                "https://www.googleapis.com/auth/classroom.rosters.readonly"),
+              
               list: fields => _list(NETWORKS.classroom.get, _url, "invitations", [], _params(fields)),
             
             };
@@ -1090,6 +1128,10 @@ Google_API = (options, factory) => {
             
             return {
 
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.rosters" :
+                                                "https://www.googleapis.com/auth/classroom.rosters.readonly"),
+              
               add: (student, code) => _call(NETWORKS.classroom.post, code ? `${_url}?enrollmentCode=${encodeURIComponent(code)}`: _url,
                                {"userId": student}, "application/json"),
               
@@ -1117,6 +1159,10 @@ Google_API = (options, factory) => {
             
             return {
 
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.rosters" :
+                                                "https://www.googleapis.com/auth/classroom.rosters.readonly"),
+              
               add: teacher => _call(NETWORKS.classroom.post, _url, {"userId": teacher}, "application/json"),
               
               remove: teacher => _call(NETWORKS.classroom.delete, `${_url}/${encodeURIComponent(teacher)}`),
@@ -1134,7 +1180,7 @@ Google_API = (options, factory) => {
           },
           
           topics: () => {
-            
+              
             var _url = `v1/courses/${encodeURIComponent(_id)}/topics`,
                 _fields = "topicId,name,updateTime,courseId",
                 _params = fields => STRIP_NULLS({
@@ -1143,6 +1189,10 @@ Google_API = (options, factory) => {
             
             return {
 
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.topics" :
+                                                "https://www.googleapis.com/auth/classroom.topics.readonly"),
+              
               last: (fields, number) => _call(NETWORKS.classroom.get, _url, _.extend( _params(fields), {
                 pageSize: number || 5
               })).then(value => value ? value.topic : value),
@@ -1165,6 +1215,15 @@ Google_API = (options, factory) => {
 
             return {
 
+              authorised : editable => editable ?
+                _scoped([
+                  "https://www.googleapis.com/auth/classroom.coursework.students",
+                  "https://www.googleapis.com/auth/classroom.student-submissions.students"
+                ], true) : _scoped([
+                  "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
+                  "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly"
+                ], true),
+              
               last: (state, fields, number, order) => _call(NETWORKS.classroom.get, _url, _.extend( _params(state, fields, order), {
                 pageSize: number || 5
               })).then(value => value ? value.courseWork : value),
@@ -1191,6 +1250,10 @@ Google_API = (options, factory) => {
                 });
         
             return {
+              
+              authorised : editable => _scoped(editable ? 
+                                                "https://www.googleapis.com/auth/classroom.student-submissions.students" :
+                                                "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly"),
               
               /* <!-- STATES Enum --> */
               /* <!-- NEW	= The student has never accessed this submission. Attachments are not returned and timestamps is not set. --> */
@@ -1368,6 +1431,53 @@ Google_API = (options, factory) => {
         }));
         return _call(NETWORKS.sheets.post, "v4/spreadsheets", _data, "application/json");
       },
+      
+      /* <!-- Add a tab to an existing Spreadsheet --> */
+      tab: (spreadsheet, id, name, colour, meta) => {
+       
+        var identified = (id !== null && id !== undefined),
+            metadata = (id, meta) => meta ? _.map((_.isArray(meta) ? meta : [meta]), meta => ({
+              "createDeveloperMetadata" : {
+                "developerMetadata": {
+                  "metadataId": meta.id,
+                  "metadataKey": meta.key,
+                  "metadataValue": String(meta.value),
+                  "visibility": meta.visibility ? meta.visibility : "DOCUMENT",
+                  "location": {
+                    "sheetId" : id
+                  }
+                }
+              }
+            })) : [],
+            properties = {
+              "tabColor": colour ? colour : {
+                    "red": 0.0,
+                    "green": 0.0,
+                    "blue": 0.0
+                  }
+            };
+        
+        if (identified) properties.sheetId = id;
+        if (name) properties.title = name;
+        
+        var updates = [{
+            "addSheet" : {
+              "properties": properties
+            },
+          }];
+        
+        return _call(NETWORKS.sheets.post, `v4/spreadsheets/${spreadsheet}:batchUpdate`, {
+          "requests": identified && meta ? updates.concat(metadata(id, meta)) : updates,
+          "includeSpreadsheetInResponse": identified || !meta,
+          "responseIncludeGridData": false,
+        }, "application/json").then(sheet => !identified && meta && sheet && sheet.replies ?
+            _call(NETWORKS.sheets.post, `v4/spreadsheets/${spreadsheet}:batchUpdate`, {
+              "requests": metadata(sheet.replies[0].properties.sheetId, meta),
+              "includeSpreadsheetInResponse": true,
+              "responseIncludeGridData": false,
+            }, "application/json").then(sheet => sheet.updatedSpreadsheet) : sheet.updatedSpreadsheet);
+          
+      },
 
       get: (id, all, range) => _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}${all ?
 																`?includeGridData=true${range ? `&ranges=${encodeURIComponent(range)}` : ""}` : ""}`),
@@ -1472,11 +1582,14 @@ Google_API = (options, factory) => {
 
       },
 
-      batch: (id, updates, returnSheet, returnData) => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}:batchUpdate`, {
-        "requests": _arrayize(updates, value => !_.isArray(value)),
-        "includeSpreadsheetInResponse": returnSheet ? true : false,
-        "responseIncludeGridData": returnData ? true : false,
-      }, "application/json"),
+      batch: (id, updates, returnSheet, returnData) => Promise.all(_.map(_.chunk(updates, 400), 
+        _updates => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}:batchUpdate`, {
+          "requests": _arrayize(_updates, value => !_.isArray(value)),
+          "includeSpreadsheetInResponse": returnSheet ? true : false,
+          "responseIncludeGridData": returnData ? true : false,
+        }, "application/json")))
+        .then(results => results && results.length === 1 ? 
+              results[0] : _.tap(results[results.length - 1], result => result.replies = _.flatten(_.pluck(results, "replies")))),
 
       metadata: {
 

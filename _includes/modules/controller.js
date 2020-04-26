@@ -189,13 +189,16 @@ Controller = function() {
 
     },
 
-    load: (inputs, promise) => _load(inputs, promise)
-      .catch(e => err("LOADING INPUTS", e))
-      .then(ಠ_ಠ.Display.busy({
-        target: ಠ_ಠ.container,
-        status: "Fetching Code",
-        fn: true,
-      })),
+    load: (inputs, promise) => {
+      var _busy = ಠ_ಠ.Display ? ಠ_ಠ.Display.busy({
+          target: ಠ_ಠ.container,
+          status: "Fetching Code",
+          fn: true,
+        }) : () => true;
+      return _load(inputs, promise)
+        .catch(e => (err("LOADING INPUTS", e), false))
+        .then(result => (_busy(), result === false ? false : true));
+    },
 
     start: function() {
 

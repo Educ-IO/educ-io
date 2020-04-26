@@ -87,7 +87,18 @@ Classwork = (options, factory) => {
       classroom => (options.functions.common.stale(classroom, "topics") ? 
                     options.functions.classes.topics(classroom, true) : Promise.resolve(classroom.$topics))
                              .then(() => options.functions.common.stale(classroom, "work") ? 
-                    options.functions.classes.work(classroom, true) : Promise.resolve(classroom.$work)).then(work => (
+                    options.functions.classes.work(classroom, true) : 
+                    Promise.resolve(_.map(classroom.$work, work => {
+                      /* <!-- Populate Work Topics (we may have come from a non-topic loading route, e.g. engagement) --> */
+                      var _topic = work.topicId && classroom.$topics && classroom.$topics.length > 0 ?
+                        _.find(classroom.$topics, topic => topic.topicId == work.topicId) : null;
+                      work.$topic = _topic ? _topic.name : "";
+                      work.topic = _topic ? {
+                              id: _topic.topicId,
+                              text: _topic.name,
+                            } : "";
+                      return work;
+                    }))).then(work => (
             factory.Main.event(options.functions.events.load.progress, 
                                factory.Main.message(processed += 1, "class", "classes", "processed")), work))))
     .then(classworks => _.reduce(classworks, (memo, classwork) => _.reduce(classwork, (memo, work) => {

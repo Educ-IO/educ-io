@@ -22,93 +22,102 @@ Submissions = (options, factory) => {
       Promise.resolve(options.functions.populate.get(id, "classwork"))
     ])
     .then(data => {
+    
       var classroom = data[0],
           work = data[1];
-      return classroom && work ? (options.functions.common.stale(work, "submissions") ?
-                                    options.functions.classes.submissions(data[0], data[1], true) : Promise.resolve(work.$submissions))
-        .then(submissions => {
-          factory.Main.event(event, factory.Main.message(submissions ? submissions.length || 0 : 0, "submission", "submissions"));
-          factory.Flags.log("Classwork Submissions:", submissions);
-          work.calculated = {
-            all: [],
-            min: null,
-            avg: null,
-            max : null
-          };
-          var _all = _.reduce(submissions, (memo, submission) => {
-            if (submission.assignedGrade !== undefined || submission.draftGrade !== undefined)
-              work.calculated.all.push(submission.assignedGrade || submission.draftGrade);
-            submission.max = work.points;
-            memo[submission.state].submissions.push(submission);
-            memo[submission.state].value += 1;
-            if (submission.late) {
-              memo.LATE.value += 1;
-              memo.LATE.submissions.push(submission);
-            }
-            return memo;
-          }, {
-            NEW : {
-              key : "New",
-              value : 0,
-              badge : "light",
-              submissions : []
-            },
-            CREATED : {
-              key : "Created",
-              value : 0,
-              badge : "dark",
-              submissions : []
-            },
-            TURNED_IN : {
-              key : "Turned In",
-              value : 0,
-              badge : "primary",
-              submissions : []
-            },
-            RETURNED : {
-              key : "Returned",
-              value : 0,
-              badge : "success",
-              submissions : []
-            },
-            RECLAIMED_BY_STUDENT : {
-              key : "Reclaimed",
-              value : 0,
-              badge : "warning",
-              submissions : []
-            },
-            LATE : {
-              key : "Late",
-              value : 0,
-              badge : "danger",
-              submissions : []
-            }
-          });
+    
+      return classroom && work ? 
+        (options.functions.common.stale(work, "submissions") ?
+          options.functions.classes.submissions(data[0], data[1], true) :
+          Promise.resolve(work.$submissions))
+            .then(submissions => {
         
-          /* <!-- Calculate Grade Values --> */
-          if (work.calculated.all.length > 0) {
-            work.calculated.min = _.min(work.calculated.all);
-            work.calculated.max = _.max(work.calculated.all);
-            work.calculated.avg = Math.preciseRound(_.reduce(work.calculated.all, 
-                                                             (total, value) => total + value, 0) / work.calculated.all.length, 2);
-          }
+              /* <!-- Log & Update Loader --> */
+              factory.Main.event(event,
+                 factory.Main.message(submissions ? submissions.length || 0 : 0, "submission", "submissions"));
+              factory.Flags.log("Classwork Submissions:", submissions);
         
-          /* <!-- Add all significant data --> */
-          _.each(_all, (value, key) => value.value > 0 ? 
-            options.functions.common.badge(work.submissions, `${id}_submissions_${key.toLowerCase()}`, value.key, "",  value.value,
-            value.badge, factory.Display.template.get("popover_submissions")(options.functions.common.parse(value.submissions))) : null);
+              work.calculated = {
+                all: [],
+                min: null,
+                avg: null,
+                max : null
+              };
+        
+              var _all = _.reduce(submissions, (memo, submission) => {
+                if (submission.assignedGrade !== undefined || submission.draftGrade !== undefined)
+                  work.calculated.all.push(submission.assignedGrade || submission.draftGrade);
+                submission.max = work.points;
+                memo[submission.state].submissions.push(submission);
+                memo[submission.state].value += 1;
+                if (submission.late) {
+                  memo.LATE.value += 1;
+                  memo.LATE.submissions.push(submission);
+                }
+                return memo;
+              }, {
+                NEW : {
+                  key : "New",
+                  value : 0,
+                  badge : "light",
+                  submissions : []
+                },
+                CREATED : {
+                  key : "Created",
+                  value : 0,
+                  badge : "dark",
+                  submissions : []
+                },
+                TURNED_IN : {
+                  key : "Turned In",
+                  value : 0,
+                  badge : "primary",
+                  submissions : []
+                },
+                RETURNED : {
+                  key : "Returned",
+                  value : 0,
+                  badge : "success",
+                  submissions : []
+                },
+                RECLAIMED_BY_STUDENT : {
+                  key : "Reclaimed",
+                  value : 0,
+                  badge : "warning",
+                  submissions : []
+                },
+                LATE : {
+                  key : "Late",
+                  value : 0,
+                  badge : "danger",
+                  submissions : []
+                }
+              });
 
-          /* <!-- Update the classwork object, and call for a visual update --> */
-          options.functions.populate.update(work, "classwork");
+              /* <!-- Calculate Grade Values --> */
+              if (work.calculated.all.length > 0) {
+                work.calculated.min = _.min(work.calculated.all);
+                work.calculated.max = _.max(work.calculated.all);
+                work.calculated.avg = Math.preciseRound(
+                  _.reduce(work.calculated.all, (total, value) => total + value, 0) / work.calculated.all.length, 2);
+              }
 
-          /* <!-- Remove the loader to inform that loading has completed --> */
-          _.each(["min", "avg", "max"], 
-                 value => targets[value].empty().append(factory.Display.template.get("cell", true)(work.calculated[value])));
-        
-          _.each(["submissions", "fetched"], 
-                 value => targets[value].empty().append(factory.Display.template.get("cell", true)(work[value])));
-        
-        }) : null;
+              /* <!-- Add all significant data --> */
+              _.each(_all, (value, key) => value.value > 0 ? 
+                options.functions.common.badge(work.submissions, `${id}_submissions_${key.toLowerCase()}`, value.key, "",  value.value,
+                value.badge, factory.Display.template.get("popover_submissions")(options.functions.common.parse(value.submissions))) : null);
+
+              /* <!-- Update the classwork object, and call for a visual update --> */
+              options.functions.populate.update(work, "classwork");
+
+              /* <!-- Remove the loader to inform that loading has completed --> */
+              _.each(["min", "avg", "max"], 
+                     value => targets[value].empty().append(factory.Display.template.get("cell", true)(work.calculated[value])));
+
+              _.each(["submissions", "fetched"], 
+                     value => targets[value].empty().append(factory.Display.template.get("cell", true)(work[value])));
+
+            }) : null;
     });
   /* <!-- Internal Functions --> */
   
@@ -135,14 +144,19 @@ Submissions = (options, factory) => {
     
     var _id = row.data("id"),
         _event = `${options.functions.events.submissions.progress}-${_id}`;
+    
+    var _run = cell => FN.submissions(row.data("parent"), _id, {
+        min : _min,
+        avg : _avg,
+        max : _max,
+        fetched : _fetched,
+        submissions : cell
+      }, _event);
         
-    return _submissions && (force || _submissions.html() == "") ? FN.submissions(row.data("parent"), _id, {
-      min : _min,
-      avg : _avg,
-      max : _max,
-      fetched : _fetched,
-      submissions : factory.Main.busy_element(force ? _submissions.empty() : _submissions, _event, "Loading Submissions")
-    }, _event) : Promise.resolve(null);
+    return _submissions && (force || _submissions.html() == "") ? 
+      new Promise(resolve => _.defer(() => _run(factory.Main.busy_element(force ? 
+                    _submissions.empty() : _submissions, _event, "Loading Submissions")).then(resolve))) : 
+      Promise.resolve(null);
     
   };
   /* <!-- Public Functions --> */

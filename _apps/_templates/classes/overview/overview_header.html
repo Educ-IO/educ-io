@@ -7,6 +7,9 @@
     <span class="sr-only">Toggle Dropdown</span>
   </button>
   <div class="dropdown-menu dropdown-menu-right">
+    {{~#if limited~}}<span class="tooltip-until-overview-usage" tabindex="0" data-toggle="tooltip" data-html="true" title="{{{limited}}}">{{~/if~}}<a class="dropdown-item" href="#overview.usage.limited">Limited</a>{{~#if limited~}}</span>{{~/if~}}
+    {{~#if force~}}<span class="tooltip-until-overview-usage" tabindex="0" data-toggle="tooltip" data-html="true" title="{{{force}}}">{{~/if~}}<a class="dropdown-item" href="#overview.usage.force">Force Update</a>{{~#if force~}}</span>{{~/if~}}
+    <div class="dropdown-divider"></div>
     {{~#if report~}}<span class="tooltip-until-overview-usage" tabindex="0" data-toggle="tooltip" data-html="true" title="{{{report}}}">{{~/if~}}<a class="dropdown-item state-overview-usage disabled" data-route="overview.report" href="#">Report</a>{{~#if report~}}</span>{{~/if~}}
     <div class="dropdown-divider"></div>
     <a class="dropdown-item" href="#instructions.overview.usage">About</a>
