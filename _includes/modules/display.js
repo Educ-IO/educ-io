@@ -912,9 +912,10 @@ Display = function() {
         if (!options || !options.message) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
-        var files = [], dialog = $(_template("upload")(options));
+        var confirmed, files = [], dialog = $(_template("upload")(options));
         
-        _target(options).append(_modalise(dialog, reject));
+        _target(options).append(_modalise(dialog, 
+          () => confirmed && files && files.length > 0 ? resolve(options.single ? files[0] : files) : reject()));
           
         /* <!-- Handle Files Population --> */
         var _populate = () => {
@@ -935,8 +936,8 @@ Display = function() {
 
         /* <!-- Set Event Handlers --> */
         dialog.find(".modal-footer button.btn-primary").click(() => {
+          confirmed = true;
           _clean();
-          if (files && files.length > 0) resolve(options.single ? files[0] : files);
         });
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */

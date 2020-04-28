@@ -5,6 +5,10 @@ Gradesheet = (options, factory) => {
   /* <!-- PARAMETERS: Receives the global app context --> */
   /* <!-- REQUIRES: Global Scope: JQuery, Underscore | App Scope: Display --> */
 
+  /* <!-- TODO: Fix Merge to work in all circumstances --> */
+  /* <!-- TODO: Fix Column Borders / Backgrounds to work in all circumstances --> */
+  /* <!-- TODO: Add LIGHTERGREY background for students not enrolled in courses --> */
+  
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
       property: {
@@ -67,7 +71,7 @@ Gradesheet = (options, factory) => {
   FN.row = row => _.tap({
     classroom: options.functions.populate.get(row.classroom),
     classwork: options.functions.populate.get(row.classwork, "classwork"),
-  }, value => value.key = `${value.classroom.$$created}_${value.classroom.name}_${value.classwork.$topic || "*"}_${value.classwork.$$created}`);
+  }, value => value.key = `${value.classroom.$$created}_${value.classroom.name}_${value.classwork.$$topic || "**********"}_${value.classwork.$$created}`);
 
   FN.rows = () => _.map(options.state.session.table.table().find("tbody tr[data-id][data-parent]").toArray(), el => {
     var _el = $(el);
@@ -156,23 +160,41 @@ Gradesheet = (options, factory) => {
   };
 
   /* <!-- General Functions --> */
-  FN.resize = (value, sheet) => FN.sheet.batch(value, _.reduce(sheet.data[0].columnMetadata, (memo, column, index) => {
+  FN.resize = (value, sheet) => FN.sheet.batch(value, _.reduce(sheet.data[0].columnMetadata, (memo, column, index, all) => {
 
     /* <!-- Only Process Classwork Columns --> */
-    if (column.developerMetadata && _.find(column.developerMetadata, meta => meta.metadataKey == _schema.keys.classwork) && memo.headers[2].values[index].formattedValue) {
+    if (column.developerMetadata && 
+        _.find(column.developerMetadata, meta => meta.metadataKey == _schema.keys.classwork) &&
+        memo.headers[2].values[index].formattedValue) {
 
-      var _title_Width = memo.headers[0].values[index].formattedValue ? column.pixelSize : 0,
-        _topic_Width = memo.headers[1].values[index].formattedValue ? column.pixelSize : 0,
+      var _title_Width = memo.headers[0].values[index].formattedValue ? column.pixelSize * 0.90 : 0,
+        _topic_Width = memo.headers[1].values[index].formattedValue ? column.pixelSize * 0.90 : 0,
         _title_Merge = memo.headers[0].values[index].merge,
         _topic_Merge = memo.headers[1].values[index].merge,
         _length = memo.headers[2].values[index].formattedValue.length;
 
-      if (_title_Width && _title_Merge) _title_Width = Math.ceil(_title_Width / (_title_Merge.endColumnIndex - _title_Merge.startColumnIndex));
-      if (_topic_Width && _topic_Merge) _topic_Width = Math.ceil(_topic_Width / (_topic_Merge.endColumnIndex - _topic_Merge.startColumnIndex));
+      var _merge = (width, merge) => {
+        if (width && merge) {
+          var _length = merge.endColumnIndex - merge.startColumnIndex;
+          width = Math.ceil(width / _length);
+          _.times(_length, forward => {
+            var _col = forward === 0 ? column : all[index + forward];
+            _col.min = Math.max(_col.min || 0, width);
+          });
+        }
+      };
+      
+      _merge(_title_Width, _title_Merge);
+      _merge(_topic_Width, _topic_Merge);
 
-      /* <!-- One Line = 30 width, two lines = 50 width & three lines = 60 width --> */
-      var _width = Math.max(_length > 30 ? 60 : _length > 20 ? 50 : 30, _title_Width, _topic_Width);
-      if (_width < column.pixelSize) memo.requests.push(value.helpers.format.dimension(value.helpers.grid.columns(index, index + 1).dimension(_width)));
+      /* <!-- One Line = 30 width, two lines = 45 width & three lines = 60 width --> */
+      var _width = Math.max(_length > 30 ? 60 : _length > 20 ? 45 : 30, column.min);
+      
+      /* <1-- Cells with Topics or Titles but no merges --> */
+      if ((!_title_Merge && _title_Width) || (!_topic_Merge && _topic_Width)) 
+        _width = Math.max(_width, Math.ceil(_title_Width), Math.ceil(_topic_Width));
+      if (_width != column.pixelSize)
+        memo.requests.push(value.helpers.format.dimension(value.helpers.grid.columns(index, index + 1).dimension(_width)));
 
     }
     return memo;
@@ -186,39 +208,73 @@ Gradesheet = (options, factory) => {
     requests: [],
   }).requests);
 
-  FN.merge = (value, row_start, row_end) => (memo, heading, index, all) => {
+  FN.merge = (value, row_start, row_end, values) => (memo, heading, index, all) => {
 
     /* <!-- Merge Back to Last Value --> */
-    if (index > 0 && !all[index - 1] && (heading || index == all.length - 1))
-      memo.values.push(value.helpers.format.merge(
-        value.helpers.grid.range(row_start, row_end, value.add.first + (memo.last || 0), value.add.first + index +
-          (index == all.length - 1 && !heading ? 1 : 0))));
-    if (heading) memo.last = index;
+    if (index > 0) {
+      
+      if (
+        /* <!-- Previous Header Cell is Blank and we are not, or we are at the end and blank --> */
+        (((heading && !all[index - 1]) || (!heading && index == all.length - 1)) || 
+
+        /* <!-- Previous Row Header Cell has changed --> */
+        (values && index < values.length && values[index] && (values[index - 1] != values[index])))
+        
+      ) {
+          
+        var _start = value.add.first + (memo.last || 0),
+          _end = value.add.first + index + (index == all.length - 1 && !heading ? 1 : 0),
+          _diff = _end - _start;
+      
+        if (_diff > 1) memo.values.push(value.helpers.format.merge(
+          value.helpers.grid.range(row_start, row_end, _start, _end)));
+    
+        memo.last = index;
+      
+      } else if (heading && all[index - 1] && heading != all[index - 1]) {
+        
+        memo.last = index;   
+      
+      }
+      
+    }
+    
     return memo;
 
   };
 
-  FN.border = (value, rows, background) => (memo, heading, index, all) => {
+  FN.border = (value, rows, background, values) => (memo, heading, index, all) => {
 
+    var _background, _col = value.add.first + index;
+    
     /* <!-- Set Last Column Border for each Row --> */
     if (index == all.length - 1 || (heading != all[index + 1] && (!heading || all[index + 1]))) {
-      var _col = value.add.first + index;
 
       _.each(_.isArray(rows) ? rows : [rows],
         row => memo.values.push(value.helpers.format.update(
             value.helpers.grid.range(row.start, row.end, _col, _col + 1))
           .borders(null, null, null, value.helpers.format.border(row.style || "SOLID", row.colour || "white"))));
 
-      if (background) {
-        if (memo.background) memo.values.push(
-          value.helpers.format.cells(value.helpers.grid.range(background.start, background.end, memo.last + 1, _col + 1), [
-            value.helpers.format.background(background.colour || "lightgrey"),
-          ]));
-        memo.background = !memo.background;
-      }
-
-      if (memo.last !== undefined) memo.last = _col;
+      _background = true;
+     
     }
+    
+     if (background && (
+          _background || 
+          ((values && index < values.length - 1 && values[index + 1] && (values[index] != values[index + 1])))
+     )) {
+
+      if (memo.background) memo.values.push(
+        value.helpers.format.cells(value.helpers.grid.range(background.start, background.end, memo.last + 1, _col + 1), [
+          value.helpers.format.background(background.colour || "lightgrey"),
+      ]));
+       
+      memo.background = !memo.background;
+       
+      if (memo.last !== undefined) memo.last = _col;
+        
+    }
+    
     return memo;
 
   };
@@ -245,7 +301,7 @@ Gradesheet = (options, factory) => {
         (
           memo.metadata.push(FN.metadata.columns(value.helpers, _column, _schema.keys.topic, row.classwork.topic.id.toString())),
           memo.last.topic = row.classwork.topic.id,
-          row.classwork.$topic
+          row.classwork.$$topic
         ) : null);
 
       /* <!-- Push Metadata Keys into holding arrays --> */
@@ -261,7 +317,7 @@ Gradesheet = (options, factory) => {
         "updateCells": {
           "rows": [{
             "values": [{
-              note: `${row.classwork.title}\n\nCreated: ${row.classwork.created}${row.classwork.created != row.classwork.updated ? `\nUpdated: ${row.classwork.updated}${row.classwork.due ? `\nDue: ${row.classwork.due.toDate().toLocaleString()}` : ""}` : ""}`
+              note: `${row.classwork.title}\n\nCreated: ${row.classwork.__created}${row.classwork.__created != row.classwork.__updated ? `\nUpdated: ${row.classwork.__updated}${row.classwork.__due ? `\nDue: ${row.classwork.__due.toDate().toLocaleString()}` : ""}` : ""}`
             }]
           }],
           range: value.helpers.grid.range(2, 3, _column, _column + 1),
@@ -378,7 +434,7 @@ Gradesheet = (options, factory) => {
 
           /* <!-- Add Note --> */
           var _handedIn = _.last(_.filter(submission.submissionHistory, event => event.stateHistory && event.stateHistory.state == "TURNED_IN"));
-          _value.note = `LATE${row.classwork.due && _handedIn ? ` by ${humanizeDuration(row.classwork.due.diff(_handedIn.stateHistory.stateTimestamp), {largest: 3})}` : ""}`;
+          _value.note = `LATE${row.classwork.__due && _handedIn ? ` by ${humanizeDuration(row.classwork.__due.diff(_handedIn.stateHistory.stateTimestamp), {largest: 3})}` : ""}`;
           _fields.push("note");
 
           /* <!-- Set Background Colour --> */
@@ -681,7 +737,7 @@ Gradesheet = (options, factory) => {
           start: value.add.data.row,
           end: 1000,
           colour: "verylightgrey",
-        }), {
+        }, value.add.values[0]), {
           values: [],
           last: value.add.first,
           background: false,
@@ -729,7 +785,7 @@ Gradesheet = (options, factory) => {
         }).values)
 
         /* <!-- Merge Topic Name Cells --> */
-        .concat(_.reduce(value.add.values[1], FN.merge(value, 1, 2), {
+        .concat(_.reduce(value.add.values[1], FN.merge(value, 1, 2, value.add.values[0]), {
           values: []
         }).values)
                                     
@@ -751,10 +807,10 @@ Gradesheet = (options, factory) => {
         value.helpers.format.cells(value.helpers.grid.range(3, Math.max(1000, value.students.length + value.add.data.row), 3, 4), [
           value.helpers.format.type("PERCENT", "0.00%"),
         ]),
-        value.helpers.format.autosize(value.helpers.grid.columns(value.add.first, value.add.first + value.add.length).dimension()),
-        value.helpers.format.cells(value.helpers.grid.range(2, 3, value.add.first, value.add.first + value.add.length), [
+        /*value.helpers.format.cells(value.helpers.grid.range(2, 3, value.add.first, value.add.first + value.add.length), [
           value.helpers.format.align.horizontal("LEFT"),
-        ])
+        ]),*/
+        value.helpers.format.autosize(value.helpers.grid.columns(value.add.first, value.add.first + value.add.length).dimension()),
       ]))
   
       .then(value => FN.sheet.values(value, 

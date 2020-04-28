@@ -1,5 +1,8 @@
 site :
   0.1.10f :
+    name : Classes v0.0.4i-beta
+    desc : Gradesheet Formatting Improvements (Column spacing)
+    numeric : 0.1.10.7
     name : Classes v0.0.4h-beta
     desc : Authorisation Improvements & Larger Gradesheet Support
     numeric : 0.1.10.6
@@ -1450,6 +1453,13 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  v0.0.4i-beta :
+    name : Gradesheet Formatting Improvements (Column spacing)
+    type : minor
+    changes :
+      - Better column width handling, particularly for larger sheets
+      - Topic Filtering in Classwork view
+      - Various minor bugfixes
   v0.0.4h-beta :
     name : Authorisation Improvements & Larger Gradesheet Support
     type : minor

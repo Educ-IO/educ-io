@@ -83,6 +83,8 @@ Colours = options => {
       "LIGHTGOLDENRODYELLOW": "#FAFAD2",
       "LIGHTGRAY": "#D3D3D3",
       "LIGHTGREY": "#D3D3D3",
+      "LIGHTERGRAY": "#D9D9D9",
+      "LIGHTERGREY": "#D9D9D9",
       "LIGHTGREEN": "#90EE90",
       "LIGHTPINK": "#FFB6C1",
       "LIGHTHOTPINK": "#FD62FD",

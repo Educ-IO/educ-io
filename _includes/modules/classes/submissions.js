@@ -37,7 +37,7 @@ Submissions = (options, factory) => {
                  factory.Main.message(submissions ? submissions.length || 0 : 0, "submission", "submissions"));
               factory.Flags.log("Classwork Submissions:", submissions);
         
-              work.calculated = {
+              work.$calculated = {
                 all: [],
                 min: null,
                 avg: null,
@@ -46,7 +46,7 @@ Submissions = (options, factory) => {
         
               var _all = _.reduce(submissions, (memo, submission) => {
                 if (submission.assignedGrade !== undefined || submission.draftGrade !== undefined)
-                  work.calculated.all.push(submission.assignedGrade || submission.draftGrade);
+                  work.$calculated.all.push(submission.assignedGrade || submission.draftGrade);
                 submission.max = work.points;
                 memo[submission.state].submissions.push(submission);
                 memo[submission.state].value += 1;
@@ -95,11 +95,11 @@ Submissions = (options, factory) => {
               });
 
               /* <!-- Calculate Grade Values --> */
-              if (work.calculated.all.length > 0) {
-                work.calculated.min = _.min(work.calculated.all);
-                work.calculated.max = _.max(work.calculated.all);
-                work.calculated.avg = Math.preciseRound(
-                  _.reduce(work.calculated.all, (total, value) => total + value, 0) / work.calculated.all.length, 2);
+              if (work.$calculated.all.length > 0) {
+                work.min = work.$calculated.min = _.min(work.$calculated.all);
+                work.max = work.$calculated.max = _.max(work.$calculated.all);
+                work.avg = work.$calculated.avg = Math.preciseRound(
+                  _.reduce(work.$calculated.all, (total, value) => total + value, 0) / work.$calculated.all.length, 2);
               }
 
               /* <!-- Add all significant data --> */
@@ -111,10 +111,7 @@ Submissions = (options, factory) => {
               options.functions.populate.update(work, "classwork");
 
               /* <!-- Remove the loader to inform that loading has completed --> */
-              _.each(["min", "avg", "max"], 
-                     value => targets[value].empty().append(factory.Display.template.get("cell", true)(work.calculated[value])));
-
-              _.each(["submissions", "fetched"], 
+              _.each(["min", "avg", "max", "submissions", "fetched"], 
                      value => targets[value].empty().append(factory.Display.template.get("cell", true)(work[value])));
 
             }) : null;

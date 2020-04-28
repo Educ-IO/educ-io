@@ -57,6 +57,8 @@ Google_API = (options, factory) => {
 
   const TEAM = (id, team, start) =>
     team ? `${start ? "?" : start !== null && start !== undefined ? "&" : ""}${id !== team ? team !== true ? `teamDriveId=${team}&` : "" :""}supportsTeamDrives=true&supportsAllDrives=true` : "";
+  
+  const BATCH = idempotent => !idempotent && Promise.each ? Promise.each : Promise.all;
   /* <!-- Internal Constants --> */
 
   /* <!-- Network Constants --> */
@@ -1582,14 +1584,24 @@ Google_API = (options, factory) => {
 
       },
 
-      batch: (id, updates, returnSheet, returnData) => Promise.all(_.map(_.chunk(updates, 400), 
-        _updates => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}:batchUpdate`, {
-          "requests": _arrayize(_updates, value => !_.isArray(value)),
-          "includeSpreadsheetInResponse": returnSheet ? true : false,
-          "responseIncludeGridData": returnData ? true : false,
-        }, "application/json")))
-        .then(results => results && results.length === 1 ? 
-              results[0] : _.tap(results[results.length - 1], result => result.replies = _.flatten(_.pluck(results, "replies")))),
+      /* <!-- Setting Idempotent means batches of updates may be executed simultaneously (e.g. before each has finished) --> */
+      batch: (id, updates, returnSheet, returnData, idempotent) => {
+        var _run = _updates => () => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}:batchUpdate`, {
+            "requests": _arrayize(_updates, value => !_.isArray(value)),
+            "includeSpreadsheetInResponse": returnSheet ? true : false,
+            "responseIncludeGridData": returnData ? true : false,
+          }, "application/json"),
+            _limit = 500;
+        if (!updates) return Promise.resolve();
+        if (updates.length > _limit) {
+          var _batch = BATCH(idempotent);
+          return _batch(_.map(_.chunk(updates, 500), _run))
+            .then(results => results && results.length === 1 ? 
+                results[0] : _.tap(results[results.length - 1], result => result.replies = _.flatten(_.pluck(results, "replies"))));
+        } else {
+          return _run(updates)();
+        }
+      },
 
       metadata: {
 

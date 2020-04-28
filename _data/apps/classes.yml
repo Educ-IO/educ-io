@@ -122,6 +122,7 @@ scripts:
   - extends/array
   - extends/math
   - extends/string
+  - extends/promises
 templates:
   - options
   - choose

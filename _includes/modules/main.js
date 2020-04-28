@@ -10,7 +10,8 @@ Main = function() {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "Dates", "App"], _helpers = ["Url", "Handlebars"], _last, _scopes = [];
+  var ಠ_ಠ, _default, _modules = ["Display", "Help", "Recent", "Router", "Dates", "App"], _helpers = ["Url", "Handlebars"], _last,
+      _scopes = [], _cancelled = [];
   /* <!-- Internal Variables --> */
 
   /* <!-- Plumbing Functions --> */
@@ -131,7 +132,7 @@ Main = function() {
       login("page", true).then(success, failure); /* <!-- TODO: Handle State for Full Page redirects.... --> */
     } else if (e.error && e.error.code && e.error.code == "cancelled") {
       ಠ_ಠ.Flags.log("Cancelled Signing into Google");
-      return false;
+      return 0;
     } else {
       return failure(e);
     }
@@ -167,6 +168,7 @@ Main = function() {
     hello.logout(ಠ_ಠ.SETUP.GOOGLE_AUTH).then(function(a) {
       /* <!-- Reset Scopes --> */
       _scopes = [];
+      _cancelled = [];
       /* <!-- Module Cleans --> */
       _modules.forEach(m => ಠ_ಠ[m] && ಠ_ಠ._isF(ಠ_ಠ[m].clean) ? ಠ_ಠ[m].clean.call(ಠ_ಠ) : false);
       google_Success("Signed out of Google")(a);
@@ -189,8 +191,26 @@ Main = function() {
           return true;
         },
         _failure = google_Failure(_action),
-        _retry = google_Retry(_login, _success, _failure);
-      return _login(_default, false, REFRESH_RACE).then(_success, _retry).then(BUSY("Authorising", true));
+        _retry = google_Retry(_login, _success, _failure),
+        _check = e => {
+          var _return = _retry(e);
+          if (_return === 0) { /* <!-- Cancelled --> */
+            
+            var _confirmed = _.intersection(_cancelled, __scopes),
+                _potential = _.difference(_cancelled, __scopes);
+            
+            /* <!-- Mark confirmed ones on the list of scopes not to retry! --> */
+            _cancelled = _.difference(_cancelled, _confirmed);
+            _scopes = _scopes.concat(_confirmed);
+            
+            /* <!-- These will be confirmed next time round --> */
+            _cancelled = _cancelled.concat(_potential);
+            
+            _return = false;
+          }
+          
+        };
+      return _login(_default, false, REFRESH_RACE).then(_success, _check).then(BUSY("Authorising", true));
     } else {
       ಠ_ಠ.Flags.log("All Scopes already previously requested for authorisation", __scopes);
       return Promise.resolve(true);

@@ -172,6 +172,7 @@ globals:
   Students: true
   Student: true
   Report: true
+  Promises: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

@@ -50,7 +50,8 @@ Router = function() {
   var _initialise = () => {
 
     APP.hooks.start.push(() => {
-      _lifecycles.started = !_lifecycles.started;
+      if (_lifecycles.started) FACTORY.Flags.error("Router already Started, but Start called again");
+      _lifecycles.started = true;
       FACTORY.Flags.log("Router Start Called");
     });
     

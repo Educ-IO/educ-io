@@ -26,10 +26,10 @@ Populate = (options, factory) => {
   /* <!-- Population Functions --> */
   FN.classwork = (data, db) => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, db, {
     unique: ["$id"],
-    indices: ["$class", "$parent", "title", "$$creator"]
+    indices: ["$$class", "$parent", "title", "$$topic", "$$creator"]
   }, data, value => ({
     $id: parseInt(value.id, 10),
-    $class: value.$class,
+    $$class: value.class ? value.class.text : "", /* <!-- Class Name (for searching/sorting) --> */
     $parent: value.$parent,
     $submissions: value.$submissions || [], /* <!-- Full Response Objects --> */
     id: {
@@ -44,18 +44,18 @@ Populate = (options, factory) => {
     fetched: value.fetched || {}, /* <!-- Fetched & Populated Dates / Times --> */
     title: value.title,
     description: value.description,
-    $topic: value.$topic,
+    $$topic: value.topic ? value.topic.text : "", /* <!-- Topic Name (for searching/sorting) --> */
     topic: value.topic,
     $$updated: value.updateTime, /* <!-- Updated Date/Time in ISO Format (for searching/sorting) --> */
-    updated: value.updateTime ? factory.Dates.parse(value.updateTime).toDate().toLocaleDateString() : null,
+    __updated: value.updateTime ? factory.Dates.parse(value.updateTime).toDate().toLocaleDateString() : null,
     $$created: value.creationTime, /* <!-- Created Date/Time in ISO Format (for searching/sorting) --> */
-    created: value.creationTime ? factory.Dates.parse(value.creationTime).toDate().toLocaleDateString() : null,
+    __created: value.creationTime ? factory.Dates.parse(value.creationTime).toDate().toLocaleDateString() : null,
     $$due: value.dueDate ? factory.Dates.parse(factory.Google.classrooms.due(value, null)).toISOString() : null, 
-    due: value.dueDate ? factory.Dates.parse(factory.Google.classrooms.due(value, null)) : null,
+    __due: value.dueDate ? factory.Dates.parse(factory.Google.classrooms.due(value, null)) : null,
     points: value.maxPoints,
-    min: value.calculated ? value.calculated.min : null,
-    avg: value.calculated ? value.calculated.avg : null,
-    max: value.calculated ? value.calculated.max : null,
+    min: value.$calculated ? value.$calculated.min : value.min,
+    avg: value.$calculated ? value.$calculated.avg : value.avg,
+    max: value.$calculated ? value.$calculated.max : value.max,
     $$submissions: value.$$submissions, /* <!--  (for searching/sorting) --> */
     submissions: value.submissions || [],
     $$creator: value.creator ? value.creator.text : null, /* <!-- Creator Name (for searching/sorting) --> */

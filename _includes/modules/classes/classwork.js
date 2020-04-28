@@ -61,7 +61,20 @@ Classwork = (options, factory) => {
           name: options.id,
           data: options.functions.populate.classwork(classwork, options.db),
           headers: options.state.application.tabulate.headers(
-            ["ID", "Type", "Mode", "Class", "Fetched", "Title", "Description", "Topic", "Updated", "Created", "Due", "Points", "Min", "Avg", "Max",
+            ["ID", "Type", "Mode", "Class", "Fetched", "Title", "Description", "Topic",
+             {
+               name : "__Updated",
+               display : "Updated",
+               export : "Updated",
+             }, {
+               name : "__Created",
+               display : "Created",
+               export : "Created",
+             }, {
+               name : "__Due",
+               display : "Due",
+               export : "Due",
+             }, "Points", "Min", "Avg", "Max",
              {
                name: "Submissions",
                shortcut : "b",
@@ -92,7 +105,6 @@ Classwork = (options, factory) => {
                       /* <!-- Populate Work Topics (we may have come from a non-topic loading route, e.g. engagement) --> */
                       var _topic = work.topicId && classroom.$topics && classroom.$topics.length > 0 ?
                         _.find(classroom.$topics, topic => topic.topicId == work.topicId) : null;
-                      work.$topic = _topic ? _topic.name : "";
                       work.topic = _topic ? {
                               id: _topic.topicId,
                               text: _topic.name,

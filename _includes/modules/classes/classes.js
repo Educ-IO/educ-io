@@ -76,7 +76,6 @@ Classes = (options, factory) => {
               _.find(classroom.$topics, topic => topic.topicId == value.topicId) : null;
           return _.extend(value, {
             $parent: classroom.$id,
-            $class: classroom.name,
             $$fetched: loaded,
             fetched: {
               self: loaded,
@@ -86,7 +85,6 @@ Classes = (options, factory) => {
               title: classroom.id.title,
               url: classroom.id.url,
             },
-            $topic: _topic ? _topic.name : "",
             topic: _topic ? {
               id: _topic.topicId,
               text: _topic.name,
