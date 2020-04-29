@@ -36,7 +36,7 @@ Usage = (options, factory) => {
   
   FN.usage = (id, targets, types, event) => Promise.resolve(options.functions.populate.get(id))
     .then(classroom => classroom ? Promise.all([
-        options.functions.common.type(types, "students") ? options.functions.people.students(classroom)
+        options.functions.common.type(types, "students") ? options.functions.people.students(classroom, true)
             .then(value => (factory.Main.event(event, factory.Main.message(classroom.$students.length || 0, "student", "students")), value)) :
           Promise.resolve(true),
         options.functions.common.type(types, "announcements") ? options.functions.classes.announcements(classroom)

@@ -1,8 +1,13 @@
 site :
-  0.1.10f :
+  0.1.10h :
+    name : Classes v0.0.4j-beta
+    desc : Bug-Fix
+    numeric : 0.1.10.8
+  0.1.10g :
     name : Classes v0.0.4i-beta
     desc : Gradesheet Formatting Improvements (Column spacing)
     numeric : 0.1.10.7
+  0.1.10f :
     name : Classes v0.0.4h-beta
     desc : Authorisation Improvements & Larger Gradesheet Support
     numeric : 0.1.10.6
@@ -1453,6 +1458,11 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  v0.0.4j-beta :
+     name : Guardians Usage Bug Fix
+    type : minor
+    changes :
+      - Fixed bug with Classroom usage incorrectly showing zero for Guardians
   v0.0.4i-beta :
     name : Gradesheet Formatting Improvements (Column spacing)
     type : minor

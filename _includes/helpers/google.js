@@ -1036,7 +1036,7 @@ Google_API = (options, factory) => {
                 _fields = "invitationId,invitedEmailAddress,state,creationTime",
                 _params = (state, fields) => STRIP_NULLS({
                   states: state || "COMPLETE",
-                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,announcements(${fields ? fields.join(",") : _fields})`,
+                  fields: fields === true ? "*" : fields === false ? null : `nextPageToken,guardianInvitations(${fields ? fields.join(",") : _fields})`,
                 });
         
         return {
