@@ -1,6 +1,0 @@
-{{~#present resources}}<div class="list-group list-group-flush list-group-dark resource-list{{#unless opaque}} bg-transparent{{/unless}}">
-  {{~#if all}}{{> resource selectable=false simple=simple opaque=opaque actionable=actionable class=(which opaque "" "bg-transparent") header=true id="ALL" name="Toggle All" email="" class="text-primary"}}{{/if~}}
-  {{#each resources}}{{> resource selectable=../selectable simple=../simple opaque=../opaque actionable=../actionable condensed=../condensed class=(which ../opaque "" "bg-transparent")}}{{/each}}
-</div>{{else}}
-<div class="mx-2"><h5 class="mt-3"><i class="material-icons md-24 mr-1 text-warning">highlight_off</i><span class="font-weight-light text-muted">No Resources!</span></h5></div>
-{{/present~}}

@@ -1,6 +1,0 @@
-<h5 class="text-faded">{{title}}</h5>
-<ul class="list-group{{#if class}} {{class}}{{/if}}">
-  {{#exists folders}}<li class="list-group-item">Folders: <strong>{{folders}}</strong></li>{{/exists}}
-  {{#exists files}}<li class="list-group-item">Files: <strong>{{files}}</strong></li>{{/exists}}
-  {{#exists size}}{{#if size}}<li class="list-group-item">Total Size of Files: <strong>{{formatBytes size}}</strong></li>{{/if}}{{/exists}}
-</ul>

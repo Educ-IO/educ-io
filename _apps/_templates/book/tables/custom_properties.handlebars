@@ -1,4 +1,0 @@
-{{#each properties}}{{#if this}}<h6 class="p-0 m-md-0"><span class="custom-property badge badge-{{#is @key 'STATUS'}}{{#choose this '{"LOANED":"danger","RETURNED":"success"}' "primary"}}{{/choose}}{{else}}secondary{{/is}} mr-2 d-flex align-items-center" title="">
-  {{#if (all (is @key 'STATUS') (any (is this 'LOANED') (is this 'RETURNED')))}}<em><i class="material-icons d-flex pr-1 text-white">{{#choose this '{"LOANED":"directions_run","RETURNED":"home"}' "grade"}}{{/choose}}</i></em>{{/if}}
-  <span>{{~#unless (is @key 'STATUS')}}{{@key}}{{#is this "!==" "TRUE"}} - {{/is}}{{/unless~}}{{#is this "!==" "TRUE"}}{{this}}{{/is}}</span>
-  {{~#if ../manageable}}{{#is @key 'STATUS'}}<a role="button" class="close pl-1" aria-label="Remove" href="#remove.tag.{{../id}}" title="Remove Tag"><span aria-hidden="true">&times;</span></a>{{/is}}{{/if~}}</span></h6>{{/if}}{{/each}}

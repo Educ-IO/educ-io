@@ -1,4 +1,0 @@
-{{#each properties}}{{#if this}}<span class="custom-property badge badge-{{#is @key "Reviewed"}}light{{else}}{{#is @key "Highlight"}}bright{{else}}{{#is @key "Review"}} badge-dark{{else}}{{#choose this '{"High":"danger","Medium":"warning","Low":"success","None":"info"}' "secondary"}}{{/choose}}{{/is}}{{/is}}{{/is}} ml-lg-1 mr-1" title="">
-  <a role="button" aria-label="Search" href="#search.properties.{{encode @key}}.{{encode this}}" title="Find all events with the same Tag/Value" class="d-flex float-left pr-1"><i class="material-icons h-100 d-inline-flex" >search</i></a>
-  {{@key}}{{#is this "!==" "TRUE"}} - {{this}}{{/is}}
-  <a role="button" class="close pl-1" aria-label="Remove" href="#remove.tag.{{encode ../id}}.{{encode @key}}" title="Remove Tag"><span aria-hidden="true">&times;</span></a></span>{{/if}}{{/each}}

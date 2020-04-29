@@ -1,5 +1,0 @@
-{{~#present confirmed}}
-  {{#is confirmed true}}<i class="material-icons text-light{{#if class}} {{class}}{{else}} ml-1 mr-2 md-18{{/if}}" data-toggle="tooltip" data-html="true" title="Resource Availability has been <strong>confirmed</strong>.">check_circle</i>{{else}}<i class="material-icons text-secondary{{#if class}} {{class}}{{else}} ml-1 mr-2 md-18{{/if}}" data-toggle="tooltip" data-html="true" title="Resource Availability has <strong>NOT</strong> <em>yet</em> been confirmed.">help</i>{{/is}}
-{{else}}
-  {{~#if (all (present declined) (is responseStatus "declined"))}}<i class="material-icons text-danger{{#if class}} {{class}}{{else}} ml-1 mr-2 md-18{{/if}}" data-toggle="tooltip" data-html="true" title="Resource is <strong>NOT</strong> AVAILABLE">error</i>{{/if~}}
-{{/present~}}

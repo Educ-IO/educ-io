@@ -1,7 +1,0 @@
-{{#> dialog class="modal-lg" tabindex=1}}
-  {{#if shortcuts}}{{> populate_buttons shortcuts}}{{/if}}
-  <form>
-    {{> field_numeric id=(concat id "_" "hide") field="Hide" title="Hide Rows" suffix="Rows" help="Number of rows to hide (before headers)" icon="remove_circle" state=hide}}
-    {{> field_numeric id=(concat id "_" "headers") field="Count" title="Headers" suffix="Rows" help="Number of rows to use as headers" icon="list" state=count}}
-  </form>
-{{/dialog}}
