@@ -1,0 +1,25 @@
+<div {{#if id}}id="{{id}}" {{/if}}class="container-fluid">
+  <div class="row">
+    {{#each columns}}
+    <div class="{{#if sizes}}{{#each sizes}} col-{{#is @key '!=' 'xs'}}{{@key}}-{{/is}}{{this}}{{/each}}{{/if}}">
+      <div class="{{#if class}}{{ class}} {{/if}}py-2 py-lg-4 px-4{{#is @index '>' 0}} border-left border-bottom bg-light{{/is}}">
+        <div class="row">
+          <div class="col-lg-4 col-xl-3">
+            <div class="btn-group" role="group">
+              <button id="{{#if id}}{{id}}_{{else}}{{#if ../id}}{{../id}}_{{/if}}{{@key}}{{/if}}_menu" type="button" class="btn btn-lg btn-action mb-3 mb-lg-2 mr-lg-3 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{text}}</button>
+              <div class="dropdown-menu" aria-labelledby="{{#if id}}{{id}}_{{else}}{{#if ../id}}{{../id}}_{{/if}}{{@key}}{{/if}}_menu">
+                {{{ menu }}}
+              </div>
+            </div>
+          </div>
+          {{#if recent}}<div id="{{#if id}}{{id}}_{{else}}{{#if ../id}}{{../id}}_{{/if}}{{@key}}{{/if}}_recent" class="{{#if recent.sizes}}{{#each recent.sizes}} col-{{#is @key '!=' 'xs'}}{{@key}}-{{/is}}{{this}}{{/each}}{{/if}}"></div>{{/if}}
+        </div>
+        {{#if details}}<hr />{{{ details }}}{{/if}}
+      </div>
+      {{#if panel}}<div {{#if panel.id}}id="{{panel.id}}" {{else}}{{#if ../id}}id="{{../id}}_{{@key}}_panel" {{/if}}{{/if}}class="{{#unless panel.visible}}d-none{{/unless}}{{#if panel.class}} {{panel.class}}{{/if}}">
+      {{#if panel.frame}}<iframe {{#if panel.frame.id}}id="{{panel.frame.id}}" {{else}}{{#if ../id}}id="{{../id}}_{{@key}}_frame" {{/if}}{{/if}}class="border border-primary rounded scroller{{#if panel.frame.class}} {{ panel.frame.class}}{{/if}}"></iframe>{{/if}}
+      </div>{{/if}}
+    </div>
+    {{/each}}
+  </div>
+</div>

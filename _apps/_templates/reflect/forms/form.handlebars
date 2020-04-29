@@ -1,0 +1,148 @@
+<div class="d-flex justify-content-md-center">
+
+	<div class="mt-2 mt-lg-4 pb-4 col-12 col-lg-10 col-xl-8 form-container">
+		
+		{{#if header}}{{{header}}}{{/if}}
+		
+		{{#if description}}<!-- {{description}} -->{{/if}}
+    
+    {{#if title}}<div class="d-flex mb-2 mb-xl-3">
+      
+    	{{#if (any editable completed)}}<div class="d-inline-flex mr-1">
+      	<i class="material-icons md-24 text-primary align-self-center"
+           {{#if completed}} data-toggle="tooltip" data-html="true" title="Report is <strong>completed</strong> and <strong>locked</strong> against editing"{{/if}}>{{#if completed}}lock{{else}}lock_open{{/if}}</i>
+      </div>{{/if}}
+      {{#if permissions}}<div class="d-inline-flex mr-1">
+      	<i class="material-icons md-18 text-light border border-light rounded bg-dark o-25 p-1 align-self-center"
+           data-toggle="tooltip" data-html="true" title='{{#each permissions}}{{> permission}}{{/each}}'>group</i>
+      </div>{{/if}}
+    	<h4 id="{{id}}_title" class="p-0 m-0">{{title}}</h4>
+      <a href="#" class="d-inline-flex text-decoration-none ml-auto"
+         data-toggle="expand" data-targets=".form-container">
+        <i class="material-icons md-24 align-self-center" data-toggle="tooltip" data-html="true" title="<strong>Expand</strong> / <strong>Contract</strong> to Fill Screen Width">panorama_horizontal</i>
+      </a>
+    	<a href="#" class="d-inline-flex text-decoration-none ml-1" data-toggle="collapse"
+         data-target=".group-collapse" aria-expanded="false" aria-controls=".group-collapse">
+        <i class="material-icons md-24 align-self-center" data-toggle="tooltip" data-html="true" title="<strong>Show</strong> / <strong>Hide</strong> all Form Groups below">vertical_align_center</i>
+      </a>
+    </div>{{/if}}
+		
+    {{~#if editable}}<div class="last-updated{{~#unless updated}} d-none{{/unless}}">
+      <h6 class="mb-{{~#if (any owner respondent)}}1{{else}}0{{/if}} text-muted small"><i class="material-icons md-1 align-self-center mr-1 text-background">update</i><strong>Last Updated</strong>: <span class="text-secondary o-75 text">{{#if updated}}{{updated}}{{/if}}</span></h6>
+    </div>{{/if~}}
+    
+    {{~#if (any owner respondent)}}<div class="d-flex flex-column flex-xl-row justify-content-between">
+      {{#if owner}}<h6 class="mb-0 text-muted small"><i class="material-icons md-1 align-self-center mr-1 text-background">dashboard</i><strong>Form</strong> owned by: <span class="text-primary">{{owner}}</span></h6>{{/if}}
+      {{#if respondent}}<h6 class="mb-0 text-muted small"><i class="material-icons md-1 align-self-center mr-1 text-background">assignment</i><strong>Report</strong> owned by: <span class="text-primary">{{respondent}}</span></h6>{{/if}}
+    </div>{{/if~}}
+    
+    {{#if headers}}
+    <div id="header__headings"
+         class="d-flex flex-row flex-wrap justify-content-start bg-action-light py-1 pl-2 mt-2 rounded">
+      {{#each headers}}<span class="badge badge-action p-1 p-lg-2 px-lg-3 mr-2 my-1">
+      	<a class="text-uppercase lead font-weight-light smooth-scroll"
+        	href="#header_{{this}}">{{replace this "_" ""}}</a>
+      </span>{{/each}}
+      {{#each footers}}<span class="badge badge-action-dark p-1 p-lg-2 px-lg-3 mr-2 my-1">
+      	<a class="text-uppercase lead font-weight-light smooth-scroll"
+        	href="#header_{{this}}">{{replace this "_" ""}}</a>
+      </span>{{/each}}
+    </div>
+    {{/if}}
+    
+		<form id="{{id}}" class="form-horizontal needs-validation" role="form"
+          {{#if name}} data-name="{{name}}"{{/if}}
+          {{#if title}} aria-labelledby="{{id}}_title"{{/if}} novalidate>
+			
+			<fieldset>
+			
+				{{#if fields}}{{{fields}}}{{/if}}
+			
+			</fieldset>
+			
+      
+			<!-- Submission / Save / Progress Area -->
+			{{#if (any help editable signable)}}<div class="card mx-1 my-1 mx-md-0">
+
+        {{#> heading target="_Actions_" name="Actions" }}
+        
+          <div class="form-group">
+            <div class="col-9 col-md-11 d-flex flex-column flex-md-row flex-wrap justify-content-start py-1 pl-2">
+
+              <!-- Save Button Group -->
+              {{#unless completed}}{{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
+              <button type="submit" id="{{id}}_SAVE" data-route="save.report" href="#" class="btn btn-info btn-lg d-flex"{{#if actions}}{{#if actions.save}} data-toggle="tooltip" data-tigger="hover focus" data-html="true" data-placement="top" title="{{ actions.save }}"{{/if}}{{/if}}><i class="mr-2 material-icons md-light md-24 align-self-center">save</i>Save</button>
+              <button type="button" class="btn btn-info btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" data-route="save.report.export" href="#">Export</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#instructions.save">About</a>
+              </div>
+              </div>{{/if}}{{/unless}}
+
+              <!-- Sign Button Group -->
+              {{#if signable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
+              <a id="{{id}}_SIGN" data-route="sign.report" href="#" role="button" class="btn btn-action-dark btn-lg d-flex"{{#if actions}}{{#if actions.sign}} data-toggle="tooltip" data-tigger="hover focus" data-html="true" data-placement="top" title="{{ actions.sign }}"{{/if}}{{/if}}><i class="mr-2 material-icons md-light md-24 align-self-center">vpn_key</i>Sign</a>
+              <button type="button" class="btn btn-action-dark btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" data-route="sign.report.remove" href="#">Remove Signature</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#instructions.sign">About</a>
+              </div>
+              </div>{{/if}}
+
+              <!-- Send Button Group -->
+              {{#unless completed}}{{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
+                <a id="{{id}}_SEND" data-route="send.report" href="#" role="button" class="btn btn-primary btn-lg d-flex"{{#if actions}}{{#if actions.send}} data-toggle="tooltip" data-tigger="hover focus" data-html="true" data-placement="top" title="{{ actions.send }}"{{/if}}{{/if}}><i class="mr-2 material-icons md-light md-24 align-self-center">send</i>Send</a>
+                <button type="button" class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a class="dropdown-item" data-route="share.report" href="#">Share</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#instructions.send">About</a>
+                </div>
+              </div>{{/if}}{{/unless}}
+
+              <!-- Complete Button Group -->
+              {{#unless completed}}{{#if editable}}<div class="btn-group btn-group-lg mb-2 mb-md-0 mr-md-2 my-1">
+                <button id="{{id}}_COMPLETE" data-route="complete.report" href="#" class="btn btn-success btn-lg d-flex"{{#if actions}}{{#if actions.complete}} data-toggle="tooltip" data-tigger="hover focus" data-html="true" data-placement="top" title="{{ actions.complete }}"{{/if}}{{/if}}><i class="mr-4 material-icons md-light md-24 align-self-center">cloud_done</i>Complete</button>
+                <button type="button" class="btn btn-success btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a class="dropdown-item" href="#instructions.complete">About</a>
+                </div>
+              </div>{{/if}}{{/unless}}
+
+              {{#if help}}<div class="form-text text-muted">{{{help}}}</div>{{/if}}
+            </div>
+          </div>
+        
+        {{/heading}}
+        
+			</div>{{/if}}
+			
+		</form>
+		
+		{{#if footer}}{{{footer}}}{{/if}}
+   
+    {{#unless preview}}<div class="card mx-1 mt-3 mx-md-0">
+
+      {{#> heading target="_Signatures_" name="Signatures" hide=true }}
+  
+        <div class="d-flex flex-column flex-md-row">
+          <ul class="list-group list-group-flush signatures flex-fill"></ul>
+        </div>
+      
+			{{/heading}}
+
+    </div>{{/unless}}
+
+	</div>
+	
+</div>

@@ -1459,7 +1459,7 @@ blocks :
     type : minor
 classes :
   v0.0.4j-beta :
-     name : Guardians Usage Bug Fix
+    name : Guardians Usage Bug Fix
     type : minor
     changes :
       - Fixed bug with Classroom usage incorrectly showing zero for Guardians

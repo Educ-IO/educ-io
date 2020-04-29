@@ -1,0 +1,13 @@
+<div>{{{message}}}</div>
+<ul {{#if id}}id="{{id}}_FILES" {{/if}}class="list-group w-100 mt-1 mt-md-2 mt-lg-3">  
+{{#each files}}<li class="list-group-item d-flex justify-content-between align-items-center">
+  <div class="d-flex justify-content-start align-items-center">
+    <img class="pr-1" src="{{iconLink}}"/>
+    <span><a id="link_text" href="{{webViewLink}}" target="_blank">{{name}}</a></span>
+    {{#if modifiedByMeTime}}<span class="badge badge-dark ml-2">{{localeDate modifiedByMeTime}}</span>{{/if}}
+    <span class="badge badge-light ml-2">{{formatBytes size}}</span>
+    {{#if shared}}<span class="badge badge-highlight ml-2">SHARED</span>>{{/if}}
+    <a id="link_copy" class="copy-trigger ml-2" href="#" data-clipboard-target="#link_text" title="Copy Link to Uploaded File"><i class="material-icons md-1 pt-1 text-secondary">file_copy</i></a>
+  </div>
+</li>{{/each}}
+</ul>

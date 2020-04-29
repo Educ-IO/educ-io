@@ -1,0 +1,43 @@
+{{#> dialog class="modal-xl" }}
+<form class="needs-validation mt-3" novalidate>
+
+  <div class="row">
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}role" class="col-sm-2 col-form-label">Role</label>
+        <div class="col-sm-10">
+          <select class="form-control custom-select" data-output-field="Role" id="{{#if id}}{{id}}_{{/if}}select_role" tabindex="1">
+            {{#each roles}}<option value="{{id}}"{{~#exists disables}} data-disables="{{disables}}"{{/exists~}}{{~#if ../state}}{{#exists ../state.role}}{{#is ../state.role id}} selected{{/is}}{{/exists}}{{/if~}}>{{name}}</option>{{/each}}
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}type" class="col-sm-2 col-form-label">Type</label>
+        <div class="col-sm-10">
+          <select class="form-control custom-select" data-output-field="Type" id="{{#if id}}{{id}}_{{/if}}select_type" tabindex="2">
+            {{#each types}}<option value="{{id}}"{{~#exists disables}} data-disables="#{{#if ../id}}{{../id}}_{{/if}}{{disables}}"{{/exists~}}{{#if ../state}}{{#exists ../state.type}}{{#is ../state.type id}} selected{{/is}}{{/exists}}{{/if}}>{{name}}</option>{{/each}}
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group{{#if notify}} col-xl-10{{/if}} col-12 px-4 px-md-3">
+      <label for="{{#if id}}{{id}}_{{/if}}description">Value</label>
+      <button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}value" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+      <textarea id="{{#if id}}{{id}}_{{/if}}value" data-output-field="Value" class="form-control resizable" tabindex="3" rows="1">{{#if state}}{{#exists state.value}}{{state.value}}{{/exists}}{{/if}}</textarea>
+      <small class="form-text text-muted"></small>
+    </div>
+    {{#if notify}}<div class="form-group col-xl-2 col-12 px-4 px-md-3 d-flex align-items-center text-center">
+      <div class="custom-control custom-checkbox bg-light text-dark border border-secondary rounded py-1 w-100">
+        <input type="checkbox" class="custom-control-input" id="{{#if id}}{{id}}_{{/if}}notify" data-output-field="Notify" {{#if state}}{{#exists state.notify}} checked{{/exists}}{{/if}}>
+        <label class="custom-control-label" for="{{#if id}}{{id}}_{{/if}}notify">Notify?</label>
+      </div>
+    </div>{{/if}}
+  </div>
+
+</form>
+{{/dialog}}

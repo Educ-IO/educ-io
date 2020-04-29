@@ -1,0 +1,14 @@
+<div>
+  <div class='d-flex align-items-center'>
+    <strong>{{user}}</strong><span class='badge badge-light ml-1'>{{date}}</span>
+  </div>
+  {{~#if (either (present grade) (present answer))~}}<div class='d-flex align-items-center'>
+    {{~#present grade~}}<div class='d-inline-flex align-items-center'>
+      <span class='text-muted pr-1'>Grade:</span><span class='small'><strong>{{grade}}</strong>{{#exists max}} / {{max}}{{/exists}}</span>
+    </div>{{~/present~}}
+    {{~#present answer~}}<div class='d-inline-flex align-items-center{{#present grade}} ml-1{{/present}}'>
+      <span class='text-muted pr-1'>Answer:</span>
+      <span class='small'>{{truncate answer 20 '…'}}</span>
+    </div>{{~/present~}}
+  </div>{{~/if~}}
+</div>

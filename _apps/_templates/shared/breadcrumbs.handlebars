@@ -1,0 +1,5 @@
+<nav {{#if id}}id="{{id}}" {{/if}}class="breadcrumb{{#if class}} {{class}}{{/if}}">
+{{#each items}}
+{{#if @last}}<span class="breadcrumb-item active">{{name}}</span>{{else}}<a class="breadcrumb-item" href="{{ this.url }}">{{name}}</a>{{/if}}
+{{/each}}
+</nav>

@@ -1,0 +1,21 @@
+<div id="header_{{target}}" class="card-header border-bottom-0 d-flex align-items-center">
+  <a class="smooth-scroll d-inline-flex text-decoration-none mr-2" href="#header__headings">
+    <i class="material-icons md-1">home</i>
+  </a>
+  <h5 class="mb-0 d-inline">{{name}}</h5>
+  <a class="d-inline-flex text-decoration-none ml-auto btn btn-sm btn-link rounded" data-toggle="collapse"
+     href="#collapse_{{target}}" aria-expanded="false" aria-controls="collapse_{{target}}"
+     title="Show / Hide this block">
+    <i {{#unless hide}}style="display: none;" {{/unless}} class="material-icons md-18"
+                data-listen="#collapse_{{target}}" data-event="hide.bs.collapse">expand_more</i>
+    <i {{#if hide}}style="display: none;" {{/if}} class="material-icons md-18"
+            data-listen="#collapse_{{target}}" data-event="show.bs.collapse">expand_less</i>
+  </a>
+</div>
+
+<div id="collapse_{{target}}" class="collapse{{#unless hide}} group-collapse show{{/unless}}" role="tabpanel"
+     aria-labelledby="header_{{target}}">
+  <div class="card-body">
+		{{> @partial-block }}
+  </div>
+</div>

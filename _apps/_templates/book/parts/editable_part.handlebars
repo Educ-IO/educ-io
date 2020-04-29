@@ -1,0 +1,17 @@
+<div data-output-name="Part" style="width: fit-content; order: {{sequence}}" class="part d-flex align-items-center rounded py-1 px-2 border border-emphasis-light mb-2"
+     data-quantity="{{quantity}}" data-sequence="{{sequence}}"
+     {{#exists children}} data-total="{{children.length}}"{{/exists}}
+     {{#exists previous}} data-previous="{{previous}}"{{/exists}}>
+  <a role="button" class="d-inline-flex text-decoration-none pr-2" aria-label="Edit" href="#edit.part.{{sequence}}.{{quantity}}.{{#exists children}}{{children.length}}{{else}}0{{/exists}}{{#exists previous}}.{{previous}}{{/exists}}" title="Edit Part">
+    <i class="material-icons d-inline-flex md-1">create</i>
+  </a>
+  <input data-output-name="Sequence" type="hidden" data-output-type="number" value="{{sequence}}"/>
+  <input data-output-name="Quantity" type="hidden" data-output-type="number" value="{{quantity}}"/>
+  {{#exists previous}}<input data-output-name="Previous" type="hidden" data-output-type="number" value="{{previous}}"/>{{/exists}}
+  <div>
+    {{> part suffix=false }}
+  </div>
+  <a role="button" class="close d-inline-flex pl-2" aria-label="Remove" href="#remove.part.{{sequence}}" title="Remove Part">
+    <span aria-hidden="true">&times;</span>
+  </a>
+</div>

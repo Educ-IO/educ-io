@@ -1,0 +1,15 @@
+{{#> dialog action=(either action "Send") class="modal-lg" tabindex=3}}
+<form>
+  {{~#if message}}<textarea data-output-field="Message" class="form-control form-control-lg w-100 resizable optional" rows="3" tabindex="1" placeholder="Optional Custom Message ..."></textarea>{{/if~}}
+  {{> recipients id=(concat id "_EMAILS") values=emails readonly=(either readonly false)}}
+</form>
+<ul class="list-group list-group-flush">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <input data-action="add" id="{{id}}_EMAIL" class="form-control mr-3" type="text"
+           data-target="{{id}}_EMAILS" data-template="pill" tabindex="2"
+           placeholder="Additional Email Address ..." />
+    <button data-action="add" type="button" class="btn btn-primary"
+            data-target="{{id}}_EMAIL" tabindex="3">Add</button>
+  </li>
+</ul>
+{{/dialog}}

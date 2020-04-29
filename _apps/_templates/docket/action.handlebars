@@ -1,0 +1,12 @@
+<div {{#if id}}id="{{id}}_add"{{/if}} class="action-menu position-fixed mr-3 mb-3 mr-lg-5 mb-lg-5 pr-xl-4 pb-xl-4{{#if action.list}} btn-float-dropdown dropdown{{/if}}">
+  {{#if action.list}}
+  	<button aria-expanded="false" aria-haspopup="true" class="btn btn-float btn-secondary dropup" data-toggle="dropdown" type="button">
+      <i class="material-icons">{{#if action.icon}}{{action.icon}}{{else}}add{{/if}}</i>
+  	</button>
+    <div class="dropdown-menu">
+      {{#each action.list}}<a class="btn btn-float{{#if class}} {{class}}{{else}} btn-light{{/if}} btn-sm" role="button" href="#{{action}}"><i class="material-icons{{#unless class}} text-dark{{/unless}}">{{icon}}</i></a>{{/each}}
+    </div>
+  {{else}}
+  	<a class="btn btn-float{{#if action.class}} {{action.class}}{{else}} btn-secondary{{/if}}" role="button" href="#{{#if action.action}}{{action.action}}{{else}}{{action}}{{/if}}"><i class="material-icons{{#unless class}} text-light{{/unless}}">{{#if action.icon}}{{action.icon}}{{else}}add{{/if}}</i></a>
+  {{/if}}
+</div>

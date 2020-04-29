@@ -1,0 +1,30 @@
+{{~#if title}}<div class="row d-flex flex-row align-items-center mt-3 mt-md-1">
+  <div class="d-none d-md-inline">
+    <h4 class="display-4 col-12 mb-lg-0 d-inline-flex flex-column flex-md-row">
+      <span class="text-muted font-weight-normal{{~#if subtitle}} mr-3{{/if}}">{{title}}</span>
+      {{~#if subtitle}}<span class="d-block d-md-inline subtitle font-weight-light">{{subtitle}}</span>{{/if~}}
+    </h4>
+  </div>
+  <div class="d-inline d-md-none">
+    <h4 class="display-5 col-12 mb-lg-0 d-inline-flex flex-column flex-md-row">
+      <span class="text-muted font-weight-normal{{~#if subtitle}} mr-3{{/if}}">{{title}}</span>
+      {{~#if subtitle}}<span class="d-block d-md-inline subtitle font-weight-light">{{subtitle}}</span>{{/if~}}
+    </h4>
+  </div>
+  <div class="d-inline d-inline d-flex flex-column flex-md-row align-items-center">
+    {{~#unless dateless}}<a href="#date" class="d-flex text-decoration-none">
+      <i class="material-icons md-24 mb-2 mb-md-0 ml-md-2 mr-md-{{~#unless instructions}}3{{else}}1{{/unless}} text-light bg-dark p-1 rounded">swap_calls</i>
+    </a>{{/unless~}}
+    {{~#if add}}{{> control_button b_large="true" b_icon_large="true"
+      	b_class="btn-success btn-sm mr-md-1 mb-1 mb-md-0"
+        b_tooltip=add b_icon="add_circle_outline"
+    		b_icon_type="light" b_command=(either add_command "add") }}{{/if~}}
+    {{~#if remove}}{{> control_button b_large="true" b_icon_large="true"
+      	b_class="btn-danger btn-sm mr-md-1 mb-1 mb-md-0"
+        b_tooltip=remove b_icon="remove_circle_outline"
+    		b_icon_type="light" b_command=(either remove_command "remove") }}{{/if~}}
+    {{~#if instructions}}<a href="#instructions.{{instructions}}" class="d-flex text-decoration-none mb-1 mb-md-0">
+      <i class="material-icons md-24 mb-0 mr-md-3 text-light bg-dark p-1 rounded">help_outline</i>
+    </a>{{/if~}}
+  </div>
+</div>{{/if~}}

@@ -1,0 +1,109 @@
+<div data-project="{{name}}" class="row align-items-center py-2 px-1 pr-lg-2{{~#is name 'NO PROJECT'}} bg-action-barely{{/is}} border-bottom{{#if data}}{{#if (all (is count data.statuses.COMPLETE) data.done.dormant)}} bg-light{{/if}}{{/if}}">
+  
+  {{!-- Project Details --}}
+  <div class="col-12 col-xl-4 d-flex flex-row align-items-center">
+    
+    <div class="container-fluid p-0 mb-1 mb-xl-0">
+      
+      <div class="row">
+        
+        {{!-- Actions and Name --}}
+        <div class="col-12 col-md-6 d-flex flex-row align-items-center border-md-right border-secondary">
+          {{~#if data}}{{#is count data.statuses.COMPLETE}}<div class="d-inline-flex mr-1"><i class="material-icons md-24 mr-1 text-light bg-success p-1 rounded" data-toggle="tooltip" data-html="true" title="All Project Tasks <strong>Complete</strong>">done_outline</i></div>{{/is}}{{/if~}}
+          <span class="display-6">
+            {{~#is name 'NO PROJECT'}}{{name}}{{else}}<a href="#search.tags.{{encode (concat '#' name)}}.true" class="text-decoration-none">{{name}}</a>{{/is~}}
+          </span>
+        </div>
+
+        {{!-- Overall Status /Counts --}}
+        {{~#if data}}{{#with data}}<div class="col-12 col-md-6 d-flex flex-row align-items-center border-md-right{{#if (all (is ../count statuses.COMPLETE) done.dormant)}} o-50{{/if}}">
+
+          <div>
+            <i class="material-icons md-24 mr-2 text-light bg-dark p-1 my-1 rounded">{{#if durations._milliseconds}}timelapse{{else}}timeline{{/if}}</i>
+          </div>
+
+          <div class="d-flex flex-column justify-content-start">
+            {{#if total}}{{#each statuses}}{{~#if this}}{{#unless (any (is @key 'ZOMBIES') (is @key 'GHOSTS'))}}<div class="small my-1">
+              <span class="font-weight-{{#is @key 'COMPLETE'}}{{#is ../../count 'eq' this}}normal bg-success text-light{{else}}bold text-success{{/is}} mr-1{{else}}light text-secondary{{/is}} p-1">{{@key}}:</span>
+              <span class="font-weight-bold{{#is @key 'COMPLETE'}} bg-dark text-light p-1{{/is}}">{{this}}</span>
+              <span>/</span>
+              <span class="font-weight-bold{{#is @key 'COMPLETE'}} bg-info text-light p-1{{/is}}">{{../../count}}</span>
+            </div>{{/unless}}{{/if}}{{/each}}{{else}}<div class="small my-1"><span class="font-weight-bold text-dark p-1">Tasks:</span>
+              <span class="font-weight-bold bg-secondary text-light p-1">{{../count}}</span></div>{{/if}}
+            {{#if durations._milliseconds}}<div class="d-flex flex-row align-items-center text-break" data-toggle="tooltip" title="{{string durations}}">
+              <span class="mr-1 font-weight-light">Overall:</span><span class="font-weight-bold text-primary pr-1">{{humanize durations}}</span>
+            </div>{{/if}}
+          </div>
+
+        </div>{{/with}}{{/if~}} 
+        
+      </div>
+    
+    </div>
+  
+  </div>
+  
+  {{!-- Overview --}}
+  <div class="col-12 col-xl-8 d-flex flex-row justify-content-center align-items-center align-items-stretch overview{{#if data}}{{#if (all (is count data.statuses.COMPLETE) data.done.dormant)}} o-25{{/if}}{{/if}}">
+  
+    {{!-- Overall Status / Counts --}}
+    {{~#if data}}{{#with data}}<div class="container-fluid p-0">
+    
+      <div class="row mb-1">
+        
+        {{!-- {{#unless (is ../count statuses.COMPLETE)}} progress-bar-striped{{/unless}} --}}
+        <div class="progress w-100">
+          {{~#if percentages.COMPLETE}}<div class="progress-bar progress-bar-striped bg-{{#is percentages.COMPLETE 100}}success{{else}}warning{{/is}}" role="progressbar" style="width: {{percentages.COMPLETE}}%" aria-valuenow="{{percentages.COMPLETE}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-offset="10" data-html="true" title="{{statuses.COMPLETE}} <strong>Completed</strong> Task{{#is statuses.COMPLETE 'gt' 1}}s{{/is}}"></div>{{/if~}}
+          {{~#if percentages.[IN PROGRESS]}}<div class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width: {{percentages.[IN PROGRESS]}}%" aria-valuenow="{{percentages.[IN PROGRESS]}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-html="true" title="{{statuses.[IN PROGRESS]}} Task{{#is statuses.[IN PROGRESS] 'gt' 1}}s{{/is}} in <strong>Progress</strong>"></div>{{/if~}}
+          {{~#if percentages.READY}}<div class="progress-bar progress-bar-striped bg-dark" role="progressbar" style="width: {{percentages.READY}}%" aria-valuenow="{{percentages.READY}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-html="true" title="{{statuses.READY}} Task{{#is statuses.READY 'gt' 1}}s{{/is}} <strong>Ready</strong> to work on"></div>{{/if~}}
+          {{~#if percentages.INACTIVE}}<div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{percentages.INACTIVE}}%" aria-valuenow="{{percentages.INACTIVE}}" aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip" data-html="true" title="{{statuses.INACTIVE}} <strong>Inactive</strong> Task{{#is statuses.INACTIVE 'gt' 1}}s{{/is}}"></div>{{/if~}}
+        </div>
+        
+      </div>
+    
+      <div class="row small">
+
+        {{!-- Period Project Took / has Taken / will Take --}}
+        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center align-items-stretch{{~#unless (is ../name 'NO PROJECT')}} bg-light{{/unless}}">
+          
+          <div class="container-fluid p-0">
+            <div class="row justify-content-center align-items-center align-items-stretch">
+              {{~#if (all duration (is ../count statuses.COMPLETE))}}<span class="text-secondary">Took<strong class="text-dark ml-1">{{humanize duration}}</strong></span>{{else}}{{~#if from.history}}<span class="text-secondary">{{#if from.future}}Taking{{else}}Taken{{/if}}<strong class="text-dark ml-1">{{humanize from.history}}</strong></span>{{else}}{{~#if from.range}}<span class="text-secondary">Duration<strong class="text-dark ml-1">{{humanize from.range}}</strong></span>{{/if~}}{{/if~}}{{/if~}}
+            </div>
+            <div class="row">
+              <div class="col-6 d-flex flex-row justify-content-center align-items-center align-items-stretch">
+                <span class="text-secondary">From<strong class="text-dark ml-1">{{localeDate from.earliest}}</strong></span>
+              </div>
+              <div class="col-6 d-flex flex-row justify-content-center align-items-center align-items-stretch">
+                <span class="text-secondary">To<strong class="text-dark ml-1">{{#if (all done.last (is ../count statuses.COMPLETE))}}{{localeDate done.last}}{{else}}{{localeDate from.end}}{{/if}}</strong></span>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        {{!-- Last Completed --}}
+        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center{{~#is ../name 'NO PROJECT'}} bg-light{{/is}}">
+          {{~#if done.latest}}<span class="text-secondary">Last Completed<strong class="text-dark ml-1">{{localeDate done.latest}}</strong></span>{{/if~}}
+        </div>
+        
+        {{!-- Next / Last Due --}}
+        <div class="col-12 col-xl-4 d-flex flex-row justify-content-center align-items-center{{~#unless (is ../name 'NO PROJECT')}} bg-light{{/unless}}">
+          {{~#if due.next}}<span class="text-secondary">Next Due<strong class="text-danger ml-1">{{localeDate due.next}}</strong></span>{{/if~}}
+          {{~#if (all due.next due.latest (is due.next 'neq' due.latest))}}<span class="text-secondary ml-2">Due Last<strong class="text-dark ml-1">{{localeDate due.latest}}</strong></span>{{/if~}}
+        </div>
+
+      </div>
+    
+    </div>{{/with}}{{/if~}}
+    
+  </div>
+  
+  {{!-- Description --}}
+  {{~#if description}}<div class="col-12 d-flex flex-row align-items-center">
+    <div class="mt-2 ml-1">
+      <span class="text-secondary small">{{description}}</span>
+    </div>
+  </div>{{/if~}}
+    
+</div>

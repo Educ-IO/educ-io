@@ -1,0 +1,55 @@
+
+{{!-- ================= DISPLAY PARAMETERS ================== --}}
+{{!-- [clear] = Whether clear button should be displayed --}}
+{{!-- [button] = Button Text (will include clear button too) --}}
+{{!-- [action] = Button Action Command --}}
+{{!-- [icon] = Icon for left-side of Element Group --}}
+{{!-- [rows] = Number of Rows of Text to Expect (decides between text input and textbox) --}}
+{{!-- [default] = Default Action to display (me = current user) --}}
+{{!-- [value] = Default Text to display --}}
+{{!-- [required] = Input is required --}}
+
+{{!-- ================= OUTPUT PARAMETERS =================== --}}
+{{!-- [field] = Form Element Group Data Field Name --}}
+{{!-- [order] = Data Output Order --}}
+{{!-- ======================================================= --}}
+
+{{!-- =================== OUTPUT FORMAT ===================== --}}
+{{!-- {} / Nothing : If nothing has been entered --}}
+{{!-- ------------------------------------------------------- --}}
+{{!-- Order = field order if supplied --}}
+{{!-- Value = entered text value --}}
+{{!-- ======================================================= --}}
+
+{{#> field_general }}
+	<input id="{{id}}" name="{{id}}" data-output-name="Value" type="range"
+         class="custom-range{{#if readonly}} disabled{{/if}}{{#if details}} show-numerical{{/if}}"
+         {{#if readonly}} readonly="readonly"{{/if}}
+         {{#exists value}} value="{{value}}"{{/exists}}
+         {{#exists min}} min="{{min}}"{{/exists}}
+         {{#exists max}} max="{{max}}"{{/exists}}
+         {{#exists step}} step="{{step}}"{{/exists}}
+         {{#if details}} data-targets="{{id}}_DETAILS"{{/if}}
+         data-value="false">
+	{{> field_validation}}
+  {{#if details}}<div class="row">
+    <label 
+			class="col-md-3 col-lg-6 col-xl-8 col-form-label text-md-right font-weight-bold text-muted" 
+			for="{{id}}_DETAILS">{{either details_Title "Numeric"}}:</label>
+    <div class="col-md-9 col-lg-6 col-xl-4">
+      <div class="input-group{{#if large}} input-group-lg{{/if}}">
+    		{{#if icon}}{{> control_icon visible_at="xl" large=large icon=icon }}{{/if}}
+      	<input id="{{id}}_DETAILS" type="text" data-output-name="Details"
+             class="form-control{{#if large}} form-control-lg{{/if}}"
+             readonly="readonly" aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"
+             {{#if suffix}} data-suffix="{{suffix}}"{{/if}}
+             {{#if range}} data-range="{{range}}"{{/if}}
+             {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+             {{#exists value}} value="{{value}}{{#if suffix}} {{suffix}}{{/if}}"{{/exists}} />
+      </div>
+    </div>
+</div>{{/if}}
+	{{#if clear}}{{> control_button b_small="true" b_icon_large="true" b_icon_centered="true"
+    b_class="btn-secondary eraser no-active" b_tooltip="Clear / Reset" b_target=id b_icon="refresh" 
+		disabled=readonly }}{{/if}}
+{{/field_general}}

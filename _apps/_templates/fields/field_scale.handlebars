@@ -1,0 +1,37 @@
+
+{{!-- ================= DISPLAY PARAMETERS ================== --}}
+{{!-- template = Template Name --}}
+{{!-- id = Control ID --}}
+{{!-- [large] = Size of Form Element Group --}}
+{{!-- [readonly] = Input is disabled / readonly --}}
+{{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
+{{!-- [markers] = Array of markers --}}
+{{!-- [type] = Passed to marker template, is type for items added to each marker (e.g. Evidence) --}}
+{{!-- [items_details] = Placeholder details for Marker Items --}}
+{{!-- [list_field] = Field Name for list (e.g. Evidence) --}}
+{{!-- [help] = Help information (html) to display --}}
+{{!-- [description] = Template Description --}}
+
+{{!-- ================= OUTPUT PARAMETERS =================== --}}
+{{!-- [field] = Form Element Group Data Field Name --}}
+{{!-- [order] = Data Output Order --}}
+{{!-- ======================================================= --}}
+
+{{!-- =================== OUTPUT FORMAT ===================== --}}
+{{!-- Value = false : If nothing has been added --}}
+{{!-- ------------------------------------------------------- --}}
+{{!-- Order = field order if supplied --}}
+{{!-- Values = Tree Collection of Markers (with values/items) --}}
+{{!-- ======================================================= --}}
+
+{{#> field_general help_class="mt-1 mt-md-2"}}
+  <ul class="list-group" id="{{id}}" name="{{val '' name id}}">
+    {{#each markers}}
+    {{!-- Call Partial Template, concatenating the ID with this parent ID and the Index, and also passing an incremented index for display --}}
+    {{> field_marker id=(concat ../id "_" @index) options=../options
+    	type=../type items_details=../items_details list_field=../list_field 
+    	list_template=../list_template number=(inc @index) 
+    	readonly=../readonly complex=../complex prefix=../prefix rows=../rows }}
+    {{/each}}
+  </ul>
+{{/field_general}}

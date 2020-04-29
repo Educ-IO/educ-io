@@ -1,0 +1,17 @@
+<div {{#if id}}id="{{id}}" {{/if}}class="container-fluid mx-0 px-0">
+  {{~#if warning}}
+    <h4 class="display-5 font-weight-bold border border-dark text-center p-2 bg-danger text-light" data-toggle="tooltip" data-html="true" title="Booking Date is <strong>NOT</strong> Today!">{{localeDate warning}}</h4>
+    <h5 class="font-weight-light text-center">{{who}}<span class="text-secondary ml-2">{{when}}</span></h5>
+  {{else}}
+    <h4 class="bg-success-light text-light text-center p-1"><span class="font-weight-bold">{{who}}</span><span class="font-weight-light text-dark ml-2">{{when}}</span></h5>
+  {{/if~}}
+  
+  <div class="row m-0 pt-2">
+    <div class="col-12">
+      <form>
+        {{#each what}}{{~#if (any (is confirmed true) (is responseStatus "accepted"))}}<input type="text" id="{{id}}_input" name="{{id}}" 
+          class="form-control{{#unless @last}} mb-2{{/unless}}" placeholder="{{name}}">{{/if~}}{{/each}}
+      </form>
+    </div>
+  </div>
+</div>

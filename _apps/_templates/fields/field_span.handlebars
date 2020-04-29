@@ -1,0 +1,98 @@
+
+{{!-- ================= DISPLAY PARAMETERS ================== --}}
+{{!-- template = Template Name --}}
+{{!-- id = Control ID --}}
+{{!-- [large] = Size of Form Element Group --}}
+{{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
+{{!-- [icon] = Icon for left-side of Element Group (at larger screen sizes only) --}}
+{{!-- [readonly] = Input is disabled / readonly --}}
+{{!-- [type] = Default Text for the Span Button --}}
+{{!-- [span] = Default Span Value for the Span Button --}}
+{{!-- [details] = Whether details input should be displayed (this text will be the field placeholder) --}}
+{{!-- [options] = Collection of shortcut options (e.g. Weekly, Monthly) to display. They can have a span (Moment style), a value (for output) and a name (for display). --}}
+{{!-- [required] = Input is required --}}
+{{!-- [help] = Help information (html) to display --}}
+{{!-- [description] = Template Description --}}
+{{!-- ======================================================= --}}
+
+{{!-- ================= OUTPUT PARAMETERS =================== --}}
+{{!-- [field] = Form Element Group Data Field Name --}}
+{{!-- [order] = Data Output Order --}}
+{{!-- ======================================================= --}}
+
+{{!-- =================== OUTPUT FORMAT ===================== --}}
+{{!-- Value = false : If nothing has been selected --}}
+{{!-- ------------------------------------------------------- --}}
+{{!-- Order = field order if supplied --}}
+{{!-- Values.Value = selected option.value --}}
+{{!-- Values.Details = further text details (if present) --}}
+{{!-- ======================================================= --}}
+
+{{#> field_general}}
+  <div class="btn-group float-right mb-1 d-xl-none" role="group" id="{{id}}_BUTTONS">
+    {{#if options}}{{> control_button b_small="true" 
+    	b_class="btn-info alter-numerical" b_tooltip="Decrease" b_target=id disabled=readonly
+    	b_modifier=(concat id "_PERIOD_SM") b_icon="remove" b_icon_centered="true" b_value=(concat "-" (either increment 1)) }}
+    {{> control_button b_small="true" b_class="btn-primary alter-numerical"
+    	b_tooltip="Increase" b_icon_centered="true" b_target=id b_modifier=(concat id "_PERIOD_SM") b_icon="add"
+    	b_value=(either increment 1) disabled=readonly }}
+    {{> control_button b_id=(concat id "_PERIOD_SM") b_class="btn-dark complex-list-type dropdown-toggle" 
+    	b_targets=id b_default=type b_text=type b_span=(either span "") 
+    	b_output_type="String" b_output_name="Type" b_toggle="dropdown" disabled=readonly }}
+    <div class="dropdown-menu" aria-labelledby="{{id}}_PERIOD_SM">
+      {{#each options}}
+      <a class="dropdown-item alter-span" href="#" data-targets="{{../id}}_PERIOD_SM"
+         data-value="{{val "" value this}}"
+         {{#exists span}}{{#if span}} data-span="{{span}}"{{/if}}{{/exists}}>{{val "" name this}}</a>
+      {{/each}}
+    </div>{{/if}}
+  </div>
+  <div id="{{id}}"
+       {{#if default}} data-input-default="{{default}}"{{/if}}
+       {{#if historical}} data-historical="{{historical}}"{{/if}}
+       class="input-group{{#if large}} input-group-lg{{/if}} input-daterange{{#unless readonly}} dt-picker{{#if time}}-time{{/if}}{{/unless}}">
+    {{#if icon}}{{> control_icon visible_at="xl" large=large icon=icon }}{{/if}}
+    <input id="{{id}}_START" type="text" data-output-type="Date" data-output-name="Start"
+           class="form-control" name="{{id}}_start" aria-label="{{val "" title field}}"
+           {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+           {{#if required}} required="required"{{/if}}
+           {{#if readonly}} readonly="readonly"{{/if}} />
+    {{#if icon}}{{> control_icon prepend="true" append="true" large=large icon="forward" }}{{/if}}
+    <input id="{{id}}_END" type="text" data-output-type="Date" data-output-name="End"
+           class="form-control" name="{{id}}_end" aria-label="{{val "" title field}}"
+           {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
+           {{#if required}} required="required"{{/if}}
+           {{#if readonly}} readonly="readonly"{{/if}} />
+    <span class="input-group-append d-xl-none">
+      {{> control_button b_class="btn-secondary eraser no-active" b_tooltip="Clear / Reset"
+      	b_target=id b_icon="refresh" b_icon_centered="true" disabled=readonly }}
+    </span>
+    <span class="input-group-append d-none d-xl-flex">
+      {{> control_button b_class="btn-secondary eraser no-active" b_tooltip="Clear / Reset"
+      	b_target=id b_icon="refresh" b_icon_centered="true" disabled=readonly }}
+      {{#if options}}{{> control_button b_small="true" b_icon_centered="true"
+      	b_class="btn-info alter-numerical" b_tooltip="Decrease" b_target=id disabled=readonly
+      	b_modifier=(concat id "_PERIOD_LG") b_icon="remove" b_value=(concat "-" (either increment 1)) }}
+      {{> control_button b_small="true" b_class="btn-primary alter-numerical" b_icon_centered="true"
+      	b_tooltip="Increase" b_target=id b_modifier=(concat id "_PERIOD_LG") b_icon="add"
+      	b_value=(either increment 1) disabled=readonly }}
+      {{> control_button b_id=(concat id "_PERIOD_LG")
+      	b_class="btn-dark complex-list-type dropdown-toggle" b_targets=id b_default=type
+      	b_text=type b_span=(either span "") b_output_type="String" b_output_name="Type"
+      	b_toggle="dropdown" disabled=readonly }}
+      <div class="dropdown-menu" aria-labelledby="{{id}}_PERIOD_LG">
+        {{#each options}}
+        <a class="dropdown-item alter-span{{#if readonly}} disabled{{/if}}" href="#"
+           data-targets="{{../id}}_PERIOD_LG" data-value="{{val "" value this}}"
+           {{#exists span}}{{#if span}} data-span="{{span}}"{{/if}}{{/exists}}>{{val "" name this}}</a>
+        {{/each}}
+      </div>{{/if}}
+    </span>
+    {{> field_validation}}
+  </div>
+  {{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS"
+                 	name="{{id}}_details"
+                  class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2"
+                  rows="1" aria-label="{{details}}" placeholder="{{details}}"
+                  {{#if readonly}} readonly="readonly"{{/if}}></textarea>{{/if}}
+{{/field_general}}

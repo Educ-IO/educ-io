@@ -1,0 +1,63 @@
+<div{{#if id}} id="{{id}}"{{/if}} class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal_options_title">{{{title}}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{#if instructions}}{{{instructions}}}{{/if}}
+				<form class="needs-validation mt-3" novalidate>
+          
+          <div class="row">
+						<div class="form-group col-12 px-4 px-md-3">
+							<label for="{{#if id}}{{id}}_{{/if}}details">Details</label>
+						  <button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}details" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<textarea id="{{#if id}}{{id}}_{{/if}}details" data-output-field="Details" class="form-control resizable" tabindex="1" rows="1" data-action="extract" required></textarea>
+							<div class="invalid-feedback">Details, name or a description is required for this item</div>
+						</div>
+					</div>
+          
+					<div class="row">
+            <div class="form-group col-lg-8 px-4 px-md-3">
+							<label for="{{#if id}}{{id}}_{{/if}}tags">Tags</label>
+							<button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}tags" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<textarea id="{{#if id}}{{id}}_{{/if}}tags" data-output-field="Tags" class="form-control resizable" tabindex="2" rows="1"></textarea>
+							<small class="form-text text-muted">Related tag/s, delineated by <strong>any</strong> punctuation.</small>
+						</div>
+            <div class="form-group col-lg-4 px-4 px-md-3">
+              <label for="{{#if id}}{{id}}_{{/if}}date">Date</label>
+              <input id="{{#if id}}{{id}}_{{/if}}date" data-output-field="From" type="text" data-output-type="date" class="dt-picker form-control" tabindex="5"{{#if date}} value="{{date}}"{{/if}}/>
+              <small class="form-text text-muted"></small>
+						</div>
+					</div>
+          
+					<div class="row">
+            <div class="form-group col-lg-4 px-4 px-md-3 d-none d-lg-block">
+              <label for="{{#if id}}{{id}}_{{/if}}time">Time</label>
+              <input type="text" id="{{#if id}}{{id}}_{{/if}}time" data-source="{{#if id}}{{id}}_{{/if}}details" data-extract="time|period" class="form-control" tabindex="-1" data-toggle="tooltip" readonly title="Automatically extracted from details" readonly/>
+						</div>
+            
+            <div class="form-group col-lg-4 px-4 px-md-3 d-none d-lg-block">
+              <label for="{{#if id}}{{id}}_{{/if}}time">Duration</label>
+              <input type="text" id="{{#if id}}{{id}}_{{/if}}hours" data-source="{{#if id}}{{id}}_{{/if}}details" data-extract="hours" class="form-control" tabindex="-1" data-toggle="tooltip" readonly title="Automatically extracted from details" readonly/>
+						</div>
+            
+            <div class="form-group col-lg-4 px-4 px-md-3 d-none d-lg-block">
+              <label for="{{#if id}}{{id}}_{{/if}}due">Due</label>
+              <input type="text" id="{{#if id}}{{id}}_{{/if}}due" data-source="{{#if id}}{{id}}_{{/if}}details" data-extract="date" class="form-control" tabindex="-1" data-toggle="tooltip" readonly title="Automatically extracted from details" readonly/>
+              <small class="form-text text-muted"></small>
+						</div>
+					</div>
+				</form>
+      </div>
+      <div class="modal-footer">
+        {{# if actions}}{{#each actions}}{{> control_button b_class="btn-outline-info" b_id=id b_action=(concat "actions_" @index) b_title=desc b_text=text }}{{/each}}{{/if}}
+				<button type="button" class="btn btn-secondary btn-flat" data-dismiss="modal" tabindex="4">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" tabindex="3">Create</button>
+      </div>
+    </div>
+  </div>
+</div>

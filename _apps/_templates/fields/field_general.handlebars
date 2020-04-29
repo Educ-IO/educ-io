@@ -1,0 +1,36 @@
+{{!-- ================= GENERAL PARAMETERS ================== --}}
+{{!-- template = Template Name --}}
+{{!-- id = Control ID --}}
+{{!-- [wide] = Whether Form Elements (label and control) span entire width --}}
+{{!-- [large] = Size of Form Element Group --}}
+{{!-- [title] = Form Element Title (used for label, field is used as fallback) --}}
+{{!-- [readonly] = Input is disabled / readonly --}}
+{{!-- [help] = Help information (html) to display --}}
+{{!-- [description] = Template Description --}}
+{{!-- ======================================================= --}}
+
+{{!-- ================= OUTPUT PARAMETERS =================== --}}
+{{!-- [field] = Form Element Group Data Field Name --}}
+{{!-- [order] = Data Output Order --}}
+{{!-- ======================================================= --}}
+
+{{!-- =================== OUTPUT FORMAT ===================== --}}
+{{!-- Order = field order if supplied --}}
+{{!-- ======================================================= --}}
+
+{{#if description}}<!-- {{description}} -->{{/if}}
+<div 
+     class="form-group{{#if large}} form-group-lg{{/if}} row justify-content-between"
+     {{#if field}} data-output-field="{{field}}"{{/if}}
+     {{#if order}} data-output-order="{{order}}"{{/if}}
+     {{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
+  {{#unless naked}}<label class="{{which wide 'col-12' 'col-md-3'}} col-form-label"
+         for="{{id}}">{{{val "" title field}}}</label>{{/unless}}
+  <div class="{{which wide 'col-12' 'col-md-9'}}{{#if holder_class}} {{holder_class}}{{/if}}">
+		{{> @partial-block }}
+  	{{#if help}}
+    <div id="{{id}}_HELP" 
+    	class="form-text text-muted text-right{{#if help_class}} {{help_class}}{{/if}}">{{{help}}}</div>
+    {{/if}}
+	</div>
+</div>

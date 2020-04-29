@@ -1,0 +1,42 @@
+<div class="container-fluid mb-1 mb-xl-0">
+  
+  <div class="row">
+    
+    {{!-- Assignment List --}}
+    <div class="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center mb-1 mb-md-0 px-1">
+      <div class="d-flex flex-column h-100 w-100 justify-content-center align-items-center bg-light">
+        {{#each assignments}}<div>
+          <span class="mr-1 font-weight-light">{{name}}:</span><span class="font-weight-bold text-dark">{{count}}</span>
+        </div>{{/each}}
+      </div>
+    </div>
+
+    {{!-- Project List --}}
+    <div class="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center mb-1 mb-md-0 px-1">
+      <div class="d-flex flex-column h-100 w-100 justify-content-center align-items-center bg-light">
+        {{#each projects}}<div>
+          <span class="mr-1 font-weight-light">{{name}}:</span><span class="font-weight-bold text-secondary">{{count}}</span>
+        </div>{{/each}}  
+      </div>
+    </div>
+
+    {{!-- Status List --}}
+    <div class="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center border-md-right">
+
+      <div class="small">
+        <span class="mr-1 font-weight-light">Total:</span><span class="font-weight-bold text-secondary">{{total}}</span>
+      </div>
+      <div class="small">
+        <span class="mr-1 font-weight-light">Complete:</span><span class="font-weight-bold text-dark">{{complete}}</span>
+      </div>
+      <div class="small">
+        <span class="mr-1 font-weight-light">Timed:</span><span class="font-weight-bold">{{timed}}</span>
+      </div>
+      <div class="small">
+        <span class="mr-1 font-weight-light">Future:</span><span class="font-weight-bold">{{future}}</span>
+      </div>
+    </div>
+    
+  </div>
+  
+</div>

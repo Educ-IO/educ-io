@@ -1,0 +1,97 @@
+{{#> dialog class="modal-xl" }}
+<form class="needs-validation mt-3" novalidate>
+          
+<div class="row">
+  <div class="container col-xl-6 px-4 px-md-3">
+    <div class="form-group row">
+      <label for="{{#if id}}{{id}}_{{/if}}name" class="col-sm-2 col-form-label">Name</label>
+      <div class="col-sm-10">
+        <input id="{{#if id}}{{id}}_{{/if}}name" data-output-field="Name" type="text" class="form-control required" tabindex="1"{{#if state}}{{#exists state.name}} value="{{state.name}}"{{/exists}}{{/if}} required/>
+      </div>
+    </div>
+  </div>
+  <div class="container col-xl-6 px-4 px-md-3">
+    <div class="form-group row">
+      <label for="{{#if id}}{{id}}_{{/if}}type" class="col-sm-2 col-form-label">Type</label>
+      <div class="col-sm-10">
+        <input id="{{#if id}}{{id}}_{{/if}}type" name="Type" type="text" class="form-control" tabindex="2"{{#if state}}{{#exists state.type}} value="{{state.type}}"{{/exists}}{{/if}}/>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="form-group col-xl-6 px-4 px-md-3">
+    <label for="{{#if id}}{{id}}_{{/if}}description">Description</label>
+    <button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}description" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+    <textarea id="{{#if id}}{{id}}_{{/if}}description" data-output-field="Description" class="form-control resizable" tabindex="4" rows="1">{{#if state}}{{#exists state.description}}{{state.description}}{{/exists}}{{/if}}</textarea>
+    <small class="form-text text-muted"></small>
+  </div>
+  <div class="form-group col-xl-6 px-4 px-md-3">
+    <label for="{{#if id}}{{id}}_{{/if}}user_description">User Visible Description</label>
+    <button type="button" class="close" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}user_description" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+    <textarea id="{{#if id}}{{id}}_{{/if}}user_description" data-output-field="User Description" class="form-control resizable" tabindex="5" rows="1">{{#if state}}{{#exists state.user_description}}{{state.user_description}}{{/exists}}{{/if}}</textarea>
+    <small class="form-text text-muted"></small>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col-xl-12 d-flex align-items-center bg-light mb-2">
+    <span class="font-weight-bold">Parent/s</span>
+  </div>   
+  <div class="col-xl-8 d-flex align-items-center mb-2 mb-xl-0">
+    <div data-output-field="Parents" class="d-flex align-items-center">
+      {{#if state}}{{~#present state.parents}}{{#each state.parents}}{{> parent-badge display=name name=id id=../state.id}}{{/each}}{{/present~}}{{/if}}
+    </div>
+  </div>
+  <div class="col-xl-4">
+    <div class="input-group">
+      <select class="form-control custom-select" data-action="parent" id="{{#if id}}{{id}}_{{/if}}select_parent" tabindex="6">
+        <option class="text-secondary" value="">New Parent ...</option>
+        {{#each parents}}<option value="{{id}}">{{name}}</option>{{/each}}
+      </select>
+      <div class="input-group-append">
+        {{> control_button b_large="true" b_icon_large="true" b_class="btn-success" b_command="add.parent"
+          b_tooltip="Add Parent" b_icon="add_circle_outline" b_icon_type="light" }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col-xl-12 d-flex align-items-center bg-light mb-2">
+    <span class="font-weight-bold">Feature/s</span>
+  </div> 
+  <div class="col-xl-8 d-flex align-items-center mb-2 mb-xl-0">
+    <div data-output-field="Features" class="d-flex align-items-center">
+      {{#if state}}{{~#present state.features}}{{#each state.features}}{{> feature-badge name=this id=../state.id}}{{/each}}{{/present~}}{{/if}}
+    </div>
+  </div>
+  <div class="col-xl-4">
+    <div class="input-group">
+      <select class="form-control custom-select" data-action="feature" id="{{#if id}}{{id}}_{{/if}}select_feature" tabindex="7">
+        <option class="text-secondary" value="">New Feature ...</option>
+        {{#each features}}<option value="{{this}}">{{this}}</option>{{/each}}
+      </select>
+      <div class="input-group-append">
+        {{> control_button b_large="true" b_icon_large="true" b_class="btn-success" b_command="add.feature"
+          b_tooltip="Add Feature" b_icon="add_circle_outline" b_icon_type="light" }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12 d-flex align-items-center bg-light mb-2">
+    <span class="font-weight-bold">Bundle/s</span>
+  </div>
+  <div class="col-12 d-flex align-items-center mb-2 mb-xl-0">
+    <div data-output-field="Bundles" class="d-flex align-items-center">
+      {{#if state}}{{~#present state.bundles}}{{#each state.bundles}}{{> bundle-badge display=name name=id id=../state.id}}{{/each}}{{/present~}}{{/if}}
+    </div>
+  </div>
+</div>
+
+{{#if state}}{{#exists state.id}}<input data-output-field="ID" type="hidden" type="text" value="{{state.id}}"/>{{/exists}}{{/if}}
+</form>
+{{/dialog}}

@@ -1,0 +1,9 @@
+<div {{#if id}}id="{{id}}" {{/if}}class="container-fluid pt-lg-1 mvh-100">
+
+  {{> date dateless=true add="Add new Resource" add_command="add.resource"}}
+  
+  {{> search placeholder="Search Resources"}}
+  
+  <div id="resources">{{#if data}}{{> resources resources=data opaque=false actionable=true}}{{/if}}</div>
+  
+</div>

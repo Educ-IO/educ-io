@@ -1,0 +1,29 @@
+<div class="form-row mb-1 mb-lg-2">
+
+  <label for="{{#if id}}{{id}}_{{/if}}name" class="col-sm-2 col-form-label">Name</label>
+  <div class="col-sm-10">
+    <div class="input-group">
+        <div class="input-group-prepend d-none d-lg-flex" data-toggle="tooltip" data-html="true" title="">
+          <span class="input-group-text align-self-stretch"><i class="material-icons h-100 d-inline-flex md-18">notes</i></span>
+        </div>
+        <input id="{{#if id}}{{id}}_{{/if}}name" data-output-field="Name" type="text" placeholder="Name" class="form-control required" tabindex="1"{{#if state}}{{#exists state.name}} value="{{state.name}}"{{/exists}}{{/if}} required/>
+      </div> 
+  </div>
+
+</div>
+
+<div class="form-row mb-2">
+  
+  <label for="{{#if id}}{{id}}_{{/if}}parts" class="col-sm-2 col-form-label">Parts</label>
+  
+  <div class="col-sm-10 d-flex flex-column" data-output-field="Parts">
+    {{#if state}}{{#with state}}{{#exists children}}{{#each children}}{{> editable_part previous=sequence }}{{/each}}{{/exists}}{{/with}}{{/if}}
+  </div>
+  
+  <div class="col-12 d-flex justify-content-end">
+    {{> control_button b_large="true" b_icon_large="true"
+      	b_class="btn-success" b_tooltip="Add new Bundle Part" b_icon="add_circle_outline"
+    		b_icon_type="light" b_command="add.part" }}
+  </div>
+  
+</div>

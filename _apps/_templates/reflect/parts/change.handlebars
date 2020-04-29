@@ -1,0 +1,12 @@
+<span class="d-inline-flex flex-column align-items-start">
+  {{~#if (any _type _name)}}<span class="d-inline-flex align-items-center">
+    {{#if _type}}<h6><span class="badge badge-primary mr-1">{{ _type }}{{#if _details}}:{{/if}}</span></h6>{{/if}}
+    {{#if _details}}<h6><span class="badge badge-light mr-1">{{_details}}</span></h6>{{/if}}
+    {{#if _name}}<h6><span class="badge badge-dark">{{ _name }}</span></h6>{{/if}}
+  </span>{{/if~}}
+  <span class="d-inline-flex align-items-center">
+    <span class="bg-very-light border border-light rounded px-1">{{lhs}}</span>
+    <i class="ml-1 mr-1 material-icons">double_arrow</i>
+    <span class="bg-very-light border border-light rounded px-1">{{rhs}}</span>
+  </span>
+</span>

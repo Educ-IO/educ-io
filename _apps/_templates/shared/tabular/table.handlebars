@@ -1,0 +1,25 @@
+<table id="{{id}}" class="table table-striped table-bordered table-filtered border-top-0{{#if classes}}{{#each classes}} {{this}}{{/each}}{{/if}}">
+  <thead id="table-headings_{{id}}" class="table-headers">
+    <tr>
+      {{#each headers}}
+      <th class="table-header align-middle border-top-0{{#if hide}} d-none no-export{{/if}}{{#if hide_default}} no-export-default{{/if}}{{#if hide_initially}} to-hide{{/if}}"
+          data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}"{{~#if ../widths}} style="width: {{#with (lookup ../widths @index)}}{{this}}{{/with}}px"{{/if~}}>
+        {{#if ../links}}
+        <a id="heading_{{../id}}_{{@index}}" href="#" data-targets="#collapse_{{../id}}_{{@index}}" aria-expanded="false"
+           aria-controls="collapse_{{../id}}_{{@index}}"{{#if display}}{{#unless (startsWith name '__')}} data-toggle="tooltip" data-placement="bottom" title="{{name}}"{{/unless}}{{/if}}{{~#if export}} data-export="{{export}}"{{/if~}}{{~#if output}} data-output="{{output}}"{{/if~}}>{{val this display name}}</a>
+        {{else}}
+        <a id="heading_{{../id}}_{{@index}}" data-heading="heading_{{../id}}_{{@index}}" data-command="sort" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" data-placement="top" title="Click to sort by this column"{{~#if export}} data-export="{{export}}"{{/if~}}>{{val this display name}}</a>
+        {{/if}}
+        {{~#present shortcut~}}<em class="kb-shortcut small ml-2 o-50">{{shortcut}}</em>{{~/present~}}
+        {{#if (any icons help)}}<div class="heading-icons d-flex align-items-center justify-content-between w-100">
+          {{~#each icons~}}{{#present desc}}<span{{#unless ../help}}{{#if (all @first @last)}} class="ml-auto"{{/if}}{{/unless}} data-toggle="tooltip" data-placement="bottom" data-delay="200" data-html="true" data-trigger="focus" tabindex="0" style="cursor: pointer; pointer-events: auto !important;" title="{{{desc}}}">{{/present}}<i class="material-icons text-muted{{#unless (any ../help desc)}}{{#if (all @first @last)}} ml-auto{{/if}}{{/unless}}">{{#exists icon}}{{icon}}{{else}}{{this}}{{/exists}}</i>{{#present desc}}</span>{{/present}}{{~/each~}}
+        {{~#present help~}}<span{{#unless icons}} class="ml-auto"{{/unless}} data-toggle="tooltip" data-placement="auto" data-delay="200" data-html="true" data-trigger="focus" tabindex="0" style="cursor: pointer; pointer-events: auto !important;" title="{{{help}}}"><i class="material-icons text-muted">help_outline</i></span>{{~/present~}}
+        </div>{{/if}}
+      </th>
+      {{/each}}
+    </tr>
+  </thead>
+  <tbody id="{{id}}_content">
+    {{#if rows}}{{{rows}}}{{/if}}
+  </tbody>
+</table>

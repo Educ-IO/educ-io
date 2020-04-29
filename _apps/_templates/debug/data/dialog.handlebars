@@ -1,0 +1,99 @@
+<div id="{{id}}" class="modal fade{{#if class}} {{class}}{{/if}}" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal_options_title">{{{title}}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+				<form>
+
+					<div class="row mt-3">
+            
+						<div class="form-group col-lg-6">
+							<label for="textEntry1">Text Entry 1</label>
+							<button type="button" class="close" data-action="clear" data-clear="textEntry1" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="textEntry1" aria-label="Lock"><i class="material-icons">lock_open</i></button>
+							<textarea id="textEntry1" name="text_1" class="form-control resizable"
+                        rows="1">{{#with state}}{{either text_1 ""}}{{/with}}</textarea>
+							<small class="form-text text-muted">First Text Entry Field (text_1)</small>	
+						</div>
+            
+						<div class="form-group col-lg-6">
+							<label for="textEntry2">Text Entry 2</label>
+							<button type="button" class="close" data-action="clear" data-clear="textEntry2" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="textEntry2" aria-label="Lock"><i class="material-icons">lock_open</i></button>
+							<textarea id="textEntry2" name="text_2" class="form-control resizable"
+                        rows="1">{{#with state}}{{either text_2 ""}}{{/with}}</textarea>
+							<small class="form-text text-muted">Second Text Entry Field (text_2)</small>
+						</div>
+            
+					</div>
+          
+					<div class="row">
+            
+						<div class="form-group col-lg-4">
+							<label for="textEntry3">Text Entry 3</label>
+							<input type="text" id="textEntry3" name="text_3" class="form-control optional"
+                     {{#with state}} value="{{either text_3 ""}}"{{/with}} />
+							<small class="form-text text-muted">First Text Entry Field (text_3)</small>
+						</div>
+            
+						<div class="form-group col-lg-4">
+							<label for="numberEntry1">Number Entry 1</label>
+							<input type="number" id="numberEntry1" name="number_1" class="form-control optional"
+                     value="{{#with state}}{{either number_1 ""}}{{/with}}"/>
+							<small class="form-text text-muted">First Number Entry Field (number_1)</small>
+						</div>
+            
+            <div class="form-group col-lg-4">
+							<label for="numberEntry2">Number Entry 2</label>
+							<input type="number" id="numberEntry2" name="number_2" class="form-control optional"
+                     value="{{#with state}}{{either number_2 0}}{{else}}0{{/with}}"/>
+							<small class="form-text text-muted">Second Number Entry Field (number_2)</small>
+						</div>
+            
+					</div>
+          
+					<div class="row">
+            
+						<div class="form-group col-lg-8">
+							<label for="driveEntry1">Drive Entry 1</label>
+							<div class="input-group">
+								<input type="text" id="driveEntry1" name="drive_1" class="form-control"
+                       {{#with state}} value="{{either drive_1 ""}}"{{/with}} readonly />
+								<div class="input-group-append">
+									{{> control_button b_class="btn-outline-primary"
+                  	b_title="Select Folder from Google Drive" b_target="drive_1"
+                  	b_action="load-g-folder" b_text="Browse" }}
+									{{> control_button b_class="btn-secondary eraser no-active"
+                  	b_title="Clear / Reset" b_target="drive_1" b_icon="refresh" }}
+								</div>
+							</div>
+							<small class="form-text text-muted">First Drive Entry Field (drive_1)</small>
+						</div>
+            
+						<div class="col-lg-4 d-flex align-items-center">
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="checkEntry1"
+                       data-output-always="true" name="check_1"
+                       {{#with state}}{{#if check_1}} checked{{/if}}{{/with}}>
+								<label class="custom-control-label" for="checkEntry1">CheckBox 1</label>
+								<small class="form-text text-muted">First CheckBox Field (check_1)</small>
+							</div>
+						</div>
+            
+					</div>
+          
+				</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-outline-secondary btn-flat"
+                data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>

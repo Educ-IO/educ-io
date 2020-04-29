@@ -1,0 +1,16 @@
+{{#> dialog class="modal-lg"}}
+<form class="needs-validation mt-3" novalidate>
+  <div class="row">
+    <div class="container col-12 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}type" class="col-sm-2 col-form-label">Type</label>
+        <div class="col-sm-10">
+          <select class="form-control custom-select" data-output-field="Type" id="{{#if id}}{{id}}_{{/if}}select_type" tabindex="1">
+            {{#each types}}<option value="{{id}}"{{~#exists disables}} data-disables="#{{#if ../id}}{{../id}}_{{/if}}{{disables}}"{{/exists~}}{{#if ../state}}{{#exists ../state.type}}{{#is ../state.type id}} selected{{/is}}{{/exists}}{{/if}}>{{name}}</option>{{/each}}
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{{/dialog}}

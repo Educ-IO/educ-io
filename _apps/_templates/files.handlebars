@@ -1,0 +1,8 @@
+{{#each this}}<li class="list-group-item d-flex justify-content-between align-items-center" title="{{type}}">
+  <div class="d-flex justify-content-start align-items-center">
+    <span>{{name}}</span>
+    {{#if lastModifiedDate}}<span class="badge badge-dark ml-2">{{localeDate lastModifiedDate}}</span>{{/if}}
+    <span class="badge badge-light ml-2">{{formatBytes size}}</span>
+  </div>
+  <a role="button" class="close float-none mr-1 text-danger" href="#" aria-label="Close" title="Remove from Upload"><span aria-hidden="true">&times;</span></a>
+</li>{{/each}}

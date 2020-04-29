@@ -1,0 +1,10 @@
+<li class="list-group-item list-group-item-action">
+  <div class="d-flex w-100 justify-content-between">
+    <h5 class="mb-1">
+      {{> valid }}
+      <span class="font-weight-bold text-{{which valid 'success' 'danger'}}">{{which valid 'Valid' 'Invalid'}}</span> Signature</h5>
+    <small class="ml-3">{{when}}</small>
+  </div>
+  <p class="mb-1">This report was signed by <strong class="text-body">{{#is who "===" true}}you{{else}}{{who}}{{/is}}</strong>{{#if email}} ({{email}}){{/if}}</p>
+  <small>{{#if valid}}{{else}}The data in this report has <strong>probably been changed</strong> since it was reviewed. Please {{#if email}}<a href="mailto:{{email}}?subject=Please re-sign my Reflect Report&body=I have recently changed this report, so could you please check and re-sign it?%0D%0A%0D%0A{{link}}">{{/if}}request{{#if email}}</a>{{/if}} that it is <strong>checked</strong> &amp; <strong>signed</strong> again.{{/if}}</small>
+</li>

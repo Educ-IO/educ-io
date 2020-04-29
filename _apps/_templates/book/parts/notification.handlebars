@@ -1,0 +1,10 @@
+{{#unless addition}}<div class="notifications-holder">{{/unless}}
+  {{#each notifications}}<div id="{{../calendar}}.{{type}}" class="mr-2 mt-1 px-1 d-inline-flex justify-content-center align-items-center border rounded {{#if class}}{{class}}{{else}}text-warning border-warning{{/if}}">
+    {{~#is type 'eventCreation'}}<i class="material-icons pl-1 md-1 text-muted" data-toggle="tooltip" data-html="true" title="Email Notification when <strong>Bookings are Created</strong>">add_box</i><span class="px-1 o-75">Created</span>{{/is~}}
+    {{~#is type 'eventChange'}}<i class="material-icons pl-1 md-1 text-muted" data-toggle="tooltip" data-html="true" title="Email Notification when <strong>Bookings are Changed</strong>">mode_edit</i><span class="px-1 o-75">Changed</span>{{/is~}}
+    {{~#is type 'eventCancellation'}}<i class="material-icons pl-1 md-1 text-muted" data-toggle="tooltip" data-html="true" title="Email Notification when <strong>Bookings are Cancelled</strong>">delete_outline</i><span class="px-1 o-75">Cancelled</span>{{/is~}}
+    {{~#is type 'eventResponse'}}<i class="material-icons pl-1 md-1 text-muted" data-toggle="tooltip" data-html="true" title="Email Notification when Bookings are <strong>Responded to by Attendees</strong>">reply</i><span class="px-1 o-75">Responded</span>{{/is~}}
+    {{~#is type 'agenda'}}<i class="material-icons pl-1 md-1 text-muted" data-toggle="tooltip" data-html="true" title="<strong>Daily Email</strong> Agenda for Bookings">view_agenda</i><span class="px-1 o-75">Daily Agenda</span>{{/is~}}
+    <a role="button" style="font-size:1.2rem;" class="close d-inline-flex pl-1 text-warning" aria-label="Remove" href="#remove.notification.{{encode ../calendar}}.{{type}}" title="Remove Notification"><span aria-hidden="true">×</span></a>
+  </div>{{/each}}
+{{#unless addition}}</div>{{/unless}}

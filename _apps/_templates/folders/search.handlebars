@@ -1,0 +1,103 @@
+<div id="{{id}}" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal_options_title">{{{title}}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{#if instructions}}{{{instructions}}}{{/if}}
+				{{#if shortcuts}}{{> populate_buttons shortcuts}}{{/if}}
+				<form>
+					<div class="row mt-3">
+						<div class="col-12 col-lg-6">
+							<label for="nameContains">Names</label>
+							<button type="button" class="close" data-action="clear" data-clear="nameContains" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+    					<textarea id="nameContains" name="names" class="form-control resizable optional" rows="1">{{#if state}}{{state.names}}{{/if}}</textarea>
+							<small class="form-text text-muted">File Names to search for (<strong>OR</strong>, <strong>ALL</strong> if blank), one per line.</small>
+						</div>
+						<div class="col-12 col-lg-6 align-self-center">
+							<div class="d-flex flex-column flex-wrap flex-md-row">
+								<div class="custom-control custom-checkbox mr-2 mt-1">
+									<input id="visibility_limited" name="limited" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.limited}} checked{{/if}}{{/if}}>
+									<label class="custom-control-label" for="visibility_limited">Individual/s</label>	
+								</div>
+								<div class="custom-control custom-checkbox mr-2 mt-1">
+									<input id="visibility_Domain" name="domain" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.domain}} checked{{/if}}{{/if}}>
+									<label class="custom-control-label" for="visibility_Domain">Domain</label>	
+								</div>
+								<div class="custom-control custom-checkbox mr-2 mt-1">
+									<input id="visibility_Public" name="public" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.public}} checked{{/if}}{{/if}}>
+									<label class="custom-control-label" for="visibility_Public">Public</label>	
+								</div>
+								<div class="custom-control custom-checkbox mr-2 mt-1">
+									<input id="shared_WithMe" name="shared" type="checkbox" class="custom-control-input" disabled{{#if state}}{{#if state.shared}} checked{{/if}}{{/if}}>
+									<label class="custom-control-label" for="shared_WithMe">Shared with Me</label>
+								</div>
+								<small class="form-text text-muted mt-1">Visibility of items to search for (<strong>OR</strong> / <strong>AND</strong> only shared).</small>
+							</div>
+						</div>
+					</div>
+					<div class="row mt-3">
+						<div class="col-12 col-lg-6">
+							<label for="mimeTypes">Mime Types</label>
+							<button type="button" class="close" data-action="clear" data-clear="mimeTypes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="mimeTypes" aria-label="Lock"><i class="material-icons">lock_open</i></button>
+							<textarea id="mimeTypes" name="mime" class="form-control resizable optional small" rows="1">{{#if state}}{{state.mime}}{{/if}}</textarea>
+							<small class="form-text text-muted">Mime Types to search for (<strong>OR</strong>, <strong>ALL</strong> if blank), one per line.</small>	
+						</div>
+						<div class="col-12 col-lg-6">
+							<label for="includeProperties">Properties</label>
+							<a href="#" class="ml-1 badge badge-light" data-action="options" data-targets="modifierProperties" data-value="or">OR</a>
+							<a href="#" class="ml-1 badge badge-dark" data-action="options" data-targets="modifierProperties" data-value="and">AND</a>
+							<input id="modifierProperties" name="properties_modifier" class="d-none" data-click="[data-action='options']" type="text" value="and" />
+							<button type="button" class="close" data-action="clear" data-clear="includeProperties" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="includeProperties,modifierProperties" aria-label="Lock"><i class="material-icons">lock_open</i></button>
+    					<textarea id="includeProperties" name="properties" class="form-control resizable optional small" rows="1">{{#if state}}{{state.properties}}{{/if}}</textarea>
+							<small class="form-text text-muted">One per line, use key, key= | &gt;= | &lt;= | !=value format.</small>	
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-12 col-lg-6">
+							<label for="excludeRegexes">Exclude (Regexes)</label>
+							<button type="button" class="close" data-action="clear" data-clear="excludeRegexes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="excludeRegexes" aria-label="Lock"><i class="material-icons">lock_open</i></button>
+    					<textarea id="excludeRegexes" name="exclude" class="form-control resizable optional small" rows="1">{{#if state}}{{state.exclude}}{{/if}}</textarea>
+							<small class="form-text text-muted">Regexes to exclude search results (<strong>OR</strong>), one per line.</small>
+						</div>
+						<div class="form-group col-12 col-lg-6">
+							<label for="includeRegexes">Include (Regexes)</label>
+							<button type="button" class="close" data-action="clear" data-clear="includeRegexes" aria-label="Clear"><span aria-hidden="true">&times;</span></button>
+							<button type="button" class="close mr-1" data-action="lock" data-lock="includeRegexes" aria-label="Lock"><i class="material-icons">lock_open</i></button>
+    					<textarea id="includeRegexes" name="include" class="form-control resizable optional small"  rows="1">{{#if state}}{{state.include}}{{/if}}</textarea>
+							<small class="form-text text-muted">Regexes to include search results (<strong>OR</strong>), one per line.</small>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12 col-lg-6 d-flex align-items-start">
+							<div class="custom-control custom-checkbox">
+								<input id="recurseFolders" name="recurse" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.recurse}} checked{{/if}}{{else}} checked{{/if}}>
+								<label class="custom-control-label" for="recurseFolders">Search all Sub-Folders Too?</label>
+								<small class="form-text text-muted">If de-ticked, only the current folder will be searched (no sub-folders).</small>
+							</div>
+						</div>
+						<div class="col-12 col-lg-6 d-flex align-items-start">
+							<div class="custom-control custom-checkbox">
+								<input id="entireDrive" name="entire" type="checkbox" class="custom-control-input"{{#if state}}{{#if state.entire}} checked{{/if}}{{else}}{{#if entire}} checked{{/if}}{{/if}}>
+								<label class="custom-control-label" for="entireDrive">Search Entire Drive?</label>
+								<small class="form-text text-muted">Basic searches (mime, name and property<strong>=</strong>value) of entire drive will be <strong>much</strong> faster.</small>
+							</div>
+						</div>
+					</div>
+				</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-outline-secondary btn-flat" data-dismiss="modal">Close</button>
+				{{# if actions}}{{#each actions}}{{> control_button b_class="btn-outline-info" b_id=id b_action=(concat "actions_" @index) b_title=desc b_text=text }}{{/each}}{{/if}}
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Search</button>
+      </div>
+    </div>
+  </div>
+</div>

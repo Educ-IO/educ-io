@@ -1,0 +1,13 @@
+<div {{#if id}}id="{{id}}" {{/if}}class="container-fluid mx-0 px-0">
+  <h5 class="font-weight-light">{{who}}<span class="text-secondary ml-2">{{when}}</span></h5>
+  <div class="row m-0 pt-2">
+    <div class="col-12">
+      <form>
+        {{#each loans}}<div class="custom-control custom-checkbox{{#unless @last}} mb-2{{/unless}}">
+          <input type="checkbox" class="custom-control-input" id="{{RESOURCE}}_input" name="{{RESOURCE}}" checked>
+          <label class="custom-control-label" for="{{RESOURCE}}_input">{{NAME}} - {{IDENTIFIER}}</label>
+        </div>{{/each}}
+      </form>
+    </div>
+  </div>
+</div>

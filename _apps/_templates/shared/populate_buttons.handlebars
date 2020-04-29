@@ -1,0 +1,5 @@
+{{#each this}}<div class="d-flex flex-column flex-wrap flex-md-row mb-lg-1">
+  <button class="btn mr-1 mr-md-2 mr-lg-3 btn-disabled mt-1 mb-md-0" type="button" aria-disabled="true" tabindex="-1">{{@key}}</button>
+  {{#each this}}<button data-action="populate" data-populate="{{#if populate}}{{populate}}{{else}}{{@key}}{{/if}}" type="button" class="btn{{#if class}} {{class}}{{/if}} mr-1 mr-md-2 mr-lg-3 mt-1 mb-md-0 waves-effect">{{name}}</button>{{/each}}
+</div>
+{{/each}}

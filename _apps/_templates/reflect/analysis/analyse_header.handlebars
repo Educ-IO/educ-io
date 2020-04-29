@@ -1,0 +1,24 @@
+{{#> table_header}}
+{{> control_button b_large="true" b_icon_large="true"
+  b_class="btn-success mr-1 state-analysis-summary"
+  b_tooltip="Compare to expectations" b_icon="add_circle_outline"
+  b_icon_type="light" b_command="analyse.add" }}
+{{> control_button b_large="true" b_icon_large="true"
+  b_class="btn-dark mr-1 state-analysis"
+  b_tooltip="Save Analysis Definition" b_icon="save"
+  b_icon_type="light" b_route="analyse.save" }}
+<div class="btn-group btn-group-lg mb-0">
+  <a{{#if id}} id="{{id}}_EXPORT"{{/if}} data-route="analyse.export.sheets" href="#"
+          role="button" class="btn btn-primary btn-lg d-flex"><i class="mr-2 material-icons md-light md-24 align-self-center">save_alt</i>Export</a>
+  <button type="button" class="btn btn-primary btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+    <a class="dropdown-item" data-route="analyse.export.csv" href="#">CSV</a>
+    <a class="dropdown-item" data-route="analyse.export.excel" href="#">Excel</a>
+    <a class="dropdown-item" data-route="analyse.export.markdown" href="#">Markdown</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="#instructions.export">About</a>
+  </div>
+</div>
+{{/table_header}}
