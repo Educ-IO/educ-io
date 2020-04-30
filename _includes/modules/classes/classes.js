@@ -74,6 +74,7 @@ Classes = (options, factory) => {
         return _.map(work, value => {
           var _topic = value.topicId && classroom.$topics && classroom.$topics.length > 0 ?
               _.find(classroom.$topics, topic => topic.topicId == value.topicId) : null;
+          if (value.materials) value.workType = _.find(value.materials, material => material.form) ? "QUIZ_ASSIGNMENT" : value.workType;
           return _.extend(value, {
             $parent: classroom.$id,
             $$fetched: loaded,

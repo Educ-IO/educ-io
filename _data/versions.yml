@@ -1,4 +1,8 @@
 site :
+  0.1.10i :
+    name : Classes v0.0.4k-beta
+    desc : Gradesheet Formatting Improvements
+    numeric : 0.1.10.9
   0.1.10h :
     name : Classes v0.0.4j-beta
     desc : Bug-Fix
@@ -1458,6 +1462,14 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  v0.0.4k-beta :
+    name : Gradesheet Formatting Improvements
+    type : minor
+    changes :
+      - Per-Classwork numerical metrics in Gradesheet
+      - Coloured cell formatting and symbols for submission states in Gradesheet
+      - Sorted output in Gradesheet
+      - Fixed bug with All Teachers counts in Report View
   v0.0.4j-beta :
     name : Guardians Usage Bug Fix
     type : minor

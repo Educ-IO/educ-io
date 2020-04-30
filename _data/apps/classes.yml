@@ -74,6 +74,7 @@ helpers:
   - google/sheets/format
   - google/sheets/properties
   - google/sheets/metadata
+  - google/sheets/sorts
   - google
   - colours
   - css

@@ -12,7 +12,7 @@ Report = (options, factory) => {
       db : "report"
     },
     FN = {},
-    HIDDEN = ["ID", "State", "Code", "Owner", "Updated", "Students", "All_Students", "Teachers", "All_Teachers"];
+    HIDDEN = ["ID", "State", "Code", "Owner", "Updated", "Students", "All_Students", "Teachers", "All_Teachers", "Formal"];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -45,7 +45,11 @@ Report = (options, factory) => {
           display : "All Teachers",
           export : "All Teachers",
           help : "Both current and invited Teachers"
-        }, "Person", "Role"]
+        }, "Person",  {
+          name : "Formal",
+          display: "Formal Name",
+          export : "Formal Name"
+        }, "Role"]
       .concat(_.map(periods, period => ({
         name: `A_${period.code}`,
         display: `A: ${period.value} ${period.unit}`,
@@ -140,10 +144,11 @@ Report = (options, factory) => {
       students: FN.flatten(classroom.students ? classroom.students.length : 0),
       all_students: FN.flatten((classroom.students ? classroom.students.length : 0) + 
                       (classroom.$invitations && classroom.$invitations.students ? classroom.$invitations.students.length : 0)),
-      teachers: FN.flatten(classroom.students ? classroom.students.length : 0),
-      all_teachers: FN.flatten((classroom.students ? classroom.students.length : 0) + 
-                      (classroom.$invitations && classroom.$invitations.students ? classroom.$invitations.students.length : 0)),
+      teachers: FN.flatten(classroom.teachers ? classroom.teachers.length : 0),
+      all_teachers: FN.flatten((classroom.teachers ? classroom.teachers.length : 0) + 
+                      (classroom.$invitations && classroom.$invitations.teachers ? classroom.$invitations.teachers.length : 0)),
       person: "",
+      formal: "",
       role: "",
     };
     
@@ -160,6 +165,7 @@ Report = (options, factory) => {
     _value.$id = `${_value.$id}_${person.id}`;
     _value.role = role,
     _value.person = person.text;
+    _value.formal = person.formal || "";
     
     /* <!-- Add Usage (if available) --> */
     if (person.children && person.children.length > 0) {

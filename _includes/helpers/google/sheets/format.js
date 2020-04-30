@@ -185,9 +185,9 @@ Google_Sheets_Format = (options, factory) => {
 
       gradient : (min, mid, max) => _generic({
         "gradientRule": {
-          "minpoint": _point(_getColour(min, "mediumred"), _getType(min, "MIN"), _getValue(min)),
+          "minpoint": _point(_getColour(min, "mediumlightred"), _getType(min, "MIN"), _getValue(min)),
           "midpoint": _point(_getColour(mid, "white"), _getType(mid, "PERCENTILE"), _getValue(mid, 50)),
-          "maxpoint": _point(_getColour(max, "mediumgreen"), _getType(max, "MAX"), _getValue(max)),
+          "maxpoint": _point(_getColour(max, "mediumlightgreen"), _getType(max, "MAX"), _getValue(max)),
         }
       }),
 

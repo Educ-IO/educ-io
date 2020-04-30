@@ -19,6 +19,13 @@ Gradesheet = (options, factory) => {
     },
     FN = {};
   
+  const MARKERS = {
+    NON_GRADED : "★",
+    AWAITING_GRADE : "☆",
+    IN_PROGRESS : "⭘",
+    MISSING_SUBMISSION : "🗅"
+  };
+  
   const SCHEMAS = [
     {
       key: "CLASSES_SCHEMA_VERSION",
@@ -98,6 +105,7 @@ Gradesheet = (options, factory) => {
       sheet: sheetId
     }),
     notation: factory.Google_Sheets_Notation(),
+    sorts: factory.Google_Sheets_Sorts()
   });
   /* <!-- Helper Functions --> */
 
@@ -312,7 +320,7 @@ Gradesheet = (options, factory) => {
       memo.columns[row.classroom.$id][row.classwork.$id] = _column;
 
       /* <!-- Add Classwork Name --> */
-      memo.values[2].push(memo.truncate(row.classwork.title));
+      memo.values[2].push(memo.truncate(`${row.classwork.mode == "INDIVIDUAL_STUDENTS" ? "◔ " : ""}${row.classwork.type == "QUIZ_ASSIGNMENT" ? "✓ " : row.classwork.type == "ASSIGNMENT" ? "🖹 " : row.classwork.type == "SHORT_ANSWER_QUESTION" ? "✎ " : row.classwork.type == "MULTIPLE_CHOICE_QUESTION" ? "⚟ " : ""}${row.classwork.title}`));
       memo.notes.push({
         "updateCells": {
           "rows": [{
@@ -326,13 +334,18 @@ Gradesheet = (options, factory) => {
       });
 
       /* <!-- Add Formulas --> */
-      memo.values[3].push(`=IF(COUNT(INDIRECT("R${memo.data.row + 1}C"&COLUMN()&":C"&COLUMN(),false))>0,
+      memo.values[3].push(`=COUNTIF(INDIRECT("R${memo.data.row + 1}C"&COLUMN()&":C"&COLUMN(),false), ">=0")`);
+      memo.values[4].push(`=COUNTIF(INDIRECT("R${memo.data.row + 1}C"&COLUMN()&":C"&COLUMN(),false), "${MARKERS.NON_GRADED}")`);
+      memo.values[5].push(`=COUNTIF(INDIRECT("R${memo.data.row + 1}C"&COLUMN()&":C"&COLUMN(),false), "${MARKERS.AWAITING_GRADE}")`);
+      memo.values[6].push(`=COUNTIF(INDIRECT("R${memo.data.row + 1}C"&COLUMN()&":C"&COLUMN(),false), "${MARKERS.IN_PROGRESS}")`);
+      
+      memo.values[7].push(`=IF(COUNT(INDIRECT("R${memo.data.row + 1}C"&COLUMN()&":C"&COLUMN(),false))>0,
   ROUND(AVERAGE(INDIRECT("R${memo.data.row + 1}C"&COLUMN()&":C"&COLUMN(),false)),1),)`);
-      memo.values[4].push(`=IF(COUNT(INDIRECT("R${memo.data.row + 1}C"&COLUMN()&":C"&COLUMN(),false))>0,
+      memo.values[8].push(`=IF(COUNT(INDIRECT("R${memo.data.row + 1}C"&COLUMN()&":C"&COLUMN(),false))>0,
   ROUND(STDEVP(INDIRECT("R${memo.data.row + 1}C"&COLUMN()&":C"&COLUMN(),false)),1),)`);
 
       /* <!-- Add Max Scores --> */
-      memo.values[5].push(row.classwork.points || "");
+      memo.values[9].push(row.classwork.points || "");
 
       memo.length += 1;
 
@@ -346,7 +359,7 @@ Gradesheet = (options, factory) => {
     first: 5,
     column: 5,
     data: {
-      row: 6,
+      row: 10,
     },
     last: {
       classroom: null,
@@ -357,6 +370,10 @@ Gradesheet = (options, factory) => {
       [], /* <!-- Classroom Names --> */
       [], /* <!-- Topic Names --> */
       [], /* <!-- Classwork Names --> */
+      [], /* <!-- Graded --> */
+      [], /* <!-- Returned / Without Grade --> */
+      [], /* <!-- Handed In / Awaiting Grade --> */
+      [], /* <!-- "With Student / In Progress --> */
       [], /* <!-- Average Formulas --> */
       [], /* <!-- SD Formulas --> */
       [], /* <!-- Max Scores --> */
@@ -369,6 +386,9 @@ Gradesheet = (options, factory) => {
 
   FN.students = (value, rows, start) => _.reduce(rows, (memo, row) => {
 
+    var _gradeless = row.classwork.points === undefined || row.classwork.points === null,
+        _quiz = row.classwork.type == "QUIZ_ASSIGNMENT";
+    
     _.each(row.classwork.$submissions, submission => {
 
       if (!memo.students[submission.userId]) memo.students[submission.userId] = {
@@ -387,19 +407,19 @@ Gradesheet = (options, factory) => {
                 }
               }, {
                 "userEnteredValue": {
-                  "stringValue": submission.user.text
+                  "stringValue": submission.user.formal || submission.user.text
                 }
               }, {
                 "userEnteredValue": {
-                  "formulaValue": `=COUNTIF(${memo.col}${memo.row}:${memo.row}, "<>")`,
+                  "formulaValue": `=COUNTIF(ARRAYFORMULA(ISNUMBER(${memo.col}${memo.row}:${memo.row})),TRUE)`,
                 }
               }, {
                 "userEnteredValue": {
-                  "formulaValue": `=IFERROR(AVERAGE(ARRAYFORMULA(IF(${memo.col}${memo.row}:${memo.row} <> "", IF(${memo.col}${memo.row}:${memo.row} <= ${memo.col}$6:$6, ${memo.col}${memo.row}:${memo.row}/${memo.col}$6:$6,1),))), "")`
+                  "formulaValue": `=IFERROR(AVERAGE(ARRAYFORMULA(IF(ISNUMBER(${memo.col}${memo.row}:${memo.row}), IF(${memo.col}${memo.row}:${memo.row} <= ${memo.col}$10:$10, ${memo.col}${memo.row}:${memo.row}/${memo.col}$10:$10,1),))), "")`
                 }
               }, {
                 "userEnteredValue": {
-                  "formulaValue": `=IFERROR(SPARKLINE(ARRAYFORMULA(IF(${memo.col}${memo.row}:${memo.row} <> "", ${memo.col}${memo.row}:${memo.row}-IF(${memo.col}$4:$4>${memo.col}$6:$6,${memo.col}$6:$6,${memo.col}$4:$4),)), {"charttype","column";"axis", true;"axiscolor", "eeeeee";"color","green";"negcolor","red";"ymin",MIN(0,MIN(ARRAYFORMULA(IF(${memo.col}${memo.row}:${memo.row} <> "", ${memo.col}${memo.row}:${memo.row}-${memo.col}$4:$4,))));"ymax",MAX(0,MAX(ARRAYFORMULA(IF(${memo.col}${memo.row}:${memo.row} <> "", ${memo.col}${memo.row}:${memo.row}-${memo.col}$4:$4,))))}), "")`,
+                  "formulaValue": `=IFERROR(SPARKLINE(ARRAYFORMULA(IF(ISNUMBER(${memo.col}${memo.row}:${memo.row}), ${memo.col}${memo.row}:${memo.row}-IF(${memo.col}$8:$8>${memo.col}$10:$10,${memo.col}$10:$10,${memo.col}$8:$8),)), {"charttype","column";"axis", true;"axiscolor", "eeeeee";"color","green";"negcolor","red";"ymin",MIN(0,MIN(ARRAYFORMULA(IF(ISNUMBER(${memo.col}${memo.row}:${memo.row}), ${memo.col}${memo.row}:${memo.row}-${memo.col}$8:$8,))));"ymax",MAX(0,MAX(ARRAYFORMULA(IF(ISNUMBER(${memo.col}${memo.row}:${memo.row}), ${memo.col}${memo.row}:${memo.row}-${memo.col}$8:$8,))))}), "")`,
                 }
               }]
             }],
@@ -409,41 +429,67 @@ Gradesheet = (options, factory) => {
         }],
       };
 
-      /* <!-- Only Add Grades for work that has beenhanded in / returned --> */
-      if (submission.state == "TURNED_IN" || submission.state == "RETURNED" ||
-        (submission.assignedGrade !== null && submission.assignedGrade !== undefined) ||
-        (submission.draftGrade !== null && submission.draftGrade !== undefined)) {
-
+      /* <!-- Only Add Grades for work that has been handed in / returned --> */
+      var _completed = submission.state == "TURNED_IN" || submission.state == "RETURNED",
+          _graded = (_completed &&
+            (submission.assignedGrade !== null && submission.assignedGrade !== undefined) ||
+            (submission.draftGrade !== null && submission.draftGrade !== undefined)),
+          _missingSubmission = _completed && !_quiz &&
+            (!submission.assignmentSubmission || !submission.assignmentSubmission.attachments || submission.assignmentSubmission.attachments.length === 0) &&
+            (!submission.shortAnswerSubmission || !submission.shortAnswerSubmission.answer) &&
+            (!submission.multipleChoiceSubmission || !submission.multipleChoiceSubmission.attachments);
+      
         var _row = memo.students[submission.userId],
           _col = value.add.columns[row.classroom.$id][row.classwork.$id],
-          _fields = ["userEnteredValue.numberValue"],
-          _value = {
-            "userEnteredValue": {
-              "numberValue": submission.assignedGrade != null && submission.assignedGrade != undefined ?
+          _fields = [_graded ? "userEnteredValue.numberValue" : "userEnteredValue.stringValue"],
+          _value =  {
+            "userEnteredValue" : _graded && !_gradeless ? {
+              "numberValue" : submission.assignedGrade != null && submission.assignedGrade != undefined ?
                 submission.assignedGrade : submission.draftGrade
+            } : submission.state == "RETURNED" ? {
+              "stringValue" : _missingSubmission ? MARKERS.MISSING_SUBMISSION : _gradeless ? "" : MARKERS.NON_GRADED,
+            } : submission.state == "TURNED_IN" ? {
+              "stringValue" : _missingSubmission ? MARKERS.MISSING_SUBMISSION : _gradeless ? "" : MARKERS.AWAITING_GRADE
+            } : {
+              "stringValue" : MARKERS.IN_PROGRESS
             }
           };
 
         var _bold = submission.state == "RETURNED" ? true : null,
-          _italic = (submission.assignedGrade == null || submission.assignedGrade == undefined) ? true : null,
+          _italic = !_completed && _graded ? true : null,
           _fore = (submission.assignedGrade == null || submission.assignedGrade == undefined) ? "verydarkgrey" : null,
-          _back = null,
-          _borders = null;
+          _back = null;
 
         if (submission.late) {
 
           /* <!-- Add Note --> */
           var _handedIn = _.last(_.filter(submission.submissionHistory, event => event.stateHistory && event.stateHistory.state == "TURNED_IN"));
-          _value.note = `LATE${row.classwork.__due && _handedIn ? ` by ${humanizeDuration(row.classwork.__due.diff(_handedIn.stateHistory.stateTimestamp), {largest: 3})}` : ""}`;
-          _fields.push("note");
+          
+          if (row.classwork.__due && _handedIn) {
+            _value.note = `LATE by ${humanizeDuration(row.classwork.__due.diff(_handedIn.stateHistory.stateTimestamp), {largest: 3})}`;
+            _fields.push("note");  
+          }
+          
+          /* <!-- Set Background Colour (Removed Borders as they don't sort!) --> */
+          _back = "mediumred";
+          _fore = _graded && !_gradeless ? "white" : "mediumdarkred";
 
-          /* <!-- Set Background Colour --> */
-          _back = "lightred";
-
-          /* <!-- Set the Borders --> */
-          var _red = value.helpers.format.border("SOLID_THICK", "red");
-          _borders = value.helpers.format.borders(_red, _red, _red, _red);
-
+        } else if (submission.state == "RETURNED") {
+          
+          _back = "verylightgreen";
+          if (!_graded) _fore = "green";
+          
+        } else if (submission.state == "TURNED_IN") {
+          
+          _back = "verylightblue";
+          if (!_graded) _fore = "steelblue";
+          
+        } else {
+          
+          /* <!-- Assigned, awaiting action --> */
+          _back = "verylightorange";
+          if (!_graded) _fore = "lightorange";
+        
         }
 
         /* <!-- Set all the formats --> */
@@ -454,7 +500,6 @@ Gradesheet = (options, factory) => {
           ]
           .concat(_back ? [value.helpers.format.background(_back)] : [])
           .concat(_bold || _italic || _fore ? [value.helpers.format.text(_fore, null, _bold, _italic)] : [])
-          .concat(_borders ? [_borders] : [])
         ));
 
         /* <!-- Add Update Request to Student Object --> */
@@ -467,8 +512,6 @@ Gradesheet = (options, factory) => {
             fields: _fields.join(",")
           }
         });
-
-      }
 
       memo.length += 1;
 
@@ -488,12 +531,16 @@ Gradesheet = (options, factory) => {
 
   /* <!-- Public Functions --> */
   FN.create = (name, tab, id, sheet) => (id ?  FN.sheet.add(id, tab, sheet) : FN.sheet.create(name, tab))
-    .then(value => FN.sheet.update(value, value.helpers.notation.grid(0, 5, 0, 4, true,
+    .then(value => FN.sheet.update(value, value.helpers.notation.grid(0, 9, 0, 4, true,
       value.sheet.sheets[value.sheet.sheets.length - 1].properties.title), [
-        ["Classrooms ⇨", null, null, null, null],
+        [null, "=HYPERLINK(\"https://educ.io/tutorials/classes/gradesheet#legend--key\", \"About\")", "Classrooms ⇨", null, null],
         ["Students ⬇", null, null, null, "Topics ➡"],
         ["ID", "Name", "Graded⬇", "Average⬇", "Classwork ➡"],
-        [null, null, "=COUNTIF(F4:4, \"<>\")", "=IFERROR(AVERAGEIF(D7:D, \">0\"),)", "Averages ➡"],
+        [null, null, null, null, "Graded ➡"],
+        [null, null, null, null, "Returned / Without Grade ➡"],
+        [null, null, null, null, "Handed In / Awaiting Grade ➡"],
+        [null, null, null, null, "With Student / In Progress ➡"],
+        [null, null, "=COUNTIF(F8:8, \"<>\")", "=IFERROR(AVERAGEIF(D11:D, \">0\"),)", "Averages ➡"],
         [null, null, null, null, "Standard Deviations ➡"],
         [null, null, null, null, "Points ➡"]
       ], "USER_ENTERED")
@@ -507,7 +554,8 @@ Gradesheet = (options, factory) => {
           value.helpers.format.text("darkgrey", 8, true)
         ]),
 
-        /* <!-- Set Top Three Columns as Headers --> */
+    /* <!-- MAIN HEADERS --> */
+        /* <!-- Set Top Three Rows as Headers --> */
         value.helpers.format.cells(value.helpers.grid.rows(0, 3).range(), [
           value.helpers.format.background("black"),
           value.helpers.format.align.horizontal("CENTER"),
@@ -515,17 +563,15 @@ Gradesheet = (options, factory) => {
           value.helpers.format.text("white", 11, true)
         ]),
 
-        value.helpers.format.cells(value.helpers.grid.rows(3, 6).range(), [
-          value.helpers.format.background("black"),
-          value.helpers.format.align.horizontal("CENTER"),
-          value.helpers.format.align.vertical("MIDDLE"),
-          value.helpers.format.text("white", 8, true)
-        ]),
-
         /* <!-- Row 1 Classroom | Name Headers --> */
         value.helpers.format.cells(value.helpers.grid.rows(0, 1).range(), [
           value.helpers.format.text("mediumyellow", 12, true)
         ]),
+    
+        /* <!-- Row 1 Key Link --> */
+        value.helpers.format.cells(value.helpers.grid.range(0, 1, 1, 2), [
+          value.helpers.format.text("lightblue", 12, true)
+        ]), 
 
         /* <!-- Column & Row 1 / 2 Main Headers --> */
         value.helpers.format.cells(value.helpers.grid.range(0, 2, 0, 1), [
@@ -533,14 +579,23 @@ Gradesheet = (options, factory) => {
         ]),
 
         /* <!-- Row 3 Classwork Headers --> */
-        value.helpers.format.cells(value.helpers.grid.range(2, 3, 4, 26), [
+        value.helpers.format.cells(value.helpers.grid.range(2, 3, 5, 26), [
           value.helpers.format.text("white", 8, true, false, 75),
           value.helpers.format.wrap("WRAP"),
           value.helpers.format.align.vertical("BOTTOM"),
           value.helpers.format.align.horizontal("CENTER"),
         ]),
+    /* <!-- MAIN HEADERS --> */
+    
+        /* <!-- Set Next Seven Rows as Smaller Headers --> */
+        value.helpers.format.cells(value.helpers.grid.rows(3, 10).range(), [
+          value.helpers.format.background("black"),
+          value.helpers.format.align.horizontal("CENTER"),
+          value.helpers.format.align.vertical("MIDDLE"),
+          value.helpers.format.text("white", 8, true)
+        ]),
 
-        /* <!-- Set Wrapping and Text Alignment for Columns 3 --> */
+        /* <!-- Set Wrapping and Text Alignment for Columns 1-3 --> */
         value.helpers.format.cells(value.helpers.grid.columns(0, 4).range(), [
           value.helpers.format.wrap("WRAP"),
           value.helpers.format.align.vertical("MIDDLE")
@@ -552,20 +607,25 @@ Gradesheet = (options, factory) => {
           value.helpers.format.align.vertical("MIDDLE")
         ]),
 
-        /* <!-- Right Align Main Header --> */
-        value.helpers.format.cells(value.helpers.grid.range(0, 1, 0, 1), [
-          value.helpers.format.align.horizontal("RIGHT")
-        ]),
-
-        /* <!-- Right Align Sub-Headers --> */
-        value.helpers.format.cells(value.helpers.grid.range(1, 6, 4, 5), [
-          value.helpers.format.align.horizontal("RIGHT")
-        ]),
-
         /* <!-- Set Text Alignment for Column 3 & 4  | Graded & Student / Average --> */
         value.helpers.format.cells(value.helpers.grid.columns(2, 4).range(), [
           value.helpers.format.align.horizontal("CENTER"),
           value.helpers.format.align.vertical("MIDDLE")
+        ]),
+    
+        /* <!-- Left Align Key Header --> */
+        value.helpers.format.cells(value.helpers.grid.range(0, 1, 1, 2), [
+          value.helpers.format.align.horizontal("LEFT")
+        ]),
+    
+        /* <!-- Right Align Classrooms Header --> */
+        value.helpers.format.cells(value.helpers.grid.range(0, 1, 2, 5), [
+          value.helpers.format.align.horizontal("RIGHT")
+        ]),
+
+        /* <!-- Right Align Sub-Headers --> */
+        value.helpers.format.cells(value.helpers.grid.range(1, 10, 4, 5), [
+          value.helpers.format.align.horizontal("RIGHT")
         ]),
 
         /* <!-- Set Format/Text Alignment for Graded & Student / Average --> */
@@ -575,29 +635,44 @@ Gradesheet = (options, factory) => {
         ]),
 
         /* <!-- Set Format for Graded Count --> */
-        value.helpers.format.cells(value.helpers.grid.range(3, 4, 2, 3), [
+        value.helpers.format.cells(value.helpers.grid.range(7, 8, 2, 3), [
           value.helpers.format.background("yellow"),
           value.helpers.format.text("black", 11, true)
         ]),
     
         /* <!-- Set Format for Student / Average --> */
-        value.helpers.format.cells(value.helpers.grid.range(3, 4, 3, 4), [
+        value.helpers.format.cells(value.helpers.grid.range(7, 8, 3, 4), [
           value.helpers.format.background("lighthotpink"),
           value.helpers.format.text("black", 10, true)
         ]),
+    
+        /* <!-- Set Format for Returned / Non-Graded --> */
+        value.helpers.format.cells(value.helpers.grid.rows(3, 5).range(), [
+          value.helpers.format.text("verylightgreen", 9)
+        ]),
+    
+        /* <!-- Set Format for Handed In / Awaiting Grade --> */
+        value.helpers.format.cells(value.helpers.grid.rows(5, 6).range(), [
+          value.helpers.format.text("verylightblue", 9)
+        ]),
+    
+        /* <!-- Set Format for With Student / In Progress --> */
+        value.helpers.format.cells(value.helpers.grid.rows(6, 7).range(), [
+          value.helpers.format.text("verylightorange", 9)
+        ]),
 
         /* <!-- Merge Main Headers --> */
-        value.helpers.format.merge(value.helpers.grid.range(0, 1, 0, 4)),
-        value.helpers.format.merge(value.helpers.grid.range(1, 2, 0, 3)),
-
-        value.helpers.format.merge(value.helpers.grid.range(2, 6, 0, 1)), /* <!-- Student / ID --> */
-        value.helpers.format.merge(value.helpers.grid.range(2, 6, 1, 2)), /* <!-- Student / Name --> */
-        value.helpers.format.merge(value.helpers.grid.range(3, 6, 2, 3)), /* <!-- Graded / Count --> */
-        value.helpers.format.merge(value.helpers.grid.range(3, 6, 3, 4)), /* <!-- Student / Average --> */
+        value.helpers.format.merge(value.helpers.grid.range(0, 1, 2, 5)),
+        value.helpers.format.merge(value.helpers.grid.range(1, 2, 0, 4)),
+   
+        value.helpers.format.merge(value.helpers.grid.range(2, 10, 0, 1)), /* <!-- Student / ID --> */
+        value.helpers.format.merge(value.helpers.grid.range(2, 10, 1, 2)), /* <!-- Student / Name --> */
+        value.helpers.format.merge(value.helpers.grid.range(7, 10, 2, 3)), /* <!-- Graded / Count --> */
+        value.helpers.format.merge(value.helpers.grid.range(7, 10, 3, 4)), /* <!-- Student / Average --> */
 
         /* <!-- Freeze Heading Rows & Student Columns --> */
         value.helpers.properties.update([
-          value.helpers.properties.grid.frozen.rows(6),
+          value.helpers.properties.grid.frozen.rows(10),
           value.helpers.properties.grid.frozen.columns(5),
         ]),
 
@@ -615,10 +690,13 @@ Gradesheet = (options, factory) => {
         value.helpers.format.dimension(value.helpers.grid.columns(3, 4).dimension(55)),
 
         /* <!-- Resize fifth Column | Overall --> */
-        value.helpers.format.dimension(value.helpers.grid.columns(5, 6).dimension(120)),
+        value.helpers.format.dimension(value.helpers.grid.columns(4, 5).dimension(120)),
 
-        /* <!-- Hide fifth & sixth Row (Standard Deviation / Max) --> */
-        value.helpers.format.hide(value.helpers.grid.rows(4, 6).dimension()),
+        /* <!-- Hide fourth, fifth, sixth and seventh Rows (Counts of Work States) --> */
+        value.helpers.format.hide(value.helpers.grid.rows(3, 7).dimension()),
+    
+        /* <!-- Hide ninth and tenth Row (Standard Deviation / Max) --> */
+        value.helpers.format.hide(value.helpers.grid.rows(8, 10).dimension()),
 
         /* <!-- Resize first and second Rows (Classroom / Topic Names) --> */
         value.helpers.format.dimension(value.helpers.grid.rows(0, 2).dimension(24)),
@@ -626,8 +704,8 @@ Gradesheet = (options, factory) => {
         /* <!-- Resize third Row (Classwork Names) --> */
         value.helpers.format.dimension(value.helpers.grid.rows(2, 3).dimension(90)),
 
-        /* <!-- Resize fourth, fifth and sixth Rows (Numerical Data) --> */
-        value.helpers.format.dimension(value.helpers.grid.rows(3, 6).dimension(20)),
+        /* <!-- Resize Numerical Data Rows --> */
+        value.helpers.format.dimension(value.helpers.grid.rows(3, 10).dimension(20)),
 
       ])));
   
@@ -705,11 +783,11 @@ Gradesheet = (options, factory) => {
   FN.populate = (value, index) => Promise.resolve(_.tap(value, value => {
         value.classes = _.chain(value.rows).map(row => row.classroom.$id).uniq().value();
         value.add = FN.process(value, value.rows);
-        value.students = FN.students(value, value.rows, value.add.data.row).students;
+        value.students = FN.students(value, value.rows, value.add.data.row);
       }))
 
       /* <!-- Update Header Cell Values --> */
-      .then(value => FN.sheet.update(value, value.helpers.notation.grid(0, 5, value.add.first,
+      .then(value => FN.sheet.update(value, value.helpers.notation.grid(0, value.add.data.row - 1, value.add.first,
                       value.add.first + value.add.length, true, value.sheet.sheets[index].properties.title), value.add.values, "USER_ENTERED"))
 
       /* <!-- Add Sheet Metadata --> */
@@ -796,10 +874,12 @@ Gradesheet = (options, factory) => {
             FN.sheet.batch(value, value.add.notes) : value)
 
       /* <!-- Add student rows --> */
-      .then(value => FN.sheet.batch(value, _.chain(value.students).values().pluck("requests").flatten().value()))
+      .then(value => FN.sheet.batch(value, _.chain(value.students.students).values().pluck("requests").flatten().value()))
 
-      /* <!-- Conditional Formats / Autosize Columns --> */
+      /* <!-- Sort Students, Conditional Formats / Autosize Columns --> */
       .then(value => FN.sheet.batch(value, [
+        value.helpers.sorts.range(value.helpers.grid.rows(value.add.data.row, value.students.length + value.add.data.row).range(),
+                                  {dimension: 1}),
         value.helpers.format.conditional(value.helpers.grid.range(value.add.data.row, Math.max(1000, value.students.length + value.add.data.row), 2, 3))
         .gradient(),
         value.helpers.format.conditional(value.helpers.grid.range(value.add.data.row, Math.max(1000, value.students.length + value.add.data.row), 3, 4))
@@ -807,9 +887,6 @@ Gradesheet = (options, factory) => {
         value.helpers.format.cells(value.helpers.grid.range(3, Math.max(1000, value.students.length + value.add.data.row), 3, 4), [
           value.helpers.format.type("PERCENT", "0.00%"),
         ]),
-        /*value.helpers.format.cells(value.helpers.grid.range(2, 3, value.add.first, value.add.first + value.add.length), [
-          value.helpers.format.align.horizontal("LEFT"),
-        ]),*/
         value.helpers.format.autosize(value.helpers.grid.columns(value.add.first, value.add.first + value.add.length).dimension()),
       ]))
   

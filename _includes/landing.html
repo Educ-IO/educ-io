@@ -37,7 +37,7 @@
 			</div>
 			<p class="text-muted mb-0">
 				Current app version is <a href="{{site.baseurl}}changes/?highlight={{ app.name | downcase }}">{% assign _app = app.name | downcase %}{{ site.data.versions[_app].first[0] }}</a> | 
-    <a href="{{site.baseurl}}about/?highlight=privacy">Privacy Policy</a>
+    <a href="{{site.baseurl}}about/?highlight=privacy">Privacy Policy</a>{% if jekyll.environment == "debug" %} | {{ site.time }}{% endif %}
 			</p>
 		</div>
 	</div>

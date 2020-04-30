@@ -32,6 +32,13 @@ People = (options, factory) => {
       .catch(() => null)
       .then(guardians => guardians && guardians.length > 0 && guardians[0] ? guardians : null));
   
+  FN.name = profile => ({
+                  id : profile.id,
+                  text : factory.handlebars.username(profile.name.fullName),
+                  formal : profile.name.fullName.length > 3 && profile.name.givenName && profile.name.familyName ?
+                    `${profile.name.familyName}, ${profile.name.givenName}` : profile.name.fullName
+                });
+  
   FN.generic = (list, property, output, singular, plural, action) => {
     var processed = 0;
     return Promise.all(_.map(_.chain(list).pluck(property).compact().uniq().value(), id => FN.person(id)
@@ -39,10 +46,7 @@ People = (options, factory) => {
                                  factory.Main.message(processed += 1, singular, plural, action || "processed")) : null, person))))
       .then(people => {
         _.each(people, person => person && person.name ? 
-                _.chain(list).filter(value => value[property] == person.id).each(value => value[output] = {
-                  id : person.id,
-                  text : person.name.fullName,
-                }) : null);
+                _.chain(list).filter(value => value[property] == person.id).each(value => value[output] = FN.name(person)) : null);
         return list;
       });
   };
@@ -50,21 +54,20 @@ People = (options, factory) => {
   FN.process = people => (_.each(_.isArray(people) ? people : [people], 
                                 person => person.userId ? ರ‿ರ.cache[person.userId] = person.profile : ರ‿ರ.cache[person.id] = person), people);
   
-  FN.simple = people => _.reduce(people, (memo, person) => (person && person.profile ? memo.push(person.profile.name.fullName) : null, memo), []);
+  FN.simple = people => _.reduce(people, (memo, person) => (person && person.profile ? 
+                                                            memo.push(factory.handlebars.username(person.profile.name.fullName)) : null, memo), []);
   
   FN.identifiers = people => _.reduce(people, (memo, person) => (person && person.userId ? memo.push(person.userId) : null, memo), []);
   
   FN.list = (people, parent, type, removable, children) => _.reduce(people, (memo, person) => {
             if (person && person.profile) {
-              var _person = {
-                id : person.profile.id,
-                text : person.profile.name.fullName,
+              var _person = _.extend(FN.name(person.profile), {
                 parent : parent,
                 type : type,
                 title: "Remove this Person from the Class",
                 children: [],
                 $removable : removable
-              };
+              });
               if (children) _person.children = children === true ? [] : children;
               memo.push(_person);
             } 
