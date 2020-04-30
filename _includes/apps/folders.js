@@ -350,7 +350,7 @@ App = function() {
             matches: [/^SHOW/i, /^TEAM$/i],
             length: 1,
             fn: command => _.compose(
-              () => ಠ_ಠ.TeamDrives(ಠ_ಠ).show(String(command) == "true")
+              () => (ರ‿ರ.drives = ಠ_ಠ.TeamDrives(ಠ_ಠ)).show(String(command) == "true")
               .then(() => ಠ_ಠ.Display.state().enter(STATE_TEAM)),
               () => ಠ_ಠ.container.empty(),
               ಠ_ಠ.Router.clean
@@ -359,7 +359,7 @@ App = function() {
           groups: {
             matches: [/^SHOW/i, /^GROUP$/i],
             length: 1,
-            fn: command => (command = command.replace(new RegExp("%2E", "gi"), ".")) && ಠ_ಠ.Groups(ಠ_ಠ).show(command, $(`[data-group='${command}']`).children(".permission")),
+            fn: command => (command = command.replace(new RegExp("%2E", "gi"), ".")) && ಠ_ಠ.Groups(ಠ_ಠ, ರ‿ರ.drives).show(command, $(`[data-group='${command}']`).children(".permission")),
           },
           load: command => {
             ((/TEAM/i).test(command[0]) ?

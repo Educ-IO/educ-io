@@ -358,4 +358,8 @@ buttons:
     desc: Show all team drives and their associated permissions
     hash: show.team.false
     auth: google
+    buttons:
+    - name: Domain Team Drives
+      desc: Show all domain team drives and their associated permissions
+      hash: show.team.true
 published: true

@@ -66,7 +66,7 @@ TeamDrives = ಠ_ಠ => {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-
+  var data;
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
@@ -77,9 +77,15 @@ TeamDrives = ಠ_ಠ => {
         .then(permissions => {
           ಠ_ಠ.Flags.log(`PERMISSIONS for ${drive.name}:`, permissions);
           _.each(permissions, permission => {
+            
             var _email = permission.emailAddress.toLowerCase(),
               _perms = _.reduce(_.keys(ROLES),
-                (roles, role) => _.tap(roles, roles => roles[role] = []), {});
+                (roles, role) => _.tap(roles, roles => {
+                  roles[role] = [];
+                  /* <!-- For Searching / Sorting --> */
+                  roles[`$$${role}`] = [];
+                }), {});
+            
             if (!_drives[drive.id])
               _drives[drive.id] = {
                 id: drive.id,
@@ -95,8 +101,9 @@ TeamDrives = ಠ_ಠ => {
                   edit: drive.capabilities && drive.capabilities.canEdit,
                   manage: drive.capabilities && drive.capabilities.canManageMembers,
                 },
-                permissions: _perms
+                permissions: _perms,
               };
+            
             _drives[drive.id].permissions[permission.role].push({
               email: _email,
               role: ROLES[permission.role],
@@ -104,7 +111,11 @@ TeamDrives = ಠ_ಠ => {
               type: TYPES[permission.type],
               deleted: permission.deleted
             });
+            
+            _drives[drive.id].permissions[`$$${permission.role}`].splice(-1, null, _email, permission.displayName);
+            
             ROLES[permission.role].count += 1;
+            
           });
         }).catch(e => ಠ_ಠ.Flags.error("Permissions Load Error", e))))
       .then(() => _drives);
@@ -119,40 +130,42 @@ TeamDrives = ಠ_ಠ => {
     var id = "team-drives",
       name = "Team Drives",
       headers = _.map(["Id", "Name"].concat(_.pairs(ROLES)), v => ({
-        name: _.isArray(v) ? v[1].name : v,
-        icon: _.isArray(v) ? v[1].icon : false,
-        hide: function(initial) {
-          return !!(initial && this.hide_initially);
-        },
-        set_hide: function(now, always, initially) {
-          this.hide_initially = initially;
-        },
-        hide_always: false,
-        hide_now: false,
-        hide_initially: v == "Id" || (_.isArray(v) && !v[1].count) ? true : false,
-        field: _.isArray(v) ? v[0] : v.toLowerCase(),
-      }));
-
-    var _data = DB.addCollection(id, {
+          name: _.isArray(v) ? v[1].name : v,
+          icon: _.isArray(v) ? v[1].icon : false,
+          hide: function(initial) {
+            return !!(initial && this.hide_initially);
+          },
+          set_hide: function(now, always, initially) {
+            this.hide_initially = initially;
+          },
+          hide_always: (_.isArray(v) ? v[1].name : v).indexOf("$") === 0,
+          hide_now: false,
+          hide_initially: v == "Id" || (_.isArray(v) && !v[1].count) ? true : false,
+          field: _.isArray(v) ? v[0] : v.toLowerCase(),
+        }));
+    
+    data = DB.addCollection(id, {
       unique: ["id"],
       indices: ["name"]
     });
 
-    _data.insert(_.map(_drives, drive => {
-      var _drive = value[drive];
-      return _.extend(_.omit(_drive, "permissions"), _drive.permissions);
+    data.insert(_.map(_drives, drive => {
+      var _drive = value[drive],
+          _return =  _.extend(_.omit(_drive, "permissions"), _drive.permissions);
+      return _return;
     }));
 
     return ಠ_ಠ.Datatable(ಠ_ಠ, {
       id: id,
       name: name,
-      data: _data,
+      data: data,
       headers: headers,
       classes: ["table-responsive"]
     }, {
       template: "drive_rows",
       advanced: false,
-      collapsed: true
+      collapsed: true,
+      complex: true,
     }, $("<div />", {
       class: "container-fluid p-2"
     }).appendTo(ಠ_ಠ.container), target => target);
@@ -176,7 +189,15 @@ TeamDrives = ಠ_ಠ => {
   /* <!-- External Visibility --> */
   return {
 
+    drive: id => data.findOne({
+        "id" : {
+          "$aeq": id /* <!-- Allows for either string or numerical --> */
+        }
+      }),
+    
     show: _show,
+    
+    update: value => data.update(value),
 
   };
   /* <!-- External Visibility --> */
