@@ -1015,15 +1015,30 @@ Google_API = (options, factory) => {
 
     classrooms: {
 
-      list: (state, fields, since, progress) => _list(
-        NETWORKS.classroom.get, "/v1/courses", "courses", [], {
+      last: (state, fields, number, teacher, student) => _call(NETWORKS.classroom.get, "/v1/courses", STRIP_NULLS({
           courseStates: state || "ACTIVE",
+          teacherId: teacher || null,
+          studentId: student || null,
           fields: `${fields && fields === true ? "*" : `nextPageToken,courses(${fields ? fields.join(",") : "id,name,section,description,calendarId,teacherFolder,creationTime"})`}`,
-        }, null, since ? {
+          pageSize: number
+        })),
+      
+      list: (state, fields, since, teacher, student, progress) => _list(
+        NETWORKS.classroom.get, "/v1/courses", "courses", [], STRIP_NULLS({
+          courseStates: state || "ACTIVE",
+          teacherId: teacher || null,
+          studentId: student || null,
+          fields: `${fields && fields === true ? "*" : `nextPageToken,courses(${fields ? fields.join(",") : "id,name,section,description,calendarId,teacherFolder,creationTime"})`}`,
+        }), null, since ? {
           operator : "gte",
           property : "creationTime",
           value : since
         } : null, progress),
+      
+      names: (state, fields, progress) => _list(NETWORKS.classroom.get, "/v1/courses", "courses", [], {
+          courseStates: state || "ACTIVE",
+          fields: `${fields && fields === true ? "*" : `nextPageToken,courses(${fields ? fields.join(",") : "id,name,section,description"})`}`,
+        }, null, null, progress),
 
       person: person => _call(NETWORKS.classroom.get, `v1/userProfiles/${encodeURIComponent(person)}`, {
           fields: "id,name,verifiedTeacher",

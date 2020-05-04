@@ -64,10 +64,18 @@ People = (options, factory) => {
               var _person = _.extend(FN.name(person.profile), {
                 parent : parent,
                 type : type,
-                title: "Remove this Person from the Class",
+                title: `Remove this ${type} from the Class`,
                 children: [],
                 $removable : removable
               });
+              if (type == "student") {
+                _person.$commands = [{
+                  command : `move.${type}.${parent}.${_person.id}`,
+                  title :  `Move this ${type} to another Class`,
+                  icon : "directions_run"
+                }];
+                _person.__small = true;
+              }
               if (children) _person.children = children === true ? [] : children;
               memo.push(_person);
             } 
@@ -108,6 +116,7 @@ People = (options, factory) => {
             classroom.$$teachers = FN.simple(teachers),
             classroom.$$$teachers = FN.identifiers(teachers),
             classroom.teachers = FN.list(teachers, classroom.$id || classroom.id, "teacher", true, true), 
+            classroom.teachers.__condensed = (teachers.length >= 2),
             teachers
           ))
           .catch(e => (factory.Flags.error("Teachers Error", e), null)))).then(() => classrooms);
@@ -128,6 +137,7 @@ People = (options, factory) => {
             classroom.$$students = FN.simple(students),
             classroom.$$$students = FN.identifiers(students),
             classroom.students = FN.list(students, classroom.$id || classroom.id, "student", true, true),
+            classroom.students.__condensed = (students.length >= 2),
             students
           ))
           .catch(e => (factory.Flags.error("Students Error", e), null)))).then(() => classrooms);

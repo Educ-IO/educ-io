@@ -22,11 +22,14 @@ Classes = (options, factory) => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var _get = (status, since, last, teacher, student, loaded) => loaded ? Promise.resolve(loaded) : last ? 
+    factory.Google.classrooms.last(status === false ? null : status || "ACTIVE", _fields.classroom, last, teacher, student) :
+    factory.Google.classrooms.list(status === false ? null : status || "ACTIVE", _fields.classroom, since, teacher, student,
+       count => factory.Main.event(options.functions.events.load.progress, factory.Main.message(count, "class", "classes")));
   /* <!-- Internal Functions --> */
 
   /* <!-- Public Functions --> */
-  FN.get = (status, since) => factory.Google.classrooms.list(status === false ? null : status || "ACTIVE", _fields.classroom, since,
-       count => factory.Main.event(options.functions.events.load.progress, factory.Main.message(count, "class", "classes")))
+  FN.get = (status, since, last, teacher, student, loaded) => _get(status, since, last, teacher, student, loaded)
     .then(classrooms => (
       factory.Main.event(options.functions.events.load.progress, factory.Main.message(classrooms.length, "class", "classes")),
       classrooms
@@ -131,7 +134,7 @@ Classes = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
 
-    all: (since, status) => FN.get(status, since),
+    all: (since, status, limit, teacher, student, loaded) => FN.get(status, since, limit, teacher, student, loaded),
 
     announcements: FN.announcements,
 

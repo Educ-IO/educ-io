@@ -133,7 +133,52 @@ Roster = (options, factory) => {
                                       .then(factory.Main.busy("Removing Teachers", true)) : false)
                   .catch(e => (e ? factory.Flags.error("Remove Teachers Error", e) : factory.Flags.log("Remove Teachers Cancelled")).negative()),
       
-    }
+    },
+    
+    move : {
+      
+      student : (classroom, person) => {
+        
+        person = _.find(classroom.$students, student => student.profile.id == person);
+
+        return factory.Display.modal("select", {
+          id: "select_target",
+          target: factory.container,
+          title: "Select Target Class/es",
+          instructions: factory.Display.doc.get("SELECT_TARGETS"),
+          validate: values => values && values.Classes,
+          data: _.chain(options.functions.populate.all().data).map(classroom => ({
+            id : classroom.$id,
+            name : `${classroom.section ? `${classroom.section} | `: ""}${classroom.name}`,
+          })).sortBy("name").value(),
+          enter: true
+        })
+        .then(values => values && values.Classes && values.Classes.Values ? 
+                factory.Display.confirm({
+                    message: [
+                      factory.Display.doc.get({
+                        name: "MOVE",
+                        content: person.profile.name.fullName
+                      }),
+                      factory.Display.doc.get({
+                        name: "CLASSROOM",
+                        content: classroom.name
+                      }),
+                      factory.Display.doc.get({
+                        name: "TARGET",
+                        content: values.Classes.Values.length
+                      })
+                    ].trim().join("\n"),
+                    action: "Move",
+                  })
+                .then(confirm => confirm ? Promise.all([factory.Google.classrooms.classroom(classroom).students().remove(person.profile.id).catch(() => false)]
+                .concat(_.map(values.Classes.Values, classroom => factory.Google.classrooms.classroom(classroom).students().add(person.profile.id).catch(() => false)))).then(factory.Main.busy("Moving Student", true)) : 
+                      null) : null)
+        .catch(e => (e ? factory.Flags.error("Move Error", e) : factory.Flags.log("Move Cancelled")).negative());
+
+      },
+      
+    },
     
   };
   /* <!-- External Visibility --> */

@@ -56,11 +56,61 @@ App = function() {
       });
     },
 
-    overview: (since, status) => FN.view.generic(() => FN.overview.display(since, _.isString(status) ? status.toUpperCase() : status), FN.states.overview.in, {
+    overview: (since, status, selected, teacher, student, display_status) => FN.view.generic(() => FN.overview.display(since, _.isString(status) ? status.toUpperCase() : status, null, selected, teacher, student), FN.states.overview.in, {
       error: "Classes Overview Error",
-      loading: since ? "Loading Classes" : status ? `Loading ${status} Classes` : "Loading All Classes"
+      loading: since ? "Loading Classes" : display_status || status ? `Loading ${display_status || status} Classes` : "Loading All Classes"
     }, FN.states.file.loaded),
 
+    select: () => {
+      var all = [];
+      return ಠ_ಠ.Display.modal("select", {
+        id: "select_classes",
+        target: ಠ_ಠ.container,
+        title: "Select Class/es",
+        instructions: ಠ_ಠ.Display.doc.get("SELECT_CLASSES"),
+        validate: values => values && values.Classes,
+        enter: true
+      }, dialog => Promise.resolve(dialog.find("select").empty())
+            .then(select => ಠ_ಠ.Google.classrooms.names(null, true,
+                              count => ಠ_ಠ.Main.event(FN.events.load.progress, ಠ_ಠ.Main.message(count, "class", "classes")))
+            .catch(e => ಠ_ಠ.Flags.error("Class Name Loading Error", e))
+            .then(ಠ_ಠ.Main.busy(true, false, FN.events.load.progress, "Loading Classes", "medium", dialog.find(".modal-content"), 
+                                "loader-medium h-100 w-100 position-absolute overflow-hidden", true))
+            .then(classes => classes ? _.each(_.sortBy(all = classes, 
+                    classroom => classroom.text = `${classroom.section ? `${classroom.section} | ` : ""}${classroom.name}`), 
+                    classroom => select.append($("<option />", {
+                      value: classroom.id,
+                      text: classroom.text,
+                      title: classroom.description || ""
+                    }))) : classes)))
+        .then(values => values && values.Classes && values.Classes.Values ? 
+              FN.view.overview(null, null, _.filter(all, classroom => values.Classes.Values.indexOf(classroom.id) >= 0), null, null, "Selected") : null)
+        .catch(e => (e ? ಠ_ಠ.Flags.error("Select Error", e) : ಠ_ಠ.Flags.log("Select Cancelled")).negative());
+    },
+    
+    filter: () => ಠ_ಠ.Display.modal("filter", {
+        id: "filter_classes",
+        target: ಠ_ಠ.container,
+        title: "Filter Class/es",
+        instructions: ಠ_ಠ.Display.doc.get("FILTER_CLASSES"),
+        validate: (values, form) => {
+          var _valid = values && (values.Teacher || values.Student);
+          if (!_valid) _.each(["Teacher", "Student"], field => {
+              if (!values || !values[field]) {
+                var _field = form.find(`input[data-output-field='${field}']`);
+                if (_field.length == 1 && (_field = _field[0]).setCustomValidity) 
+                  _field.setCustomValidity("Please fill in at least one field!");
+              }
+            });
+          return _valid;
+        },
+        enter: true
+      }, dialog => dialog.find("input").first().focus())
+        .then(values => values ? FN.view.overview(null, null, null,
+          values.Teacher ? values.Teacher.Value : null, values.Student ? values.Student.Value : null,
+          "Filtered") : null)
+        .catch(e => (e ? ಠ_ಠ.Flags.error("Filter Error", e) : ಠ_ಠ.Flags.log("Filter Cancelled")).negative()),
+    
     classwork: since => (ಠ_ಠ.Display.state().in(FN.states.overview.in) ? FN.overview.detach() : Promise.resolve(true))
       .then(() => FN.view.generic(() => FN.classwork.display(FN.current.classes(), since), FN.states.classwork.in, {
         error: "Classwork View Error",
@@ -97,14 +147,17 @@ App = function() {
     table: table => {
       if (!table) return;
       ರ‿ರ.table = table;
-      table.table().find("a.value-remove").hide();
+      table.table().find("a.value-remove, a.value-command").hide();
       FN.view.state([FN.states.overview.in, FN.states.overview.engagement, FN.states.overview.usage])();
     },
 
-    close: () => (ಠ_ಠ.Display.state().in(FN.states.overview.student) ? (FN.student.close(), FN.students.attach()) :
-        ಠ_ಠ.Display.state().in(FN.states.overview.report) ? (FN.report.close(), FN.overview.attach()) :
-        ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? (FN.classwork.close(), FN.overview.attach()) :
-        FN.overview.attach())
+    close: () => (ಠ_ಠ.Display.state().in(FN.states.overview.student) ? 
+                    (FN.student.close(), FN.students.attach()) :
+                    ಠ_ಠ.Display.state().in(FN.states.overview.report) ? 
+                      (FN.report.close(), FN.overview.attach()) :
+                      ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? 
+                        (FN.classwork.close(), FN.overview.attach()) :
+                        FN.overview.attach())
       .then(table => ರ‿ರ.table = table)
       .then(() => (ಠ_ಠ.Display.tidy(), ಠ_ಠ.Display.state().change(
         [FN.states.classwork.in, FN.states.classwork.submissions, FN.states.overview.report, FN.states.overview.students, FN.states.overview.student],
@@ -343,7 +396,7 @@ App = function() {
                 matches: /ALL/i,
                 length: 0,
                 keys: ["ctrl+alt+o", "ctrl+alt+O"],
-                fn: () => FN.view.overview(),
+                fn: FN.view.overview,
               },
               
               archived: {
@@ -351,13 +404,27 @@ App = function() {
                 length: 0,
                 fn: () => FN.view.overview(null, "Archived"),
               },
+              
+              filter: {
+                matches: /FILTER/i,
+                length: 0,
+                keys: ["ctrl+alt+f", "ctrl+alt+F"],
+                fn: FN.view.filter,
+              },
+              
+              select: {
+                matches: /SELECT/i,
+                length: 0,
+                keys: ["ctrl+alt+j", "ctrl+alt+J"],
+                fn: FN.view.select,
+              },
 
               close: {
                 matches: /CLOSE/i,
                 state: [FN.states.overview.students, FN.states.overview.report, FN.states.classwork.in],
                 length: 0,
                 keys: ["c", "C"],
-                fn: () => FN.view.close()
+                fn: FN.view.close,
               },
 
               classwork: {
@@ -734,6 +801,25 @@ App = function() {
 
           },
 
+          move: {
+            
+            matches: /MOVE/i,
+            state: FN.states.overview.in,
+            
+            routes: {
+
+              student: {
+                matches: /STUDENT/i,
+                state: FN.states.overview.in,
+                length: 2,
+                scopes: "https://www.googleapis.com/auth/classroom.rosters",
+                fn: commands => FN.roster.move.student(FN.populate.get(commands[0]), commands[1])
+                  .then(results => (ಠ_ಠ.Flags.log("Student Move/s", results), results && _.isArray(results) ? 
+                    _.each(results, result => result !== false ? FN.usage.update(result && result.courseId ? result.courseId : commands[0], true, "students") : result) : results))
+              },
+            }
+          },
+          
           edit: {
             
             matches: /EDIT/i,

@@ -121,6 +121,8 @@ Usage = (options, factory) => {
         /* <!-- Remove the loader to inform that loading has completed --> */
         _.each(["teachers", "students", "__usage", "fetched"], 
                value => targets[value].empty().append(factory.Display.template.get("cell", true)(classroom[value])));
+        /* <!-- Mimic Condensed --> */
+        _.each(["teachers", "students"], value => classroom[value].length >= 2 ? targets[value].addClass("py-1 px-2") : null);
         
       }) : false);
   /* <!-- Internal Functions --> */

@@ -92,7 +92,7 @@ Overview = (options, factory) => {
   /* <!-- Render Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.display = (since, status) => options.functions.classes.all(since, status)
+  FN.display = (since, status, limit, selected, teacher, student) => options.functions.classes.all(since, status, limit, teacher, student, selected)
     .then(options.functions.people.teachers)
     .then(classrooms => {
       factory.Flags.log("Loaded CLASSES", classrooms);

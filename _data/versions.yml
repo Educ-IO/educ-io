@@ -1,4 +1,8 @@
 site :
+  0.1.10k :
+    name : Classes v0.0.5-beta
+    desc : Filtered and Selectable Classroom Loading
+    numeric : 0.1.10.11
   0.1.10j :
     name : Folders v0.0.7f-beta
     desc : Filterable Team Drive Permissions
@@ -1470,6 +1474,14 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  v0.0.5-beta :
+    name : Filtered and Selectable Classroom Loading
+    type : minor
+    changes :
+      - Load Selected Classes
+      - Load Classes filtered by Teacher or Student
+      - Move Student into other classes
+      - Visual Improvements to tabular overview
   v0.0.4k-beta :
     name : Gradesheet Formatting Improvements
     type : minor

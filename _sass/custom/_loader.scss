@@ -54,7 +54,7 @@ div.loader {
   }
 	// -- Size Options -- //
 	&.loader-large, &.loader-medium {
-		background-color: rgba($colour-background, 0.9);
+		background-color: rgba($colour-background, 0.85);
 		position: fixed;
     top: 0;
 		.loading {

@@ -1,0 +1,1 @@
+Please enter the __email address__ of the teacher and / or student you wish to view classes for. If you enter both, you will see classes which are __taught__ by the relevant teacher and have the student __enrolled__ in them.

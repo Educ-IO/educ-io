@@ -1,0 +1,26 @@
+{% raw %}
+{{#> dialog class="modal-xl" tabindex=2}}
+<form class="needs-validation mt-3" novalidate>
+  <div class="row">
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}teacher" class="col-sm-2 col-form-label">Teacher</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}teacher" data-output-field="Teacher"
+                 type="text" class="form-control" tabindex="1"/>
+        </div>
+      </div>
+    </div>
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+       <label for="{{#if id}}{{id}}_{{/if}}student" class="col-sm-2 col-form-label">Student</label>
+        <div class="col-sm-10">
+          <input id="{{#if id}}{{id}}_{{/if}}student" data-output-field="Student"
+                 type="text" class="form-control" tabindex="2"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{{/dialog}}
+{% endraw %}

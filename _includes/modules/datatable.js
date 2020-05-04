@@ -546,17 +546,18 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     
     values: filtered => {
       
-      var _html = filtered ? $(_createDisplayTable()) : $(_createDefaultTable());
-      var _return = [_.map(_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray(), 
-                           el => el.dataset.export || el.textContent.trim())];
+      var _html = filtered ? $(_createDisplayTable()) : $(_createDefaultTable()),
+          _return = [_.map(_html.find(".table-headers .table-header:not(." + (filtered ? "no-export" : "no-export-default") + ") a").toArray(), 
+                           el => el.dataset.export || el.textContent.trim())],
+          _processed = [];
       
       var _clean = el => {
         if (el.find(".no-export").length > 0) (el = el.clone()).find(".no-export").remove();
         if (el.find("hr, br").length > 0) (el = el.clone()).find("hr, br").replaceWith("\n");
         return el;
-      }, _extract = el => (el.find(".badge, [data-id], [data-type]").length > 0) ?
-          _.map(el.find(".badge, [data-id], [data-type]").toArray(), el => _extract($(el))).join("\n") :
-          el.length > 0 ? el[0].textContent.trim() : "";
+      }, _extract = el => (el.find(".badge, .export, [data-id], [data-type]").length > 0) ?
+          _.chain(el.find(".badge, .export, [data-id], [data-type]").toArray()).map(el => _extract($(el))).compact().value().join("\n") :
+          el.length > 0 && _processed.indexOf(el[0]) < 0 ? (_processed.push(el[0]), el[0].textContent.trim()) : "";
       
       _html.find("tbody tr").each((i, el) => _return.push(_.map($(el).find("td").toArray(), el => _extract(_clean($(el))))));
       

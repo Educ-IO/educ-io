@@ -1,0 +1,1 @@
+Please confirm that you wish to move __{% raw %}{{content}}{% endraw %}__

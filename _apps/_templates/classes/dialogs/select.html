@@ -1,0 +1,13 @@
+{% raw %}
+{{#> dialog class="modal-xl" }}
+<form class="needs-validation mt-3" novalidate>
+  <div class="row">
+    <div class="col-12 px-4 px-md-3">
+      <select class="custom-select" size="8" data-output-field="Classes" multiple>{{~#present data~}}
+      {{#each data}}<option value="{{either id value}}"{{#if description}} title="{{description}}"{{/if}}>{{either text name}}</option>{{/each}}
+      {{~/present~}}</select>
+    </div>
+  </div>
+</form>
+{{/dialog}}
+{% endraw %}

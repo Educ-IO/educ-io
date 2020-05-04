@@ -606,7 +606,7 @@ Display = function() {
               /* <!-- Log is available, so debug log --> */
               if (_log) _log(`Parsed Values from Template: ${template} using ${ಠ_ಠ.Data ? "the Data helper" : "serializeArray"}`, _values);
 
-              if (options.validate && !options.validate(_values)) _valid = false;
+              if (options.validate && !options.validate(_values, _form)) _valid = false;
               if (_valid) {
                 _clean();
                 resolve(_values);

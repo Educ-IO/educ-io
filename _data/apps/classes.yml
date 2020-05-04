@@ -79,6 +79,7 @@ helpers:
   - colours
   - css
   - handlebars
+  - data
   - notify
   - config
   - dialog
@@ -145,6 +146,7 @@ templates:
   - shared/tabular/cell
   - shared/tabular/table_header
   - shared/tabular/table_body
+  - shared/dialogs/dialog
   - classes/overview/overview_body
   - classes/overview/overview_header
   - classes/overview/classwork_body
@@ -167,6 +169,8 @@ templates:
   - classes/parts/popover_people
   - classes/parts/popover_class
   - classes/parts/popover_classes
+  - classes/dialogs/select
+  - classes/dialogs/filter
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -198,6 +202,11 @@ docs:
   - classes/IMPORT
   - classes/ACTIVATE_CLASSES
   - classes/ARCHIVE_CLASSES
+  - classes/SELECT_CLASSES
+  - classes/FILTER_CLASSES
+  - classes/SELECT_TARGETS
+  - classes/MOVE
+  - classes/TARGET
   - classes/instructions/INSTRUCTIONS
   - classes/instructions/OVERVIEW_INSTRUCTIONS
   - classes/instructions/VIEW_EXPORT_INSTRUCTIONS
@@ -298,6 +307,7 @@ menus:
             shortcut: "o"
             imports:
               - d3
+            divider: true
           - name: All Classes
             desc: Show overview of all your active classes / classes in your domain
             hash: overview.all
@@ -310,7 +320,20 @@ menus:
             imports:
               - d3
             divider: true
-          
+          - name: Filter Classes
+            desc: Filter Classes you want to show an overview (by teacher and/or student)
+            hash: overview.filter
+            shortcut: "ctrl+alt+f"
+            imports:
+              - d3
+          - name: Select Classes
+            desc: Select Classes you want to show an overview for
+            hash: overview.select
+            shortcut: "ctrl+alt+j"
+            imports:
+              - d3
+            divider: true
+            
           - name: Import
             desc: Import existing Classes Analysis File
             hash: import
@@ -673,6 +696,18 @@ buttons:
       hash: overview.archived
       imports:
         - d3
+      divider: true
+    - name: Filter Classes
+      desc: Filter Classes you want to show an overview (by teacher and/or student)
+      hash: overview.filter
+      imports:
+        - d3
+    - name: Select Classes
+      desc: Select Classes you want to show an overview for
+      hash: overview.select
+      imports:
+        - d3
+      divider: true
     - name: About
       desc: More details about this view
       hash: instructions.overview
