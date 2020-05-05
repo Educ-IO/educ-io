@@ -17,11 +17,18 @@ People = (options, factory) => {
   /* <!-- Internal Variables --> */
   var ರ‿ರ = {
     cache: {},
-    guardians: {}
+    guardians: {},
+    titles: {},
   }; /* <!-- State --> */
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  FN.title = (name, content) => {
+    if (!ರ‿ರ[name]) ರ‿ರ[name] = {};
+    return ರ‿ರ[name][content] ? 
+      ರ‿ರ[name][content] : ರ‿ರ[name][content] = factory.Display.doc.get(name, content, true);
+  };
+  
   FN.person = key => ರ‿ರ.cache[key] !== undefined ? 
       Promise.resolve(ರ‿ರ.cache[key]) : 
       (ರ‿ರ.cache[key] = factory.Google.classrooms.person(key).catch(() => null));
@@ -71,7 +78,7 @@ People = (options, factory) => {
               if (type == "student") {
                 _person.$commands = [{
                   command : `move.${type}.${parent}.${_person.id}`,
-                  title :  `Move this ${type} to another Class`,
+                  title :  FN.title("MOVE_TITLE", type),
                   icon : "directions_run"
                 }];
                 _person.__small = true;

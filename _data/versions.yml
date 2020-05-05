@@ -1,4 +1,8 @@
 site :
+  0.1.10l :
+    name : Classes v0.0.5a-beta
+    desc : Visual Improvements
+    numeric : 0.1.10.12
   0.1.10k :
     name : Classes v0.0.5-beta
     desc : Filtered and Selectable Classroom Loading
@@ -1474,6 +1478,13 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  v0.0.5a-beta :
+    name : Visual Improvements
+    type : minor
+    changes :
+      - Re-organised front page buttons (to highlight classes selector / filter)
+      - Updated initial greeting instructions
+      - Command Warnings for admin only actions
   v0.0.5-beta :
     name : Filtered and Selectable Classroom Loading
     type : minor

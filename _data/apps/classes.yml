@@ -227,6 +227,7 @@ docs:
   - classes/titles/REPORT_TITLE
   - classes/titles/USAGE_LIMITED_TITLE
   - classes/titles/USAGE_FORCE_TITLE
+  - classes/titles/MOVE_TITLE
   - classes/headers/OVERVIEW_ENGAGEMENT_HEADER
   - classes/headers/OVERVIEW_USAGE_HEADER
   - classes/headers/CLASSWORK_SUBMISSIONS_HEADER
@@ -302,7 +303,7 @@ menus:
       all:
         commands:
           - name: Overview
-            desc: Show overview of your active classes / classes in your domain (created in the last 12 months)
+            desc: Show overview of your currently active classes / classes in your domain (created in the last 12 months)
             hash: overview
             shortcut: "o"
             imports:
@@ -320,16 +321,16 @@ menus:
             imports:
               - d3
             divider: true
-          - name: Filter Classes
-            desc: Filter Classes you want to show an overview (by teacher and/or student)
-            hash: overview.filter
-            shortcut: "ctrl+alt+f"
-            imports:
-              - d3
           - name: Select Classes
             desc: Select Classes you want to show an overview for
             hash: overview.select
             shortcut: "ctrl+alt+j"
+            imports:
+              - d3
+          - name: Filter Classes
+            desc: Filter Classes you want to show an overview (by teacher and/or student)
+            hash: overview.filter
+            shortcut: "ctrl+alt+f"
             imports:
               - d3
             divider: true
@@ -458,6 +459,7 @@ menus:
             divider: true
           - name: Add Teacher/s
             desc: Add Teachers to the list of classes shown
+            admin: true
             hash: add.class.teachers
             auth: google
             scopes:
@@ -483,6 +485,7 @@ menus:
             divider: true
           - name: Add Student/s
             desc: Add Students to the list of classes shown
+            admin: true
             hash: add.class.students
             auth: google
             scopes:
@@ -679,32 +682,46 @@ menus:
             auth: google
               
 buttons:
-  - name: Class Overview
+  - name: Select
+    desc: Select the classes for which you wish to see an overview for
+    hash: overview.select
+    auth: google
+    loud: true
+    imports:
+      - d3
+    buttons:
+    - name: Filter Classes
+      desc: Filter Classes you want to show an overview (by teacher and/or student)
+      hash: overview.filter
+      auth: google
+      loud: true
+      imports:
+        - d3
+      divider: true
+    - name: About
+      desc: More details about this view
+      hash: instructions.overview
+      
+  - name: Current
     desc: Show overview of your classes / classes in your domain (created in the last 12 months)
     hash: overview
     auth: google
+    loud: true
     imports:
       - d3
     buttons:
     - name: All Classes
       desc: Show overview of all your active classes / classes (in your domain if your are a G-Suite Admin)
       hash: overview.all
+      auth: google
+      loud: true
       imports:
         - d3
     - name: Archived Classes
       desc: Show overview of all your archived classes / classes in your domain
       hash: overview.archived
-      imports:
-        - d3
-      divider: true
-    - name: Filter Classes
-      desc: Filter Classes you want to show an overview (by teacher and/or student)
-      hash: overview.filter
-      imports:
-        - d3
-    - name: Select Classes
-      desc: Select Classes you want to show an overview for
-      hash: overview.select
+      auth: google
+      loud: true
       imports:
         - d3
       divider: true
@@ -714,6 +731,7 @@ buttons:
   - name: Load
     desc: Load existing Classes Analysis from Google Drive
     hash: data.load
+    loud: true
     auth: google
     scopes:
       - https://www.googleapis.com/auth/drive.file
@@ -721,8 +739,10 @@ buttons:
       - google
     buttons:
     - name: Import
-      desc: Import existing Classes Analysis File
+      desc: Import existing Classes Analysis File (from your computer)
       hash: import
+      loud: true
+      divider: true
     - name: About
       desc: More details about loading existing files
       hash: instructions.load

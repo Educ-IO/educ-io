@@ -22,6 +22,8 @@ Files = (options, factory) => {
 
   /* <!-- Internal Functions --> */
   FN.prefix = mime => mime == options.mime ? "CLASSES DATA" : "";
+  
+  FN.matches = name => name && /CLASSES DATA | \d{4}-\d{1,2}-\d{1,2}/i.test(name);
 
   FN.title = (title, mime, extension) => {
     var _prefix = FN.prefix(mime);
@@ -112,12 +114,13 @@ Files = (options, factory) => {
       action: "Create New",
       actions: [{
         text: "Download",
-        handler: values => values && values.length === 1 && values[0].value ? FN.download(values[0].value) : false,
+        handler: values => values && values.value ? FN.download(values.value.Value) : false,
         dismiss: true,
       }, {
         text: "Update Existing",
         handler: values => factory.Router.pick.single(FN.loader("Select a Classes File to Update"))
-                  .then(file => FN.update(values && values.length === 1 ? values[0].value : null, file))
+                  .then(file => FN.update(values && values.value && FN.matches(file.name) ? 
+                                            values.value.Value : null, file))
                   .catch(e => (e ? factory.Flags.error("Updating", e) : factory.Flags.log("Update Picker Cancelled")).negative()),
         dismiss: true,
       }],

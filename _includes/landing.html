@@ -8,20 +8,20 @@
 			{{ text | markdownify }}
 			<div class="d-flex flex-column flex-lg-row flex-wrap lead mb-3 mt-4">
         {% assign buttons = site.array %}{% for button in include.buttons %}{% if button.visibility %}{% if jekyll.environment == button.visibility or button.visibility == true %}{% assign buttons = buttons | push: button %}{% endif %}{% else %}{% assign buttons = buttons | push: button %}{% endif %}{% endfor %}
-				{% for button in buttons %}
+				{% for button in buttons %}{% if button.loud %}{% assign quiet = false %}{% else %}{% assign quiet = true %}{% endif %}
         {% if button.buttons %}
         <div class="btn-group{% unless button.hash %} dropdown{% endunless %} mt-2 mr-lg-3"{% unless button.hash %} role="group"{% endunless %}>
         {% assign id = "btn_Command_Group_" | append: forloop.index %}{% if button.id %}{% assign id = button.id %}{% endif %}
         {% if button.hash %}
-          {% include command.html id=id quiet="true" class="btn btn-lg btn-action flex-fill waves-effect identity" command=button %}
+          {% include command.html id=id quiet=quiet class="btn btn-lg btn-action flex-fill waves-effect identity" command=button %}
           <a role="button" class="btn btn-lg btn-action dropdown-toggle dropdown-toggle-split identity" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></a>
         {% else %}
-          {% include command.html type="button" id=id quiet="true" class="btn btn-lg btn-action dropdown-toggle flex-fill waves-effect identity" command=button dropdown="true" %}
+          {% include command.html type="button" id=id quiet=quiet class="btn btn-lg btn-action dropdown-toggle flex-fill waves-effect identity" command=button dropdown="true" %}
         {% endif %}
         {% assign sub_buttons = site.array %}{% for sub_button in button.buttons %}{% if sub_button.visibility %}{% if jekyll.environment == sub_button.visibility or sub_button.visibility == true %}{% assign sub_buttons = sub_buttons | push: sub_button %}{% endif %}{% else %}{% assign sub_buttons = sub_buttons | push: sub_button %}{% endif %}{% endfor %}
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{ id }}">
-            {% for sub_button in sub_buttons %}
-            {% include command.html quiet="true" class="dropdown-item" command=sub_button %}
+            {% for sub_button in sub_buttons %}{% if sub_button.loud %}{% assign quiet = false %}{% else %}{% assign quiet = true %}{% endif %}
+            {% include command.html quiet=quiet class="dropdown-item" command=sub_button %}
             {% if sub_button.divider %}<div class="dropdown-divider{% if command.divider_class %} {{command.divider_class}}{% endif %}"></div>{% endif %}
             {% endfor %}
     			</div>

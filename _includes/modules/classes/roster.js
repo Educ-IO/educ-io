@@ -172,7 +172,9 @@ Roster = (options, factory) => {
                     action: "Move",
                   })
                 .then(confirm => confirm ? Promise.all([factory.Google.classrooms.classroom(classroom).students().remove(person.profile.id).catch(() => false)]
-                .concat(_.map(values.Classes.Values, classroom => factory.Google.classrooms.classroom(classroom).students().add(person.profile.id).catch(() => false)))).then(factory.Main.busy("Moving Student", true)) : 
+                .concat(_.map(values.Classes.Values, 
+                      classroom => factory.Google.classrooms.classroom(classroom = options.functions.populate.get(classroom)).students()
+                              .add(person.profile.id, classroom.code).catch(() => false)))).then(factory.Main.busy("Moving Student", true)) : 
                       null) : null)
         .catch(e => (e ? factory.Flags.error("Move Error", e) : factory.Flags.log("Move Cancelled")).negative());
 
