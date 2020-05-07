@@ -276,7 +276,7 @@ scopes:
       request: lazy
     - scope: https://www.googleapis.com/auth/classroom.courses
       name: Manage your Google Classroom classes
-      reason: In order to change the Google Classroom course statuses 
+      reason: In order to change the Google Classroom course statuses (e.g. archive old Classrooms)
       request: lazy
     - scope: https://www.googleapis.com/auth/drive.file
       name: View and manage Google Drive files and folders that you have opened or created with this app
@@ -446,7 +446,8 @@ menus:
               - https://www.googleapis.com/auth/classroom.courses
             disabled_while:
               - file-loaded
-            visibility: debug
+            disabled_until:
+              - experiments
           - name: Activate Classes
             desc: Activate / De-Archive the list of classes shown
             hash: edit.activate
@@ -455,7 +456,8 @@ menus:
               - https://www.googleapis.com/auth/classroom.courses
             disabled_while:
               - file-loaded
-            visibility: debug
+            disabled_until:
+              - experiments
             divider: true
           - name: Add Teacher/s
             desc: Add Teachers to the list of classes shown
@@ -651,6 +653,13 @@ menus:
             url: /guides/classes
             desc: A guide to using this app
             divider: true
+          - name: Experiments
+            desc: Turn on new and experimental features in this app
+            hash: experiments
+            toggle:
+              - experiments
+            disabled_until:
+              - authenticated
           - name: Install
             desc: Install this app into your Google Drive
             hash: install
@@ -658,6 +667,7 @@ menus:
             scope: https://www.googleapis.com/auth/drive.install
             disabled_until:
               - authenticated
+            divider: true
           - name: Permissions
             url: /scopes/?highlight=classes
             desc: Find out about the permissions and scopes that this app uses

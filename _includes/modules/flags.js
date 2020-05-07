@@ -13,6 +13,7 @@ Flags = function() {
   var _alert = false,
     _debug = false,
     _verbose = false,
+    _experiments = false,
     _development = false,
     _page = false,
     _option = false,
@@ -49,6 +50,8 @@ Flags = function() {
     
     _verbose = _debug ? (_url.param("verbose") === "" || _url.fparam("verbose") === "") : false;
 
+    _experiments = _debug ? (_url.param("experiments") === "" || _url.fparam("experiments") === "") : false;
+    
     _development = (_url.attr("host").split(".")[0] == "dev" || _url.param("dev") === "" || _url.fparam("dev") === "");
 
     _key = (_url.param("key") || _url.fparam("key"));
@@ -150,6 +153,10 @@ Flags = function() {
 
           development: function() {
             return _development;
+          },
+          
+          experiments: function() {
+            return _experiments;
           },
 
           dir: function() {

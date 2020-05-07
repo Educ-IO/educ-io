@@ -112,6 +112,8 @@ Router = function() {
                                                      [requires] : 
                                                      requires, required => ಠ_ಠ.IMPORTS.LOAD_LAZY[required])),
     SCOPES = scopes => ಠ_ಠ.Main.authorise(_.isArray(scopes) ? scopes : [scopes]);
+  
+  const STATE_EXPERIMENTS = "experiments";
   /* <!-- Internal Setup Constants --> */
 
   /* <!-- Internal Functions --> */  
@@ -342,6 +344,11 @@ Router = function() {
             target: ಠ_ಠ.container
           }),
         },
+        experiments: { /* <!-- Turn on Experimental Features --> */
+          matches: /EXPERIMENTS/i,
+          length: 0,
+          fn: () => ಠ_ಠ.Display.state().toggle(STATE_EXPERIMENTS),
+        },
         instructions: { /* <!-- Show App Instructions --> */
           matches: /INSTRUCTIONS/i,
           keys: ["i", "I"],
@@ -430,6 +437,10 @@ Router = function() {
 
           /* <!-- Verbose Debug Flag: For future logging --> */
           _debug = ಠ_ಠ.Flags && ಠ_ಠ.Flags.verbose();
+          
+          /* <!-- Enter Experiments Mode if specified by Flags --> */
+          if (ಠ_ಠ.Display && ಠ_ಠ.Flags && (ಠ_ಠ.Flags.development() || ಠ_ಠ.Flags.experiments()))
+            ಠ_ಠ.Display.state().enter(STATE_EXPERIMENTS);
 
           /* <!-- Run App Setup --> */
           if (_options.setup) _options.setup();

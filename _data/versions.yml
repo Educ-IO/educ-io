@@ -1,4 +1,8 @@
 site :
+  0.1.10m :
+    name : Early Release Features
+    desc : Early Release Features
+    numeric : 0.1.10.13
   0.1.10l :
     name : Classes v0.0.5a-beta
     desc : Visual Improvements
