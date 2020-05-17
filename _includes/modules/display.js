@@ -579,10 +579,9 @@ Display = function() {
 
         if (!options) return reject();
 
-        var dialog = $(_template(template)(options));
+        var dialog = $(_template(template)(options)),
+            resolver = () => resolve();
             
-        _target(options).append(_modalise(dialog, resolve));
-
         if (dialog.find("form").length > 0) {
 
           /* <!-- Set Form / Return Event Handlers --> */
@@ -609,7 +608,7 @@ Display = function() {
               if (options.validate && !options.validate(_values, _form)) _valid = false;
               if (_valid) {
                 _clean();
-                resolve(_values);
+                resolver = () => resolve(_values);
               } else {
                 e.preventDefault();
                 e.stopPropagation();
@@ -626,6 +625,9 @@ Display = function() {
 
         }
 
+        /* <!-- Modal Submission Clicks --> */
+        _target(options).append(_modalise(dialog, () => resolver()));
+        
         /* <!-- Modal Dismissing Clicks --> */
         dialog.find("btn[data-click='dismiss-modal'], a[data-click='dismiss-modal']").on("click.dismiss",
           () => {

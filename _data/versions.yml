@@ -1,4 +1,8 @@
 site :
+  0.1.10n :
+    name : Classes v0.0.5b-beta
+    desc : Bug Fixes
+    numeric : 0.1.10.14
   0.1.10m :
     name : Early Release Features
     desc : Early Release Features
@@ -1482,6 +1486,12 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  v0.0.5b-beta :
+    name : Bug Fixes
+    type : minor
+    changes :
+      - Modal Scrolling Bug Fix
+      - Tooltips fully hidden when transitioning to busy state
   v0.0.5a-beta :
     name : Visual Improvements
     type : minor

@@ -18,7 +18,7 @@ Main = function() {
 
   /* <!-- TODO: Overlapping busy calls can cause issues, so we check that it is function --> */
   const BUSY = (status, full, event, initial, size, element, classes, contained) => _.wrap(ಠ_ಠ.Display.busy({
-    target : element ? element : full ? ಠ_ಠ.container.parent() : ಠ_ಠ.container,
+    target : element ? element : full ? (ಠ_ಠ.Display.tidy(), ಠ_ಠ.container.parent()) : ಠ_ಠ.container,
     status : event ? {
         source : window,
         event : event,
