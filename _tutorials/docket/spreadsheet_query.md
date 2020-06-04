@@ -7,12 +7,12 @@ for: docket
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-lightest .mt-lg-3}
 
 Google sheets include an incredibly powerful [query language](https://developers.google.com/chart/interactive/docs/querylanguage){:target="_blank" rel="noopener"} that can be used to generate aggregate statistics. As Docket stores all your data in __your own__ sheet, in __your__ Google Drive, we can use these queries to help summarise information about your productivity and tasks.
 
 #### Query Formulas
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-lightest}
 
 There are plenty of [excellent tutorials](https://lifestack.io/snippets/#spreadsheet-functions){:target="_blank" rel="noopener"} available on the web to help you design the perfect query formula in your sheet. To help get you started, here are a couple you might like to try.
 

@@ -309,7 +309,7 @@ menus:
             imports:
               - d3
             divider: true
-          - name: All Classes
+          - name: Current Classes
             desc: Show overview of all your active classes / classes in your domain
             hash: overview.all
             shortcut: "ctrl+alt+o"
@@ -446,8 +446,6 @@ menus:
               - https://www.googleapis.com/auth/classroom.courses
             disabled_while:
               - file-loaded
-            disabled_until:
-              - experiments
           - name: Activate Classes
             desc: Activate / De-Archive the list of classes shown
             hash: edit.activate
@@ -456,8 +454,6 @@ menus:
               - https://www.googleapis.com/auth/classroom.courses
             disabled_while:
               - file-loaded
-            disabled_until:
-              - experiments
             divider: true
           - name: Add Teacher/s
             desc: Add Teachers to the list of classes shown

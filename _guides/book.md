@@ -8,7 +8,7 @@ for: book
 ---
 
 #### Introduction
-{:.p-2 .border .rounded-sm .bg-light}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3 .mt-xl-4}
 
 Book is an app which extends the __resource booking__ functionality found in G-Suite. The app makes is much easier to use G-Suite as a resource booking system, fully integrated with Google Calendar.Book
 
@@ -28,16 +28,18 @@ This means you can make bookings in whatever way you wish, however, there are ma
 - - -
 
 #### Setup
-{:.p-2 .border .rounded-sm .bg-light}
+{:.p-2 .border .rounded-sm .bg-highlight-light}
 
 Before your users can start to book resources, you will need to create some first! You can do this from within [the app](#instructions.manage.resources), or using the [Google Admin](https://admin.google.com/){:target="_blank" rel="noopener"} console. You will need to have the appropriate privileges to create and manage resources in your G-Suite domain. You can find more details about the privileges required in this [tutorial]({% link _tutorials/book/admin_privileges.md %})
 
-The best way to organise similar resources is into [groups]({% link _tutorials/book/resource_groups.md %}). A resource can exist on it's own, or in any number of groups. When a resource has a parent (e.g. it is a member of a group), it will be displayed under that group title. An __orphaned__ resource will be displayed on it's own (e.g. at the top level).
+The best way to organise similar resources is into [groups]({% link _tutorials/book/resource_groups.md %}) and / or  [bundles]({% link _tutorials/book/resource_bundles.md %}). A resource can exist on it's own, or in any number of groups. When a resource has a parent (e.g. it is a member of a group), it will be displayed under that group title. An __orphaned__ resource will be displayed on it's own (e.g. at the top level).
 
 Grouped resources can be booked together (e.g. I would like to book 10 Chromebooks). In order for this to make sense for your users, it is best to group together resources that are the same or (functionally) very similar.
 
+- - -
+
 #### Shortcut Codes
-{:.p-2 .border .rounded-sm .bg-light}
+{:.p-2 .border .rounded-sm .bg-highlight-light}
 
 In most organisations, after resources have been booked they must be __collected__. Often there will be someone responsible for looking after these resources, and ensuring they are only given out to users who have made an appropriate booking. This can be a time-consuming process, but shortcut QR codes should make it __easier__!
 
@@ -45,8 +47,10 @@ The user who has made the booking can access their shortcut QR code by clicking 
 
 Due to the way most barcode scanners deliver non-standard characters (such as #) to the browser, please make sure the language setting on your barcode scanner matches the keyboard input language on your computer!
 
+- - -
+
 #### Logging Equipment Loans and Returns
-{:.p-2 .border .rounded-sm .bg-light}
+{:.p-2 .border .rounded-sm .bg-highlight-light}
 
 Recording loans is easy, simply click on the <i class="small material-icons md-1 text-light bg-action p-1 border rounded">directions_run</i> Loan button in the management view for the appropriate loan (loans are visible by day, for the resources which you have toggled 'on'). This will record the booking as <span class="badge badge-danger ml-1 mr-1">LOANED</span>. You can then record it as <span class="badge badge-success ml-1 mr-1">RETURNED</span> when the resource has been delivered back. If you have made a loan in error, or are just testing the app out, you can delete the <span class="badge badge-danger ml-1 mr-1">LOANED</span> status by clicking on the small cross next to it.
 

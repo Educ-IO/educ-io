@@ -7,12 +7,12 @@ for: folders
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3}
 
 A search needs to start from an __initial folder__. This can be any folder, a Team Drive or the root of your Google Drive. Once you have opened a folder, you will be able to click the __Search__ command from the __Folders__ menu.
 
 #### Search Parameters
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 ![Search Dialog Screenshot][1]{:class="img-fluid img-thumbnail mx-auto d-block"}
 
@@ -34,7 +34,7 @@ The search dialog box (shown above) allows you to __fully customise__ your searc
 * __Entire__ Drive - If you choose to search your entire drive using simple search terms (mime types, names and property=value) then this will be a __much faster search__
 
 #### Performance
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 A __simple search__ (using just mime types, names and property=value parameters) can leverage the native [Google Search API](https://developers.google.com/drive/v3/web/search-parameters){:target="_blank" rel="noopener"} if you choose to search your entire drive. __Complex__ and __recursive searches__ will take much longer (potentially minutes, rather than seconds) so if you can use a simple search, then this will be far more performant. An example of this might be searching for items that are marked as confidential using tags. A search using:
 

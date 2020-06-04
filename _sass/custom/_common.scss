@@ -216,6 +216,10 @@ em.kb-shortcut, strong.kb-shortcut {
 	background-color: $colour-highlight !important;
 }
 
+.bg-action-lighter, .bg-highlight-lighter {
+	background-color: lighten($colour-highlight, 40%) !important;
+}
+
 .bg-action-light, .bg-highlight-light {
 	background-color: lighten($colour-highlight, 50%) !important;
 }

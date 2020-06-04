@@ -7,14 +7,14 @@ for: reflect
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3}
 
 Reflect ships with a number of [built-in]({% link _tutorials/reflect/standard_forms.md %}) forms. While they are an excellent introduction to how the app can be used, sometimes a bit more customisation is required!
 
 If you need any help, advice or would like custom forms designed for you, please visit our [support](/support) page for details, or use the __Get Help__ command from the __About__ menu within the app itself.
 
 #### How it works
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 When the app is started, any __reflect forms__ that you have __created__, or have been __shared with you__, will be loaded. They can then be filled in to create reports. If you wish to allow someone to fill in a form without directly sharing it with them, you must ensure that [link-sharing](https://support.google.com/docs/answer/2494822#specific_people){:target="_blank" rel="noopener"} is turned on, and that 'everyone' is granted __read__ permission to the form.  Then you can send the following link to those people you want to create a report based on the form (they will need a Google account):
 
@@ -23,11 +23,12 @@ When the app is started, any __reflect forms__ that you have __created__, or hav
 You will need to replace __{% raw %}{{ID of your FORM}}{% endraw %}__ with the ID of your form from Google drive (this is the long sequence of letters and numbers you will find at the end of the sharing URL from Google Drive).
 
 #### Using Existing Forms
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 The __easiest way__ to customise a form is to base the new form on an existing one. This can be done in two ways, the first is to __extend__ any existing form and the second is to __edit__ a form to create a new one.
 
 ##### Extending
+{:.pt-4}
 
 Using the __Create__ command on the __Forms__ menu, and select 'New ...' from the options selector.
 
@@ -102,7 +103,7 @@ You can base your new form on an existing form by __selecting__ the form from th
 When you have made your changes, you can press 'Save' to __save your form__ into Google Drive. Once it has been saved, you can share it with whomever you wish.
 
 #### Creating Entirely New Forms
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 Creating a form from scratch is much the __same as editing__! Just create a __new__ form and start writing your JSON. You should have a look at the __[existing forms]({% link _tutorials/reflect/standard_forms.md %})__ to see how best to structure your new form and the types of fields that you can use.
 

@@ -1,4 +1,8 @@
 site :
+  0.1.10o :
+    name : Documentation Updates
+    desc : Updates to Guides and Tutorials
+    numeric : 0.1.10.15
   0.1.10n :
     name : Classes v0.0.5b-beta
     desc : Bug Fixes

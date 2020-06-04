@@ -8,3 +8,4 @@ for: cover
 ---
 
 #### Introduction
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3 .mt-xl-4}

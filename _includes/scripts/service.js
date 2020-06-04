@@ -84,10 +84,9 @@
         throw new NetworkError('Incorrect response status');
       }
 
-      /* <!-- TODO: check that requests don't overwrite one another (don't think this is possible to polyfill due to opaque responses) --> */
       return Promise.all(
         responses.map(function(response, i) {
-          return cache.put(requests[i], response);
+          return response.ok ? cache.put(requests[i], response) : response;
         })
       );
     }).then(function() {
@@ -163,15 +162,13 @@ var cache_Promises = function(now, cache) {
                 var css_url = new URL(css_urls[1], location.href);
                 css_url.search += (css_url.search ? "&" : "?") + "timestamp=" + now;
                 fetch(new Request(css_url, {mode: fetch_mode ? fetch_mode : "cors"})).then(function(css_response) {
-                  if (css_response.status < 400) {
-                    cache.put(css_response.url.split("?")[0], css_response);
-                  }
+                  if (css_response.status < 400) cache.put(css_response.url.split("?")[0], css_response);
                 });
               }
             }
           });
         }
-        return cache.put(fetch_url.url, response);
+        return response.status < 400 ? cache.put(fetch_url.url, response) : response;
       }).catch(function(e) {
         if (!fetch_mode)  {
            console.error("Failed to cache (trying no-cors) " + fetch_url.url + ":", e);  

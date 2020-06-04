@@ -7,14 +7,14 @@ for: reflect
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3}
 
 Reflect ships with many built-in forms. These can be used straight away or can be [customised]({% link _tutorials/reflect/custom_forms.md %}) to make your own versions.
 
 Remember that __reports__, created when these forms are filled in, can be sent to individuals (such as tutors, mentors or administrators) for [__signing__]({% link _tutorials/reflect/report_signing.md %}) and __approval__. These people can be specified within the form itself, or at time of submission or completion.
 
 #### Forms
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 ##### Lesson Observation
 {:.p-2 .border .rounded-sm .bg-highlight-light}

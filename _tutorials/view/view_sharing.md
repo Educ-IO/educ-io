@@ -7,12 +7,12 @@ for: view
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3}
 
 Once you have __crafted__ your perfect view by [filtering]({% link _tutorials/view/easy_filtering.md %}) the data from sheets, you can then generate a __sharable__ link.
 
 #### Process
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 ![Link Export Screenshot][1]{:class="img-fluid img-thumbnail mx-auto d-block"}
 
@@ -26,7 +26,7 @@ When you click on the __Create__ command (from the _Share_ menu), you will see a
 If you would prefer to use a [QR Code](https://en.wikipedia.org/wiki/QR_code){:target="_blank" rel="noopener"}, instead of a regular link, then clicking the black button (on the right hand side) will reveal a QR code that can be quickly copied or displayed on a larger screen.
 
 #### Finally
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 Each link that you generate will be __unique to the filters__ that you set up __before creating it__. You can create as __many different filters__ (e.g. for different departments or subjects) for a single sheet as you would like. Each link will __work independently__ of all other ones.
 

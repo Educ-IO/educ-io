@@ -7,14 +7,14 @@ for: folders
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3}
 
 Using Google Drive to publish documents that need to be periodically updated, such as schedules, policies or timetables is an easy process. You can either publish the Google Doc / Sheet [directly](https://support.google.com/docs/answer/2494822){:target="_blank" rel="noopener"}, or export the document as a PDF and publish that.
 
 The drawbacks of this method are obvious when you have a large number of documents to publish, or you need to publish updates to a document on a regular basis. This is a typical use case for policies, where there is a __live__ working copy, and then a __public__ version, which is essentially a snapshot of the working document, taken _quarterly_ or _yearly_. To do this using Drive, you need to download the exported copy of the PDF and then re-upload it as a [new version](https://support.google.com/drive/answer/2409045){:target="_blank" rel="noopener"} of your published document. This is incredibly time-consuming, and error prone!
 
 #### Our Solution
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 With __Folders__, you can help streamline this process and save yourself a __lot__ of time.
 
@@ -57,7 +57,7 @@ Click on the __Convert__ action button to start the conversion. If you have sele
 If you are publishing, or sharing, individual PDF files and have not done so previously, you can now share these newly created files through the normal Google Drive sharing procedure. When you next run the convert, these same files __will be updated__ from your source documents, meaning your published files will then have the __same content__ as your working files.
 
 #### Publishing Folders
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 It can be _tiresome_ publishing individual files, especially if you are continually adding new documents. You may wish to publish a whole folder, rather than individual documents. However, you shouldn't publish your original folder as this will also publish the working copies (which is exactly what we are trying not to do!). In this case, you can create a __new folder in your Google Drive__ and __publish it as normal__ (it can be empty at this point). When you go through the conversion process above, on __[Step 3](#step-3)__ you can select this folder as the __Mirror To__ folder before your documents are converted. After they have been converted, they are then __automatically added to this published folder__ as well as your working folder. This takes advantage of the ability for a file to be in more than one folder simultaneously in Google Drive. These newly converted PDFs will __inherit the sharing policies__ of your published folder and therefore be available to your intended audience. Every time a new document is created and converted in that folder, provided the __Mirror To__ folder is set (you can save your settings in __[Step 4](#step-4)__), it will be publishing too!
 

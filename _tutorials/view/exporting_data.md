@@ -7,12 +7,12 @@ for: view
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3}
 
 If you are looking for an easy way to export the __values__ from your spreadsheet to a different spreadsheet format (e.g. for importing into a legacy system), then __View__ can help you here as well!
 
 #### Exporting
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 __View__ supports a wide variety of formats, including a range of legacy __Excel__ file types, which expands the range of data export options that you already have in Google Drive.
 
@@ -27,7 +27,7 @@ You can also choose to export __your filtered views__ (Export -> __Filtered View
 Not every export format will __support multiple sheets__ within a __single file__. If your __chosen format does__, then you will be asked whether you would like to export all the sheet tabs or just the currently visible one.
 
 #### Downloading
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 Once the exported file has been __generated__ by __View__, it will be __downloaded__ in your browser window, ready for whatever you need it for!
 

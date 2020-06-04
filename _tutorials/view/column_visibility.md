@@ -7,12 +7,12 @@ for: view
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3}
 
 When creating a _View_, you can opt to control the visibility of columns. These can be fully hidden while you are working with your data, hidden on both current and output _Views_, or initially hidden (but visible when required).
 
 #### Adjusting Visibility
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 ![Hide Column Options Screenshot][1]{:class="img-fluid img-thumbnail mx-auto d-block"}
 
@@ -31,7 +31,7 @@ The __same__ column in it's __hidden__ state:
 ![Column Hidden Screenshot][3]{:class="img-fluid img-thumbnail mx-auto d-block"}
 
 #### Changing All Columns
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 If you want to control the visibility of a lot of columns in one go, or need to restore a previously hidden column, then you can use the __Show / Hide Columns__ command on the _Settings_ menu.
 

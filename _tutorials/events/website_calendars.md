@@ -7,17 +7,17 @@ for: events
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3}
 
 This is more of a __technical tutorial__ than normal! It is intended to lay the groundwork for people looking to __code__ their own websites and wanting to include their Google Calendar events. The approach taken here is a client-side one, where javascript code is included in a website, and client browsers request and display calendar events themselves.
 
 #### Preparing the Events
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 We want to filter our events for display, so that we only show a subset of them. For this example we are going to use the highlight tag to indicate which events we want to display.
 
 #### Accessing Google Calendar
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 To retrieve events, we are going to use the [Google Calendar API](https://developers.google.com/calendar/){:target="_blank" rel="noopener"}, authorising our requests using an API key. To do this, you will need to generate your own API key. You can find instructions all over the web to help do this, but for the impatient, here is a particularly [helpful set](https://docs.simplecalendar.io/google-api-key/){:target="_blank" rel="noopener"}. Following these instructions (except for the final, WordPress-specific step) you will end up with an API key that we can use in the code below.
 
@@ -74,7 +74,7 @@ $(document).ready(_loadDiary);
 {% endhighlight %}
 
 #### How it works
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 We use a fetch call to the Google API, combining our API key and Calendar ID to ensure we get the correct data! We use a simple filter to retrieve a maximum of 5 events, that are more recent than two days before today. Finally, we only ask for events that have the highlight tag set.
 

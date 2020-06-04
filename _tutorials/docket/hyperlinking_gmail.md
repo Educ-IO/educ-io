@@ -7,12 +7,12 @@ for: docket
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-lightest .mt-lg-3}
 
 Often, our tasks will be linked to or triggered by, an email. When creating a task in Docket it is incredibly useful to link to the source email. That way, when you come to tackle it, all the info you need is just one click away.
 
 #### Markdown Links
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-lightest .mt-lg-4}
 
 Markdown allows you to specify [hyperlinks](https://www.markdownguide.org/basic-syntax/#links), which will then be displayed as __blue clickable links__ in your Docket items. The easiest way to do this is to surround the text you want to link from (e.g. what will be displayed) with square brackets, like this: `[example link]`. Then, add the [URL](https://en.wikipedia.org/wiki/URL){:target="_blank" rel="noopener"} (which is the web page address) in normal brackets straight afterwards (without any space between them).
 
@@ -21,7 +21,7 @@ Your link should then look something like this: `[example link](https://www.goog
 Make sure that you include the protocol part of the address (the __http://__ or __https://__) at the start of the URL, to ensure it works correctly.
 
 #### Linking to an Email
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-lightest .mt-lg-4}
 
 Gmail has a unique URL for each conversation thread. To get this, navigate to the email you want to link and __copy the whole address__ from the browser address bar. It should look a little like this: `https://mail.google.com/mail/ca/u/0/#inbox/{LONG UNIQUE ID}`
 

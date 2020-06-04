@@ -9,7 +9,7 @@ lead: How to use our `Reflect` app to create __reports__ and __forms__, with __d
 ---
 
 #### Introduction
-{:.p-2 .border .rounded-sm .bg-light}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3 .mt-xl-4}
 
 Reflect is an app which allows __reports__ to be created, based on pre-defined or custom __forms__.
 
@@ -33,7 +33,7 @@ Reflect offers a more sophisticated approach with some key benefits that make it
 - - -
 
 #### Forms
-{:.p-2 .border .rounded-sm .bg-light}
+{:.p-2 .border .rounded-sm .bg-highlight-light}
 
 Forms are the basis of everything that goes on in the app! They are the set of questions that are answered by users to create a report (a template). Reflect has a number of  [built-in]({% link _tutorials/reflect/standard_forms.md %}) forms, but you can also create [your own]({% link _tutorials/reflect/custom_forms.md %}).
 
@@ -42,7 +42,7 @@ Custom forms are __stored in Google Drive__, just like reports, and can be share
 - - -
 
 #### Reports
-{:.p-2 .border .rounded-sm .bg-light}
+{:.p-2 .border .rounded-sm .bg-highlight-light}
 
 Reports are saved when a user fills in a form. Every form can be filled in as __many times as desired__, so that users can create and share weekly (or any other period!) reports on their progress and achievements. A copy of the form is saved within the report, meaning that if the report is shared with a user who does not have access to the original form, they can still see the exact questions and layout of the form.
 
@@ -59,7 +59,7 @@ If they then agree with the report, then can __sign__ the report using a __secur
 - - -
 
 #### Analysis
-{:.p-2 .border .rounded-sm .bg-light}
+{:.p-2 .border .rounded-sm .bg-highlight-light}
 
 The final step of the process is the __completion of the report__. The report author can mark the report as completed once it is __valid__. This means that all required fields have been filled in with acceptable data. The completed report is shared with whoever is needed (typically an administrator), and this person (or people) can be set as a __default__ in a custom report.
 

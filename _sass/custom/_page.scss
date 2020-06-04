@@ -22,6 +22,10 @@ nav.navbar.bg-faded {
     max-width: 1em;
     margin: 0 0.4em -0.1em -0.2em;
 	}
+  &.page-header {
+    margin-left: -1em;
+    margin-right: -1em;
+  }
 }
 // -- Tweak Jumbotron -- //
 

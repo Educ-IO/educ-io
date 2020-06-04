@@ -7,7 +7,7 @@ for: book
 ---
 
 #### Groups
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3}
 
 Groups are simply just __labels__. They are added to each resource as a __feature__, with a special formatting so that the app can understand them. The easiest way to manage these groups is to use this app to create or edit the resources. This way, the app will ensure that the formatting is __correct__.
 

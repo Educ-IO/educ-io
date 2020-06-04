@@ -7,12 +7,12 @@ for: folders
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3}
 
 Auditing refers to a process of loading and verifying the sharing permissions of all the folder items or results. These are then displayed in the __Actions__ column for each item, with any permissions that are obviously incompatible with __confidentiality__ tags highlighted in red and amber for easy visual identification.
 
 #### Icon Key
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 + <i class="material-icons md-1 small" title="Owner">pets</i> - An __owner__ of an item who is not you
 + <i class="material-icons text-success md-1 small" title="Owned by you">cloud_done</i> - You are the __owner__ of this item (or Team Drive Organiser)
@@ -34,14 +34,14 @@ Items that are [tagged]({% link _tutorials/folders/tagging_data.md %}) with <spa
 These permissions may be __appropriate for you__, but they should be double checked to make sure that confidential data is __not disclosed__ to unintended recipients.
 
 #### Summary Report
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 Once the auditing process is complete, a summary of all the sharing permissions will be displayed in a modal dialog box. This includes the total number of items shared in different ways, and a list of all the email addresses for domains, groups and users with which items are shared. These lists are ranked in descended order, so the recipients of the most number of shared items will appear first.
 
 ![Audit Summary Screenshot][1]{:class="img-fluid img-thumbnail mx-auto d-block"}
 
 #### Usage
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 A valuable way to use this audit feature would be to ensure you have [tagged]({% link _tutorials/folders/tagging_data.md %}) any items in your drive which you consider to be of a __confidential nature__. You can then periodically [search]({% link _tutorials/folders/advanced_searching.md %}) your drive using the '__Confidential__' shortcut in the search dialog. Once complete, you can run an __audit__ to ensure that none of these items is shared more widely than you wish them to be (we can all make mistakes with sharing occasionally!).
 

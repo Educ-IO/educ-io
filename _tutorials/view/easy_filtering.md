@@ -7,19 +7,19 @@ for: view
 ---
 
 #### Introduction
-{:.pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-3}
 
 At the heart of __View__ is the ability to __quickly__ and __precisely__ filter your tabular data. We support __simple text filtering__, so click on a __column header__ and __start typing__ - the rows will instantly respond to your filter. __View__ allows you to find data much faster than a traditional filter or search operation.
 
 #### Filters
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 All text is case _insensitive_, unless prefixed with __$__ to _include_ or __!$__ to _exclude_. Starting with __!!__ will invert the filter, showing only those results that _don't_ match your value.
 
 Press *esc*{:.kb-shortcut} to clear then close the filter, or *enter*{:.kb-shortcut} to apply then close. To just close, click the column title again, or the &times; after the filter.
 
 ##### Filter Operators
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 Instead of relying on __simple text filtering__, you can prefix your filters with the following operators:
 
@@ -32,7 +32,7 @@ Instead of relying on __simple text filtering__, you can prefix your filters wit
 + **x -> y** _range_ between x and y (for numerical values only)
 
 ##### Magic Keywords
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 ![Past Filter Screenshot][1]{:class="img-fluid img-thumbnail mx-auto d-block"}
 
@@ -41,7 +41,7 @@ There are also _magical_ keywords, such **past** (above), **future** (below) and
 ![Future Filter Screenshot][2]{:class="img-fluid img-thumbnail mx-auto d-block"}
 
 #### Multiple Filters
-{:.pt-2 .pb-1}
+{:.p-2 .border .rounded-sm .bg-highlight-light .mt-lg-4}
 
 All filters are cumulative, meaning you can combine them to generate an __AND__ filter, where each consecutive filter will be applied to the results of the previos one.
 
