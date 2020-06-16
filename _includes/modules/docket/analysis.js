@@ -43,20 +43,26 @@ Analysis = (options, factory) => {
       var _empty = value => !value,
           _project = value => value && value.indexOf(options.markers.project) === 0,
           _assignment = value => value && value.indexOf(options.markers.assignation) === 0,
+          _label = value => value && value.indexOf(options.markers.label) === 0,
           _uniq = value => value ? value.toLowerCase() : value,
           _all = _.chain(items).pluck(options.schema.columns.badges.value).flatten().compact()
                     .uniq(false, _uniq).value().sort();
       
-      _analysis.tags = _.chain(_all).reject(item => _empty(item) || _project(item) || _assignment(item)).map(value => value.toUpperCase()).value();
+      _analysis.tags = _.chain(_all)
+        .reject(item => _empty(item) || _project(item) || _assignment(item) || _label(item))
+        .map(value => value.toUpperCase()).value();
       
-      _.each([{name: "projects", fn: _project}, {name: "assignments", fn: _assignment}], 
-              item => _analysis[item.name] = _.chain(_all).reject(_empty).filter(item.fn).map(
-                value => ({
-                  name: value.substr(1).toUpperCase(),
-                  count: _.chain(items).pluck(options.schema.columns.badges.value).flatten().reject(_empty)
-                    .map(tag => tag.toUpperCase()).filter(tag => tag == value.toUpperCase()).value().length,
-                })
-              ).value());
+      _.each([
+        {name: "projects", fn: _project}, 
+        {name: "assignments", fn: _assignment}, 
+        {name: "labels", fn: _label}
+      ], item => _analysis[item.name] = _.chain(_all).reject(_empty).filter(item.fn).map(
+        value => ({
+          name: value.substr(1).toUpperCase(),
+          count: _.chain(items).pluck(options.schema.columns.badges.value).flatten().reject(_empty)
+            .map(tag => tag.toUpperCase()).filter(tag => tag == value.toUpperCase()).value().length,
+        })
+      ).value());
       
     }
     
@@ -172,17 +178,17 @@ Analysis = (options, factory) => {
       
     },
     
-    series: (tags, projects, timed, since, until, db) => {
+    series: (tags, projects, timed, since, until, durationed, exclude, touched, db) => {
       
-      factory.Flags.log(`Series | TAGS = ${tags} | PROJECTS = ${projects} | TIMED = ${timed} | SINCE = ${since}`);
+      factory.Flags.log(`Series | TAGS = ${tags} | PROJECTS = ${projects} | TIMED = ${timed} | SINCE = ${since} | DURATIONED = ${durationed} | EXCLUDE = ${exclude}`);
       
       var _query = tags === false ? /* <!-- Tags === FALSE | All results, regardless of tags --> */
           since || until ? 
-            options.query.between(since, until) :
+            (touched ? options.query.touched : options.query).between(since, until) :
              null : 
           tags === true ? 
-            options.query.tagless(since, until) : /* <!-- Tags === TRUE | Has no tag --> */
-            options.query.all_tagged(tags, since, until);
+            options.query.tagless(since, until, touched) : /* <!-- Tags === TRUE | Has no tag --> */
+            options.query.all_tagged(tags, since, until, touched);
       
       if (projects !== false && projects !== undefined) {
         var _projects = projects === true ? /* <!-- Projects === TRUE | Has any project --> */
@@ -193,13 +199,30 @@ Analysis = (options, factory) => {
         _query = _query ? {"$and": [_query, _projects]} : _projects;
       } /* <!-- Projects === FALSE | All results, regardless of projects --> */
       
-      if (timed === false) _query = {"$and": [_query, options.query.timeless()]}; 
-        
+      /* <!-- Set timed / yes or no | null or undefined = ignore --> */
+      _query = timed === false ? {"$and": [_query, options.query.timeless()]} :
+                timed === true ? {"$and": [_query, options.query.timed()]} :
+                  _query;
+      
+      /* <!-- Set durationed / yes or no | null or undefined = ignore --> */
+      _query = durationed === false ? {"$and": [_query, options.query.durationless()]} :
+                durationed === true ? {"$and": [_query, options.query.durationed()]} :
+                  _query;
+      
       factory.Flags.log(since ? `Query [Since] for: ${since}` : "Query [all]", _query);
       var _all = (db ? db : options.db).find(_query);
+      
+      /* <!-- Exclude Tags if appropriate --> */
+      if (exclude && _.isArray(exclude) && exclude.length > 0) {
+        var _exclude = options.query.all_tagged(exclude, since, until),
+            _exclusions = new Set((db ? db : options.db).find(_exclude).map(v => v.$loki));
+        _all = _.reject(_all, v => _exclusions.has(v.$loki));
+      }
+      
       factory.Flags.log(since ? `Series [Since] for: ${since}` : "Series [all]", _all);
       
-      var _count = (holder, name, count) => name ? holder[name] ? holder[name] += count || 1 : holder[name] = count || 1 : null;
+      var _count = (holder, name, count) => name ? 
+          holder[name] ? holder[name] += count || 1 : holder[name] = count || 1 : null;
                     
       var _series = value => ([
         {name: "months", value: value.format("YYYY-MM"), date: factory.Dates.parse(value).startOf("month").toDate()},

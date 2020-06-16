@@ -1,0 +1,168 @@
+{% raw %}
+{{~#if name}}{{> name }}{{/if~}}
+<div {{#if id}}id="{{id}}" {{/if}}class="items-holder border-exagerate container-fluid pt-lg-1 mvh-100">
+  
+  <div class="row">
+    
+    <form class="d-flex flex-wrap align-items-center border border-white rounded bg-highlight-lightest py-2 mx-2 w-100">
+        
+      <div class="col-12 col-lg-6 col-xl-3">
+
+        <div class="d-block w-100 mb-3">
+          <h5 class="marker-label text-dark font-weight-light">Tag Filter</h5>
+        </div>
+        
+        <select id="select_Tag" class="custom-select tag-type mt-1">
+          <option value="all" selected>All</option>
+          <option value="any">Any</option>
+          <option disabled>──────────</option>
+          {{~#if tags}}{{#each tags}}<option value="{{this}}">{{this}}</option>{{/each}}{{/if~}}
+        </select>
+
+        <div class="d-block d-lg-none w-100"><hr /></div>
+
+      </div>
+
+      <div class="col-12 col-lg-6 col-xl-3">
+        
+        <div class="d-block w-100 mb-2">
+              <div class="material-switch-label">
+                <h5 class="marker-label text-dark font-weight-light">Project Filter</h5>
+              </div>
+              <div class="float-right">
+                <input id="filter_Projects" hidden="hidden" type="checkbox" data-targets=".project-filter">
+                <label class="material-switch" for="filter_Projects"></label>
+              </div>
+            </div>
+        
+        <select id="select_Project" class="custom-select project-filter mt-1 default-first disabled" disabled>
+          <option value="any" selected>Any</option>
+          <option value="none">None</option>
+          <option disabled>──────────</option>
+          {{~#if projects}}{{#each projects}}<option value="{{this}}">{{this}}</option>{{/each}}{{/if~}}
+        </select>
+
+        <div class="d-block d-lg-none w-100"><hr /></div>
+          
+      </div>
+      
+      <div class="d-none d-lg-block d-xl-none w-100 mx-3"><hr /></div>
+      
+      <div class="col-12 col-lg-8 col-xl-4">
+
+        <div class="row">
+          
+          <div class="col-12 col-xl-6">
+            <div class="d-block w-100 mb-2">
+              <div class="material-switch-label">
+                <h5 class="marker-label text-dark font-weight-light">Date Filter</h5>
+              </div>
+              <div class="float-right">
+                <input id="filter_Dates" hidden="hidden" type="checkbox" data-targets=".date-filter">
+                <label class="material-switch" for="filter_Dates"></label>
+              </div>
+            </div>
+
+            <select id="select_Dates" class="custom-select date-filter mb-2 mb-xl-0 default-first disabled" disabled>
+              <option value="current_year" selected>This Year</option>
+              <option value="last_year">Last Year</option>
+              <option disabled>──────────</option>
+              <option value="current_month">This Month</option>
+              <option value="last_month">Last Month</option>
+              <option disabled>──────────</option>
+              <option value="current_isoWeek">This Week</option>
+              <option value="last_isoWeek">Last Week</option>
+              <option disabled>──────────</option>
+              <option value="past_30_day">Past 30 Days</option>
+              <option value="past_60_day">Past 60 Days</option>
+              <option value="past_120_day">Past 120 Days</option>
+              <option disabled>──────────</option>
+              <option value="past_2_week">Past 2 Weeks</option>
+              <option value="past_4_week">Past 4 Weeks</option>
+              <option value="past_8_week">Past 8 Weeks</option>
+              <option value="past_12_week">Past 12 Weeks</option>
+              <option disabled>──────────</option>
+              <option value="custom_range">Custom Range</option>
+            </select>
+          </div>
+          
+          <div class="col-12 col-xl-6">
+            
+            <div class="input-group input-group-sm mb-2">
+              <div class="input-group-prepend d-none d-md-flex">
+				        <span class="input-group-text align-self-stretch"><i class="material-icons h-100 d-inline-flex md-18">date_range</i></span>
+				      </div>
+				      <input id="custom_Since" type="text" class="form-control dt-picker date-filter default-readonly disabled"
+                     placeholder="Since" disabled readonly>
+				    </div>
+            
+            <div class="input-group input-group-sm">
+              <div class="input-group-prepend d-none d-md-flex">
+				        <span class="input-group-text align-self-stretch"><i class="material-icons h-100 d-inline-flex md-18">date_range</i></span>
+				      </div>
+				      <input id="custom_Until" type="text" class="form-control dt-picker date-filter default-readonly disabled"
+                     placeholder="Until" disabled readonly>
+				    </div>
+            
+          </div>
+            
+        </div>
+        
+        <div class="d-block d-lg-none w-100"><hr /></div>
+
+      </div>
+
+      <div class="col-12 col-lg-4 col-xl-2">
+
+        <div class="{{#unless tags}}d-none {{/unless}}d-block w-100 mb-2">
+          <div class="material-switch-label">
+            <h5 class="marker-label text-dark font-weight-light">Exclude Tags</h5>
+          </div>
+          <div class="float-right">
+            <input id="exclude_Tags" hidden="hidden" type="checkbox" data-targets=".select-tags" data-toggle="collapse" data-target="#selectTags" aria-expanded="false" aria-controls="selectTags">
+            <label class="material-switch" for="exclude_Tags"></label>
+          </div>
+        </div>
+
+        {{~#if tags}}
+          <div class="d-flex flex-row flex-wrap align-items-center justify-content-xl-around mt-2">
+            {{> control_button b_class="btn-dark select-tags" b_aria_title="Toggle All Tags" b_text="All" b_action="all" disabled=true }}
+            {{> control_button b_class="btn-light ml-2 ml-xl-0 select-tags" b_aria_title="Toggle No Tags" b_text="None" b_action="none" disabled=true }}  
+          </div>
+        {{/if~}}
+
+      </div>
+
+      <div class="col-12">
+
+        {{~#if tags}}<div id="selectTags" class="align-items-center justify-content-center justify-content-lg-start select-tags-holder collapse">
+          <div class="d-block d-lg-none w-100"><hr /></div>
+          <fieldset class="select-tags my-1 mt-xl-2 px-2 mx-1 mx-xl-2 disabled" disabled>
+            <div class="d-flex flex-wrap">
+              {{#each tags}}<div class="custom-control custom-switch tag-filter mb-1">
+                <input type="checkbox" class="custom-control-input" id="tag_{{this}}" data-tag="{{this}}">
+                <label class="custom-control-label text-secondary font-weight-light{{#unless @last}} border-right border-dark pr-1 pr-lg-2 mr-1 mr-lg-2{{/unless}}" for="tag_{{this}}">{{this}}</label>
+              </div>{{/each}}
+            </div>
+          </fieldset>
+        </div>{{/if~}}
+
+      </div>
+    
+    </form>
+  </div>
+  
+  <div class="row">
+    
+    <div class="col-12 my-1 stats-totals"></div>
+  
+  </div>
+  
+  <div class="row m-0 pt-2 pt-xl-3">
+    
+    <div {{#if id}}id="{{id}}_items" {{/if}}class="container-fluid w-100 h-100 p-0 items"></div>
+  
+  </div>
+</div>
+{{#if action}}{{> action id=id action=action}}{{/if}}
+{% endraw %}

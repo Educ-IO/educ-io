@@ -192,11 +192,25 @@ menus:
             url: /guides/publish
             desc: A guide to using this app
             divider: true
+            
+          - name: Experiments
+            desc: Turn on new and experimental features in this app
+            hash: experiments
+            toggle:
+              - experiments
+            disabled_until:
+              - authenticated
           - name: Install
             desc: Install this app into your Google Drive
             hash: install
             auth: google
             scope: https://www.googleapis.com/auth/drive.install
+            disabled_until:
+              - authenticated
+            disabled_while:
+              - external-oauth
+            divider: true
+            
           - name: Permissions
             url: /scopes/?highlight=publish
             desc: Find out about the permissions and scopes that this app uses
@@ -204,6 +218,7 @@ menus:
             url: /changes?highlight=publish
             desc: Find out about the most recent changes and features of this app
             divider: true
+            
           - name: Privacy
             url: /about?highlight=privacy
             desc: We are passionate about protecting your privacy and security
@@ -211,6 +226,7 @@ menus:
             url: /about
             desc: Find out about our platform, technology and approach
             divider: true
+            
           - name: Get Help
             hash: help
             desc: Get help or request a feature

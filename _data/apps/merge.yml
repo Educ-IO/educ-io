@@ -12,7 +12,7 @@
 name: Merge
 desc: _Produce_ __merged__ documents from your sheets __data__
 link: /merge/
-colour: 818109
+colour: 153e7d
 logo: images/merge_logo.svg
 learn: /guides/merge
 css:
@@ -41,7 +41,7 @@ imports:
     load: last
   - name: autosize
     load: last
-  - name: day
+  - name: moment_all
     load: last
   - name: waves-css
     load: last
@@ -60,6 +60,11 @@ helpers:
   - data
   - filters
   - handlebars
+  - tabulate
+  - notify
+  - config
+  - dialog
+  - exporter
 modules:
   - flags
   - controller
@@ -74,11 +79,22 @@ modules:
   - dates
   - grid
   - headers
+  - merge/states
+  - merge/events
+  - merge/common
+  - merge/load
+  - merge/pdf
+  - merge/doc
+  - merge/merge
+  - merge/templates
   - merge/master
   - merge/records
 scripts: 
   - extends/regex
   - extends/array
+  - extends/math
+  - extends/string
+  - extends/promises
 templates:
   - options
   - choose
@@ -116,6 +132,8 @@ docs:
   - merge/FEATURES
   - merge/README
   - merge/INSTRUCTIONS
+  - merge/LOAD_DATA_INSTRUCTIONS
+  - merge/LOAD_TEMPLATE_INSTRUCTIONS
   - merge/TUTORIALS
   - merge/IMPORT_CHOOSE_SHEET
   - merge/DATA_DETAILS
@@ -234,7 +252,13 @@ menus:
               hash: open.template.sheet
               auth: google
               imports:
-              - google         
+              - google
+            - name: Load Presentation
+              desc: Load a template (to merge into) from a Google Presentation (Slides)
+              hash: open.template.presentation
+              auth: google
+              imports:
+              - google
   - name: Settings
   - name: About
     short_name: Help
@@ -251,11 +275,25 @@ menus:
             url: /guides/merge
             desc: A guide to using this app
             divider: true
+            
+          - name: Experiments
+            desc: Turn on new and experimental features in this app
+            hash: experiments
+            toggle:
+              - experiments
+            disabled_until:
+              - authenticated
           - name: Install
             desc: Install this app into your Google Drive
             hash: install
             auth: google
             scope: https://www.googleapis.com/auth/drive.install
+            disabled_until:
+              - authenticated
+            disabled_while:
+              - external-oauth
+            divider: true
+            
           - name: Permissions
             url: /scopes/?highlight=merge
             desc: Find out about the permissions and scopes that this app uses
@@ -263,6 +301,7 @@ menus:
             url: /changes?highlight=merge
             desc: Find out about the most recent changes and features of this app
             divider: true
+            
           - name: Privacy
             url: /about?highlight=privacy
             desc: We are passionate about protecting your privacy and security
@@ -270,6 +309,7 @@ menus:
             url: /about
             desc: Find out about our platform, technology and approach
             divider: true
+            
           - name: Get Help
             hash: help
             desc: Get help or request a feature
@@ -289,6 +329,8 @@ buttons:
   auth: google
   imports:
     - google
+    
 published: false
+
 config:
   api: "MN_prIAeoOzt-NF-8uwlGE9Wlbr8Kyl43"

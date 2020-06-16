@@ -2,31 +2,34 @@
 <div {{#exists COUNTDOWN}}data-countdown="{{COUNTDOWN}}" {{/exists}}
      {{~#if IS_ZOMBIE}}data-zombie="{{IS_ZOMBIE}}" {{/if~}}
      {{~#if IS_GHOST}}data-ghost="{{IS_GHOST}}" {{/if~}}
-     class="item pl-1{{#exists class}} {{class}}{{/exists}}{{#if editable}} editable{{else}} text-complement small{{/if}}{{#if IS_COMPLETE}} complete{{/if}}{{#unless IS_COMPLETE}}{{#is COUNTDOWN 'lt' 0}} overdue{{else}}{{#is COUNTDOWN 'lte' 2}} due-soon{{/is}}{{/is}}{{/unless}}{{#if IS_ZOMBIE}} background{{else}}{{#if IS_GHOST}} background{{/if}}{{/if}}"
+     class="item pl-1{{#exists class}} {{class}}{{/exists}}{{#if editable}} editable{{else}} text-complement small{{/if}}{{#if IS_COMPLETE}} complete{{/if}}{{#unless plain}}{{#unless IS_COMPLETE}}{{#is COUNTDOWN 'lt' 0}} overdue mt-1{{else}}{{#is COUNTDOWN 'lte' 2}} due-soon mt-1{{/is}}{{/is}}{{/unless}}{{/unless}}{{#if IS_ZOMBIE}} background{{else}}{{#if IS_GHOST}} background{{/if}}{{/if}}"
+     {{~#exists class}}{{~#if class}} data-display-classes="{{class}}"{{/if~}}{{/exists~}}
      {{~#if editable}} data-display-editable="{{editable}}"{{/if~}}
      {{~#if wide}} data-display-wide="{{wide}}"{{/if~}}
      {{~#if simple}} data-display-simple="{{simple}}"{{/if~}}
      {{~#if forward}} data-display-forward="{{forward}}"{{/if~}}
      {{~#if backward}} data-display-simple="{{backward}}"{{/if~}}
+     {{~#if plain}} data-display-plain="{{plain}}"{{/if~}}
+     {{~#if compact}} data-display-compact="{{compact}}"{{/if~}}
      {{~#exists $loki}} id="item_{{ $loki }}" data-id="{{ $loki }}"{{/exists~}}
      {{~#unless (any IS_TIMED static)}} data-order="{{#if ORDER}}{{ ORDER }}{{else}}{{inc @index}}{{/if}}" data-droppable="true"{{/unless~}}
      {{~#unless static}} draggable="true"{{/unless~}}
      {{~#exists _title}} data-toggle="tooltip" title="{{_title}}"{{/exists~}}>
   
-  <div class="display{{#unless small}} py-1{{/unless}}{{#if IS_GHOST}} small ghost text-very-faded{{/if}}{{#if IS_ZOMBIE}} zombie text-faded{{/if}}">
+  <div class="display h-100 pl-1{{#unless small}} py-1{{#if dates}} pr-1{{/if}}{{/unless}}{{#if IS_GHOST}} small ghost text-very-faded{{/if}}{{#if IS_ZOMBIE}} zombie text-faded{{/if}}">
     
     <div class="d-flex flex-row align-items-center">
       <div class="d-flex flex-column flex-sm-row align-items-sm-center align-items-start flex-wrap">
         {{~#if dates}}
-          {{#if _action}}<a class="date" href="#{{_action}}" data-click="dismiss-modal">{{/if}}
-          <span class="float-left font-weight-light text-{{#if _action}}primary{{else}}muted{{/if}} mr-2">{{#if _date}}{{localeDate _date}}{{else}}{{localeDate FROM}}{{/if}}</span>
+          {{#if _action}}<a class="date mr-{{#unless compact}}2 border rounded p-1{{else}}1{{/unless}}" href="#{{_action}}" data-click="dismiss-modal">{{/if}}
+          <span class="float-left font-weight-light text-{{#if _action}}primary{{else}}muted{{/if}}{{#unless _action}} mr-1{{/unless}}">{{#if _date}}{{localeDate _date}}{{else}}{{localeDate FROM}}{{/if}}</span>
           {{#if _action}}</a>{{/if}}
         {{else}}
-          {{#if editable}}{{#unless IS_COMPLETE}}<a class="d-none d-md-flex float-left text-very-faded pr-1 align-items-center" role="button" aria-label="Edit Tags" href="#edit.tags{{#exists $loki}}.{{ $loki }}{{/exists}}"><i class="material-icons d-flex">add_box</i></a>{{/unless}}{{/if}}
-          {{#if BADGES}}<div class="mt-1 mt-sm-0{{#if IS_COMPLETE}} o-25{{/if}}">{{#each BADGES}}{{> badge text=this last=@last search=(concat "search.tags." (encode this)) remove=(concat "remove.tag." ../$loki "." (encode this))}}{{/each}}</div>{{/if}}
+          {{#if editable}}{{#unless IS_COMPLETE}}<a class="d-none d-md-flex float-left text-very-faded pr-1 align-items-center" role="button" aria-label="Edit Tags" href="#edit.tags{{#exists $loki}}.{{ $loki }}{{/exists}}"><i class="material-icons d-flex add-tags">add_box</i></a>{{/unless}}{{/if}}
         {{/if~}}
+        {{~#if (any badges (falsy dates))}}{{#if BADGES}}<div class="mt-1 mt-sm-0{{#if IS_COMPLETE}} o-25{{/if}}">{{#each BADGES}}{{> badge text=this last=@last search=(concat "search.tags." (encode this)) remove=(concat "remove.tag." ../$loki "." (encode this))}}{{/each}}</div>{{/if}}{{/if~}}
         {{~#if (all _icon _link)}}<a role="button" aria-label="View" href="{{_link}}" target="_blank" class="d-none d-md-flex float-left text-very-faded pr-1"><i class="material-icons d-flex">{{_icon}}</i></a>{{/if~}}
-        {{~#if IS_COMPLETE}}<del class="text-muted text-faded" data-toggle="tooltip" data-html="true" data-trigger="hover" title="<i class='material-icons mr-1 d-block text-success'>thumb_up</i><b>Completed</b> item">{{/if~}}{{~#if DISPLAY}}{{{DISPLAY}}}{{else}}{{~#if DETAILS}}{{DETAILS}}{{else}}{{this}}{{/if}}{{/if~}}{{~#if IS_COMPLETE}}</del>{{/if~}}
+        {{~#if IS_COMPLETE}}<del class="text-muted text-faded text-break{{# if plain}} text-decoration-none{{/if}}" data-toggle="tooltip" data-html="true" data-trigger="hover" title="<i class='material-icons mr-1 d-block text-success'>thumb_up</i><b>Completed</b> item">{{/if~}}{{~#if DISPLAY}}{{{DISPLAY}}}{{else}}{{~#if DETAILS}}{{DETAILS}}{{else}}{{this}}{{/if}}{{/if~}}{{~#if IS_COMPLETE}}</del>{{/if~}}
       </div>
 
       <div class="ml-auto flex-row status-holder d-flex align-items-center">
@@ -45,38 +48,38 @@
     <div class="col-12 p-1">
 			<div class="input-group">
         {{#if wide}}<span class="input-group-prepend d-none d-xl-flex">
-          {{> control_button b_class="btn-light" b_aria_title="Cancel" b_icon="cancel" b_action="cancel" }}
-          {{> control_button b_class="btn-danger px-2" b_icon_type="light" b_aria_title="Delete this Item" b_icon="delete_forever" b_action="delete" }}
-          {{> control_button b_class="btn-info px-2" b_icon_type="light" b_aria_title="Edit Tags" b_icon="add_box" b_action="tags" }}
+          {{> control_button b_class="btn-light" b_icon_centered=true b_aria_title="Cancel" b_icon="cancel" b_action="cancel" }}
+          {{> control_button b_class="btn-danger px-2" b_icon_centered=true b_icon_type="light" b_aria_title="Delete this Item" b_icon="delete_forever" b_action="delete" }}
+          {{> control_button b_class="btn-info px-2" b_icon_centered=true b_icon_type="light" b_aria_title="Edit Tags" b_icon="add_box" b_action="tags" }}
         </span>{{/if}}
         <textarea class="form-control resizable" rows="1" style="touch-action: none;">{{#if DETAILS}}{{{ DETAILS }}}{{else}}{{ this }}{{/if}}</textarea>
       	{{#if wide}}<span class="input-group-append d-none d-xl-flex">
-          {{> control_button b_class="btn-secondary px-2" b_icon_type="light" b_aria_title="Save Changes" b_icon="save" b_action="update" }}
+          {{> control_button b_class="btn-secondary px-2" b_icon_centered=true b_icon_type="light" b_aria_title="Save Changes" b_icon="save" b_action="update" }}
           {{#unless (any forward backward)}}
-            {{#unless IS_COMPLETE}}{{> control_button b_class="btn-warning px-2" b_icon_type="light" b_aria_title="Duplicate Task" b_icon="file_copy" b_action="copy" }}{{/unless}}
-            {{> control_button b_class="btn-dark px-2" b_icon_type="light" b_aria_title="Change Date" b_icon="update" b_action="move" }}
-            {{#if IS_COMPLETE}}{{> control_button b_class="btn-warning px-2" b_aria_title="Mark as In Progress" b_icon="edit" b_action="complete" }}{{else}}{{> control_button b_class="btn-success px-2" b_icon_type="light" b_aria_title="Mark as Complete" b_icon="done" b_action="complete" }}{{/if}}
+            {{#unless IS_COMPLETE}}{{> control_button b_class="btn-warning px-2" b_icon_centered=true b_icon_type="light" b_aria_title="Duplicate Task" b_icon="file_copy" b_action="copy" }}{{/unless}}
+            {{> control_button b_class="btn-dark px-2" b_icon_centered=true b_icon_type="light" b_aria_title="Change Date" b_icon="update" b_action="move" }}
+            {{#if IS_COMPLETE}}{{> control_button b_class="btn-warning px-2" b_icon_centered=true b_aria_title="Mark as In Progress" b_icon="edit" b_action="complete" }}{{else}}{{> control_button b_class="btn-success px-2" b_icon_centered=true b_icon_type="light" b_aria_title="Mark as Complete" b_icon="done" b_action="complete" }}{{/if}}
           {{else}}
-            {{#if backward}}{{> control_button b_class="btn-warning px-2" b_icon_type="light" b_aria_title="Move Backwards" b_icon=backward b_action="backward" }}{{/if}}
-            {{#if forward}}{{> control_button b_class="btn-success px-2" b_icon_type="light" b_aria_title="Move Forwards" b_icon=forward b_action="forward" }}{{/if}}
+            {{#if backward}}{{> control_button b_class="btn-warning px-2" b_icon_centered=true b_icon_type="light" b_aria_title="Move Backwards" b_icon=backward b_action="backward" }}{{/if}}
+            {{#if forward}}{{> control_button b_class="btn-success px-2" b_icon_centered=true b_icon_type="light" b_aria_title="Move Forwards" b_icon=forward b_action="forward" }}{{/if}}
           {{/unless}}
         </span>{{/if}}
       </div>
       <div class="input-group d-flex{{#if wide}} d-xl-none{{/if}} pt-1">
          <span class="input-group-prepend">
-          {{> control_button b_class=(concat "btn-light px-2" (which wide " px-sm-3" "")) b_aria_title="Cancel" b_icon="cancel" b_action="cancel" }}
-          {{> control_button b_class=(concat "btn-danger px-2" (which wide " px-sm-3" "")) b_icon_type="light" b_aria_title="Delete this Item" b_icon="delete_forever" b_action="delete" }}
-          {{> control_button b_class=(concat "btn-info px-2" (which wide " px-sm-3" "")) b_icon_type="light" b_aria_title="Edit Tags" b_icon="add_box" b_action="tags" }}
+          {{> control_button b_class=(concat "btn-light px-2" (which wide " px-sm-3" "")) b_icon_centered=true b_aria_title="Cancel" b_icon="cancel" b_action="cancel" }}
+          {{> control_button b_class=(concat "btn-danger px-2" (which wide " px-sm-3" "")) b_icon_centered=true b_icon_type="light" b_aria_title="Delete this Item" b_icon="delete_forever" b_action="delete" }}
+          {{> control_button b_class=(concat "btn-info px-2" (which wide " px-sm-3" "")) b_icon_centered=true b_icon_type="light" b_aria_title="Edit Tags" b_icon="add_box" b_action="tags" }}
         </span>
         <span class="input-group-append">
-          {{> control_button b_class=(concat "btn-secondary px-2" (which wide " px-sm-3" "")) b_icon_type="light" b_aria_title="Save Changes" b_icon="save" b_action="update" }}
+          {{> control_button b_class=(concat "btn-secondary px-2" (which wide " px-sm-3" "")) b_icon_type="light" b_icon_centered=true b_aria_title="Save Changes" b_icon="save" b_action="update" }}
           {{#unless (any forward backward)}}
-            {{#unless IS_COMPLETE}}{{> control_button b_class=(concat "btn-warning px-2" (which wide " px-sm-3" "")) b_icon_type="light" b_aria_title="Duplicate Task" b_icon="file_copy" b_action="copy" }}{{/unless}}
-            {{> control_button b_class=(concat "btn-dark px-2" (which wide " px-sm-3" "")) b_icon_type="light" b_aria_title="Change Date" b_icon="update" b_action="move" }}
-            {{#if IS_COMPLETE}}{{> control_button b_class=(concat "btn-warning px-2" (which wide " px-sm-3" "")) b_aria_title="Mark as In Progress" b_icon="edit" b_action="complete" }}{{else}}{{> control_button b_class=(concat "btn-success px-2" (which wide " px-sm-3" "")) b_icon_type="light" b_aria_title="Mark as Complete" b_icon="done" b_action="complete" }}{{/if}}
+            {{#unless IS_COMPLETE}}{{> control_button b_class=(concat "btn-warning px-2" (which wide " px-sm-3" "")) b_icon_centered=true b_icon_type="light" b_aria_title="Duplicate Task" b_icon="file_copy" b_action="copy" }}{{/unless}}
+            {{> control_button b_class=(concat "btn-dark px-2" (which wide " px-sm-3" "")) b_icon_centered=true b_icon_type="light" b_aria_title="Change Date" b_icon="update" b_action="move" }}
+            {{#if IS_COMPLETE}}{{> control_button b_class=(concat "btn-warning px-2" (which wide " px-sm-3" "")) b_icon_centered=true b_aria_title="Mark as In Progress" b_icon="edit" b_action="complete" }}{{else}}{{> control_button b_class=(concat "btn-success px-2" (which wide " px-sm-3" "")) b_icon_centered=true b_icon_type="light" b_aria_title="Mark as Complete" b_icon="done" b_action="complete" }}{{/if}}
           {{else}}
-            {{#if backward}}{{> control_button b_class=(concat "btn-warning px-2" (which wide " px-sm-3" "")) b_icon_type="light" b_aria_title="Move Backwards" b_icon=backward b_action="backward" }}{{/if}}
-            {{#if forward}}{{> control_button b_class=(concat "btn-success px-2" (which wide " px-sm-3" "")) b_icon_type="light" b_aria_title="Move Forwards" b_icon=forward b_action="forward" }}{{/if}}
+            {{#if backward}}{{> control_button b_class=(concat "btn-warning px-2" (which wide " px-sm-3" "")) b_icon_type="light" b_icon_centered=true b_aria_title="Move Backwards" b_icon=backward b_action="backward" }}{{/if}}
+            {{#if forward}}{{> control_button b_class=(concat "btn-success px-2" (which wide " px-sm-3" "")) b_icon_type="light" b_icon_centered=true b_aria_title="Move Forwards" b_icon=forward b_action="forward" }}{{/if}}
           {{/unless}}
         </span>
       </div>

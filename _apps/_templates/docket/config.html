@@ -1,147 +1,130 @@
 {% raw %}
-<div id="{{id}}" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
-  <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modal_options_title">{{{title}}}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        {{#if instructions}}{{{instructions}}}{{/if}}
-        <form>
+{{#> dialog class="modal-xl" action="Save" tabindex=9}}
+<form>
 
-          <div class="row">
-            {{!-- Zombie and Ghosts --}}
+  <div class="row">
+    {{!-- Zombie and Ghosts --}}
 
-            <div class="form-group col-12 col-lg-6 col-xl-5">
-              <label for="{{id}}_zombie">Zombies</label>
-              <input type="number" id="{{id}}_zombie" name="zombie" class="form-control optional" min="0" max="365" step="5"{{#exists state.zombie}} value="{{state.zombie}}"{{/exists}} />
-              <small class="form-text text-muted"><strong>Long</strong> running tasks at the bottom of your list. This is the number of days a task needs to be active before turning into a zombie. Blank reverts to defaults, zero/negative will <strong>disable zombies</strong>.</small>
-            </div>
-            <div class="form-group col-12 col-lg-6 col-xl-7">
-              <label for="{{id}}_ghost">Ghosts</label>
-              <input type="number" id="{{id}}_ghost" name="ghost" class="form-control optional" min="0" max="365" step="5"{{#exists state.ghost}} value="{{state.ghost}}"{{/exists}} />
-              <small class="form-text text-muted"><strong>Very long</strong> running tasks which drop right to the bottom of your list, displayed in a <strong>smaller font</strong>. This is the number of days a task needs to be active before it becomes a ghost. Blank reverts to defaults, zero/negative will <strong>disable ghosts</strong>.</small>
-            </div>
-            
-          </div>
-
-          <div class="row">
-            {{!-- Database Sheet and Default View --}}
-            
-            <div class="form-group col-12 col-lg-6 col-xl-7">
-              <label for="{{id}}_data">Default Database Sheet</label>
-              <div class="input-group">
-                <input type="text" id="{{id}}_data" name="data" class="form-control"
-                       {{#if state.data}} value="{{state.data}}"{{/if}} readonly />
-                <div class="input-group-append">
-                  {{> control_button b_class="btn-outline-primary" b_title="Select File from Google Drive"
-                    b_command="config.set.data" b_text="Browse" }}
-                </div>
-              </div>
-              <small class="form-text text-muted">Google Drive File ID for your default database sheet.</small>
-            </div>
-
-            <div class="form-group col-12 col-lg-3 col-xl-2">
-              <label for="{{id}}_view">Default View</label>
-              <select id="{{id}}_view" name="view" class="custom-select">
-                <option value="daily"{{#is state.view "daily"}} selected{{/is}}>Daily</option>      
-                <option value="weekly"{{#if state.view}}{{#is state.view "weekly"}} selected{{/is}}{{else}} selected{{/if}}>Weekly</option>
-                <option value="monthly"{{#is state.view "monthly"}} selected{{/is}}>Monthly</option>
-              </select>
-              <small class="form-text text-muted">Initial loaded view.</small>
-            </div>
-            
-             <div class="form-group col-12 col-lg-3 col-xl-3">
-              <label for="{{id}}_refresh">Refresh</label>
-              <input type="number" id="{{id}}_refresh" name="refresh" class="form-control optional" min="0" max="60" step="5"{{#exists state.refresh}} value="{{state.refresh}}"{{/exists}} />
-              <small class="form-text text-muted">Update every N mins (blank = default, 0 = disabled).</small>
-            </div>
-
-          </div>
-          
-          <div class="row">
-          
-            <div class="form-group col-12 col-xl-6 mb-0" data-output-field="calendars">
-              {{!-- Calendars --}}
-          
-              <div class="d-flex flex-row mb-1 justify-content-between align-items-center">
-                <label class="m-0" for="calendars">Calendars</label>
-                {{> control_button b_id=(concat id "_add_calendar") b_class="btn-success"
-    	            b_title="Add Calendar to List" b_icon="add_circle_outline" b_icon_type="light"
-                  b_command="google|https://www.googleapis.com/auth/calendar.readonly,config.add.calendar"
-                  b_spinner=true b_loading="Loading Calendars ..." }}
-              </div>
-              
-              <ul class="list-group list-group-flush mt-2 mt-xl-3 mb-2 mb-xl-3" id="calendars">
-                {{#if state.calendars}}{{#each state.calendars}}
-                  {{!-- Call Partial Template --}}
-                  {{~> calendar ~}}
-                {{/each}}{{/if}}
-              </ul>
-              <small class="{{#unless state.calendars}}d-none {{/unless}}form-text text-muted">
-                Events in these calendars will be displayed.
-              </small>
-          
-            </div>
-          
-            <div class="form-group col-12 col-xl-6 mb-0" data-output-field="classes">
-              {{!-- Classes --}}
-          
-              <div class="d-flex flex-row mb-1 justify-content-between align-items-center">
-                <label class="m-0" for="classes">Classes</label>
-                {{> control_button b_id=(concat id "_add_class") b_class="btn-success"
-    	            b_title="Add Class to List" b_icon="add_circle_outline" b_icon_type="light"
-                  b_command="google|https://www.googleapis.com/auth/classroom.courses.readonly,config.add.class"
-                  b_spinner=true b_loading="Loading Classes ..." }}
-              </div>
-              
-              <ul class="list-group list-group-flush mt-2 mt-xl-3 mb-2 mb-xl-3" id="classes">
-                {{#if state.classes}}{{#each state.classes}}
-                  {{!-- Call Partial Template --}}
-                  {{~> class ~}}
-                {{/each}}{{/if}}
-              </ul>
-              <small class="{{#unless state.classes}}d-none {{/unless}}form-text text-muted">
-                Deadlines/Events for these classes will be displayed.
-              </small>
-          
-            </div>
-          
-          </div>
-          
-          <div class="row mt-2">
-            
-            {{!-- Kanban Day Ranges --}}
-
-            <div class="col-12">
-              <label class="mb-0 font-weight-bold text-secondary">Kanban</label>
-              <small class="form-text text-muted">Using the <strong>kanban view</strong> of your tasks, you can specify the range of days tasks are pulled from (blank values revert to defaults).</small>
-            </div>
-            
-            <div class="form-group col-12 col-lg-6 col-xl-5">
-              <label for="{{id}}_past">Past</label>
-              <input type="number" id="{{id}}_past" name="past" class="form-control optional" min="0" max="365" step="1"{{#exists state.past}} value="{{state.past}}"{{/exists}} />
-              <small class="form-text text-muted">Show <strong>completed tasks</strong> from this number of days in the past.</small>
-            </div>
-            
-            <div class="form-group col-12 col-lg-6 col-xl-7">
-              <label for="{{id}}_future">Future</label>
-              <input type="number" id="{{id}}_future" name="future" class="form-control optional" min="0" max="365" step="1"{{#exists state.future}} value="{{state.future}}"{{/exists}} />
-              <small class="form-text text-muted">Show future <strong>scheduled tasks</strong> from this number of days in the future.</small>
-            </div>
-            
-          </div>
-
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-outline-secondary btn-flat" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
-      </div>
+    <div class="form-group col-12 col-lg-6 col-xl-5">
+      <label for="{{id}}_zombie">Zombies</label>
+      <input type="number" id="{{id}}_zombie" name="zombie" class="form-control optional" min="0" max="365" step="5"{{#exists state.zombie}} value="{{state.zombie}}"{{/exists}} tabindex="1" />
+      <small class="form-text text-muted"><strong>Long</strong> running tasks at the bottom of your list. This is the number of days a task needs to be active before turning into a zombie. Blank reverts to defaults, zero/negative will <strong>disable zombies</strong>.</small>
     </div>
+    <div class="form-group col-12 col-lg-6 col-xl-7">
+      <label for="{{id}}_ghost">Ghosts</label>
+      <input type="number" id="{{id}}_ghost" name="ghost" class="form-control optional" min="0" max="365" step="5"{{#exists state.ghost}} value="{{state.ghost}}"{{/exists}} tabindex="2" />
+      <small class="form-text text-muted"><strong>Very long</strong> running tasks which drop right to the bottom of your list, displayed in a <strong>smaller font</strong>. This is the number of days a task needs to be active before it becomes a ghost. Blank reverts to defaults, zero/negative will <strong>disable ghosts</strong>.</small>
+    </div>
+
   </div>
-</div>
+
+  <div class="row">
+    {{!-- Database Sheet and Default View --}}
+
+    <div class="form-group col-12 col-lg-6 col-xl-7">
+      <label for="{{id}}_data">Default Database Sheet</label>
+      <div class="input-group">
+        <input type="text" id="{{id}}_data" name="data" class="form-control"
+               {{#if state.data}} value="{{state.data}}"{{/if}} readonly />
+        <div class="input-group-append">
+          {{> control_button b_class="btn-outline-primary" b_title="Select File from Google Drive"
+            b_command="config.set.data" b_text="Browse" b_tab=3 }}
+        </div>
+      </div>
+      <small class="form-text text-muted">Google Drive File ID for your default database sheet.</small>
+    </div>
+
+    <div class="form-group col-12 col-lg-3 col-xl-2">
+      <label for="{{id}}_view">Default View</label>
+      <select id="{{id}}_view" name="view" class="custom-select" tabindex="4">
+        <option value="daily"{{#is state.view "daily"}} selected{{/is}}>Daily</option>      
+        <option value="weekly"{{#if state.view}}{{#is state.view "weekly"}} selected{{/is}}{{else}} selected{{/if}}>Weekly</option>
+        <option value="monthly"{{#is state.view "monthly"}} selected{{/is}}>Monthly</option>
+      </select>
+      <small class="form-text text-muted">Initial loaded view.</small>
+    </div>
+
+     <div class="form-group col-12 col-lg-3 col-xl-3">
+      <label for="{{id}}_refresh">Refresh</label>
+      <input type="number" id="{{id}}_refresh" name="refresh" class="form-control optional" min="0" max="60" step="5"{{#exists state.refresh}} value="{{state.refresh}}"{{/exists}} tabindex="5" />
+      <small class="form-text text-muted">Update every N mins (blank = default, 0 = disabled).</small>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="form-group col-12 col-xl-6 mb-0" data-output-field="calendars">
+      {{!-- Calendars --}}
+
+      <div class="d-flex flex-row mb-1 justify-content-between align-items-center">
+        <label class="m-0" for="calendars">Calendars</label>
+        {{> control_button b_id=(concat id "_add_calendar") b_class="btn-success"
+          b_title="Add Calendar to List" b_icon="add_circle_outline" b_icon_type="light"
+          b_command="google|https://www.googleapis.com/auth/calendar.readonly,config.add.calendar"
+          b_spinner=true b_loading="Loading Calendars ..." b_tab=6 }}
+      </div>
+
+      <ul class="list-group list-group-flush mt-2 mt-xl-3 mb-2 mb-xl-3" id="calendars">
+        {{#if state.calendars}}{{#each state.calendars}}
+          {{!-- Call Partial Template --}}
+          {{~> calendar ~}}
+        {{/each}}{{/if}}
+      </ul>
+      <small class="{{#unless state.calendars}}d-none {{/unless}}form-text text-muted">
+        Events in these calendars will be displayed.
+      </small>
+
+    </div>
+
+    <div class="form-group col-12 col-xl-6 mb-0" data-output-field="classes">
+      {{!-- Classes --}}
+
+      <div class="d-flex flex-row mb-1 justify-content-between align-items-center">
+        <label class="m-0" for="classes">Classes</label>
+        {{> control_button b_id=(concat id "_add_class") b_class="btn-success"
+          b_title="Add Class to List" b_icon="add_circle_outline" b_icon_type="light"
+          b_command="google|https://www.googleapis.com/auth/classroom.courses.readonly,config.add.class"
+          b_spinner=true b_loading="Loading Classes ..." b_tab=7 }}
+      </div>
+
+      <ul class="list-group list-group-flush mt-2 mt-xl-3 mb-2 mb-xl-3" id="classes">
+        {{#if state.classes}}{{#each state.classes}}
+          {{!-- Call Partial Template --}}
+          {{~> class ~}}
+        {{/each}}{{/if}}
+      </ul>
+      <small class="{{#unless state.classes}}d-none {{/unless}}form-text text-muted">
+        Deadlines/Events for these classes will be displayed.
+      </small>
+
+    </div>
+
+  </div>
+
+  <div class="row mt-2">
+
+    {{!-- Kanban Day Ranges --}}
+
+    <div class="col-12">
+      <label class="mb-0 font-weight-bold text-secondary">Kanban</label>
+      <small class="form-text text-muted">Using the <strong>kanban view</strong> of your tasks, you can specify the range of days tasks are pulled from (blank values revert to defaults).</small>
+    </div>
+
+    <div class="form-group col-12 col-lg-6 col-xl-5">
+      <label for="{{id}}_past">Past</label>
+      <input type="number" id="{{id}}_past" name="past" class="form-control optional" min="0" max="365" step="1"{{#exists state.past}} value="{{state.past}}"{{/exists}} tabindex="8" />
+      <small class="form-text text-muted">Show <strong>completed tasks</strong> from this number of days in the past.</small>
+    </div>
+
+    <div class="form-group col-12 col-lg-6 col-xl-7">
+      <label for="{{id}}_future">Future</label>
+      <input type="number" id="{{id}}_future" name="future" class="form-control optional" min="0" max="365" step="1"{{#exists state.future}} value="{{state.future}}"{{/exists}} tabindex="9" />
+      <small class="form-text text-muted">Show future <strong>scheduled tasks</strong> from this number of days in the future.</small>
+    </div>
+
+  </div>
+
+</form>
+{{/dialog}}
 {% endraw %}

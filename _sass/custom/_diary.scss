@@ -90,6 +90,7 @@
       }
     }
     &:not(:last-child) .display {border-bottom: 1px dashed $colour-emphasis;}
+    &.unbounded:last-child .display {border-bottom: 1px dashed $colour-emphasis;}
     &:last-child .display {border-bottom: 1px solid transparent;}
     &:small .display {border-bottom: none !important;}
     &.small {
@@ -120,6 +121,7 @@
       height: 1.4em;
     	width: 1.4em;
     }
+    .display a .add-tags {margin-left: -0.25rem;}
     a.hover-dark:hover {color: $colour-general;}
   }
 }

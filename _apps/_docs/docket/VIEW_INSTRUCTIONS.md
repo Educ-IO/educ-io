@@ -10,6 +10,12 @@ For a greater overview, you can swap to the monthly view using *m*{:.kb-shortcut
 
 These two views present alternative ways of looking at your tasks. The __analysis__ view *a*{:.kb-shortcut} gives you statistics and a visual representation of your task management over time. Kanban *k*{:.kb-shortcut} presents a status-first view of your current tasks, giving you a more simplified view of what you are currently working on.
 
+##### Timesheet
+
+{% include_relative _docs/docket/TIMESHEET.md %}
+
+* * *
+
 Each item in these views may be accompanied with icons to indicate status or further information:
 
 {% include_relative _docs/shared/ICON_EXPLANATION.md icon="schedule" explanation="This is a __timed__ item (such as a meeting), meaning it is will happen on a certain day and/or time, regardless of whether you mark it as complete" %}

@@ -16,9 +16,6 @@ Task = (options, factory) => {
           time: /(?:^|\s)((0?[1-9]|1[012])([:.]?[0-5][0-9])?(\s?[ap]m)|([01]?[0-9]|2[0-3])([:.]?[0-5][0-9]))(?:[.!?]?)(?:\s|$)/i,
           date: /\b(\d{4})-(\d{2})-(\d{2})|((0?[1-9]|[12]\d|30|31)[^\w\d\r\n:](0?[1-9]|1[0-2]|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)[^\w\d\r\n:](\d{4}|\d{2}))\b/i,
         },
-        SPLIT = {
-          tags: /[^a-zA-Z0-9#@!\?\-_]/, /* <!-- Valid Characters for Tags/Badges --> */
-        },
         FN = {};
   /* <!-- Internal Constants --> */
 
@@ -143,27 +140,37 @@ Task = (options, factory) => {
 
       /* <!-- Split Tags into Badges --> */
       item[options.schema.columns.tags.value] ?
-        item[options.schema.columns.badges.value] = _.compact(item[options.schema.columns.tags.value].split(SPLIT.tags).sort()) :
+        item[options.schema.columns.badges.value] = _.compact(item[options.schema.columns.tags.value].split(options.markers.split).sort()) :
         delete item[options.schema.columns.badges.value];
 
 
       /* <!-- Set Has Tags --> */
       item[options.schema.columns.tags.value] && 
-        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(options.markers.project) !== 0 && value.indexOf(options.markers.assignation) !== 0) ?
+        _.find(item[options.schema.columns.badges.value], value => value &&
+               value.indexOf(options.markers.project) !== 0 && 
+               value.indexOf(options.markers.assignation) !== 0 &&
+                value.indexOf(options.markers.label) !== 0) ?
           item[options.schema.columns.has_tags.value] = true : delete item[options.schema.columns.has_tags.value];
 
 
       /* <!-- Set Has Projects --> */
       item[options.schema.columns.tags.value] && 
-        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(options.markers.project) === 0) ?
+        _.find(item[options.schema.columns.badges.value], 
+               value => value && value.indexOf(options.markers.project) === 0) ?
           item[options.schema.columns.has_projects.value] = true : delete item[options.schema.columns.has_projects.value];      
 
       
       /* <!-- Set Has Assignations --> */
       item[options.schema.columns.tags.value] && 
-        _.find(item[options.schema.columns.badges.value], value => value && value.indexOf(options.markers.assignation) === 0) ?
-          item[options.schema.columns.has_assignations.value] = true : delete item[options.schema.columns.has_assignations.value];    
+        _.find(item[options.schema.columns.badges.value], 
+               value => value && value.indexOf(options.markers.assignation) === 0) ?
+          item[options.schema.columns.has_assignations.value] = true : delete item[options.schema.columns.has_assignations.value];
       
+      /* <!-- Set Has Labels --> */
+      item[options.schema.columns.tags.value] && 
+        _.find(item[options.schema.columns.badges.value], value => 
+               value && value.indexOf(options.markers.label) === 0) ?
+          item[options.schema.columns.has_labels.value] = true : delete item[options.schema.columns.has_labels.value];
       
       /* <!-- Set Appropriate Status --> */
       options.schema.enums.status.complete.equals(item[options.schema.columns.status.value], true) ?

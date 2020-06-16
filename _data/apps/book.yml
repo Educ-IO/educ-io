@@ -310,6 +310,7 @@ menus:
             toggle:
               - diary
             divider: true
+            
           - name: Close
             desc: Return to App Start
             hash: close
@@ -342,6 +343,7 @@ menus:
               toggle:
                 - manage-bookings
               divider: true
+              
             - name: Resources
               desc: Manage resources
               hash: manage.resources
@@ -367,6 +369,7 @@ menus:
               toggle:
                 - manage-bundles
               divider: true
+              
             - name: Permissions
               desc: Manage permissions on resource calendars
               hash: manage.permissions
@@ -386,6 +389,7 @@ menus:
               toggle:
                 - manage-notifications
               divider: true
+              
             - name: Close
               desc: Return to App Start
               hash: close
@@ -447,6 +451,16 @@ menus:
             url: /guides/book
             desc: A guide to using this app
             divider: true
+            
+          - name: Experiments
+            desc: Turn on new and experimental features in this app
+            hash: experiments
+            toggle:
+              - experiments
+            disabled_until:
+              - authenticated
+            divider: true
+            
           - name: Permissions
             url: /scopes/?highlight=book
             desc: Find out about the permissions and scopes that this app uses
@@ -454,6 +468,7 @@ menus:
             url: /changes?highlight=book
             desc: Find out about the most recent changes and features of this app
             divider: true
+            
           - name: Privacy
             url: /about?highlight=privacy
             desc: We are passionate about protecting your privacy and security
@@ -461,6 +476,7 @@ menus:
             url: /about
             desc: Find out about our platform, technology and approach
             divider: true
+            
           - name: Get Help
             hash: help
             desc: Get help or request a feature
@@ -535,6 +551,7 @@ buttons:
       - https://www.googleapis.com/auth/admin.directory.rolemanagement.readonly
     auth: google
     divider: true
+    
   - name: Permissions
     desc: Manage permissions on resource calendars
     hash: manage.permissions
@@ -550,6 +567,7 @@ buttons:
       - https://www.googleapis.com/auth/admin.directory.resource.calendar
     auth: google
     divider: true
+    
   - name: About
     desc: More details about managing Resources and Bookings
     hash: instructions.manage

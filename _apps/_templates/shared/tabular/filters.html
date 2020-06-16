@@ -1,7 +1,7 @@
 {% raw %}
 <div class="filter-wrapper">
   {{#each headers}}
-  <div id="collapse_{{../id}}_{{@index}}" class="form form-tabbed container-fluid pt-2 pb-1 px-2 column-settings data-identifier transition-opacity o-none d-none" aria-labelledby="heading_{{../id}}_{{@index}}" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}">
+  <div id="collapse_{{../id}}_{{@index}}" class="form filter-form form-tabbed{{#if ../full}} form-tabbed-right{{/if}} container-fluid pt-2 pb-1 px-2 column-settings data-identifier transition-opacity o-none d-none" aria-labelledby="heading_{{../id}}_{{@index}}" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}">
     <div class="input-group no-gutters d-flex d-md-none">
       <span class="input-group-prepend"><button type="button" class="btn btn-secondary mb-0" data-command="clear" data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}" data-toggle="tooltip" title="Clear this filter">&times;</button></span>
       <input data-field="{{@index}}" data-action="filter" type="text" class="form-control table-search" placeholder="Filter {{#if display}}{{display}}{{else if name}}{{name}}{{else}}{{this}}{{/if}} ...">
@@ -16,7 +16,7 @@
       </div>
         <button type="button" class="close ml-2" aria-label="Close" data-command="close" data-toggle="tooltip" title="Close this panel but retain the filter"><span aria-hidden="true">&times;</span></button>
     </div>
-    <div class="input-group col-md-12 col-lg-8 col-xl-6 p-0 no-gutters d-none d-md-flex">
+    <div class="input-group {{#if ../full}}col-12{{else}}col-md-12 col-lg-8 col-xl-6{{/if}} p-0 no-gutters d-none d-md-flex">
       <span class="input-group-prepend">
         <a tabindex="0" class="btn btn-action mb-0" role="button" data-toggle="popover" data-offset="0 -50%" data-placement="right" data-boundary="viewport" title="Instructions" data-html=true data-content="{{../instructions}}">{{#if display}}{{display}}{{else if name}}{{name}}{{else}}{{this}}{{/if}}</a>
       </span>

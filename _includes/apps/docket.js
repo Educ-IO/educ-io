@@ -19,17 +19,18 @@ App = function() {
     STATE_ANALYSIS = "analysis",
     STATE_QUEUE = "queue",
     STATE_PROJECTS = "projects",
+    STATE_TIMESHEET = "timesheet",
     STATE_CALENDARS = "calendars",
     STATE_CLASSES = "classes",
     STATE_PREFERENCES = "preferences",
     STATES = [STATE_READY, STATE_CONFIG, STATE_OPENED, STATE_DEFAULT, STATE_LOADED,
       STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY,
-      STATE_KANBAN, STATE_ANALYSIS, STATE_QUEUE, STATE_PROJECTS,
+      STATE_KANBAN, STATE_ANALYSIS, STATE_QUEUE, STATE_PROJECTS, STATE_TIMESHEET,
       STATE_CALENDARS, STATE_CLASSES, STATE_PREFERENCES
     ],
     SOURCE = [STATE_DEFAULT, STATE_LOADED],
     DIARIES = [STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY],
-    DISPLAY = [STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY, STATE_KANBAN, STATE_ANALYSIS, STATE_QUEUE, STATE_PROJECTS];
+    DISPLAY = [STATE_MONTHLY, STATE_WEEKLY, STATE_DAILY, STATE_KANBAN, STATE_ANALYSIS, STATE_QUEUE, STATE_PROJECTS, STATE_TIMESHEET];
   /* <!-- State Constants --> */
   
   /* <!-- Scope Constants --> */
@@ -38,7 +39,8 @@ App = function() {
   /* <!-- Scope Constants --> */
   
   /* <!-- Internal Constants --> */
-  const ID = "diary",
+  const NAME = "Docket",
+        ID = "diary",
         SHARED = "assignment_turned_in",
         DATE_FORMAT = "YYYY-MM-DD",
         FN = {};
@@ -53,6 +55,8 @@ App = function() {
   /* <!-- Internal Functions --> */
 
   /* <!-- Helper Functions --> */
+  FN.view = name => $(".page-title").text(name ? name : NAME);
+    
   FN.loader = () => ({
               mime: ಠ_ಠ.Google.files.natives()[1],
               properties: _.object([ಱ.schema.property.name], [ಱ.schema.property.value]),
@@ -163,9 +167,14 @@ App = function() {
     }).then(() => list),
     
     tagged: (tag, all) => tag.indexOf(ಱ.markers.project) === 0 ?
-      FN.display.list(ರ‿ರ.database.tagged(tag, all), `Tasks for Project: ${tag.replace(ಱ.markers.project,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)) : 
+      FN.display.list(ರ‿ರ.database.tagged(tag, all),
+          `Tasks for Project: ${tag.replace(ಱ.markers.project,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)) : 
         tag.indexOf(ಱ.markers.assignation) === 0 ? 
-          FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks for: ${tag.replace(ಱ.markers.assignation,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)):
+          FN.display.list(ರ‿ರ.database.tagged(tag), 
+            `Tasks for: ${tag.replace(ಱ.markers.assignation,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)) :
+        tag.indexOf(ಱ.markers.label) === 0 ? 
+          FN.display.list(ರ‿ರ.database.tagged(tag), 
+            `Tasks for Label: ${tag.replace(ಱ.markers.label,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)) :
         FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks tagged with: ${tag}`),
 
     cleanup: () => {
@@ -509,8 +518,33 @@ App = function() {
   };
   /* <!-- Background | Refresh Functions --> */
   
-  /* <!-- Background | Refresh Functions --> */
+  /* <!-- Internal Functions --> */
+
+  /* <!-- Setup Functions --> */
   FN.setup = {
+    
+    /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
+    now: () => {
+
+      FN.menu = ಠ_ಠ.Menu({
+          state : STATE_LOADED,
+          icon : SHARED
+        }, ಠ_ಠ);
+      
+      /* <!-- Set Up / Create the Function Modules --> */
+      FN.graphs = ಠ_ಠ.Graphs();
+      FN.classes = ಠ_ಠ.Classes({}, ಠ_ಠ);
+      FN.calendars = ಠ_ಠ.Calendars({}, ಠ_ಠ);
+      FN.archive = ಠ_ಠ.Archive({functions: FN, state: {session: ರ‿ರ, application: ಱ}}, ಠ_ಠ);
+      FN.tasks = ಠ_ಠ.Tasks({functions: FN, state: {session: ರ‿ರ, application: ಱ}, date_format: DATE_FORMAT}, ಠ_ಠ);
+      FN.views = ಠ_ಠ.Views(
+          {functions: FN, state: {session: ರ‿ರ, application: ಱ}, date_format: DATE_FORMAT, icon : SHARED, id : ID},
+        ಠ_ಠ);
+      FN.tags = ಠ_ಠ.Tags({functions: FN, state: {session: ರ‿ರ, application: ಱ}}, ಠ_ಠ);
+      FN.bulk = ಠ_ಠ.Bulk({functions: FN, state: {session: ರ‿ರ, application: ಱ}}, ಠ_ಠ);
+      /* <!-- Set Up / Create the Function Modules --> */
+      
+    },
     
     initial: () => {
       
@@ -518,6 +552,9 @@ App = function() {
       ಱ.markers = {
         project: "#",
         assignation: "@",
+        label: "~",
+        split: /[^a-zA-Z0-9#@!\?\-_~]/gi,
+        replace: "_"
       };
       
       /* <!-- Setup Showdown --> */
@@ -572,10 +609,8 @@ App = function() {
     },
     
   };
+  /* <!-- Setup Functions --> */
   
-  
-  /* <!-- Internal Functions --> */
-
   /* <!-- External Visibility --> */
   return {
 
@@ -587,25 +622,16 @@ App = function() {
 
       /* <!-- Set Container Reference to this --> */
       container.App = this;
-
-      /* <!-- Set Up / Create the Function Modules --> */
-      FN.menu = ಠ_ಠ.Menu({
-          state : STATE_LOADED,
-          icon : SHARED
-        }, ಠ_ಠ);
-      FN.graphs = ಠ_ಠ.Graphs();
-      FN.classes = ಠ_ಠ.Classes({}, ಠ_ಠ);
-      FN.calendars = ಠ_ಠ.Calendars({}, ಠ_ಠ);
-      FN.archive = ಠ_ಠ.Archive({functions: FN, state: {session: ರ‿ರ, application: ಱ}}, ಠ_ಠ);
-      FN.tasks = ಠ_ಠ.Tasks({functions: FN, state: {session: ರ‿ರ, application: ಱ}, date_format: DATE_FORMAT}, ಠ_ಠ);
-      FN.views = ಠ_ಠ.Views({functions: FN, state: {session: ರ‿ರ, application: ಱ}, date_format: DATE_FORMAT, icon : SHARED, id : ID}, ಠ_ಠ);
-      /* <!-- Set Up / Create the Function Modules --> */
       
+      /* <!-- Initial Setup Call --> */
+      FN.setup.now();
+
       /* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
-        name: "Docket",
+        name: NAME,
         state: ರ‿ರ,
         states: STATES,
+        start: FN.setup.routed,
         recent: false,
         simple: true,
         instructions: [{
@@ -644,6 +670,10 @@ App = function() {
             match: /LINKS/i,
             show: "LINK_INSTRUCTIONS",
             title: "Linking to a Database ..."
+          },{
+            match: /TIMESHEET/i,
+            show: "TIMESHEET_INSTRUCTIONS",
+            title: "Viewing Tasks as a Timesheet ..."
           }
         ],
         routes: {
@@ -760,27 +790,27 @@ App = function() {
                 matches: /DAILY/i,
                 keys: ["d", "D"],
                 fn: () => FN.display.dated(ಠ_ಠ.Dates.parse(FN.focus.date()), FN.views.daily, FN.display.cleanup())
-                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_DAILY))
+                  .then(() => FN.view(), ಠ_ಠ.Display.state().change(DISPLAY, STATE_DAILY))
               },
               weekly: {
                 matches: /WEEKLY/i,
                 keys: ["w", "W"],
                 fn: () => FN.display.dated(ಠ_ಠ.Dates.parse(FN.focus.date()), FN.views.weekly, FN.display.cleanup())
-                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_WEEKLY))
+                  .then(() => FN.view(), ಠ_ಠ.Display.state().change(DISPLAY, STATE_WEEKLY))
               },
               monthly: {
                 matches: /MONTHLY/i,
                 keys: ["m", "M"],
 
                 fn: () => FN.display.dated(ಠ_ಠ.Dates.parse(FN.focus.date()), FN.views.monthly, FN.display.cleanup())
-                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_MONTHLY))
+                  .then(() => FN.view(), ಠ_ಠ.Display.state().change(DISPLAY, STATE_MONTHLY))
               },
               analysis: {
                 matches: /ANALYSIS/i,
                 keys: ["a", "A"],
                 requires: "d3",
                 fn: () => FN.views.analysis(FN.display.cleanup())
-                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_ANALYSIS))
+                  .then(() => FN.view("Analysis"), ಠ_ಠ.Display.state().change(DISPLAY, STATE_ANALYSIS))
               },
               kanban: {
                 matches: /KANBAN/i,
@@ -790,20 +820,26 @@ App = function() {
                   future: ರ‿ರ.config.settings.future,
                 }, FN.display.cleanup())
                   .then(ಠ_ಠ.Main.busy("Loading View"))
-                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_KANBAN))
+                  .then(() => FN.view("Kanban"), ಠ_ಠ.Display.state().change(DISPLAY, STATE_KANBAN))
               },
               queue: {
                 matches: /QUEUE/i,
                 keys: ["q", "Q"],
                 fn: () => FN.views.queue(FN.display.cleanup())
-                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_QUEUE))
+                  .then(() => FN.view("Queue"), ಠ_ಠ.Display.state().change(DISPLAY, STATE_QUEUE))
               },
               projects: {
                 matches: /PROJECTS/i,
                 keys: ["p", "P"],
                 fn: () => FN.views.projects(FN.display.cleanup())
-                  .then(() => ಠ_ಠ.Display.state().change(DISPLAY, STATE_PROJECTS))
+                  .then(() => FN.view("Projects"), ಠ_ಠ.Display.state().change(DISPLAY, STATE_PROJECTS))
               },
+              timesheet: {
+                matches: /TIMESHEET/i,
+                keys: ["l", "L"],
+                fn: () => FN.views.timesheet(FN.display.cleanup())
+                  .then(timesheet => ರ‿ರ.timesheet = timesheet, FN.view("Timesheet"), ಠ_ಠ.Display.state().change(DISPLAY, STATE_TIMESHEET))
+              }
             }
           },
 
@@ -995,6 +1031,19 @@ App = function() {
             }
           },
 
+          add: {
+            matches: /ADD/i,
+            routes: {
+              tags: {
+                matches: /TAGS/i,
+                state: STATE_TIMESHEET,
+                length: 0,
+                fn: () => FN.bulk.tags.add(ರ‿ರ.timesheet.items())
+                  .then(result => result !== null && result !== false ? ರ‿ರ.timesheet.refresh() : result)
+              },
+            }
+          },
+          
           remove: {
             matches: /REMOVE/i,
             state: STATE_OPENED,
@@ -1004,6 +1053,18 @@ App = function() {
                 length: 2,
                 fn: command => FN.tasks.detag($(`#item_${command[0]}`),
                   decodeURIComponent(command[1]))
+              },
+            }
+          },
+          
+          timesheet: {
+            matches: /TIMESHEET/i,
+            state: STATE_TIMESHEET,
+            routes: {
+              tag: {
+                matches: /SUMMARY/i,
+                length: 0,
+                fn: () => ರ‿ರ.timesheet.summary()
               },
             }
           },

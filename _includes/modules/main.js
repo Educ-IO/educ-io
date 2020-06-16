@@ -179,6 +179,9 @@ Main = function() {
 
   var google_Authorise = (scopes, force) => {
 
+    /* <!-- Ensure Scopes is an Array --> */
+    scopes = _.isString(scopes) ? [scopes] : scopes;
+    
     var __scopes = force ? scopes : _.difference(scopes, _scopes);
     
     if (__scopes.length > 0) {

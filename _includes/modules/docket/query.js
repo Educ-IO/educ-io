@@ -22,6 +22,10 @@ Query = (options, factory) => {
   
     timed: () => _.tap({}, q => (q[options.schema.columns.time.value] = {}).$exists = true),
     
+    durationless: () => _.tap({}, q => (q[options.schema.columns.duration.value] = {}).$exists = false),
+    
+    durationed: () => _.tap({}, q => (q[options.schema.columns.duration.value] = {}).$exists = true),
+    
   };
   
   /* <!-- Temporal Queries --> */
@@ -47,6 +51,19 @@ Query = (options, factory) => {
     before: date => date ? FN.done.from(date.endOf ? date.endOf("day").toDate() : date, "$lte")  : {},
     
     after: date => date ? FN.done.from(date.startOf ? date.startOf("day").toDate() : date, "$gte")  : {},
+    
+    between: (from, until) => from ? until ? {"$and": [FN.done.after(from), FN.temporal.before(until)]} : FN.done.after(from) : until ? FN.done.before(until) : {},
+    
+  };
+  
+  /* <!-- Touched Queries (created OR done) --> */
+  FN.touched = {
+    
+    before: date => ({"$or": [FN.temporal.before(date), FN.done.before(date)]}),
+    
+    after: date => ({"$or": [FN.temporal.after(date), FN.done.after(date)]}),
+    
+    between: (from, until) => ({"$or": [FN.temporal.between(from, until), FN.done.between(from, until)]}),
     
   };
   
@@ -97,6 +114,10 @@ Query = (options, factory) => {
     timeless: FN.general.timeless,
     
     timed: FN.general.timed,
+    
+    durationless: FN.general.durationless,
+    
+    durationed: FN.general.durationed,
     /* <!-- General Queries --> */
     
     /* <!-- Temporal Queries --> */
@@ -108,6 +129,18 @@ Query = (options, factory) => {
     
     between: FN.temporal.between,
     /* <!-- Temporal Queries --> */
+    
+    /* <!-- Touched Queries --> */
+    touched: {
+      from: FN.touched.from,
+    
+      before: FN.touched.before,
+
+      after: FN.touched.after,
+
+      between: FN.touched.between, 
+    },
+    /* <!-- Touched Queries --> */
 
     /* <!-- Status Queries --> */
     none: FN.status.none,
@@ -142,14 +175,14 @@ Query = (options, factory) => {
         "$or": [{"$and": [{"$or": [FN.general.timed(), FN.temporal.future()]},
                           FN.temporal.before(date), FN.temporal.after(date), FN.status.incomplete()]}, FN.status.completed(date)]}),
     
-    all_tagged: (tags, since, until) => since || until ? {"$and": [FN.temporal.between(since, until), FN.content.badges(tags)]} : FN.content.badges(tags),
+    all_tagged: (tags, since, until, touched) => since || until ? {"$and": [(touched ? FN.touched : FN.temporal).between(since, until), FN.content.badges(tags)]} : FN.content.badges(tags),
     
     tagged: tag => ({"$and": [FN.content.badge(tag), FN.status.incomplete()]}),
     
     project: value => _.tap({}, query => query[options.schema.columns.has_projects.value] = value === false ?
                             {"$or": [{$exists: false}, {$eq: false}]} : {$eq: true}),
     
-    tagless: (since, until) => since || until ? {"$and": [FN.temporal.between(since, until), FN.content.tagless()]} : FN.content.tagless(),
+    tagless: (since, until, touched) => since || until ? {"$and": [(touched ? FN.touched : FN.temporal).between(since, until), FN.content.tagless()]} : FN.content.tagless(),
 
     text: (value, from) => from ?
       {"$and": [

@@ -159,6 +159,12 @@ html, body {
     box-shadow: 0 0 0 2px rgba(darken($colour-bright-foreground, 20%), 0.5);
 	}
 }
+
+.btn.btn-light.border-light {
+  &:hover, &:focus {
+    border-color: #c7cace !important;
+  }
+}
 // -- Other Buttons -- //
 
 // -- Border the bottom of the Navbar -- //

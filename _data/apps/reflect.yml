@@ -630,6 +630,7 @@ menus:
             auth: google
             visibility: debug
             divider: true
+            
           - name: Log Evidence
             desc: Log your Evidence against targets or a scale
             hash: log.evidence
@@ -638,6 +639,7 @@ menus:
             auth: google
             visibility: debug
             divider: true
+            
           - name: Create Scale
             hash: create.scale
             auth: google
@@ -668,7 +670,8 @@ menus:
             hash: evidence.something
             toggle:
               - evidence-something
-            divider: true            
+            divider: true   
+            
   - name: About
     short_name: Help
     groups:
@@ -684,6 +687,14 @@ menus:
             url: /guides/reflect
             desc: A guide to using this app
             divider: true
+            
+          - name: Experiments
+            desc: Turn on new and experimental features in this app
+            hash: experiments
+            toggle:
+              - experiments
+            disabled_until:
+              - authenticated
           - name: Install
             desc: Install this app into your Google Drive
             hash: install
@@ -691,6 +702,10 @@ menus:
             scope: https://www.googleapis.com/auth/drive.install
             disabled_until:
               - authenticated
+            disabled_while:
+              - external-oauth
+            divider: true
+            
           - name: Permissions
             url: /scopes/?highlight=reflect
             desc: Find out about the permissions and scopes that this app uses
@@ -698,6 +713,7 @@ menus:
             url: /changes?highlight=reflect
             desc: Find out about the most recent changes and features of this app
             divider: true
+            
           - name: Privacy
             url: /about?highlight=privacy
             desc: We are passionate about protecting your privacy and security
@@ -705,6 +721,7 @@ menus:
             url: /about
             desc: Find out about our platform, technology and approach
             divider: true
+            
           - name: Get Help
             hash: help
             desc: Get help or request a feature

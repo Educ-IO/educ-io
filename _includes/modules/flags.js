@@ -56,7 +56,7 @@ Flags = function() {
 
     _key = (_url.param("key") || _url.fparam("key"));
 
-    _oauth = (_url.param("oauth") || _url.fparam("oauth"));
+    _oauth = (_url.param("a") || _url.fparam("a"));
     
     _initial = (() => {
       var _value = _url.param("i") || _url.fparam("i");

@@ -33,7 +33,7 @@ Tasks = (options, factory) => {
   /* <!-- Internal Functions --> */
   FN.input = {
     
-    new : (id, title, instructions) => {
+    new : (id, title, instructions, complete) => {
     
       var _dialog = factory.Dialog({}, factory);
       
@@ -46,6 +46,13 @@ Tasks = (options, factory) => {
           handlers: {
             clear: _dialog.handlers.clear,
           },
+          actions: [{
+            text: "Complete",
+            class: "btn-success",
+            desc: factory.Display.doc.get("NEW_COMPLETE_TITLE"),
+            handler: complete,
+            dismiss: true,
+          }],
           updates: {
             extract: _dialog.handlers.extract(options.state.application.task.regexes)
           }
@@ -177,18 +184,29 @@ Tasks = (options, factory) => {
 
     },
 
-    create : (item, editable, wide, simple, forward, backward) => $(factory.Display.template.get(_.extend({
+    create : (item, editable, wide, simple, forward, backward, classes, plain, compact) => $(factory.Display.template.get(_.extend({
       template: "item",
+      class: classes,
       editable: editable ? true : false,
       wide: wide ? true : false,
       simple: simple ? true : false,
       forward: forward ? forward : false,
       backward: forward ? backward : false,
+      plain: plain ? plain : false,
+      compact: compact ? compact : false
     }, item))),
   
-    replace : (target, item, group) => (group || target) ? FN.hookup(FN.elements.create(item, (group || target).data("display-editable"), (group || target).data("display-wide"),
-                                                                    (group || target).data("display-simple"), (group || target).data("display-forward"),
-                                                                    (group || target).data("display-backward")).replaceAll(target), true) : true,
+    replace : (target, item, group) => (group || target) ? 
+                FN.hookup(FN.elements.create(item, 
+                                              (group || target).data("display-editable"), 
+                                              (group || target).data("display-wide"),
+                                              (group || target).data("display-simple"),
+                                              (group || target).data("display-forward"),
+                                              (group || target).data("display-backward"),
+                                              (group || target).data("display-classes"),
+                                              (group || target).data("display-plain"),
+                                              (group || target).data("display-compact"))
+                          .replaceAll(target), true) : true,
     
   };
   
@@ -291,6 +309,7 @@ Tasks = (options, factory) => {
       item.DISPLAY =options.state.application.showdown.makeHtml(item.DETAILS);
 
       return FN.items.update(target, item, original, keep);
+      
     },
     
     move : (target, item) => {
@@ -339,16 +358,21 @@ Tasks = (options, factory) => {
   
   FN.new = {
     
-    item: type => FN.input.new("new", `Create New ${type}`).then(values => {
+    item: type => {
+      var _create = completed => values => {
           if (!values) return false;
           factory.Flags.log("Values for Creation", values);
           return FN.items.insert({
             FROM: values.From ? values.From.Value : null,
             TAGS: values.Tags ? values.Tags.Value : null,
             DETAILS: values.Details ? values.Details.Value : null,
+            STATUS: completed ? "COMPLETE" : "",
+            DONE: completed ? factory.Dates.now() : ""
           });
-        })
-        .catch(e => e ? factory.Flags.error("Create New Error", e) : factory.Flags.log("Create New Cancelled")),
+        };
+      return FN.input.new("new", `Create New ${type}`, null, _create(true)).then(_create(false))
+        .catch(e => e ? factory.Flags.error("Create New Error", e) : factory.Flags.log("Create New Cancelled"));
+    },
 
     task: () => FN.new.item("Task"),
 
@@ -365,98 +389,12 @@ Tasks = (options, factory) => {
       item = item || FN.items.get(target);
       original = original || FN.items.clone(item);
       
-      var _cancel = () => FN.items.reconcile(_.tap(item, item => item.tags = original.tags)),
-          _reconcile = target => target.empty().append($(factory.Display.template.get({
-            template: "tags",
-            tags: item.TAGS,
-            badges: item.BADGES
-          }))),
-          _dialog = factory.Dialog({}, factory),
-          _template = "tag",
-          _id = "tag";
-
-      /* <!-- Remove Tags from within Dialog --> */
-      var _handleRemove = target => target.find("span.badge a").on("click.remove", e => {
-        e.preventDefault();
-        var _target = $(e.currentTarget),
-          _tag = _target.parents("span.badge").data("tag");
-        if (_tag) {
-          item.TAGS = (item.BADGES = _.filter(
-            item.BADGES, badge => badge != _tag
-          )).sort().join(";");
-          _handleRemove(_reconcile(_target.parents("form")));
-        }
-      });
+      var _cancel = () => FN.items.reconcile(_.tap(item, item => item.tags = original.tags));
       
-      return factory.Display.modal(_template, {
-          target: factory.container,
-          id: _id,
-          title: "Edit Tags",
-          instructions: factory.Display.doc.get("TAG_INSTRUCTIONS"),
-          handlers: {
-            clear: _dialog.handlers.clear,
-          },
-          tags: item.TAGS,
-          badges: item.BADGES,
-          all: options.state.session.database.badges()
-        }, dialog => {
-
-          /* <!-- General Handlers --> */
-          factory.Fields().on(dialog);
-
-          /* <!-- Handle CTRL Enter to Save --> */
-          _dialog.handlers.keyboard.enter(dialog);
-
-          /* <!-- Handle Click to Remove --> */
-          _handleRemove(dialog);
-
-          /* <!-- Handle Click to Add --> */
-          var _add = elements => elements.on("click.add", e => {
-            e.preventDefault();
-            var _input = $(e.currentTarget).parents("li").find("span[data-type='tag'], input[data-type='tag']"),
-                _val = _input.val() || _input.text();
-            (_input.is("input") ? _input : dialog.find("input[data-type='tag']")).val("").change().focus();
-            
-            if (_val && (item.BADGES ? item.BADGES : item.BADGES = []).indexOf(_val) < 0) {
-              item.BADGES.push(_val);
-              item.TAGS = item.BADGES.sort().join(";");
-              _handleRemove(_reconcile(dialog.find("form")));
-            }
-            
-          });
-          _add(dialog.find("li button"));
-
-          /* <!-- Handle Refresh Suggestions --> */
-          var _last, _handle = e =>  {
-            var _suggestion = () => {
-              var _val = $(e.currentTarget).val();
-              if (_val != _last) {
-                _last = _val;
-                var _suggestions = options.state.session.database.badges(_val),
-                    _list = dialog.find("ul.list-group");
-                _list.children("li[data-suggestion]").remove();
-                if (_suggestions.length > 0) {
-                  var _new = $(factory.Display.template.get("suggestions")(_suggestions));
-                  _list.append(_new);
-                  _add(_new.find("button"));
-                }
-              }
-            };
-            _.debounce(_suggestion, 250)();
-          };
-      
-          /* <!-- Handle Enter on textbox to Add --> */
-          dialog.find("li input[data-type='tag']")
-            .keydown(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? 
-                      e.preventDefault() || (e.shiftKey ? dialog.find(".modal-footer button.btn-primary") : $(e.currentTarget).siblings("button[data-action='add']")).click() :
-                      _handle(e))
-            .change(_handle)
-            .focus();
-
-        })
-        .then(values => values ? FN.items.update(target, item, original) : _cancel())
+      return options.functions.tags.edit("Edit Tags", "TAG_INSTRUCTIONS", item)
+        .then(value => value ? FN.items.update(target, item, original) : _cancel())
         .catch(e => _cancel() && (e ? factory.Flags.error("Edit Tags Error", e) : factory.Flags.log("Edit Tags Cancelled")));
-
+      
     },
 
     remove: (target, tag) => factory.Display.confirm({

@@ -1,0 +1,1 @@
+Below is a timesheet __summary__  of the visible tasks. If you have added __label__ tags (a label tag starts with a __~__) then tasks are grouped into a summary using these labels. This is especially useful for invoicing, where you might want to account for time using more generic labels (e.g. telephone support) rather than listing the individual tasks.

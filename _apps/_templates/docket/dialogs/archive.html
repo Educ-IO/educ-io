@@ -1,50 +1,32 @@
 {% raw %}
-<div{{#if id}} id="{{id}}"{{/if}} class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modal_options_title">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modal_options_title">{{{title}}}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        {{#if instructions}}{{{instructions}}}{{/if}}
-        <form>
-          {{#if years}}
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Year</th>
-                <th scope="col">Complete</th>
-                <th scope="col">Incomplete</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody data-output-field="Archive">
-              {{#each years}}
-              <tr>
-                <th scope="row">{{@key}}</th>
-                <td>{{complete}}</td>
-                <td>{{incomplete}}</td>
-                <td>
-                  <div class="custom-control custom-checkbox">
-                    <input id="archive_{{@key}}" name="archive_{{@key}}" data-output-name="{{@key}}" data-output-type="boolean" type="checkbox" class="custom-control-input">
-                    <label class="custom-control-label" for="archive_{{@key}}">Archive? </label>	
-                  </div>
-                </td>
-              </tr>{{/each}}
-            </tbody>
-          </table>
-          {{/if}}
-        </form>
-      </div>
-      <div class="modal-footer">
-        {{# if actions}}{{#each actions}}{{> control_button b_class="btn-outline-info" b_id=id b_action=(concat "actions_" @index) b_title=desc b_text=text }}{{/each}}{{/if}}
-				<button type="button" class="btn btn-secondary btn-flat" data-dismiss="modal" tabindex="4">Close</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" tabindex="3">Archive</button>
-      </div>
-    </div>
-  </div>
-</div>
+{{#> dialog class="modal-lg" action="Archive" tabindex=(length years)}}
+<form>
+  {{#if years}}
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Year</th>
+        <th scope="col">Complete</th>
+        <th scope="col">Incomplete</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody data-output-field="Archive">
+      {{#each years}}
+      <tr>
+        <th scope="row">{{@key}}</th>
+        <td>{{complete}}</td>
+        <td>{{incomplete}}</td>
+        <td>
+          <div class="custom-control custom-checkbox">
+            <input id="archive_{{@key}}" name="archive_{{@key}}" data-output-name="{{@key}}" data-output-type="boolean" type="checkbox" class="custom-control-input" tabindex={{add true 1 @index}}>
+            <label class="custom-control-label" for="archive_{{@key}}">Archive? </label>	
+          </div>
+        </td>
+      </tr>{{/each}}
+    </tbody>
+  </table>
+  {{/if}}
+</form>
+{{/dialog}}
 {% endraw %}

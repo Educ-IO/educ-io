@@ -1,364 +1,385 @@
- App = function() {
-   "use strict";
+App = function() {
+  "use strict";
 
-   /* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
+  /* <!-- DEPENDS on JQUERY to work, but not to initialise --> */
 
-   /* <!-- Returns an instance of this if required --> */
-   if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
+  /* <!-- Returns an instance of this if required --> */
+  if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
-   /* <!-- Internal Constants --> */
-   const TYPE = "application/x.educ-io.merge",
-     STATE_OPENED = "opened",
-     STATE_LOADED_DATA = "loaded-data",
-     STATE_LOADED_TEMPLATE = "loaded-template",
-     STATES = [STATE_OPENED, STATE_LOADED_DATA, STATE_LOADED_TEMPLATE];
-   const ID = "merge_split",
-     RECENT = {};
-   /* <!-- Internal Constants --> */
+  /* <!-- Internal Constants --> */
+  const ID = "merge_split",
+    FN = {},
+    MIME = "application/x.educ-io.merge";
+  /* <!-- Internal Constants --> */
 
-   /* <!-- Internal Variables --> */
-   var ಠ_ಠ, _records, _master, _output;
+  /* <!-- Internal Variables --> */
+  var ಠ_ಠ, /* <!-- Context --> */
+    ರ‿ರ = {},
+    /* <!-- State --> */
+    ಱ = {}; /* <!-- Persistant State --> */
+  /* <!-- Internal Variables --> */
 
-   var _result, _template, _nodes, _template_Resize, _template_File;
-   /* <!-- Internal Variables --> */
+  /* <!-- Internal Functions --> */
+  FN.options = {
+    
+    open : (type, view, mime) => ({
+              title: `Select a ${type} to Open`,
+              view: view,
+              mime: mime,
+              folders: true,
+              all: true,
+              team: true,
+            }),
+    
+    load : mime => mime ? {
+      mime: mime,
+    } : {
+      mime: MIME,
+      busy: true,
+      download: true,
+    },
+    
+  };
+  
+  FN.open = value => (/DATA/i.test(value.command) ?
+                FN.load.data(value.result)
+                  .then(records => ರ‿ರ.records = records, ಠ_ಠ.Display.state().enter(FN.states.data.loaded)) :
+                               
+                /TEMPLATE/i.test(value.command) ?
+                  FN.load.template(value.result)
+                    .then(template => ರ‿ರ.template = template, ಠ_ಠ.Display.state().enter(FN.states.template.loaded)) :
+                               
+                  FN.load.file(value.result).then(() => ಠ_ಠ.Display.state().enter(FN.states.opened)))
+  
+                .then(() => FN.recent(value.result, 
+                              (value.command.length === 3 ? value.command[1] : value.command[0]).toLowerCase()))
+            
+                .then(FN.resize)
+            
+                .catch(e => ಠ_ಠ.Flags.error("Loading Failure: ", e ? e : "No Inner Error"))
+            
+                .then(ಠ_ಠ.Display.busy({
+                  target: ಠ_ಠ.container,
+                  status: "Loading Data",
+                  fn: true
+                }));
+  
+  FN.resize = () => ಠ_ಠ.Display.size.resizer.height("#site_nav, #data_tabs", "div.tab-pane");
+  
+  FN.recent = (file, type) => {
+    
+    /* <!-- Store in Relevant Recent Items --> */
+    var _recent = ರ‿ರ.recent[type].db,
+        _type = file.mimeType == ಠ_ಠ.Google.files.natives()[0] ? "doc" :
+                file.mimeType == ಠ_ಠ.Google.files.natives()[1] ? "sheet" :
+                file.mimeType == ಠ_ಠ.Google.files.natives()[2] ? "presentation" :
+                file.mimeType == ಠ_ಠ.Google.files.natives()[4] ? "form" : "";
+     _recent ? _recent.add(file.id, file.name, `#google,load.${file.id}.${type}${_type ? `.${_type}` : ""}`) : false;
 
-   /* <!-- Internal Functions --> */
-   var _createMerge = () => new Promise(resolve => {
+  };
+  /* <!-- Internal Functions --> */
 
-     /* <!-- Set Up Recent DBs if required --> */
-     _.each(["data", "template"], name => RECENT[name] = (RECENT[name] ?
-       RECENT[name] : {
-         target: `${ID}_${name}_recent`,
-         db: ಠ_ಠ.Items(ಠ_ಠ, `${ಠ_ಠ.Flags.dir()}--${name.toUpperCase()}`)
-       }));
+  /* <!-- Setup Functions --> */
+  FN.setup = {
 
-     ಠ_ಠ.Display.template.show({
-       template: "split",
-       id: ID,
-       columns: {
-         data: {
-           sizes: {
-             md: 6,
-             lg: 8
-           },
-           text: "Merge Data",
-           class: "hide-loaded-data",
-           menu: $(".dropdown-menu[data-menu='Data']").html(),
-           details: ಠ_ಠ.Display.doc.get("DATA_DETAILS"),
-           recent: {
-             sizes: {
-               xs: 12,
-               lg: 8,
-               xl: 9
-             }
-           },
-           panel: {
-             class: "show-loaded-data"
-           }
-         },
-         template: {
-           sizes: {
-             md: 6,
-             lg: 4
-           },
-           text: "Output Template",
-           class: "hide-loaded-template",
-           menu: $(".dropdown-menu[data-menu='Template']").html(),
-           details: ಠ_ಠ.Display.doc.get("TEMPLATE_DETAILS"),
-           recent: {
-             sizes: {
-               xs: 12
-             }
-           },
-           panel: {
-             class: "show-loaded-template",
-             frame: true
-           }
-         },
-       },
-       target: ಠ_ಠ.container,
-       clear: true,
-     });
+    /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
+    now: () => {
 
-     _.each(_.keys(RECENT), key => {
-       RECENT[key].db.last(5).then(recent => {
-         recent && recent.length > 0 ? ಠ_ಠ.Display.template.show({
-           template: "recent",
-           recent: recent,
-           target: $(`#${RECENT[key].target}`),
-           clear: true
-         }) : false;
-       }).catch(e => ಠ_ಠ.Flags.error("Recent Items Failure", e ? e : "No Inner Error"));
-     });
+      /* <!-- Set Up / Create the States Module --> */
+      FN.states = ಠ_ಠ.States();
 
-     resolve(ಠ_ಠ.Display.state().enter(STATE_OPENED));
+      /* <!-- Set Up / Create the Events Module --> */
+      FN.events = ಠ_ಠ.Events();
 
-   });
+    },
 
-   var _loadTemplate = file => {
+    /* <!-- Start App after fully loaded (but BEFORE routing or authentication) --> */
+    initial: () => {
 
-     if (file.mimeType.toLowerCase() == ಠ_ಠ.Google.files.natives()[0].toLowerCase()) {
+      /* <!-- Setup Helpers --> */
+      _.each([{
+        name: "Strings"
+      }, {
+        name: "Tabulate"
+      }, {
+        name: "Notify",
+        options: {
+          id: "classes_Notify",
+          autohide: true,
+        }
+      }, {
+        name: "Config",
+        options: {
+          fields: {
+            comparison: ["data"],
+          },
+          state: FN.states.config
+        }
+      }, {
+        name: "Exporter",
+        options: {
+          state: {
+            application: ಱ
+          }
+        }
+      }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
 
-       return ಠ_ಠ.Google.files.export(file.id, "text/html")
-         .then(ಠ_ಠ.Google.reader().promiseAsText)
-         .then(result => {
-           _result = result;
-           _template_Resize = ಠ_ಠ.Display.size.resizer.height("#site_nav", `#${ID}_template_frame`, "height", 25);
-           _template = $(result);
-           _nodes = $.parseHTML($.trim(result));
-           _template_File = file;
+      /* <!-- Setup Function Modules --> */
+      var _options = {
+        id: ID,
+        mime: MIME,
+        functions: FN,
+        state: {
+          session: ರ‿ರ,
+          application: ಱ
+        }
+      };
+      _.each(["Common", "Load", "PDF", "Doc", "Merge", "Templates"],
+        module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
-           var _frame = $(`#${ID}_template_frame`),
-             _doc = _frame[0].contentDocument || _frame[0].contentWindow.document;
-           _doc.open();
-           _doc.writeln(result);
-           _doc.close();
+    },
 
-           ಠ_ಠ.Display.state().enter(STATE_LOADED_TEMPLATE);
-         });
+    /* <!-- App is ready for action - e.g. is authenticated but no initial routing done! --> */
+    session: () => null,
 
-     } else {
+    /* <!-- App is authenticated and routed! --> */
+    routed: () => {
+      
+      /* <!-- Sets the recent DB holder. --> */
+      ರ‿ರ.recent = {};
+      
+    },
 
-       return Promise.reject(`Can't load ${file.name}, as we can't process type: ${file.mimeType}`);
+  };
+  /* <!-- Setup Functions --> */
 
-     }
+  /* <!-- External Visibility --> */
+  return {
 
-   };
+    /* <!-- External Functions --> */
+    initialise: function(container) {
 
-   var _uploadDoc = template => {
+      /* <!-- Get a reference to the Container --> */
+      ಠ_ಠ = container;
 
-     var metadata = {
-       name: "TEST UPLOAD",
-       mimeType: ಠ_ಠ.Google.files.natives()[0]
-     };
+      /* <!-- Set Container Reference to this --> */
+      container.App = this;
 
-     return ಠ_ಠ.Google.files.upload(metadata, new Blob([template], {
-       type: "text/html"
-     }), "text/html");
+      /* <!-- Initial Setup Call --> */
+      FN.setup.now();
 
-   };
+      /* <!-- Set Up the Default Router --> */
+      this.route = ಠ_ಠ.Router.create({
+        name: "Merge",
+        states: FN.states.all,
+        start: FN.setup.routed,
+        instructions: [{
+          match: [
+            /LOAD/i,
+            /DATA/i,
+          ],
+          show: "LOAD_DATA_INSTRUCTIONS",
+          title: "Loading Data ..."
+        }, {
+          match: [
+            /LOAD/i,
+            /TEMPLATE/i,
+          ],
+          show: "LOAD_TEMPLATE_INSTRUCTIONS",
+          title: "Loading a Template ..."
+        }],
+        routes: {
 
-   var _generatePDF = template => {
-     var pdf = new jsPDF();
-     pdf.fromHTML(template);
-     return pdf;
-   };
+          open: {
+            
+            options: command => /DOC/i.test(command) ? 
+                FN.options.open("Document", "DOCUMENTS", ಠ_ಠ.Google.files.natives()[0]) : 
+              /PRESENTATION/i.test(command) ? 
+                FN.options.open("Presentation", "PRESENTATIONS", ಠ_ಠ.Google.files.natives()[2]) :
+              /SHEET/i.test(command) ?
+                FN.options.open("Sheet", "SPREADSHEETS", ಠ_ಠ.Google.files.natives()[1]) :
+              /FORM/i.test(command) ? 
+                FN.options.open("Form", "DOCS", ಠ_ಠ.Google.files.natives()[4]) :
+                _.extend(FN.options.open("Merge", "DOCS", MIME), {download: true}),
+            
+            success: FN.open
+            
+          },
 
-   var _uploadPDF = template => {
-     var metadata = {
-       name: "TEST UPLOAD",
-       mimeType: "application/pdf"
-     };
+          load: {
+            
+            options: command => _.isArray(command) ? 
+              /DOC/i.test(command) ?
+                FN.options.load(ಠ_ಠ.Google.files.natives()[0]) :
+              /PRESENTATION/i.test(command) ? 
+                FN.options.load(ಠ_ಠ.Google.files.natives()[2]) :
+              /SHEET/i.test(command) ?
+                FN.options.load(ಠ_ಠ.Google.files.natives()[1]) :
+              /FORM/i.test(command) ? 
+                FN.options.load(ಠ_ಠ.Google.files.natives()[4]) : 
+                FN.options.load() :
+              FN.options.load(),
+            
+            scopes: "https://www.googleapis.com/auth/drive.file",
+            
+            success: FN.open
+            
+          },
+          
+          save: {
+            matches: /SAVE/i,
+            routes: {
 
-     return ಠ_ಠ.Google.files.upload(metadata,
-       new Blob(_generatePDF(template).output("blob"), {
-         type: "application/pdf"
-       }), "application/pdf");
+              pdf: {
+                matches: /PDF/i,
+                length: 0,
+                fn: () => FN.pdf.save()
+                  .catch(e => ಠ_ಠ.Flags.error("Uploading Failure: ", e ? e : "No Inner Error"))
+                  .then(ಠ_ಠ.Display.busy({
+                    target: ಠ_ಠ.container,
+                    status: "Processing Merge",
+                    fn: true
+                  }))
+              }
 
-   };
+            }
+          },
+          
+          create: () => FN.merge.create().then(() => ಠ_ಠ.Display.state().enter(FN.states.opened)),
 
-   var _savePDF = () => {
-     var _frame = $(`#${ID}_template_frame`),
-       _doc = _frame[0].contentDocument || _frame[0].contentWindow.document;
-     ಠ_ಠ.Flags.log("DOC:", _doc);
-     _generatePDF(_doc).save("Test.pdf");
-     return Promise.resolve();
+          headers: {
+            matches: /HEADERS/i,
+            length: 0,
+            fn: () => ರ‿ರ.records.headers.restore().then(FN.resize),
+            routes: {
 
-     /* <!-- 
-	var blob = pdf.output("blob");
-	window.open(URL.createObjectURL(blob));
-	--> */
+              increment: {
+                matches: /INCREMENT/i,
+                length: 0,
+                fn: () => ರ‿ರ.records.headers.increment().then(FN.resize)
+              },
+              
+              decrement: {
+                matches: /DECREMENT/i,
+                length: 0,
+                fn: () => ರ‿ರ.records.headers.decrement().then(FN.resize)
+              },
+              
+              manage: {
+                matches: /MANAGE/i,
+                length: 0,
+                fn: () => ರ‿ರ.records.headers.manage().then(FN.resize)
+              },
 
-   };
+            }
+          },
 
-   var _resize = () => ಠ_ಠ.Display.size.resizer.height("#site_nav, #data_tabs", "div.tab-pane");
-   /* <!-- Internal Functions --> */
+          merge: {
+            matches: /MERGE/i,
+            routes: {
+              
+              doc: {
+                matches: /DOC/i,
+                length: 0,
+                fn: () => {
+                  ಠ_ಠ.Flags.log("TEMPLATE FILE:", FN.templates.state().file);
+                  ಠ_ಠ.Google.files.copy(FN.templates.state().file.id, false, {
+                      name: `${FN.templates.state().file.name} [Merged]`,
+                      parents: FN.templates.state().file.parents,
+                    })
+                    .then(merge => {
+                      ಠ_ಠ.Flags.log("MERGED FILE:", merge);
+                      return ಠ_ಠ.Google.execute(ಠ_ಠ.SETUP.CONFIG.api, "test", [merge.id]);
+                    })
+                    .then(result => ಠ_ಠ.Flags.log("RESULT FROM MERGE:", result))
+                    .catch(e => ಠ_ಠ.Flags.error("Merging Failure: ", e ? e : "No Inner Error"))
+                    .then(ಠ_ಠ.Display.busy({
+                      target: ಠ_ಠ.container,
+                      status: "Processing Merge",
+                      fn: true
+                    }));
+                }
+              },
+              
+            }
+          },
 
-   /* <!-- External Visibility --> */
-   return {
+          upload: {
+            matches: [/UPLOAD/i, /DOC/i],
+            routes: {
+              
+              doc : {
+                matches: /DOC/i,
+                length: 0,
+                fn: () => {
+                  FN.doc.upload(FN.template.result).then(uploaded => {
+                      ಠ_ಠ.Flags.log("PROCESSED UPLOAD:", uploaded);
+                    })
+                    .catch(e => ಠ_ಠ.Flags.error("Uploading Failure: ", e ? e : "No Inner Error"))
+                    .then(ಠ_ಠ.Display.busy({
+                      target: ಠ_ಠ.container,
+                      status: "Processing Merge",
+                      fn: true
+                    }));
+                }
+              },
+              
+              pdf: {
+                matches: /PDF/i,
+                length: 0,
+                fn: () => {
+                  FN.pdf.upload(FN.templates.state().result).then(uploaded => {
+                      ಠ_ಠ.Flags.log("PROCESSED UPLOAD:", uploaded);
+                    })
+                    .catch(e => ಠ_ಠ.Flags.error("Uploading Failure: ", e ? e : "No Inner Error"))
+                    .then(ಠ_ಠ.Display.busy({
+                      target: ಠ_ಠ.container,
+                      status: "Processing Merge",
+                      fn: true
+                    }));
+                }
+              }
+              
+            }
+            
+          },
 
-     /* <!-- External Functions --> */
-     initialise: function(container) {
+          test: {
+            matches: /DUMP/i,
+            fn: () => {
+              ಠ_ಠ.Flags.log("Records:", ರ‿ರ.records);
+              ಠ_ಠ.Flags.log("Master:", ರ‿ರ.master);
+              ಠ_ಠ.Flags.log("Output:", ರ‿ರ.output);
+              ಠ_ಠ.Flags.log("Template:", FN.templates.state().template);
+              ಠ_ಠ.Flags.log("Nodes:", FN.templates.state().nodes);
+            }
+          },
 
-       /* <!-- Get a reference to the Container --> */
-       ಠ_ಠ = container;
+        },
+        route: () => false,
+        /* <!-- PARAMETERS: handled, command --> */
+      });
 
-       /* <!-- Set Container Reference to this --> */
-       container.App = this;
+      /* <!-- Return for Chaining --> */
+      return this;
 
-       /* <!-- Set Up the Default Router --> */
-       this.route = ಠ_ಠ.Router.create({
-         name: "Merge",
-         states: STATES,
-         test: () => ಠ_ಠ.Display.state().in(STATE_OPENED),
-         clear: () => {
-           _records = null;
-           _master = null;
-           if (_template_Resize) _template_Resize() && (_template_Resize = null);
-         },
-         routes: {
-           create: _createMerge,
-           save_pdf: {
-             matches: [/SAVE/i, /PDF/i],
-             fn: () => _savePDF()
-               .catch(e => ಠ_ಠ.Flags.error("Uploading Failure: ", e ? e : "No Inner Error"))
-               .then(ಠ_ಠ.Display.busy({
-                 target: ಠ_ಠ.container,
-                 status: "Processing Merge",
-                 fn: true
-               }))
-           },
-           headers_increment: {
-             matches: [/HEADERS/i, /INCREMENT/i],
-             fn: () => _records.headers.increment().then(_resize)
-           },
-           headers_decrement: {
-             matches: [/HEADERS/i,/DECREMENT/i],
-             fn: () => _records.headers.decrement().then(_resize)
-           },
-           headers_manage: {
-             matches: [/HEADERS/i, /MANAGE/i],
-             fn: () => _records.headers.manage().then(_resize)
-           },
-           headers: {
-             matches: /HEADERS/i,
-             fn: () => _records.headers.restore().then(_resize)
-           },
-           open: {
-             options: command => /SHEET/i.test(command) ? {
-               title: "Select a Sheet to Open",
-               view: "SPREADSHEETS",
-               mime: ಠ_ಠ.Google.files.natives()[1],
-               all: true,
-               recent: true,
-             } : /DOC/i.test(command) ? {
-               title: "Select a Document to Open",
-               view: "DOCUMENTS",
-               mime: ಠ_ಠ.Google.files.natives()[0],
-               all: true,
-               recent: true,
-             } : /FORM/i.test(command) ? {
-               title: "Select a Form to Open",
-               view: "DOCS",
-               mime: ಠ_ಠ.Google.files.natives()[4],
-               all: true,
-               recent: true,
-             } : {
-               title: "Select a Merge to Open",
-               view: "DOCS",
-               mime: TYPE,
-               all: true,
-               recent: true,
-               download: true,
-             },
-             success: value => {
-               /DATA/i.test(value.command) ?
-                 ಠ_ಠ.Records(ಠ_ಠ, value.result, $(`#${ID}_data_panel`), value.command[2])
-                 .then(records => {
-                   _records = records;
-                   ಠ_ಠ.Display.state().enter(STATE_LOADED_DATA);
-                   _resize();
-                 })
-                 .then(result => {
-                   ಠ_ಠ.Flags.log("PROCESSED LOAD:", result);
+    },
 
-                   /* <!-- Store in Relevant Recent Items --> */
-                   var _type = value.command.toLowerCase(),
-                     _recent = RECENT[_type].db;
-                   _recent ? _recent.add(value.result.id, value.result.name, `#google,load.${_type}.${value.result.id}`) : false;
+    start: FN.setup.initial,
 
-                   return result;
-                 })
-                 .catch(e => ಠ_ಠ.Flags.error("Loading Failure: ", e ? e : "No Inner Error"))
-                 .then(ಠ_ಠ.Display.busy({
-                   target: ಠ_ಠ.container,
-                   status: "Loading",
-                   fn: true
-                 })) :
-                 /TEMPLATE/i.test(value.command) ?
-                 _loadTemplate(value.result) :
-                 ಠ_ಠ.Display.log("Loaded:", value.result) && ಠ_ಠ.Display.state().enter(STATE_OPENED);
-             }
-           },
-           load: { /* <!-- TODO: Doesn't currently work with Column Swap on Data Source (LHS Panel) --> */
-             options: {
-               mime: TYPE,
-               download: true,
-             },
-             success: value => ಠ_ಠ.Display.log("Loaded:", value.result) && ಠ_ಠ.Display.state().enter(STATE_OPENED)
-           },
-           merge_doc: {
-             matches: [/MERGE/i, /DOC/i],
-             fn: () => {
-               ಠ_ಠ.Flags.log("TEMPLATE FILE:", _template_File);
-               ಠ_ಠ.Google.files.copy(_template_File.id, false, {
-                   name: `${_template_File.name} [Merged]`,
-                   parents: _template_File.parents,
-                 })
-                 .then(merge => {
-                   ಠ_ಠ.Flags.log("MERGED FILE:", merge);
-                   return ಠ_ಠ.Google.execute(ಠ_ಠ.SETUP.CONFIG.api, "test", [merge.id]);
-                 })
-                 .then(result => ಠ_ಠ.Flags.log("RESULT FROM MERGE:", result))
-                 .catch(e => ಠ_ಠ.Flags.error("Merging Failure: ", e ? e : "No Inner Error"))
-                 .then(ಠ_ಠ.Display.busy({
-                   target: ಠ_ಠ.container,
-                   status: "Processing Merge",
-                   fn: true
-                 }));
-             }
-           },
-           upload_doc: {
-             matches: [/UPLOAD/i, /DOC/i],
-             fn: () => {
-               _uploadDoc(_result).then(uploaded => {
-                   ಠ_ಠ.Flags.log("PROCESSED UPLOAD:", uploaded);
-                 })
-                 .catch(e => ಠ_ಠ.Flags.error("Uploading Failure: ", e ? e : "No Inner Error"))
-                 .then(ಠ_ಠ.Display.busy({
-                   target: ಠ_ಠ.container,
-                   status: "Processing Merge",
-                   fn: true
-                 }));
-             }
-           },
-           upload_pdf: {
-             matches: [/UPLOAD/i, /PDF/i],
-             fn: () => {
-               _uploadPDF(_result).then(uploaded => {
-                   ಠ_ಠ.Flags.log("PROCESSED UPLOAD:", uploaded);
-                 })
-                 .catch(e => ಠ_ಠ.Flags.error("Uploading Failure: ", e ? e : "No Inner Error"))
-                 .then(ಠ_ಠ.Display.busy({
-                   target: ಠ_ಠ.container,
-                   status: "Processing Merge",
-                   fn: true
-                 }));
-             }
-           },
-           test: {
-             matches: /DUMP/i,
-             fn: () => {
-               ಠ_ಠ.Flags.log("Records:", _records);
-               ಠ_ಠ.Flags.log("Master:", _master);
-               ಠ_ಠ.Flags.log("Output:", _output);
-               ಠ_ಠ.Flags.log("Template:", _template);
-               ಠ_ಠ.Flags.log("Nodes:", _nodes);
-             }
-           },
-         },
-         route: () => false,
-         /* <!-- PARAMETERS: handled, command --> */
-       });
+    ready: FN.setup.session,
 
-       /* <!-- Return for Chaining --> */
-       return this;
+    /* <!-- Clear the existing state --> */
+    clean: () => ಠ_ಠ.Router.clean(false),
 
-     },
+    /* <!-- Present Internal State (for debugging etc) --> */
+    state: ರ‿ರ,
 
-     /* <!-- Clear the existing state --> */
-     clean: () => ಠ_ಠ.Router.clear(false)
+    /* <!-- Present Internal Modules / Functions (for debugging etc) --> */
+    fn: FN,
 
-   };
+    persistent: ಱ,
 
- };
+  };
+
+};

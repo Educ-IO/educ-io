@@ -1,9 +1,12 @@
 <nav id="site_nav" class="navbar navbar-expand-md navbar-light bg-faded{% if include.type %} {{ include.type }}{% endif %}">
 
-  <button class="navbar-toggler navbar-toggler-right css-sensitive" type="button" data-toggle="collapse" data-target="#main_Nav" aria-controls="main_Nav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
+  <div>
+    <button class="navbar-toggler navbar-toggler-right css-sensitive" type="button" data-toggle="collapse" data-target="#main_Nav" aria-controls="main_Nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    {% if page.app and page.layout == "app" %}<span class="page-title navbar-brand font-sensitive d-inline-block d-md-none ml-1 ml-sm-2">{{ page.title }}</span>{% endif %}
+  </div>
+  
   {%- if page.app -%}<div class="navbar-status d-md-none o-50" data-toggle="tooltip" data-placement="bottom" data-trigger="hover" title="App Status Display for Background Tasks">
     <button type="button" class="btn btn-outline-status rounded waves-effect loader-small loader-dark d-none" style="opacity: 0;">
       <span class="loading float-left">
@@ -20,7 +23,7 @@
 
   <div class="collapse navbar-collapse" id="main_Nav">
 
-    {% if page.app and page.layout == "app" %}<a class="navbar-brand font-sensitive jump d-sm-none d-md-inline-block" href="{{ page.permalink }}" title="Reload Current {% if page.app %}App{% assign _app = page.app | downcase %}{% if site.data.versions[_app] %} - {{site.data.apps[_app].name}} v{{ site.data.versions[_app].first[0] }}{% endif %}{% else %}Page{% endif %}">{{ page.title }}<span class="d-none d-lg-inline o-50 ml-1">{{ site.title }}</span><span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}</span></a>{%
+    {% if page.app and page.layout == "app" %}<a class="navbar-brand font-sensitive jump d-sm-none d-md-inline-block" href="{{ page.permalink }}" data-toggle="tooltip" title="Reload Current {% if page.app %}App{% assign _app = page.app | downcase %}{% if site.data.versions[_app] %} - {{site.data.apps[_app].name}} v{{ site.data.versions[_app].first[0] }}{% endif %}{% else %}Page{% endif %}"><span class="page-title">{{ page.title }}</span><span class="d-none d-lg-inline o-50 ml-1">{{ site.title }}</span><span class="sr-only">Current {% if page.app %}App{% else %}Page{% endif %}> - Click to {% if page.app %}Restart{% else %}Reload{% endif %}</span></a>{%
     endif %}
 
     <ul class="navbar-nav mr-auto">

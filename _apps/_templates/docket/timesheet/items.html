@@ -1,0 +1,7 @@
+{% raw %}
+<div class="items-holder p-0 col-12 container-fluid d-flex flex-column flex-lg-row flex-lg-wrap align-items-center">
+  {{#if tasks}}{{#each tasks}}
+  {{> item dates=true badges=true plain=true compact=true class="unbounded col-lg-6 align-self-stretch"}}
+  {{/each}}{{/if}}
+</div>
+{% endraw %}

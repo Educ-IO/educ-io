@@ -12,25 +12,43 @@ Views = (options, factory) => {
       icon: "add",
       class: "btn-dark"
     },
+    TAGGED : {
+      list: [{
+        action: "add.tags",
+        icon: "add_box",
+        class: "btn-dark border border-dark"
+      }, {
+        action: "timesheet.summary",
+        icon: "analytics",
+        class: "btn-primary border border-primary"
+      }, {
+        action: "instructions.timesheet",
+        icon: "live_help",
+        class: "btn-info border border-info"
+      }],
+      icon: "edit"
+    },
     TEMPORAL : {
       list: [{
         action: "new.task",
         icon: "add",
-        class: "btn-dark"
+        class: "btn-dark border border-dark"
       }, {
         action: "search",
-        icon: "search"
+        icon: "search",
+        class: "btn-light border border-light"
       }, {
         action: "jump",
-        icon: "swap_calls"
+        icon: "swap_calls",
+        class: "btn-light border border-light"
       }, {
         action: "jump.today",
         icon: "home",
-        class: "btn-primary"
+        class: "btn-primary border border-primary",
       }, {
         action: "instructions.shortcut",
         icon: "live_help",
-        class: "btn-info"
+        class: "btn-info border border-info"
       }],
       icon: "edit"
     },
@@ -38,14 +56,13 @@ Views = (options, factory) => {
   }, EMPTY = "", FN = {};
   /* <!-- Internal Constants --> */
 
-  /* <!-- Internal Options --> */
-  /* <!-- Internal Options --> */
+  /* <!-- Default Options --> */
+  const DEFAULTS = {
+    delay: 200
+  };
+  /* <!-- Default Options --> */
 
-  /* <!-- Internal Variables --> */
-  
-  /* <!-- Internal Variables --> */
-
-  /* <!-- Internal Functions --> */
+  /* <!-- Helper Functions --> */
   FN.helpers = {
     
     owner: file => file.ownedByMe ? "Me" : file.owners && file.owners.length > 0 ? file.owners[0].displayName : "Shared Drive",
@@ -57,7 +74,72 @@ Views = (options, factory) => {
     url: file => `${factory.Flags.full()}${factory.Flags.dir()}/#${FN.helpers.command(file)}`,
     
   };
+  /* <!-- Helper Functions --> */
   
+  /* <!-- Parse Functions --> */
+  FN.parse = {
+    
+    custom: (since, until) => {
+      if (since && until) {
+        var _since = factory.Dates.parse(since),
+            _until = factory.Dates.parse(until);
+        if (_since.isValid()) {
+          return {
+            since : _since.startOf("day"),
+            until: _until.isValid() ? _until.endOf("day") : factory.Dates.now().endOf("day"),
+          };
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    },
+    
+    dates: value => {
+      if (!value) return null;
+      var _return = {
+        since : factory.Dates.now().startOf("day"),
+        until: factory.Dates.now().endOf("day"),
+      };
+      value = value.split("_");
+      if (/CURRENT/i.test(value[0])) {
+        _return.since = _return.since.startOf(value[1]);
+        _return.until = _return.until.endOf(value[1]);
+      } else if (/LAST/i.test(value[0])) {
+        _return.since = _return.since.subtract(1, value[1]).startOf(value[1]);
+        _return.until = _return.until.subtract(1, value[1]).endOf(value[1]);
+      } else if (/PAST/i.test(value[0])) {
+        _return.since = _return.since.subtract(parseInt(value[1], 10), value[2]);
+      }
+      return _return;
+    },
+    
+  };
+  /* <!-- Parse Functions --> */
+  
+  /* <!-- Hookup Functions --> */
+  FN.hookup = {
+    
+    /* <!-- Handle Switches for Filters --> */
+    toggles: (view, refresh) => view.find("input[data-targets][type='checkbox']").change(e => {
+      
+        var _target = $(e.target), _for = $(_target.data("targets"));
+        _target.prop("checked") ?
+          _for.prop("disabled", false).removeClass("disabled") :
+          _for.prop("disabled", true).addClass("disabled") &&
+            _for.filter(".default-readonly").prop("readonly", true) &&
+            _for.filter(".default-empty").val("") &&
+            _for.filter(".default-first").find("option:selected").prop("selected", false) &&
+            _for.filter(".default-first").find("option:first").prop("selected", "selected");
+        if (refresh) refresh();
+      
+      }),
+    
+  };
+  /* <!-- Hookup Functions --> */
+  
+  /* <!-- Internal Functions --> */
   FN.scroll = (target, container) => {
 
       /* <!-- Scroll to today if visible --> */
@@ -73,7 +155,9 @@ Views = (options, factory) => {
         }
       }
     };
+  /* <!-- Internal Functions --> */
   
+  /* <!-- View Functions --> */
   FN.day = (focus, overlay) => {
 
     var _return = {};
@@ -271,7 +355,6 @@ Views = (options, factory) => {
             template: "analysis",
             id: "analysis",
             name: options.state.session.name,
-            title: "Stats",
             projects: _summary.projects,
             tags: _summary.tags,
             summary: _summary,
@@ -281,40 +364,21 @@ Views = (options, factory) => {
           _visualise = () => {
             
             /* <!-- Clear Row for Visualisation --> */
-            var _busy = factory.Display.busy({
-                   status: "Analysing Data",
-                   fn: true
-                 });
+            var _busy = factory.Main.busy("Analysing Data");
             
             var _tags = _analysis.find("#filter_Tags").prop("checked") ?
                   _.map(_analysis.find(".tag-filter input:checked"), el => $(el).data("tag")) : false,
                 _project = _analysis.find("#filter_Projects").prop("checked") ?
                   _analysis.find("select.project-filter").val() : false,
                 _timed = _analysis.find("#include_Timed").prop("checked"),
-                _dates = value => {
-                  var _return = {
-                    since : factory.Dates.now().startOf("day"),
-                    until: factory.Dates.now().endOf("day"),
-                  };  
-                  value = value.split("_");
-                  if (/CURRENT/i.test(value[0])) {
-                    _return.since = _return.since.startOf(value[1]);
-                    _return.until = _return.until.endOf(value[1]);
-                  } else if (/LAST/i.test(value[0])) {
-                    _return.since = _return.since.subtract(1, value[1]).startOf(value[1]);
-                    _return.until = _return.until.subtract(1, value[1]).endOf(value[1]);
-                  } else if (/PAST/i.test(value[0])) {
-                    _return.since = _return.since.subtract(parseInt(value[1], 10), value[2]);
-                  }
-                  return _return;
-                },
-                _bounds = _analysis.find("#filter_Dates").prop("checked") ? _dates(_analysis.find("select.date-filter").val()) : null,
+                _bounds = _analysis.find("#filter_Dates").prop("checked") ? 
+                  FN.parse.dates(_analysis.find("select.date-filter").val()) : null,
                 _results = options.state.application.analysis.series(_.isArray(_tags) && _tags.length === 0 ? true : _tags, 
                                             _project == "***none***" ? 
                                               null : _project == "***all***" ? 
                                                 true : _project, _timed, _bounds ? 
                                                   _bounds.since : _bounds, _bounds ?
-                                                    _bounds.until : _bounds, options.state.session.db);
+                                                    _bounds.until : _bounds, null, null, null, options.state.session.db);
             
             /* <!-- Time Series Graph --> */
             var _target = _analysis.find("div.row.visualisation"),
@@ -373,19 +437,16 @@ Views = (options, factory) => {
                   _results.from.range && _results.from.range.months() >= 2 ? _results.series.weeks :
                   _results.series.days, _target.width(), _target.height() / 1.05, _analysis.find("span.graph-tooltip"));
             
+            /* <!-- Working Complete --> */
             _busy();
             
           },
-          _refresh = _.debounce(_visualise, 200);
+          _refresh = _.debounce(_visualise, DEFAULTS.delay);
       
-      /* <!-- Handle Switches for Filters --> */
-      _analysis.find("input[data-targets][type='checkbox']").change(e => {
-        var _target = $(e.target), _for = _target.data("targets");
-        _target.prop("checked") ?
-          $(_for).prop("disabled", false).removeClass("disabled") :
-          $(_for).prop("disabled", true).addClass("disabled");
-        _refresh();
-      });
+      /* <!-- Handle Switches for General Filters --> */
+      FN.hookup.toggles(_analysis, _refresh);
+        
+      /* <!-- Handle Switches for Timed Filter --> */
       _analysis.find("#include_Timed").change(_refresh);
       
       /* <!-- Handle Toggle Tags Shortcut Buttons --> */
@@ -512,8 +573,6 @@ Views = (options, factory) => {
             var _view = factory.Display.template.show({
               template: "queue",
               id: "queue",
-              title: "Tasks",
-              subtitle: "Queue",
               files: _.map(files, _decode(permissions)),
               target: factory.container,
               clear: true,
@@ -542,12 +601,12 @@ Views = (options, factory) => {
     var _summary = options.state.application.analysis.summary(null, options.state.session.db),
         _analysis = _.map(_summary.projects, project => _.extend(
                       {
-                        data: options.state.application.analysis.series(false, project.name, null, null, null, options.state.session.db)
+                        data: options.state.application.analysis.series(false, project.name, null, null, null, null, null, null, options.state.session.db)
                       }, project));
     
     _analysis.unshift(_.extend(
                       {
-                        data: options.state.application.analysis.series(false, null, null, null, null, options.state.session.db)
+                        data: options.state.application.analysis.series(false, null, null, null, null, null, null, null, options.state.session.db)
                       }, {name: "NO PROJECT"}));
     _analysis[0].count = _analysis[0].data ? _analysis[0].data.total ? _analysis[0].data.total : _analysis[0].data.data.length : 0;
     
@@ -555,8 +614,6 @@ Views = (options, factory) => {
       template: "projects",
       id: "projects",
       name: options.state.session.name,
-      title: "Projects",
-      subtitle: "Overview",
       projects: _analysis,
       action: ACTIONS.CATEGORISED,
       target: factory.container,
@@ -568,7 +625,154 @@ Views = (options, factory) => {
     resolve(true);
     
   });
-  /* <!-- Internal Functions --> */
+  
+  FN.timesheet = () => new Promise(resolve => {
+    
+    factory.Flags.log("Entering Timesheet View");
+    
+    var _results,
+        _analysis = options.state.application.analysis.summary(null, options.state.session.db),
+        _timesheet = factory.Display.template.show({
+          template: "timesheet",
+          id: "timesheet",
+          name: options.state.session.name,
+          tags: _analysis.tags,
+          projects: _.map(_analysis.projects, "name"),
+          action: ACTIONS.TAGGED,
+          target: factory.container,
+          clear: true,
+        }),
+        _visualise = () => {
+            
+          /* <!-- Clear Row for Visualisation --> */
+          var _busy = factory.Main.busy("Tallying Data");
+            
+          /* <!-- Get Tag Filtering --> */
+          var _include = _timesheet.find("#select_Tag").val() === "all" ? 
+                false : _timesheet.find("#select_Tag").val() === "any" ?
+                _analysis.tags : _timesheet.find("#select_Tag").val(), 
+              _exclude = _timesheet.find("#exclude_Tags").prop("checked") ?
+                _.map(_timesheet.find(".tag-filter input:checked"), el => $(el).data("tag")) : false;
+
+          /* <!-- Get Project Filtering --> */
+          var _project = _timesheet.find("#filter_Projects").prop("checked") ? 
+              _timesheet.find("#select_Project").val() === "none" ? null : 
+              _timesheet.find("#select_Project").val() === "any" ? true :
+              _timesheet.find("#select_Project").val() : false;
+              
+          /* <!-- Get Date Filtering --> */
+          var _bounds = _timesheet.find("#filter_Dates").prop("checked") ? 
+                _timesheet.find("select.date-filter").val() === "custom_range" ?
+                  FN.parse.custom(_timesheet.find("#custom_Since").val(), _timesheet.find("#custom_Until").val()) : 
+                  FN.parse.dates(_timesheet.find("select.date-filter").val()) : null;
+          
+          /* <!-- Get Analysis Results --> */
+          _results = options.state.application.analysis.series(_include, _project, null, _bounds ? 
+                      _bounds.since : _bounds, _bounds ?  _bounds.until : _bounds, true, _exclude, true, 
+                        options.state.session.db);
+
+          /* <!-- Tidy up Errant Popovers --> */
+          factory.Display.tidy();
+          
+          /* <!-- Show Totals --> */
+          factory.Display.template.show({
+              template: "stats_totals",
+              durations: _results.durations && _results.durations.asHours && _results.durations.asHours() > 0 ? 
+                Math.preciseRound(_results.durations.asHours(), 2) : _results.data.length ? 0 : undefined,
+              count: _results.data.length,
+              complete: _results.statuses.COMPLETE != null ? 
+                _results.statuses.COMPLETE : _results.data.length ? 0 : undefined,
+              target: _timesheet.find("div.stats-totals"),
+              clear: true
+            });
+          
+          /* <!-- Show Items --> */
+          factory.Display.template.show({
+            template: "items",
+            tasks: _results.data && _results.data.length > 0 ?
+              options.state.application.task.prepare(_results.data) : null,
+            target: _timesheet.find("div.items"),
+            clear: true,
+          });
+          
+          /* <!-- Working Complete --> */
+          _busy();
+          
+        },
+        _refresh = _.debounce(_visualise, DEFAULTS.delay),
+        _items = () => _results ? _results.data : [],
+        _clean = task => {
+          var _name = task[options.state.application.schema.columns.details.value],
+              _duration = task[options.state.application.schema.columns.duration.value];
+          return _name.replace(_duration, "").trim().replace(/\B[\/\\|]+$/g, "");
+        },
+        _summary = () => _results ? factory.Display.text({
+          id: "timesheet_summary",
+          title: "Timesheet Summary",
+          action: false,
+          message: factory.Display.doc.get("TIMESHEET_SUMMARY_INSTRUCTIONS"),
+          rows: 10,
+          state: {
+            value: _.chain(_results.data)
+              .reduce((memo, task) => {
+                var _name = task[options.state.application.schema.columns.has_labels.value] ?
+                  _.find(task[options.state.application.schema.columns.badges.value], 
+                      value => value && value.indexOf(options.state.application.markers.label) === 0).substring(1) :
+                        _clean(task),
+                    _hours = task[options.state.application.schema.columns.duration.parsed].asHours();
+                
+                memo[_name] ? memo[_name] += _hours : memo[_name] = _hours;
+                return memo;
+              }, {})
+              .pairs()
+              .sortBy(value => value[1])
+              .reverse()
+              .reduce((memo, value) => `${memo}${memo ? "\n" : ""}${Math.preciseRound(value[1], 2)} hr${value[1] === 1 ? "" : "/s"}: ${value[0]}`, "")
+              .value()
+          }
+        }) : false;
+    
+    /* <!-- Hookup Datetime Picker --> */
+    factory.Fields().types.datetime(_timesheet);
+    
+    /* <!-- Handle Switches for General Filters --> */
+    FN.hookup.toggles(_timesheet, _refresh);
+      
+    /* <!-- Handle Toggle Tags Shortcut Buttons --> */
+    _timesheet.find("button[data-action='none']")
+      .click(() => _timesheet.find(".tag-filter input[type='checkbox']").prop("checked", false).change());
+    _timesheet.find("button[data-action='all']")
+      .click(() => _timesheet.find(".tag-filter input[type='checkbox']").prop("checked", true).change());
+
+    /* <!-- Re-Visualise Output after Tag Select, Custom Range / Tag Filter Change --> */
+    _timesheet.find(".tag-type, .project-filter, input.date-filter, .tag-filter input[type='checkbox']")
+      .on("change", _refresh);
+    
+    /* <!-- Re-Visualise Output after Date Filter Change --> */
+    _timesheet.find("select.date-filter").on("change", e => {
+      var _target = $(e.currentTarget);
+      if (_target.val() == "custom_range") {
+        _timesheet.find("input.date-filter").prop("readonly", false);
+      } else {
+        _timesheet.find("input.date-filter").prop("readonly", true);
+        if (_target.val()) _refresh();
+      }
+    });
+    
+    /* <!-- Focus on Tag Selector --> */
+    _timesheet.find("#select_Tag").focus();
+    
+    /* <!-- Start Visualisation --> */
+    _visualise();
+    
+    resolve({
+      items: _items,
+      refresh: _visualise,
+      summary: _summary,
+    });
+    
+  });
+  /* <!-- View Functions --> */
 
   /* <!-- Initial Calls --> */
 
@@ -587,7 +791,9 @@ Views = (options, factory) => {
     
     queue : FN.queue,
     
-    projects : FN.projects
+    projects : FN.projects,
+    
+    timesheet : FN.timesheet
     
   };
   /* <!-- External Visibility --> */

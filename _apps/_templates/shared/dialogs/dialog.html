@@ -18,7 +18,7 @@
 			</div>
       <div class="modal-footer">
 				<button type="button" class="btn btn-outline-secondary btn-flat" data-dismiss="modal"{{~#exists tabindex}} tabindex="{{inc (inc tabindex)}}"{{/exists}}>Close</button>
-        {{# if actions}}{{#each actions}}{{> control_button b_class="btn-outline-danger" b_id=id b_action=(concat "actions_" @index) b_title=desc b_text=text }}{{/each}}{{/if}}
+        {{# if actions}}{{#each actions}}{{> control_button b_class=(either class "btn-outline-danger") b_id=id b_tab=(which ../tabindex (add true (add true 3 ../tabindex) @index) "") b_action=(concat "actions_" @index) b_tooltip=desc b_html=true b_text=text b_dismiss=(which dismiss "modal" "") }}{{/each}}{{/if}}
         {{#unless no_action}}<button type="button" class="btn btn-primary" data-dismiss="modal"{{~#exists tabindex}} tabindex="{{inc tabindex}}"{{/exists}}>{{#if action}}{{action}}{{else}}Confirm{{/if}}</button>{{/unless}}
       </div>
     </div>

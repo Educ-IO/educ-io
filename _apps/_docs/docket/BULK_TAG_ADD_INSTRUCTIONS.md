@@ -1,0 +1,2 @@
+Add tags below, using the __text box__ or your __commonly used__ tags. The keyboard shortcut to __save__ is *SHIFT-Enter*{:.kb-shortcut}, or *Esc*{:.kb-shortcut} to __cancel__. Tags will be added to __all visible__ tasks (currently __{% raw %}{{content}}{% endraw %}__).
+{:.small .mb-2}

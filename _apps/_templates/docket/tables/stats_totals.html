@@ -1,0 +1,22 @@
+{% raw %}
+<div class="d-flex flex-column flex-md-row justify-content-between py-2 px-3 bg-light border">
+  {{#exists durations}}<div>
+    <span class="display-4 d-flex align-items-center">
+      <span class="font-weight-bold text-dark mr-2 mr-xl-4">{{durations}}</span>
+      <span class="small text-success font-weight-light">{{#exists units}}{{units}}{{else}}hours{{/exists}}</span>
+    </span>
+  </div>{{/exists}}
+  {{#exists count}}<div>
+    <span class="display-4 d-flex align-items-center">
+      {{#exists complete}}
+        <span class="font-weight-bold">{{complete}}</span>
+        <span class="font-weight-lighter o-50 mx-1">/</span>
+        <span class="font-weight-light o-75 mr-2 mr-xl-4">{{count}}</span>
+      {{else}}
+        <span class="font-weight-bold text-dark mr-2 mr-xl-4">{{count}}</span>
+      {{/exists}}
+      <span class="small text-primary font-weight-light">tasks</span>
+    </span>
+  </div>{{/exists}}
+</div>
+{% endraw %}

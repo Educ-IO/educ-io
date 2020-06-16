@@ -113,7 +113,8 @@ Router = function() {
                                                      requires, required => ಠ_ಠ.IMPORTS.LOAD_LAZY[required])),
     SCOPES = scopes => ಠ_ಠ.Main.authorise(_.isArray(scopes) ? scopes : [scopes]);
   
-  const STATE_EXPERIMENTS = "experiments";
+  const STATE_EXPERIMENTS = "experiments",
+        STATE_EXTERNAL_OAUTH = "external-oauth";
   /* <!-- Internal Setup Constants --> */
 
   /* <!-- Internal Functions --> */  
@@ -438,10 +439,17 @@ Router = function() {
           /* <!-- Verbose Debug Flag: For future logging --> */
           _debug = ಠ_ಠ.Flags && ಠ_ಠ.Flags.verbose();
           
-          /* <!-- Enter Experiments Mode if specified by Flags --> */
-          if (ಠ_ಠ.Display && ಠ_ಠ.Flags && (ಠ_ಠ.Flags.development() || ಠ_ಠ.Flags.experiments()))
-            ಠ_ಠ.Display.state().enter(STATE_EXPERIMENTS);
-
+          /* <!-- Initial States --> */
+          if (ಠ_ಠ.Display && ಠ_ಠ.Flags) {
+            
+            /* <!-- Enter Experiments Mode if specified by Flags --> */
+            if (ಠ_ಠ.Flags.development() || ಠ_ಠ.Flags.experiments()) ಠ_ಠ.Display.state().enter(STATE_EXPERIMENTS); 
+            
+            /* <!-- Enter External OAuth Mode if specified by Flags --> */
+            if (ಠ_ಠ.Flags.oauth()) ಠ_ಠ.Display.state().enter(STATE_EXTERNAL_OAUTH); 
+            
+          }
+          
           /* <!-- Run App Setup --> */
           if (_options.setup) _options.setup();
 

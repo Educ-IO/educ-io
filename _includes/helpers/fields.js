@@ -861,6 +861,12 @@ Fields = (options, factory) => {
     
     validate: FN.validate,
 
+    types: {
+      
+      datetime: _datetime,
+      
+    },
+    
   };
   /* <!-- External Visibility --> */
 

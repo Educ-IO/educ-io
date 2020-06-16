@@ -101,7 +101,7 @@
           <h5 class="marker-label text-dark font-weight-light">Tag Filter</h5>
         </div>
         <div class="float-right">
-          <input id="filter_Tags" hidden="hidden" type="checkbox" data-targets=".select-tags">
+          <input id="filter_Tags" hidden="hidden" type="checkbox" data-targets=".select-tags" data-toggle="collapse" data-target="#selectTags" aria-expanded="false" aria-controls="selectTags">
           <label class="material-switch" for="filter_Tags"></label>
         </div>
       </div>
@@ -119,7 +119,7 @@
     
     <div class="col-12">
       
-      {{~#if tags}}<div class="row align-items-center justify-content-center justify-content-lg-start">
+      {{~#if tags}}<div id="selectTags" class="row align-items-center justify-content-center justify-content-lg-start collapse">
         <div class="col-12 my-1 my-xl-2 px-1 mx-1 mx-xl-2">
           <fieldset class="select-tags disabled" disabled>
             <div class="d-flex flex-wrap">

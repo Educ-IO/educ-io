@@ -1,5 +1,8 @@
 .form-tabbed {
   border-left: 1px solid #eceeef;
+  &.form-tabbed-right {
+    border-right: 1px solid #eceeef;
+  }
 }
 
 form {

@@ -259,7 +259,7 @@ Handlebars = (options, factory) => {
         return _b[_a] ? _b[_a] : _default ? _default : "";
       });
 
-      Handlebars.registerHelper("length", variable => !variable || !variable.length ? 0 : variable.length);
+      Handlebars.registerHelper("length", variable => variable ? variable.length !== null && variable.length !== undefined ? variable.length : _.isObject(variable) ? _.keys(variable).length : 0 : 0);
       
       Handlebars.registerHelper("which", (which, a, b) => which ? a : b);
 
@@ -304,6 +304,14 @@ Handlebars = (options, factory) => {
       Handlebars.registerHelper("truncate", (value, length, ending) =>
         value && _.isString(value) ? value.length > length ? `${value.substring(0, length - 1)}${ending}` : value : "");
 
+      Handlebars.registerHelper("lowercase", value => value && value.toLowerCase ? value.toLowerCase() : value);
+      
+      Handlebars.registerHelper("uppercase", value => value && value.toUpperCase ? value.toUpperCase() : value);
+
+      Handlebars.registerHelper("falsy", value => !value);
+      
+      Handlebars.registerHelper("truthy", value => !!value);
+      
       /* <!-- Map all templates as Partials too --> */
       if (Handlebars.templates) Handlebars.partials = Handlebars.templates;
 

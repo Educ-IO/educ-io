@@ -281,6 +281,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
     id: _name,
     headers: table.headers,
     choices: options.visibilities,
+    full: options.full_width_filters ? true : null,
     instructions: ಠ_ಠ.Display.doc.get("FILTERS")
   });
 
@@ -329,7 +330,11 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
       var keycode = ((typeof e.keyCode != "undefined" && e.keyCode) ? e.keyCode : e.which);
       if (keycode === 27) { /* <!-- Escape Key Pressed --> */
         e.preventDefault();
+        var _form = $(e.target).parents(".filter-form"),
+            _last = _form.prev(".filter-form:visible"),
+            _next = _form.next(".filter-form:visible");
         _clearFilter(e.target);
+        (_last.length == 1 ? _last : _next).find("input.table-search").select();
       } else if (keycode === 13) { /* <!-- Enter Key Pressed --> */
         e.preventDefault();
         _toggleFilter($(e.target).parents("div.form"), false);

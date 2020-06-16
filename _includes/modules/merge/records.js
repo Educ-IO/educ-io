@@ -114,9 +114,10 @@ Records = (ಠ_ಠ, file, target, tab) => {
     }, {
       classes: ["table-responsive", "table-hover"],
       template: "meta_rows",
+      full_width_filters: true,
       advanced: false,
       collapsed: true,
-      removable: true
+      removable: false
     }, $(`#tab_${_headings.tabs[0].id}`));
     /* <!-- Create Cols Table --> */
 
@@ -142,6 +143,7 @@ Records = (ಠ_ಠ, file, target, tab) => {
       headers: _rows.headers(),
     }, {
       classes: ["table-responsive", "table-hover"],
+      full_width_filters: true,
       advanced: false,
       collapsed: true,
       removable: true
@@ -154,7 +156,7 @@ Records = (ಠ_ಠ, file, target, tab) => {
   };
 
   var _load = (id, name, tab) => ಠ_ಠ.Google.sheets.get(id, false).then(sheet => {
-
+    
     ಠ_ಠ.Flags.log("Google Drive Sheet Opened", sheet);
 
     var _values = (name, names, tab) => ಠ_ಠ.Google.sheets.values(sheet.spreadsheetId, `${name}!A:ZZ`)

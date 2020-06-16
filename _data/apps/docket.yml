@@ -116,6 +116,8 @@ modules:
   - docket/task
   - docket/tasks
   - docket/views
+  - docket/tags
+  - docket/bulk
 scripts:
   - extends/regex
   - extends/array
@@ -136,6 +138,7 @@ templates:
   - shared/menu_item
   - shared/menu_divider
   - shared/permission
+  - shared/dialogs/dialog
   - docket/recent
   - docket/config
   - docket/badge
@@ -149,6 +152,7 @@ templates:
   - docket/views/analysis
   - docket/views/queue
   - docket/views/projects
+  - docket/views/timesheet
   - docket/dialogs/new
   - docket/dialogs/archive
   - docket/dialogs/tag
@@ -160,11 +164,13 @@ templates:
   - docket/queue/tasks
   - docket/projects/project
   - docket/visualisation/time_series
+  - docket/timesheet/items
   - docket/config/calendar
   - docket/config/class
   - docket/tables/stats_overall
   - docket/tables/stats_categories
   - docket/tables/stats_times
+  - docket/tables/stats_totals
   - docket/icons/ghost
 docs:
   - shared/JUMP
@@ -178,6 +184,7 @@ docs:
   - docket/TUTORIALS
   - docket/README
   - docket/NEW_INSTRUCTIONS
+  - docket/NEW_COMPLETE_TITLE
   - docket/SEARCH_INSTRUCTIONS
   - docket/ARCHIVE_INSTRUCTIONS
   - docket/EDIT_INSTRUCTIONS
@@ -191,6 +198,10 @@ docs:
   - docket/ANALYSIS_INSTRUCTIONS
   - docket/PROJECT_INSTRUCTIONS
   - docket/LINK_INSTRUCTIONS
+  - docket/BULK_TAG_ADD_INSTRUCTIONS
+  - docket/TIMESHEET_INSTRUCTIONS
+  - docket/TIMESHEET_SUMMARY_INSTRUCTIONS
+  - docket/TIMESHEET
   - docket/FAILED_CREATE
   - docket/FAILED_DELETE
   - docket/FAILED_SAVE
@@ -329,6 +340,15 @@ menus:
             hash: display.projects
             toggle:
               - projects
+          - name: Timesheet
+            desc: Display Timesheet Overview
+            shortcut: "l"
+            hash: display.timesheet
+            toggle:
+              - timesheet
+            disabled_until:
+              - experiments
+            divider: true  
           - name: Queue
             desc: Display Task Queue from all your Docket Databases
             shortcut: "q"
@@ -418,7 +438,22 @@ menus:
             hash: jump
             disabled_until:
               - opened
-          
+              
+  - name: Timesheet
+    disabled_until:
+      - timesheet
+    groups:
+      all:
+        commands:
+          - name: Add Tags
+            desc: Add Tags to all the visible / filtered tasks
+            hash: add.tags
+            divider: true
+            
+          - name: Summary
+            desc: Show Timesheet Summary
+            hash: timesheet.summary
+            
   - name: Tools
     groups:
       all:
@@ -486,6 +521,13 @@ menus:
             desc: A guide to using this app
             divider: true
             
+          - name: Experiments
+            desc: Turn on new and experimental features in this app
+            hash: experiments
+            toggle:
+              - experiments
+            disabled_until:
+              - authenticated
           - name: Install
             desc: Install this app into your Google Drive
             hash: install
@@ -493,6 +535,10 @@ menus:
             scope: https://www.googleapis.com/auth/drive.install
             disabled_until:
               - authenticated
+            disabled_while:
+              - external-oauth
+            divider: true
+            
           - name: Permissions
             url: /scopes/?highlight=docket
             desc: Find out about the permissions and scopes that this app uses

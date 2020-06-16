@@ -192,6 +192,11 @@ em.kb-shortcut, strong.kb-shortcut {
   @include arrayed_Gradient(rgba(200,200,0,0.95) rgba(0,0,0,0.95) rgba(66,5,50,0.9) rgba(50,49,50,0.9), 60%, 0 0 0 0.7);
 }
 
+.badge-label {
+  color: $colour-background !important;
+  @include arrayed_Gradient(rgba(21,13,89,0.9) rgba(33,19,237,0.95) darken(rgba(32,30,66,0.9), 20%), 70%);
+}
+
 .badge-vital {
   color: $colour-background !important;
   @include arrayed_Gradient(darken($colour-vital, 15%) $colour-vital lighten($colour-vital, 10%), 50%, 0 0 0.65);
@@ -200,6 +205,11 @@ em.kb-shortcut, strong.kb-shortcut {
 .badge-highlight {
   color: $colour-background !important;
 	background-color: lighten($colour-highlight, 10%) !important
+}
+
+.badge-amazing {
+  color: $colour-background !important;
+  @include arrayed_Gradient($colour-amazing darken($colour-bright-background, 15%) $colour-success darken($colour-success, 25%), 85%);
 }
 // -- Badges -- //
 

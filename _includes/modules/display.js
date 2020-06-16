@@ -15,7 +15,8 @@ Display = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _string = value => typeof value === "string" || value instanceof String;
+  var _string = value => typeof value === "string" || value instanceof String,
+      _number = value => typeof value === "number" && isFinite(value);
 
   var _commarise = value => {
     var s = (value += "").split("."),
@@ -63,34 +64,34 @@ Display = function() {
       placement: _placement
     }));
   };
-  
+
   var _hover = (e, toggle) => {
     var _this = $(e.currentTarget),
-        _targets = _this.data("targets"),
-        _value = _this.data("value"),
-        _first = _this.data("first");
+      _targets = _this.data("targets"),
+      _value = _this.data("value"),
+      _first = _this.data("first");
     if (!_targets || !_value) return;
-    _first ? 
-      $(_targets).first().toggleClass(_value, toggle) : 
+    _first ?
+      $(_targets).first().toggleClass(_value, toggle) :
       $(_targets).each((i, el) => {
         var _el = $(el);
         _el.toggleClass(_value, toggle);
       });
   };
-  
+
   var _hovers = targets => targets
     .off("mouseenter.hover").on("mouseenter.hover", e => _hover(e, true))
     .off("mouseleave.hover").on("mouseleave.hover", e => _hover(e, false));
-  
+
   var _expands = targets => targets.off("click.expand").on("click.expand", e => {
     e.preventDefault();
     e.stopPropagation();
     var _this = $(e.currentTarget),
-        _targets = _this.data("targets");
+      _targets = _this.data("targets");
     if (!_targets) return;
     $(_targets).each((i, el) => {
       var _el = $(el),
-          _classes = _el.attr("class").split(/\s+/);
+        _classes = _el.attr("class").split(/\s+/);
       _.each(_classes, _class => {
         if (_class && _class != "col-12" && _class.indexOf("col-") === 0) {
           _el.removeClass(_class).addClass(`_${_class}`);
@@ -100,7 +101,7 @@ Display = function() {
       });
     });
   });
-  
+
   var _routes = targets => targets.off("click.route").on("click.route", e => {
     e.preventDefault();
     e.stopPropagation();
@@ -111,7 +112,7 @@ Display = function() {
       _command && _command.length > 0 && _command.prop("onclick") ?
         _command.first().click() :
         _command && _command.length > 0 ?
-          _command[0].click() : window.location.hash = `#${_route}`;
+        _command[0].click() : window.location.hash = `#${_route}`;
     }
   });
 
@@ -123,34 +124,35 @@ Display = function() {
     return _element;
 
   };
-  
+
   var _modal = run => {
-    var _modals = $(".modal.show[role='dialog']"),
+      var _modals = $(".modal.show[role='dialog']"),
         _after = fn => {
           if (run && _.isFunction(run)) run();
           if (fn && _.isFunction(fn)) fn();
         };
-    if (_modals.length > 0) {
-      _modals.addClass("d-none");
-      $("div.modal-backdrop.show").addClass("d-none");
-      $("body").removeClass("modal-open");
-      return fn => {
-        $(".modal.d-none[role='dialog'], div.modal-backdrop.d-none").removeClass("d-none");
-        $(".modal[role='dialog']").focus();
-        $("body").addClass("modal-open");
-        _after(fn);
-      };
-    } else {
-      return _after;
-    }
-  }, _modalise = (element, fn) => {
-    element.on("hide.bs.modal", () => $("div.modal-backdrop.d-none").removeClass("d-none"));
-    element.on("hidden.bs.modal", _modal(() => element.remove() && (fn && _.isFunction(fn) ? fn() : true)));
-    return element;
-  };
-  
+      if (_modals.length > 0) {
+        _modals.addClass("d-none");
+        $("div.modal-backdrop.show").addClass("d-none");
+        $("body").removeClass("modal-open");
+        return fn => {
+          $(".modal.d-none[role='dialog'], div.modal-backdrop.d-none").removeClass("d-none");
+          $(".modal[role='dialog']").focus();
+          $("body").addClass("modal-open");
+          _after(fn);
+        };
+      } else {
+        return _after;
+      }
+    },
+    _modalise = (element, fn) => {
+      element.on("hide.bs.modal", () => $("div.modal-backdrop.d-none").removeClass("d-none"));
+      element.on("hidden.bs.modal", _modal(() => element.remove() && (fn && _.isFunction(fn) ? fn() : true)));
+      return element;
+    };
+
   var _template = (name, raw) => ಠ_ಠ.handlebars ? ಠ_ಠ.handlebars.template(name, raw) : null;
-  
+
   var _visuals = value => {
     _popovers(value.find("[data-toggle='popover'], [data-popover='true']").add(value.filter("[data-toggle='popover'], [data-popover='true']")));
     _tooltips(value.find("[data-toggle='tooltip'], [data-tooltip='true']").add(value.filter("[data-toggle='tooltip'], [data-tooltip='true']")));
@@ -162,22 +164,22 @@ Display = function() {
   var _listen = element => {
     _.each(element.find("[data-listen]"), input => {
       var _this = $(input),
-          _selector = _this.data("listen"),
-          _event = _this.data("event");
+        _selector = _this.data("listen"),
+        _event = _this.data("event");
       ((trigger, selector, event) => {
         element.find(selector).off(event).on(event, e => {
           if ($(e.target).is(selector)) trigger.show(500).siblings("[data-listen]").hide(500);
-        }); 
+        });
       })(_this, _selector, _event);
     });
     return element;
   };
-  
+
   var _process = value => {
     _routes(_visuals(value).find("a[data-route], button[data-route], input[data-route]"));
     return _listen(value);
   };
-  
+
   var _keys = (options, dialog) => {
     /* <!-- Handle Enter Key (if simple) --> */
     if (options.enter) dialog.keypress(e => {
@@ -188,19 +190,33 @@ Display = function() {
     });
   };
 
-  var _clean = () => $("div.modal-backdrop.show").last().remove() && 
-      $("body.modal-open").removeClass("modal-open"); /* <!-- Weird Modal Not Hiding Bug --> */
-  
+  var _clean = () => $("div.modal-backdrop.show").last().remove() &&
+    $("body.modal-open").removeClass("modal-open"); /* <!-- Weird Modal Not Hiding Bug --> */
+
   var _tidy = () => $("div.tooltip.show").last().remove(); /* <!-- Tooltips Not Hiding --> */
 
-  var _toggle = (state, toggle, container) => {
+  var _toggle = (state, toggle, container, all) => {
+
     var _$ = (container ? container.find : $);
+
+    /* <!-- Will not enable elements that should remain disabled --> */
+    toggle && all && all.length > 0 ?
+      _$(`.disabled.state-${state}${_.reduce(all, (memo, name) => `${memo}:not(.disabled-state-${name})`, "")}`).toggleClass("disabled", !toggle) :
+      _$(".state-" + state).toggleClass("disabled", !toggle);
+    /* <!-- Disabled / Hide always takes precedence --> */
     _$(".disabled-state-" + state).toggleClass("disabled", toggle);
-    _$(".state-" + state).toggleClass("disabled", !toggle);
+
+    /* <!-- Will not show elements that should remain hidden --> */
+    toggle && all && all.length > 0 ?
+      _$(`.d-none.show-${state}${_.reduce(all, (memo, name) => `${memo}:not(.hide-${name})`, "")}`).toggleClass("d-none", !toggle) :
+      _$(".show-" + state).toggleClass("d-none", !toggle);
+    /* <!-- Disabled / Hide always takes precedence --> */
     _$(".hide-" + state).toggleClass("d-none", toggle);
-    _$(".show-" + state).toggleClass("d-none", !toggle);
+
     _$(".tooltip-until-" + state).tooltip(toggle ? "disable" : "enable");
+    /* <!-- Disabled / Hide always takes precedence --> */
     _$(".tooltip-while-" + state).tooltip(toggle ? "enable" : "disable");
+
     return true;
   };
 
@@ -217,7 +233,8 @@ Display = function() {
           if (_action.indexOf("actions_") === 0) {
             _action = $(e.target).data("action").split("_");
             if (_action[0] == "actions") options.actions[_action[1]].handler(handler ?
-              handler() : ಠ_ಠ.Data ? ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(dialog.find("form")) : dialog.find("form").serializeArray(), dialog);
+              handler() : ಠ_ಠ.Data ? ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(dialog.find("form")) :
+                            dialog.find("form").serializeArray(), dialog);
           } else if (options.handlers && options.handlers[_action]) {
             options.handlers[_action](_target, dialog, options);
           }
@@ -235,10 +252,12 @@ Display = function() {
         });
       });
     }
+    
+    
 
   };
   /* <!-- Internal Functions --> */
-  
+
   /* <!-- External Visibility --> */
   return {
 
@@ -263,7 +282,7 @@ Display = function() {
 
       /* <!-- Set Logging State --> */
       if (ಠ_ಠ.Flags && ಠ_ಠ.Flags.debug()) _log = ಠ_ಠ.Flags.log;
-      
+
       /* <!-- Enable Tooltips & Popovers --> */
       _popovers($("[data-toggle='popover']"));
       _popovers($("#site_nav [data-toggle='popover']"), {
@@ -279,7 +298,7 @@ Display = function() {
     },
 
     tidy: _tidy,
-    
+
     popovers: (targets, options) => _popovers(targets, options),
 
     tooltips: (targets, options) => _tooltips(targets, options),
@@ -306,7 +325,7 @@ Display = function() {
           .replace(/\{\{+\s*title\s*}}/gi, options && options.title ? options.title : "Title")
           .replace(/\{\{+\s*close\s*}}/gi, options && options.close ? options.close : "Close");
       },
-      
+
       /* <!--
       	Options are : {
       		name : name of the document to display,
@@ -317,7 +336,7 @@ Display = function() {
         options = _string(options) || Array.isArray(options) ? {
           name: options
         } : options;
-        if (content && _string(content)) options.content = content;
+        if (content && (_string(content) || _number(content))) options.content = content;
         if (trim) options.trim = trim;
 
         var _get = name => $("#__doc__" + name)[0].innerText;
@@ -327,15 +346,15 @@ Display = function() {
 
         /* <!-- Trim Start / End <p> tags (if required) --> */
         if (options.trim) _doc = _doc.replace(/^<\/?p>|<\/?p>$/gi, "");
-        
+
         var _return = options.content !== undefined ?
-          _doc.replace(/\{\{+\s*content\s*}}/gi, options.content) : 
+          _doc.replace(/\{\{+\s*content\s*}}/gi, options.content) :
           options.data !== undefined ?
-            _.reduce(_.keys(options.data), (doc, key) => doc.replace(new RegExp(`\{\{+\s*${key}\s*}}`, "gi"), options.data[key]), _doc) :
-            _doc;
-        
+          _.reduce(_.keys(options.data), (doc, key) => doc.replace(new RegExp(`\{\{+\s*${key}\s*}}`, "gi"), options.data[key]), _doc) :
+          _doc;
+
         _return = options.wrapper ? this.wrap(options.wrapper, _return, options) : _return;
-            
+
         return options.plain ? $(_return).text() : _return;
 
       },
@@ -356,7 +375,7 @@ Display = function() {
 
         /* <!-- Allow for showing / hiding previous modals (e.g. help modals from help modals)	--> */
         if (options.wrapper && options.wrapper === "MODAL") _modalise(_return);
-       
+
         return _visuals(_return);
 
       },
@@ -371,7 +390,7 @@ Display = function() {
 
         var _return = _string(options) ? _template(options) : _template(options.template ? options.template : options.name)(options);
         return process ? _string(options) ? options => _process($($.parseHTML(_return(options)))) : _process($(_return)) : _return;
-        
+
       },
 
       show: function(options) {
@@ -484,11 +503,11 @@ Display = function() {
         _status;
       var _clear = (options && options.clear === true) || _element.find("div.loader-large").length > 0,
         _loader = _clear ?
-          options.clear = true && _element.find("div.loader").remove() :
-          options && options.append ? 
-            _element.append(_template("loader")(options ? options : {})) :
-            _element.prepend(_template("loader")(options ? options : {})),
-          _handler;
+        options.clear = true && _element.find("div.loader").remove() :
+        options && options.append ?
+        _element.append(_template("loader")(options ? options : {})) :
+        _element.prepend(_template("loader")(options ? options : {})),
+        _handler;
 
       if (options && options.status) {
         _status = _loader.find(".status");
@@ -524,7 +543,7 @@ Display = function() {
 
         /* <!-- Great Modal Choice Dialog --> */
         var dialog = $(_template("confirm")(options));
-        
+
         _target(options).append(_modalise(dialog, reject));
 
         /* <!-- Set Event Handlers --> */
@@ -532,10 +551,10 @@ Display = function() {
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
         dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
-        
+
         /* <!-- Handle Enter Key (if simple) --> */
         _keys(options, dialog);
-        
+
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
 
@@ -554,7 +573,7 @@ Display = function() {
 
         /* <!-- Great Modal Choice Dialog --> */
         var dialog = $(_template("inform")(options));
-       
+
         _target(options).append(_modalise(dialog, resolve));
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
@@ -562,7 +581,7 @@ Display = function() {
 
         /* <!-- Handle Enter Key (if simple) --> */
         _keys(options, dialog);
-        
+
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
 
@@ -580,8 +599,8 @@ Display = function() {
         if (!options) return reject();
 
         var dialog = $(_template(template)(options)),
-            resolver = () => resolve();
-            
+          resolver = () => resolve();
+
         if (dialog.find("form").length > 0) {
 
           /* <!-- Set Form / Return Event Handlers --> */
@@ -614,7 +633,7 @@ Display = function() {
                 e.stopPropagation();
               }
             });
-            
+
             /* <!-- Handle Enter Key (if simple) --> */
             _keys(options, dialog);
 
@@ -627,7 +646,7 @@ Display = function() {
 
         /* <!-- Modal Submission Clicks --> */
         _target(options).append(_modalise(dialog, () => resolver()));
-        
+
         /* <!-- Modal Dismissing Clicks --> */
         dialog.find("btn[data-click='dismiss-modal'], a[data-click='dismiss-modal']").on("click.dismiss",
           () => {
@@ -636,14 +655,14 @@ Display = function() {
           });
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
-        dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
+        dialog.on("shown.bs.modal", _.compose(() => dialog.find("textarea:visible, input:visible").first().focus(), shown ? () => shown(dialog) : () => _visuals(dialog)));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal({
           show: true,
           backdrop: options.backdrop !== undefined ? options.backdrop : true,
         });
-        
+
         /* <!-- Clean-up any old tool-tips --> */
         _tidy();
 
@@ -688,7 +707,7 @@ Display = function() {
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
         dialog.on("shown.bs.alert", shown ? () => shown(dialog) : () => _visuals(dialog));
-        
+
         /* <!-- Show the Alert --> */
         dialog.alert();
 
@@ -722,8 +741,9 @@ Display = function() {
         options.__LONG = (_length > MAX_ITEMS);
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("choose")(options)), parsed;
-        
+        var dialog = $(_template("choose")(options)),
+          parsed;
+
         _target(options).append(_modalise(dialog, () => _.isEmpty(parsed) ? reject() : resolve(parsed)));
 
         /* <!-- Parsing Method --> */
@@ -757,7 +777,7 @@ Display = function() {
               _.tap(parse(true, _values), value => value ? resolve(value) : false);
             }
           });
-        
+
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
         dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
 
@@ -768,7 +788,7 @@ Display = function() {
             dialog.find(".modal-footer button.btn-primary").click();
           }
         });
-           
+
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
 
@@ -794,9 +814,9 @@ Display = function() {
 
         /* <!-- Great Modal Options Dialog --> */
         var dialog = $(_template("options")(options));
-        
+
         _target(options).append(_modalise(dialog, reject));
-        
+
         dialog.find("a.dropdown-item").on("click.toggler", (e) => $(e.target).closest(".input-group-append, .input-group-prepend").children("button")[0].innerText = e.target.innerText);
         dialog.find("a[data-toggle='tooltip'], a[data-tooltip='true']").tooltip({
           animation: false,
@@ -816,7 +836,7 @@ Display = function() {
           });
           resolve(_return);
         });
-        
+
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
         dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
 
@@ -870,8 +890,8 @@ Display = function() {
               e.stopPropagation();
             }
           };
-        
-        _target(options).append( _modalise(dialog, () => _submitted ? _submit() : reject()));
+
+        _target(options).append(_modalise(dialog, () => _submitted ? _submit() : reject()));
 
         /* <!-- Handle Enter Key (if simple) --> */
         if (options.simple || options.password) dialog.keypress(e => {
@@ -886,12 +906,12 @@ Display = function() {
 
         /* <!-- Handle Clicked Submit --> */
         dialog.find(".modal-footer button.btn-primary").click(_submit);
-        
+
         var _focus = () => dialog.find("textarea[name='value'], input[type='text'][name='value'], input[type='password'][name='value']").focus();
-        
+
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
         dialog.on("shown.bs.modal", _.compose(_focus, shown ? () => shown(dialog) : () => _visuals(dialog)));
-        
+
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
 
@@ -914,11 +934,12 @@ Display = function() {
         if (!options || !options.message) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
-        var confirmed, files = [], dialog = $(_template("upload")(options));
-        
-        _target(options).append(_modalise(dialog, 
+        var confirmed, files = [],
+          dialog = $(_template("upload")(options));
+
+        _target(options).append(_modalise(dialog,
           () => confirmed && files && files.length > 0 ? resolve(options.single ? files[0] : files) : reject()));
-          
+
         /* <!-- Handle Files Population --> */
         var _populate = () => {
           var _files = $(_template("files")(_.map(files, file => _.pick(file, "type", "name", "lastModifiedDate", "size"))));
@@ -944,7 +965,7 @@ Display = function() {
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
         dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
-        
+
         /* <!-- Show the Modal Dialog --> */
         dialog.modal("show");
 
@@ -975,9 +996,9 @@ Display = function() {
 
         /* <!-- Great Modal Options Dialog --> */
         var dialog = $(_template("action")(options));
-        
+
         _target(options).append(_modalise(dialog, reject));
-        
+
         dialog.find("a[data-toggle='tooltip'], a[data-tooltip='true']").tooltip({
           animation: false,
           trigger: "hover",
@@ -999,7 +1020,7 @@ Display = function() {
           });
 
         });
-        
+
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
         dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
 
@@ -1054,6 +1075,14 @@ Display = function() {
 
       var _parent = this;
 
+      var _all = () => {
+        var _ret = [];
+        for (var name in _state) {
+          if (_state.hasOwnProperty(name)) _ret.push(name);
+        }
+        return _ret;
+      };
+
       var _add = name => {
         if (!_state[name]) {
           _state[name] = true;
@@ -1064,9 +1093,10 @@ Display = function() {
       };
 
       var _enter = names => {
+        var all = _all();
         names = _arrayize(names, _string);
         _.each(names, name => {
-          if (_add(name)) _toggle(name, true);
+          if (_add(name)) _toggle(name, true, null, all);
         });
         return _parent;
       };
@@ -1078,14 +1108,6 @@ Display = function() {
           return true;
         }
         return false;
-      };
-
-      var _all = () => {
-        var _ret = [];
-        for (var name in _state) {
-          if (_state.hasOwnProperty(name)) _ret.push(name);
-        }
-        return _ret;
       };
 
       var _exit = names => {
@@ -1151,40 +1173,40 @@ Display = function() {
       };
 
     },
-    
+
     status: (function() {
-      
+
       var _get = () => $(".navbar-status > .btn-outline-status");
-      
+
       var _set = {
-        
-        details : (status, title, details) => (title && details ? status.popover("dispose").popover({
-                  title: title,
-                  content: details,
-                  trigger: "click",
-                  html: /<\/?[a-z][\s\S]*>/i.test(details),
-                }) : null, status),
-      
-        text : (status, text) => (text ? status.find(".text").text(text) : null, status),
-        
+
+        details: (status, title, details) => (title && details ? status.popover("dispose").popover({
+          title: title,
+          content: details,
+          trigger: "click",
+          html: /<\/?[a-z][\s\S]*>/i.test(details),
+        }) : null, status),
+
+        text: (status, text) => (text ? status.find(".text").text(text) : null, status),
+
       };
-      
+
       var _hide = {
-        
-        icons : status => (status.find(".material-icons").addClass("d-none"), status),
-        
-        status : status => {
+
+        icons: status => (status.find(".material-icons").addClass("d-none"), status),
+
+        status: status => {
           var _status = (status || _get()).removeClass("loader").css("opacity", 0)
             .one("transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd", () => {
               _status.addClass("d-none");
               _hide.icons(_status);
               _status.find(".text").text("");
-              _status.popover("dispose");    
+              _status.popover("dispose");
             });
         },
-        
+
       };
-      
+
       var _show = (text, title, details, working) => {
         var _status = _get().removeClass("d-none").css("opacity", 1);
         if (working) _status.addClass("loader");
@@ -1192,9 +1214,9 @@ Display = function() {
         _set.details(_status, title, details);
         return _status;
       };
-      
+
       return {
-        
+
         working: (text, title, details) => {
           var _status = _show(text, title, details, true);
           return (result, text, title, details, hide) => {
@@ -1212,9 +1234,9 @@ Display = function() {
         hide: () => {
           _hide.status();
         }
-        
+
       };
-      
+
     })(),
     /* <!-- External Functions --> */
 

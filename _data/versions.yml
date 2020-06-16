@@ -1,4 +1,8 @@
 site :
+  0.1.11 :
+    name : Docket v1.1.0
+    desc : Timesheet View and Bug Fixes
+    numeric : 0.1.11.0
   0.1.10o :
     name : Documentation Updates
     desc : Updates to Guides and Tutorials
@@ -1244,6 +1248,15 @@ events :
     name : Early testing version
     type : minor
 docket :
+  1.1.0 :
+    name : Experimental Timesheet View
+    desc : Fixed Tag Removal regression bug
+    changes :
+      - New Timesheet view and Summary
+      - Label Tags
+      - Bulk Assignment of Tags
+      - Visual Bug Fixes (Daily View)
+    type : major
   1.0.8c :
     name : Bug Fix
     desc : Fixed Tag Removal regression bug

@@ -1,6 +1,6 @@
 {% raw %}
-<div {{#if id}}id="{{id}}" {{/if}}class="container-fluid">
-  <div class="row">
+<div {{#if id}}id="{{id}}" {{/if}}class="{{#unless full}}container-fluid{{/unless}}">
+  <div class="row{{#if full}} no-gutters{{/if}}">
     {{#each columns}}
     <div class="{{#if sizes}}{{#each sizes}} col-{{#is @key '!=' 'xs'}}{{@key}}-{{/is}}{{this}}{{/each}}{{/if}}">
       <div class="{{#if class}}{{ class}} {{/if}}py-2 py-lg-4 px-4{{#is @index '>' 0}} border-left border-bottom bg-light{{/is}}">
