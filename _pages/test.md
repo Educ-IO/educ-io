@@ -5,10 +5,10 @@ permalink: /test/
 helpers:
   - handlebars
 modules:
-  - controller
-  - service
-  - flags
-  - display
+  - generic/controller
+  - generic/service
+  - generic/flags
+  - generic/display
   - test
   - page
 imports:

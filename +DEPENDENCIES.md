@@ -18,7 +18,7 @@ lead: Each app we make includes a __number of different dependencies__. This is 
 <li class="list-group-item">
 <div class="d-flex w-100 justify-content-between mt-2">
 <h4 class="mb-1" markdown="1"><a href="/{{ app.name | downcase }}">{{ app.name | capitalize }}</a></h4>
-<small>Total: <strong>{% include number.html number=total decimals=0 ds="." ts="," suffix="kb" %}</strong></small>
+<small>Total: <strong>{% include plumbing/number.html number=total decimals=0 ds="." ts="," suffix="kb" %}</strong></small>
 </div>
 {% if app.desc %}<p class="mb-1">{{ app.desc | markdownify }}</p>{% endif %}
 

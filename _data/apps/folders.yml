@@ -67,17 +67,17 @@ helpers:
   - handlebars
   - url
 modules:
-  - flags
-  - controller
-  - display
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
   - help
-  - service
-  - main
   - items
   - recent
-  - router
   - datatable
-  - dates
   - folders/folder
   - folders/team-drives
   - folders/groups
@@ -85,10 +85,10 @@ scripts:
   - extends/regex
   - extends/array
 templates:
-  - options
-  - choose
-  - confirm
-  - alert
+  - generic/options
+  - generic/choose
+  - generic/confirm
+  - generic/alert
   - loader
   - recent
   - help

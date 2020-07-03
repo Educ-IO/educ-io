@@ -50,7 +50,7 @@
 
           {% for group in menu.groups %}{% assign _group_commands = group[1].commands %}{% assign group_commands = site.array %}{% for command in _group_commands %}{% if command.visibility %}{% if jekyll.environment == command.visibility or command.visibility ==
           true %}{% assign group_commands = group_commands | push: command %}{% endif %}{% else %}{% assign group_commands = group_commands | push: command %}{% endif %}{% endfor %} {% if group[1].name %}
-          <h5 class="dropdown-heading">{{ group[1].name }}</h5>{% endif %} {% for command in group_commands %} {% if command.desc and command.disabled_until and command.disabled_until.size > 0 %}<div class="d-block holder" tabindex="0" data-toggle="tooltip" {% include description.html value=command %}>{% include command.html class="dropdown-item" command=command quiet="true" %}</div>{% else %}{% include command.html class="dropdown-item" command=command %}{% endif %} {% if command.divider %}
+          <h5 class="dropdown-heading">{{ group[1].name }}</h5>{% endif %} {% for command in group_commands %} {% if command.desc and command.disabled_until and command.disabled_until.size > 0 %}<div class="d-block holder" tabindex="0" data-toggle="tooltip" {% include description.html value=command %}>{% include plumbing/command.html class="dropdown-item" command=command quiet="true" %}</div>{% else %}{% include plumbing/command.html class="dropdown-item" command=command %}{% endif %} {% if command.divider %}
           <div class="dropdown-divider{% if command.divider_class %} {{command.divider_class}}{% endif %}"></div>{% endif %} {% endfor %} {% endfor %}
 
         </div>

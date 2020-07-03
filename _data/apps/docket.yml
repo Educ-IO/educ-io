@@ -94,14 +94,14 @@ helpers:
   - handlebars
   - url
 modules:
-  - flags
-  - controller
-  - display
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
   - help
-  - service
-  - main
-  - router
-  - dates
   - docket/analysis
   - docket/archive
   - docket/calendars
@@ -124,17 +124,17 @@ scripts:
   - extends/math
   - extends/string
 templates:
-  - options
-  - choose
-  - confirm
-  - alert
+  - generic/options
+  - generic/choose
+  - generic/confirm
+  - generic/alert
+  - generic/inform
+  - generic/text
   - loader
   - help
-  - inform
-  - text
-  - notify
   - shared/control_icon
   - shared/control_button
+  - shared/child_buttons
   - shared/menu_item
   - shared/menu_divider
   - shared/permission
@@ -185,6 +185,7 @@ docs:
   - docket/README
   - docket/NEW_INSTRUCTIONS
   - docket/NEW_COMPLETE_TITLE
+  - docket/NEW_COMPLETE_TODAY_TITLE
   - docket/SEARCH_INSTRUCTIONS
   - docket/ARCHIVE_INSTRUCTIONS
   - docket/EDIT_INSTRUCTIONS
@@ -346,8 +347,6 @@ menus:
             hash: display.timesheet
             toggle:
               - timesheet
-            disabled_until:
-              - experiments
             divider: true  
           - name: Queue
             desc: Display Task Queue from all your Docket Databases

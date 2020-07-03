@@ -5,10 +5,10 @@ permalink: /support/
 helpers:
   - handlebars
 modules:
-  - controller
-  - service
-  - flags
-  - display
+  - generic/controller
+  - generic/service
+  - generic/flags
+  - generic/display
   - page
   - support
 imports:

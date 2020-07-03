@@ -50,7 +50,14 @@ Tasks = (options, factory) => {
             text: "Complete",
             class: "btn-success",
             desc: factory.Display.doc.get("NEW_COMPLETE_TITLE"),
-            handler: complete,
+            handler: values => complete(values.From ? values.From.Value : factory.Dates.now())(values),
+            actions: [
+              {
+                text: "Complete Today",
+                desc: factory.Display.doc.get("NEW_COMPLETE_TODAY_TITLE"),
+                handler: values => complete(factory.Dates.now())(values),                
+              }
+            ],
             dismiss: true,
           }],
           updates: {
@@ -122,7 +129,8 @@ Tasks = (options, factory) => {
     place: (item, element) => {
       
       /* <!-- Get the relevant date/status for item --> */
-      var _date = (item.IS_TIMED || item.IN_FUTURE ? item.FROM : factory.Dates.now()).toISOString(true).split("T")[0],
+      var _date = (item.IS_TIMED || item.IN_FUTURE ? item.FROM : 
+                   item.IS_COMPLETE ? item.DONE : factory.Dates.now()).toISOString(true).split("T")[0],
           _status = item.STATUS, _holder = $(`div[data-date='${_date}'], div[data-status='${_status ? _status : item.IS_TIMED ? "NONE" : ""}']`);
       
       var _place = holder => {
@@ -367,10 +375,10 @@ Tasks = (options, factory) => {
             TAGS: values.Tags ? values.Tags.Value : null,
             DETAILS: values.Details ? values.Details.Value : null,
             STATUS: completed ? "COMPLETE" : "",
-            DONE: completed ? factory.Dates.now() : ""
+            DONE: completed ? completed : ""
           });
         };
-      return FN.input.new("new", `Create New ${type}`, null, _create(true)).then(_create(false))
+      return FN.input.new("new", `Create New ${type}`, null, _create).then(_create())
         .catch(e => e ? factory.Flags.error("Create New Error", e) : factory.Flags.log("Create New Cancelled"));
     },
 

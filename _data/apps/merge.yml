@@ -66,17 +66,17 @@ helpers:
   - dialog
   - exporter
 modules:
-  - flags
-  - controller
-  - display
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
   - help
-  - service
-  - main
   - items
   - recent
-  - router
   - datatable
-  - dates
   - grid
   - headers
   - merge/states
@@ -96,10 +96,10 @@ scripts:
   - extends/string
   - extends/promises
 templates:
-  - options
-  - choose
-  - confirm
-  - alert
+  - generic/options
+  - generic/choose
+  - generic/confirm
+  - generic/alert
   - loader
   - recent
   - help

@@ -75,17 +75,17 @@ helpers:
   - handlebars
   - url
 modules:
-  - flags
-  - controller
-  - display
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
   - help
-  - service
-  - main
   - items
   - recent
-  - router
   - datatable
-  - dates
   - grid
   - headers
   - view/readwrite
@@ -94,17 +94,17 @@ scripts:
   - extends/regex
   - extends/array
 templates:
-  - options
-  - choose
-  - confirm
-  - alert
+  - generic/options
+  - generic/choose
+  - generic/confirm
+  - generic/alert
+  - generic/inform
+  - generic/text
+  - generic/files
+  - generic/upload
   - loader
   - recent
-  - text
-  - files
-  - upload
   - help
-  - inform
   - shared/control_icon
   - shared/control_button
   - shared/populate_buttons

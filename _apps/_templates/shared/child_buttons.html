@@ -1,0 +1,10 @@
+{% raw %}
+{{~#if split}}<button type="button" class="btn {{ class }} dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <span class="sr-only">Toggle Dropdown</span>
+</button>{{/if~}}
+<div class="dropdown-menu{{#if direction}} dropdown-menu-{{ direction }}{{/if}}">
+  {{~#each actions~}}
+    <a class="dropdown-item" href="#" data-action="{{concat 'actions_' ../index '_' @index}}"{{#if desc}} data-toggle="tooltip" data-html="true" title="{{ desc }}"{{/if}}{{#if (any ../dismiss dismiss)}} data-dismiss="modal"{{/if}}>{{ text }}</a>
+  {{~/each~}}
+</div>
+{% endraw %}

@@ -1,9 +1,9 @@
 ---
-layout: compress
+layout: compress.base
 style: landing
 modules:
-  - controller
-  - service
+  - generic/controller
+  - generic/service
 imports:
 - name: jquery_slim
   load: first
@@ -13,7 +13,7 @@ logo: true
 ---
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
-{% include head.html %}
+{% include plumbing/head.html %}
 	<body>
 		<div class="container-fluid logo landing">
 			<div class="title">
@@ -21,6 +21,6 @@ logo: true
 		  </div>
 		{{ content }}
     </div>
-		{% include footer.html type="page" %}
+		{% include plumbing/footer.html type="page" %}
   </body>
 </html>

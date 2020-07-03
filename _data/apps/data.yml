@@ -56,23 +56,23 @@ helpers:
   - css
   - handlebars
 modules:
-  - flags
-  - controller
-  - display
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
   - help
-  - service
-  - main
   - items
   - recent
-  - router
 scripts: 
   - extends/regex
   - extends/array
 templates:
-  - options
-  - choose
-  - confirm
-  - alert
+  - generic/options
+  - generic/choose
+  - generic/confirm
+  - generic/alert
   - loader
   - recent
   - help

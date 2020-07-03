@@ -1,8 +1,8 @@
 ---
-layout: compress
+layout: compress.base
 modules:
-  - controller
-  - service
+  - generic/controller
+  - generic/service
 imports:
 - name: jquery_slim
   load: first
@@ -15,9 +15,9 @@ imports:
 ---
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
-{% include head.html %}
+{% include plumbing/head.html %}
 	<body>
 		{{ content }}
-		{% include footer.html type="page" %}
+		{% include plumbing/footer.html type="page" %}
   </body>
 </html>

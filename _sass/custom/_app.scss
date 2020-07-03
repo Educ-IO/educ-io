@@ -65,6 +65,10 @@ html, body {
 // -- Action Buttons -- //
 #sign_in .btn, #sign_out .btn {
 	border-radius: 2px;
+  .google-logo-wrapper {
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+  }
 }
 
 #sign_in .btn {

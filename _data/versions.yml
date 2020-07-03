@@ -1,4 +1,8 @@
 site :
+  0.1.12 :
+    name : Docket v1.1.1
+    desc : Improvements and Bug Fixes
+    numeric : 0.1.12.0
   0.1.11 :
     name : Docket v1.1.0
     desc : Timesheet View and Bug Fixes
@@ -1248,6 +1252,13 @@ events :
     name : Early testing version
     type : minor
 docket :
+  1.1.1 :
+    name : Improvements and Bug Fixes
+    desc : Fixed Adding Past Tasks Bug
+    changes :
+      - Complete immediately option (for time recording)
+      - Visual Bug Fixes (Adding Past Tasks)
+    type : minor
   1.1.0 :
     name : Experimental Timesheet View
     desc : Fixed Tag Removal regression bug

@@ -1,0 +1,43 @@
+{% assign colour = false %}{% if page.colour %}{% assign colour = page.colour %}{% elsif layout.colour %}{% assign colour = layout.colour %}{% elsif page.app and site.data.apps[page.app].colour %}{% assign colour = site.data.apps[page.app].colour %}{% endif %}{% assign css = false %}{% if page.css and page.css.secondary %}{% assign css = page.css.secondary %}{% elsif layout.css and layout.css.secondary %}{% assign css = layout.css.secondary %}{% endif %}{% if page.app and site.data.apps[page.app].css and site.data.apps[page.app].css.secondary and site.data.apps[page.app].css.secondary.size > 0 %}{% assign css = css | concat: site.data.apps[page.app].css.secondary %}{% endif %}{% if page.extra-css and page.extra-css.secondary and page.extra-css.secondary.size > 0 %}{% assign css = css | concat: page.extra-css.secondary %}{% endif %}{% if include.type == "app" or page.templates or layout.templates or page.docs or layout.docs %}
+  {% include plumbing/docs.html %}
+  {% include plumbing/templates.html %}
+{% endif %}
+{% if include.type == "app" or include.type == "page" %}
+		{% include plumbing/links.html %}
+		{% include plumbing/analytics.html %}
+{% endif %}
+<script type="text/javascript" charset="utf-8" data-src="start">
+	{% include scripts/start.js %}
+</script>
+{% assign imports = false %}{% if page.imports %}{% assign imports = page.imports %}{% elsif layout.imports %}{% assign imports = layout.imports %}{% elsif page.app and page.app != "" and site.data.apps[page.app].imports %}{% assign imports = site.data.apps[page.app].imports %}{% endif %}
+{% if imports %}
+{% assign async_imports = imports | where_exp: "item", "item.load == 'async'" | map: "name" %}
+  {% if async_imports %}
+    {% for import in async_imports %}
+      {% if jekyll.environment == site.debug %}
+        {% for import_script in site.data.imports[import].dev %}
+          <script id="{{ import_script.id }}" src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} async></script>
+        {% endfor %}
+      {% else %}
+        {% for import_script in site.data.imports[import].prod %}
+          <script id="{{ import_script.id }}" src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} async></script>
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+	{% assign defer_imports = imports | where_exp: "item", "item.load == 'defer'" | map: "name" %}
+  {% if defer_imports %}
+    {% for import in defer_imports %}
+      {% if jekyll.environment == site.debug %}
+        {% for import_script in site.data.imports[import].dev %}
+          <script id="{{ import_script.id }}" src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} defer></script>
+        {% endfor %}
+      {% else %}
+        {% for import_script in site.data.imports[import].prod %}
+          <script id="{{ import_script.id }}" src="{{ import_script.url }}"{% if import_script.integrity %} integrity="{{ import_script.integrity }}"{% endif %}{% if import_script.crossorigin %} crossorigin="{{ import_script.crossorigin }}"{% endif %} defer></script>
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endif %}
+{% include plumbing/styles.html icons="true" colour=colour imports=css %}

@@ -72,29 +72,30 @@ helpers:
   - colours
   - handlebars
 modules:
-  - flags
-  - controller
-  - display
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
   - help
-  - service
-  - main
   - items
   - recent
-  - router
+  - generic/router
   - accounts/credentials
 scripts: 
   - extends/regex
   - extends/array
 templates:
-  - options
-  - choose
-  - confirm
-  - alert
+  - generic/options
+  - generic/choose
+  - generic/confirm
+  - generic/alert
+  - generic/inform
+  - generic/text
   - loader
   - recent
   - help
-  - inform
-  - text
   - shared/control_icon
   - shared/control_button
 docs:

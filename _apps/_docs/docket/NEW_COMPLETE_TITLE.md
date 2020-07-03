@@ -1,1 +1,1 @@
-Save item and immediately mark as __complete__
+Save item and immediately mark as __completed__

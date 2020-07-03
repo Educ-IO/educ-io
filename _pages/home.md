@@ -35,8 +35,8 @@ css:
 helpers:
   - scroll
 modules:
-  - controller
-  - service
+  - generic/controller
+  - generic/service
   - home
 sitemap:
   priority: 1.0

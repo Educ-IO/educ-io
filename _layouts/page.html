@@ -1,12 +1,12 @@
 ---
-layout: compress
+layout: compress.base
 helpers:
   - scroll
 modules:
-  - controller
-  - service
-  - flags
-  - display
+  - generic/controller
+  - generic/flags
+  - generic/service
+  - generic/display
   - page
 imports:
 - name: underscore
@@ -66,7 +66,7 @@ css:
 ---
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
-	{% include head.html %}
+	{% include plumbing/head.html %}
 	<body class="container">
     {% if page.layout == 'guide' or page.layout == 'tutorial' %}{% include nav.html %}{% else %}{% include nav.html type="sticky-top" %}{% endif %}
 		<div class="container pb-4 px-0">
@@ -81,6 +81,6 @@ css:
 			</div>
 			{{ content }}
 		</div>
-		{% include footer.html type="page" %}		
+		{% include plumbing/footer.html type="page" %}		
   </body>
 </html>

@@ -101,17 +101,17 @@ helpers:
   - tabulate
   - exporter
 modules:
-  - flags
-  - controller
-  - display
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
   - items
   - recent
-  - router
   - help
-  - service
-  - main
   - datatable
-  - dates
   - grid
   - headers
   - reflect/helper
@@ -150,18 +150,18 @@ scripts:
   - extends/regex
   - extends/array
 templates:
-  - options
-  - choose
-  - confirm
-  - alert
+  - generic/options
+  - generic/choose
+  - generic/confirm
+  - generic/alert
+  - generic/action
+  - generic/text
+  - generic/files
+  - generic/upload
+  - generic/notify
   - loader
   - recent
-  - text
-  - files
-  - upload
-  - action
   - help
-  - notify
   - shared/control_icon
   - shared/control_button
   - shared/toggle_button

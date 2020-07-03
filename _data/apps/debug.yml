@@ -81,28 +81,28 @@ helpers:
   - colours
   - handlebars
 modules:
-  - flags
-  - controller
-  - display
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
   - help
-  - service
-  - router
-  - dates
-  - main
 scripts: 
   - extends/regex
   - extends/array
   - extends/promises
 templates:
-  - options
-  - choose
-  - confirm
-  - alert
+  - generic/options
+  - generic/choose
+  - generic/confirm
+  - generic/alert
+  - generic/inform
+  - generic/text
   - loader
   - recent
   - help
-  - inform
-  - text
   - shared/control_icon
   - shared/control_button
   - shared/toggle_button

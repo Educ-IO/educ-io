@@ -3,7 +3,7 @@
 		{% for value in site.data.tiers %}{% assign tier = value[1] %}<div class="col-xs-12 col-lg-4">
 			<div class="card text-center">
 				<div class="card-header">
-					<h5 class="display-2"><span class="currency text-muted">£</span>{{tier.cost}}<span class="period">/month</span></h5>
+					<h5 class="display-2"><span class="currency text-muted">£</span>{{tier.cost}}<span class="period">/ {% if tier.unit %}{{tier.unit}}{% else %}month{% endif %}</span></h5>
 				</div>
 				<div class="card-block">
 					<h5 class="card-title align-middle">{{tier.name}}</h5>

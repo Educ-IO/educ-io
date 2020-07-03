@@ -186,7 +186,8 @@ App = function() {
     current: focus => FN.display.dated(focus, ಠ_ಠ.Display.state().in(STATE_MONTHLY) ?
       FN.views.monthly : ಠ_ಠ.Display.state().in(STATE_WEEKLY) ?
       FN.views.weekly : ಠ_ಠ.Display.state().in(STATE_DAILY) ?
-      FN.views.daily : FN.views.weekly, FN.display.cleanup()),
+      FN.views.daily : 
+     (focus, overlay) => (FN.views.weekly(focus, overlay), ಠ_ಠ.Display.state().change(DISPLAY, STATE_WEEKLY)), FN.display.cleanup()),
 
     dated: (focus, fn) => new Promise(resolve => {
 

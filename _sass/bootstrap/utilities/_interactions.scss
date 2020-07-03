@@ -1,0 +1,5 @@
+// stylelint-disable declaration-no-important
+
+@each $value in $user-selects {
+  .user-select-#{$value} { -webkit-user-select: $value !important; -moz-user-select: $value !important; -ms-user-select: $value !important; user-select: $value !important; }
+}

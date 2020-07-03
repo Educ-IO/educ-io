@@ -1,1 +1,0 @@
-!function(){var a=Handlebars.template;(Handlebars.templates=Handlebars.templates||{}).tag=a({compiler:[7,">= 4.0.0"],main:function(a,e,n,l,s){return'<span class="tag d-inline small mw-150p">'+a.escapeExpression(a.lambda(null!=e?e.detail:e,e))+"</span>\n"},useData:!0})}();

@@ -10,3 +10,7 @@ Math.parseInteger = function(value) {
   var parsed = parseInt(value, 10);
   return Number.isNaN(parsed) ? value : parsed;
 };
+
+Math.randomInteger = function(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
