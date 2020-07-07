@@ -1,4 +1,8 @@
 site :
+  0.1.12a :
+    name : Classes v0.0.5c-beta
+    desc : Bug Fixes
+    numeric : 0.1.12.1
   0.1.12 :
     name : Docket v1.1.1
     desc : Improvements and Bug Fixes
@@ -1514,6 +1518,11 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  v0.0.5c-beta :
+    name : Bug Fixes
+    type : minor
+    changes :
+      - Select Single Class to Students View Fixed
   v0.0.5b-beta :
     name : Bug Fixes
     type : minor

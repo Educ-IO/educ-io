@@ -164,6 +164,7 @@ templates:
   - help
   - shared/control_icon
   - shared/control_button
+  - shared/child_buttons
   - shared/toggle_button
   - shared/list_item
   - shared/response_item

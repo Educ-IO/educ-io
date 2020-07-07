@@ -132,6 +132,7 @@ templates:
   - help
   - shared/control_icon
   - shared/control_button
+  - shared/child_buttons
   - shared/tabular/filters
   - shared/tabular/datatable
   - shared/tabular/table

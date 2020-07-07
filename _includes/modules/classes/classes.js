@@ -7,7 +7,7 @@ Classes = (options, factory) => {
 
   /* <!-- Internal Constants --> */
   const DEFAULTS = {},
-    FN = {};
+        FN = {};
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -16,8 +16,8 @@ Classes = (options, factory) => {
 
   /* <!-- Internal Variables --> */
   var _fields = {
-    classroom : ["id", "name", "section", "description", "room", "ownerId", "creationTime", "updateTime", "enrollmentCode", "courseState",
-                  "alternateLink", "teacherFolder", "guardiansEnabled", "calendarId"],
+    classroom : ["id", "name", "section", "description", "room", "ownerId", "creationTime", "updateTime",
+                 "enrollmentCode", "courseState", "alternateLink", "teacherFolder", "guardiansEnabled", "calendarId"],
   };
   /* <!-- Internal Variables --> */
 

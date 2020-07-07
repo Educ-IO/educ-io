@@ -73,6 +73,7 @@ templates:
   - help
   - shared/control_icon
   - shared/control_button
+  - shared/child_buttons
   - emails/email_standard
   - shared/split
 docs:

@@ -78,6 +78,7 @@ templates:
   - help
   - shared/control_icon
   - shared/control_button
+  - shared/child_buttons
 docs:
   - shared/FILTERS
   - shared/JUMP

@@ -101,6 +101,7 @@ templates:
   - shared/breadcrumbs
   - shared/control_icon
   - shared/control_button
+  - shared/child_buttons
   - shared/populate_buttons
   - shared/pill
   - folders/rows

@@ -1,20 +1,20 @@
-########################################################
-#                                                      #
-#   d8888b. db       .d88b.   .o88b. db   dD .d8888.   #
-#   88  `8D 88      .8P  Y8. d8P  Y8 88 ,8P' 88'  YP   #
-#   88oooY' 88      88    88 8P      88,8P   `8bo.     #
-#   88~~~b. 88      88    88 8b      88`8b     `Y8b.   #
-#   88   8D 88booo. `8b  d8' Y8b  d8 88 `88. db   8D   #
-#   Y8888P' Y88888P  `Y88P'   `Y88P' YP   YD `8888Y'   #
-#                                                      #
-########################################################
+#########################################
+#                                       #
+#   .d8888. db    db d8b   db  .o88b.   #
+#   88'  YP `8b  d8' 888o  88 d8P  Y8   #
+#   `8bo.    `8bd8'  88V8o 88 8P        #
+#     `Y8b.    88    88 V8o88 8b        #
+#   db   8D    88    88  V888 Y8b  d8   #
+#   `8888Y'    YP    VP   V8P  `Y88P'   #
+#                                       #
+#########################################
 
-name: Blocks
-desc: Share __links__ and create your own simple dashboard-style __intranet__ page
-link: /blocks/
-colour: 6d635a
-logo: images/blocks_logo.svg
-learn: /guides/blocks
+name: Sync
+desc: Sync G-Suite to your user data, including Groups and Classroom
+link: /sync/
+colour: a85805
+logo: images/sync_logo.svg
+learn: /guides/sync
 imports:
   - name: underscore
     load: first
@@ -74,6 +74,7 @@ templates:
   - shared/control_icon
   - shared/control_button
   - shared/child_buttons
+  - shared/split
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -81,11 +82,11 @@ docs:
   - shared/HELP_AVAILABLE
   - shared/HELP_INDETERMINATE
   - shared/HELP_UNAVAILABLE
-  - blocks/PUBLIC
-  - blocks/FEATURES
-  - blocks/README
-  - blocks/INSTRUCTIONS
-  - blocks/TUTORIALS
+  - sync/PUBLIC
+  - sync/FEATURES
+  - sync/README
+  - sync/INSTRUCTIONS
+  - sync/TUTORIALS
 scopes:
   google:
     - scope: email
@@ -100,31 +101,33 @@ scopes:
       name: View and manage Google Drive files and folders that you have opened or created with this app
       reason: In order to display the Google Drive Picker, at least one 'Drive' scope is required, and this is the lowest privilege one.
       request: login
-    - scope: https://www.googleapis.com/auth/spreadsheets.readonly
-      name: View your Google Spreadsheets
-      reason: This app needs to load data from spreadsheets in order to display it, but not to write to them.
-      request: login
-    - scope: https://www.googleapis.com/auth/drive.readonly
-      name: View the files in your Google Drive
-      reason: In order to read previously saved view files, this 'readonly' permissions is required.
-      request: login
-    - scope: https://www.googleapis.com/auth/spreadsheets
-      name: Edit your Google Spreadsheets
-      reason: This app needs to save data to your spreadsheets in order to share your tiles.
-      request: lazy
-    - scope: https://www.googleapis.com/auth/urlshortener
-      name: Manage your goo.gl short URLs
-      reason: Once you have created a link to share in this app, you have the option of using the Google Link Shortener to 'compress' it. This scope allows access to that feature.
-      request: lazy
     - scope: https://www.googleapis.com/auth/drive.install
       name: Special scope used to let users approve installation of an app.
       reason: Allows you to install the app into your Google Drive, making opening it faster and easier from within the Google Drive Web App.
       request: lazy
 keys:
   google:
-      general: 
-      oauth: 894090436889-a4kond8cjov44miilvm2gs7q4bboarup.apps.googleusercontent.com
+      oauth: 976925442046-3evn6sn67ps6p6m245qphmsmbkku393d.apps.googleusercontent.com
 menus:
+  - name: Sync
+    groups:
+      all:
+        commands:
+          - name: Create
+            desc: Create a new Sync
+            hash: create
+            auth: google
+          - name: Open
+            desc: Open an existing Data Sheet
+            hash: open
+            auth: google
+            imports:
+              - google
+          - name: Close
+            desc: Close the current Sync
+            hash: close
+            disabled_until:
+              - opened
   - name: Settings
   - name: About
     short_name: Help
@@ -138,7 +141,7 @@ menus:
             hash: tutorials
             desc: Ways in which you can use this app
           - name: Guide
-            url: /guides/blocks
+            url: /guides/sync
             desc: A guide to using this app
             divider: true
             
@@ -161,10 +164,10 @@ menus:
             divider: true
             
           - name: Permissions
-            url: /scopes/?highlight=blocks
+            url: /scopes/?highlight=sync
             desc: Find out about the permissions and scopes that this app uses
           - name: Changes
-            url: /changes?highlight=blocks
+            url: /changes?highlight=sync
             desc: Find out about the most recent changes and features of this app
             divider: true
             
@@ -184,4 +187,15 @@ menus:
               - jshashes
               - fetchjsonp
             auth: google
+buttons:
+    - name: Create a Sync
+      desc: Create a new Sync
+      hash: create
+      auth: google
+    - name: Open Existing
+      desc: Open an Existing Data Sheet
+      hash: open
+      auth: google
+      imports:
+        - google
 published: false
