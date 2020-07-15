@@ -1,4 +1,10 @@
 site :
+  0.1.12b :
+    name : Classes v0.0.5d-beta
+    desc : Bug Fixes
+    changes :
+      - Fixed Regression Bug preventing notification messages in certain apps
+    numeric : 0.1.12.2
   0.1.12a :
     name : Classes v0.0.5c-beta
     desc : Bug Fixes
@@ -1518,6 +1524,12 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  v0.0.5d-beta :
+    name : Bug Fixes
+    type : minor
+    changes :
+      - Fixed Display Bug for Imported Classes with Enrolment Code
+      - Fixed Gradesheet Output First Classwork Column Width Bug
   v0.0.5c-beta :
     name : Bug Fixes
     type : minor

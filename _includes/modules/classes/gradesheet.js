@@ -201,7 +201,7 @@ Gradesheet = (options, factory) => {
       /* <1-- Cells with Topics or Titles but no merges --> */
       if ((!_title_Merge && _title_Width) || (!_topic_Merge && _topic_Width)) 
         _width = Math.max(_width, Math.ceil(_title_Width), Math.ceil(_topic_Width));
-      if (_width != column.pixelSize)
+      if (_width && _width != column.pixelSize)
         memo.requests.push(value.helpers.format.dimension(value.helpers.grid.columns(index, index + 1).dimension(_width)));
 
     }

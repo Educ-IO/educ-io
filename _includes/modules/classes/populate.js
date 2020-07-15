@@ -100,7 +100,7 @@ Populate = (options, factory) => {
       created: value.creationTime ? factory.Dates.parse(value.creationTime).toDate().toLocaleDateString() : null,
       teachers: value.teachers || [],
       students: value.students || [],
-      code: value.enrollmentCode,
+      code: value.enrollmentCode || "",
       $$usage: value.$$usage, /* <!-- Usage Date/Time in ISO Format (for searching/sorting) --> */
       $usage: value.$usage, /* <!-- Full Date/Time Object for Latest Usage --> */
       __usage: value.__usage || [], /* <!-- Prefixed with __ to prevent sorting / searching --> */

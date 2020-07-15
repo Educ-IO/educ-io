@@ -123,7 +123,7 @@ Router = function() {
         
         /* <!-- Load the Initial Instructions --> */
         var _show = recent => ಠ_ಠ.Display.doc.show({
-            name: "README",
+            name: _options.readme || "README",
             content: recent && recent.length > 0 ? ಠ_ಠ.Display.template.get({
               template: "recent",
               recent: recent
@@ -478,8 +478,8 @@ Router = function() {
           /* <!-- Load the Public Instructions --> */
           /* <!-- Don't use handlebar templates here as we may be routed from the controller, and it might not be loaded --> */
           if (!command || !_last || command[0] !== _last[0]) ಠ_ಠ.Display.doc.show({
-            wrapper: "PUBLIC",
-            name: "FEATURES",
+            wrapper: _options.public ? null : "PUBLIC",
+            name: _options.public || "FEATURES",
             target: ಠ_ಠ.container,
             clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
           });

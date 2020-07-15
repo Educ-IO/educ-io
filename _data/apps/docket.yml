@@ -130,6 +130,7 @@ templates:
   - generic/alert
   - generic/inform
   - generic/text
+  - generic/notify
   - loader
   - help
   - shared/control_icon

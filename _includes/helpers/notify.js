@@ -88,7 +88,8 @@ Notify = (options, factory) => {
           _success("Successful Save", factory.Display.doc.get({
               name: _.isFunction(message) ? message() : message,
               content: result.webViewLink ?
-                result.webViewLink : result.spreadsheetId ?
+                result.webViewLink : result.spreadsheetUrl ? 
+                  result.spreadsheetUrl : result.spreadsheetId ?
                   `https://docs.google.com/spreadsheets/d/${result.spreadsheetId}/edit` : result.id ?
                     `https://drive.google.com/file/d/${result.id}/view` : "https://drive.google.com",
             }), delay)() : false;

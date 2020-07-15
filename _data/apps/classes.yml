@@ -133,6 +133,7 @@ templates:
   - generic/text
   - generic/files
   - generic/upload
+  - generic/notify
   - loader
   - recent
   - help

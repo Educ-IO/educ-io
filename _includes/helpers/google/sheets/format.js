@@ -54,6 +54,13 @@ Google_Sheets_Format = (options, factory) => {
 
   };
 
+  var _autofill = (range, alternate) => ({
+    "autoFill": {
+      "useAlternateSeries": !!alternate,
+      "range": range
+    }
+  });
+
   /* <!-- Border Types can be: DOTTED | DASHED | SOLID | SOLID_MEDIUM | SOLID_THICK | NONE | DOUBLE --> */
   var _border = (type, colour) => ({
     "style": type || "SOLID",
@@ -132,6 +139,12 @@ Google_Sheets_Format = (options, factory) => {
     "updateDimensionProperties": dimension
   });
   
+  var _delete = dimension => ({
+    "deleteDimension": {
+       "range": dimension,
+    }
+  });
+    
   var _autosize = dimension => ({
     "autoResizeDimensions": {
       "dimensions" : dimension 
@@ -146,6 +159,9 @@ Google_Sheets_Format = (options, factory) => {
       "fields": "hiddenByUser",
   });
   
+  var _value = value => ({
+    "userEnteredValue": value
+  });
   
   var _conditional = (ranges, index) => {
   
@@ -177,7 +193,7 @@ Google_Sheets_Format = (options, factory) => {
         booleanRule : {
           "condition" : {
             "type" : type,
-            "values" : _.isArray(values) ? values : [values],
+            "values" : values ? _.isArray(values) ? values : [values] : null,
           },
           "format" : format  
         }
@@ -213,10 +229,14 @@ Google_Sheets_Format = (options, factory) => {
     align : _align,
     
     autosize : _autosize,
+    
+    autofill : _autofill,
 
     colour : value => _colour.single.apply(null, _parseColour(value)),
     
     conditional : _conditional,
+    
+    delete : _delete,
     
     foreground : _foreground,
 
@@ -242,7 +262,9 @@ Google_Sheets_Format = (options, factory) => {
     
     update : _update,
     
-    type : _type
+    type : _type,
+    
+    value : _value
     
   };
   /* <!-- External Visibility --> */

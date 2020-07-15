@@ -289,7 +289,7 @@ App = function() {
                     })
                     .then(merge => {
                       ಠ_ಠ.Flags.log("MERGED FILE:", merge);
-                      return ಠ_ಠ.Google.execute(ಠ_ಠ.SETUP.CONFIG.api, "test", [merge.id]);
+                      return ಠ_ಠ.Google.scripts.execute(ಠ_ಠ.SETUP.CONFIG.api, "test", [merge.id]);
                     })
                     .then(result => ಠ_ಠ.Flags.log("RESULT FROM MERGE:", result))
                     .catch(e => ಠ_ಠ.Flags.error("Merging Failure: ", e ? e : "No Inner Error"))

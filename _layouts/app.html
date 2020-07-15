@@ -62,9 +62,9 @@ css:
 	{% include plumbing/head.html %}
 	<body>
 		{% include nav.html %}
-    {% if page.app and site.data.apps[page.app].templates contains 'notify' %}<div
+    {% if page.app %}{% if site.data.apps[page.app].templates contains 'notify' or site.data.apps[page.app].templates contains 'generic/notify' %}<div
     	aria-live="polite" aria-atomic="true"
-      id="{{page.app}}_Notify" class="notifications"><div class="holder"></div></div>{% endif %}
+      id="{{page.app}}_Notify" class="notifications"><div class="holder"></div></div>{% endif %}{% endif %}
 		<div id="{{ site.app.content }}" class="content">{{ content }}</div>
 		{% include plumbing/footer.html type="app" %}
     {% include plumbing/breakpoints.html %}

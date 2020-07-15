@@ -343,6 +343,27 @@ loki:
       bulk: 97.8
       id: __loki
 
+uuid_new:
+  name: UUID
+  desc: Used to generarate UUIDs (universally unique identifiers) in the browser.
+  url: https://cdnjs.com/libraries/uuid
+  project: https://github.com/uuidjs/uuid
+  version: 8.2.0
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/uuid/8.2.0/uuidv4.min.js
+      integrity: sha512-W6Yf3E7UBUKz5LqkjOHga4hkDX3huRhAvV8I6MFuZ0zX+5ttmVldY8nz9q26SwBItFrb9XSKNMiWEsKg8rDmXg==
+      crossorigin: anonymous
+      bulk: 1.6
+      id: __uuid
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/uuid/8.2.0/uuidv4.min.js
+      integrity: sha512-W6Yf3E7UBUKz5LqkjOHga4hkDX3huRhAvV8I6MFuZ0zX+5ttmVldY8nz9q26SwBItFrb9XSKNMiWEsKg8rDmXg==
+      crossorigin: anonymous
+      bulk: 1.6
+      id: __uuid
+      
 uuid:
   name: Node UUID
   desc: Used to generarate UUIDs (universally unique identifiers) in the browser.
@@ -2109,3 +2130,19 @@ ion-sound:
       crossorigin: anonymous
       bulk: 28.7
       id: __ionsound
+      
+stripe:
+  name: Stripe Client API
+  project: https://stripe.com/docs
+  desc: The Stripe Payments Client Javascript API
+  type: js
+  prod:
+    - url: https://js.stripe.com/v3
+      mode: no-cors
+      bulk: 176
+      id: __stripe
+  dev:
+    - url: https://js.stripe.com/v3
+      mode: no-cors
+      bulk: 176
+      id: __stripe
