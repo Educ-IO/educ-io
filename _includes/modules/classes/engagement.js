@@ -248,6 +248,7 @@ Engagement = (options, factory) => {
         if (results[3] && results[3] !== true && 
             ((classroom.$work && classroom.$work.length > 0) || (classroom.$announcements && classroom.$announcements.length > 0))) {
           classroom.engagement =  FN.calculate.classroom(classroom);
+          classroom.engagement.__condensed = (classroom.engagement.length >= 2);
           var _numerics = _.map(classroom.engagement, "$numeric");
           classroom.$$engagement = Math.preciseRound(_.reduce(_numerics, (total, value) => total + value, 0) / _numerics.length, 2);
         }
@@ -256,8 +257,7 @@ Engagement = (options, factory) => {
         options.functions.populate.update(classroom);
       
         /* <!-- Remove the loader to inform that loading has completed --> */
-        _.each(["teachers", "students", "engagement", "fetched"], 
-               value => targets[value].empty().append(factory.Display.template.get("cell", true)(classroom[value])));
+        options.functions.common.refresh(["teachers", "students", "engagement", "fetched"], targets, classroom);
         
       }) : false);
   /* <!-- Internal Functions --> */

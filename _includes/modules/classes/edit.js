@@ -36,7 +36,9 @@ Edit = (options, factory) => {
     options.functions.populate.update(classroom);
     var _row = options.state.session.table.table().find(`tbody tr[data-id='${classroom.$id}']`),
         _cell = _row.find(`td:nth-child(${options.functions.common.column(field) + 1})`).first();
-    _cell.empty().append(factory.Display.template.get("cell", true)(classroom[field]));
+    
+    /* <!-- Updated the Edited Cell --> */
+    options.functions.common.cell(_cell, classroom[field]);
   };
   /* <!-- Internal Functions --> */
   

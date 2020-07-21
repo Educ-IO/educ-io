@@ -111,9 +111,8 @@ Submissions = (options, factory) => {
               options.functions.populate.update(work, "classwork");
 
               /* <!-- Remove the loader to inform that loading has completed --> */
-              _.each(["min", "avg", "max", "submissions", "fetched"], 
-                     value => targets[value].empty().append(factory.Display.template.get("cell", true)(work[value])));
-
+              options.functions.common.refresh(["min", "avg", "max", "submissions", "fetched"], targets, work); 
+        
             }) : null;
     });
   /* <!-- Internal Functions --> */
