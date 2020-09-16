@@ -11,7 +11,10 @@ Your very own __markdown angel__. Publish __google docs__ to [github pages](http
 {:class="lead"}
 
 Designed to make generating a publishing Markdown __easier__ for non-technical or non-confident users and named with a nod to __Jekyll &amp; Hyde__ as it is best used with static [Jekyll](https://jekyllrb.com/) sites. It's `free`, so you can grab the [code](https://github.com/thiscouldbejd/Gabriel) or install the app from the [Google Web Store](https://chrome.google.com/webstore/detail/gabriel-the-markdown-ange/okimajjeocnndpifeelaajdebkkbckff).
-{:class="lead mb-4"}
+{:class="lead"}
+
+We __do not process__ or __store__ your personal information when you use this add-on - all the code runs on your system and within your Google Account. Please take a few moments to read our [privacy policy](/about/?highlight=privacy) more about our transparent approach to ensuring your data remains confidential and always yours.
+{:class="alert-primary p-2 border border-primary rounded lead mb-4"}
 
 {% endcapture %}
 
