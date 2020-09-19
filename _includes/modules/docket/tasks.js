@@ -46,6 +46,8 @@ Tasks = (options, factory) => {
           handlers: {
             clear: _dialog.handlers.clear,
           },
+          action: "Save",
+          action_desc: factory.Display.doc.get("NEW_PENDING_TITLE"),
           actions: [{
             text: "Complete",
             class: "btn-success",
@@ -151,7 +153,7 @@ Tasks = (options, factory) => {
         return element;
       };
       
-      return _holder.length == 1 ? _place(_holder) : false;
+      return _holder.length === 1 ? _place(_holder) : false;
       
     },
     
@@ -632,7 +634,7 @@ Tasks = (options, factory) => {
       container.find("div.edit textarea")
         .keydown(e => {
           var code = e.keyCode ? e.keyCode : e.which;
-          if (code == 13 || code == 27) e.preventDefault(); /* <!-- Enter or Escape Pressed --> */
+          if (code === 13 || code === 27) e.preventDefault(); /* <!-- Enter or Escape Pressed --> */
         })
         .keyup(e => {
           var code = e.keyCode ? e.keyCode : e.which;
@@ -645,13 +647,13 @@ Tasks = (options, factory) => {
                 "true" : "false");
             return parent;
           };
-          if (code == 13) {
+          if (code === 13) {
             /* <!-- Enter Pressed --> */
             e.preventDefault();
             _return(e.shiftKey ?
               FN.actions.complete(_handle(e.currentTarget)) : 
                       FN.actions.edit(_handle(e.currentTarget)));
-          } else if (code == 27) {
+          } else if (code === 27) {
             /* <!-- Escape Pressed / Cancel Update --> */
             e.preventDefault();
             _return(FN.actions.cancel(_handle(e.currentTarget)));
@@ -703,7 +705,7 @@ Tasks = (options, factory) => {
               if (e.pointerType == "touch") {
                 var _destination = $(document.elementFromPoint(e.center.x, e.center.y));
                 _destination = _destination.is("div.item[draggable=true]") ? _destination : _destination.parents("div.item[draggable=true]");
-                if (_destination && _destination.length == 1) {
+                if (_destination && _destination.length === 1) {
                   var _source = $(e.target);
                   _source = _source.is("div.item") ? _source : _source.parents("div.item");
                   if (_source.parents(".group")[0] == _destination.parents(".group")[0]) _source.insertBefore(_destination);

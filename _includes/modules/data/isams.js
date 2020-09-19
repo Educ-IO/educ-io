@@ -31,7 +31,7 @@ iSAMS_API = (options, factory) => {
       per_sec: options.rate ? options.rate : 0,
       concurrent: options.concurrent ? options.concurrent : 0,
       retry: r =>
-        new Promise(resolve => r.status == 403 || r.status == 429 ?
+        new Promise(resolve => r.status === 403 || r.status === 429 ?
           r.json().then(result => result.error.message && result.error.message.indexOf("Rate Limit Exceeded") >= 0 ? resolve(true) : resolve(false)) : resolve(false))
     }, factory);
   

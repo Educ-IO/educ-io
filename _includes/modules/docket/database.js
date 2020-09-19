@@ -36,7 +36,7 @@ Database = (options, factory) => {
     
     archive : year => factory.Google.sheets.filtered(database.state.data.spreadsheet, factory.Google_Sheets_Metadata({},
       factory).filter().parse(options.schema.sheets.sheet_archive).value(year).make())
-      .then(value => value && value.sheets && value.sheets.length == 1 && 
+      .then(value => value && value.sheets && value.sheets.length === 1 && 
             _.find(value.sheets[0].developerMetadata, m => m.metadataKey == options.schema.sheets.sheet_archive.key && m.metadataValue == year) ?
         value.sheets[0].properties :
         factory.Google.sheets.batch(database.state.data.spreadsheet, [{

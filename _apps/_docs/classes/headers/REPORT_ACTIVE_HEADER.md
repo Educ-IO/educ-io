@@ -1,0 +1,1 @@
+Whether individual has shown __enagement__ (post a new comment in the stream or submitted/created an assignment) with the Classroom in specified time period.

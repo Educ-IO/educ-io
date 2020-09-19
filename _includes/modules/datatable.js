@@ -334,7 +334,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
             _last = _form.prev(".filter-form:visible"),
             _next = _form.next(".filter-form:visible");
         _clearFilter(e.target);
-        (_last.length == 1 ? _last : _next).find("input.table-search").select();
+        (_last.length === 1 ? _last : _next).find("input.table-search").select();
       } else if (keycode === 13) { /* <!-- Enter Key Pressed --> */
         e.preventDefault();
         _toggleFilter($(e.target).parents("div.form"), false);

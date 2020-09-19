@@ -56,7 +56,7 @@ Service = function() {
 
 			fetch("/version.json?d=" + Date.now(), {cache: "no-store"}).then((response) => {
 
-				if (response.status == 200) return response.json();
+				if (response.status === 200) return response.json();
 
 			}).then((version) => {
 
@@ -150,7 +150,7 @@ Service = function() {
 
             var k = e.which || e.keyCode;
 
-            if (k == 82 || k == 76) {
+            if (k === 82 || k === 76) {
 
               try {if (!ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.busy();} catch (e) {_err(e);}
 
@@ -160,7 +160,7 @@ Service = function() {
                 });
               };
 
-              if (k == 82) {
+              if (k === 82) {
 
                 /* <!-- CTRL-ALT-R --> */
                 /* <!-- Force Cache Refresh and then reload --> */
@@ -174,7 +174,7 @@ Service = function() {
                   }
                 ).catch(_clear);
 
-              }  else if (k == 76) {
+              }  else if (k === 76) {
 
                 /* <!-- CTRL-ALT-L --> */
                 /* <!-- List Cache Objects --> */
@@ -186,7 +186,7 @@ Service = function() {
 
               }
 
-            } else if (k == 85) {
+            } else if (k === 85) {
 							
 							_update("serviceWorker" in navigator ? navigator.serviceWorker.controller : null);
 							

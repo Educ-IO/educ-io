@@ -82,7 +82,7 @@ App = function() {
 
       var _retry = retry => fn()
         .catch(e => {
-          if (e.status == 403) { /* <!-- e.status: 403 --> */
+          if (e.status === 403) { /* <!-- e.status: 403 --> */
             ಠ_ಠ.Flags.log("ELEVATE: Need to grant permission");
             return {
               retry: retry
@@ -594,6 +594,13 @@ App = function() {
       
     },
     
+    routed: () => {
+    
+      /* <!-- Set Up / Create the Configuration Module --> */
+      FN.configuration = ಠ_ಠ.Configuration(ಱ, ಠ_ಠ);
+      
+    },
+    
     session: () => {
       
       /* <!-- Setup Today | Override every 15mins --> */
@@ -752,7 +759,7 @@ App = function() {
                       var _start = FN.focus.from();
                       FN.display.current(
                         _start.add(ಠ_ಠ.Display.state().in([STATE_MONTHLY, STATE_WEEKLY], true) &&
-                          ಠ_ಠ.Dates.isoWeekday(_start) == 6 ? 2 : 1, "days"));
+                          ಠ_ಠ.Dates.isoWeekday(_start) === 6 ? 2 : 1, "days"));
                     },
                   }
                 }
@@ -773,7 +780,7 @@ App = function() {
                       var _start = FN.focus.from();
                       FN.display.current(
                         _start.subtract(ಠ_ಠ.Display.state().in([STATE_MONTHLY, STATE_WEEKLY], true) &&
-                          ಠ_ಠ.Dates.isoWeekday(_start) == 7 ?
+                          ಠ_ಠ.Dates.isoWeekday(_start) === 7 ?
                           2 : 1, "days"));
                     },
                   }
@@ -914,7 +921,7 @@ App = function() {
                 keys: ["e", "E"],
                 fn: () => {
                   ಠ_ಠ.Display.state().enter(STATE_PREFERENCES);
-                  return ಱ.config.edit(ರ‿ರ.config.settings)
+                  return FN.configuration.edit(ರ‿ರ.config.settings, ಱ.config.fields())
                     .then(values => {
                       ಠ_ಠ.Display.state().exit(STATE_PREFERENCES);
                       return values !== undefined ? 
@@ -950,7 +957,7 @@ App = function() {
                       .then(results => _.tap(results,
                                              () => $("div[data-output-field='calendars'] a[role='button']").removeClass("loader")))
                       .then(results => results !== false ? 
-                            ಱ.config.add("calendars", "calendar", results) : results)
+                            FN.configuration.add("calendars", "calendar", results) : results)
                   },
                   class: {
                     matches: /CLASS/i,
@@ -958,7 +965,7 @@ App = function() {
                       .then(results => _.tap(results,
                                              () => $("div[data-output-field='classes'] a[role='button']").removeClass("loader")))
                       .then(results => results !== false ?
-                            ಱ.config.add("classes", "class", results) : results)
+                            FN.configuration.add("classes", "class", results) : results)
                   }
                 }
               },
@@ -970,12 +977,12 @@ App = function() {
                   calendar: {
                     matches: /CALENDAR/i,
                     length: 1,
-                    fn: id => ಱ.config.remove("calendars", decodeURIComponent(id).replace(/\|/gi, "."))
+                    fn: id => FN.configuration.remove("calendars", decodeURIComponent(id).replace(/\|/gi, "."))
                   },
                   class: {
                     matches: /CLASS/i,
                     length: 1,
-                    fn: id => ಱ.config.remove("classes", decodeURIComponent(id).replace(/\|/gi, "."))
+                    fn: id => FN.configuration.remove("classes", decodeURIComponent(id).replace(/\|/gi, "."))
                   }
                 }
               },

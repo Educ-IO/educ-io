@@ -78,7 +78,7 @@ Students = (options, factory) => {
   FN.class = (student, classroom) => ({
     id : student.userId,
     parent : classroom.$id,
-    text : classroom.name,
+    text : classroom.$$name,
     type : "student",
     title : "Remove Student from this Classroom",
     $removable : true,
@@ -100,7 +100,7 @@ Students = (options, factory) => {
               
           /* <!-- Add Class --> */
           _student.$$$classes.push(classroom.$id);
-          _student.$$classes.push(classroom.name);
+          _student.$$classes.push(classroom.$$name);
           _student.$classes.push(classroom);
           _student.classes.push(FN.class(student, classroom));
           
@@ -117,7 +117,7 @@ Students = (options, factory) => {
 
             /* <!-- Classes Initialisation --> */
             $$$classes : [classroom.$id],
-            $$classes : [classroom.name],
+            $$classes : [classroom.$$name],
             $classes : [classroom],
             classes : [FN.class(student, classroom)],
 

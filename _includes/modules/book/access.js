@@ -47,7 +47,7 @@ Access = (options, factory) => {
                   /* <!-- This only works for calendars added to a users calendar! --> */
                   options.functions.source.calendar(events[0].calendar)
                     .then(calendar => _return(calendar.id, calendar.accessRole == "writer" || calendar.accessRole == "owner"))
-                    .catch(e => e.status == 404 ? _check(events[0].calendar) : _return(events[0].calendar, false)))
+                    .catch(e => e.status === 404 ? _check(events[0].calendar) : _return(events[0].calendar, false)))
       .then(calendar => _.map(events, event => _.tap(event, event => event.manageable = calendar.manager)));
     
   };

@@ -459,7 +459,7 @@ Fields = (options, factory) => {
           var checks = _controls ?
             list.parents("[data-output-field]").find(`#${_controls}`) :
             list.find("input[type='checkbox']");
-          if (checks && checks.length == 1 &&
+          if (checks && checks.length === 1 &&
             checks.is("input[type='checkbox']") && !checks.prop("checked"))
             checks.prop("checked", true);
         }

@@ -60,7 +60,7 @@ Data = function() {
     _checks = {
       list: (list, map, field, items) => (name, values) => {
         list.length > 0 ?
-          list.length == 1 ?
+          list.length === 1 ?
           values.to.have.deep.nested.property(
             `${name}.Values${field ? `.${field}` : ""}.${items ? items : "Items"}`, map(list[0])) :
           values.to.have.deep.nested.property(

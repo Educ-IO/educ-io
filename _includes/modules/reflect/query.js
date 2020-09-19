@@ -66,7 +66,7 @@ Query = (options, factory) => {
   
   var _resolve = (reply, field) => reply && reply.action == "resolve" ? field.on("hidden.bs.collapse", () => {
             var _parent = field.closest(".questions");
-            _parent.find(".question").length == 1 ? (_parent.closest(".questioned").removeClass("questioned border border-warning"), _parent.remove()) : field.remove();
+            _parent.find(".question").length === 1 ? (_parent.closest(".questioned").removeClass("questioned border border-warning"), _parent.remove()) : field.remove();
           }).collapse("hide") : options.functions.process.display.replies(field.data("id"), [_parse.reply(reply, true)]);
   /* <!-- Internal Functions --> */
   

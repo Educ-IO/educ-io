@@ -153,17 +153,32 @@ Router = function() {
         /* <!-- Clean up the state (before command has run) if required! --> */
         if (route.reset) _clean(false);
         
-        var l_command = STRIP(command, route.__length),
+        /* <!-- Tidy up visuals if required! --> */
+        if (route.trigger) ಠ_ಠ.Display.state().enter(route.trigger);
+        
+        /* <!-- Tidy up visuals if required! --> */
+        if (route.tidy) ಠ_ಠ.Display.tidy();
+        
+        var l_command = route.preserve ? 
+            route.strip && _.isNumber(route.strip) ? 
+              STRIP(command, route.strip) : command : STRIP(command, route.__length),
           l_options = PREPARE(route.options, l_command),
           l_result = route.fn(_.isArray(l_command) ? 
                               l_command.length === 0 ? 
-                                null : l_command.length == 1 ? l_command[0] : l_command : l_command, l_options);
-        return l_result && l_result.then ? l_result
-          .then(result => {
-          
+                                null : l_command.length === 1 ? l_command[0] : l_command : l_command, l_options),
+          _complete = () => {
             /* <!-- Clean up the state (after command has run) if required! --> */
             if (route.clean) _clean(false);
 
+            /* <!-- Clean up the state (after command has run) if required! --> */
+            if (route.trigger) ಠ_ಠ.Display.state().exit(route.trigger);
+          };
+        
+        return l_result && l_result.then ? l_result
+          .then(result => {
+          
+            _complete();  
+          
             /* <!-- Run the success function if available --> */
             return route.success ? route.success(
               _.isObject(result) && _.has(result, "command") && _.has(result, "result") ?
@@ -174,7 +189,7 @@ Router = function() {
           })
           .catch(route.failure ? route.failure :
             e => e ?
-            ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative() : false) : l_result;
+            ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative() : false) : (_complete(), l_result);
       },
       _shortcut = (route, debug, name, key) => () => (!route.state || ಠ_ಠ.Display.state().in(route.state, route.all ? false : true)) ? 
                 (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && 
@@ -220,6 +235,7 @@ Router = function() {
         states : Potential States that should be cleared on exit (e.g. opened),
         test : Tests whether app has been used (for cleaning purposes)
         clear : Function to execute once exited / cleared (after logout)
+        center : Whether help / instruction dialogs should be centered
         route : App-Specific Router Command (if all other routes have not matched)
         routes : {
         	// Default routes (apart from AUTH/UNAUTH) can be switched off by setting active property to false (DEFAULT is ON).
@@ -229,6 +245,9 @@ Router = function() {
           // All routes can have a qualifier function (taking command as a parameter) to further refine matching
           // All routes can have a length (will check array length after initial regex match), which can be a number or a min|max object
           // All routes can have a next regex that is tested after initial regex match
+          // All routes can be flagged to 'tidy' if they should clean up any popovers etc before running
+          // All routes can have a trigger state, which is triggered while the route is running (promise or synchronous)
+          // All routes can be flagged to 'preserve' if they should call their fn property with the full command. If a numerical value is also supplied via a strip property, then this number of commands will be removed from the command array.
           // All promise returning routes can have a success({command, result}) and failure(e) methods attached
           // All routes can have a clean property which, if truthy, will call a state clean upon success
           // Extra configuration options for default routes are shown in methods below.
@@ -326,6 +345,7 @@ Router = function() {
           fn: () => ಠ_ಠ.Display.doc.show({
             name: "TUTORIALS",
             title: `Tutorials for ${options.name ? options.name : "App"} ...`,
+            class: _options.center ? "modal-dialog-centered" : "",
             target: $("body"),
             wrapper: "MODAL"
           }).modal("show"),
@@ -359,6 +379,7 @@ Router = function() {
             var show = (name, title) => $(`div.modal[data-doc="${name}"]`).length === 0 ? ಠ_ಠ.Display.doc.show({
               name: name,
               title: title,
+              class: _options.center ? "modal-dialog-centered" : "",
               target: $("body"),
               wrapper: "MODAL"
             }).modal("show") : false;

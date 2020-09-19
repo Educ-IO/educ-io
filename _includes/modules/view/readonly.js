@@ -96,7 +96,7 @@ ReadOnly = (ಠ_ಠ, sheet, parameters) => {
 
   var _start = (sheet, target) => {
 
-    ((sheet.data && sheet.data.length == 1) ?
+    ((sheet.data && sheet.data.length === 1) ?
       Promise.resolve(sheet) : _fetch(sheet, target))
     .then(sheet => _display(sheet.data.values, target))
       .catch(err => ಠ_ಠ.Flags.error("Adding Content Table", err));

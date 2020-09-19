@@ -145,6 +145,7 @@ templates:
   - shared/tabular/datatable
   - shared/tabular/rows
   - shared/tabular/cell
+  - shared/tabular/editing
   - shared/tabular/table_header
   - shared/tabular/table_body
   - shared/dialogs/dialog
@@ -208,6 +209,8 @@ docs:
   - classes/SELECT_TARGETS
   - classes/MOVE
   - classes/TARGET
+  - classes/TRANSFER_OWNERSHIP
+  - classes/ENTER_OWNER
   - classes/instructions/INSTRUCTIONS
   - classes/instructions/OVERVIEW_INSTRUCTIONS
   - classes/instructions/VIEW_EXPORT_INSTRUCTIONS
@@ -229,10 +232,19 @@ docs:
   - classes/titles/USAGE_LIMITED_TITLE
   - classes/titles/USAGE_FORCE_TITLE
   - classes/titles/MOVE_TITLE
+  - classes/titles/EDIT_TITLE
+  - classes/titles/SELECT_ALL
+  - classes/titles/DESELECT_ALL
+  - classes/titles/FILTER_CURRENT
+  - classes/titles/FILTER_ARCHIVED
+  - classes/titles/CHANGE_STATUS
+  - classes/titles/CHANGE_OWNER
   - classes/headers/OVERVIEW_ENGAGEMENT_HEADER
   - classes/headers/OVERVIEW_USAGE_HEADER
   - classes/headers/CLASSWORK_SUBMISSIONS_HEADER
   - classes/headers/STUDENTS_ENGAGEMENT_HEADER
+  - classes/headers/REPORT_ACTIVE_HEADER
+  - classes/headers/REPORT_ALL_PARTICIPANTS_HEADER
 scopes:
   google:
     - scope: email
@@ -705,16 +717,17 @@ buttons:
     hash: overview.select
     auth: google
     loud: true
-    imports:
-      - d3
     buttons:
+    - name: Archived Classes
+      desc: Select from a list of archived classes
+      hash: overview.select.archived
+      auth: google
+      loud: true
     - name: Filter Classes
       desc: Filter Classes you want to show an overview (by teacher and/or student)
       hash: overview.filter
       auth: google
       loud: true
-      imports:
-        - d3
       divider: true
       
     - name: About
@@ -726,23 +739,17 @@ buttons:
     hash: overview
     auth: google
     loud: true
-    imports:
-      - d3
     buttons:
     - name: All Classes
       desc: Show overview of all your active classes / classes (in your domain if your are a G-Suite Admin)
       hash: overview.all
       auth: google
       loud: true
-      imports:
-        - d3
     - name: Archived Classes
       desc: Show overview of all your archived classes / classes in your domain
       hash: overview.archived
       auth: google
       loud: true
-      imports:
-        - d3
       divider: true
       
     - name: About

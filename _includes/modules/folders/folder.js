@@ -1391,7 +1391,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
             !inPlace ? _upload() : ಠ_ಠ.Google.folders.search(file.parents, false, [], targetMimeType, [],
               ((n, t) => f => (f.name == n) && f.mimeType == t)(_name, targetMimeType), [], [], null, _team, false).then(results => {
-              if (results && results.length == 1) {
+              if (results && results.length === 1) {
                 _upload({}, results[0].id);
               } else {
                 _upload();
@@ -1433,7 +1433,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
         target: ಠ_ಠ.container,
         title: `Convert <strong class="text-secondary">${ಠ_ಠ.Display.commarise(results.length)}</strong> File${results.length > 1 ? "s" : ""}`,
         instructions: ಠ_ಠ.Display.doc.get("CONVERT_INSTRUCTIONS"),
-        state: results.length == 1 ? {
+        state: results.length === 1 ? {
           source: results[0].mimeType
         } : state && state.convert ? state.convert : null,
         shortcuts: _dialog_Shortcuts.convert,
@@ -1589,7 +1589,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
       };
 
-      if (items.length == 1) { /* <!-- No Need to confirm --> */
+      if (items.length === 1) { /* <!-- No Need to confirm --> */
 
         _star();
 

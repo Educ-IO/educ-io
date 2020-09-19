@@ -245,6 +245,11 @@ Flags = function() {
             }
 
           },
+          
+          cleared: () => !window.location.hash || 
+                          window.location.hash == "!" || 
+                          window.location.hash == "#" || 
+                          window.location.hash == "#!",
 
         };
 

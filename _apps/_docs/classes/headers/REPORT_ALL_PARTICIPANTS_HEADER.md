@@ -1,0 +1,1 @@
+Both __current__ and __invited__ {% raw %}{{content}}{% endraw %}

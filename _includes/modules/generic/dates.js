@@ -67,7 +67,8 @@ Dates = function() {
           "dayjs_plugin_isSameOrBefore",
           "dayjs_plugin_customParseFormat",
           "dayjs_plugin_advancedFormat",
-          "dayjs_plugin_localizedFormat"
+          "dayjs_plugin_localizedFormat",
+          "dayjs_plugin_duration",
         ].forEach(plugin => window[plugin] ? dayjs.extend(window[plugin]) : false);
 
       }

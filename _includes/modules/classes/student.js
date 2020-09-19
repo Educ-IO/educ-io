@@ -79,9 +79,9 @@ Student = (options, factory) => {
     
     var _return = [];
     var _submission = s => s.userId == student.$id,
-        _classwork = _.chain(student.$classes).map("$work").flatten()
+        _classwork = _.chain(student.$classes).map("$work").flatten().compact()
                           .filter(w => !!_.find(w.$submissions, _submission)).value(),
-        _announcements = _.chain(student.$classes).map("$announcements").flatten()
+        _announcements = _.chain(student.$classes).map("$announcements").flatten().compact()
                           .filter(a => a.creatorUserId == student.$id).value();
 
     _.each(_classwork, work => _.each(_.filter(work.$submissions, _submission), submission => {
@@ -122,7 +122,7 @@ Student = (options, factory) => {
       if (!value.class && value.course) {
         var classroom = _.find(student.$classes, course => course.$id == value.course);
         value.class = {
-          text: classroom.name,
+          text: classroom.$$name,
           title: classroom.id.title,
           url: classroom.id.url,
         };

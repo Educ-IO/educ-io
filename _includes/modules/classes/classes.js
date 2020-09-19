@@ -35,10 +35,26 @@ Classes = (options, factory) => {
       classrooms
     ))
     .then(classrooms => _.chain(classrooms).uniq(false, "id").each(classroom => {
+    
       classroom.fetched = {
         self: factory.Dates.now().toISOString()
       };
       classroom.$$fetched = classroom.fetched.self;
+      
+      /* <!-- Set Editable Fields --> */
+      _.each(["name", "section", "description", "room"], field => classroom[field] = {
+          $id: field,
+          text: classroom[field] || "",
+          $commands: [
+            {
+              action : "edit",
+              command : `edit.${field}.${classroom.$id || classroom.id}`,
+              title :  options.functions.common.title("EDIT_TITLE", field),
+              icon : "edit"
+            }
+          ],
+        });
+    
     }).sortBy("creationTime").value().reverse())
     .then(options.functions.people.classes);
 
@@ -85,7 +101,7 @@ Classes = (options, factory) => {
               self: loaded,
             },
             class: {
-              text: classroom.name,
+              text: classroom.$$name,
               title: classroom.id.title,
               url: classroom.id.url,
             },

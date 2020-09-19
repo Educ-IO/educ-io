@@ -259,7 +259,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode, helper, table
                 ರ‿ರ.expected.slice(),
                 value => {
                   var _regexp = new RegExp(`^${RegExp.escape(_key(value))}$`, "i");
-                  return _.every(_reports, (value, key) => key.search(_regexp) == -1);
+                  return _.every(_reports, (value, key) => key.search(_regexp) === -1);
                 });
 
           ಠ_ಠ.Flags.log("Missing from Analysis:", _missing);
@@ -454,6 +454,7 @@ Analysis = (ಠ_ಠ, forms, reports, expected, signatures, decode, helper, table
           .catch(e => ಠ_ಠ.Flags.error("Signature Error", e).negative())
           .then(ಠ_ಠ.Display.busy({
             target: _target,
+            size: "tiny",
             class: "loader-tiny loader-light mx-1",
             append: true,
             fn: true

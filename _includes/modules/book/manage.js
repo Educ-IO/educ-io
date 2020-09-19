@@ -339,13 +339,15 @@ Manage = (options, factory) => {
           toggled = check.prop("checked"),
           resource = options.state.application.resources.get(id);
 
-        if ((!resource.toggled && toggled) || (resource.toggled && !toggled))(resource.toggled = toggled) ?
-          (added.push(id), ರ‿ರ.calendars.push({
-            id: id,
-            name: name
-          })) :
-          (removed.push(id), ರ‿ರ.calendars = _.reject(ರ‿ರ.calendars, calendar => calendar.id == id));
-
+        if ((!resource.toggled && toggled) || (resource.toggled && !toggled)) {
+          resource.toggled = toggled;
+          resource.toggled ?
+            (added.push(id), ರ‿ರ.calendars.push({
+              id: id,
+              name: name
+            })) :
+            (removed.push(id), ರ‿ರ.calendars = _.reject(ರ‿ರ.calendars, calendar => calendar.id == id)); 
+        }
       });
 
       if (added.length > 0) factory.Flags.log("Toggled Resources:", added);
@@ -613,7 +615,7 @@ Manage = (options, factory) => {
         $("#bundle [data-output-field='Parts']"),
         /* <!-- Inserting new Part --> */
         _diff = !sequence ? 1 : /* <!-- New Part, move everything forward! --> */
-        data.Sequence.Value - sequence == 1 ? -1 : /* <!-- Leap frog the next Part --> */
+        data.Sequence.Value - sequence === 1 ? -1 : /* <!-- Leap frog the next Part --> */
         sequence >= data.Sequence.Value ? 1 : -1;
 
       if ((sequence && data.Sequence.Value != sequence) || /* <!-- Existing Part with Changed Sequence --> */

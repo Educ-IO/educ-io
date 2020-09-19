@@ -1,3 +1,3 @@
 {% raw %}
-{{#if valid}}<b>Signed by</b>{{else}}<em>Invalid</em>{{/if}}: {{#is who "===" true}}Me{{else}}{{who}}{{/is}}<br/><span>{{when}}</span>
+{{#if valid}}<b>Signed by</b>{{else}}<em>Invalid Signature</em>{{/if}}: {{#is who "===" true}}Me{{else}}{{who}}{{/is}}<br/><span class="text-secondary">{{uppercase when}}</span>
 {% endraw %}

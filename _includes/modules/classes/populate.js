@@ -80,19 +80,40 @@ Populate = (options, factory) => {
       id: {
         text: value.id,
         url: value.alternateLink,
-        title: "Open in Classroom"
+        title: "Open in Classroom",
       },
       calendar: {
         text: value.calendarId,
         url: `https://calendar.google.com/render?cid=${value.calendarId}&authuser=${factory.Google.user()}`,
         title: "Open in Calendar"
       },
-      state: value.courseState || "",
+      $$state: value.courseState || "", /* <!-- Class State (for searching/sorting) --> */
+      state: value.courseState ? {
+        text: value.courseState,
+        $commands: value.courseState === "ARCHIVED" ? [{
+          action : "activate",
+          class : "o-75",
+          command : `edit.activate.${value.id}`,
+          title :  options.functions.common.title("CHANGE_STATUS", "Activate"),
+          icon : "unarchive"
+        }] : value.courseState === "ACTIVE" ? [{
+          action : "archive",
+          class : "o-50",
+          command : `edit.archive.${value.id}`,
+          title :  options.functions.common.title("CHANGE_STATUS", "Archive"),
+          icon : "archive"
+        }] : null,
+      } : "",
+      $$name: value.name ? value.name.text : "", /* <!-- Class Name (for searching/sorting) --> */
       name: value.name || "",
       $$fetched: value.$$fetched, /* <!-- Fetched Date/Time in ISO Format (for searching/sorting) --> */
       fetched: value.fetched || {}, /* <!-- Fetched & Populated Dates / Times --> */
+      $$section: value.section ? value.section.text : "", /* <!-- Class Section (for searching/sorting) --> */
       section: value.section || "",
+      $$description: value.description ? value.description.text : "", /* <!-- Class Description (for searching/sorting) --> */
+      description: value.description || "",
       guardians: value.guardiansEnabled ? "Enabled" : "",
+      $$room: value.room ? value.room.text : "", /* <!-- Class Room (for searching/sorting) --> */
       room: value.room || "",
       $$updated: value.updateTime, /* <!-- Updated Date/Time in ISO Format (for searching/sorting) --> */
       updated: value.updateTime ? factory.Dates.parse(value.updateTime).toDate().toLocaleDateString() : null,
@@ -112,7 +133,15 @@ Populate = (options, factory) => {
         title: "Open in Folders App"
       } : null,
       $$owner: value.owner ? value.owner.text : null, /* <!-- Owner Name (for searching/sorting) --> */
-      owner: value.owner || "" /* <!-- Hidden Column cannot be last! --> */
+      owner: value.owner ? _.extend(value.owner, {
+        $commands: [{
+          action : "transfer",
+          class : "o-75",
+          command : `edit.transfer.${value.id}`,
+          title :  factory.Display.doc.get("CHANGE_OWNER"),
+          icon : "transform"
+        }]
+      }) : "" /* <!-- Hidden Column cannot be last! --> */
     }));
   
   FN.students = (data, db) => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, db, {

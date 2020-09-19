@@ -127,7 +127,9 @@ Grid = (ಠ_ಠ, data, options) => {
 		values = _.map(data, v => Object.assign({}, v));
 		fields = Array.apply(null, {
 			length: options.size.cols
-		}).map(Number.call, Number);
+		})
+      .map(Number.call, Number)
+      .map(n => String(n));
 		ಠ_ಠ.Flags.time("Creating Object Array from Sheet Values", true);
 
 	};

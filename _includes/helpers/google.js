@@ -150,7 +150,7 @@ Google_API = (options, factory) => {
       per_sec: url.rate ? url.rate : 0,
       concurrent: url.concurrent ? url.concurrent : 0,
       retry: r =>
-        new Promise(resolve => r.status == 403 || r.status == 429 ?
+        new Promise(resolve => r.status === 403 || r.status === 429 ?
           r.json().then(result => result.error.message && result.error.message.indexOf("Rate Limit Exceeded") >= 0 ? resolve(true) : resolve(false)) : resolve(false))
     }, factory);
     return networks;
@@ -333,7 +333,7 @@ Google_API = (options, factory) => {
           picker.addView((view = make(view)).setEnableTeamDrives ?
             view.setEnableTeamDrives(view.team !== undefined ? view.team : team) : view);
         });
-        if (views.length == 1 && !views[0].navigation) picker.enableFeature(FEATURE.NAV_HIDDEN);
+        if (views.length === 1 && !views[0].navigation) picker.enableFeature(FEATURE.NAV_HIDDEN);
       } else {
         picker.addView((views = make(views)).setEnableTeamDrives ?
           views.setEnableTeamDrives(views.team !== undefined ? views.team : team) : views);
@@ -465,7 +465,7 @@ Google_API = (options, factory) => {
 
     return new Promise(resolve => {
       if (parents && parents.length > 0) {
-        if (parents.length == 1) {
+        if (parents.length === 1) {
           _path(parents[0], chain).then(value => resolve(value));
         } else {
           var promises = [];

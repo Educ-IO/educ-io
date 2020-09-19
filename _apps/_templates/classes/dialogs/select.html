@@ -1,9 +1,20 @@
 {% raw %}
 {{#> dialog class="modal-xl" }}
+<div class="form-group row">
+  <label for="{{#if id}}{{id}}_{{/if}}filter" class="col-sm-2 col-form-label">Filter</label>
+  <div class="col-sm-10">
+    <div class="input-group">
+      <input id="{{#if id}}{{id}}_{{/if}}filter" type="text" class="form-control" tabindex="1" data-action="filter" data-filter="{{#if id}}{{id}}_{{/if}}select"/>
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" data-action="clear" data-clear="{{#if id}}{{id}}_{{/if}}filter" type="button">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
 <form class="needs-validation mt-3" novalidate>
   <div class="row">
     <div class="col-12 px-4 px-md-3">
-      <select class="custom-select" size="8" data-output-field="Classes" multiple>{{~#present data~}}
+      <select id="{{#if id}}{{id}}_{{/if}}select" class="custom-select" size="8" data-output-field="Classes" multiple>{{~#present data~}}
       {{#each data}}<option value="{{either id value}}"{{#if description}} title="{{description}}"{{/if}}>{{either text name}}</option>{{/each}}
       {{~/present~}}</select>
     </div>

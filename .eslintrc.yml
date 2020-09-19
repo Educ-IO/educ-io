@@ -16,7 +16,7 @@ rules:
   semi:
     - error
     - always
-  no-cond-assign: [1, except-parens]
+  no-cond-assign: [1, 'except-parens']
   no-const-assign: 1
   no-useless-escape: 0
 globals:
@@ -180,6 +180,7 @@ globals:
   Merge: true
   PDF: true
   Templates: true
+  Configuration: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

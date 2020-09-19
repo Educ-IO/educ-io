@@ -28,8 +28,11 @@ App = function() {
 
   FN.export = {
 
-    file: () => ಠ_ಠ.Display.state().in(FN.states.overview.in) ?
-      "Google Classroom Overview" : ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? "Google Classwork Overview" : "Overview",
+    file: () => ಠ_ಠ.Display.state().in(FN.states.overview.in) ? "Google Classroom Overview" : 
+      ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? "Google Classwork Overview" : 
+      ಠ_ಠ.Display.state().in(FN.states.overview.student) ? "Student Classroom Overview" : 
+      ಠ_ಠ.Display.state().in(FN.states.overview.students) ? "Classroom Students Overview" : 
+      "Overview",
 
     table: () => ಠ_ಠ.Display.state().in(FN.states.overview.in) ?
       "Classes" : ಠ_ಠ.Display.state().in(FN.states.classwork.in) ? "Classwork" : "Data",
@@ -61,17 +64,39 @@ App = function() {
       loading: since ? "Loading Classes" : display_status || status ? `Loading ${display_status || status} Classes` : "Loading All Classes"
     }, FN.states.file.loaded),
 
-    select: () => {
-      var all = [];
+    select: state => {
+      var all = [], _dialog = ಠ_ಠ.Dialog({}, ಠ_ಠ);
       return ಠ_ಠ.Display.modal("select", {
         id: "select_classes",
         target: ಠ_ಠ.container,
         title: "Select Class/es",
         instructions: ಠ_ಠ.Display.doc.get("SELECT_CLASSES"),
         validate: values => values && values.Classes,
+        updates: {
+          filter: _dialog.handlers.filter
+        },
+        handlers: {
+          clear: _dialog.handlers.clear,
+        },
+        actions: [{
+          text: "Select All",
+          class: "btn-dark",
+          desc: ಠ_ಠ.Display.doc.get("SELECT_ALL"),
+          handler: (values, dialog) => dialog.find("form select option:visible").prop("selected", true),
+          actions: [
+              {
+                text: "Deselect All",
+                desc: ಠ_ಠ.Display.doc.get("DESELECT_ALL"),
+                handler: (values, dialog) => dialog.find("form select option:visible").prop("selected", false),               
+              }
+            ],
+        }],
         enter: true
-      }, dialog => Promise.resolve(dialog.find("select").empty())
-            .then(select => ಠ_ಠ.Google.classrooms.names(null, true,
+      }, dialog => {
+        ಠ_ಠ.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {trigger: "hover"});
+        _dialog.handlers.keyboard.enter(dialog);
+        return Promise.resolve(dialog.find("select").empty())
+            .then(select => ಠ_ಠ.Google.classrooms.names(state ? state.toUpperCase() : null, true,
                               count => ಠ_ಠ.Main.event(FN.events.load.progress, ಠ_ಠ.Main.message(count, "class", "classes")))
             .catch(e => ಠ_ಠ.Flags.error("Class Name Loading Error", e))
             .then(ಠ_ಠ.Main.busy(true, false, FN.events.load.progress, "Loading Classes", "medium", dialog.find(".modal-content"), 
@@ -82,13 +107,18 @@ App = function() {
                       value: classroom.id,
                       text: classroom.text,
                       title: classroom.description || ""
-                    }))) : classes)))
+                    }))) : classes));
+      })
         .then(values => values && values.Classes && values.Classes.Values ? 
               FN.view.overview(null, null, _.filter(all, classroom => values.Classes.Values.indexOf(classroom.id) >= 0), null, null, "Selected") : null)
         .catch(e => (e ? ಠ_ಠ.Flags.error("Select Error", e) : ಠ_ಠ.Flags.log("Select Cancelled")).negative());
     },
     
-    filter: () => ಠ_ಠ.Display.modal("filter", {
+    filter: () => {
+      var _filter = status => values => values ? FN.view.overview(null, status, null,
+          values.Teacher ? values.Teacher.Value : null, values.Student ? values.Student.Value : null,
+          "Filtered") : null;
+      return ಠ_ಠ.Display.modal("filter", {
         id: "filter_classes",
         target: ಠ_ಠ.container,
         title: "Filter Class/es",
@@ -98,18 +128,29 @@ App = function() {
           if (!_valid) _.each(["Teacher", "Student"], field => {
               if (!values || !values[field]) {
                 var _field = form.find(`input[data-output-field='${field}']`);
-                if (_field.length == 1 && (_field = _field[0]).setCustomValidity) 
+                if (_field.length === 1 && (_field = _field[0]).setCustomValidity) 
                   _field.setCustomValidity("Please fill in at least one field!");
               }
             });
           return _valid;
         },
+        action: "Current",
+        action_desc: ಠ_ಠ.Display.doc.get("FILTER_CURRENT"),
+        actions: [{
+          text: "Archived",
+          class: "btn-dark",
+          desc: ಠ_ಠ.Display.doc.get("FILTER_ARCHIVED"),
+          handler: _filter("Archived"),
+          dismiss: true,
+        }],
         enter: true
-      }, dialog => dialog.find("input").first().focus())
-        .then(values => values ? FN.view.overview(null, null, null,
-          values.Teacher ? values.Teacher.Value : null, values.Student ? values.Student.Value : null,
-          "Filtered") : null)
-        .catch(e => (e ? ಠ_ಠ.Flags.error("Filter Error", e) : ಠ_ಠ.Flags.log("Filter Cancelled")).negative()),
+      }, dialog => {
+        ಠ_ಠ.Display.tooltips(dialog.find("[data-toggle='tooltip']"), {trigger: "hover"});
+        dialog.find("input").first().focus();
+      })
+        .then(_filter())
+        .catch(e => (e ? ಠ_ಠ.Flags.error("Filter Error", e) : ಠ_ಠ.Flags.log("Filter Cancelled")).negative());
+    },
     
     classwork: since => (ಠ_ಠ.Display.state().in(FN.states.overview.in) ? FN.overview.detach() : Promise.resolve(true))
       .then(() => FN.view.generic(() => FN.classwork.display(FN.current.classes(), since), FN.states.classwork.in, {
@@ -417,6 +458,13 @@ App = function() {
                 length: 0,
                 keys: ["ctrl+alt+j", "ctrl+alt+J"],
                 fn: FN.view.select,
+                routes: {
+                  filter: {
+                  matches: /ARCHIVED/i,
+                  length: 0,
+                  fn: () => FN.view.select("Archived")
+                },
+                },
               },
 
               close: {
@@ -536,7 +584,6 @@ App = function() {
                 state: FN.states.overview.in,
                 length: 0,
                 keys: ["u", "U"],
-                requires: "d3",
                 scopes: [
                   "https://www.googleapis.com/auth/classroom.announcements.readonly",
                   "https://www.googleapis.com/auth/classroom.topics.readonly",
@@ -551,7 +598,6 @@ App = function() {
                   force: {
                     matches: /FORCE/i,
                     length: 0,
-                    requires: "d3",
                     scopes: [
                       "https://www.googleapis.com/auth/classroom.announcements.readonly",
                       "https://www.googleapis.com/auth/classroom.topics.readonly",
@@ -566,7 +612,6 @@ App = function() {
                   limited: {
                     matches: /LIMITED/i,
                     length: 0,
-                    requires: "d3",
                     scopes: [
                       "https://www.googleapis.com/auth/classroom.announcements.readonly",
                       "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
@@ -583,7 +628,6 @@ App = function() {
                 state: FN.states.overview.in,
                 length: 0,
                 keys: ["e", "E"],
-                requires: "d3",
                 scopes: [
                   "https://www.googleapis.com/auth/classroom.announcements.readonly",
                   "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
@@ -595,7 +639,6 @@ App = function() {
                   force: {
                     matches: /FORCE/i,
                     length: 0,
-                    requires: "d3",
                     scopes: [
                       "https://www.googleapis.com/auth/classroom.announcements.readonly",
                       "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
@@ -829,21 +872,56 @@ App = function() {
 
               activate: {
                 matches: /ACTIVATE/i,
-                length: 0,
+                length: {
+                  min: 0,
+                  max: 1,
+                },
                 scopes: [
                   "https://www.googleapis.com/auth/classroom.courses",
                 ],
-                fn: () => FN.edit.activate(FN.current.classes()),
+                fn: command => FN.edit.activate(command ? [FN.populate.get(command)] : FN.current.classes()),
               },
 
               archive: {
                 matches: /ARCHIVE/i,
-                length: 0,
+                length: {
+                  min: 0,
+                  max: 1,
+                },
                 scopes: [
                   "https://www.googleapis.com/auth/classroom.courses",
                 ],
-                fn: () => FN.edit.archive(FN.current.classes()),
+                fn: command => FN.edit.archive(command ? [FN.populate.get(command)] : FN.current.classes()),
               },
+              
+               transfer: {
+                matches: /TRANSFER/i,
+                length: {
+                  min: 0,
+                  max: 1,
+                },
+                scopes: [
+                  "https://www.googleapis.com/auth/classroom.rosters",
+                  "https://www.googleapis.com/auth/classroom.courses",
+                ],
+                fn: command => FN.edit.transfer(command ? [FN.populate.get(command)] : FN.current.classes())
+                 .then(results => _.each(results, result => FN.usage.update(result.$id, true, "teachers"))),
+              },
+              
+              field: {
+                matches: [/.+/i, /\d+/i],
+                length: {
+                  min: 0,
+                  max: 1,
+                },
+                scopes: [
+                  "https://www.googleapis.com/auth/classroom.courses",
+                ],
+                tidy: true,
+                preserve: true,
+                strip: 1,
+                fn: commands => FN.edit.field(commands[1], commands[0], commands.length > 2 ? commands[2] : null)
+              }
 
             }
 

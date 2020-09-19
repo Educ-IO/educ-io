@@ -102,6 +102,7 @@ modules:
   - generic/main
   - generic/router
   - help
+  - configuration
   - docket/analysis
   - docket/archive
   - docket/calendars
@@ -185,6 +186,7 @@ docs:
   - docket/TUTORIALS
   - docket/README
   - docket/NEW_INSTRUCTIONS
+  - docket/NEW_PENDING_TITLE
   - docket/NEW_COMPLETE_TITLE
   - docket/NEW_COMPLETE_TODAY_TITLE
   - docket/SEARCH_INSTRUCTIONS

@@ -117,7 +117,7 @@ Data = (options, factory) => {
             /* <!-- This will normally exclude (=== false) values --> */
             if (_valid(__val, !_el.data("output-always"))) {
               var _name = _el.data("output-name"),
-                _type = ((_type = el.data("template")) ? _type : false);
+                _type = el.data("template") || false;
               if (_type) _val.__type = _type;
               _val = set(_val, _name, __val);
             }
@@ -149,7 +149,7 @@ Data = (options, factory) => {
         _inputs = _descendants(_$),
         _multiple = _inputs.length > 1,
         _field = _.reduce(_multiple ? _inputs : [_$.is(":input") ? input :
-            _inputs.length == 1 ? _inputs[0] :
+            _inputs.length === 1 ? _inputs[0] :
             _$.find(options.inputs)[0]
           ],
           (field, input) => {
@@ -158,7 +158,7 @@ Data = (options, factory) => {
 
             /* <!-- This will normally exclude (=== false) values --> */
             if (_valid(_val, !_$.data("output-always"))) {
-              var _type = ((_type = _$.data("template")) ? _type : false),
+              var _type = _$.data("template") || false,
                 _name = _$.data("output-name");
               if (_type && _.isObject(_val)) _val.__type = _type;
 
@@ -238,12 +238,12 @@ Data = (options, factory) => {
             .filter((i, parent) => $(parent).data(HIDDEN) === true).length !== 0;
 
           /* <!-- Set text in all cases but also use click handler if available --> */
-          !_hidden && _option.length == 1 ? _el.text(val) && _option[0].click() : _el.text(val);
+          !_hidden && _option.length === 1 ? _el.text(val) && _option[0].click() : _el.text(val);
 
         } else {
-          var _holder = ((_holder = _el.data("holder-field")) ? _holder : false);
+          var _holder = _el.data("holder-field") || false;
           if (_holder) {
-            var _name = ((_name = _el.data("output-name")) ? _name : false),
+            var _name = _el.data("output-name") || false,
               _val = _name ? val[_holder] : val;
             if (_val) _.each(_.isArray(_val) ? _val : [_val], item => {
               if (item.__type) {
@@ -304,9 +304,9 @@ Data = (options, factory) => {
 
       if (_name && data[_name]) {
 
-        var _values = ((_values = data[_name].Values) ? _values : {
+        var _values = data[_name].Values || {
             "Value": data[_name].Value
-          }),
+          },
           _targets = _descendants(_$, true, true);
 
         /* <!-- Iterate through all the field parts --> */

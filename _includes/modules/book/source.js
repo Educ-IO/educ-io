@@ -78,11 +78,11 @@ Source = (options, factory) => {
         return !!(privilege && privilege.childPrivileges && _.find(privilege.childPrivileges, 
           child => child.serviceName == "calendar" && child.privilegeName == "CALENDAR_RESOURCE"));
       })
-      .catch(e => e.status == 403 ? null : factory.Flags.error("Privileges Error", e).reflect(false))
+      .catch(e => e.status === 403 ? null : factory.Flags.error("Privileges Error", e).reflect(false))
       .then(result => result === null ? 
             factory.Google.resources.features.insert(uuid.v4())
               .then(feature => factory.Google.resources.features.delete(feature.name))
-              .catch(e => e.status == 403 ? null : factory.Flags.error("Feature Privilege Error", e).reflect(false)) : result);
+              .catch(e => e.status === 403 ? null : factory.Flags.error("Feature Privilege Error", e).reflect(false)) : result);
   
   FN.book = {
     
@@ -117,7 +117,7 @@ Source = (options, factory) => {
   FN.permissions = calendar => factory.Google.calendar.permissions.list(calendar);
   
   FN.notifications = calendar => factory.Google.calendars.notifications(calendar)
-                                  .catch(e => e && e.status == 404 ? false : factory.Flags.error("Calendar List Error", e));
+                                  .catch(e => e && e.status === 404 ? false : factory.Flags.error("Calendar List Error", e));
   
   FN.date = (time, date) => {
     var _date = options.state.session.current.clone();

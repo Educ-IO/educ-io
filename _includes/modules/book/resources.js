@@ -200,9 +200,9 @@ Resources = function(loaded) {
   /* <!-- Load Functions --> */
   FN.load = (loaded, context) => Promise.all([
         ಠ_ಠ.Google.resources.calendars.list()
-          .catch(e => e && e.status == 404 ? ಠ_ಠ.Flags.log("No Resource Calendars").negative() : false),
+          .catch(e => e && e.status === 404 ? ಠ_ಠ.Flags.log("No Resource Calendars").negative() : false),
         ಠ_ಠ.Google.resources.features.list()
-          .catch(e => e && e.status == 404 ? ಠ_ಠ.Flags.log("No Resource Features").negative() : false),
+          .catch(e => e && e.status === 404 ? ಠ_ಠ.Flags.log("No Resource Features").negative() : false),
       ])
       .then(values => {
 

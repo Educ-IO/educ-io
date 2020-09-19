@@ -100,7 +100,7 @@ Roster = (options, factory) => {
       student : (classroom, person) => {
         person = _.find(classroom.$students, student => student.profile.id == person);
         return FN.confirm("remove_Student", "STUDENT", person.profile.name.fullName,
-                            `${classroom.name} (Owned By: ${classroom.owner.text})`, "Remove")
+                            `${classroom.$$name} (Owned By: ${classroom.$$owner})`, "Remove")
                 .then(confirm => confirm ? 
                       factory.Google.classrooms.classroom(classroom).students().remove(person.profile.id)
                         .then(factory.Main.busy("Removing Student", true)) : false)
@@ -118,7 +118,7 @@ Roster = (options, factory) => {
       teacher : (classroom, person) => {
         person = _.find(classroom.$teachers, teacher => teacher.profile.id == person);
         return FN.confirm("remove_Teacher", "TEACHER", person.profile.name.fullName,
-                            `${classroom.name} (Owned By: ${classroom.owner.text})`, "Remove")
+                            `${classroom.$$name} (Owned By: ${classroom.$$owner})`, "Remove")
                 .then(confirm => confirm ? 
                       factory.Google.classrooms.classroom(classroom).teachers().remove(person.profile.id)
                         .then(factory.Main.busy("Removing Teacher", true)) : false)
@@ -140,16 +140,23 @@ Roster = (options, factory) => {
       student : (classroom, person) => {
         
         person = _.find(classroom.$students, student => student.profile.id == person);
-
+        var _dialog = factory.Dialog({}, factory);
+        
         return factory.Display.modal("select", {
           id: "select_target",
           target: factory.container,
           title: "Select Target Class/es",
           instructions: factory.Display.doc.get("SELECT_TARGETS"),
+          updates: {
+            filter: _dialog.handlers.filter
+          },
+          handlers: {
+            clear: _dialog.handlers.clear,
+          },
           validate: values => values && values.Classes,
           data: _.chain(options.functions.populate.all().data).map(classroom => ({
             id : classroom.$id,
-            name : `${classroom.section ? `${classroom.section} | `: ""}${classroom.name}`,
+            name : `${classroom.$$section ? `${classroom.$$section} | `: ""}${classroom.$$name}`,
           })).sortBy("name").value(),
           enter: true
         })
@@ -162,7 +169,7 @@ Roster = (options, factory) => {
                       }),
                       factory.Display.doc.get({
                         name: "CLASSROOM",
-                        content: classroom.name
+                        content: classroom.$$name
                       }),
                       factory.Display.doc.get({
                         name: "TARGET",

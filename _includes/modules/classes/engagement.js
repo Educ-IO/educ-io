@@ -171,9 +171,9 @@ Engagement = (options, factory) => {
      /* <!-- Get the From Point, All Students to build a inactive list from, and the filtered list of classwork and announcements --> */
       var _from = period.since.toISOString(),
           _classes = _.map(student.$$$classes, classroom => classroom.toString()),
-          _classwork = _.chain(student.$classes).map("$work").flatten()
+          _classwork = _.chain(student.$classes).map("$work").flatten().compact()
                           .filter(w => w.scheduledTime >= _from || w.updateTime >= _from || w.creationTime >= _from).value(),
-          _announcements = _.chain(student.$classes).map("$announcements").flatten()
+          _announcements = _.chain(student.$classes).map("$announcements").flatten().compact()
                           .filter(a => a.creatorUserId == student.id && (a.updateTime >= _from || a.creationTime >= _from)).value();
 
       /* <!-- Remove Students from list on inactive who have submitted work --> */

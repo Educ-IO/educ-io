@@ -1,0 +1,1 @@
+Please confirm you would like to transfer the ownership of __{% raw %}{{content}}{% endraw %}__ to __{% raw %}{{value}}{% endraw %}__.

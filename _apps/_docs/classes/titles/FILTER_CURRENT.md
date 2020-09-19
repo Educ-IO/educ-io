@@ -1,0 +1,1 @@
+Filter and show __current__ classes

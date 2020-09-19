@@ -78,7 +78,7 @@ Gradesheet = (options, factory) => {
   FN.row = row => _.tap({
     classroom: options.functions.populate.get(row.classroom),
     classwork: options.functions.populate.get(row.classwork, "classwork"),
-  }, value => value.key = `${value.classroom.$$created}_${value.classroom.name}_${value.classwork.$$topic || "**********"}_${value.classwork.$$created}`);
+  }, value => value.key = `${value.classroom.$$created}_${value.classroom.$$name}_${value.classwork.$$topic || "**********"}_${value.classwork.$$created}`);
 
   FN.rows = () => _.map(options.state.session.table.table().find("tbody tr[data-id][data-parent]").toArray(), el => {
     var _el = $(el);
@@ -301,7 +301,7 @@ Gradesheet = (options, factory) => {
         (
           memo.metadata.push(FN.metadata.columns(value.helpers, _column, _schema.keys.classroom, row.classroom.$id.toString())),
           memo.last.classroom = row.classroom.$id,
-          row.classroom.name
+          row.classroom.$$name
         ) : null);
 
       /* <!-- Add Topic Name or Null is the topic is the same as the last iteration --> */

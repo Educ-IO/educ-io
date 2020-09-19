@@ -21,7 +21,7 @@
         {{~#if actions}}{{~#each actions}}{{~#if actions}}<div class="btn-group dropup">{{/if~}}
         {{> control_button b_class=(concat (either class "btn-outline-danger") (which handler "" " dropdown-toggle")) b_id=id b_tab=(which ../tabindex (add true (add true 3 ../tabindex) @index) "") b_action=(which handler (concat "actions_" @index) "") b_tooltip=(which handler desc "") b_html=true b_text=text b_dismiss=(which handler (which dismiss "modal" "") "") b_toggle=(which handler "" "dropdown") }}
         {{~#if actions}}{{> child_buttons class=(either class "btn-outline-danger" dismiss=dismiss) index=@index direction="right" split=(which handler true false)}}</div>{{/if~}}{{/each~}}{{/if~}}
-        {{#unless no_action}}<button type="button" class="btn btn-primary" data-dismiss="modal"{{~#exists tabindex}} tabindex="{{inc tabindex}}"{{/exists}}>{{#if action}}{{action}}{{else}}Confirm{{/if}}</button>{{/unless}}
+        {{#unless no_action}}<button type="button" class="btn btn-primary" data-dismiss="modal"{{~#exists tabindex}} tabindex="{{inc tabindex}}"{{/exists}}{{~#present action_desc}} data-toggle="tooltip" data-html="true" title="{{action_desc}}"{{/present}}>{{#if action}}{{action}}{{else}}Confirm{{/if}}</button>{{/unless}}
       </div>
     </div>
   </div>

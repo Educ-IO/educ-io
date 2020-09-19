@@ -1,9 +1,18 @@
 site :
+  0.1.13 :
+    name : Classes v0.0.6-beta
+    desc : New Features
+    changes :
+      - Improved Class Selection with faster filtering
+      - Ability to edit names, sections, rooms and class descriptions
+      - Transfer ownership of classes
+    numeric : 0.1.13.0
   0.1.12c :
     name : Classes v0.0.5d-beta
     desc : Bug Fixes
     changes :
       - Fixed Regression Bug preventing notification messages in certain apps
+      - Fixed Analytics Error
     numeric : 0.1.12.3
   0.1.12a :
     name : Classes v0.0.5c-beta
@@ -1524,6 +1533,13 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  v0.0.6-beta :
+    name : New Features
+    type : major
+    changes :
+      - Improved Class Selection with faster filtering
+      - Ability to edit names, sections, rooms and class descriptions
+      - Transfer ownership of classes
   v0.0.5d-beta :
     name : Bug Fixes
     type : minor

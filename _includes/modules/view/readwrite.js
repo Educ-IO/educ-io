@@ -298,7 +298,7 @@ ReadWrite = (ಠ_ಠ, sheet) => {
       };
 
     /* <!-- Initiatilise Sheet & Protect Jump Links --> */
-    ((_sheet.data && _sheet.data.length == 1) ? _process() : _fetch(sheet.spreadsheetId).then(_process))
+    ((_sheet.data && _sheet.data.length === 1) ? _process() : _fetch(sheet.spreadsheetId).then(_process))
     .then(value => _.defaults(value, {
         data: [],
         name: name,

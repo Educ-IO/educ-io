@@ -183,7 +183,7 @@ Display = function() {
   var _keys = (options, dialog) => {
     /* <!-- Handle Enter Key (if simple) --> */
     if (options.enter) dialog.keypress(e => {
-      if (e.which == 13) {
+      if (e.which === 13) {
         e.preventDefault();
         dialog.find(".modal-footer button.btn-primary").click();
       }
@@ -258,8 +258,6 @@ Display = function() {
       });
     }
     
-    
-
   };
   /* <!-- Internal Functions --> */
 
@@ -328,7 +326,8 @@ Display = function() {
           .replace(/\{\{+\s*content\s*}}/gi, content)
           .replace(/\{\{+\s*doc\s*}}/gi, options && options.name ? options.name : "name")
           .replace(/\{\{+\s*title\s*}}/gi, options && options.title ? options.title : "Title")
-          .replace(/\{\{+\s*close\s*}}/gi, options && options.close ? options.close : "Close");
+          .replace(/\{\{+\s*close\s*}}/gi, options && options.close ? options.close : "Close")
+          .replace(/\{\{+\s*class\s*}}/gi, options && options.class ? ` ${options.class}` : "");
       },
 
       /* <!--
@@ -507,15 +506,15 @@ Display = function() {
       var _element = _target(options),
         _status;
       var _clear = (options && options.clear === true) || _element.find("div.loader-large").length > 0,
-        _loader = _clear ?
-        options.clear = true && _element.find("div.loader").remove() :
-        options && options.append ?
-        _element.append(_template("loader")(options ? options : {})) :
-        _element.prepend(_template("loader")(options ? options : {})),
+          _create = () => _template("loader")(options ? options : {}),
+          _loader = _clear ? options.clear = true && _element.find("div.loader").remove() :
+            options && options.replace ? _element.replaceWith(_create()) :
+            options && options.append ? _element.append(_create()) :
+            _element.prepend(_create()),
         _handler;
-
+      
       if (options && options.status) {
-        _status = _loader.find(".status");
+        _status = _loader.find(".status").removeClass("d-none");
         if (_string(options.status)) {
           /* <!-- Status is a string, so display it	--> */
           _status.text(options.status);
@@ -788,7 +787,7 @@ Display = function() {
 
         /* <!-- Handle Enter Key (if simple) --> */
         dialog.keypress(e => {
-          if (e.which == 13) {
+          if (e.which === 13) {
             e.preventDefault();
             dialog.find(".modal-footer button.btn-primary").click();
           }
@@ -900,7 +899,7 @@ Display = function() {
 
         /* <!-- Handle Enter Key (if simple) --> */
         if (options.simple || options.password) dialog.keypress(e => {
-          if (e.which == 13) {
+          if (e.which === 13) {
             e.preventDefault();
             dialog.find(".modal-footer button.btn-primary").click();
           }
@@ -1173,7 +1172,9 @@ Display = function() {
           _arrayize(names, _string)
             .forEach(name => all.indexOf(name) >= 0 ? _exit(name) : _enter(name));
           return _in(names);
-        }
+        },
+        
+        set: (names, toggle) => _arrayize(names, _string).forEach(name => toggle ? _enter(name) : _exit(name)),
 
       };
 

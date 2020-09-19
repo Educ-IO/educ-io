@@ -16,6 +16,9 @@ Common = (options, factory) => {
   /* <!-- Internal Options --> */
 
   /* <!-- Internal Variables --> */
+  var ರ‿ರ = {
+    titles: {},
+  }; /* <!-- State --> */
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
@@ -70,9 +73,15 @@ Common = (options, factory) => {
   FN.type = (types, type, force) => (!force && types === null) || (!force && types === undefined) || types == type || _.indexOf(types, type) >= 0;
   
   FN.cell = (cell, value) => cell.empty().append(factory.Display.template.get("cell", true)(value))
-                                .toggleClass("py-1 px-2", value && value.__condensed);
+                                .toggleClass("py-1 px-2", !!(value && value.__condensed));
   
   FN.refresh = (names, targets, value) => _.each(names, name => FN.cell(targets[name], value[name]));
+  
+  FN.title = (name, content) => {
+    if (!ರ‿ರ[name]) ರ‿ರ[name] = {};
+    return ರ‿ರ[name][content] ? 
+      ರ‿ರ[name][content] : ರ‿ರ[name][content] = factory.Display.doc.get(name, content, true);
+  };
   /* <!-- Public Functions --> */
 
   /* <!-- Initial Calls --> */

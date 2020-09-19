@@ -43,18 +43,15 @@
   // When fading in the modal, animate it to slide down
   .modal.fade & {
     @include transition($modal-transition);
-    -webkit-transform: $modal-fade-transform;
-            transform: $modal-fade-transform;
+    transform: $modal-fade-transform;
   }
   .modal.show & {
-    -webkit-transform: $modal-show-transform;
-            transform: $modal-show-transform;
+    transform: $modal-show-transform;
   }
 
   // When trying to close, animate focus to scale
   .modal.modal-static & {
-    -webkit-transform: $modal-scale-transform;
-            transform: $modal-scale-transform;
+    transform: $modal-scale-transform;
   }
 }
 
@@ -187,7 +184,6 @@
   // Place margin between footer elements
   // This solution is far from ideal because of the universal selector usage,
   // but is needed to fix https://github.com/twbs/bootstrap/issues/24800
-  // stylelint-disable-next-line selector-max-universal
   > * {
     margin: $modal-footer-margin-between / 2;
   }

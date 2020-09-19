@@ -39,8 +39,8 @@ Save = (options, factory) => {
     
     if (_.isArray(e) && e.length > 0) {
       /* <!-- Mutation Event Triggered --> */
-      e = _.reject(e, mutation => (mutation.addedNodes.length == 1 && mutation.addedNodes[0].nodeName == "DIV" && mutation.addedNodes[0].classList.value.indexOf("waves-ripple") === 0) ||
-               (mutation.removedNodes.length == 1 && mutation.removedNodes[0].nodeName == "DIV" && mutation.removedNodes[0].classList.value.indexOf("waves-ripple") === 0));
+      e = _.reject(e, mutation => (mutation.addedNodes.length === 1 && mutation.addedNodes[0].nodeName == "DIV" && mutation.addedNodes[0].classList.value.indexOf("waves-ripple") === 0) ||
+               (mutation.removedNodes.length === 1 && mutation.removedNodes[0].nodeName == "DIV" && mutation.removedNodes[0].classList.value.indexOf("waves-ripple") === 0));
       if (e.length > 0 && options.state.session.file) FN.background();
       
     } else {
@@ -157,7 +157,7 @@ Save = (options, factory) => {
                         (_.isRegExp(meta[EXTRACT]) ?
                           meta[EXTRACT] : new RegExp(meta[EXTRACT], "i")).exec(value) : value;
 
-                      memo[`FIELD.${field}`] = JSON.stringify(_.isArray(_val) && _val.length == 1 ?
+                      memo[`FIELD.${field}`] = JSON.stringify(_.isArray(_val) && _val.length === 1 ?
                         _val[0] : _val);
                     }, {
                       FORM: saving.data.form.$name ? saving.data.form.$name : saving.data.form.name

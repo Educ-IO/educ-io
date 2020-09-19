@@ -18,17 +18,10 @@ People = (options, factory) => {
   var ರ‿ರ = {
     cache: {},
     guardians: {},
-    titles: {},
   }; /* <!-- State --> */
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  FN.title = (name, content) => {
-    if (!ರ‿ರ[name]) ರ‿ರ[name] = {};
-    return ರ‿ರ[name][content] ? 
-      ರ‿ರ[name][content] : ರ‿ರ[name][content] = factory.Display.doc.get(name, content, true);
-  };
-  
   FN.person = key => ರ‿ರ.cache[key] !== undefined ? 
       Promise.resolve(ರ‿ರ.cache[key]) : 
       (ರ‿ರ.cache[key] = factory.Google.classrooms.person(key).catch(() => null));
@@ -78,7 +71,7 @@ People = (options, factory) => {
               if (type == "student") {
                 _person.$commands = [{
                   command : `move.${type}.${parent}.${_person.id}`,
-                  title :  FN.title("MOVE_TITLE", type),
+                  title :  options.functions.common.title("MOVE_TITLE", type),
                   icon : "directions_run"
                 }];
                 _person.__small = true;
@@ -167,6 +160,10 @@ People = (options, factory) => {
     submissions : FN.submissions,
     
     teachers : FN.teachers,
+    
+    name : FN.name,
+    
+    person : FN.person,
     
   };
   /* <!-- External Visibility --> */

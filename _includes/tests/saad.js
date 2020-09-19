@@ -72,7 +72,7 @@ SaaD = function() {
             key: "COLUMN_NAME",
             value: _name.toUpperCase(),
             _meta: {
-              group: groups.length == 1 || GEN.b(30) ? groups[0] : groups.shift(),
+              group: groups.length === 1 || GEN.b(30) ? groups[0] : groups.shift(),
               colour: GEN.cn(200, 255),
               title: _name,
               width: GEN.i(120, 200),
@@ -322,8 +322,8 @@ SaaD = function() {
           memo.length === 0 || memo[memo.length - 1].name != column._meta.group ?
             memo.push({
               name: column._meta.group,
-              start: memo.length == 0 ? 0 : memo[memo.length - 1].end,
-              end: memo.length == 0 ? 1 : memo[memo.length - 1].end + 1
+              start: memo.length === 0 ? 0 : memo[memo.length - 1].end,
+              end: memo.length === 0 ? 1 : memo[memo.length - 1].end + 1
             }) : memo[memo.length - 1].end += 1;
           return memo;
         }, []).filter(merge => merge.end - merge.start > 1).value();

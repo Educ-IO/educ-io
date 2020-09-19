@@ -136,7 +136,7 @@ Filters = (options, factory) => {
       };
     } else if (value.indexOf(BETWEEN) > 0) {
       var _value = value.split(BETWEEN);
-      if (_value.length == 2) {
+      if (_value.length === 2) {
         var val_1 = _value[0].trim(),
           val_2 = _value[1].trim();
         if (val_1 && val_2) _filter = {

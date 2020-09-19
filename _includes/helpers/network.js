@@ -123,7 +123,7 @@ Network = options => {
 					/* <!-- Fetch Executed, but may have returned a non-200 status code --> */
 					if (response.ok) {
 
-						if (response.status == 204) {
+						if (response.status === 204) {
 							resolve(true);
 						} else {
 							var _response;
@@ -141,23 +141,23 @@ Network = options => {
 
 					} else {
 
-						if (response.status == 503 && a--) {
+						if (response.status === 503 && a--) {
 							
 							DELAY(RANDOM(RETRY_WAIT_LOWER, RETRY_WAIT_UPPER)).then(() => {
 								if (_before) _before(_request);
 								fetch(_target, _request).then(_success).catch(_failure);
 							});
 							
-						} else if (response.status >= 500 || response.status == 413) {
+						} else if (response.status >= 500 || response.status === 413) {
 
 							/* <!-- 500 errors or 413 (Entity Too Large) means rejection --> */
 							reject({name: "HTTP 50x Error", url: response.url, status: response.status, statusText: response.statusText});
 
-						} else if (response.status == 301 || response.status == 302) {
+						} else if (response.status === 301 || response.status === 302) {
 
 							reject({name: "Got Redirect", url: response.url, status: response.status, statusText: response.statusText});
 
-						} else if (response.status == 401 && a--) {
+						} else if (response.status === 401 && a--) {
 
 							/* <!-- Set Retries down to nothing --> */
 							a = 0;
@@ -170,7 +170,7 @@ Network = options => {
 								}) : reject({name: "Failed Auth Check", url: response.url, status: response.status, statusText: response.statusText});
 							});
 
-            } else if (response.status == 404) {
+            } else if (response.status === 404) {
               
               reject({name: "Not Found", url: response.url, status: response.status, statusText: response.statusText});
               

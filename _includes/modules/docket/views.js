@@ -219,13 +219,13 @@ Views = (options, factory) => {
               lg: type.large ? 9 : type.small.before ? 3 : 6,
               xl: type.large ? 6 : type.small.before || type.small.after ? 3 : 4
             },
-            row_sizes: factory.Dates.isoWeekday(date) == 6 ? {
+            row_sizes: factory.Dates.isoWeekday(date) === 6 ? {
               lg: type.large ? 9 : type.small.before ? 3 : 6,
               xl: type.large ? 6 : type.small.before || type.small.after ? 3 : 4
             } : false,
             title: date.format("ddd"),
             date: date.clone(),
-            instruction: factory.Dates.isoWeekday(date) == 6 ? "row-start" : factory.Dates.isoWeekday(date) == 7 ? "row-end" : false,
+            instruction: factory.Dates.isoWeekday(date) === 6 ? "row-start" : factory.Dates.isoWeekday(date) === 7 ? "row-end" : false,
             class: factory.Dates.isoWeekday(date) >= 6 ? `p-0 ${css.block}` : css.block,
             action: action,
             title_class: css.title,
@@ -236,7 +236,7 @@ Views = (options, factory) => {
           });
         };
 
-      focus = focus.add(factory.Dates.isoWeekday(focus) == 1 ? -3 : -2, "days");
+      focus = focus.add(factory.Dates.isoWeekday(focus) === 1 ? -3 : -2, "days");
 
       _.times(7, () => {
 
@@ -244,9 +244,9 @@ Views = (options, factory) => {
 
         var _data = FN.day(focus, overlay),
           _day = factory.Dates.isoWeekday(focus),
-          _lg = _data.diff === 0 || (_day == 6 && _data.diff == -1) || (_day == 7 && _data.diff == 1),
-          _sm_Before = !_lg && (_data.diff == -1 || (_day == 5 && _data.diff == -2) || (_day == 6 && _data.diff == -2)),
-          _sm_After = !_lg && (_data.diff == 1 || (_day == 1 && _data.diff == 2)),
+          _lg = _data.diff === 0 || (_day === 6 && _data.diff === -1) || (_day === 7 && _data.diff === 1),
+          _sm_Before = !_lg && (_data.diff === -1 || (_day === 5 && _data.diff === -2) || (_day === 6 && _data.diff === -2)),
+          _sm_After = !_lg && (_data.diff === 1 || (_day === 1 && _data.diff === 2)),
           _sizes = {
             large: _lg,
             small: {

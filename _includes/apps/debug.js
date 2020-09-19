@@ -54,7 +54,7 @@ App = function() {
       o: array => array[GENERATE.i(0, array.length - 1)],
     },
     ARRAYS = value => value === undefined || value === null ? [] : _.isArray(value) ? value : [value],
-    SIMPLIFY = value => value && _.isArray(value) && value.length == 1 ? value[0] : value,
+    SIMPLIFY = value => value && _.isArray(value) && value.length === 1 ? value[0] : value,
     NUMBER = /^\+?[1-9][\d]*$/;
 
   var _promisify = (fn, value) => new Promise(resolve => resolve(fn ? ಠ_ಠ._isF(fn) ?

@@ -97,7 +97,7 @@ Tags = (options, factory) => {
       
           /* <!-- Handle Enter on textbox to Add --> */
           dialog.find("li input[data-type='tag']")
-            .keydown(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? 
+            .keydown(e => ((e.keyCode ? e.keyCode : e.which) === 13) ? 
                       e.preventDefault() || (e.shiftKey ? dialog.find(".modal-footer button.btn-primary") : $(e.currentTarget).siblings("button[data-action='add']")).click() :
                       _handle(e))
             .change(_handle)

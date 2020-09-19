@@ -434,7 +434,7 @@ SaaD = (options, factory) => {
           factory.Google_Sheets_Metadata({}, factory).filter()
           .parse(sheetMetadata ? sheetMetadata : _.values(options.sheets)[0]).make())
         .then(value => {
-          if (value && value.matchedDeveloperMetadata && value.matchedDeveloperMetadata.length == 1) {
+          if (value && value.matchedDeveloperMetadata && value.matchedDeveloperMetadata.length === 1) {
             /* <!-- Representation of Sheet Data Structure --> */
             ರ‿ರ.data = {
               spreadsheet: id,
@@ -647,7 +647,7 @@ SaaD = (options, factory) => {
                 ರ‿ರ.db.insert(item);
               }
             });
-            return !array && items.length == 1 ? items[0] : items;
+            return !array && items.length === 1 ? items[0] : items;
 
           } else {
 
@@ -682,7 +682,7 @@ SaaD = (options, factory) => {
               ರ‿ರ.db.update(item);
             });
             
-            return !array && items.length == 1 ? items[0] : items;
+            return !array && items.length === 1 ? items[0] : items;
             
           });
 
@@ -737,7 +737,7 @@ SaaD = (options, factory) => {
             /* <!-- As we have removed a row/rows, reduce the max grid size too --> */
             ರ‿ರ.data.max -= items.length;
 
-            return !array && items.length == 1 ? items[0] : items;
+            return !array && items.length === 1 ? items[0] : items;
           });
 
       return (check || options.options.check ? FN.rows.check(items, id).then(commit) : commit());

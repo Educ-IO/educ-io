@@ -1,0 +1,1 @@
+De-select all __visible__ options

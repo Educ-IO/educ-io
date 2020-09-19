@@ -1,0 +1,23 @@
+{% raw %}
+<div class="input-group flex-nowrap">
+  <div class="input-group-prepend d-none d-lg-flex">
+    <button class="btn btn-outline-warning btn-flat d-flex" data-action="cancel" type="button">
+      <i class="material-icons md-18 align-self-center">undo</i>
+    </button>
+  </div>
+  <input type="text" class="form-control" style="min-width: 220px;"{{#exists value}} value="{{value}}"{{/exists}}>
+  <div class="input-group-append d-none d-lg-flex">
+    <button class="btn btn-outline-success btn-flat d-flex" data-action="save" type="button">
+      <i class="material-icons md-18 align-self-center">check</i>
+    </button>
+  </div>
+</div>
+<div class="btn-group float-right mt-1 d-lg-none" role="group">
+  <button class="btn btn-sm btn-outline-warning btn-flat d-flex" data-action="cancel" type="button">
+    <i class="material-icons md-14 align-self-center">undo</i>
+  </button>
+  <button class="btn btn-sm btn-outline-success btn-flat d-flex" data-action="save" type="button">
+    <i class="material-icons md-14 align-self-center">check</i>
+  </button>
+</div>
+{% endraw %}

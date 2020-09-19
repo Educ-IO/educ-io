@@ -57,7 +57,7 @@ Handlebars = (options, factory) => {
 
         var _template = $("#__template__" + name);
 
-        if (_template.length == 1) {
+        if (_template.length === 1) {
 
           var _html = _template.html();
 
@@ -224,7 +224,7 @@ Handlebars = (options, factory) => {
           variable !== null &&
           !(variable.constructor === Object && Object.keys(variable).length === 0) &&
           !(variable.constructor === Array && variable.length === 0) && 
-          !((typeof variable === "string" || variable instanceof String) && variable == "")) {
+          !((typeof variable === "string" || variable instanceof String) && variable === "")) {
           return options.fn ? options.fn(this) : true;
         } else {
           return options.inverse ? options.inverse(this) : false;

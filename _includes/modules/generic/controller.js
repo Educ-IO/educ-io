@@ -27,8 +27,16 @@ Controller = function() {
     a.setAttribute("id", g.id);
     a.setAttribute("data-type", "import");
     a.setAttribute("data-src", g.url);
-    if (o == "style") m = s.getElementsByTagName(o)[0];
-    else if (o == "script") a.setAttribute("aria-hidden", "true");
+    
+    if (o == "style") {
+      m = s.getElementsByTagName(o)[0];
+    } else if (o == "script") {
+      a.setAttribute("aria-hidden", "true");
+    } else if (o == "meta") {
+      var _file = /(?:.+\/)([^#?]+)/gi.exec(g.url);
+      if (_file) a.setAttribute("data-filename", _file[_file.length - 1]);
+    }
+    
     var t = g.text;
     if (g.map === true) {
       var map_regex = /[\/*|\/\/]#[\s]*sourceMappingURL=(\S+)[\s]*[*\/]?/gi,
@@ -41,19 +49,22 @@ Controller = function() {
         }
       }
     }
+    
     if (g.overrides)
-      for (var j = 0; j < g.overrides.length; j++) t = t.replace(g.overrides[j].replace, g.overrides[j].with);
-    a.appendChild(s.createTextNode(t));
+      for (var j = 0; j < g.overrides.length; j++) t = t.replace(g.overrides[j].replace, g.overrides[j].with || "");
+    
+    a.appendChild(s.createTextNode(t.trim()));
     a.onload = r(g);
     if (m) {
       m.parentNode.insertBefore(a, m);
     } else {
       s.head.appendChild(a);
     }
+    
     if (g.css === true && g.fonts === true) {
       try {
         for (var k = 0; k < a.sheet.cssRules.length; k++) {
-          if (a.sheet.cssRules[k].type == 5) {
+          if (a.sheet.cssRules[k].type === 5) {
             if ("fontDisplay" in a.sheet.cssRules[k].style) {
               a.sheet.cssRules[k].style.fontDisplay = "block";
               _removeClass("font-sensitive");
@@ -90,13 +101,14 @@ Controller = function() {
   var _add = function(input, deferreds, resources) {
     
     var is_fonts = !!input.url.match(/^https:\/\/fonts\.googleapis\.com\/css/gi),
-        is_css = is_fonts || !!input.url.match(/(\.|\/)css($|\?\S+)/gi);
+        is_css = is_fonts || !!input.url.match(/(\.|\/)css($|\?\S+)/gi),
+        is_wasm = !!input.url.match(/(\.|\/)wasm($|\?\S+)/gi);
     
     var _dependencies = [];
 
     if (input.mode == "no-cors") {
 
-      deferreds.push(_include(input.url, is_css ? "style" : "script", input.id, input.dependencies));
+      deferreds.push(_include(input.url, is_css ? "style" : is_wasm ? "meta" : "script", input.id, input.dependencies));
 
     } else {
 
@@ -104,7 +116,8 @@ Controller = function() {
           mode: input.mode ? input.mode : "cors",
           integrity: input.integrity ? input.integrity : ""
         })
-        .then(res => [res.text(), input.id, input.url, is_css, is_fonts, input.map === true, input.overrides])
+        .then(res => [is_wasm ? res.blob().then(blob => window.URL.createObjectURL(blob)) : res.text(), 
+                        input.id, input.url, is_css, is_fonts, is_wasm, input.map === true, input.overrides])
         .then(promises => Promise.all(promises).then(resolved => {
 
           resources.push({
@@ -113,8 +126,9 @@ Controller = function() {
             url: resolved[2],
             css: resolved[3],
             fonts: resolved[4],
-            map: resolved[5],
-            overrides: resolved[6],
+            wasm: resolved[5],
+            map: resolved[6],
+            overrides: resolved[7],
             dependencies : _dependencies,
           });
 
@@ -130,17 +144,18 @@ Controller = function() {
   };
   
   var _injector = resource => new Promise(resolve => {
+    var _type = r => r.css === true ? "style" : r.wasm ? "meta" : "script";
     if (resource.dependencies && resource.dependencies.length > 0) {
-      var _run = new Promise(r => _inject(window, document, resource.css === true ? "style" : "script", resource, r)).then(() => {
+      var _run = new Promise(r => _inject(window, document, _type(resource), resource, r)).then(() => {
         var _dependencies = [];
         resource.dependencies.forEach(d => {
-          _dependencies.push(new Promise(r => _inject(window, document, d.css === true ? "style" : "script", d, r)));
+          _dependencies.push(new Promise(r => _inject(window, document, _type(d), d, r)));
         });
         return Promise.all(_dependencies);
       });
       _run.then(resolve);
     } else {
-      _inject(window, document, resource.css === true ? "style" : "script", resource, resolve);  
+      _inject(window, document, _type(resource), resource, resolve);  
     }
   });
   

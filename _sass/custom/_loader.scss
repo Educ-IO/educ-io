@@ -1,6 +1,7 @@
 // -- Loading Container -- //
 $spinner-size-large: 100px;
 $spinner-size-medium: 60px;
+$spinner-size-enclosed: 40px;
 $spinner-size-button: 1.5em;
 $spinner-size-small: 22px;
 $spinner-size-tiny: 14px;
@@ -53,6 +54,16 @@ div.loader {
     }
   }
 	// -- Size Options -- //
+  &.loader-enclosed {
+    background-color: rgba($colour-background, 0.65);
+    position: relative;
+    display: inline;
+    left: 50%;
+    .loading {
+			position: absolute;
+			transform: translate(-50%, 50%);
+		}
+  }
 	&.loader-large, &.loader-medium {
 		background-color: rgba($colour-background, 0.85);
 		position: fixed;
@@ -62,24 +73,21 @@ div.loader {
 			transform: translate(-50%, -50%);
 		}
 	}
-	&.loader-large {
-		.loading {
-			width: $spinner-size-large;
-			height: $spinner-size-large;
-			.spinner {
-				border: solid $spinner-size-large/10 rgba(0,0,0,0);
-			}
-		}
-	}
-	&.loader-medium {
-		.loading {
-			width: $spinner-size-medium;
-			height: $spinner-size-medium;
-			.spinner {
-				border: solid $spinner-size-medium/10 rgba(0,0,0,0);
-			}
-		}
-	}
+  &.loader-large .loading .spinner {
+    width: $spinner-size-large;
+    height: $spinner-size-large;  
+    border: solid $spinner-size-large/10 rgba(0,0,0,0);
+  }
+  &.loader-medium .loading .spinner {
+    width: $spinner-size-medium;
+    height: $spinner-size-medium;  
+    border: solid $spinner-size-medium/10 rgba(0,0,0,0);
+  }
+  &.loader-enclosed .loading .spinner {
+    width: $spinner-size-enclosed;
+    height: $spinner-size-enclosed;  
+    border: solid $spinner-size-enclosed/9 rgba(0,0,0,0);
+  }
   &.loader-small, &.loader-tiny {
     .loading {
       position: relative;
@@ -88,12 +96,10 @@ div.loader {
   }
 	&.loader-small {
     &.h-0 {height: 0;}
-		.loading {
+		.loading .spinner {
 			width: $spinner-size-small;
-			height: $spinner-size-small;
-			.spinner {
-				border: solid $spinner-size-small/10 rgba(0,0,0,0);
-			}
+      height: $spinner-size-small;
+      border: solid $spinner-size-small/10 rgba(0,0,0,0);
 		}
 	}
   &.loader-tiny {

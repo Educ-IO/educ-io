@@ -20,7 +20,7 @@ Scales = (options, factory) => {
   /* <!-- Internal Functions --> */
   var _reducer = (memo, value, key) => {
                     if (key !== "Value" && value && value.Value === true) {
-                      memo.push(_.keys(value).length == 1 ? key :
+                      memo.push(_.keys(value).length === 1 ? key :
                         _.map(_.reduce(value, _reducer, []), (value, i) => i === 0 ? `${key} - ${value}` : value).join("; "));
                     }
                     return memo;

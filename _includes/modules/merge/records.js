@@ -172,7 +172,7 @@ Records = (ಠ_ಠ, file, target, tab) => {
       .then(_display);
 
     var _names = _.map(sheet.sheets, sheet => sheet.properties.title);
-    return (tab || _names.length == 1 ?
+    return (tab || _names.length === 1 ?
       _values(tab ? tab : sheet.sheets[0].properties.title, tab && _names.length > 1 ? _names : null, sheet.sheets[0]) :
       ಠ_ಠ.Display.choose({
         id: "merge_choose_sheet",

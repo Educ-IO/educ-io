@@ -17,7 +17,7 @@ Main = function() {
   /* <!-- Plumbing Functions --> */
 
   /* <!-- TODO: Overlapping busy calls can cause issues, so we check that it is function --> */
-  const BUSY = (status, full, event, initial, size, element, classes, contained) => _.wrap(ಠ_ಠ.Display.busy({
+  const BUSY = (status, full, event, initial, size, element, classes, contained, replace) => _.wrap(ಠ_ಠ.Display.busy({
     target : element ? element : full ? (ಠ_ಠ.Display.tidy(), ಠ_ಠ.container.parent()) : ಠ_ಠ.container,
     status : event ? {
         source : window,
@@ -28,6 +28,7 @@ Main = function() {
     size : size,
     class : classes,
     contained : contained,
+    replace : replace,
     fn : true
   }), (busy, value) => _.tap(value, () => _.isFunction(busy) ? busy() : false));
   
@@ -46,7 +47,7 @@ Main = function() {
         .catch(e => ಠ_ಠ.Flags.error(`${name} List`, e).negative())
         .then(BUSY(`Loading ${name}s`))
         .then(options => options === false || options.length === 0 ||
-          (options.length == 1 && (options[0] === undefined || options[0] === null)) ? false : ಠ_ಠ.Display.choose({
+          (options.length === 1 && (options[0] === undefined || options[0] === null)) ? false : ಠ_ಠ.Display.choose({
             id: `choose_${name}`,
             title: `Please Choose a ${name} to Open ...`,
             action: options && options.length > 0 ? "Open" : false,
@@ -352,9 +353,9 @@ Main = function() {
       }).catch(e => {
 
         /* <!-- Maybe user has revoked scopes, so default back to unauthenticated --> */
-        if (e.status == 401) {
+        if (e.status === 401) {
           google_SignOut();
-        } else if (e.status == 400 || e.status == 403) {
+        } else if (e.status === 400 || e.status === 403) {
           route_LoggedIn(ಠ_ಠ.me = {
             available: false
           });
@@ -551,7 +552,7 @@ Main = function() {
     elevator: SCOPE => fn => {
       var _retry = retry => fn()
         .catch(e => {
-          if (e.status == 403 || e.status == 404) { /* <!-- e.status: 403 or 404 | Seems to return both? --> */
+          if (e.status === 403 || e.status === 404) { /* <!-- e.status: 403 or 404 | Seems to return both? --> */
             ಠ_ಠ.Flags.log("ELEVATE: May need to grant permission");
             return {
               retry: retry

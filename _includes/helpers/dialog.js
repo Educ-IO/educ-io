@@ -33,7 +33,7 @@ Dialog = (options, factory) => {
       if (_shortcut) _.each(pairs, pair => {
         if (_shortcut[pair[0]] !== undefined) {
           var _target = dialog.find(pair[1]);
-          if (_target.length == 1 && !_target.hasClass("locked")) {
+          if (_target.length === 1 && !_target.hasClass("locked")) {
             if (_target.data("click")) {
               $(_.find(dialog.find(_target.data("click") + `[data-target='${_target[0].id}']`).toArray(),
                 element => _extractDataValueOrText($(element)) == _shortcut[pair[0]])).click();
@@ -84,7 +84,9 @@ Dialog = (options, factory) => {
       target.find("i.material-icons").text(_el.hasClass("locked") ? "lock" : "lock_open");
     },
 
-    clear: (target, dialog) => dialog.find(_makeIds(target.data("clear"))).val("").filter("textarea.resizable").map((i, el) => autosize.update(el)),
+    clear: (target, dialog) => dialog.find(
+      _makeIds(target.data("clear"))).val("").trigger("change").trigger("input").filter("textarea.resizable")
+        .map((i, el) => autosize.update(el)),
 
     options: (target, dialog) => {
       var value = _extractDataValueOrText(target),
@@ -128,6 +130,17 @@ Dialog = (options, factory) => {
       
     },
 
+    filter: (target, dialog) => {
+
+      var _select = dialog.find(`#${target.data("filter")}`),
+          _text = target.val(),
+          _search = _text ? new RegExp(RegExp.escape(_text), "gi") : false;
+      
+      _select.find("option").each((i, el) => !_search || el.text.match(_search) ?
+          $(el).show() : $(el).hide());
+  
+    },
+    
     extract: regexes => (target, dialog) => {
 
       var _value = target.val();
@@ -156,7 +169,7 @@ Dialog = (options, factory) => {
       enter: dialog => {
 
         /* <!-- Ctrl-Enter Pressed --> */
-        dialog.keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13 && e.shiftKey) ? e.preventDefault() || dialog.find(".modal-footer button.btn-primary").click() : null);
+        dialog.keypress(e => ((e.keyCode ? e.keyCode : e.which) === 13 && e.shiftKey) ? e.preventDefault() || dialog.find(".modal-footer button.btn-primary").click() : null);
 
       },
 
@@ -209,7 +222,7 @@ Dialog = (options, factory) => {
 
       /* <!-- Handle Enter on textbox to Add --> */
       dialog.find("input[data-action='add']")
-        .keypress(e => ((e.keyCode ? e.keyCode : e.which) == 13) ? 
+        .keypress(e => ((e.keyCode ? e.keyCode : e.which) === 13) ? 
                     e.preventDefault() || $(e.currentTarget).siblings("button[data-action='add']").click() : null).focus();
       
     }

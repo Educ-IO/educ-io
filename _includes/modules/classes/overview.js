@@ -11,7 +11,7 @@ Overview = (options, factory) => {
       format: "Do MMM, YYYY",
     },
     FN = {},
-    HIDDEN = ["ID", "Calendar", "State", "Fetched", "Guardians", "Room", "Updated", "Students", "Code", "Folder"];
+    HIDDEN = ["ID", "Calendar", "State", "Fetched", "Description", "Guardians", "Room", "Updated", "Students", "Code", "Folder"];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -65,7 +65,7 @@ Overview = (options, factory) => {
           name: options.id,
           data: data,
           headers: options.state.application.tabulate.headers(
-            ["ID", "Calendar", "State", "Name", "Fetched", "Section", "Guardians", "Room", "Updated", "Created", "Teachers", "Students", "Code",
+            ["ID", "Calendar", "State", "Name", "Fetched", "Section", "Description", "Guardians", "Room", "Updated", "Created", "Teachers", "Students", "Code",
              {
                name : "__Usage",
                display : "Usage",

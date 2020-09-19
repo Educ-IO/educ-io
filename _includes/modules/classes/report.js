@@ -39,12 +39,12 @@ Report = (options, factory) => {
           name : "All_Students",
           display : "All Students",
           export : "All Students",
-          help : "Both current and invited Students"
+          help : options.functions.common.title("REPORT_ALL_PARTICIPANTS_HEADER", "students"),
         }, "Teachers", {
           name : "All_Teachers",
           display : "All Teachers",
           export : "All Teachers",
-          help : "Both current and invited Teachers"
+          help : options.functions.common.title("REPORT_ALL_PARTICIPANTS_HEADER", "teachers"),
         }, "Person",  {
           name : "Formal",
           display: "Formal Name",
@@ -65,7 +65,7 @@ Report = (options, factory) => {
       .concat([{
         name : "Engaged",
         display : `Active in ${periods[periods.length - 1].text}`,
-        help : "Whether individual has shown enagement with the Classroom in specified time period"
+        help : factory.Display.doc.get("REPORT_ACTIVE_HEADER")
       }]),
     
     hidden : name => HIDDEN.indexOf(name) >= 0 || _.find(["A_", "C_"], value => name && name.indexOf(value) === 0),
@@ -128,13 +128,12 @@ Report = (options, factory) => {
     var _classroom = {
       $id: classroom.$id,
       id: classroom.id,
-      state: classroom.state,
+      state: classroom.$$state,
       code: classroom.code,
-      name : classroom.name,
-      section : classroom.section,
-      room : classroom.room,
-      $$owner: classroom.$$owner,
-      owner: classroom.owner,
+      name : classroom.$$name,
+      section : classroom.$$section,
+      room : classroom.$$room,
+      owner: classroom.$$owner,
       guardians : classroom.guardians,
       $$created: classroom.$$created,
       created: classroom.created,

@@ -18,11 +18,6 @@ Config = (options, factory) => {
       complex: [],
       simple: [],
     },
-    preferences: {
-      id : "edit_Preferences",
-      template : "config",
-      title : "Preferences",
-    },
     state: false,
   };
   /* <!-- Internal Consts --> */
@@ -50,7 +45,7 @@ Config = (options, factory) => {
     .catch(e => factory.Flags.error("Upload Error", e ? e : "No Inner Error"));
 
   var _find = () => factory.Google ? factory.Google.appData.search(options.name, options.mime).then(results => {
-    if (results && results.length == 1) {
+    if (results && results.length === 1) {
       factory.Flags.log(`Found App Config [${results[0].name} / ${results[0].id}]`);
       return results[0];
     } else {
@@ -82,33 +77,6 @@ Config = (options, factory) => {
       };
     })
     .catch(e => factory.Flags.error("Upload Error", e ? e : "No Inner Error"));
-
-  var _edit = settings => factory.Display.modal(options.preferences.template, {
-    id: options.preferences.id,
-    title: options.preferences.title,
-    enter: true,
-    state: _.mapObject(
-              settings, 
-              (value, key) => options.fields && options.fields.complex && options.fields.complex.indexOf(key) >= 0 ?
-                       value === false ? 0 : value : value),
-  });
-
-  var _field = field => $(`#${options.preferences.id} div[data-output-field='${field}']`);
-
-  var _label = field => field.find("small.form-text").toggleClass("d-none", field.find("li").length === 0);
-
-  var _remove = (field, id) => _label(_field(field).find(`li[data-id='${id}']`).remove());
-  
-  var _add = (field, template, items) => {
-    var _list = (field = _field(field)).children("ul");
-    _.each(items, item => {
-      if (_list.find(`li[data-id='${item.id}']`).length === 0)
-        $(factory.Display.template.get((_.extend({
-          template: template
-        }, item)))).appendTo(_list);
-    });
-    _label(field);
-  };
 
   var _process = (values, current) => {
 
@@ -162,27 +130,21 @@ Config = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
 
-    add: _add,
-
     create: _create,
 
     clear: _clear,
 
+    fields: () => options.fields,
+    
     find: _find,
-
-    load: _load,
-
-    remove: _remove,
-
-    update: _update,
-
-
-    /* <!-- TODO: Clean this up --> */
-    edit: _edit,
 
     get: _get,
 
+    load: _load,
+
     process: _process,
+    
+    update: _update,
 
   };
   /* <!-- External Visibility --> */
