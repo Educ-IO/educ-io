@@ -138,7 +138,7 @@ Edit = (options, factory) => {
             return FN.edit.field(classroom, field, _edit.find("input").val()).then(_restore);
           };
       
-      _edit.find("button").on("click.action", e => $(e.target).data("action") == "save" ? _save() : _restore());
+      _edit.find("button").on("click.action", e => $(e.currentTarget || e.target).data("action") == "save" ? _save() : _restore());
       
       _edit.find("input").focus().on("keydown.action", e => {
         var code = typeof e.keyCode != "undefined" && e.keyCode ? e.keyCode : e.which;

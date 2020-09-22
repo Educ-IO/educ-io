@@ -54,8 +54,16 @@ Filters = (options, factory) => {
       var _condition;
       /* <!-- Only run complex query if we are allowed and the comparator is in the COMPLEX list above --> */
       if (options.complex && COMPLEX.indexOf(_.keys(filters[field])[0]) >= 0) {
-        var _condition_Normal = {}, _condition_Complex = {};
+        var _condition_Normal = {},
+            _condition_Complex = {},
+            _condition_Primitive = {"$or" : _.map(["string", "number", "date"], primitive => {
+              var _value = {};
+              _value[field] = {"$type" : primitive};
+              return _value;
+            })};
         _condition_Normal[field] = _createFilter(filters[field]);
+        /* <!-- If the 'normal' version of the property is not a primitive data type, e.g. it is an object, it won't match! --> */
+        _condition_Normal = {"$and" : [_condition_Primitive, _condition_Normal]};
         _condition_Complex[options.complex == true ? 
                            `$$${field.replace(/^_+/, "")}` : 
                            `${options.complex}${field.replace(/^_+/, "")}`] = _createFilter(filters[field]);

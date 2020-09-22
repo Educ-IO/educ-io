@@ -59,6 +59,13 @@ Google_API = (options, factory) => {
     team ? `${start ? "?" : start !== null && start !== undefined ? "&" : ""}${id !== team ? team !== true ? `teamDriveId=${team}&` : "" :""}supportsTeamDrives=true&supportsAllDrives=true` : "";
   
   const BATCH = idempotent => !idempotent && Promise.each ? Promise.each : Promise.all;
+  
+  /* <!-- Time Zone in CLDR format (normally?) such as 'America/New_York' or 'Europe/London', suitable for sheets etc --> */
+  const TIMEZONE = () => window && window.Intl ? window.Intl.DateTimeFormat().resolvedOptions().timeZone : null;
+  
+  /* <!-- Locale in BCP 47 Format (e.g. 'en-GB') - Not the same as ISO 639-1/2 or hybrid ('en_GB'), which is used in Sheets  --> */
+  /* <!-- const LOCALE = () => navigator ? (navigator.languages && navigator.languages.length) ? 
+        navigator.languages[0] : navigator.userLanguage || navigator.language || navigator.browserLanguage || null : null; --> */
   /* <!-- Internal Constants --> */
 
   /* <!-- Network Constants --> */
@@ -776,6 +783,12 @@ Google_API = (options, factory) => {
         _properties[app ? "appProperties" : "properties"] = _values;
         return _properties;
       },
+      
+      tags: (pairs, app) => {
+        var _properties = {};
+        _properties[app ? "appProperties" : "properties"] = _.object(pairs);
+        return _properties;
+      },
 
       type: (mime, corpora, spaces, query) => {
         var _domain = "domain", 
@@ -1414,9 +1427,10 @@ Google_API = (options, factory) => {
       /* <!-- Create a new Spreadsheet --> */
       create: (name, tab, colour, meta) => {
         var _data = {
-          "properties": {
-            "title": name
-          },
+          "properties": STRIP_NULLS({
+            "title": name,
+            "timeZone": TIMEZONE()
+          }),
           "sheets": [{
             "properties": {
               "sheetId": 0,
@@ -1722,12 +1736,12 @@ Google_API = (options, factory) => {
           list : () => _list(NETWORKS.scripts.get, _url, "deployments", [], {fields: _fields}),
           
           update : (deployment, version, manifest, description) => _call(NETWORKS.scripts.put,
-            `${_url}/${encodeURIComponent(_deployment(deployment))}`, {"deploymentConfig": {
+            `${_url}/${encodeURIComponent(_deployment(deployment))}`, {"deploymentConfig": STRIP_NULLS({
                 "scriptId": _id,
                 "versionNumber": version,
                 "manifestFileName": manifest,
                 "description": description
-              }}, "application/json"),
+              })}, "application/json"),
 
         };
         

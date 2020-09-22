@@ -118,7 +118,10 @@ Populate = (options, factory) => {
       $$updated: value.updateTime, /* <!-- Updated Date/Time in ISO Format (for searching/sorting) --> */
       updated: value.updateTime ? factory.Dates.parse(value.updateTime).toDate().toLocaleDateString() : null,
       $$created: value.creationTime, /* <!-- Created Date/Time in ISO Format (for searching/sorting) --> */
-      created: value.creationTime ? factory.Dates.parse(value.creationTime).toDate().toLocaleDateString() : null,
+      created: value.creationTime ? {
+        $id: "created",
+        text: factory.Dates.parse(value.creationTime).toDate().toLocaleDateString()
+      } : null,
       teachers: value.teachers || [],
       students: value.students || [],
       code: value.enrollmentCode || "",

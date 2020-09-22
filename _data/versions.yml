@@ -1,12 +1,14 @@
 site :
-  0.1.13 :
-    name : Classes v0.0.6-beta
+  0.1.13a :
+    name : Classes v0.0.6a-beta
     desc : New Features
     changes :
       - Improved Class Selection with faster filtering
       - Ability to edit names, sections, rooms and class descriptions
       - Transfer ownership of classes
-    numeric : 0.1.13.0
+      - Bug Fix for Field Editing Button
+      - Bug Fix for Date Filtering (e.g. created)
+    numeric : 0.1.13.1
   0.1.12c :
     name : Classes v0.0.5d-beta
     desc : Bug Fixes
@@ -1533,13 +1535,15 @@ blocks :
     name : Early testing version
     type : minor
 classes :
-  v0.0.6-beta :
+  v0.0.6a-beta :
     name : New Features
     type : major
     changes :
       - Improved Class Selection with faster filtering
       - Ability to edit names, sections, rooms and class descriptions
       - Transfer ownership of classes
+      - Bug Fix for Field Editing Button
+      - Bug Fix for Date Filtering (e.g. created)
   v0.0.5d-beta :
     name : Bug Fixes
     type : minor
