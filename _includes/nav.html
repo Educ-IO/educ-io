@@ -56,7 +56,7 @@
         </div>
       </li>
       {% elsif menu.hash %}
-      <li class="nav-item">
+      <li class="nav-item{% if menu.disabled_until and menu.disabled_until.size > 0%} disabled{% for until in menu.disabled_until %} state-{{until}}{% endfor %}{% endif %}{% if menu.disabled_while and menu.disabled_while.size > 0%}{% for while in menu.disabled_while %} disabled-state-{{while}}{% endfor %}{% endif %}">
         <a class="nav-link" href="#{{ menu.hash }}" {% if menu.desc %}data-toggle="tooltip" title="{{ menu.desc }}" {% endif %}>
             {% if menu.short_name %}<span class="d-inline d-lg-none">{{ menu.short_name }}</span><span class="d-none d-lg-inline">{{ menu.name }}</span>{% else %}{{ menu.name }}{% endif %}
           </a>

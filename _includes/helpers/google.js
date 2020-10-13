@@ -1505,7 +1505,7 @@ Google_API = (options, factory) => {
       },
 
       get: (id, all, range) => _call(NETWORKS.sheets.get, `v4/spreadsheets/${id}${all ?
-																`?includeGridData=true${range ? `&ranges=${encodeURIComponent(range)}` : ""}` : ""}`),
+        `?includeGridData=true${range ? `&ranges=${encodeURIComponent(range)}` : ""}` : ""}`),
 
       filtered: (id, filters, all) => _call(NETWORKS.sheets.post, `v4/spreadsheets/${id}:getByDataFilter`, {
         "dataFilters": _.isArray(filters) ? filters : [filters],

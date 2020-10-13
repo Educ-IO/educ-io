@@ -319,35 +319,25 @@ menus:
             desc: Show overview of your currently active classes / classes in your domain (created in the last 12 months)
             hash: overview
             shortcut: "o"
-            imports:
-              - d3
             divider: true
             
           - name: Current Classes
             desc: Show overview of all your active classes / classes in your domain
             hash: overview.all
             shortcut: "ctrl+alt+o"
-            imports:
-              - d3
           - name: Archived Classes
             desc: Show overview of all your archived classes / classes in your domain
             hash: overview.archived
-            imports:
-              - d3
             divider: true
             
           - name: Select Classes
             desc: Select Classes you want to show an overview for
             hash: overview.select
             shortcut: "ctrl+alt+j"
-            imports:
-              - d3
           - name: Filter Classes
             desc: Filter Classes you want to show an overview (by teacher and/or student)
             hash: overview.filter
             shortcut: "ctrl+alt+f"
-            imports:
-              - d3
             divider: true
             
           - name: Import
@@ -362,7 +352,16 @@ menus:
             shortcut: "l"
             imports:
               - google
-
+              
+  - name: Sync
+    visibility: debug
+    disabled_while:
+      - view
+    desc: Sync Class Memberships from Google Sheets
+    scopes:
+      - https://www.googleapis.com/auth/drive.file
+    hash: sync
+              
   - name: Overview
     disabled_until:
       - overview
@@ -774,5 +773,20 @@ buttons:
     - name: About
       desc: More details about loading existing files
       hash: instructions.load
+      
+  - name: Sync
+    visibility: debug
+    desc: Sync Class Memberships from Google Sheets
+    hash: sync
+    loud: true
+    auth: google
+    scopes:
+      - https://www.googleapis.com/auth/drive.file
+    imports:
+      - google
+    buttons:
+    - name: About
+      desc: More details about how to sync Class Memberships
+      hash: instructions.sync
   
 published: true

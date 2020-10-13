@@ -3,7 +3,7 @@
   <thead id="table-headings_{{id}}" class="table-headers">
     <tr>
       {{#each headers}}
-      <th class="table-header align-middle border-top-0{{#if hide}} d-none no-export{{/if}}{{#if hide_default}} no-export-default{{/if}}{{#if hide_initially}} to-hide{{/if}}"
+      <th class="table-header align-middle border-top-0{{#if hide}} d-none no-export{{/if}}{{#if hide_default}} no-export-default{{/if}}{{#if hide_initially}} to-hide{{/if}}{{#if class}} {{class}}{{/if}}"
           data-index="{{@index}}" data-field="{{#if field}}{{field}}{{else}}{{@index}}{{/if}}"{{~#if ../widths}} style="width: {{#with (lookup ../widths @index)}}{{this}}{{/with}}px"{{/if~}}>
         {{#if ../links}}
         <a id="heading_{{../id}}_{{@index}}" href="#" data-targets="#collapse_{{../id}}_{{@index}}" aria-expanded="false"

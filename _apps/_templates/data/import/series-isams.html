@@ -1,0 +1,15 @@
+{% raw %}
+<div class="d-flex align-items-center flex-row list-item list-group-item p-2">
+	<a class="align-self-center d-flex delete icon{{#if readonly}} disabled{{/if}}" href="#"
+     data-toggle="tooltip" title="{{either delete 'Delete Item from List'}}" data-action="remove" data-types="{{types}}" data-id="{{id}}">
+		<i class="align-self-center mr-2 material-icons text-danger">delete_forever</i>
+	</a>
+  <p data-output-name="Items" class="align-self-center d-flex align-items-center px-0 py-0 mx-0 my-0">
+    <span data-output-name="ID" class="d-none">{{id}}</span>
+    <span data-output-name="Year" class="d-none">{{year}}</span>
+    <span data-output-name="Term" class="d-none">{{term}}</span>
+    <span data-output-name="Value">{{name}}</span>
+    <span data-output-name="Type" class="badge badge-secondary ml-1 align-self-center">{{type}}</span>
+  </p>
+</div>
+{% endraw %}

@@ -214,7 +214,7 @@ Analysis = (options, factory) => {
       
       /* <!-- Exclude Tags if appropriate --> */
       if (exclude && _.isArray(exclude) && exclude.length > 0) {
-        var _exclude = options.query.all_tagged(exclude, since, until),
+        var _exclude = options.query.all_tagged(exclude, since, until, touched),
             _exclusions = new Set((db ? db : options.db).find(_exclude).map(v => v.$loki));
         _all = _.reject(_all, v => _exclusions.has(v.$loki));
       }

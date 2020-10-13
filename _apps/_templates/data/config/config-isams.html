@@ -1,0 +1,109 @@
+{% raw %}
+{{#> dialog class="modal-xl" action="Save" tabindex=5}}
+<form>
+  
+  <div class="row">
+    {{!-- URL Pattern and Base --}}
+
+     <div class="form-group col-12 col-lg-6">
+      <label for="{{id}}_base">iSAMS Base URL</label>
+      <div class="input-group">
+        <input type="text" id="{{id}}_base" name="base" class="form-control" tabindex="1"
+               {{#if state.base}} value="{{state.base}}"{{else}} placeholder="https://your-school.isams.cloud"{{/if}} />
+      </div>
+      <small class="form-text text-muted">The base URL is your iSAMS tenancy web address.</small>
+    </div>
+    
+     <div class="form-group col-12 col-lg-6">
+      <label for="{{id}}_format">iSAMS API URL Format</label>
+      <div class="input-group">
+        <input type="text" id="{{id}}_format" name="format" class="form-control" tabindex="10"
+               value="{{#if state.format}}{{state.format}}{{else}}%s/api/batch/1.0/%s.ashx?apiKey=%s{{/if}}" readonly />
+      </div>
+      <small class="form-text text-muted">The URL Format used for making iSAMS API calls.</small>
+    </div>
+    
+  </div>
+
+  <div class="row">
+    {{!-- API Codes --}}
+    
+    <div class="form-group col-12 col-lg-6">
+      <label for="{{id}}_api_metadata">Metadata API</label>
+      <div class="input-group">
+        <input type="text" id="{{id}}_api_metadata" name="api_metadata" class="form-control" tabindex="2" value="{{either (resolve state 'api' 'metadata') ''}}" />
+      </div>
+      <small class="form-text text-muted"></small>
+    </div>
+    
+    <div class="form-group col-12 col-lg-6">
+      <label for="{{id}}_api_pupils">Pupils API</label>
+      <div class="input-group">
+        <input type="text" id="{{id}}_api_pupils" name="api_pupils" class="form-control" tabindex="3" value="{{either (resolve state 'api' 'pupils') ''}}" />
+      </div>
+      <small class="form-text text-muted"></small>
+    </div>
+    
+    <div class="form-group col-12 col-lg-6">
+      <label for="{{id}}_api_reports">Reports API</label>
+      <div class="input-group">
+        <input type="text" id="{{id}}_api_reports" name="api_reports" class="form-control" tabindex="4" value="{{either (resolve state 'api' 'reports') ''}}" />
+      </div>
+      <small class="form-text text-muted"></small>
+    </div>
+    
+    <div class="form-group col-12 col-lg-6">
+      <label for="{{id}}_api_tracking">Tracking API</label>
+      <div class="input-group">
+        <input type="text" id="{{id}}_api_tracking" name="api_tracking" class="form-control" tabindex="5" value="{{either (resolve state 'api' 'tracking') ''}}" />
+      </div>
+      <small class="form-text text-muted"></small>
+    </div>
+    
+  </div>
+
+  <div class="row">
+    {{!-- Filters --}}
+    
+    <div class="form-group col-12 col-lg-6">
+      <label for="{{id}}_filters_wrapper">Filters Wrapper</label>
+      <div class="input-group">
+        {{lookup obj field}}
+        <input type="text" id="{{id}}_filters_wrapper" name="filters_wrapper" class="form-control" tabindex="11"
+          value="{{either (resolve state 'filters' 'wrapper') '<?xml version=\'1.0\' encoding=\'utf-8\'?><Filters>%s</Filters>'}}" readonly />
+      </div>
+      <small class="form-text text-muted"></small>
+    </div>
+    
+    <div class="form-group col-12 col-lg-6">
+      <label for="{{id}}_filters_reports_cycle">Reports Cycle Filter</label>
+      <div class="input-group">
+        <input type="text" id="{{id}}_filters_reports_cycle" name="filters_reports_cycle" class="form-control" tabindex="12"
+          value="{{either (resolve state 'filters' 'reports' 'cycle') '<SchoolReports><ReportCycles reportTerm=\'%s\' reportCycleType=\'%s\' reportYear=\'%s\' /></SchoolReports>'}}" readonly />
+      </div>
+      <small class="form-text text-muted"></small>
+    </div>
+    
+    <div class="form-group col-12 col-lg-6">
+      <label for="{{id}}_filters_reports_reports">Reports Filter</label>
+      <div class="input-group">
+        <input type="text" id="{{id}}_filters_reports_reports" name="filters_reports_reports" class="form-control" tabindex="13"
+          value="{{either (resolve state 'filters' 'reports' 'reports') '<SchoolReports><Reports reportCycleIdsToInclude=\'%s\' ncYear=\'%s\' reportType=\'%s\' reportStatus=\'%s\' /></SchoolReports>'}}" readonly />
+      </div>
+      <small class="form-text text-muted"></small>
+    </div>
+
+    <div class="form-group col-12 col-lg-6">
+      <label for="{{id}}_filters_reports_tracking">Reports Tracking Filter</label>
+      <div class="input-group">
+        <input type="text" id="{{id}}_filters_reports_tracking" name="filters_reports_tracking" class="form-control" tabindex="14"
+          value="{{either (resolve state 'filters' 'reports' 'tracking') '<TrackingManager><ExternalData idsToInclude=\'%s\' /></TrackingManager>'}}" readonly />
+      </div>
+      <small class="form-text text-muted"></small>
+    </div>
+    
+  </div>
+
+</form>
+{{/dialog}}
+{% endraw %}

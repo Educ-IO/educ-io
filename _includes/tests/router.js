@@ -260,8 +260,11 @@ Router = function() {
                   keys: `${parent.keys ? `${parent.keys}_` : ""}${_key}`,
                   length: _route.length === undefined ? parent.length : _route.length,
                   matches: SIMPLIFY(ARRAYS(parent.matches).concat(ARRAYS(_route.matches))),
-                  state: _route.state === undefined ? parent.state : _route.state
+                  /* <!-- Parent Route States are now integrated --> */
+                  state: _route.state === undefined ? parent.state : [].concat(_route.state).concat(parent.state ? parent.state : [])
                 };
+                _parent.state = _.isArray(_parent.state) && _parent.state.length === 0 ? undefined :
+                                _.isArray(_parent.state) && _parent.state.length === 1 ? _parent.state[0] : _parent.state;
 
                 if ((current < max && GEN.b(30))) _route.routes = _create(tests, _parent, max, current);
                 if (!_route.routes || GEN.b(60)) {
@@ -299,8 +302,15 @@ Router = function() {
             expect(values).to.have.a.nested.property(`${path}.fn`).to.be.a("function");
             if (length !== null && length !== undefined)
               expect(values).to.have.a.nested.property(`${path}.length`, length);
-            if (state !== null && state !== undefined)
-              expect(values).to.have.a.nested.property(`${path}.state`, state);
+            if (state !== null && state !== undefined) {
+              if (_.isArray(state) && state.length > 0) {
+                expect(values).to.have.a.nested.property(`${path}.state`)
+                  .and.to.be.an("array")
+                  .and.to.have.members(state);
+              } else {
+                expect(values).to.have.a.nested.property(`${path}.state`, state);
+              }
+            }
             var _regex = (path, regex) => {
               expect(values).to.have.a.nested.property(path);
               expect(values).to.have.a.nested.property(`${path}.source`)
@@ -318,15 +328,19 @@ Router = function() {
           _test(_static, "test1_test2_test3_test6", 0, [/TEST1/i, /TEST3/i, /TEST6/i, /TEST7/i], STATE_TEST_1);
           _test(_static, "test1_test2_test3", 0, [/TEST1/i, /TEST3/i], STATE_TEST_1);
           _test(_static, "test1_test2_test4", 1, [/TEST1/i, /TEST4/i], STATE_TEST_1);
-          _test(_static, "test1_test2_test5", 2, [/TEST1/i, /TEST5/i], STATE_TEST_2);
+          _test(_static, "test1_test2_test5", 2, [/TEST1/i, /TEST5/i], [STATE_TEST_1, STATE_TEST_2]);
 
           _expand(_dynamic);
 
+          FACTORY.Flags.log("Dynamic Routes:", _dynamic);
+          
           expect(_dynamic).to.be.an("object");
 
           expect(_.keys(_dynamic)).to.be.an("array")
             .and.to.have.members(_.map(_tests, test => test[0]));
 
+          FACTORY.Flags.log("Dynamic Route Preparation Tests:", _tests);
+          
           _.each(_tests, test => _test.apply(this, [_dynamic].concat(test)));
 
           resolve(FACTORY.Flags.log("Route Prepare Test SUCCEEDED").reflect(true));

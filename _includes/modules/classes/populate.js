@@ -23,6 +23,25 @@ Populate = (options, factory) => {
       }; /* <!-- Persistant --> */
   /* <!-- Internal Variables --> */
   
+  /* <!-- Field Functions --> */
+  FN.state = value => value.courseState ? {
+        text: value.courseState,
+        $commands: value.courseState === "ARCHIVED" ? [{
+          action : "activate",
+          class : "o-75",
+          command : `edit.activate.${value.id}`,
+          title :  options.functions.common.title("CHANGE_STATUS", "Activate"),
+          icon : "unarchive"
+        }] : value.courseState === "ACTIVE" ? [{
+          action : "archive",
+          class : "o-50",
+          command : `edit.archive.${value.id}`,
+          title :  options.functions.common.title("CHANGE_STATUS", "Archive"),
+          icon : "archive"
+        }] : null,
+      } : "";
+  /* <!-- Field Functions --> */
+  
   /* <!-- Population Functions --> */
   FN.classwork = (data, db) => options.state.application.tabulate.data(ರ‿ರ, ಱ.db, db, {
     unique: ["$id"],
@@ -88,22 +107,7 @@ Populate = (options, factory) => {
         title: "Open in Calendar"
       },
       $$state: value.courseState || "", /* <!-- Class State (for searching/sorting) --> */
-      state: value.courseState ? {
-        text: value.courseState,
-        $commands: value.courseState === "ARCHIVED" ? [{
-          action : "activate",
-          class : "o-75",
-          command : `edit.activate.${value.id}`,
-          title :  options.functions.common.title("CHANGE_STATUS", "Activate"),
-          icon : "unarchive"
-        }] : value.courseState === "ACTIVE" ? [{
-          action : "archive",
-          class : "o-50",
-          command : `edit.archive.${value.id}`,
-          title :  options.functions.common.title("CHANGE_STATUS", "Archive"),
-          icon : "archive"
-        }] : null,
-      } : "",
+      state: FN.state(value),
       $$name: value.name ? value.name.text : "", /* <!-- Class Name (for searching/sorting) --> */
       name: value.name || "",
       $$fetched: value.$$fetched, /* <!-- Fetched Date/Time in ISO Format (for searching/sorting) --> */

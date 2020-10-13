@@ -23,7 +23,7 @@ Google_Sheets_Sorts = options => {
   var _spec = spec => _.extend({
         /* <!-- ASCENDING | DESCENDING --> */
         "sortOrder": spec.order || options.order,
-        "dimensionIndex": spec.dimension || options.dimension
+        "dimensionIndex": _.isNumber(spec) ? spec : (spec.dimension || options.dimension)
       },
        /* <!-- Colour formatted from format.foreground | format.background --> */                           
       spec.colour ? spec.colour : {});

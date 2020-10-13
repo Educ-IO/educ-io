@@ -34,6 +34,7 @@ Tabulate = (options, factory) => {
       shortcut: v.shortcut || null,
       export: v.export || null,
       output: v.output || null,
+      class: v.class || null,
       hide: function(initial) {
         return !!(this.hide_now || this.hide_always || (initial && this.hide_initially));
       },

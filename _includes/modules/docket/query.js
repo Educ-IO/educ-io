@@ -96,7 +96,8 @@ Query = (options, factory) => {
     
     badge : text => _.tap({}, q => (q[options.schema.columns.badges.value] = {}).$regex = new RegExp(RegExp.escape(text), "i")),
     
-    badges : text => _.isArray(text) ? {"$or": _.map(text, FN.content.badge)} : FN.content.badge(text),
+    badges : text => _.isArray(text) && text.length > 1 ? {"$or": _.map(text, FN.content.badge)} : 
+                        FN.content.badge(_.isArray(text) ? text[0] : text),
     
     tagged : () => _.tap({}, q => (q[options.schema.columns.tags.value] = {}).$ne = ""),
     

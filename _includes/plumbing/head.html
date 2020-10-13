@@ -4,6 +4,8 @@
 
 	{% if page.app %}<noscript><meta http-equiv="refresh" content="0; URL=/requirements"/></noscript>{% endif %}
 
+  {% if page.app and site.data.apps[page.app].published == false %}<meta name="robots" content="noindex, nofollow">{% elsif jekyll.environment == site.debug %}<meta name="robots" content="noindex, nofollow">{% endif %}
+  
 	{% include plumbing/icons.html %}
 
 	{% include plumbing/setup.html %}

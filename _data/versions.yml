@@ -1,4 +1,8 @@
 site :
+  0.1.13b :
+    name : Bug Fixes & Improvements
+    desc : Bug Fixes
+    numeric : 0.1.13.2
   0.1.13a :
     name : Classes v0.0.6a-beta
     desc : New Features
@@ -1527,6 +1531,10 @@ book :
   0.0.2-beta :
     name : First fully functional release
     type : major
+  0.0.1-alpha :
+    name : Early testing version
+    type : minor
+data :
   0.0.1-alpha :
     name : Early testing version
     type : minor

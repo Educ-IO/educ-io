@@ -8,8 +8,7 @@ Update = (options, factory) => {
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
     id : "changes"
-  },
-    FN = {};
+  }, FN = {};
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -92,6 +91,11 @@ Update = (options, factory) => {
                 change.path.indexOf("fields") ? "Field" : "Group" : "Form";
               if (change._type == "Group" || change._type == "Field" && change.path.length >= 2)
                 change._details = change.path[change.path.length - 2];
+              if (change.path[change.path.length - 1] && change.path[change.path.length - 1].match(/__(\S+)__/)) {
+                /* <!-- Markdown field --> */
+                if (change.lhs) change.lhs_display = options.state.application.showdown.makeHtml(change.lhs);
+                if (change.rhs) change.rhs_display = options.state.application.showdown.makeHtml(change.rhs);
+              }
             }
             return change;
           })

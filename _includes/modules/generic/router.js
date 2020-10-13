@@ -25,24 +25,29 @@ Router = function() {
       PROPERTIES: (files, options) => options !== null && options.properties !== undefined && !_.every(_.isArray(files) ? files : [files], file => _.isMatch(_.extend({}, file.properties, file.appProperties), options.properties)) && ಠ_ಠ.Flags.log(`Google Drive Files PROPERTIES${_.isArray(files) ? "" : ` (${STR(_.extend({}, files.properties, files.appProperties))})`} not matched to ${STR(options.properties)}`, files),
     },
 
-    HANDLE = (options, resolve, reject) => files => files && (!_.isArray(files) || files.length > 0) ?
+    HANDLE = (options, resolve, reject) => files => {
+      $(document.body).removeClass("overflow-hidden");
+      return files && (!_.isArray(files) || files.length > 0) ?
       REJECT.MIME(files, options) || REJECT.PROPERTIES(files, options) ?
         reject() :
           ಠ_ಠ.Flags.log("Google Drive File/s Picked from Open", files) && 
             (options.full ? (_.isArray(files) ? 
                               Promise.all(_.map(files, file => ಠ_ಠ.Google.files.get(file.id, true, true))) : 
                               ಠ_ಠ.Google.files.get(files.id, true, true)).then(resolve) : resolve(files)) :
-        ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject(),
+        ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject();
+    },
 
     PICK = (picker => ({
-      single: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
-        options && options.title ? options.title : "Select a File to Open", false,
-        options && options.team !== undefined ? options.team : true, picker(options),
-        HANDLE(options, resolve, reject), null, true)),
-      multiple: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
-        options && options.title ? options.title : "Select a File/s to Open", true,
-        options && options.team !== undefined ? options.team : true, picker(options),
-        HANDLE(options, resolve, reject), null, true)),
+      single: options => new Promise((resolve, reject) => ($(document.body).addClass("overflow-hidden"),
+        ಠ_ಠ.Google.pick(
+          options && options.title ? options.title : "Select a File to Open", false,
+          options && options.team !== undefined ? options.team : true, picker(options),
+          HANDLE(options, resolve, reject), null, true))),
+      multiple: options => new Promise((resolve, reject) => ($(document.body).addClass("overflow-hidden"),
+        ಠ_ಠ.Google.pick(
+          options && options.title ? options.title : "Select a File/s to Open", true,
+          options && options.team !== undefined ? options.team : true, picker(options),
+          HANDLE(options, resolve, reject), null, true))),
     }))(options => () => [_.tap(new google.picker
         .DocsView(options ? google.picker.ViewId[options.view] : null)
         .setMimeTypes(options && options.mime ? options.mime : null)
@@ -78,26 +83,39 @@ Router = function() {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Setup Constants --> */
-  const EXPAND = (routes, route, name) => {
+  const STRIP_NULLS = data => _.chain(data).omit(_.isUndefined).omit(_.isNull).omit(value => _.isArray(value) && value.length === 0).value(),
+    EXTEND = (parent, route, arrays) => {
+      var _integrate = (parent, route, property) => parent[property] ?
+        route[property] ? (_.isArray(parent[property]) ? parent[property] : [parent[property]])
+          .concat(route[property] ? route[property] : []) : parent[property] : route[property],
+          _extension = () => _.reduce(arrays, (memo, property) => _.tap(memo, memo => memo[property] = _integrate(parent, route, property)), {});
+      return _.extend(parent, _.isFunction(route) ? {
+          fn: route
+        } : route, _extension());
+    },
+    EXPAND = (routes, route, name) => {
       var _name = value => `${name ? `${name}_`: ""}${value}`,
-        _matches = value => route.matches ?
-        value.matches ? (_.isArray(route.matches) ? route.matches : [route.matches])
-        .concat(value.matches ? value.matches : []) : route.matches : value.matches,
-        _default = () => ({
+        _default = () => route.inherit === false ? {
+          matches: route.matches,
+        } : {
+          matches: route.matches,
           state: route.state,
           length: route.length,
           clean: route.clean,
           reset: route.reset,
-        }),
-        _extend = matches => ({
-          matches: matches,
-        });
+          requires: route.requires,
+          scopes: route.scopes,
+          trigger: route.trigger,
+          preserve : route.preserve,
+          tidy: route.tidy,
+        };
       _.each(route.routes, (route, name) => {
-        route = _.extend(_default(), _.isFunction(route) ? {
-          fn: route
-        } : route, _extend(_matches(route)));
+        
+        route = STRIP_NULLS(EXTEND(_default(), route, ["matches", "state", "requires", "scopes"]));
+        
         if (!routes[name = _name(name)] && route.fn)
           routes[name] = route;
+        
         if (route.routes) EXPAND(routes, route, name);
       });
       delete route.routes;
@@ -250,6 +268,7 @@ Router = function() {
           // All routes can be flagged to 'preserve' if they should call their fn property with the full command. If a numerical value is also supplied via a strip property, then this number of commands will be removed from the command array.
           // All promise returning routes can have a success({command, result}) and failure(e) methods attached
           // All routes can have a clean property which, if truthy, will call a state clean upon success
+          // All parent routes can have an inherit property (set to false, means that only matches is transferred to child routes)
           // Extra configuration options for default routes are shown in methods below.
         },
 				instructions : App-Specific Instructions
@@ -260,19 +279,19 @@ Router = function() {
       /* <!-- Default Routes, can be overridden by the routes object in options --> */
       const ROUTES = {
         create: {
-          matches: /CREATE/i,
+          matches: /^CREATE(\.\S+|$)/i,
           fn: () => false,
           /* <!-- Returning False will mean route fall-through to app route --> */
         },
         open: {
-          matches: /OPEN/i,
+          matches: /^OPEN(\.\S+|$)/i,
           requires: "google",
           /* <!-- OPTIONS: Multiple | Single property dictates files returned, all others passed through to picker method -->  */
           fn: (command, options) => options && options.mutiple ?
             PICK.multiple(options) : PICK.single(options),
         },
         load: {
-          matches: /LOAD/i,
+          matches: /^LOAD(\.\S+|$)/i,
           length: {
             min: 1
           },
@@ -307,12 +326,13 @@ Router = function() {
           }),
         },
         save: {
-          matches: /SAVE/i,
+          matches: /^SAVE(\.\S+|$)/i,
           fn: () => false,
           /* <!-- Returning False will mean route fall-through to app route --> */
         },
         import: {
-          matches: /IMPORT/i,
+          matches: /^IMPORT(\.\S+|$)/i,
+          length: 0,
           fn: (command, options) => new Promise((resolve, reject) => {
             ಠ_ಠ.Display.files({
                 id: options.id ? options.id : "prompt_file",
@@ -327,21 +347,21 @@ Router = function() {
           }),
         },
         export: {
-          matches: /EXPORT/i,
+          matches: /^EXPORT(\.\S+|$)/i,
           fn: () => false,
           /* <!-- Returning False will mean route fall-through to app route --> */
         },
         clone: {
-          matches: /CLONE/i,
+          matches: /^CLONE(\.\S+|$)/i,
           fn: () => false,
           /* <!-- Returning False will mean route fall-through to app route --> */
         },
         close: {
-          matches: /CLOSE/i,
+          matches: /^CLOSE(\.\S+|$)/i,
           fn: () => _clean(true),
         },
         tutorials: { /* <!-- Show App Tutorials --> */
-          matches: /TUTORIALS/i,
+          matches: /^TUTORIALS$/i,
           fn: () => ಠ_ಠ.Display.doc.show({
             name: "TUTORIALS",
             title: `Tutorials for ${options.name ? options.name : "App"} ...`,
@@ -351,27 +371,27 @@ Router = function() {
           }).modal("show"),
         },
         remove: {
-          matches: /REMOVE/i,
+          matches: /^REMOVE(\.\S+|$)/i,
           length: 1,
           fn: command => ಠ_ಠ.Recent.remove(command).then(id => $(`#${id}`).remove()),
         },
         routes: { /* <!-- Debug Show all Routes --> */
-          matches: /ROUTES/i,
+          matches: /^ROUTES$/i,
           fn: () => _.each(_options.routes, (route, key) => ಠ_ಠ.Flags.log(`Registered Route: ${key}`, route))
         },
         spin: {
-          matches: /SPIN/i,
+          matches: /^SPIN$/i,
           fn: () => ಠ_ಠ.Display.busy({
             target: ಠ_ಠ.container
           }),
         },
         experiments: { /* <!-- Turn on Experimental Features --> */
-          matches: /EXPERIMENTS/i,
+          matches: /^EXPERIMENTS$/i,
           length: 0,
           fn: () => ಠ_ಠ.Display.state().toggle(STATE_EXPERIMENTS),
         },
         instructions: { /* <!-- Show App Instructions --> */
-          matches: /INSTRUCTIONS/i,
+          matches: /^INSTRUCTIONS(\.\S+|$)/i,
           keys: ["i", "I"],
           fn: command => {
 
@@ -402,7 +422,7 @@ Router = function() {
           },
         },
         help: { /* <!-- Request Help --> */
-          matches: /HELP/i,
+          matches: /^HELP$/i,
           fn: () => ಠ_ಠ.Help.provide(ಠ_ಠ.Flags.dir()),
         }
       };

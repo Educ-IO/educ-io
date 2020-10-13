@@ -29,8 +29,8 @@
       <span data-output-name="Value"{{#if (either Tags tags)}} class="border-bottom border-success"{{/if}}>{{#exists details}}{{val "" details}}{{/exists}}</span>{{/if}}{{/if}}
       {{#present (either number Number)}}<span data-output-name="Number" 
         class="ml-2 badge badge-dark align-self-center">{{val "" number Number}}</span>{{/present}}
-      {{~#if (either Tags tags)}}<span class="d-flex flex-row mt-1">
-        {{~#if (isString (either Tags tags))}}<span class="o-75 small badge badge-pill badge-light" data-output-name="Tags">{{either Tags tags}}</span>{{else}}{{#each (either Tags tags)}}<span class="o-75 small badge badge-pill badge-light{{#unless @last}} mr-2{{/unless}}" data-output-name="Tags">{{this}}</span>{{/each}}{{/if~}}
+      {{~#if (either Tags tags)}}<span class="d-flex flex-row flex-wrap mt-1 mt-xl-2">
+        {{~#if (isString (either Tags tags))}}<span class="o-75 small badge badge-pill badge-light" data-output-name="Tags">{{either Tags tags}}</span>{{else}}{{#each (either Tags tags)}}<span class="o-75 small badge badge-pill badge-light mb-1{{#unless @last}} mr-2{{/unless}}" data-output-name="Tags">{{this}}</span>{{/each}}{{/if~}}
       </span>{{/if~}}
     </span>
 		<span data-output-name="Type" 

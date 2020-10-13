@@ -386,6 +386,10 @@ App = function() {
           match: /LOAD/i,
           show: "LOAD_INSTRUCTIONS",
           title: "Loading Existing Classes Data ..."
+        }, {
+          match: /SYNC/i,
+          show: "SYNC_INSTRUCTIONS",
+          title: "Sync Class Memberships ..."
         }, ],
         routes: {
 

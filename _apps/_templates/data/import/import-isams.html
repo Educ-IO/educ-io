@@ -1,0 +1,93 @@
+{% raw %}
+{{#> dialog class="modal-xl" tabindex=8}}
+<div>
+  
+  <div class="selector row">
+    {{!-- Academic Year and Term --}}
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+        <label for="{{#if id}}{{id}}_{{/if}}year" class="col-sm-4 col-form-label">Academic Year</label>
+        <div class="col-sm-8">
+          <input id="{{#if id}}{{id}}_{{/if}}year" data-output-field="Year" type="number" min="2000" step="1" 
+                 class="form-control" {{#if year}} value="{{year}}"{{/if}} data-action="load" tabindex="1"/>
+        </div>
+        {{#if (resolve help 'year')}}<small class="form-text text-muted">{{help.year}}</small>{{/if}}
+      </div>
+    </div>
+    
+    <div class="container col-xl-6 px-4 px-md-3">
+      <div class="form-group row">
+       <label for="{{#if id}}{{id}}_{{/if}}term" class="col-sm-2 col-form-label">Term</label>
+        <div class="col-sm-10">
+          <select id="{{#if id}}{{id}}_{{/if}}term" class="form-control custom-select" 
+                  data-output-field="Term" data-action="load" tabindex="2">
+            <option disabled selected value> -- Select a Term -- </option>
+            {{#each terms}}<option value="{{id}}"{{#if selected}} selected{{/if}}>{{name}}</option>{{/each}}
+          </select>
+        </div>
+        {{#if (resolve help 'term')}}<small class="form-text text-muted">{{help.term}}</small>{{/if}}
+      </div>
+    </div>
+    
+  </div>
+  
+  <div class="row">
+    {{!-- Cycle and Tracking --}}
+    
+    <div class="container col-12 px-4 px-md-3">
+      <div class="form-group row">
+       <label for="{{#if id}}{{id}}_{{/if}}cycle" class="col-sm-2 col-form-label">Cycle</label>
+        <div class="col-sm-10">
+          <div class="input-group">
+            <select class="form-control custom-select" data-content="cycles" data-output-field="Cycle" id="{{#if id}}{{id}}_{{/if}}cycle" tabindex="3"></select>
+            <div class="input-group-append">
+              {{> control_button b_class="btn-dark" b_title="Refresh" b_icon_centered=true
+                  b_action="refresh" b_icon="refresh" b_tab=5 }}
+              {{> control_button b_class="btn-success" b_title="Add to Output" b_icon_centered=true
+                  b_action="add" b_type="Report Cycle" b_targets="[data-holder-field='Items']"
+                  b_value="[data-content='cycles']" b_icon="add_circle" b_tab=4 }}
+            </div>
+          </div>
+        </div>
+        {{#if (resolve help 'cycle')}}<small class="form-text text-muted">{{help.cycle}}</small>{{/if}}
+      </div>
+    </div>
+    
+    <div class="container col-12 px-4 px-md-3">
+      <div class="form-group row">
+       <label for="{{#if id}}{{id}}_{{/if}}tracker" class="col-sm-2 col-form-label">Tracker</label>
+        <div class="col-sm-10">
+          <div class="input-group">
+            <select class="form-control custom-select" data-content="trackers" data-output-field="Tracker" id="{{#if id}}{{id}}_{{/if}}tracker" tabindex="6"></select>
+            <div class="input-group-append">
+              {{> control_button b_class="btn-dark" b_title="Refresh" b_icon_centered=true
+                  b_action="refresh" b_icon="refresh" b_tab=8 }}
+              {{> control_button b_class="btn-success" b_title="Add to Output" b_icon_centered=true
+                  b_action="add" b_type="Academic Tracker" b_targets="[data-holder-field='Items']"
+                  b_value="[data-content='trackers']" b_icon="add_circle" b_tab=7 }}
+            </div>
+          </div>
+        </div>
+        {{#if (resolve help 'tracker')}}<small class="form-text text-muted">{{help.tracker}}</small>{{/if}}
+      </div>
+    </div>
+    
+  </div>
+  
+</div>
+
+<form class="needs-validation mt-3 row" novalidate>
+  
+  <div class="container col-12 px-4 px-md-3" data-output-field="Series" data-output-always="true">
+
+    <div id="{{#if id}}{{id}}_{{/if}}_list" data-holder-field="Items" 
+         class="list-data list-group list-group-light d-flex flex-column mt-1 mt-md-2">
+    
+    </div>
+    
+  </div>
+  
+</form>
+{{/dialog}}
+{% endraw %}

@@ -18,6 +18,7 @@ Config = (options, factory) => {
       complex: [],
       simple: [],
     },
+    defaults: null,
     state: false,
   };
   /* <!-- Internal Consts --> */
@@ -64,7 +65,7 @@ Config = (options, factory) => {
     });
   });
 
-  var _get = () => _find().then(result => result ? _load(result) : result);
+  var _get = () => _find().then(result => result && result.id ? _load(result) : result);
 
   var _update = (id, settings) => factory.Google.appData.upload({
       name: options.name
@@ -78,6 +79,26 @@ Config = (options, factory) => {
     })
     .catch(e => factory.Flags.error("Upload Error", e ? e : "No Inner Error"));
 
+  var _value = (value, prop) => {
+    
+    if (/^\S+_\S+$/i.test(prop)) {
+      var props = prop.split("_");
+      prop = props.pop();
+      value = _.reduce(props, (memo, prop) => memo[prop] || (memo[prop] = {}), value);
+    }
+    
+    return {
+      
+      delete: () => value[prop],
+      
+      get: () => value[prop],
+      
+      set: value => value[prop] = value,
+      
+    };
+    
+  };
+  
   var _process = (values, current) => {
 
     var _config = {};
@@ -86,8 +107,8 @@ Config = (options, factory) => {
       
       /* <!-- Comparison Sets --> */
       if (options.fields.comparison) _.each(options.fields.comparison, prop => {
-        if (values[prop] && current[prop] != values[prop].Value)
-          _config[prop] = values[prop].Value;
+        if (values[prop] && _value(current, prop).get() != values[prop].Value)
+          _value(_config, prop).set(values[prop].Value);
       });
       
       /* <!-- Array Sets (override) --> */
@@ -95,29 +116,29 @@ Config = (options, factory) => {
         values[prop] && (
             (_.isArray(values[prop].Values) && values[prop].Values.length > 0) ||
             (_.isObject(values[prop].Values) && values[prop].Values.id)) ?
-          _config[prop] = _.isArray(values[prop].Values) ?
-          values[prop].Values : [values[prop].Values] :
-          delete current[prop];
+          _value(_config, prop).set(_.isArray(values[prop].Values) ?
+          values[prop].Values : [values[prop].Values]) :
+          _value(current, prop).delete();
       });
       
       /* <!-- Complex Sets --> */
       if (options.fields.complex) _.each(options.fields.complex, prop => {
         values[prop] === undefined ?
-          delete current[prop] :
+          _value(current, prop).delete() :
           values[prop].Value <= 0 ?
-          _config[prop] = false :
+          _value(_config, prop).set(false) :
           values[prop] ?
-          _config[prop] = values[prop].Value :
-          delete current[prop];
+          _value(_config, prop).set(values[prop].Value) :
+          _value(current, prop).delete();
       });
       
       /* <!-- Simple Sets --> */
       if (options.fields.simple) _.each(options.fields.simple, prop => {
         values[prop] === undefined ?
-          delete current[prop] :
+          _value(current, prop).delete() :
           values[prop] && values[prop].Value >= 0 ?
-          _config[prop] = values[prop].Value :
-          delete current[prop];
+          _value(_config, prop).set(values[prop].Value) :
+          _value(current, prop).delete();
       });
       
     }
@@ -134,6 +155,8 @@ Config = (options, factory) => {
 
     clear: _clear,
 
+    defaults: () => options.defaults,
+    
     fields: () => options.fields,
     
     find: _find,

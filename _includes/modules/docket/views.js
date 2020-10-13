@@ -470,9 +470,6 @@ Views = (options, factory) => {
   
   FN.kanban = prefs => new Promise(resolve => {
 
-    /* <!-- Notify what we are doing! --> */
-      factory.Display.busy("Preparing Data");
-    
       var _past = prefs.past === null || prefs.past === undefined || prefs.past == "" ? 2 : prefs.past,
           _future = prefs.future === null || prefs.future === undefined || prefs.future == "" ? 5 : prefs.future,
           _from = factory.Dates.parse(options.state.session.today).subtract(_past, "days"),
@@ -482,7 +479,7 @@ Views = (options, factory) => {
             options.state.application.query.completed(_from, _until)
           ],
           _data = _.map(_queries, q => options.state.application.task.prepare(options.state.session.db ?
-                                                                              _.reject(options.state.session.database.execute(q), "IS_TIMED") : []));
+                                          _.reject(options.state.session.database.execute(q), "IS_TIMED") : []));
     
       var _status = [{
         header: "dark",

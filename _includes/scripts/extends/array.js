@@ -6,10 +6,7 @@ if (!Array.prototype.stdDev) {
     return mean ? Math.sqrt(this.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n) : 0;
   };
 }
-/* <!-- Is Null Method --> */
-
-
-
+/* <!-- Standard Deviation Method --> */
 
 /* <!-- Is Null Method --> */
 if (!Array.prototype.isNull) {
@@ -67,3 +64,35 @@ if (!Array.prototype.trim) {
 	};
 }
 /* <!-- Trim Array to Length (if nulls) --> */
+
+/* <!-- Column Sort (e.g. sort rows by header values in 2D array (array of rows)) --> */
+/* <!-- Returns an Array, first element is sorted headers and second element sorted rows --> */
+Array.columnSort = function(columns, rows, comparer, from) {
+  
+  /* <!-- If 'from', adjust sortable columns appropriately --> */
+  from = from || 0;
+  var _sortable = from ? columns.slice(from) : columns;
+  
+  var _sorted_Columns = _sortable.map(column => column).sort(comparer || undefined);
+  
+  /* <!-- Add the not-sorted columns to the front of the array --> */
+  for (var i = from - 1; i >= 0; i -= 1) {
+    _sorted_Columns.splice(0, 0, columns[i]);
+  }
+  
+  var _sorts = columns.reduce((memo, column) => {
+    memo.push(_sorted_Columns.indexOf(column));
+    return memo;
+  }, []);
+  
+  var _sorted_Rows = _.map(rows, row => {
+        var _new = Array(columns.length);
+        _.each(_sorts, (new_index, old_index) => {
+          _new[new_index] = row[old_index];
+        });
+        return _new;
+      });
+  
+  return [_sorted_Columns, _sorted_Rows];
+};
+/* <!-- Row Sort --> */

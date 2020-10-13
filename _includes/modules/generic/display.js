@@ -126,7 +126,7 @@ Display = function() {
   };
 
   var _modal = run => {
-      var _modals = $(".modal.show[role='dialog']"),
+      var _modals = $(".modal.show[role='dialog'][data-active='true']"),
         _after = fn => {
           if (run && _.isFunction(run)) run();
           if (fn && _.isFunction(fn)) fn();
@@ -146,7 +146,13 @@ Display = function() {
       }
     },
     _modalise = (element, fn) => {
-      element.on("hide.bs.modal", () => $("div.modal-backdrop.d-none").removeClass("d-none"));
+      /* <!-- Handle Modal chaining by indicating this is active --> */
+      element.data("active", true);
+      element.on("hide.bs.modal", e => {
+        /* <!-- Handle Modal chaining by indicating this is now inactive --> */
+        $(e.currentTarget).data("active", false);
+        $("div.modal-backdrop.d-none").removeClass("d-none");
+      });
       element.on("hidden.bs.modal", _modal(() => element.remove() && (fn && _.isFunction(fn) ? fn() : true)));
       return element;
     };
@@ -190,8 +196,8 @@ Display = function() {
     });
   };
 
-  var _clean = () => $("div.modal-backdrop.show").last().remove() &&
-    $("body.modal-open").removeClass("modal-open"); /* <!-- Weird Modal Not Hiding Bug --> */
+  var _clean = () =>  $(".modal.show[role='dialog']").length === 0 ? $("div.modal-backdrop.show").last().remove() &&
+    $("body.modal-open").removeClass("modal-open") : null; /* <!-- Weird Modal Not Hiding Bug --> */
 
   var _tidy = () => $("div.tooltip.show").last().remove(); /* <!-- Tooltips Not Hiding --> */
 
@@ -546,12 +552,13 @@ Display = function() {
         if (!options) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("confirm")(options));
+        var dialog = $(_template("confirm")(options)),
+            confirmed;
 
-        _target(options).append(_modalise(dialog, reject));
+        _target(options).append(_modalise(dialog, () => confirmed ? resolve(confirmed) : reject()));
 
         /* <!-- Set Event Handlers --> */
-        dialog.find(".modal-footer button.btn-primary").click(() => _clean() && resolve(true));
+        dialog.find(".modal-footer button.btn-primary").click(() => (confirmed = true) && _clean());
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
         dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
@@ -745,10 +752,9 @@ Display = function() {
         options.__LONG = (_length > MAX_ITEMS);
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("choose")(options)),
-          parsed;
+        var dialog = $(_template("choose")(options)), parsed, resolved;
 
-        _target(options).append(_modalise(dialog, () => _.isEmpty(parsed) ? reject() : resolve(parsed)));
+        _target(options).append(_modalise(dialog, () => _.isEmpty(parsed) ? reject() : resolved ? null : (resolved = true) && resolve(parsed)));
 
         /* <!-- Parsing Method --> */
         var choice = () => {
@@ -778,7 +784,8 @@ Display = function() {
               e.preventDefault();
               e.stopPropagation();
             } else if ($(e.currentTarget).is(".btn-primary")) {
-              _.tap(parse(true, _values), value => value ? resolve(value) : false);
+              options.chain ? parse(false, _values) : _.tap(parse(true, _values), 
+                  value => value ? resolved ? null : (resolved = true) && resolve(value) : false);
             }
           });
 
@@ -816,10 +823,11 @@ Display = function() {
 
         if (!options || !options.list || !options.choices) return reject();
 
-        /* <!-- Great Modal Options Dialog --> */
-        var dialog = $(_template("options")(options));
+        /* <!-- Create Modal Options Dialog --> */
+        var dialog = $(_template("options")(options)), _return, _resolved;
 
-        _target(options).append(_modalise(dialog, reject));
+        /* <!-- Modalise, handles Hidden event which will reject unless data available for resolving --> */
+        _target(options).append(_modalise(dialog, () => _return ? _resolved ? null : resolve(_return) : reject()));
 
         dialog.find("a.dropdown-item").on("click.toggler", (e) => $(e.target).closest(".input-group-append, .input-group-prepend").children("button")[0].innerText = e.target.innerText);
         dialog.find("a[data-toggle='tooltip'], a[data-tooltip='true']").tooltip({
@@ -830,7 +838,7 @@ Display = function() {
 
         /* <!-- Set Event Handlers --> */
         dialog.find(".modal-footer button.btn-primary").click(() => {
-          var _return = [];
+          _return = [];
           dialog.find("div.input-group").each(function() {
             var e = $(this);
             _return.push({
@@ -838,7 +846,7 @@ Display = function() {
               value: e.find("button").text()
             });
           });
-          resolve(_return);
+          _resolved ? null : (_resolved = true) && resolve(_return);
         });
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
@@ -999,9 +1007,9 @@ Display = function() {
         options.__LONG = (_length > MAX_ITEMS);
 
         /* <!-- Great Modal Options Dialog --> */
-        var dialog = $(_template("action")(options));
+        var dialog = $(_template("action")(options)), _return, _resolved;
 
-        _target(options).append(_modalise(dialog, reject));
+        _target(options).append(_modalise(dialog, () => _return ? _resolved ? null : resolve(_return): reject()));
 
         dialog.find("a[data-toggle='tooltip'], a[data-tooltip='true']").tooltip({
           animation: false,
@@ -1017,11 +1025,12 @@ Display = function() {
           _clean();
 
           var _this = $(this),
-            _action = options.actions[_this.data("action")];
-          resolve({
+              _action = options.actions[_this.data("action")];
+          _return = {
             action: _action,
             option: _action.options ? _action.options[_this.parents(".action").find("select option:selected").val()] : null
-          });
+          };
+          _resolved ? null : (_resolved = true) && resolve(_return);
 
         });
 

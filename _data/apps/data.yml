@@ -1,20 +1,33 @@
-########################################
-#                                      #
-#   d8888b.  .d8b.  d888888b  .d8b.    #
-#   88  `8D d8' `8b `~~88~~' d8' `8b   #
-#   88   88 88ooo88    88    88ooo88   #
-#   88   88 88~~~88    88    88~~~88   #
-#   88  .8D 88   88    88    88   88   #
-#   Y8888D' YP   YP    YP    YP   YP   #
-#                                      #
-########################################
+#############################################################
+#                                                           #
+#   .sSSSSs.                                                #
+#   SSSSSSSSSs. .sSSSSs.    .sSSSSSSSSSSSSSs. .sSSSSs.      #
+#   S SSS SSSSS S SSSSSSSs. SSSSS S SSS SSSSS S SSSSSSSs.   #
+#   S  SS SSSSS S  SS SSSSS SSSSS S  SS SSSSS S  SS SSSSS   #
+#   S..SS SSSSS S..SSsSSSSS `:S:' S..SS `:S:' S..SSsSSSSS   #
+#   S:::S SSSSS S:::S SSSSS       S:::S       S:::S SSSSS   #
+#   S;;;S SSSSS S;;;S SSSSS       S;;;S       S;;;S SSSSS   #
+#   S%%%S SSSS' S%%%S SSSSS       S%%%S       S%%%S SSSSS   #
+#   SSSSSsS;:'  SSSSS SSSSS       SSSSS       SSSSS SSSSS   #
+#                                                           #
+#############################################################
 
 name: Data
-desc: Analyse your __academic data__ and output straight to Google Sheets, with _ease_
+desc: Analyse your __academic data__ and output straight to Google Sheets
 link: /data/
 colour: 1a1a1a
 logo: images/data_logo.svg
 learn: /guides/data
+css:
+  primary:
+  secondary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/toasts
+    - custom/variables
+    - custom/notifications
+    - custom/tabs
 imports:
   - name: underscore
     load: first
@@ -42,20 +55,42 @@ imports:
     load: last
   - name: waves-js
     load: last
+  - name: sprintf
+    load: last
+  - name: clipboard
+    load: lazy
+  - name: xlsxpopulate
+    load: lazy
+  - name: filesaver
+    load: lazy
   - name: google
     load: lazy
+    
 helpers:
   - network
   - strings
+  - tabulate
+  - notify
+  - config
+  - dialog
+  - data
   - google/sheets/notation
-  - google/sheets/metadata
   - google/sheets/grid
   - google/sheets/format
   - google/sheets/properties
+  - google/sheets/metadata
+  - google/sheets/sorts
   - google
+  - colours
   - css
   - handlebars
+  - link
+  - filters
+  - saver
+  - exporter
+  
 modules:
+  - generic/dates
   - generic/flags
   - generic/controller
   - generic/display
@@ -65,20 +100,63 @@ modules:
   - help
   - items
   - recent
+  - datatable
+  - grid
+  - headers
+  - configuration
+  - data/states
+  - data/events
+  - data/common
+  - data/files
+  - data/isams
+  - data/transform
+  - data/generate
+  - data/views/overview
+  - data/views/detail
+  - data/views/student
+  
 scripts: 
   - extends/regex
   - extends/array
+  - extends/promises
+  
 templates:
   - generic/options
   - generic/choose
   - generic/confirm
   - generic/alert
+  - generic/text
+  - generic/files
+  - generic/upload
+  - generic/notify
   - loader
   - recent
   - help
   - shared/control_icon
   - shared/control_button
   - shared/child_buttons
+  - shared/tabular/filters
+  - shared/tabular/table
+  - shared/tabular/datatable
+  - shared/tabular/rows
+  - shared/tabular/cell
+  - shared/tabular/editing
+  - shared/tabular/table_header
+  - shared/tabular/table_body
+  - shared/dialogs/dialog
+  - shared/link
+  - shared/link_options
+  - data/config/config-isams
+  - data/import/import-isams
+  - data/import/series-isams
+  - data/output/format-output
+  - data/views/overview_header
+  - data/views/overview_body
+  - data/views/detail_header
+  - data/views/detail_body
+  - data/views/student_header
+  - data/views/student_body
+  
 docs:
   - shared/FILTERS
   - shared/JUMP
@@ -91,6 +169,31 @@ docs:
   - data/README
   - data/INSTRUCTIONS
   - data/TUTORIALS
+  - data/LINK_INSTRUCTIONS
+  - data/IMPORT
+  - data/SAVE_FILE
+  - data/notify/NOTIFY_EXPORT_DATA_SUCCESS
+  - data/notify/NOTIFY_SAVE_FAILED
+  - data/notify/NOTIFY_EXPORT_VIEW_SUCCESS
+  - data/notify/NOTIFY_EXPORT_GENERATE_SUCCESS
+  - data/instructions/CONFIG_ISAMS_INSTRUCTIONS
+  - data/instructions/CONFIG_INSTRUCTIONS
+  - data/instructions/IMPORT_ISAMS_INSTRUCTIONS
+  - data/instructions/IMPORT_INSTRUCTIONS
+  - data/instructions/SAVE_INSTRUCTIONS
+  - data/instructions/OVERVIEW_EXPORT_INSTRUCTIONS
+  - data/titles/GET_URL
+  - data/titles/DELETE_SAVED_CONFIG
+  - data/titles/OVERVIEW_SUBTITLE
+  - data/titles/DETAIL_SUBTITLE
+  - data/titles/STUDENT_SUBTITLE
+  - data/titles/VIEW_DETAILS
+  - data/titles/SUBJECT_NAME
+  - data/confirmations/CONFIRM_DELETE_SAVED_CONFIG
+  - data/dialogs/IMPORT_ISAMS_DATA
+  - data/dialogs/IMPORT_ISAMS_DATA_NCYEAR
+  - data/dialogs/OUTPUT_DATA_FORMAT
+  
 scopes:
   google:
     - scope: email
@@ -101,19 +204,116 @@ scopes:
       name: View your basic profile info
       reason: In order to display your name on the navigation menu, once you have signed in.
       request: login
+    - scope: https://www.googleapis.com/auth/drive.appdata
+      name: View and manage its own configuration data in your Google Drive
+      reason: In order to record your settings in Google Drive.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.file
+      name: View and manage Google Drive files and folders that you have opened or created with this app
+      reason: In order to create, and export data to a Google Sheet, we need access to it.
+      request: lazy
+
 keys:
   google:
       general: 
       oauth: 999744010011-kgvh6lacssv8pjsqccrukpicpcmo41h0.apps.googleusercontent.com
+      
 menus:
+
+  - name: Open
+    desc: Open MIS Data from Google Drive
+    disabled_until:
+      - authenticated
+    disabled_while:
+      - view
+    auth: google
+    scopes:
+      - https://www.googleapis.com/auth/drive.file
+    shortcut: "o"
+    imports:
+      - google
+    hash: open
+    
   - name: Import
+    disabled_until:
+      - authenticated
+    disabled_while:
+      - view
     groups:
       all:
         commands:
+          - name: From File
+            desc: Import Tracking & Report Data from a File
+            hash: import
+            divider: true
           - name: From iSAMS
             desc: Import Tracking & Report Data from iSAMS
-            hash: import.isams
+            disabled_until:
+              - config-isams
+            hash: query.isams
+            
+  - name: View
+    disabled_until:
+      - view
+    groups:
+      all:
+        commands:
+          - name: Overview
+            desc: Show Overview
+            hash: show.overview
+            disabled_while:
+              - overview
+          - name: Detail
+            desc: Show Details
+            hash: show.detail
+            disabled_while:
+              - detail
+            divider: true
+          - name: Close
+            desc: Close this Overview
+            hash: close
+            
+  - name: Export
+    disabled_until:
+      - view
+    groups:
+      all:
+        commands:
+          - name: Export to Sheets
+            desc: Export Academic Data View to Google Sheets
+            hash: export.sheets
+            auth: google
+            scopes:
+              - https://www.googleapis.com/auth/drive.file
+          - name: Download as CSV
+            desc: Download Academic Data View as a Comma Separated Values (CSV) File
+            hash: export.csv
+            imports:
+              - filesaver
+          - name: Download as Excel
+            desc: Download Academic Data View as a Microsoft Excel File
+            hash: export.excel
+            imports:
+              - xlsxpopulate
+              - filesaver
+          - name: Download as Markdown
+            desc: Download Academic Data View as a Markdown Table
+            hash: export.markdown
+            imports:
+              - filesaver
+              
   - name: Settings
+    disabled_until:
+      - authenticated
+    groups:
+      all:
+        commands:
+          - name: iSAMS API Config
+            desc: Enter API URL, Details & Keys
+            imports:
+              - clipboard
+            hash: settings.config.isams
+            
   - name: About
     short_name: Help
     groups:
@@ -163,4 +363,26 @@ menus:
               - jshashes
               - fetchjsonp
             auth: google
+buttons:
+  - name: Open
+    desc: Open MIS Data from Google Drive
+    hash: open
+    auth: google
+    loud: true
+    
+  - name: Import
+    desc: Import MIS Data
+    hash: import
+    auth: google
+    loud: true
+    buttons:
+    - name: From iSAMS
+      desc: Import Tracking & Report Data from iSAMS
+      hash: query.isams
+      auth: google
+      divider: true
+      
+    - name: About
+      desc: More details about this
+      hash: instructions.import
 published: false

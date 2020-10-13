@@ -1,0 +1,1 @@
+Please confirm you wish to __delete__ the saved config for __{% raw %}{{content}}{% endraw %}__

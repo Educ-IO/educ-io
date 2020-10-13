@@ -312,6 +312,11 @@ Handlebars = (options, factory) => {
       
       Handlebars.registerHelper("truthy", value => !!value);
       
+      Handlebars.registerHelper("resolve", function() {
+        return _.reduce(Array.prototype.slice.call(arguments, 1, arguments.length - 1), 
+          (memo, property) => memo ? memo[property] : null, Array.prototype.slice.call(arguments, 0, 1)[0]);
+      });
+      
       /* <!-- Map all templates as Partials too --> */
       if (Handlebars.templates) Handlebars.partials = Handlebars.templates;
 

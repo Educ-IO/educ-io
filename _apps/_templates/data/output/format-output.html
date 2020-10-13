@@ -1,0 +1,39 @@
+{% raw %}
+{{#> dialog class="modal-xl" tabindex=2}}
+
+<form class="needs-validation mt-3" novalidate>
+  
+  <div class="row">
+    {{!-- Output Types --}}
+    
+    <div class="container col-lg-6 px-4 px-md-3">
+      <div class="form-group row">
+       <label for="{{#if id}}{{id}}_{{/if}}format" class="col-sm-2 col-form-label">Format</label>
+        <div class="col-sm-10">
+          <select class="form-control custom-select" data-output-field="Format" id="{{#if id}}{{id}}_{{/if}}format" tabindex="1">
+            {{#each formats}}<option value="{{id}}"{{#if selected}} selected{{/if}}>{{name}}</option>{{/each}}
+          </select>
+        </div>
+        {{#if (resolve help 'format')}}<small class="form-text text-muted">{{help.format}}</small>{{/if}}
+      </div>
+    </div>
+    
+    <div class="container col-lg-6 px-4 px-md-3">
+      <div class="form-group row">
+       <label for="{{#if id}}{{id}}_{{/if}}grades" class="col-sm-2 col-form-label">Grades</label>
+        <div class="col-sm-10">
+          <select class="form-control custom-select" data-output-field="Grades" id="{{#if id}}{{id}}_{{/if}}grades" tabindex="2">
+            {{#each grades}}<option value="{{id}}"{{#if selected}} selected{{/if}}>{{name}}</option>{{/each}}
+          </select>
+        </div>
+        {{#if (resolve help 'grades')}}<small class="form-text text-muted">{{help.grades}}</small>{{/if}}
+      </div>
+    </div>
+    
+  </div>
+  
+</form>
+
+<form>
+{{/dialog}}
+{% endraw %}

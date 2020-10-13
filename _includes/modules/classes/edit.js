@@ -90,8 +90,7 @@ Edit = (options, factory) => {
               courseState: state
             }).then(result => FN.update(_.tap(classroom, classroom => {
               classroom.$$state = result.courseState;
-              classroom.state.text !== undefined ? classroom.state.text = result.courseState : 
-                classroom.state = result.courseState;
+              classroom.state = options.functions.populate.state(result);
             }), "state"))))
             .catch(e => factory.Flags.error(error, e))
             .then(factory.Main.busy(busy, true)) : false)
@@ -110,7 +109,7 @@ Edit = (options, factory) => {
               }), "owner"))))
               .catch(e => factory.Flags.error("Class Transfer Error", e))
               .then(factory.Main.busy("Transferring Classes", true)) : false)
-        .catch(e => (e ? factory.Flags.error("Class Transfer Error", e) : factory.Flags.log("Class Activation Cancelled")).negative()),
+        .catch(e => (e ? factory.Flags.error("Class Transfer Error", e) : factory.Flags.log("Class Transfer Cancelled")).negative()),
     
   };
   /* <!-- Edit Functions --> */
@@ -120,11 +119,11 @@ Edit = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
       
-    activate : FN.edit.state(c => c.state == "ARCHIVED" || c.state.text == "ARCHIVED", "ACTIVE", "activate_Classes", "Activate Classes", "ACTIVATE_CLASSES", "Activate",
-                              "Activating Classes", "Class Activation Error", "Class Activation Cancelled"),
+    activate : FN.edit.state(c => c.state == "ARCHIVED" || c.state.text == "ARCHIVED", "ACTIVE", "activate_Classes", "Activate Classes",
+                             "ACTIVATE_CLASSES", "Activate", "Activating Classes", "Class Activation Error", "Class Activation Cancelled"),
     
-    archive : FN.edit.state(c => c.state == "ACTIVE" || c.state.text == "ACTIVE", "ARCHIVED", "archive_Classes", "Archive Classes", "ARCHIVE_CLASSES", "Archive",
-                              "Archiving Classes", "Class Archiving Error", "Class Archiving Cancelled"),
+    archive : FN.edit.state(c => c.state == "ACTIVE" || c.state.text == "ACTIVE", "ARCHIVED", "archive_Classes", "Archive Classes",
+                            "ARCHIVE_CLASSES", "Archive", "Archiving Classes", "Class Archiving Error", "Class Archiving Cancelled"),
     
     field : (classroom, field, value) => {
       

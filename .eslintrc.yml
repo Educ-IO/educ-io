@@ -55,6 +55,7 @@ globals:
   d3: false
   DeepDiff: false
   humanizeDuration: false
+  sprintf: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -181,6 +182,10 @@ globals:
   PDF: true
   Templates: true
   Configuration: true
+  Arrays: true
+  Detail: true
+  Transform: true
+  Generate: true
   
   # Reflect Forms and Scales
   __Ω__UK_Teachers_Standards: true

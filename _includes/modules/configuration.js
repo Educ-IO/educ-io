@@ -20,6 +20,7 @@ Configuration = (options, factory) => {
       id: options.preferences.id,
       title: options.preferences.title,
       enter: true,
+      actions: options.preferences.actions || null,
       state: _.mapObject(
                 settings, 
                 (value, key) => fields && fields.complex && fields.complex.indexOf(key) >= 0 ?
