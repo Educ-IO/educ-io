@@ -134,7 +134,7 @@ Generate = (options, factory) => {
  
   var getGrades = (grades, selector) => {
 
-    // -- De-dupe Grades -- //
+    /* <!-- De-dupe Grade --> */
     var _grades = [];
 
     grades.forEach(function(grade) {
@@ -177,8 +177,8 @@ Generate = (options, factory) => {
   };
   
   var generate = (sheet, data, callback, sort) => {
-    
-    // -- Handle Initial Headers -- //
+
+    /* <!--  Handle Initial Headers --> */
     var _columns = {
       student: ["ID", "Chosen Name", "Surname", "Form"],
       trackers: [],
@@ -191,14 +191,14 @@ Generate = (options, factory) => {
     
     var _process = property => {
       
-      // -- Square Off Array (prevent jagged array) -- //
+      /* <!-- Square Off Array (prevent jagged array) --> */
       _values[property] = _square(_values[property], _columns[property].length);
 
       var _sort = _.isObject(sort) ? sort[property] : sort;
       
       if (_sort !== null && _sort !== undefined) {
         
-        // -- Sort Columns -- //
+        /* <!-- Sort Columns --> */
         var _sorted = _sort === true ? 
             Array.columnSort(_columns[property], _values[property]) :
             Array.columnSort(_columns[property], _values[property], null, _sort);
@@ -209,16 +209,16 @@ Generate = (options, factory) => {
       
     };
 
-    // -- Handle Students / Trackers -- //
+    /* <!-- Handle Students / Trackers --> */
     iterate(data, student => {
 
-      // -- Main Student Details -- //
+      /* <!-- Main Student Details --> */
       _values.student.push([student.id, student.chosenName, student.surname, student.form]);
       
-      // -- Array to Handle Tracker Details -- //
+      /* <!-- Array to Handle Tracker Details --> */
       var _row = [];
 
-      // -- Handle Trackers -- //
+      /* <!-- Handle Trackers --> */
       if (student.tracking) iterate(student.tracking, (tracking, key) => {
         iterate(tracking, (value, name) => {
           var _header = sprintf("%s | %s", key, name),
@@ -232,21 +232,21 @@ Generate = (options, factory) => {
         });
       });
 
-      // -- Push Row into Rows -- //
+      /* <!-- Push Row into Rows --> */
       _values.trackers.push(_row);
       
-      // -- Add Placeholder for Main Rows / Values -- //
+      /* <!-- Add Placeholder for Main Rows / Values --> */
       _values.main.push([]);
 
     });
     
-    // -- We have trackers -- //
+    /* <!-- We have trackers --> */
     if (_columns.trackers.length > 0) _process("trackers");
     
-    // -- Hit Callback (if supplied) -- //
+    /* <!-- Hit Callback (if supplied) --> */
     if (callback) {
 
-      // -- Call Callback to further process data -- //
+      /* <!-- Call Callback to further process data  --> */
       callback(data, _columns.main, _values.main, _values.student, _values.trackers);
 
       if (_columns.main.length > 0) _process("main");
@@ -268,29 +268,29 @@ Generate = (options, factory) => {
         _all_Spacers = [_columns.student.length]
           .concat(_columns.trackers.length > 0 && _columns.main.length > 0 ? _columns.student.length + 1 + (_columns.trackers.length > 0 ? _columns.trackers.length + 1 : 0) : []);
     
-    // -- Add Headers to Output Sheet -- //
+    /* <!-- Add Headers to Output Sheet --> */
     return FN.sheet.update(sheet, 
         sheet.helpers.notation.grid(0, 0, 0, _all_Columns.length - 1, true,
         sheet.sheet.sheets[sheet.sheet.sheets.length - 1].properties.title), [_all_Columns], "USER_ENTERED")
     
-      // -- Add Values to Output Sheet -- //
+      /* <!-- Add Values to Output Sheet --> */
       .then(() => FN.sheet.update(sheet, 
         sheet.helpers.notation.grid(1, _all_Values.length, 0, _all_Columns.length - 1, true,
         sheet.sheet.sheets[sheet.sheet.sheets.length - 1].properties.title), _all_Values, "USER_ENTERED"))
     
-      // -- Format Output Sheet -- //
+      /* <!-- Format Output Sheet --> */
       .then(() => FN.sheet.batch(sheet, 
-                      
-         // -- Format Spacer Columns -- //
-         _.map(_all_Spacers,
-          spacer => sheet.helpers.format.cells(sheet.helpers.grid.columns(spacer, spacer + 1).range(), [
-            sheet.helpers.format.background("back"),
-            sheet.helpers.format.align.horizontal("CENTER"),
-            sheet.helpers.format.align.vertical("MIDDLE"),
-            sheet.helpers.format.text("white", 8, true)
-          ]))
 
-        // -- Dimension Spacer Columns -- //
+        /* <!-- Format Spacer Columns --> */
+        _.map(_all_Spacers,
+        spacer => sheet.helpers.format.cells(sheet.helpers.grid.columns(spacer, spacer + 1).range(), [
+          sheet.helpers.format.background("back"),
+          sheet.helpers.format.align.horizontal("CENTER"),
+          sheet.helpers.format.align.vertical("MIDDLE"),
+          sheet.helpers.format.text("white", 8, true)
+        ]))
+
+        /* <!-- Dimension Spacer Columns --> */
         .concat(_.map(_all_Spacers,
           spacer => sheet.helpers.format.dimension(sheet.helpers.grid.columns(spacer, spacer + 1).dimension(10))))
                                  
@@ -314,7 +314,7 @@ Generate = (options, factory) => {
 
       ))
     
-      // -- Format Output Sheet | Final Pass -- //
+      /* <!-- Format Output Sheet | Final Pass --> */
       .then(() => FN.sheet.batch(sheet, [
       
         /* <!-- Set Autosize Columns --> */
@@ -360,14 +360,14 @@ Generate = (options, factory) => {
                                                     groups, selector, date, id, sheet)
       .then(value => generate(value, data, (data, columns, values, students) => {
 
-        // -- Handle Students / Trackers -- //
+        /* <!-- Handle Students / Trackers --> */
         iterate(data, function(student) {
 
           var _row = students.findIndex(function(row) {
                 return row[0] == student.id;
               });
 
-          // -- Handle Subject Gradings -- //
+          /* <!-- Handle Subject Gradings --> */
           if (student.subjects) iterate(student.subjects, function(subject, subject_Name) {
 
             iterate(subject, function(grades, grade_Name) {
@@ -394,14 +394,14 @@ Generate = (options, factory) => {
 
       }, true))
 
-      // -- Return Sheet to Caller -- //
+      /* <!-- Return Sheet to Caller --> */
       .then(sheet => sheet ? FN.sheet.finally(sheet.sheet) : null),
 
       long : (groups, selector, data) => FN.sheet.tab("L", factory.Google_Sheets_Format({}, factory).colour("0000ff"),
                                                       groups, selector, date, id, sheet)
         .then(value => generate(value, data, function(data, columns, values, students, trackers) {
 
-          // -- Handle Report Grades -- //
+          /* <!-- Handle Report Grades --> */
           columns.splice(columns.length, 0, "Subject", "Cycle", "Grading", "Date", "User", "Value");
 
           iterate(data, student => {
@@ -421,7 +421,7 @@ Generate = (options, factory) => {
                   var _row = [subject_Name, grade.cycle, grade_Name, grade.date,
                       _.isArray(grade.author) ? grade.author.join("\n") : grade.author, grade.grade];
 
-                  // -- Add or Update Main & Student Rows -- //
+                  /* <!-- Add or Update Main & Student Rows --> */
                   if (_updated) {
                     students.push(_student);
                     trackers.push(_tracker);
@@ -444,13 +444,13 @@ Generate = (options, factory) => {
         /* <!-- Sort Students, Conditional Formats / Autosize Columns --> */
         .then(value => FN.sheet.batch(value, [
 
-            // -- Hide ID Column -- //
+            /* <!-- Hide ID Column --> */
             value.helpers.format.hide(value.helpers.grid.columns(0, 1).dimension()),
 
-            // -- Hide Date/User Column -- //
+            /* <!-- Hide Date/User Column --> */
             value.helpers.format.hide(value.helpers.grid.columns(value.extents.width - 3, value.extents.width - 1).dimension()),
 
-            // -- Sort Data -- //
+            /* <!-- Sort Data --> */
             value.helpers.sorts.range(
               value.helpers.grid.rows(value.extents.data.row, value.extents.height).range(),
               [
@@ -461,7 +461,7 @@ Generate = (options, factory) => {
               ]),
           ]))
 
-        // -- Return Sheet to Caller -- //
+        /* <!-- Return Sheet to Caller --> */
         .then(sheet => sheet ? FN.sheet.finally(sheet.sheet) : null)),
 
       hybrid : (groups, selector, data) => FN.sheet.tab("H", factory.Google_Sheets_Format({}, factory).colour("ff0000"),
@@ -470,7 +470,7 @@ Generate = (options, factory) => {
         var _length;
         return generate(value, data, (data, columns, values, students, trackers) => {
 
-          // -- Handle Subject Names -- //
+          /* <!-- Handle Subject Names --> */
           columns.splice(columns.length, 0, "Subject", "User");
 
           iterate(data, student => {
@@ -484,7 +484,7 @@ Generate = (options, factory) => {
 
               var _row = [];
               
-              // -- Add subject name / user placeholder to row -- //
+              /* <!-- Add subject name / user placeholder to row --> */
               _row.push(subject_Name);
               _row.push([]);
 
@@ -512,10 +512,10 @@ Generate = (options, factory) => {
 
               });
 
-              // -- Tidy up User / Author Cell -- //
+              /* <!-- Tidy up User / Author Cell --> */
               _row[1] = _row[1].join("\n");
 
-              // -- Add or Update Values -- //
+              /* <!-- Add or Update Values --> */
               if (_updated) {
                 students.push(_student);
                 trackers.push(_tracker);
@@ -529,7 +529,7 @@ Generate = (options, factory) => {
 
           });
 
-          // -- Get Length of Reports (for sorting / hiding purposes) -- //
+          /* <!-- Get Length of Reports (for sorting / hiding purposes) --> */
           _length = columns.length - 2;
           
         }, {
@@ -540,21 +540,21 @@ Generate = (options, factory) => {
         /* <!-- Sort Students, Conditional Formats / Autosize Columns --> */
         .then(value => FN.sheet.batch(value, [
           
-            // -- Hide ID Column -- //
+            /* <!-- Hide ID Column --> */
             value.helpers.format.hide(value.helpers.grid.columns(0, 1).dimension()),
           
-            // -- Hide User Column -- //
+            /* <!-- Hide User Column --> */
             value.helpers.format.hide(value.helpers.grid.columns(value.extents.width - (_length + 1), 
                                                                   value.extents.width - _length).dimension()),
           
-            // -- Sort Data -- //
+            /* <!-- Sort Data --> */
             value.helpers.sorts.range(
               value.helpers.grid.rows(value.extents.data.row, value.extents.height).range(),
               [3, 2, 1, value.extents.width - (_length + 1)]),
           
           ]))
         
-        // -- Return Sheet to Caller -- //
+        /* <!-- Return Sheet to Caller --> */
         .then(sheet => sheet ? FN.sheet.finally(sheet.sheet) : null);
 
       }),

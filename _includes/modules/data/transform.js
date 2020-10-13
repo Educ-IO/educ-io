@@ -134,7 +134,7 @@ Transform = (options, factory) => {
       _pupil = output[_pupil];
     }
 
-    // -- Only Run if there are Grades -- //
+    /* <!-- Only Run if there are Grades --> */
     if (_pupil && pupilReport.Grades && pupilReport.Grades.Grade) {
       var __subject = _pupil.subjects[_subject] || (_pupil.subjects[_subject] = {});
       _template = getTemplate(_template, metadata);
@@ -160,7 +160,7 @@ Transform = (options, factory) => {
   /* <!-- Public Functions --> */
   FN.process = (metadata, reports, pupils, trackers) => {
   
-    // -- Get Report Data -- //
+    /* <!-- Get Report Data --> */
     var _data = reports.iSAMS.SchoolReports.ReportCycles.ReportCycle;
     _data = _.isArray(_data) ? _data : [_data];
 

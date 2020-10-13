@@ -173,7 +173,7 @@ iSAMS_API = (options, factory) => {
                     ರ‿ರ.metadata = metadata;
                   }
                
-                  // -- Get Cycles and Populate -- //
+                  /* <!-- Get Cycles and Populate --> */
                   var _cycles = dialog.find("[data-content='cycles']").empty();
                   if (metadata.iSAMS && metadata.iSAMS.SchoolReports && metadata.iSAMS.SchoolReports.ReportCycles) {
                     (Array.isArray(metadata.iSAMS.SchoolReports.ReportCycles.ReportCycle) ? 
@@ -188,7 +188,7 @@ iSAMS_API = (options, factory) => {
                       }).text(cycle.ReportName)));
                   }
 
-                  // -- Get Tracking Options -- //
+                  /* <!-- Get Tracking Options --> */
                   var _trackers = dialog.find("[data-content='trackers']").empty();
                   if (metadata.iSAMS && metadata.iSAMS.TrackingManager && metadata.iSAMS.TrackingManager.ExternalDataList) {
                     (Array.isArray(metadata.iSAMS.TrackingManager.ExternalDataList.Data) ? 

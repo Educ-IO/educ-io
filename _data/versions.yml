@@ -1,8 +1,8 @@
 site :
-  0.1.13b :
+  0.1.13c :
     name : Bug Fixes & Improvements
     desc : Bug Fixes
-    numeric : 0.1.13.2
+    numeric : 0.1.13.3
   0.1.13a :
     name : Classes v0.0.6a-beta
     desc : New Features
