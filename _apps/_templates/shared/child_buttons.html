@@ -4,7 +4,7 @@
 </button>{{/if~}}
 <div class="dropdown-menu{{#if direction}} dropdown-menu-{{ direction }}{{/if}}">
   {{~#each actions~}}
-    <a class="dropdown-item" href="#" data-action="{{concat 'actions_' ../index '_' @index}}"{{#if desc}} data-toggle="tooltip" data-html="true" title="{{ desc }}"{{/if}}{{#if (any ../dismiss dismiss)}} data-dismiss="modal"{{/if}}>{{ text }}</a>
+    <a class="dropdown-item" href="#" data-action="{{concat 'actions_' ../index '_' @index}}"{{#if desc}}{{#if ../delay}} data-delay="{{../delay}}"{{/if}} {{#if ../placement}} data-placement="{{../placement}}"{{/if}} data-toggle="tooltip" data-html="true" title="{{ desc }}"{{/if}}{{#if (any ../dismiss dismiss)}} data-dismiss="modal"{{/if}}>{{ text }}</a>
   {{~/each~}}
 </div>
 {% endraw %}

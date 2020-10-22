@@ -160,6 +160,11 @@ Handlebars = (options, factory) => {
             variable.toDate() : variable instanceof Date ? variable : false))) return;
         return variable.toLocaleTimeString();
       });
+      
+      Handlebars.registerHelper("localeString", variable => {
+        if (variable === null || variable === undefined) return;
+        return isNaN(variable) || !variable.toLocaleString ? variable : variable.toLocaleString();
+      });
 
       Handlebars.registerHelper("fromNow", (variable, short) => {
         if (!variable || !(variable._isAMomentObject || (window.dayjs && dayjs.isDayjs(variable)))) return;

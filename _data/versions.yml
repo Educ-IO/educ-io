@@ -1,8 +1,8 @@
 site :
-  0.1.13c :
+  0.1.13d :
     name : Bug Fixes & Improvements
     desc : Bug Fixes
-    numeric : 0.1.13.3
+    numeric : 0.1.13.4
   0.1.13a :
     name : Classes v0.0.6a-beta
     desc : New Features
@@ -1277,6 +1277,12 @@ events :
     name : Early testing version
     type : minor
 docket :
+  1.1.1a :
+    name : Bug Fixes
+    desc : Fixed Tooltip and Dialog Bugs
+    changes :
+      - Fixed mobile / touch bug impacting some small screen dialogs
+    type : minor
   1.1.1 :
     name : Improvements and Bug Fixes
     desc : Fixed Adding Past Tasks Bug
@@ -1465,6 +1471,13 @@ plan :
     name : Early testing version
     type : minor
 book :
+  0.0.8c-beta :
+    name : Visual Tweaks
+    changes :
+      - Additional Button for Extending/Reducing Loan Span
+      - Manage Booking Time Display Improvement
+      - Tooltip Bug Fixes
+    type : minor
   0.0.8b-beta :
     name : Persistent QR Code Links
     type : minor

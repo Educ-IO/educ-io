@@ -10,6 +10,7 @@ Calendar = (options, factory) => {
       format : {
         short : "HH:mm",
         long : "Do | HH:mm",
+        partial : "HH:mm (Do MMM)",
         display : "[<strong>]Do, MMM[</strong>] | HH:mm",
       }
     },
@@ -48,13 +49,20 @@ Calendar = (options, factory) => {
                     event.extendedProperties.private : {};
   
   FN.date = event => factory.Dates.parse(event.start.date || event.start.dateTime).startOf("day"),
-    
-  FN.times = (from, until, dates, display) => `${from.format(dates ? display ? options.format.display : options.format.long : options.format.short)} - ${until.format(dates && (from.year() !== until.year() || from.dayOfYear() !== until.dayOfYear()) ? display ? options.format.display : options.format.long : options.format.short)}`;
+
+  FN.times = (from, until, dates, display, partial) => {
+    var _start = options.state.session.current.clone().startOf("day"),
+        _end = options.state.session.current.clone().endOf("day"),
+        _format = display ? options.format.display : partial ? options.format.partial : options.format.long,
+        _form = from.format((dates || from < _start) ? _format : options.format.short),
+        _until = until.format((dates || until > _end) && (from.year() !== until.year() || from.dayOfYear() !== until.dayOfYear()) ? _format : options.format.short);
+    return `${_form} - ${_until}`;
+  };
 
   FN.time = event => {
       event.confirmed = FN.confirmed(event),
       event.time = event.start.dateTime ? FN.times(factory.Dates.parse(event.start.dateTime),
-        factory.Dates.parse(event.end.dateTime)) : "00:00 - 23:59";
+        factory.Dates.parse(event.end.dateTime), false, false, true) : "00:00 - 23:59";
       event.dates = event.start.dateTime ? FN.times(factory.Dates.parse(event.start.dateTime),
         factory.Dates.parse(event.end.dateTime), true, true) : "All Day";
       event.duration = (event.start.dateTime ? 

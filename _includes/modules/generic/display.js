@@ -199,7 +199,11 @@ Display = function() {
   var _clean = () =>  $(".modal.show[role='dialog']").length === 0 ? $("div.modal-backdrop.show").last().remove() &&
     $("body.modal-open").removeClass("modal-open") : null; /* <!-- Weird Modal Not Hiding Bug --> */
 
-  var _tidy = () => $("div.tooltip.show").last().remove(); /* <!-- Tooltips Not Hiding --> */
+  var _tidy = () => {
+    var _remove = $("div.tooltip.show");
+    if (_log) _log("Tidying Tooltips:", _remove.length);
+    _remove.last().remove();
+  }; /* <!-- Tooltips Not Hiding --> */
 
   var _toggle = (state, toggle, container, all) => {
 
@@ -228,7 +232,7 @@ Display = function() {
 
   var _breakpoint = size => $(`div.bs-breakpoints span.${size}`).css("display") == "block";
 
-  var _dialog = (dialog, options, handler) => {
+  var _dialog = (dialog, options, handler, validator) => {
 
     if ((options.actions || options.handlers) &&
       dialog.find("button[data-action], a[data-action]").length > 0) {
@@ -243,8 +247,29 @@ Display = function() {
               while (_action.length > 0) {
                 _fn = _fn && _fn.actions ? _fn.actions[_action.shift()] : null;
               }
-              if (_fn && _fn.handler) _fn.handler(handler ? handler() : ಠ_ಠ.Data ? ಠ_ಠ.Data({},
-                ಠ_ಠ).dehydrate(dialog.find("form")) : dialog.find("form").serializeArray(), dialog);
+              
+              if (_fn && _fn.handler) {
+                var _complete = values => _fn.handler(handler ? handler() : values, dialog);
+                
+                if (_fn.validate) {
+                  
+                  /* <!-- Run through the supplied validator before continuing (false === invalid) --> */
+                  var _values = validator();
+                  if (_values === false) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  } else {
+                    _complete(_values);
+                  }
+                  
+                } else {
+                  
+                  _complete(ಠ_ಠ.Data ? ಠ_ಠ.Data({},
+                    ಠ_ಠ).dehydrate(dialog.find("form")) : dialog.find("form").serializeArray());
+                  
+                }
+                
+              }
             }
           } else if (options.handlers && options.handlers[_action]) {
             options.handlers[_action](_target, dialog, options);
@@ -613,36 +638,45 @@ Display = function() {
           resolver = () => resolve();
 
         if (dialog.find("form").length > 0) {
+          
+          var _validator = () => {
+            
+            var _valid = true;
+            _.each(dialog.find("form.needs-validation"), form => {
+              if (form.checkValidity() === false) _valid = false;
+              form.classList.add("was-validated");
+            });
+
+            var _form = dialog.find("form"),
+              _values = ಠ_ಠ.Data ? ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form) : _form.serializeArray();
+            if (!ಠ_ಠ.Data) _.each(_form.find("input:indeterminate"), el => _values.push({
+              name: el.name,
+              value: "all"
+            }));
+
+            /* <!-- Log is available, so debug log --> */
+            if (_log) _log(`Parsed Values from Template: ${template} using ${ಠ_ಠ.Data ? "the Data helper" : "serializeArray"}`, _values);
+
+            if (options.validate && !options.validate(_values, _form)) _valid = false;
+            
+            return _valid ? _values : false;
+            
+          };
 
           /* <!-- Set Form / Return Event Handlers --> */
           if (dialog.find(".modal-footer button.btn-primary").length > 0) {
 
             dialog.find(".modal-footer button.btn-primary").on("click.submit", e => {
 
-              var _valid = true;
-              _.each(dialog.find("form.needs-validation"), form => {
-                if (form.checkValidity() === false) _valid = false;
-                form.classList.add("was-validated");
-              });
-
-              var _form = dialog.find("form"),
-                _values = ಠ_ಠ.Data ? ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form) : _form.serializeArray();
-              if (!ಠ_ಠ.Data) _.each(_form.find("input:indeterminate"), el => _values.push({
-                name: el.name,
-                value: "all"
-              }));
-
-              /* <!-- Log is available, so debug log --> */
-              if (_log) _log(`Parsed Values from Template: ${template} using ${ಠ_ಠ.Data ? "the Data helper" : "serializeArray"}`, _values);
-
-              if (options.validate && !options.validate(_values, _form)) _valid = false;
-              if (_valid) {
-                _clean();
-                resolver = () => resolve(_values);
-              } else {
+              var _values = _validator();
+              if (_values === false) {
                 e.preventDefault();
                 e.stopPropagation();
+              } else {
+                _clean();
+                resolver = () => resolve(_values);
               }
+              
             });
 
             /* <!-- Handle Enter Key (if simple) --> */
@@ -651,7 +685,7 @@ Display = function() {
           }
 
           /* <!-- Wire Up Action and Update Handlers --> */
-          _dialog(dialog, options);
+          _dialog(dialog, options, null, _validator);
 
         }
 
@@ -666,7 +700,8 @@ Display = function() {
           });
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
-        dialog.on("shown.bs.modal", _.compose(() => dialog.find("textarea:visible, input:visible").first().focus(), shown ? () => shown(dialog) : () => _visuals(dialog)));
+        dialog.on("shown.bs.modal", _.compose(() => dialog.find("textarea:visible, input:visible").first().focus(), shown ? 
+                                                () => shown(dialog) : () => _visuals(dialog)));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal({

@@ -53,11 +53,13 @@ Tasks = (options, factory) => {
             class: "btn-success",
             desc: factory.Display.doc.get("NEW_COMPLETE_TITLE"),
             handler: values => complete(values.From ? values.From.Value : factory.Dates.now())(values),
+            validate: true,
             actions: [
               {
                 text: "Complete Today",
                 desc: factory.Display.doc.get("NEW_COMPLETE_TODAY_TITLE"),
-                handler: values => complete(factory.Dates.now())(values),                
+                handler: values => complete(factory.Dates.now())(values),
+                validate: true,
               }
             ],
             dismiss: true,

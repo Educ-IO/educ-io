@@ -84,8 +84,9 @@ Bookings = (options, factory) => {
   FN.display = {
     
     extension: extend => rendered => rendered.find(".until-date")
-                                     .toggleClass("d-none", !extend)
-                                     .val(extend ? options.functions.source.end(extend).format(options.functions.source.formats().date) : ""),
+        .toggleClass("d-none", !extend)
+        .filter("input")
+        .val(extend ? options.functions.source.end(extend).format(options.functions.source.formats().date) : ""),
     
     group : (id, name) => {
       
@@ -332,7 +333,9 @@ Bookings = (options, factory) => {
   /* <!-- External Visibility --> */
   return {
     
-    extend: () => ರ‿ರ.last ? (factory.Display.tidy(), ರ‿ರ.last(false, ರ‿ರ.extend += 1)) : false,
+    extend: () => ರ‿ರ.last ? ರ‿ರ.last(false, ರ‿ರ.extend += 1) : false,
+    
+    reduce: () => ರ‿ರ.last ? ರ‿ರ.last(false, (ರ‿ರ.extend = Math.floor(ರ‿ರ.extend - 1, 0))) : false,
     
     new: () => options.functions.source.resources()
       .then(resources => options.functions.render.view("book", options.id, "Book for", options.state.session.current, "book.create", {resource: true, data: resources}))

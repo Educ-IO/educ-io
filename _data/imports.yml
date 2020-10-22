@@ -278,25 +278,25 @@ bootstrap-js:
   desc: This is a toolkit / framework for site design, layout and presentation.
   url: https://cdnjs.com/libraries/twitter-bootstrap
   project: http://getbootstrap.com/
-  version: 4.5.2
-  last: 4.5.0
+  version: 4.5.3
+  last: 4.5.2
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js
-      integrity: sha512-M5KW3ztuIICmVIhjSqXe01oV2bpe248gOxqmlcYrEzAvws7Pw3z6BK0iGbrwvdrUQUhi3eXgtxp5I8PDo9YfjQ==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js
+      integrity: sha512-8qmis31OQi6hIRgvkht0s6mCOittjMa9GMqtK9hes5iEQBQE/Ca6yGE5FsW36vyipGoWQswBj/QBm2JR086Rkw==
       crossorigin: anonymous
       overrides:
         - replace: //# sourceMappingURL=bootstrap.min.js.map
-      bulk: 60.0
+      bulk: 63.3
       id: __bootstrap-js
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.js
-      integrity: sha512-2nWfr/l1RS9Cj5j3i7Shr8mcGA+CRKbmnhSKX7aDNsZvCn6xX2NpT4FHEhxOT8oaq9mwMdu9CNQ65xi41sJu2A==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.js
+      integrity: sha512-KCgUnRzizZDFYoNEYmnqlo0PRE6rQkek9dE/oyIiCExStQ72O7GwIFfmPdkzk4OvZ/sbHKSLVeR4Gl3s7s679g==
       crossorigin: anonymous
       overrides:
         - replace: //# sourceMappingURL=bootstrap.js.map
-      bulk: 136
+      bulk: 144
       id: __bootstrap-js
       
 

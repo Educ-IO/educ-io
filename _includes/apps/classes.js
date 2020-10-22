@@ -1028,6 +1028,7 @@ App = function() {
     /* <!-- Present Internal Modules / Functions (for debugging etc) --> */
     fn: FN,
 
+    /* <!-- Present Internal Persistent State (for debugging etc) --> */
     persistent: ಱ,
 
   };

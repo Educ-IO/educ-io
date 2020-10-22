@@ -239,6 +239,7 @@ App = function() {
             state: FN.states.dated,
             length: 0,
             keys: ["j", "J", "g", "G"],
+            tidy: true,
             fn: FN.jump,
             routes: {
               today: {
@@ -278,6 +279,11 @@ App = function() {
                 matches: /EXTEND/i,
                 state: [FN.states.book.in, FN.states.bundle.in],
                 fn: () => FN.bookings.extend(),
+              },
+              reduce: {
+                matches: /REDUCE/i,
+                state: [FN.states.book.in, FN.states.bundle.in],
+                fn: () => FN.bookings.reduce(),
               }
             }
           },

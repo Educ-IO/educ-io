@@ -10,7 +10,9 @@ Router = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Constants --> */
-  const REPLACER = (key, value) => value && (typeof value === "object" &&
+  const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms)),
+        
+    REPLACER = (key, value) => value && (typeof value === "object" &&
       value.constructor === RegExp) || typeof value === "function" ? value.toString() : value,
 
     STR = value => JSON.stringify(value, REPLACER, 2),
@@ -174,8 +176,8 @@ Router = function() {
         /* <!-- Tidy up visuals if required! --> */
         if (route.trigger) ಠ_ಠ.Display.state().enter(route.trigger);
         
-        /* <!-- Tidy up visuals if required! --> */
-        if (route.tidy) ಠ_ಠ.Display.tidy();
+        /* <!-- Tidy up visuals if required! / Delay by 500ms to allow delayed tooltips to appear --> */
+        if (route.tidy) DELAY(500).then(ಠ_ಠ.Display.tidy);
         
         var l_command = route.preserve ? 
             route.strip && _.isNumber(route.strip) ? 
@@ -510,7 +512,7 @@ Router = function() {
 
         if (!_options) SETUP();
 
-        if (!command || command === false || command[0] === false || (/PUBLIC/i).test(command)) {
+        if (!command || command === false || command[0] === false || (/^PUBLIC$/i).test(command)) {
 
           /* <!-- Clear the existing state (in case of logouts) --> */
           /* <!-- command[1] = true when logging out --> */
@@ -525,7 +527,7 @@ Router = function() {
             clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
           });
 
-        } else if (command === true || /AUTH/i.test(command) || (command && command[0] === true && command.length == 2)) {
+        } else if (command === true || /^AUTH$/i.test(command) || (command && command[0] === true && command.length == 2)) {
 
           /* <!-- Check the setup --> */
           _setup = _setup ? _setup() : _setup;
