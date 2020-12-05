@@ -17,6 +17,8 @@ Router = function() {
 
     STR = value => JSON.stringify(value, REPLACER, 2),
 
+    RANDOM = prefix => `${prefix ? `${prefix}__` : ""}${Math.random().toString(36).slice(2)}`,
+        
     STRIP = (command, number) => _.isArray(command) ? _.rest(command, number ? number : 1) : _.isString(command) ? [] : command,
 
     PREPARE = (options, command) => options ?
@@ -168,57 +170,68 @@ Router = function() {
           return true;
         }
       },
-      _execute = (route, command) => {
+      _execute = (route, command, singleton) => {
         
-        /* <!-- Clean up the state (before command has run) if required! --> */
-        if (route.reset) _clean(false);
-        
-        /* <!-- Tidy up visuals if required! --> */
-        if (route.trigger) ಠ_ಠ.Display.state().enter(route.trigger);
-        
-        /* <!-- Tidy up visuals if required! / Delay by 500ms to allow delayed tooltips to appear --> */
-        if (route.tidy) DELAY(500).then(ಠ_ಠ.Display.tidy);
-        
-        var l_command = route.preserve ? 
-            route.strip && _.isNumber(route.strip) ? 
-              STRIP(command, route.strip) : command : STRIP(command, route.__length),
-          l_options = PREPARE(route.options, l_command),
-          l_result = route.fn(_.isArray(l_command) ? 
-                              l_command.length === 0 ? 
-                                null : l_command.length === 1 ? l_command[0] : l_command : l_command, l_options),
-          _complete = () => {
-            /* <!-- Clean up the state (after command has run) if required! --> */
-            if (route.clean) _clean(false);
+        var _run = after => {
+          
+          /* <!-- Clean up the state (before command has run) if required! --> */
+          if (route.reset) _clean(false);
 
-            /* <!-- Clean up the state (after command has run) if required! --> */
-            if (route.trigger) ಠ_ಠ.Display.state().exit(route.trigger);
-          };
-        
-        return l_result && l_result.then ? l_result
-          .then(result => {
-          
-            _complete();  
-          
+          /* <!-- Enter into Trigger state (if supplied) --> */
+          if (route.trigger) ಠ_ಠ.Display.state().enter(route.trigger);
+
+          /* <!-- Tidy up visuals if required! / Delay by 500ms to allow delayed tooltips to appear --> */
+          if (route.tidy) DELAY(500).then(ಠ_ಠ.Display.tidy);
+
+          var l_command = route.preserve ? 
+              route.strip && _.isNumber(route.strip) ? 
+                STRIP(command, route.strip) : command : STRIP(command, route.__length),
+            l_options = PREPARE(route.options, l_command),
+            l_result = route.fn(_.isArray(l_command) ? 
+                                l_command.length === 0 ? 
+                                  null : l_command.length === 1 ? l_command[0] : l_command : l_command, l_options),
+            _complete = () => {
+              /* <!-- Clean up the state (after command has run) if required! --> */
+              if (route.clean) _clean(false);
+
+              /* <!-- Clean up the state (after command has run) if required! --> */
+              if (route.trigger) ಠ_ಠ.Display.state().exit(route.trigger);
+              
+              /* <!-- Run after, if supplied! --> */
+              if (after) after();
+            },
+            _return = result => (_complete(), result);
+
+          return l_result && l_result.then ? l_result
             /* <!-- Run the success function if available --> */
-            return route.success ? route.success(
-              _.isObject(result) && _.has(result, "command") && _.has(result, "result") ?
-              result : {
-                command: l_command,
-                result: result
-              }) : true;
-          })
-          .catch(route.failure ? route.failure :
-            e => e ?
-            ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative() : false) : (_complete(), l_result);
+            .then(result => route.success ? route.success(
+                _.isObject(result) && _.has(result, "command") && _.has(result, "result") ?
+                result : {
+                  command: l_command,
+                  result: result
+                }) : true)
+            .catch(route.failure ? route.failure :
+              e => e ?
+              ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative() : false)
+            .then(_return) : _return(l_result);
+        
+        };
+        
+        /* <!-- Check the Singleton State before running --> */
+        return singleton ? ಠ_ಠ.Display.state().in(singleton) ? null : 
+          _run((() => () => ಠ_ಠ.Display.state().exit(singleton))(ಠ_ಠ.Display.state().enter(singleton))) : 
+          _run();
+        
       },
-      _shortcut = (route, debug, name, key) => () => (!route.state || ಠ_ಠ.Display.state().in(route.state, route.all ? false : true)) ? 
+      _shortcut = singleton => (route, debug, name, key) => () => (!route.state || ಠ_ಠ.Display.state().in(route.state, route.all ? false : true)) ? 
                 (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && 
                   (Promise.all([
                     route.requires ? REQUIRES(route.requires) : Promise.resolve(true),
                     route.scopes ? SCOPES(route.scopes) : Promise.resolve(true)
                   ]))
                   .then(results => route.permissive || _.every(results) ? 
-                        _execute(route, null) : (ಠ_ಠ.Flags.log(`Route ${name} is not permissive and preconditions failed:`, results), false)) : false;
+                        _execute(route, null, singleton) : 
+                        (ಠ_ಠ.Flags.log(`Route ${name} is not permissive and preconditions failed:`, results), false)) : false;
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -256,6 +269,7 @@ Router = function() {
         test : Tests whether app has been used (for cleaning purposes)
         clear : Function to execute once exited / cleared (after logout)
         center : Whether help / instruction dialogs should be centered
+        singular : Only one route can be run at a time (regardless of whether a route function is synchronous or a promise). This can be a string, representing the state to enter / exit while the route is being processed, or a true boolean if the state should be automatically generated.
         route : App-Specific Router Command (if all other routes have not matched)
         routes : {
         	// Default routes (apart from AUTH/UNAUTH) can be switched off by setting active property to false (DEFAULT is ON).
@@ -441,6 +455,9 @@ Router = function() {
             delete list[key];
           }),
         });
+        
+        /* <!-- Set Up Singular State --> */
+        _options.singleton = options.singular ? options.singular === true ? RANDOM("singleton") : options.singular : null;
 
         /* <!-- Recursively Expand Child Routes --> */
         _.each(_options.routes, (route, name) =>
@@ -455,7 +472,7 @@ Router = function() {
           /* <!-- Bind Shortcut key/s if required --> */
           if (route.keys && (!route.length || route.length === 0)) {
             route.keys = _.isArray(route.keys) ? route.keys : [route.keys];
-            _.each(route.keys, key => window.Mousetrap.bind(key, (_shortcut)(route, debug, name, key)));
+            _.each(route.keys, key => window.Mousetrap.bind(key, (_shortcut(_options.singleton))(route, debug, name, key)));
           }
         }) : true;
         _touch = debug => window.Hammer ? _.each(_options.routes, (route, name) => {
@@ -569,9 +586,9 @@ Router = function() {
                     (handled_Scopes === null || handled_Scopes === undefined ? (handled_Scopes = true) : false) && _route.scopes ?
                       SCOPES(_route.scopes) : Promise.resolve(handled_Scopes)
                   ]).then(results => _route.permissive || _.every(results) ? 
-                        _execute(_route, command) : 
+                        _execute(_route, command, _options.singleton) : 
                         (ಠ_ಠ.Flags.log("Route is not permissive and preconditions failed:", results), false)) :
-                      _execute(_route, command))) === false ? (_handled = false) : true : (_handled = false);
+                      _execute(_route, command, _options.singleton))) === false ? (_handled = false) : true : (_handled = false);
 
           /* <!-- Log is available, so debug log --> */
           if (_handled && _debug) ಠ_ಠ.Flags.log(`Routed to: ${STR(_route)} with: ${STR(command)}`);
@@ -581,12 +598,15 @@ Router = function() {
         /* <!-- Record the last command --> */
         _last = command;
 
-        /* <!-- Route to App-Specific Command --> */
-        if (_options.route) _executions.app = _options.route(_handled, command);
+        /* <!-- Local Route Resolution--> */
+        _executions.local = Promise.resolve(_executions.local);
+        
+        /* <!-- Route to App-Specific Command (once local has been resolved) --> */
+        if (_options.route) _executions.app = _executions.local.then(() => _options.route(_handled, command));
 
         return Promise.all([
-          Promise.resolve(_executions.local),
-          Promise.resolve(_executions.app)
+          _executions.local,
+          _executions.app
         ]);
         
       };

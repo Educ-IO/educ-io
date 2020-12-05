@@ -14,7 +14,7 @@
         {{#if (any __LONG multiple)}}
           <div class="form-group">
             {{#if desc}}<label for="choices">{{desc}}</label>{{/if}}
-            <select class="custom-select form-control" id="choices" name="choices"
+            <select class="custom-select form-control{{#if control_class}} {{control_class}}{{/if}}" id="choices" name="choices"
                     size="{{either size 5}}"{{#if multiple}}multiple{{/if}}>
               {{#each choices}}
               <option value="{{@key}}"{{#if class}} class="{{class}}"{{/if}}{{#if title}} title="{{title}}"{{/if}}>{{~#exists name}}{{#if name}}{{name}}{{#exists desc}}{{#if desc}} - {{desc}}{{/if}}{{/exists}}{{/if}}{{else}}{{this}}{{/exists~}}</option>

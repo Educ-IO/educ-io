@@ -14,21 +14,21 @@
           {{#present name}}
           <div class="form-group d-flex flex-wrap">
             <label class="col-12 col-lg-3 col-form-label"{{#if id}} for="{{id}}_NAME" {{/if}}>{{name}}</label>
-            <input {{#if id}}id="{{id}}_NAME" {{/if}} type="text" name="name" class="col-12 col-lg-9 form-control optional"{{#with state}}{{#if value}} value="{{value}}"{{/if}}{{/with}}/>
+            <input {{#if id}}id="{{id}}_NAME" {{/if}} type="text" name="name" class="col-12 col-lg-9 form-control optional{{#if control_class}} {{control_class}}{{/if}}"{{#with state}}{{#if value}} value="{{value}}"{{/if}}{{/with}}/>
           </div>
           <div class="form-group d-flex flex-wrap">
             <label class="col-12 col-lg-3 col-form-label"
                    {{#if id}} for="{{id}}_VALUE" {{/if}}>{{either value "Value"}}</label>
-            <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="col-12 col-lg-9 form-control form-control-lg" rows="{{either rows 2}}">{{#with state}}{{value}}{{/with}}</textarea>
+            <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="col-12 col-lg-9 form-control form-control-lg{{#if control_class}} {{control_class}}{{/if}}" rows="{{either rows 2}}">{{#with state}}{{value}}{{/with}}</textarea>
           </div>
           {{else}}
           {{#if password}}
-          <input {{#if id}}id="{{id}}_VALUE" {{/if}} autocomplete="{{#present autocomplete}}{{autocomplete}}{{else}}new-password{{/present}}" type="password" name="value" class="form-control form-control-lg w-100" />
+          <input {{#if id}}id="{{id}}_VALUE" {{/if}} autocomplete="{{#present autocomplete}}{{autocomplete}}{{else}}new-password{{/present}}" type="password" name="value" class="form-control form-control-lg w-100{{#if control_class}} {{control_class}}{{/if}}" />
           {{else}}
           {{#if simple}}
-          <input {{#if id}}id="{{id}}_VALUE" {{/if}} type="text" name="value" class="form-control form-control-lg w-100"{{#with state}}{{#if value}} value="{{value}}"{{/if}}{{/with}}/>
+          <input {{#if id}}id="{{id}}_VALUE" {{/if}} type="text" name="value" class="form-control form-control-lg w-100{{#if control_class}} {{control_class}}{{/if}}"{{#with state}}{{#if value}} value="{{value}}"{{/if}}{{/with}}/>
           {{else}}
-          <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="form-control form-control-lg w-100" rows="{{either rows 2}}">{{#with state}}{{value}}{{/with}}</textarea>
+          <textarea {{#if id}}id="{{id}}_VALUE" {{/if}}name="value" class="form-control form-control-lg w-100{{#if control_class}} {{control_class}}{{/if}}" rows="{{either rows 2}}">{{#with state}}{{value}}{{/with}}</textarea>
           {{/if}}
           {{/if}}
           {{/present}}

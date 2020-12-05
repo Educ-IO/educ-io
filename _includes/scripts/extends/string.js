@@ -35,5 +35,18 @@
     return (typeof value === "string") ? !ignoreCase ? ignoreCaseCompare(this, value) : localeCompare(this, value, useLocale) : this === value;
     
   };
+  
+  String.prototype.indexOfAny = function(searchValues, fromIndex) {
+    
+    if (this && this.length && searchValues && searchValues.length) {
+      for (var i = 0; i < searchValues.length; i++) {
+        var _result = this.indexOf(searchValues[i], fromIndex);
+        if (_result >= 0) return _result;
+      }
+    }
+    
+    return -1;
+    
+  };
 
 })();

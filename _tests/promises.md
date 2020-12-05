@@ -7,4 +7,4 @@ tests:
     desc: Test Sequential Promise Execution
     function: sequential
 ---
-To verify the functionality of the __promise__ extensions, which includes the ability to sequentially execute promises (essential in some Apps for non-idempotent rate limiting).
+To verify the functionality of the __promise__ extensions, which includes the ability to sequentially execute promises (essential in some apps for non-idempotent rate limiting).

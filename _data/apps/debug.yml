@@ -93,6 +93,7 @@ scripts:
   - extends/regex
   - extends/array
   - extends/promises
+  - extends/string
 templates:
   - generic/options
   - generic/choose

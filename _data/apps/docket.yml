@@ -173,6 +173,7 @@ templates:
   - docket/tables/stats_categories
   - docket/tables/stats_times
   - docket/tables/stats_totals
+  - docket/tables/stats_series
   - docket/icons/ghost
 docs:
   - shared/JUMP

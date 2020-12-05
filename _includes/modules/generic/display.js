@@ -697,6 +697,8 @@ Display = function() {
           () => {
             _clean();
             dialog.modal("hide");
+            /* <!-- 2020-12-04 | Added to allow click outs from modals to correctly resolve for singleton routing --> */
+            resolve();
           });
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */

@@ -193,6 +193,10 @@ Schema = () => {
           value: "HAS_LABELS"
         }, /* <!-- Whether Task has any valid labels --> */
         
+        has_renumerations: {
+          value: "HAS_RENUMERATIONS"
+        }, /* <!-- Whether Task has any valid renumerations --> */
+        
         in_future: {
           value: "IN_FUTURE"
         }, /* <!-- Whether Task starts in the future --> */

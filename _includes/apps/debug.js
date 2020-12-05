@@ -109,7 +109,8 @@ App = function() {
     /* <!-- Clear the status and indicate busy status --> */
     _this.removeClass("success failure").addClass("loader disabled").find("i.result").addClass("d-none");
 
-    return new Promise((resolve, reject) => {
+    /* <!-- Not returning as we are using a Singleton Router (for testing), which doesn't allow us to run parallel routes! --> */
+    new Promise((resolve, reject) => {
       (times && times > 1 ?
         Promise.each(_.map(_.range(0, times), () => () => _click(_buttons))) : _click(_buttons))
       .then(() => {
@@ -183,7 +184,8 @@ App = function() {
     /* <!-- Clear the status and indicate busy status --> */
     _this.removeClass("success failure").addClass("loader disabled").find("i.result").addClass("d-none");
 
-    return _click(_buttons)
+    /* <!-- Not returning as we are using a Singleton Router (for testing), which doesn't allow us to run parallel routes! --> */
+    _click(_buttons)
       .then(() => _this.removeClass("loader disabled").addClass("success")
         .find("i.result-success").removeClass("d-none"))
       .catch(() => _this.removeClass("loader disabled").addClass("failure")
@@ -217,7 +219,8 @@ App = function() {
         },
         fn: command => _run.apply(this, command),
       },
-    }
+    },
+    singleton: null
   };
   /* <!-- Overridable Configuration --> */
 
@@ -242,6 +245,7 @@ App = function() {
         name: "Debug",
         recent: false,
         simple: true,
+        singular: true,
         start: () => {
           ಠ_ಠ.Display.template.show({
             template: "host",
@@ -293,7 +297,7 @@ App = function() {
       var _timeout, _time = time ? time : 1000;
       var _success = val => {
           clearTimeout(_timeout);
-          return val;
+          return Promise.resolve(val);
         },
         _failure = err => {
           clearTimeout(_timeout);

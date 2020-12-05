@@ -149,7 +149,8 @@ Task = (options, factory) => {
         _.find(item[options.schema.columns.badges.value], value => value &&
                value.indexOf(options.markers.project) !== 0 && 
                value.indexOf(options.markers.assignation) !== 0 &&
-                value.indexOf(options.markers.label) !== 0) ?
+               value.indexOf(options.markers.label) !== 0 && 
+               !options.markers.renumeration.test(value)) ?
           item[options.schema.columns.has_tags.value] = true : delete item[options.schema.columns.has_tags.value];
 
 
@@ -171,6 +172,12 @@ Task = (options, factory) => {
         _.find(item[options.schema.columns.badges.value], value => 
                value && value.indexOf(options.markers.label) === 0) ?
           item[options.schema.columns.has_labels.value] = true : delete item[options.schema.columns.has_labels.value];
+      
+      /* <!-- Set Has Renumerations --> */
+      item[options.schema.columns.tags.value] && 
+        _.find(item[options.schema.columns.badges.value], value => 
+               value && options.markers.renumeration.test(value)) ?
+          item[options.schema.columns.has_renumerations.value] = true : delete item[options.schema.columns.has_renumerations.value];
       
       /* <!-- Set Appropriate Status --> */
       options.schema.enums.status.complete.equals(item[options.schema.columns.status.value], true) ?

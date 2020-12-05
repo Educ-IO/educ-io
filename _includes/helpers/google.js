@@ -422,10 +422,12 @@ Google_API = (options, factory) => {
     };
 
     if (team) {
-      _data.teamDriveId = team;
+      if (team !== true) {
+        _data.teamDriveId = team;
+        _data.corpora = "teamDrive";
+      }
       _data.includeTeamDriveItems = true;
       _data.supportsTeamDrives = true;
-      _data.corpora = "teamDrive";
     } else if (spaces) {
       _data.spaces = spaces;
     } else {
@@ -912,10 +914,10 @@ Google_API = (options, factory) => {
         return fn;
       },
 
-      search: (mimeTypes, properties, mine, dates, full) => _contents(null, null,
+      search: (mimeTypes, properties, mine, dates, full, team) => _contents(null, null,
         _arrayize(mimeTypes, _.isString), null, _arrayize(properties, _.isString),
-        null, null, false, false, null, null, null, full ? FULL : null, mine, dates),
-
+        null, null, false, team || false, null, null, null, full ? FULL : null, mine, dates),
+      
     },
 
     calendar: {
@@ -1425,11 +1427,102 @@ Google_API = (options, factory) => {
     sheets: {
 
       /* <!-- Create a new Spreadsheet --> */
-      create: (name, tab, colour, meta) => {
+      create: (name, tab, colour, meta, font, colours) => {
         var _data = {
           "properties": STRIP_NULLS({
             "title": name,
-            "timeZone": TIMEZONE()
+            "timeZone": TIMEZONE(),
+            "spreadsheetTheme": font ? {
+              "primaryFontFamily": font,
+              "themeColors": colours ? colours : [
+                {
+                  "colorType": "ACCENT3",
+                  "color": {
+                    "rgbColor": {
+                      "red": 0.9843137,
+                      "green": 0.7372549,
+                      "blue": 0.015686275
+                    }
+                  }
+                },
+                {
+                  "colorType": "ACCENT6",
+                  "color": {
+                    "rgbColor": {
+                      "red": 0.27450982,
+                      "green": 0.7411765,
+                      "blue": 0.7764706
+                    }
+                  }
+                },
+                {
+                  "colorType": "TEXT",
+                  "color": {
+                    "rgbColor": {}
+                  }
+                },
+                {
+                  "colorType": "ACCENT2",
+                  "color": {
+                    "rgbColor": {
+                      "red": 0.91764706,
+                      "green": 0.2627451,
+                      "blue": 0.20784314
+                    }
+                  }
+                },
+                {
+                  "colorType": "ACCENT1",
+                  "color": {
+                    "rgbColor": {
+                      "red": 0.25882354,
+                      "green": 0.52156866,
+                      "blue": 0.95686275
+                    }
+                  }
+                },
+                {
+                  "colorType": "LINK",
+                  "color": {
+                    "rgbColor": {
+                      "red": 0.06666667,
+                      "green": 0.33333334,
+                      "blue": 0.8
+                    }
+                  }
+                },
+                {
+                  "colorType": "ACCENT5",
+                  "color": {
+                    "rgbColor": {
+                      "red": 1,
+                      "green": 0.42745098,
+                      "blue": 0.003921569
+                    }
+                  }
+                },
+                {
+                  "colorType": "BACKGROUND",
+                  "color": {
+                    "rgbColor": {
+                      "red": 1,
+                      "green": 1,
+                      "blue": 1
+                    }
+                  }
+                },
+                {
+                  "colorType": "ACCENT4",
+                  "color": {
+                    "rgbColor": {
+                      "red": 0.20392157,
+                      "green": 0.65882355,
+                      "blue": 0.3254902
+                    }
+                  }
+                }
+              ]
+            }: null
           }),
           "sheets": [{
             "properties": {

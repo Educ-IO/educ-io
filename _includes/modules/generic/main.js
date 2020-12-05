@@ -41,7 +41,7 @@ Main = function() {
   
   const EVENT = (event, message) => window.dispatchEvent(new CustomEvent(event, _.isObject(message) ? message : {detail : message}));
   
-  const MESSAGE = (count, singular, plural, action) => `${ಠ_ಠ.Display.commarise(count)} ${count === 1 ? singular : plural} ${action || "loaded"}`;
+  const MESSAGE = (count, singular, plural, action, total) => `${ಠ_ಠ.Display.commarise(count)} ${count === 1 ? singular : plural} ${action || "loaded"}${total !== null && total !== undefined ? ` / ${total}` : ""}`;
   
   const PROMPT = (name, map, list) => (_.isFunction(list) ? list() : Promise.resolve(list))
         .catch(e => ಠ_ಠ.Flags.error(`${name} List`, e).negative())

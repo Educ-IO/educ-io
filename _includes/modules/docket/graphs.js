@@ -1,4 +1,4 @@
-Graphs = () => {
+Graphs = (options, factory) => {
   "use strict";
 
   /* <!-- MODULE: Provides an interface to handle generating analysis graphs --> */
@@ -33,7 +33,7 @@ Graphs = () => {
       .attr("preserveAspectRatio","xMinYMin")
     .append("g").attr("transform", `translate(${margins.left},${margins.top})`);
   
-  var _stream = (holder, series, width, height, generate_x, text_x, curve, tooltip) => {
+  var _stream = (holder, series, width, height, generate_x, text_x, curve, tooltip, ranged) => {
 
     /* <!-- Set the SVG Boundary Object --> */
     var margin = _margins(width, height),
@@ -75,6 +75,8 @@ Graphs = () => {
       .domain([0 - _max * 0.8, _max * 0.7])
       .range([margin.innerHeight, 0]);
 
+    var _range = ranged ? x.range([0, margin.innerWidth]) : null;
+    
     /* <!-- Finesse the chart --> */
     svg.append("g")
       .attr("transform", "translate(0," + margin.innerHeight * (text_x ? 0.8 : 0.95) + ")")
@@ -105,9 +107,9 @@ Graphs = () => {
       .attr("y", 20)
       .style("font-size", 20);
 
-    var total, mouse = {
+    var part, total, mouse = {
 
-      over: function(d) {
+      over: function(e, d) {
         total = _.reduce(d, (total, value) => total += value.data[d.key], 0);
         d3.selectAll(".series-area").style("opacity", 0.2);
         d3.select(this)
@@ -116,8 +118,17 @@ Graphs = () => {
           .style("opacity", 1);
       },
 
-      move: (d, i) => tooltip.html(`${_series[i]}${total ? `: <strong>${total}</strong>` : ""}`),
-
+      move: (e, d) => {
+        var _date = _range && _range.invert ? _range.invert(e.layerX) : null;
+        part =  _date ? _.reduce(d, (total, value) => total += value.data.date.value <= _date ? value.data[d.key] : 0, 0) : null;
+        tooltip.html(factory.Display.template.get("stats_series")({
+          name: d.key,
+          total: total,
+          part: part,
+          date: _date
+        }).trim());
+      },
+      
       leave: () => {
         tooltip.html("");
         d3.selectAll(".series-area").style("opacity", 1).style("stroke", "none");
@@ -141,7 +152,35 @@ Graphs = () => {
       .on("mouseover", mouse.over)
       .on("mousemove", mouse.move)
       .on("mouseleave", mouse.leave);
-
+    
+    /* <!-- Vertical Highlighting Line --> */
+    var _graph = d3.select(".graph-holder svg"),
+        _vertical = _graph
+          .append("line")
+          .attr("class", "remove")
+          .attr("pointer-events", "none")
+          .attr("stroke", "yellow")
+          .attr("stroke-dasharray", 10)
+          .attr("stroke-linecap", "round")
+          .attr("stroke-width", "3")
+          .attr("opacity", "0.6")
+          .attr("x1", "-10")
+          .attr("x2", "-10")
+          .attr("y1", "0")
+          .attr("y2", "100%");
+    
+    var _scale = margin.width / _graph._groups[0][0].getBoundingClientRect().width,
+        _draw = e => {
+          var _x = e.pageX * _scale - _graph._groups[0][0].getBoundingClientRect().left;
+          _vertical.attr("x1", _x).attr("x2", _x);
+        };
+    
+   _graph
+      .on("mousemove", _draw)
+      .on("mouseover", _draw)
+      .on("mouseleave", () => _vertical.attr("x1", "-10").attr("x2", "-10"));
+    /* <!-- Vertical Highlighting Line --> */
+    
   };
   /* <!-- Internal Functions --> */
 
@@ -152,11 +191,11 @@ Graphs = () => {
 
     temporal: (holder, series, width, height, tooltip) => _stream(holder, series, width, height,
       (keys, margin) => d3.scaleTime([keys[0].value, keys[keys.length - 1].value], [0, margin.innerWidth]),
-      null, d3.curveCatmullRom, tooltip),
+      null, d3.curveCatmullRom, tooltip, true),
 
     distribution: (holder, series, width, height, tooltip) => _stream(holder, series, width, height,
       (keys, margin) => d3.scaleOrdinal(_.pluck(keys, "value"), _.map(_.range(keys.length), i => margin.innerWidth / (keys.length - 1) * i)),
-      null, d3.curveNatural, tooltip),
+      null, d3.curveNatural, tooltip, false),
 
   };
   /* <!-- External Visibility --> */

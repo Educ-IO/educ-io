@@ -41,5 +41,13 @@ tests:
     desc: Keyboard Shortcuts
     function: test_Router_KeyPress
     auth: google
+  - name: Singleton
+    desc: Ensure Singleton Router only processes a single route at a time
+    function: test_Router_Singleton
+    auth: google
+  - name: Pause
+    desc: Ensure Router Pauses Correctly
+    function: test_Router_Pause
+    auth: google
 ---
 To verify the functionality of the __app router__, which controls ther majority of button and menu actions, providing __stateful routing__ of commands in all apps.

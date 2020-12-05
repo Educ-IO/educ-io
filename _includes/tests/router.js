@@ -13,6 +13,7 @@ Router = function() {
     DELAY = APP.delay,
     RANDOM = APP.random,
     PAUSE = () => DELAY(RANDOM(300, 500)),
+    LONG_PAUSE = () => DELAY(RANDOM(1000, 2000)),
     STATE = FACTORY.Display.state(),
     GEN = FACTORY.App.generate,
     ARRAYS = FACTORY.App.arrays,
@@ -30,13 +31,19 @@ Router = function() {
   /* <!-- Internal Setup --> */
 
   /* <!-- Internal Variables --> */
-  var expect, _route, _tests = {
+  var expect, _route, _routes = {}, _tests = {
     simple: false,
     state: false,
     complex: false,
     range: false,
     length: false,
     partial: false,
+    singleton_1: false,
+    singleton_2: false,
+    singleton_3: false,
+    duplicate_1: false,
+    duplicate_2: false,
+    duplicate_3: false
   }, _lifecycles = {
     started: false,
     cleared: false,
@@ -153,20 +160,70 @@ Router = function() {
       matches: /TEST$/i,
       fn: command => _tests.partial = (command === null),
     };
+    
+    APP.hooks.routes.test_singleton_1 = {
+      matches: /^SINGLETON_1$/i,
+      fn: command => {
+        FACTORY.Flags.log("SINGLETON_1", command);
+        _tests.singleton_1 = (command === null);
+        return LONG_PAUSE();
+      },
+    };
+    
+    APP.hooks.routes.test_singleton_2 = {
+      matches: /^SINGLETON_2$/i,
+      fn: command => {
+        FACTORY.Flags.log("SINGLETON_2", command);
+        _tests.singleton_2 = (command === null);
+        return LONG_PAUSE();
+      },
+    };
+    
+    APP.hooks.routes.test_singleton_3 = {
+      matches: /^SINGLETON_3$/i,
+      fn: command => {
+        FACTORY.Flags.log("SINGLETON_3", command);
+        _tests.singleton_3 = (command === null);
+        return LONG_PAUSE();
+      },
+    };
+    
+    APP.hooks.routes.test_duplicate_1 = {
+      matches: /^DUPLICATE_1$/i,
+      fn: command => (FACTORY.Flags.log("DUPLICATE_1", command), _tests.duplicate_1 = (command === null)),
+    };
+    
+    APP.hooks.routes.test_duplicate_2 = {
+      matches: /^DUPLICATE_2$/i,
+      fn: command => (FACTORY.Flags.log("DUPLICATE_2", command), _tests.duplicate_2 = (command === null)),
+    };
+    
+    APP.hooks.routes.test_duplicate_3 = {
+      matches: /^DUPLICATE_3$/i,
+      fn: command => (FACTORY.Flags.log("DUPLICATE_3", command), _tests.duplicate_3 = (command === null)),
+    };
 
+    APP.hooks.routes.test_pause = {
+      matches: /^PAUSE/i,
+      fn: () => (FACTORY.Flags.log("Pausing Route"), LONG_PAUSE().then(() => true)),
+    };
+    
     APP.hooks.route.push((handled, command) => {
-      if (_route) _route(handled, command);
+      var __route = _routes[command] || _route;
+      return __route ? (FACTORY.Flags.log(`Calling Route FN (for: ${command}):`, __route), __route(handled, command)) : Promise.resolve(null);
     });
 
   };
 
-  var _simple = (name, hash, tests) => PAUSE().then(
-    () => RACE(new Promise(resolve => {
-      (_routed = () => true) && (_route = (handled, command) => tests(handled, command, hash)
-        .then(value => resolve(FACTORY.Flags.log(`${name} Test ${SUCCESS}`).reflect(value)))
-        .catch(err => resolve(FACTORY.Flags.error(`${name} Test ${FAILURE}`, err).reflect(false))));
+  var _simple = (name, hash, tests, timeout, complex, failure) => PAUSE().then(
+    () => (timeout ? APP.race(timeout) : RACE)(new Promise(resolve => {
+      _routed = () => true;
+      var __route = (handled, command) => tests(handled, command, hash)
+        .then(value => (resolve(FACTORY.Flags.log(`${name} Test ${SUCCESS}`).reflect(value)), Promise.resolve(true)))
+        .catch(err => (resolve(FACTORY.Flags.error(`${name} Test ${FAILURE}`, err).reflect(false)), Promise.resolve(false)));
+      complex ? _routes[hash] = __route : _route = __route;
       window.location.hash = hash;
-    }))
+    })).catch(e => failure ? failure(e) : null)
   );
   /* <!-- Internal Functions --> */
 
@@ -185,6 +242,7 @@ Router = function() {
 
       /* <!-- Custom Settings --> */
       _route = null;
+      _routes = [];
 
       for (var test in _tests) _tests[test] = false;
 
@@ -478,7 +536,62 @@ Router = function() {
         }));
       }))
     ),
-
+    
+    test_Router_Singleton: () => _simple("Singleton Router [1]", "singleton_1", (handled, command, hash) => new Promise(resolve => {
+        expect(_tests.singleton_1).to.be.true;
+        expect(handled).to.be.true;
+        expect(command).to.be.ok.and.to.equal(hash);
+      
+        return _simple("Duplicate Router [1]", "duplicate_1", (handled, command, hash) => new Promise(resolve => {
+          expect(_tests.duplicate_1).to.be.true;
+          expect(command).to.be.ok.and.to.equal(hash);
+          resolve(true);
+        }), 5000, true)
+          
+          .then(value => (FACTORY.Flags.log("SINGLETON TEST VALUE 1", value), value ? Promise.all([
+            _simple("Singleton Router [2]", "singleton_2", (handled, command, hash) => new Promise(resolve => {
+              expect(_tests.singleton_2).to.be.true;
+              expect(handled).to.be.true;
+              expect(command).to.be.ok.and.to.equal(hash);
+              resolve(true);
+            }), 5000, true),
+            PAUSE().then(() => _simple("Duplicate Router [2]", "duplicate_2", (handled, command, hash) => new Promise(resolve => {
+              expect(_tests.duplicate_2).to.be.false;
+              expect(handled).to.be.true;
+              expect(command).to.be.ok.and.to.equal(hash);
+              resolve(true);
+            }), 1000, true))
+          ]) : value))
+          
+          .then(values => (FACTORY.Flags.log("SINGLETON TEST VALUES 2", values), values && _.every(values, value => value) ? Promise.each([
+            () => _simple("Singleton Router [3]", "singleton_3", (handled, command, hash) => new Promise(resolve => {
+              expect(_tests.singleton_3).to.be.true;
+              expect(handled).to.be.true;
+              expect(command).to.be.ok.and.to.equal(hash);
+              resolve(true);
+            }), 5000, true),
+            () => _simple("Duplicate Router [3]", "duplicate_3", (handled, command, hash) => new Promise(resolve => {
+              expect(_tests.duplicate_3).to.be.true;
+              expect(command).to.be.ok.and.to.equal(hash);
+              resolve(true);
+            }), 1000, true)
+          ]) : values))
+        .then(values => (FACTORY.Flags.log("SINGLETON TEST VALUES 3", values), 
+                         values && _.every(values, value => value) ? resolve(true) : resolve(false)));
+      }), 15000, true),
+    
+    test_Router_Pause: () => {
+      FACTORY.Flags.log(`PAUSE RUN: ${new Date().toUTCString()}`);
+      var _run = () => _simple("Pause Router", "pause", (handled, command, hash) => new Promise(resolve => {
+        FACTORY.Flags.log(`PAUSE HANDLED: ${new Date().toUTCString()}`);
+        expect(command).to.be.ok.and.to.equal(hash);
+        resolve(true);
+      }), 10000, true);
+      var _return = _run().then(_run);
+      FACTORY.Flags.log("PAUSE RETURN:", _return);
+      return _return;
+    },
+    
     finish: () => FACTORY.Flags.log("FINISH Called").reflect(true),
     /* <!-- External Functions --> */
 

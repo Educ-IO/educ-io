@@ -25,7 +25,7 @@
           <span class="float-left font-weight-light text-{{#if _action}}primary{{else}}muted{{/if}}{{#unless _action}} mr-1{{/unless}}">{{#if _date}}{{localeDate _date}}{{else}}{{localeDate FROM}}{{/if}}</span>
           {{#if _action}}</a>{{/if}}
         {{else}}
-          {{#if editable}}{{#unless IS_COMPLETE}}<a class="d-none d-md-flex float-left text-very-faded pr-1 align-items-center" role="button" aria-label="Edit Tags" href="#edit.tags{{#exists $loki}}.{{ $loki }}{{/exists}}"><i class="material-icons d-flex add-tags">add_box</i></a>{{/unless}}{{/if}}
+          {{#if editable}}{{#unless IS_COMPLETE}}<a class="d-none d-md-flex float-left text-very-faded pr-1 align-items-center text-decoration-none" role="button" aria-label="Edit Tags" href="#edit.tags{{#exists $loki}}.{{ $loki }}{{/exists}}"><i class="material-icons d-flex add-tags">add_box</i></a>{{/unless}}{{/if}}
         {{/if~}}
         {{~#if (any badges (falsy dates))}}{{#if BADGES}}<div class="mt-1 mt-sm-0{{#if IS_COMPLETE}} o-25{{/if}}">{{#each BADGES}}{{> badge text=this last=@last search=(concat "search.tags." (encode this)) remove=(concat "remove.tag." ../$loki "." (encode this))}}{{/each}}</div>{{/if}}{{/if~}}
         {{~#if (all _icon _link)}}<a role="button" aria-label="View" href="{{_link}}" target="_blank" class="d-none d-md-flex float-left text-very-faded pr-1"><i class="material-icons d-flex">{{_icon}}</i></a>{{/if~}}

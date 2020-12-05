@@ -143,7 +143,9 @@ Tasks = (options, factory) => {
           
           /* <!-- Updates various fields, including ACTION for date dialog (force to ensure everything is refreshed) --> */
           element = FN.elements.create(FN.items.reconcile(item, true), true, 
-                                        holder.data("display-wide"), holder.data("display-simple"), holder.data("display-forward"), holder.data("display-backward"));
+                                        holder.data("display-wide"), holder.data("display-simple"), 
+                                        holder.data("display-forward"), holder.data("display-backward"),
+                                        holder.data("display-classes"));
           
           FN.hookup(element, true);
           

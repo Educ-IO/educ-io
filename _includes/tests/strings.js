@@ -102,7 +102,90 @@ Strings = function() {
       });
 
     }),
+    
+    indexing: () => new Promise(resolve => {
 
+      PAUSE().then(() => {
+
+        try {
+
+          /* <!-- Test Conditions --> */
+          expect("".indexOfAny(["$", "£", "€"], 0))
+            .to.be.a("number")
+            .that.equals(-1);
+          
+          expect("0.00".indexOfAny(["$", "£", "€"], 0))
+            .to.be.a("number")
+            .that.equals(-1);
+          
+          expect("$0.00".indexOfAny([], 0))
+            .to.be.a("number")
+            .that.equals(-1);
+          
+          expect("$0.00".indexOfAny(null, 0))
+            .to.be.a("number")
+            .that.equals(-1);
+          
+          expect("$0.00".indexOfAny(["$", "£", "€"], 0))
+            .to.be.a("number")
+            .that.equals(0);
+          
+          expect("£0.00".indexOfAny(["$", "£", "€"], 0))
+            .to.be.a("number")
+            .that.equals(0);
+          
+          expect("€0.00".indexOfAny(["$", "£", "€"], 0))
+            .to.be.a("number")
+            .that.equals(0);
+          
+          expect("A$0.00".indexOfAny(["$", "£", "€"], 0))
+            .to.be.a("number")
+            .that.equals(1);
+          
+          expect("B£0.00".indexOfAny(["$", "£", "€"], 0))
+            .to.be.a("number")
+            .that.equals(1);
+          
+          expect("C€0.00".indexOfAny(["$", "£", "€"], 0))
+            .to.be.a("number")
+            .that.equals(1);
+          
+          expect("A$0.00".indexOfAny(["$", "£", "€"], 1))
+            .to.be.a("number")
+            .that.equals(1);
+          
+          expect("B£0.00".indexOfAny(["$", "£", "€"], 1))
+            .to.be.a("number")
+            .that.equals(1);
+          
+          expect("C€0.00".indexOfAny(["$", "£", "€"], 1))
+            .to.be.a("number")
+            .that.equals(1);
+          
+          expect("A$0.00".indexOfAny(["$", "£", "€"], 2))
+            .to.be.a("number")
+            .that.equals(-1);
+          
+          expect("B£0.00".indexOfAny(["$", "£", "€"], 2))
+            .to.be.a("number")
+            .that.equals(-1);
+          
+          expect("C€0.00".indexOfAny(["$", "£", "€"], 2))
+            .to.be.a("number")
+            .that.equals(-1);
+          
+          resolve(FACTORY.Flags.log("Stringify Test SUCCEEDED").reflect(true));
+
+        } catch (err) {
+          resolve(FACTORY.Flags.error("Stringify Test FAILED", err).reflect(false));
+        }
+
+      });
+
+    }),
+
+    
+    
     finish: () => FACTORY.Flags.log("FINISH Called").reflect(true),
     /* <!-- External Functions --> */
 

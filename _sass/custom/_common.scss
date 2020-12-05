@@ -171,6 +171,13 @@ em.kb-shortcut, strong.kb-shortcut {
   }
 }
 // -- List Groups -- //
+
+// -- Text -- //
+.text-bright {
+	color: $colour-bright-background !important;
+}
+// -- Text -- //
+
 // -- Badges -- //
 .badge-bright {
 	color: $colour-bright-foreground;
@@ -195,6 +202,11 @@ em.kb-shortcut, strong.kb-shortcut {
 .badge-label {
   color: $colour-background !important;
   @include arrayed_Gradient(rgba(21,13,89,0.9) rgba(33,19,237,0.95) darken(rgba(32,30,66,0.9), 20%), 70%);
+}
+
+.badge-renumeration {
+  color: $colour-background !important;
+  @include arrayed_Gradient(rgba(0,0,0,0.9) rgba(50,50,50,0.95) darken(rgba(80,80,80,0.9), 20%), 70%);
 }
 
 .badge-vital {

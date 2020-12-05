@@ -175,6 +175,9 @@ App = function() {
         tag.indexOf(ಱ.markers.label) === 0 ? 
           FN.display.list(ರ‿ರ.database.tagged(tag), 
             `Tasks for Label: ${tag.replace(ಱ.markers.label,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)) :
+        ಱ.markers.renumeration.test(tag) ? 
+          FN.display.list(ರ‿ರ.database.tagged(tag), 
+            `Renumerated Tasks: ${tag.replace(ಱ.markers.renumeration,"")}`, ಱ.analysis.analysis(tag, ರ‿ರ.db)) :
         FN.display.list(ರ‿ರ.database.tagged(tag), `Tasks tagged with: ${tag}`),
 
     cleanup: () => {
@@ -533,7 +536,7 @@ App = function() {
         }, ಠ_ಠ);
       
       /* <!-- Set Up / Create the Function Modules --> */
-      FN.graphs = ಠ_ಠ.Graphs();
+      FN.graphs = ಠ_ಠ.Graphs({}, ಠ_ಠ);
       FN.classes = ಠ_ಠ.Classes({}, ಠ_ಠ);
       FN.calendars = ಠ_ಠ.Calendars({}, ಠ_ಠ);
       FN.archive = ಠ_ಠ.Archive({functions: FN, state: {session: ರ‿ರ, application: ಱ}}, ಠ_ಠ);
@@ -554,7 +557,8 @@ App = function() {
         project: "#",
         assignation: "@",
         label: "~",
-        split: /[^a-zA-Z0-9#@!\?\-_~]/gi,
+        renumeration: /^[\$£€]/,
+        split: /[^a-zA-Z0-9#@!\?\-_~\$£€]/gi,
         replace: "_"
       };
       
@@ -642,6 +646,7 @@ App = function() {
         start: FN.setup.routed,
         recent: false,
         simple: true,
+        singular: true,
         instructions: [{
             match: /SHORTCUT/i,
             show: "SHORTCUT_INSTRUCTIONS",

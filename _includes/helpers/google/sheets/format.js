@@ -75,9 +75,12 @@ Google_Sheets_Format = (options, factory) => {
       right ? {"right": right} : {})
   });
       
-  var _text = (colour, size, bold, italic, rotate) => _.extend({
+  var _text = (colour, size, bold, italic, rotate, font) => _.extend({
     "textFormat": _.extend(
       colour ? _foreground(colour) : {},
+      font ? {
+        "fontFamily" : font
+      } : {},
       size ? {
         "fontSize" : size
       } : {},
