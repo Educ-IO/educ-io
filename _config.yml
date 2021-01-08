@@ -33,7 +33,7 @@ permalink:						pretty
 # Setup
 title:								"EDUC.IO"
 byline:								""
-  
+
 description:					"Web Apps & Tools built for Google Apps"
 lead: 								"A collection of free web apps that integrate with the Google platform"
 url:									https://educ.io
@@ -83,6 +83,7 @@ analytics:
   scroll:							true
 
 app:
+  alert:              info
   content:            content
   namespace:          educ
   tests:              _tests

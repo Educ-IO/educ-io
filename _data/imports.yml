@@ -2269,3 +2269,114 @@ epub-js:
       bulk: 643
       map: true
       id: __epubjs
+
+rvsp:
+  name: RVSP
+  desc: A lightweight library that provides tools for organizing asynchronous code
+  url: https://cdnjs.com/libraries/rsvp
+  project: https://github.com/tildeio/rsvp.js
+  version: 4.8.5
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/rsvp/4.8.5/rsvp.min.js
+      integrity: sha512-HFmmKqGaLV2NYgTKWTLxKYsreelx/C5mZLO5kgcA00If59U0YbjAdOpVsoSAb6YTi5K11nVtotiQnSHkltN2XQ==
+      crossorigin: anonymous
+      bulk: 14.9
+      map: true
+      id: __rvsp
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/rsvp/4.8.5/rsvp.js
+      integrity: sha512-7I0n3tGdCi6lPyQHA9l5T81YgjjfVYU2VvqYUbhGkAWlrHQnbG0THom49J2tBGFLDXzqf/W0AlVHTKsMeLRCig==
+      crossorigin: anonymous
+      bulk: 75.2
+      map: true
+      id: __rvsp
+
+pdf-js:
+  name: PDF.js
+  desc: PDF Reader in JavaScript
+  url: https://cdnjs.com/libraries/pdf.js
+  project: https://github.com/mozilla/pdf.js
+  version: 2.6.347
+  license: Apache-2.0
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js
+      integrity: sha512-Z8CqofpIcnJN80feS2uccz+pXWgZzeKxDsDNMD/dJ6997/LSRY+W4NmEt9acwR+Gt9OHN0kkI1CTianCwoqcjQ==
+      crossorigin: anonymous
+      bulk: 215
+      id: __pdfjs
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.js
+      integrity: sha512-P/HN5l+O8ovwpe3layxRDin3RTk1kbHlnxe3KBmqqhjrVUebBE769mPVvGO5qcZGJG4uJAppkmchRMrFainTFg==
+      crossorigin: anonymous
+      bulk: 385
+      map: true
+      id: __pdfjs
+      
+pdf-js-viewer-js:
+  name: PDF.js
+  desc: PDF Reader in JavaScript (Full Viewer)
+  url: https://cdnjs.com/libraries/pdf.js
+  project: https://github.com/mozilla/pdf.js
+  version: 2.6.347
+  license: Apache-2.0
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js
+      integrity: sha512-Z8CqofpIcnJN80feS2uccz+pXWgZzeKxDsDNMD/dJ6997/LSRY+W4NmEt9acwR+Gt9OHN0kkI1CTianCwoqcjQ==
+      crossorigin: anonymous
+      bulk: 215
+      id: __pdfjs
+      dependencies:
+        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js
+          integrity: sha512-lHibs5XrZL9hXP3Dhr/d2xJgPy91f2mhVAasrSbMkbmoTSm2Kz8DuSWszBLUg31v+BM6tSiHSqT72xwjaNvl0g==
+          crossorigin: anonymous
+          bulk: 686
+          id: __pdfjs-worker
+        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.js
+          integrity: sha512-WBiA7Xu6uie6Tk2fqnQnXHWbDFrkzDMlUfALYEJI9/eQtQ4kHcO1AbZA9wGqQ48Nkx7EUs9dXSAvW50ZYIQq+A==
+          crossorigin: anonymous
+          bulk: 161
+          map: true
+          id: __pdfjs-viewer
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.js
+      integrity: sha512-P/HN5l+O8ovwpe3layxRDin3RTk1kbHlnxe3KBmqqhjrVUebBE769mPVvGO5qcZGJG4uJAppkmchRMrFainTFg==
+      crossorigin: anonymous
+      bulk: 385
+      map: true
+      id: __pdfjs
+      dependencies:
+        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.js
+          integrity: sha512-pJzvZrVxPmP3FaObZnxajtAkLVTmPZguSaaBlOg3DD89rtKOA/wDj/YkQ6cYKBv2GamBBv+iAI0wEIpSXtMs5w==
+          crossorigin: anonymous
+          bulk: 1319
+          map: true
+          id: __pdfjs-worker
+        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.js
+          integrity: sha512-WBiA7Xu6uie6Tk2fqnQnXHWbDFrkzDMlUfALYEJI9/eQtQ4kHcO1AbZA9wGqQ48Nkx7EUs9dXSAvW50ZYIQq+A==
+          crossorigin: anonymous
+          bulk: 161
+          map: true
+          id: __pdfjs-viewer
+      
+pdf-js-viewer-css:
+  name: PDF.js
+  desc: PDF Reader in JavaScript
+  url: https://cdnjs.com/libraries/pdf.js
+  project: https://github.com/mozilla/pdf.js
+  version: 2.6.347
+  license: Apache-2.0
+  type: css
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.min.css
+      integrity: sha512-5cOE2Zw/F4SlIUHR/xLTyFLSAR0ezXsra+8azx47gJyQCilATjazEE2hLQmMY7xeAv/RxxZhs8w8zEL7dTsvnA==
+      crossorigin: anonymous
+      id: __pdfjs-viewer-css
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.css
+      integrity: sha512-CWsS97AlgjAjjwqi38kjboS8Kz0aU84/iahk4FUfjxFCeSGuyoDaQkIZvgjKZrVUDVA8Hx2Kl7JrS6rlH19z3A==
+      crossorigin: anonymous
+      id: __pdfjs-viewer-css

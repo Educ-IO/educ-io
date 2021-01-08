@@ -343,6 +343,8 @@ Handlebars = (options, factory) => {
     template: _template,
     
     username: _username,
+    
+    bytes: _bytes,
     /* <!-- External Functions --> */
 
   };

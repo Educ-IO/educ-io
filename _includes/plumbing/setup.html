@@ -6,6 +6,7 @@
     _isF : function(o) {return !!(o && o.constructor && o.call && o.apply);},
     _root : "{{ site.app.content }}",
     SETUP : {
+      {% if site.app.alert %}ALERT: "{{ site.app.alert }}",{% endif %}
 			{% if site.data.apps[page.app].config %}CONFIG: {{ site.data.apps[page.app].config | jsonify }},{% endif %}
 			CHECK : {{ site.app.check | jsonify }},
       SINGLE_PAGE : !!(window.navigator.standalone || window.navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)),

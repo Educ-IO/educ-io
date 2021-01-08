@@ -1,6 +1,8 @@
-@mixin user-select($details) {
+@mixin user-select($details...) {
   -webkit-user-select: $details;
+   -khtml-user-select: $details;
      -moz-user-select: $details;
-      -ms-user-select: $details;
+			-ms-user-select: $details;
+			 -o-user-select: $details;
 					user-select: $details;
 }

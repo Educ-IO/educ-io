@@ -60,11 +60,16 @@ Display = function() {
   };
 
   var _tooltips = (targets, options) => {
-    if (targets && targets.tooltip) targets.tooltip(_.defaults(options ? options : {}, {
-      placement: _placement
-    }));
+    if (targets && targets.tooltip) {
+      targets.tooltip(_.defaults(options ? options : {}, {
+        placement: _placement
+      }));
+      targets.filter("a[target='_blank']")
+        .off("click.tooltip-clear")
+        .on("click.tooltip-clear", e => $(e.target || e.currentTarget).tooltip("dispose"));
+    }
   };
-
+  
   var _hover = (e, toggle) => {
     var _this = $(e.currentTarget),
       _targets = _this.data("targets"),

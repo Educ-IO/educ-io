@@ -184,6 +184,32 @@ Strings = () => {
       decode: value => decodeURIComponent(_.map(atob(value).split(""),
         c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")),
 
+      bytes: (value, slice) => {
+        
+        slice = slice || 512;
+        const _chars = atob(value),
+              _length = _chars.length;
+
+        var _array = new Uint8Array(new ArrayBuffer(_length)),
+            _current = 0;
+        
+        for (var offset = 0; offset < _length; offset += slice) {
+          
+          const _values = _chars.slice(offset, offset + slice),
+                _numbers = new Array(_values.length);
+          
+          for (var i = 0; i < _values.length; i++) {
+            _numbers[i] = _values.charCodeAt(i);
+          }
+          
+          _array.set(_numbers, _current);
+          _current+=_numbers.length;
+        
+        }
+
+        return _array;
+      },
+      
     },
 
     sort: _property,

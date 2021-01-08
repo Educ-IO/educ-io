@@ -1,0 +1,26 @@
+#############################################################################################
+#                                                                                           #
+#    )\.---.   .')           .-.     )\.-.  .'(     )\.-.     /`-.   .-,.-.,-.  )\.---.     #
+#    (   ,-._( ( /        ,'  /  )  ,' ,-,_) \  )  ,'     )  ,' _  \  ) ,, ,. ( (   ,-._(   #
+#     \  '-,    ))       (  ) | (  (  .   _  ) (  (  .-, (  (  '-' (  \( |(  )/  \  '-,     #
+#      ) ,-`    )'._.-.   ) '._\ )  ) '..' ) \  )  ) '._\ )  )   _  )    ) \      ) ,-`     #
+#     (  ``-.  (       ) (  ,   (  (  ,   (   ) \ (  ,   (  (  ,' ) \    \ (     (  ``-.    #
+#      )..-.(   )/,__.'   )/ ._.'   )/'._.'    )/  )/ ._.'   )/    )/     )/      )..-.(    #
+#                                                                                           #
+#############################################################################################
+
+name: Elucidate
+desc: Chrome Extension for overlaying webcam view on any webpage
+link: /extensions/elucidate
+published: false
+info: true
+colour: 0a0a0a
+action: Find out more
+versions:
+  1.0.0 :
+    name : Initial Version
+    desc : Initial version published online
+    type : major
+    changes :
+      - details: Initial Code Commit
+        url : https://github.com/thiscouldbejd/elucidate-extension

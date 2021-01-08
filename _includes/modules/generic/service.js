@@ -34,7 +34,7 @@ Service = function() {
 	var _notify = function(sw, urgency, details) {
 						
 		if (ಠ_ಠ.Display && !ಠ_ಠ._isF(ಠ_ಠ.Display)) ಠ_ಠ.Display.alert({
-			type: urgency ? urgency : "info",
+			type: urgency ? urgency : ಠ_ಠ.SETUP.ALERT || "info",
 			headline: "New Version Available",
 			message: details ? details.trim() : "",
 			action: "Update",
@@ -60,7 +60,7 @@ Service = function() {
 
 			}).then((version) => {
 
-				var _details, _urgency = "info";
+				var _details, _urgency;
 				if (version) {
 					if (version.VERSION_TYPE == "security") {
 						_urgency = "danger";
