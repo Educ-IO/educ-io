@@ -1,5 +1,9 @@
 site :
-  0.1.13d :
+  0.1.13f :
+    name : Classes v0.0.6b-beta
+    desc : Minor Bug Fix
+    numeric : 0.1.13.6
+  0.1.13e :
     name : Docket v1.1.2
     desc : Improvements and Bug Fixes
     numeric : 0.1.13.5
@@ -1567,6 +1571,11 @@ blocks :
     name : Early testing version
     type : minor
 classes :
+  v0.0.6b-beta :
+    name : Minor Bug Fix
+    type : minor
+    changes :
+      - Fixed naming of classes in student engagement view
   v0.0.6a-beta :
     name : New Features
     type : major
