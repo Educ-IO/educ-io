@@ -7,15 +7,16 @@ App = function() {
   if (this && this._isF && this._isF(this.App)) return new this.App().initialise(this);
 
   /* <!-- Internal Constants --> */
-  const TYPE = "application/x.educ-io.folders-",
-    STATE_OPENED = "opened",
-    STATE_SEARCHED = "searched",
-    STATE_TEAM = "team",
-    STATES = [STATE_OPENED, STATE_SEARCHED, STATE_TEAM];
+  const FN = {};
+
+  const TYPE = "application/x.educ-io.folders-";
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Variables --> */
-  var ಠ_ಠ, ರ‿ರ = {};
+  var ಠ_ಠ, /* <!-- Context --> */
+    ರ‿ರ = {},
+    /* <!-- State --> */
+    ಱ = {}; /* <!-- Persistant State --> */
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
@@ -89,7 +90,7 @@ App = function() {
     ರ‿ರ.folder = ಠ_ಠ.Folder(ಠ_ಠ, folder, ಠ_ಠ.container, teamDrive, state,
       ರ‿ರ.folder ? ರ‿ರ.folder.tally.get() : null, resolve, reject);
     if (log) ಠ_ಠ.Recent.add(folder.id, folder.name, folder.url).then(() => _resize());
-    ಠ_ಠ.Display.state().enter(STATE_OPENED);
+    ಠ_ಠ.Display.state().enter(FN.states.opened.in);
 
   };
 
@@ -174,6 +175,69 @@ App = function() {
   };
   /* <!-- Internal Functions --> */
 
+  /* <!-- Setup Functions --> */
+  FN.setup = {
+
+    /* <!-- Setup required for everything --> */
+    now: () => {
+
+      /* <!-- Set Up / Create the States and Files Module --> */
+      FN.states = ಠ_ಠ.States(ಠ_ಠ);
+      /* <!-- Set Up / Create the Function Modules --> */
+
+    },
+
+    /* <!-- Start App after fully loaded (but BEFORE routing) --> */
+    initial: () => {
+
+      ಠ_ಠ.Flags.log("APP Start Called", "Initial");
+
+      /* <!-- Setup Helpers --> */
+      _.each([{
+        name: "Strings"
+      }, {
+        name: "Notify",
+        options: {
+          id: "folders_Notify",
+          autohide: true,
+        }
+      }, {
+        name: "Exporter",
+        options: {
+          state: {
+            application: ಱ
+          }
+        }
+      }], helper => ಱ[helper.name.toLowerCase()] = ಠ_ಠ[helper.name](helper.options || null, ಠ_ಠ));
+
+      /* <!-- Setup Function Modules --> */
+      var _options = {
+        functions: FN,
+        state: {
+          session: ರ‿ರ,
+          application: ಱ
+        }
+      };
+      _.each([], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+
+    },
+
+    /* <!-- App is ready for action! --> */
+    session: () => {
+
+      ಠ_ಠ.Flags.log("App is now READY", "Session");
+
+    },
+
+    routed: () => {
+
+      ಠ_ಠ.Flags.log("Router is Started", "Routed");
+
+    },
+
+  };
+  /* <!-- Setup Functions --> */
+
   /* <!-- External Visibility --> */
   return {
 
@@ -186,11 +250,15 @@ App = function() {
       /* <!-- Set Container Reference to this --> */
       container.App = this;
 
+      /* <!-- Initial Setup Call --> */
+      FN.setup.now();
+
       /* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
         name: "Folders",
         state: ರ‿ರ,
-        states: STATES,
+        states: FN.states.all,
+        start: FN.setup.routed,
         routes: {
           open_root: { /* <!-- Pick, or Load the Root Folder --> */
             keys: ["o", "O"],
@@ -216,61 +284,68 @@ App = function() {
           },
           close_results: {
             matches: [/CLOSE/i, /RESULTS/i],
-            state: STATE_SEARCHED,
+            state: FN.states.searched.in,
             fn: () => {
-              ಠ_ಠ.Display.state().exit([STATE_SEARCHED]);
+              ಠ_ಠ.Display.state().exit([FN.states.searched.in]);
               if (ರ‿ರ.folder) ರ‿ರ.folder.close();
             }
           },
           remove_list: {
             matches: [/REMOVE/i, /LIST/i],
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             length: 1,
             fn: command => ರ‿ರ.folder.remove(command)
           },
           remove_tag: {
             matches: [/REMOVE/i, /TAG/i],
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             length: 2,
             fn: command => ರ‿ರ.folder.detag(command[0], command[1])
           },
           remove_tab: {
             matches: [/REMOVE/i, /TAB/i],
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             length: 1,
             fn: command => ರ‿ರ.folder.close(command)
           },
           info: {
             matches: /INFO/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             keys: "i",
             fn: command => ರ‿ರ.folder.info(command),
           },
           tally: {
             matches: /TALLY/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             keys: "t",
             fn: command => ರ‿ರ.folder.tally.run(command),
           },
           convert: {
             matches: /CONVERT/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             fn: command => ರ‿ರ.folder.convert(command),
           },
           tag: {
             matches: /TAG/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             fn: command => ರ‿ರ.folder.tag(command),
+          },
+          download: {
+            matches: /DOWNLOAD/i,
+            requires: "filesaver",
+            state: FN.states.opened.in,
+            length: 2,
+            fn: commands => ರ‿ರ.folder.download(commands[0], ಠ_ಠ.Strings().base64.decode(commands[1])),
           },
           star: {
             matches: /STAR/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             length: 1,
             fn: command => ರ‿ರ.folder.star(command),
           },
           visibility_columns: {
             matches: [/VISIBILITY/i, /COLUMNS/i],
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             fn: () => ರ‿ರ.folder.table().columns.visibility(),
           },
           search_properties: {
@@ -289,39 +364,39 @@ App = function() {
           },
           search_root: {
             matches: [/SEARCH/i, /ROOT/i],
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             fn: () => ರ‿ರ.folder.search("root")
           },
           search: {
             matches: /SEARCH/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             keys: "s",
             fn: command => ರ‿ರ.folder.search(command)
           },
           clone: {
             matches: /CLONE/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             fn: command => ರ‿ರ.folder.clone(command),
           },
           audit: {
             matches: /AUDIT/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             fn: command => ರ‿ರ.folder.audit(command),
           },
           rename: {
             matches: /RENAME/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             fn: command => ರ‿ರ.folder.rename(command),
           },
           move: {
             matches: /MOVE/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             length: 0,
             fn: () => ರ‿ರ.folder.move(),
           },
           move_to: {
             matches: /MOVE/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             length: {
               min: 1,
               max: 2,
@@ -330,19 +405,19 @@ App = function() {
           },
           delete_folder: {
             matches: /DELETE/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             length: 1,
             fn: command => ರ‿ರ.folder.delete(command),
           },
           delete: {
             matches: /DELETE/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             length: 0,
             fn: () => ರ‿ರ.folder.delete(),
           },
           refresh: {
             matches: /REFRESH/i,
-            state: STATE_OPENED,
+            state: FN.states.opened.in,
             keys: "r",
             fn: () => _openFolder(ರ‿ರ.folder.folder(), false),
           },
@@ -351,7 +426,7 @@ App = function() {
             length: 1,
             fn: command => _.compose(
               () => (ರ‿ರ.drives = ಠ_ಠ.TeamDrives(ಠ_ಠ)).show(String(command) == "true")
-              .then(() => ಠ_ಠ.Display.state().enter(STATE_TEAM)),
+              .then(() => ಠ_ಠ.Display.state().enter(FN.states.team.in)),
               () => ಠ_ಠ.container.empty(),
               ಠ_ಠ.Router.clean
             )(),
@@ -359,7 +434,34 @@ App = function() {
           groups: {
             matches: [/^SHOW/i, /^GROUP$/i],
             length: 1,
-            fn: command => (command = command.replace(new RegExp("%2E", "gi"), ".")) && ಠ_ಠ.Groups(ಠ_ಠ, ರ‿ರ.drives).show(command, $(`[data-group='${command}']`).children(".permission")),
+            fn: command => (command = command.replace(new RegExp("%2E", "gi"), ".")) &&
+              ಠ_ಠ.Groups(ಠ_ಠ, ರ‿ರ.drives).show(command, $(`[data-group='${command}']`).children(".permission")),
+          },
+          export: {
+            matches: /EXPORT/i,
+            state: FN.states.opened.in,
+            routes: {
+              csv: {
+                matches: /CSV/i,
+                length: 0,
+                fn: () => ಱ.exporter.export(ರ‿ರ.folder.table(), "csv", ರ‿ರ.folder.title())
+              },
+              excel: {
+                matches: /EXCEL/i,
+                length: 0,
+                fn: () => ಱ.exporter.export(ರ‿ರ.folder.table(), "xlsx", ರ‿ರ.folder.title(), "Contents")
+              },
+              markdown: {
+                matches: /MARKDOWN/i,
+                length: 0,
+                fn: () => ಱ.exporter.export(ರ‿ರ.folder.table(), "md", ರ‿ರ.folder.title())
+              },
+              sheets: {
+                matches: /SHEETS/i,
+                length: 0,
+                fn: () => ಱ.exporter.export(ರ‿ರ.folder.table(), "sheets", ರ‿ರ.folder.title(), "Contents", "NOTIFY_SAVE_EXPORT_SUCCESS")
+              },
+            }
           },
           load: command => {
             ((/TEAM/i).test(command[0]) ?
@@ -376,7 +478,7 @@ App = function() {
         route: (handled, command) => {
 
           if (handled) return;
-          
+
           if ((/TEST/i).test(command)) {
 
             if (ರ‿ರ.folder) ರ‿ರ.folder.test(
@@ -395,6 +497,10 @@ App = function() {
 
     },
 
+    start: FN.setup.initial,
+
+    ready: FN.setup.session,
+    
     /* <!-- Clear the existing state --> */
     clean: () => ಠ_ಠ.Router.clean(false)
 

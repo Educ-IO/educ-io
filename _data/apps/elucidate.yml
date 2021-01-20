@@ -17,6 +17,10 @@ info: true
 colour: 0a0a0a
 action: Find out more
 versions:
+  1.1.0 :
+    name : Multiple Camera Support
+    desc : Use additional / different webcams
+    type : minor
   1.0.0 :
     name : Initial Version
     desc : Initial version published online

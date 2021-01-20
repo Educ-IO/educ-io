@@ -85,6 +85,9 @@ Handlebars = (options, factory) => {
       Handlebars.registerHelper("stringify", variable => variable ?
         JSON.stringify(variable) : "");
 
+      Handlebars.registerHelper("base64", variable => variable ?
+        factory.Strings ? factory.Strings().base64.encode(variable) : encodeURIComponent(variable) : "");
+      
       Handlebars.registerHelper("encode", variable => variable ?
         factory.url ? factory.url.encode(encodeURIComponent(variable)) : encodeURIComponent(variable) : "");
 
@@ -177,7 +180,7 @@ Handlebars = (options, factory) => {
 
       Handlebars.registerHelper("formatYaml", (variable, field) => {
         if (variable !== null && variable !== undefined && window.jsyaml)
-          return jsyaml.safeDump(_.omit(variable[field] || variable, (value, key) => value === null || value === undefined || key == "__class"), {
+          return jsyaml.dump(_.omit(variable[field] || variable, (value, key) => value === null || value === undefined || key == "__class"), {
             skipInvalid: true
           });
       });

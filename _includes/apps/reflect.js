@@ -26,7 +26,7 @@ App = function() {
   FN.loading = () => $("#createRelectiveReport").addClass("loader");
   FN.loaded = () => $("#createRelectiveReport").removeClass("loader");
   
-  /* <!-- Setup Functions Functions --> */
+  /* <!-- Setup Functions --> */
   FN.setup = {
 
     /* <!-- Setup required for everything --> */

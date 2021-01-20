@@ -564,7 +564,7 @@ Datatable = (ಠ_ಠ, table, options, target, after_update) => {
           _.chain(el.find(".badge, .export, [data-id], [data-type]").toArray()).map(el => _extract($(el))).compact().value().join("\n") :
           el.length > 0 && _processed.indexOf(el[0]) < 0 ? (_processed.push(el[0]), el[0].textContent.trim()) : "";
       
-      _html.find("tbody tr").each((i, el) => _return.push(_.map($(el).find("td").toArray(), el => _extract(_clean($(el))))));
+      _html.find("tbody tr").each((i, el) => _return.push(_.map($(el).find("td:not(.no-export)").toArray(), el => _extract(_clean($(el))))));
       
       return _return;
     },

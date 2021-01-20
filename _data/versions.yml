@@ -1,4 +1,8 @@
 site :
+  0.1.13g :
+    name : Folders 0.0.7g-beta
+    desc : File List Exports
+    numeric : 0.1.13.7
   0.1.13f :
     name : Classes v0.0.6b-beta
     desc : Minor Bug Fix
@@ -1015,6 +1019,10 @@ view :
     name : Early testing version
     type : minor
 folders :
+  0.0.7g-beta :
+    name : Export File Lists
+    desc : Folders / File Lists and Search Results can now be exported to Sheets, CSV etc
+    type : minor
   0.0.7f-beta :
     name : Team Drives
     desc : Filterable Team Drive Permissions

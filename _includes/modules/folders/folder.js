@@ -20,6 +20,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
     _tallyCache = tally ? tally : {},
     _team = team,
     _searches = {},
+    _name,
     _user = ಠ_ಠ.Google.user();
   /* <!-- Internal Variables --> */
 
@@ -674,18 +675,6 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
   });
 
-  var _enableDownloads = target => {
-    target.find("a.download").on("click.download", e => {
-      ಠ_ಠ.Google.files.download($(e.target).data("id"), _team).then(binary => {
-        try {
-          saveAs(binary, $(e.target).data("name"));
-        } catch (e) {
-          ಠ_ಠ.Flags.error("Drive File Download", e);
-        }
-      });
-    });
-  };
-
   var _showData = (id, name, values, target) => {
 
     var headers = _.map(["Type", "Shared", "ID", "Name", "Actions", "Star"], v => ({
@@ -699,6 +688,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
       hide_always: false,
       hide_now: false,
       hide_initially: v === "ID" ? true : false,
+      screen: v == "Actions",
       field: v.toLowerCase(),
     }));
 
@@ -717,9 +707,6 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
     _data.insert(values);
 
     var _update = target => {
-
-        /* <!-- Wire Up Download Buttons --> */
-        _enableDownloads(target);
 
         /* <!-- Hide popovers on second click --> */
         var _popped = null;
@@ -806,7 +793,9 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
       ಠ_ಠ.Display.state().enter("searched");
       _search = tab.data("id");
     }
-
+    
+    _name = tab.data("name");
+    
   };
 
   var _activateTab = tabs => {
@@ -818,6 +807,8 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
   var _showFolder = (folder, target) => {
 
+    _name = null;
+    
     var _data = {
       tabs: [{
         id: folder.id,
@@ -891,7 +882,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
     if (name && value) {
 
-      var _name = "Search @ " + new Date().toLocaleTimeString();
+      _name = "Search @ " + new Date().toLocaleTimeString();
 
       var _finish = ಠ_ಠ.Display.busy({
         target: ಠ_ಠ.container,
@@ -917,7 +908,7 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
   var _searchFolder = id => {
 
-    var _name = "Search @ " + new Date().toLocaleTimeString();
+    _name = "Search @ " + new Date().toLocaleTimeString();
 
     var _decode = values => {
 
@@ -1097,6 +1088,8 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
   };
 
   var _getTable = () => _search ? _tables[_search] : _tables[folder.id];
+  
+  var _getTitle = () => _search ? `${folder.name} | ${_name}` : folder.name;
   /* <!-- Internal Functions --> */
 
   /* <!-- Item Processing --> */
@@ -2036,6 +2029,19 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
 
     delete: id => _items.process(_items.delete, id),
 
+    download: (id, name) => ಠ_ಠ.Google.files.download(id, _team)
+      .then(ಠ_ಠ.Main.busy("Downloading File"))
+      .catch(e => (ಠ_ಠ.Flags.error("Drive File Download", e), null))
+      .then(binary => {
+          if (binary) {
+            try {
+              saveAs(binary, name);
+            } catch (e) {
+              ಠ_ಠ.Flags.error("Drive File Download", e);
+            } 
+          }
+        }),
+    
     rename: id => _items.process(_items.rename, id),
 
     move: id => _items.process(_items.move, id),
@@ -2072,8 +2078,10 @@ Folder = (ಠ_ಠ, folder, target, team, state, tally, complete) => {
       if (batch) parameters.batch = batch;
       if (log) parameters.log = true;
       _items.process(_items.test, null, items => _.reject(items, item => ಠ_ಠ.Google.folders.is(item.mimeType)), parameters);
-    }
+    },
 
+    title: () => _getTitle(),
+    
   };
   /* <!-- External Visibility --> */
 

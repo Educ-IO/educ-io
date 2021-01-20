@@ -18,7 +18,12 @@ learn: /guides/folders
 css:
   primary:
   secondary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/toasts
     - custom/variables
+    - custom/notifications
     - custom/tabs
     - custom/tags
     - custom/folders
@@ -47,25 +52,35 @@ imports:
     load: last
   - name: day
     load: last
-  - name: filesaver
-    load: last
   - name: waves-css
     load: last
   - name: waves-js
     load: last
+  - name: filesaver
+    load: lazy
+  - name: xlsxpopulate
+    load: lazy
   - name: google
     load: lazy
 helpers:
   - network
   - strings
+  - google/sheets/notation
+  - google/sheets/grid
+  - google/sheets/format
+  - google/sheets/properties
   - google
   - table
   - css
   - fields
   - filters
   - dialog
+  - notify
   - handlebars
+  - saver
+  - colours
   - url
+  - exporter
 modules:
   - generic/dates
   - generic/flags
@@ -78,6 +93,7 @@ modules:
   - items
   - recent
   - datatable
+  - folders/states
   - folders/folder
   - folders/team-drives
   - folders/groups
@@ -89,6 +105,7 @@ templates:
   - generic/choose
   - generic/confirm
   - generic/alert
+  - generic/notify
   - loader
   - recent
   - help
@@ -136,6 +153,7 @@ docs:
   - folders/AUDIT_EXPLANATION
   - folders/NO_TEAM_DRIVES
   - folders/TUTORIALS
+  - folders/NOTIFY_SAVE_EXPORT_SUCCESS
 scopes:
   google:
     - scope: email
@@ -228,6 +246,7 @@ menus:
             disabled_until:
               - opened
               - team
+              
   - name: Results
     groups:
       all:
@@ -288,6 +307,37 @@ menus:
             hash: close.results
             disabled_until:
               - searched
+              
+  - name: Export
+    disabled_until:
+      - opened
+      - team
+    groups:
+      all:
+        commands:
+          - name: Export to Sheets
+            desc: Export Files & Folders Data to Google Sheets
+            hash: export.sheets
+            auth: google
+            scopes:
+              - https://www.googleapis.com/auth/drive.file
+          - name: Download as CSV
+            desc: Download Files & Folders Data as a Comma Separated Values (CSV) File
+            hash: export.csv
+            imports:
+              - filesaver
+          - name: Download as Excel
+            desc: Download Files & Folders Data as a Microsoft Excel File
+            hash: export.excel
+            imports:
+              - xlsxpopulate
+              - filesaver
+          - name: Download as Markdown
+            desc: Download Files & Folders Data as a Markdown Table
+            hash: export.markdown
+            imports:
+              - filesaver
+              
   - name: Settings
     groups:
       all:
