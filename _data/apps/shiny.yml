@@ -17,10 +17,19 @@ info: true
 colour: 000080
 action: Find out more
 versions:
+  0.7.8:
+    name : Functionality Improvements
+    desc : Text Alignments
+    type : beta
+    changes :
+      - details: Added left, right, center and fully justified text aligment
+      - details: Added two new colour schemes
+      - details: Added shortcut keys to improve full-screen experience
+      - details: Minor visual tweaks
   0.7.7:
     name : Functionality Improvements
     desc : Open Insert/Overwrite
-    type : production | beta
+    type : production
     changes :
       - details: Opening a file will trigger an __insert__ or __overwrite__ question (previously files were just inserted)
       - details: Added Print option to __always parse__ line breaks as new paragraphs (off by default)
