@@ -17,10 +17,16 @@ info: true
 colour: 000080
 action: Find out more
 versions:
+  0.7.9:
+    name : Functionality Improvements
+    desc : Table Insert
+    type : beta
+    changes :
+      - details: Added Table Insert Function
   0.7.8:
     name : Functionality Improvements
     desc : Text Alignments
-    type : beta
+    type : minor
     changes :
       - details: Added left, right, center and fully justified text aligment
       - details: Added two new colour schemes
