@@ -17,10 +17,16 @@ info: true
 colour: 000080
 action: Find out more
 versions:
+  0.8.0:
+    name : Functionality Improvements
+    desc : Text Alignment Improvements
+    type : beta
+    changes :
+      - details: Insert Alignment for Selected Text
+      - details: Supports Multiple Aligment Blocks
   0.7.9:
     name : Functionality Improvements
     desc : Table Insert
-    type : beta
     changes :
       - details: Added Table Insert Function
   0.7.8:
