@@ -24,16 +24,31 @@ Transform = (options, factory) => {
       name = name.substring(0,name.length-1);
     return name;
   };
+  
+  var transformResultName = (name) => {
+    name = name.toUpperCase().trim();
+    return name;
+  };
 
-  var getValue = (text, grade) => {
+  var getGradeValue = (text, grade) => {
     return (_.isArray(grade.Values.Value) ? grade.Values.Value : [grade.Values.Value]).find(function(value) {
       return value.Grade == text;
     });
+  };
+  
+  var getResultValue = (text, result) => {
+    return result.IsNumericValue && result.UseResult && text ? Number(text) : text;
   };
 
   var getGrade = (id, template) => {
     return (_.isArray(template.Gradings.Grading) ? template.Gradings.Grading : [template.Gradings.Grading]).find(function(grade) {
       return grade["@Id"] == id;
+    });
+  };
+  
+  var getResult = (id, template) => {
+    return (_.isArray(template.Results.Result) ? template.Results.Result : [template.Results.Result]).find(function(result) {
+      return result["@Id"] == id;
     });
   };
   
@@ -91,30 +106,54 @@ Transform = (options, factory) => {
     var _grade = getGrade(grade["@GradeId"], template);
     if (_grade) {
       var _name = transformGradeName(_grade.Name),
-          _value = getValue(grade.Grade, _grade);
+          _value = getGradeValue(grade.Grade, _grade);
       if (_value) {
+        var __value = {
+            cycle: name,
+            author: author,
+            date: date,
+            grade: _value.Grade,
+            numeric: _value.TransposeValue,
+          };
         if (subject[_name]) {
-          subject[_name].push({
-            cycle: name,
-            author: author,
-            date: date,
-            grade: _value.Grade,
-            numeric: _value.TransposeValue,
-          });
+          subject[_name].push(__value);
         } else {
-          subject[_name] = [{
-            cycle: name,
-            author: author,
-            date: date,
-            grade: _value.Grade,
-            numeric: _value.TransposeValue,
-          }];
+          subject[_name] = [__value];
         }
       } else {
         factory.Flags.log(`Can't find grade value for ID: ${grade["@GradeId"]} and grade ${grade.Grade}`);
       }
     } else {
       factory.Flags.log(`Can't find grade definition for ID: ${grade["@GradeId"]}`);
+    }
+
+  };
+  
+  var transformResult = (template, result, name, author, date, subject) => {
+
+    var _result = getResult(result["@ResultId"], template);
+    if (_result) {
+      var _name = transformResultName(_result.Name),
+          _value = getResultValue(result.Result, _result);
+      if (_value) {
+        var __value = {
+            cycle: name,
+            author: author,
+            date: date,
+            result: _value,
+            grade: _value,
+          };
+        if (typeof __value.result === "number" && isFinite(__value.result)) __value.numeric = __value.result;
+        if (subject[_name]) {
+          subject[_name].push(__value);
+        } else {
+          subject[_name] = [__value];
+        }
+      } else {
+        factory.Flags.log(`Can't parse result value for ID: ${result["@ResultId"]} and result ${result.Result}`);
+      }
+    } else {
+      factory.Flags.log(`Can't find result definition for ID: ${result["@ResultId"]}`);
     }
 
   };
@@ -136,12 +175,24 @@ Transform = (options, factory) => {
 
     /* <!-- Only Run if there are Grades --> */
     if (_pupil && pupilReport.Grades && pupilReport.Grades.Grade) {
-      var __subject = _pupil.subjects[_subject] || (_pupil.subjects[_subject] = {});
+      var __grade_subject = _pupil.subjects[_subject] || (_pupil.subjects[_subject] = {});
       _template = getTemplate(_template, metadata);
 
-      (_.isArray(pupilReport.Grades.Grade) ? pupilReport.Grades.Grade : [pupilReport.Grades.Grade]).forEach(function(grade) {
-        transformGrade(_template, grade, name, _author, _date, __subject);
-      });
+      (_.isArray(pupilReport.Grades.Grade) ? pupilReport.Grades.Grade : [pupilReport.Grades.Grade])
+        .forEach(function(grade) {
+          transformGrade(_template, grade, name, _author, _date, __grade_subject);
+        });
+    }
+    
+    /* <!-- Only Run if there are Results --> */
+    if (_pupil && pupilReport.Results && pupilReport.Results.Result) {
+      var __result_subject = _pupil.subjects[_subject] || (_pupil.subjects[_subject] = {});
+      _template = getTemplate(_template, metadata);
+
+      (_.isArray(pupilReport.Results.Result) ? pupilReport.Results.Result : [pupilReport.Results.Result])
+        .forEach(function(result) {
+          transformResult(_template, result, name, _author, _date, __result_subject);
+        });
     }
 
   };

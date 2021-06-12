@@ -47,8 +47,12 @@ iSAMS_API = (options, factory) => {
   var _terms = () => _.map(["Autumn", "Spring", "Summer"], 
                            (value, index) => options.functions.common.option(index + 1, value));
   
-  var _grade = value => `${value.numeric && parseInt(value.numeric) ? 
-                                  `${value.grade} [${value.numeric}]` : value.grade}`;
+  var _value = value => {
+    var _val = value.grade || value.result;
+    return `${value.numeric !== null && value.numeric !== undefined && value.numeric !== "" && 
+       ((typeof value.numeric === "number" && isFinite(value.numeric)) || parseInt(value.numeric)) ? 
+                                  `${_val}${_val == value.numeric ? "" : ` [${value.numeric}]`}` : _val}`;
+  };
   /* <!-- Internal Functions --> */
   
   /* <!-- Config Functions --> */
@@ -365,7 +369,7 @@ iSAMS_API = (options, factory) => {
                 if (student.subjects[subject]) {
                   _student[subject] = _.reduce(student.subjects[subject], (memo, values, key) => {
                     memo.push(`${key} - ${_.map(values, 
-                      value => _grade(value)).join(" | ")}`);
+                      value => _value(value)).join(" | ")}`);
                     return memo;
                   }, []);
                   _student[subject].__small = true;
@@ -458,17 +462,17 @@ iSAMS_API = (options, factory) => {
       }
       
       if (data.transformed[id] && data.transformed[id].subjects) _.each(data.transformed[id].subjects, (values, subject) => {
-        _.each(values, (grades, type) => {
-          _.each(grades, grade => {
+        _.each(values, (elements, type) => {
+          _.each(elements, element => {
              _data.push({
                 name: subject,
                 description: [
-                  `<strong>Author</strong>: ${grade.author}`,
-                  `<strong>Cycle</strong>: ${grade.cycle}`,
-                  `<strong>Date</strong>: ${grade.date}`
+                  `<strong>Author</strong>: ${element.author}`,
+                  `<strong>Cycle</strong>: ${element.cycle}`,
+                  `<strong>Date</strong>: ${element.date}`
                 ],
                 type: type,
-                value: _grade(grade),
+                value: _value(element),
               });
           });
            

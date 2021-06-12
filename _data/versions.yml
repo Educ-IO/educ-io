@@ -1,4 +1,8 @@
 site :
+  0.1.13h :
+    name : Data 0.0.2-alpha
+    desc : Results Support
+    numeric : 0.1.13.8
   0.1.13g :
     name : Folders 0.0.7g-beta
     desc : File List Exports
@@ -1571,6 +1575,9 @@ book :
     name : Early testing version
     type : minor
 data :
+  0.0.2-alpha :
+    name : Results Support
+    type : minor
   0.0.1-alpha :
     name : Early testing version
     type : minor
