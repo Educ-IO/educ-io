@@ -36,7 +36,7 @@ imports:
     load: last
   - name: hello
     load: last
-  - name: urlparser
+  - name: uri-js
     load: last
   - name: bootstrap-js
     load: last
@@ -530,6 +530,17 @@ menus:
       all:
         commands:
           - name: Close
+            desc: Close this Students View
+            hash: overview.close
+            shortcut: "c"
+            
+  - name: Student
+    disabled_until:
+      - overview-student
+    groups:
+      all:
+        commands:
+          - name: Close
             desc: Close this Student View
             hash: overview.close
             shortcut: "c"
@@ -733,7 +744,7 @@ buttons:
       desc: More details about this view
       hash: instructions.overview
       
-  - name: Current
+  - name: Recent
     desc: Show overview of your classes / classes in your domain (created in the last 12 months)
     hash: overview
     auth: google

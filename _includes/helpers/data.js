@@ -26,6 +26,11 @@ Data = (options, factory) => {
         "select",
       ].join(", "),
       always: false,
+      overrides: {
+        range: {
+          string: false
+        } 
+      }
     },
     DEBUG = factory.Flags && factory.Flags.debug(),
     LOG = DEBUG ? factory.Flags.log : () => false,
@@ -83,6 +88,10 @@ Data = (options, factory) => {
             (el[0].type == "checkbox" && el.is("input:indeterminate")) ?
             el.data("output-always") ? "" : "all" :
             (el[0].type == "checkbox" || el[0].type == "radio") ? el.prop("checked") :
+            (el[0].nodeName == "INPUT" && el.data("locked") === true) ? {
+              Locked: true,
+              Value: el.val()
+            } :
             (el[0].nodeName == "P" || el[0].nodeName == "DIV" ||
               el[0].nodeName == "SPAN" || el[0].nodeName == "I") ?
             el.text().trim() : (el[0].nodeName == "A") ? {
@@ -103,6 +112,7 @@ Data = (options, factory) => {
             _type == "date" ? factory.Dates.parse(_val) :
             _type == "datetime" ? _val :
             _type == "number" ? Number(_val) :
+            _type == "range" && _val && !options.overrides.range.string ? Number(_val) :
             _type == "boolean" ? (_val === "true") :
             _val : _val;
         };
@@ -138,7 +148,7 @@ Data = (options, factory) => {
       };
 
     /* <!-- DEBUG: Exclude Inputs already parented by an output-field --> */
-    var _all = form.find(options.fields).not(":parents([data-output-field])");
+    var _all = form && form.find ? form.find(options.fields).not(":parents([data-output-field])") : [];
 
     /* <!-- DEBUG: Log Dehydrating Start --> */
     if (DEBUG) LOG(`Dehydrating Form with ${_all.length} field/s:`, form);
@@ -221,9 +231,9 @@ Data = (options, factory) => {
       });
       
       var simple = _el => {
-        if (el[0].type == "range" && el.data("value") === false) el.data("value", true);
+        if (_el[0].type == "range" && _el.data("value") === false) _el.data("value", true);
         if (_el[0].type == "checkbox" || _el[0].type == "radio") {
-          if (val || el.data("output-always")) {
+          if (val || _el.data("output-always")) {
             _el.prop("checked", !!(val))
               .prop("indeterminate", false)
               .triggerHandler("change");
@@ -275,9 +285,22 @@ Data = (options, factory) => {
             });
           } else {
 
-            _el.val(val) && (_el.is("textarea.resizable")) ?
-              autosize.update(_el[0]) : true; /* <!-- Fire autosize if required --> */
-
+            if (_el.val(val.Locked && val.Value ? val.Value : val)) {
+              
+              /* <!-- Set Locked (if required) --> */
+              if (val.Locked === true) {
+                _el.data("locked", true);
+                _el.addClass("locked");
+              }
+              
+              /* <!-- Trigger Change Handler (if required) --> */
+              if (_el[0].type == "range") _el.triggerHandler("change");
+              
+              /* <!-- Fire autosize (if required) --> */
+              if (_el.is("textarea.resizable")) autosize.update(_el[0]);
+              
+            }
+            
             /* <!-- Highlight Active Button --> */
             el.parent()
               .closest("*[data-output-name], *[data-output-field]")
@@ -298,7 +321,7 @@ Data = (options, factory) => {
     };
 
     /* <!-- Iterate through all the fields in the form --> */
-    _.each(form.find(options.fields), input => {
+    if (form && form.find) _.each(form.find(options.fields), input => {
       var _$ = $(input),
         _name = _$.data("output-field");
 

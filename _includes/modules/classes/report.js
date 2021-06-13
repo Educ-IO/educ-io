@@ -9,7 +9,8 @@ Report = (options, factory) => {
   const DEFAULTS = {
       id: "report",
       format: "Do MMM, YYYY",
-      db : "report"
+      db : "report",
+      forever: "The start of time",
     },
     FN = {},
     HIDDEN = ["ID", "State", "Code", "Owner", "Updated", "Students", "All_Students", "Teachers", "All_Teachers", "Formal"];
@@ -99,7 +100,7 @@ Report = (options, factory) => {
         details: ರ‿ರ.since ? factory.Display.doc.get({
           name: "VIEW_DETAILS",
           data: {
-            since: ರ‿ರ.since.format(options.format),
+            since: ರ‿ರ.since ? ರ‿ರ.since.format(options.format) : options.forever,
             current: factory.Dates.parse(options.state.session.current).format(options.format),
           }
         }) : null,

@@ -96,7 +96,7 @@
 
   {{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS"
                            data-name="value" name="{{id}}_DETAILS"
-                           class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2"
+                           class="form-control{{#if large}} form-control-lg{{/if}} resizable optional mt-2{{#if details_Bold}} font-weight-bold{{/if}}"
                            rows="1" aria-label="{{either details 'Details'}}"
                            placeholder="{{either details 'Details'}}"
                            {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}

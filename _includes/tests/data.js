@@ -287,7 +287,7 @@ Data = function() {
             });
           _return._value = (value => (name, values) => {
             values.to.have.deep.nested.property(`${name}.Values.Details`, String(value));
-            values.to.have.deep.nested.property(`${name}.Values.Value`, String(value));
+            values.to.have.deep.nested.property(`${name}.Values.Value`, value);
           })(_number);
           _return._populate = (id => modal => {
             modal.find(`[data-id='${id}'] input[type='range']`).val(_number)[0].click();
@@ -307,7 +307,7 @@ Data = function() {
             });
           _return._value = ((value, details) => (name, values) => {
             values.to.have.deep.nested.property(`${name}.Values.Details`, details);
-            values.to.have.deep.nested.property(`${name}.Values.Value`, String(value));
+            values.to.have.deep.nested.property(`${name}.Values.Value`, value);
           })(_number, _range[_number]);
           _return._populate = (id => modal => {
             modal.find(`[data-id='${id}'] input[type='range']`).val(_number).trigger("click");

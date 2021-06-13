@@ -1,5 +1,5 @@
 {% raw %}
-<div class="alert alert-{{#if type}}{{ type }}{{else}}info{{/if}} alert-dismissible fade show" role="alert">
+<div class="alert alert-{{#if type}}{{ type }}{{else}}info{{/if}} mb-0 alert-dismissible fade show" role="alert">
   {{#if action }}
     <div class="container-fluid">
       <div class="row align-items-center">
@@ -8,7 +8,7 @@
          	{{#if details}}{{{ details }}}{{/if}}
         </div>
         <div class="col-3">
-          <button type="button" class="btn btn-outline-{{#if type}}{{ type }}{{else}}info{{/if}} btn-sm float-right action waves-effect"{{#if warning }} data-toggle="tooltip" data-placement="left" title="{{warning}}"{{/if}}>{{action}}</button>
+          <button type="button" class="btn btn-outline-{{#if type}}{{ type }}{{else}}info{{/if}}{{#is type 'light'}} text-dark{{/is}} btn-sm float-right action waves-effect"{{#if warning }} data-toggle="tooltip" data-placement="left" title="{{warning}}"{{/if}}>{{action}}</button>
         </div>
       </div>
     </div>

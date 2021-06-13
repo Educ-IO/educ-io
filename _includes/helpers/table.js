@@ -18,7 +18,10 @@ Table = (options, factory) => {
 	var $$ = element => (element instanceof jQuery === true) ? element : $(element);
 	
 	/* <!-- Internal Variables --> */
-	var _table = $$(options.table), _outside = $$(options.outside), _css = factory.Css(_outside.id, _outside.id);
+	var _table = $$(options.table), _outside = $$(options.outside), _css = factory.Css({
+    suffix: _outside.id,
+    prefix: _outside.id,
+  });
 	
 	/* <!-- Internal Scroll Variables --> */
 	var  _rows, _cache, _content, _rows_in_block,	_blocks_in_cluster, _rows_in_cluster, _row_height, _block_height, _cluster_height,

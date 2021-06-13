@@ -40,8 +40,8 @@
 
 @if $enable-transitions {
   .progress-bar-animated {
-    -webkit-animation: progress-bar-stripes $progress-bar-animation-timing;
-            animation: progress-bar-stripes $progress-bar-animation-timing;
+    -webkit-animation: $progress-bar-animation-timing progress-bar-stripes;
+            animation: $progress-bar-animation-timing progress-bar-stripes;
 
     @if $enable-prefers-reduced-motion-media-query {
       @media (prefers-reduced-motion: reduce) {

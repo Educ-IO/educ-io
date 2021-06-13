@@ -325,6 +325,11 @@ Handlebars = (options, factory) => {
           (memo, property) => memo ? memo[property] : null, Array.prototype.slice.call(arguments, 0, 1)[0]);
       });
       
+      Handlebars.registerHelper("md5", value => value && (typeof value === "string" || value instanceof String) ? 
+                                window.SparkMD5 ? SparkMD5.hash(value) : 
+                                window.CryptoJS ? CryptoJS.MD5(value) : 
+                                value : value);
+      
       /* <!-- Map all templates as Partials too --> */
       if (Handlebars.templates) Handlebars.partials = Handlebars.templates;
 

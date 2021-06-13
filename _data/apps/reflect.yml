@@ -38,7 +38,7 @@ imports:
     load: last
   - name: hello
     load: last
-  - name: urlparser
+  - name: uri-js
     load: last
   - name: bootstrap-js
     load: last

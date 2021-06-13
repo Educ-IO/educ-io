@@ -96,6 +96,11 @@ App = function() {
     observer.observe(button, {
       attributes: true
     });
+    
+    var _scroll = $(button).closest(".row").offset().top - $(".row.sticky-top").outerHeight();
+    if (typeof _scroll === "number" && isFinite(_scroll) && _scroll > 10) 
+      $([document.documentElement, document.body]).scrollTop(_scroll - 10);
+    
     button.click();
 
   })));
@@ -267,6 +272,14 @@ App = function() {
           /* <!-- Handle Highlights --> */
           ಠ_ಠ.Display.highlight();
 
+          /* <!-- Handle Sticky Scrolling --> */
+          var _sticky = $(".row.sticky-top");
+          window.onscroll = () => {
+            var _top = window.pageYOffset > _sticky.height();
+            _sticky.find(".hidable").toggleClass("hidden", _top);
+            _sticky.toggleClass("top", _top);
+          };
+          
           return true;
         },
         test: () => {

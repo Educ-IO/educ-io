@@ -78,7 +78,7 @@ States = () => {
     
     views : [
       STATE_OVERVIEW,
-      STATE_CLASSWORK
+      STATE_CLASSWORK,
     ],
     
   };

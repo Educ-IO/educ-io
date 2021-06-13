@@ -1,6 +1,6 @@
 Flags = function() {
 
-  /* <!-- DEPENDS on WINDOW, JQUERY & PURL to work, and initialise --> */
+  /* <!-- DEPENDS on WINDOW & URI.JS to work, and initialise --> */
 
   /* <!-- Returns an instance of Flags if required --> */
   if (this && this._isF && this._isF(this.Flags)) {
@@ -9,9 +9,29 @@ Flags = function() {
     return this.Flags;
   }
 
+  /* <!-- Internal Constants --> */
+  const MATCH = {
+    alert : /^alert$/i,
+    debug : /^debug$/i,
+    demo : /^demo$/i,
+    development : /^dev$/i,
+    experiments : /^experiments$/i,
+    highlight : /^highlight$/i,
+    key : /^key$/i,
+    initial : /^i$/i,
+    oauth : /^a$/i,
+    option : /^option$/i,
+    page : /^page$/i,
+    performance : /^performance$/i,
+    remote : /^remote$/i,
+    verbose : /^verbose$/i,
+  };
+  /* <!-- Internal Constants --> */
+  
   /* <!-- Internal Variables --> */
   var _alert = false,
     _debug = false,
+    _demo = false,
     _verbose = false,
     _experiments = false,
     _development = false,
@@ -29,55 +49,61 @@ Flags = function() {
     _log = (window && window.console ? window.console.log : _default),
     _start = (window && window.console ? window.console.time : _default),
     _end = (window && window.console ? window.console.timeEnd : _default);
-
-
+  /* <!-- Internal Variables --> */
+  
   /* <!-- Internal Functions --> */
   var _parse = function() {
 
     /* <!-- Parse Url --> */
-    var _url = $.url();
-
+    var _url = new URI(),
+        _data = _url.search(true);
+    
+    var _value = match => {
+      for (const property in _data) {
+        if (match.test(property)) return _data[property];
+      }
+    };
+    
     /* <!-- Set Variables --> */
-    _alert = (_url.param("alert") === "" || _url.fparam("alert") === "");
+    _alert = _url.hasQuery(MATCH.alert);
     if (_alert) window.onerror = function(m, u, l, c, o) {
       alert("Error: " + m + " Script: " + u + " Line: " + l + " Column: " + c + " Trace: " + o);
     };
 
-    _debug = _alert ? _alert : (_url.param("debug") === "" || _url.fparam("debug") === "");
+    _debug = _alert ? _alert : _url.hasQuery(MATCH.debug);
     if (_debug) window.onerror = function(m, u, l, c, o) {
       _err(`Error: ${m} Script: ${u} Line: ${l} Column: ${c} Trace: ${o}`);
     };
     
-    _verbose = _debug ? (_url.param("verbose") === "" || _url.fparam("verbose") === "") : false;
-
-    _experiments = _debug ? (_url.param("experiments") === "" || _url.fparam("experiments") === "") : false;
+    _demo = _url.hasQuery(MATCH.demo) ? _value(MATCH.demo) === null : false;
     
-    _development = (_url.attr("host").split(".")[0] == "dev" || _url.param("dev") === "" || _url.fparam("dev") === "");
+    _verbose = _debug ? _url.hasQuery(MATCH.verbose) && _value(MATCH.verbose) === null : false;
 
-    _key = (_url.param("key") || _url.fparam("key"));
-
-    _oauth = (_url.param("a") || _url.fparam("a"));
+    _experiments = _debug ? _url.hasQuery(MATCH.experiments) && _value(MATCH.experiments) === null : false;
     
-    _initial = (() => {
-      var _value = _url.param("i") || _url.fparam("i");
-      if (!_value) {
-        _value = _url.param("I") || _url.fparam("I");
-      }
-      return _value;
-    })();
+    _development = (
+      MATCH.development.test(_url.subdomain()) || 
+      (_url.hasQuery(MATCH.development) && _value(MATCH.development) === null)
+    );
 
-    _option = (_url.param("option") === "" || _url.fparam("option") === "");
+    _key = _url.hasQuery(MATCH.key) ? _value(MATCH.key) : null;
 
-    _highlight = (_url.param("highlight") || _url.fparam("highlight"));
+    _oauth = _url.hasQuery(MATCH.oauth) ? _value(MATCH.oauth) : null;
+    
+    _initial = _url.hasQuery(MATCH.initial) ? _value(MATCH.initial) : null;
 
-    _performance = (_url.param("performance") === "" || _url.fparam("performance") === "");
+    _option = _url.hasQuery(MATCH.option) && _value(MATCH.option) === null;
 
-    _page = (_url.param("page") === "" || _url.fparam("page") === "");
+    _highlight = _url.hasQuery(MATCH.highlight) ? _value(MATCH.highlight) : null;
 
-    _base = _url.attr("protocol") + "://" + _url.attr("host") +
-      (_url.attr("port") && _url.attr("port") != 80 && _url.attr("port") != 443 ? ":" + _url.attr("port") : "") + "/";
+    _performance = _url.hasQuery(MATCH.performance) && _value(MATCH.performance) === null;
 
-    _dir = _url.attr("directory").replace(new RegExp("\\/", "g"), "");
+    _page = _url.hasQuery(MATCH.page) && _value(MATCH.page) === null;
+
+    _base = _url.protocol() + "://" + _url.hostname() +
+      (_url.port() && _url.port() != 80 && _url.port() != 443 ? ":" + _url.port() : "") + "/";
+
+    _dir = _url.directory().split("/").pop();
 
     /* <!-- Load Remote Console Script Function --> */
     var _load = function(id) {
@@ -91,13 +117,8 @@ Flags = function() {
     };
 
     /* <!-- Return Promise --> */
-    if (_url.param("remote") && _url.param("remote").length > 0) {
-      return _load(_url.param("remote"));
-    } else if (_url.fparam("remote") && _url.fparam("remote").length > 0) {
-      return _load(_url.fparam("remote"));
-    } else {
-      return Promise.resolve();
-    }
+    return _url.hasQuery(MATCH.remote) && _value(MATCH.remote) ?
+       _load(_value(MATCH.remote)) : Promise.resolve();
 
   };
 
@@ -149,6 +170,10 @@ Flags = function() {
           
           debug: function() {
             return _debug;
+          },
+          
+          demo: function() {
+            return _demo;
           },
 
           development: function() {
@@ -244,6 +269,20 @@ Flags = function() {
 
             }
 
+          },
+          
+          decorate: (url, hash) => {
+            var _url = new URI(url);
+            _url.search(data => {
+              data.alert = _alert ? null : undefined;
+              data.debug = _debug ? null : undefined;
+              data.demo = _demo ? null : undefined;
+              data.experiments = _experiments ? null : undefined;
+              data.performance = _performance ? null : undefined;
+              data.verbose = _verbose ? null : undefined;
+            });
+            if (hash) _url.hash(hash);
+            return _url.toString();
           },
           
           cleared: () => !window.location.hash || 

@@ -28,8 +28,8 @@ Config = (options, factory) => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Methods --> */
-  var _clear = () => factory.Google.appData.search(options.name, options.mime)
-    .then(results => Promise.all(_.map(results, result => factory.Google.files.delete(result.id))))
+  var _clear = id => (id ? factory.Google.files.delete(id) : factory.Google.appData.search(options.name, options.mime)
+    .then(results => Promise.all(_.map(results, result => factory.Google.files.delete(result.id)))))
     .then(result => result ? factory.Flags.log("App Config Deleted").positive() : result);
 
   var _create = settings => factory.Google.appData.upload({
@@ -46,13 +46,18 @@ Config = (options, factory) => {
     .catch(e => factory.Flags.error("Upload Error", e ? e : "No Inner Error"));
 
   var _find = () => factory.Google ? factory.Google.appData.search(options.name, options.mime).then(results => {
-    if (results && results.length === 1) {
-      factory.Flags.log(`Found App Config [${results[0].name} / ${results[0].id}]`);
+    if (results && results.length > 0) {
+      results.length === 1 ?
+        factory.Flags.log(`Found App Config [${results[0].name} / ${results[0].id}]`) :
+        factory.Flags.log(`Found ${results.length} App Configs (Using First):`, _.map(results, result => ({
+          id: result.id,
+          name: result.name
+        })));
       return results[0];
     } else {
       return factory.Flags.log("No Existing App Config").negative();
     }
-  }).catch(e => factory.Flags.error("Config Error", e ? e : "No Inner Error")) : Promise.resolve(false);
+  }).catch(e => factory.Flags.error("Config Error", e ? e : "No Inner Error").nothing()) : Promise.resolve(false);
 
   var _load = file => factory.Google.files.download(file.id).then(loaded => {
     return factory.Google.reader().promiseAsText(loaded).then(parsed => {

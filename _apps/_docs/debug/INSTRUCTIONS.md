@@ -1,2 +1,2 @@
-Below are a list of executable __debug tests__, grouped by __tested module__.
-{:.lead}
+Below are executable __debug tests__, grouped by __module__.
+{:.lead .hidable .mb-0}

@@ -374,3 +374,8 @@ div.modal-backdrop.show {
 .valid-feedback, .invalid-feedback {
   p {margin-bottom: 0;}
 }
+
+// -- Popovers -- //
+.wide-popovers .popover {
+  max-width: 60% !important;
+}

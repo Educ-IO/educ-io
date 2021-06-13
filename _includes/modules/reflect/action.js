@@ -80,7 +80,13 @@ Action = (options, factory) => {
                                         options.functions.files.type.report, true),
       data: {
         form: options.functions.decode.clean(options.state.session.template),
-        report: factory.Data({}, factory).dehydrate(options.state.session.form)
+        report: factory.Data({
+          overrides: {
+            range: {
+              string: true
+            } 
+          }
+        }, factory).dehydrate(options.state.session.form)
       }
     };
 

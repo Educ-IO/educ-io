@@ -21,8 +21,10 @@ css:
     - material/general
     - custom/mixins/transitions
     - custom/mixins/gradients
+    - custom/mixins/box-shadows
     - custom/variables
     - custom/highlight
+    - custom/hidable
 imports:
   - name: underscore
     load: first
@@ -40,7 +42,7 @@ imports:
     load: last
   - name: hello
     load: last
-  - name: urlparser
+  - name: uri-js
     load: last
   - name: bootstrap-js
     load: last
@@ -80,6 +82,7 @@ helpers:
   - saad
   - colours
   - handlebars
+  - url
 modules:
   - generic/dates
   - generic/flags

@@ -60,7 +60,7 @@ css:
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
 	{% include plumbing/head.html %}
-	<body>
+	<body class="{% if page.classes and page.classes.body %} {{ page.classes.body }}{% endif %}">
 		{% include nav.html %}
     {% if page.app %}{% if site.data.apps[page.app].templates contains 'notify' or site.data.apps[page.app].templates contains 'generic/notify' %}<div
     	aria-live="polite" aria-atomic="true"

@@ -6,6 +6,7 @@ We __support__{:.text-success} the most recent versions of all major browsers:
 - Safari
 - Mobile Safari (IOS Version __10.3__ and later)
 - Edge
+- Chromium-based Edge
 
 As these are __client-side__ web apps, they require Javascript for their operation. If you don't have Javascript enabled in your browser, you will be able to __read all the pages__ on this site, but __not__ use the apps.
 

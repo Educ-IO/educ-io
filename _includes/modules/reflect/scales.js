@@ -54,7 +54,13 @@ Scales = (options, factory) => {
           }, dialog => {
             if (!selected) return;
             var _form = options.state.application.fields.on(dialog.find("form"));
-            factory.Data({}, factory).rehydrate(_form, selected || {});
+            factory.Data({
+              overrides: {
+                range: {
+                  string: true
+                } 
+              }
+            }, factory).rehydrate(_form, selected || {});
           }).then(values => values && success ? success(values) : false); /* <!-- Action Button Clicked (e.g. not dismissed) --> */
   
   FN.hookup = form => {

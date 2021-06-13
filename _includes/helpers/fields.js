@@ -208,25 +208,43 @@ Fields = (options, factory) => {
 
     var _change = e => {
       var _this = $(e.currentTarget);
+      _this.data("value", true);
       if (_this.data("targets")) {
         var _target = _get(_this.data("targets")),
           _suffix = _target.data("suffix"),
           _range = _target.data("range"),
-          _value = _this.val();
+          _append = _target.data("append"),
+          _value = _this.val(),
+          _display = _value;
         if (_range) {
-          _range = _range.split(";");
-          _value = _range[Number(_value)];
+          if (_range.indexOf("**SPREAD**||") === 0) {
+            _range = _range.substring(12).split(";");
+            var _max = Number(_this[0].max || 100),
+                _step = _max / _range.length,
+                _index = Math.min(Math.floor(Number(_value) / _step), _range.length - 1) || 0;
+            _display = _range[_index];
+          } else {
+            _range = _range.split(";");
+            _display = _range[Number(_value)];
+          }
         }
-        _target.val(`${_value}${_suffix ? `${_suffix.length > 1 ? " " : ""}${_suffix}` : ""}`).change();
+        _target.val(`${_display}${_suffix ? `${_suffix.length > 1 ? " " : ""}${_suffix}` : ""}`).change();
+        if (_append) _target.parent().find(`[data-show='${_append}']`).each((i, element) => {
+          var _element = $(element),
+              _text = _append == "value" ? _value : "";
+          if (_element.text() != _text) _element.text(_text).trigger(`change.${_append}`); 
+        });
       }
     };
 
     /* <!-- Wire up numerical fields --> */
-    form.find("input[type='range'].show-numerical").click(e => {
-      $(e.currentTarget).data("value", true);
-      _change(e);
-    });
-    form.find("input[type='range'].show-numerical").change(_change);
+    form.find("input[type='range'].show-numerical").off("click.change").on("click.change", _change)
+      .each((i, element) => {
+        element.removeEventListener("touchstart", _change, {passive: true});
+        element.addEventListener("touchstart", _change, {passive: true});
+      });
+    form.find("input[type='range'].show-numerical").off("change.change").on("change.change", _change);
+    form.find("input[type='range'].show-numerical.show-realtime").off("input.change").on("input.change", _change);
   };
 
   var _numerical = form => {

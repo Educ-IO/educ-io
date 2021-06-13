@@ -473,7 +473,7 @@ App = function() {
 
               close: {
                 matches: /CLOSE/i,
-                state: [FN.states.overview.students, FN.states.overview.report, FN.states.classwork.in],
+                state: [FN.states.overview.student, FN.states.overview.students, FN.states.overview.report, FN.states.classwork.in],
                 length: 0,
                 keys: ["c", "C"],
                 fn: FN.view.close,

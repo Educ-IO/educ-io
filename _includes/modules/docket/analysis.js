@@ -44,12 +44,13 @@ Analysis = (options, factory) => {
           _project = value => value && value.indexOf(options.markers.project) === 0,
           _assignment = value => value && value.indexOf(options.markers.assignation) === 0,
           _label = value => value && value.indexOf(options.markers.label) === 0,
+          _renumerated = value => options.markers.renumeration.test(value),
           _uniq = value => value ? value.toLowerCase() : value,
           _all = _.chain(items).pluck(options.schema.columns.badges.value).flatten().compact()
                     .uniq(false, _uniq).value().sort();
       
       _analysis.tags = _.chain(_all)
-        .reject(item => _empty(item) || _project(item) || _assignment(item) || _label(item))
+        .reject(item => _empty(item) || _project(item) || _assignment(item) || _label(item) || _renumerated(item))
         .map(value => value.toUpperCase()).value();
       
       _.each([

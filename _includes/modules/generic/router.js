@@ -104,7 +104,9 @@ Router = function() {
         } : {
           matches: route.matches,
           state: route.state,
+          all: route.all,
           length: route.length,
+          spread: route.spread,
           clean: route.clean,
           reset: route.reset,
           requires: route.requires,
@@ -181,15 +183,16 @@ Router = function() {
           if (route.trigger) ಠ_ಠ.Display.state().enter(route.trigger);
 
           /* <!-- Tidy up visuals if required! / Delay by 500ms to allow delayed tooltips to appear --> */
-          if (route.tidy) DELAY(500).then(ಠ_ಠ.Display.tidy);
+          if (route.tidy) DELAY(500).then(() => ಠ_ಠ.Display.tidy(true));
 
           var l_command = route.preserve ? 
               route.strip && _.isNumber(route.strip) ? 
                 STRIP(command, route.strip) : command : STRIP(command, route.__length),
             l_options = PREPARE(route.options, l_command),
-            l_result = route.fn(_.isArray(l_command) ? 
-                                l_command.length === 0 ? 
-                                  null : l_command.length === 1 ? l_command[0] : l_command : l_command, l_options),
+            l_process = command => decodeURIComponent(ಠ_ಠ.url ? ಠ_ಠ.url.decode(command) : command),
+            l_result = route.spread ? 
+              route.fn.apply(route.context || null, _.map(_.isArray(l_command) ? l_command : [l_command], l_process)) : 
+              route.fn(_.isArray(l_command) ? l_command.length === 0 ? null : l_command.length === 1 ? l_command[0] : l_command : l_command, l_options),
             _complete = () => {
               /* <!-- Clean up the state (after command has run) if required! --> */
               if (route.clean) _clean(false);
@@ -275,9 +278,11 @@ Router = function() {
         	// Default routes (apart from AUTH/UNAUTH) can be switched off by setting active property to false (DEFAULT is ON).
         	// All default routes can be functions, or contain a function as the fn property (which is mandatory for non-default routes).
           // All routes are specified by the regexes in the ROUTES constant below, or can be overridden with a regex property.
-          // All routes can have a state property, which is a string or array of strings indicating the states in which the route is valid
+          // All routes can have a state property, which is a string or array of strings indicating the states in which the route is valid (use the all property to declare whether array of states is and/or - default is or)
           // All routes can have a qualifier function (taking command as a parameter) to further refine matching
           // All routes can have a length (will check array length after initial regex match), which can be a number or a min|max object
+          // All routes can have a spread boolean (which will expand and process command parameters before passing them to result function) - this is not compatible with function options
+          // Routes that spread their commands into the result function can also take a context property which will be passed as the 'this' context to consuming functions
           // All routes can have a next regex that is tested after initial regex match
           // All routes can be flagged to 'tidy' if they should clean up any popovers etc before running
           // All routes can have a trigger state, which is triggered while the route is running (promise or synchronous)

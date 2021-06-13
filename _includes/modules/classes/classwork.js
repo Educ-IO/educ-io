@@ -10,6 +10,7 @@ Classwork = (options, factory) => {
       id : "classwork",
       format: "Do MMM",
       db : "classwork",
+      forever: "The start of time",
     },
     FN = {},
     HIDDEN = ["ID", "Type", "Mode", "Fetched", "Description", "Topic", "Updated", "Points", "Min", "Avg", "Max"];
@@ -48,7 +49,7 @@ Classwork = (options, factory) => {
         details: ರ‿ರ.since ? factory.Display.doc.get({
           name: "VIEW_DETAILS",
           data: {
-            since: ರ‿ರ.since.format(options.format),
+            since: ರ‿ರ.since ? ರ‿ರ.since.format(options.format) : options.forever,
             current: factory.Dates.parse(options.state.session.current).format(options.format),
           }
         }) : null,

@@ -24,7 +24,7 @@
 
 {{#> field_general }}
 	<input id="{{id}}" name="{{id}}" data-output-name="Value" type="range"
-         class="custom-range{{#if readonly}} disabled{{/if}}{{#if details}} show-numerical{{/if}}"
+         class="custom-range{{#if readonly}} disabled{{/if}}{{#if details}} show-numerical{{#if realtime}} show-realtime{{/if}}{{/if}}{{#if explanation}} show-explanation{{/if}}"
          {{#if readonly}} readonly="readonly"{{/if}}
          {{#exists value}} value="{{value}}"{{/exists}}
          {{#exists min}} min="{{min}}"{{/exists}}
@@ -33,23 +33,53 @@
          {{#if details}} data-targets="{{id}}_DETAILS"{{/if}}
          data-value="false">
 	{{> field_validation}}
-  {{#if details}}<div class="row">
+  {{~#if details}}<div class="row">
     <label 
-			class="col-md-3 col-lg-6 col-xl-8 col-form-label text-md-right font-weight-bold text-muted" 
+			class="col-md-3 col-lg-6 col-xl-{{which details_Wide '7' '8'}} col-form-label text-md-right {{either details_Class 'font-weight-bold text-muted'}}" 
 			for="{{id}}_DETAILS">{{either details_Title "Numeric"}}:</label>
-    <div class="col-md-9 col-lg-6 col-xl-4">
+    <div class="col-md-9 col-lg-6 col-xl-{{which details_Wide '5' '4'}}">
       <div class="input-group{{#if large}} input-group-lg{{/if}}">
     		{{#if icon}}{{> control_icon visible_at="xl" large=large icon=icon }}{{/if}}
       	<input id="{{id}}_DETAILS" type="text" data-output-name="Details"
-             class="form-control{{#if large}} form-control-lg{{/if}}"
-             readonly="readonly" aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}}"
+             class="form-control{{#if large}} form-control-lg{{/if}}{{#if details_Bold}} font-weight-bold{{/if}}"
+             readonly="readonly" aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}} {{either details_Title 'Numeric'}}"
+             {{#if details_Append}} data-append="{{details_Append}}"{{/if}}
              {{#if suffix}} data-suffix="{{suffix}}"{{/if}}
              {{#if range}} data-range="{{range}}"{{/if}}
              {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}
              {{#exists value}} value="{{value}}{{#if suffix}} {{suffix}}{{/if}}"{{/exists}} />
+        {{~#if details_Append~}}
+        <div class="input-group-append d-none d-lg-flex">
+          <span class="input-group-text align-self-stretch" style="opacity: 0.6;" data-show="{{details_Append}}"></span>
+        </div>
+        {{~/if~}}
       </div>
     </div>
-</div>{{/if}}
+  </div>{{/if~}}
+  {{~#if extras}}<div class="row{{~#if (all details (any large (is extras_Rows 'gt' 1)))}} mt-1{{/if}}">
+    <label 
+			class="col-md-3 col-lg-6 col-xl-{{which extras_Wide '7' '8'}} col-form-label text-md-right {{either extras_Class 'font-weight-bold text-muted'}}" 
+			for="{{id}}_EXTRAS">{{either extras_Title "Extras"}}:</label>
+    <div class="col-md-9 col-lg-6 col-xl-{{which extras_Wide '5' '4'}} d-flex align-items-center">
+      <div class="input-group{{#if large}} input-group-lg{{/if}}">
+    		{{#if extras_Icon}}{{> control_icon visible_at="xl" large=large icon=extras_Icon }}{{/if}}
+        {{~#if extras_Rows~}}
+        <textarea id="{{id}}_EXTRAS" 
+              data-output-name="{{either extras_Name 'Extras'}}"
+              class="form-control{{#if large}} form-control-lg{{/if}} resizable"
+              style="white-space: pre-line;{{#if extras_Small}} font-size: 70%;{{/if}}"
+              readonly="readonly" rows="{{extras_Rows}}"
+              {{#if help}} aria-describedby="{{id}}_HELP"{{/if}}>{{either value ""}}</textarea>
+        {{~else~}}
+      	<input id="{{id}}_EXTRAS" type="text" data-output-name="{{either extras_Name 'Extras'}}"
+             class="form-control{{#if large}} form-control-lg{{/if}}"
+             readonly="readonly" aria-label="{{#if title}}{{title}}{{else}}{{field}}{{/if}} {{either extras_Title 'Extras'}}"
+             {{#if help}} aria-describedby="{{id}}_HELP"{{/if}} 
+             {{#exists value}} value="{{value}}"{{/exists}} />
+        {{~/if~}}
+      </div>
+    </div>
+  </div>{{/if~}}
 	{{#if clear}}{{> control_button b_small="true" b_icon_large="true" b_icon_centered="true"
     b_class="btn-secondary eraser no-active" b_tooltip="Clear / Reset" b_target=id b_icon="refresh" 
 		disabled=readonly }}{{/if}}

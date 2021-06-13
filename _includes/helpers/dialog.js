@@ -141,6 +141,16 @@ Dialog = (options, factory) => {
   
     },
     
+    filter_selected: (target, dialog) => {
+
+      var _select = dialog.find(`#${target.data("filter")}`),
+          _checked = target.prop("checked");
+      
+      _select.find("option").each((i, el) => !_checked || el.selected ?
+          $(el).show() : $(el).hide());
+  
+    },
+    
     extract: regexes => (target, dialog) => {
 
       var _value = target.val();

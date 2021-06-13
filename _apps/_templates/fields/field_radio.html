@@ -32,7 +32,7 @@
   {{> field_buttons}}
   {{#if details}}<textarea data-for="{{id}}" data-output-name="Details" id="{{id}}_DETAILS"
                            name="{{id}}_DETAILS"
-                           class="form-control {{which large 'form-control-lg ' ''}}resizable optional mt-2"
+                           class="form-control {{which large 'form-control-lg ' ''}}resizable optional mt-2{{#if details_Bold}} font-weight-bold{{/if}}"
                            rows="1" aria-label="{{details}}" placeholder="{{details}}"{{#if readonly}} readonly="readonly"{{/if}}></textarea>{{/if}}
 {{/field_general}}
 {% endraw %}

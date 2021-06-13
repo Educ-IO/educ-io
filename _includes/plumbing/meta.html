@@ -7,9 +7,9 @@
 {% if include.keywords and include.keywords != ''  %}<meta name="keywords" content="{{ include.keywords }}" />{% endif %}
 {% if include.hidden %}<meta name="robots" content="noindex, nofollow">{% endif %}
 
-<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileColor" content="#{{ site.background }}">
 <meta name="msapplication-TileImage" content="{{ site.baseurl }}ico/ms-icon-144x144.png">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#{{ site.background }}">
 
 {% comment %}<!-- Declare Associated Manifest File -->{% endcomment %}
 <link rel="manifest" href="{{ site.baseurl }}manifest.json">

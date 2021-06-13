@@ -1,16 +1,19 @@
 {% raw %}
 <div {{#if id}}id="{{id}}" {{/if}}class="container-fluid">
-  <div class="row bg-action-lighter px-2 pt-4 pb-3 mb-2">
-    <div class="col">
-      {{#if instructions}}{{{ instructions }}}{{/if}}
+  <div class="row bg-action-lighter px-2 py-3 mb-2 align-items-start sticky-top d-flex align-items-center">
+    <div class="col-12{{#if instructions}} col-xl-6{{/if}}">
       <div class="d-flex justify-content-start align-items-center">
         {{#if run_all}}{{{ run_all }}}{{/if}}
-        <span id="{{id}}_counter" class="text-muted">
+        <span id="{{id}}_counter" class="text-muted font-smaller-90">
           <span class="d-inline d-lg-none display-4 content ml-1"></span>
           <span class="d-none d-lg-inline display-3 content"></span>
         </span>
       </div>
     </div>
+    {{~#if instructions}}<div class="col-12 col-xl-6">
+      <div class="d-flex justify-content-end align-items-center">{{{ instructions }}}</div>
+    </div>
+    {{/if~}}
   </div>
   <div class="row">
     <div class="d-flex flex-column">

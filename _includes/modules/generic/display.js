@@ -55,20 +55,29 @@ Display = function() {
 
   var _popovers = (targets, options) => {
     if (targets && targets.popover) targets.popover(_.defaults(options ? options : {}, {
-      trigger: "focus"
+      trigger: "focus",
+      boundary: "viewport"
     }));
   };
 
   var _tooltips = (targets, options) => {
     if (targets && targets.tooltip) {
       targets.tooltip(_.defaults(options ? options : {}, {
-        placement: _placement
+        placement: _placement,
+        boundary: "viewport"
       }));
       targets.filter("a[target='_blank']")
         .off("click.tooltip-clear")
         .on("click.tooltip-clear", e => $(e.target || e.currentTarget).tooltip("dispose"));
     }
   };
+  
+  var _decorate = targets => targets.filter("[href]").each(
+    (i, el) => {
+      el.href = !el.href || el.href.indexOf("#") === 0 ? el.href : ಠ_ಠ.Flags.decorate(el.href);
+      if (el.dataset && el.dataset.href && el.dataset.href.indexOf("#") < 0)
+        el.dataset.href = ಠ_ಠ.Flags.decorate(el.dataset.href);
+    });
   
   var _hover = (e, toggle) => {
     var _this = $(e.currentTarget),
@@ -169,6 +178,7 @@ Display = function() {
     _tooltips(value.find("[data-toggle='tooltip'], [data-tooltip='true']").add(value.filter("[data-toggle='tooltip'], [data-tooltip='true']")));
     _expands(value.find("[data-toggle='expand'], [data-expand='true']").add(value.filter("[data-toggle='expand'], [data-expand='true']")));
     _hovers(value.find("[data-toggle='hover'], [data-hover='true']").add(value.filter("[data-toggle='hover'], [data-hover='true']")));
+    _decorate(value.find("[data-decorate]"));
     return value;
   };
 
@@ -204,11 +214,19 @@ Display = function() {
   var _clean = () =>  $(".modal.show[role='dialog']").length === 0 ? $("div.modal-backdrop.show").last().remove() &&
     $("body.modal-open").removeClass("modal-open") : null; /* <!-- Weird Modal Not Hiding Bug --> */
 
-  var _tidy = () => {
+  var _tidy = everything => {
     var _remove = $("div.tooltip.show");
     if (_log) _log("Tidying Tooltips:", _remove.length);
     _remove.last().remove();
-  }; /* <!-- Tooltips Not Hiding --> */
+    
+    _remove = $("div.popover.show");
+    if (_log) _log("Tidying Popovers:", _remove.length);
+    _remove.hide();
+    
+    if (everything) {
+      $(".dropdown-toggle").dropdown("hide"); 
+    }
+  }; /* <!-- Tooltips / Dropdowns Not Hiding --> */
 
   var _toggle = (state, toggle, container, all) => {
 
@@ -328,6 +346,7 @@ Display = function() {
         trigger: "hover"
       });
       _tooltips($("[data-toggle='tooltip']"));
+      _decorate($("[data-decorate]"));
 
       /* <!-- Enable Closing Bootstrap Menu after Action --> */
       var navMain = $(".navbar-collapse");
@@ -341,6 +360,8 @@ Display = function() {
     popovers: (targets, options) => _popovers(targets, options),
 
     tooltips: (targets, options) => _tooltips(targets, options),
+    
+    decorate: targets => _decorate(targets),
 
     commarise: value => _commarise(value),
 

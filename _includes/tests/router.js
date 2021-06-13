@@ -43,7 +43,10 @@ Router = function() {
     singleton_3: false,
     duplicate_1: false,
     duplicate_2: false,
-    duplicate_3: false
+    duplicate_3: false,
+    spread_1: false,
+    spread_2: false,
+    spread_3: false,
   }, _lifecycles = {
     started: false,
     cleared: false,
@@ -208,6 +211,31 @@ Router = function() {
       fn: () => (FACTORY.Flags.log("Pausing Route"), LONG_PAUSE().then(() => true)),
     };
     
+    APP.hooks.routes.test_spread_1 = {
+      matches: /^SPREAD_1/i,
+      spread: true,
+      length: 3,
+      fn: (param_1, param_2, param_3) => (FACTORY.Flags.log("SPREAD_1", [param_1, param_2, param_3]), _tests.spread_1 = !!(param_1 == "test1" && param_2 == "test2" && param_3 == "test3")),
+    };
+    
+    APP.hooks.routes.test_spread_2 = {
+      matches: /^SPREAD_2/i,
+      spread: true,
+      length: 2,
+      fn: (param_1, param_2) => (FACTORY.Flags.log("SPREAD_2", [param_1, param_2]), _tests.spread_2 = !!(param_1 == "test.1" && param_2 == "test.2")),
+    };
+    
+    APP.hooks.routes.test_spread_3 = {
+      matches: /^SPREAD_3/i,
+      spread: true,
+      length: 1,
+      context: "testing",
+      fn: function(param_1) {
+        FACTORY.Flags.log("SPREAD_3", [param_1]);
+        return (_tests.spread_3 = !!(param_1 == "test@1" && this == "testing"));
+      },
+    };
+    
     APP.hooks.route.push((handled, command) => {
       var __route = _routes[command] || _route;
       return __route ? (FACTORY.Flags.log(`Calling Route FN (for: ${command}):`, __route), __route(handled, command)) : Promise.resolve(null);
@@ -223,7 +251,9 @@ Router = function() {
         .catch(err => (resolve(FACTORY.Flags.error(`${name} Test ${FAILURE}`, err).reflect(false)), Promise.resolve(false)));
       complex ? _routes[hash] = __route : _route = __route;
       window.location.hash = hash;
-    })).catch(e => failure ? failure(e) : null)
+    }))
+    .catch(e => failure ? failure(e) : null)
+    .then(result => (_route = null, result))
   );
   /* <!-- Internal Functions --> */
 
@@ -591,6 +621,25 @@ Router = function() {
       FACTORY.Flags.log("PAUSE RETURN:", _return);
       return _return;
     },
+    
+    test_Router_Spread: () => _simple("Spread Router 1", "spread_1.test1.test2.test3", (handled, command) => new Promise(resolve => {
+        expect(_tests.spread_1).to.be.true;
+        expect(handled).to.be.true;
+        expect(command).to.have.lengthOf(4);
+        resolve(true);
+      }))
+      .then(() => _simple("Spread Router 2", `spread_2.${FACTORY.url.encode("test.1")}.${FACTORY.url.encode("test.2")}`, (handled, command) => new Promise(resolve => {
+        expect(_tests.spread_2).to.be.true;
+        expect(handled).to.be.true;
+        expect(command).to.have.lengthOf(3);
+        resolve(true);
+      })))
+    .then(() => _simple("Spread Router 3", `spread_3.${FACTORY.url.encode("test@1")}`, (handled, command) => new Promise(resolve => {
+        expect(_tests.spread_3).to.be.true;
+        expect(handled).to.be.true;
+        expect(command).to.have.lengthOf(2);
+        resolve(true);
+      }))),
     
     finish: () => FACTORY.Flags.log("FINISH Called").reflect(true),
     /* <!-- External Functions --> */

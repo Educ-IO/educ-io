@@ -9,6 +9,7 @@ Overview = (options, factory) => {
   const DEFAULTS = {
       id : "overview",
       format: "Do MMM, YYYY",
+      forever: "The start of time",
     },
     FN = {},
     HIDDEN = ["ID", "Calendar", "State", "Fetched", "Description", "Guardians", "Room", "Updated", "Students", "Code", "Folder"];
@@ -49,7 +50,7 @@ Overview = (options, factory) => {
         details: ರ‿ರ.since ? factory.Display.doc.get({
           name: "VIEW_DETAILS",
           data: {
-            since: ರ‿ರ.since.format(options.format),
+            since: ರ‿ರ.since ? ರ‿ರ.since.format(options.format) : options.forever,
             current: factory.Dates.parse(options.state.session.current).format(options.format),
           }
         }) : null,

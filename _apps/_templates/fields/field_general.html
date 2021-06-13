@@ -24,6 +24,7 @@
      class="form-group{{#if large}} form-group-lg{{/if}} row justify-content-between"
      {{#if field}} data-output-field="{{field}}"{{/if}}
      {{#if order}} data-output-order="{{order}}"{{/if}}
+     {{#exists calculation}} data-calculation="{{calculation}}"{{/exists}}
      {{#if template}} data-template="{{template}}"{{/if}} data-id="{{id}}">
   {{#unless naked}}<label class="{{which wide 'col-12' 'col-md-3'}} col-form-label"
          for="{{id}}">{{{val "" title field}}}</label>{{/unless}}

@@ -55,6 +55,9 @@ globals:
   d3: false
   DeepDiff: false
   humanizeDuration: false
+  SparkMD5: false
+  CryptoJS: false
+  URI: false
   sprintf: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false

@@ -355,7 +355,7 @@ SaaD = function() {
           .to.have.lengthOf(0);
 
         expect(database.idIndex)
-          .to.have.lengthOf(0);
+          .to.be.null;
 
         expect(database.binaryIndices)
           .and.deep.include({

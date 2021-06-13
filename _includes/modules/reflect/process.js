@@ -129,7 +129,13 @@ Process = (options, factory) => {
     options.functions.create.load(_.tap(data, data =>
         factory.Flags.log(`Loaded Report File: ${JSON.stringify(data, options.functions.replacers.regex, 2)}`)).form,
       form => {
-        var _return = (options.state.session.actions = actions, options.state.session.form = factory.Data({}, factory).rehydrate(form, data.report));
+        var _return = (options.state.session.actions = actions, options.state.session.form = factory.Data({
+          overrides: {
+            range: {
+              string: true
+            } 
+          }
+        }, factory).rehydrate(form, data.report));
         /* <!-- Re-wire up refreshed (e.g. List) events --> */
         options.state.application.fields.refresh(_return);
         return _return;

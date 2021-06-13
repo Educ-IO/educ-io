@@ -1868,6 +1868,10 @@ Google_API = (options, factory) => {
       
       },
       
+      get : script =>  _call(NETWORKS.scripts.get, `v1/projects/${encodeURIComponent(script.id || script.scriptId || script)}`, {
+        fields: "*"
+      }),
+      
       versions : script => {
         
         var _id = script ? script.id ? script.id : script.scriptId ? script.scriptId : script : script,
