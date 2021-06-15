@@ -166,7 +166,7 @@ hello:
   desc: This is used to manage login / tokens for OAuth2 Services.
   url: https://cdnjs.com/libraries/hellojs
   project: https://github.com/MrSwitch/hello.js
-  version: 1.18.7
+  version: 1.19.3
   last: 1.18.7
   license: MIT
   type: js
@@ -175,11 +175,9 @@ hello:
       integrity: sha512-9i/rn8u0KCFZvoIYw+BtBfh8qjC6bI6n5cE3ffFQKyIpYBPndIDFdotQ03dGFQPFT2stg5gH91gDpflG32fByg==
       crossorigin: anonymous
       overrides:
-        - replace: c("auth.init",i),
+        - replace: emit("auth.init",p);
           with: >-
-            h&&h.authuser!==null&&h.authuser!==undefined?e=e+"&authuser="+h.authuser:false, c("auth.init",i),
-        - replace: emit('auth.init', p);
-          with: if (session&&session.authuser!==null&&session.authuser!==undefined) {url=url+"&authuser="+session.authuser;} emit('auth.init', p);
+            if (session&&session.authuser!==null&&session.authuser!==undefined) {url=url+"&authuser="+session.authuser;} emit("auth.init",p);
       bulk: 37
       id: __hello
   dev:
