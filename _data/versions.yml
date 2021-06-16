@@ -1,11 +1,13 @@
 site :
-  0.1.13i :
+  0.1.13k :
     name : Data 0.0.2-alpha
     desc : Results Support
     changes :
       - Imported Libraries Upgraded
       - Bug Fixes and Updates
-    numeric : 0.1.13.9
+      - Auth Regression Bug Fix (multiple accounts)
+      - Data App Regression Bug Fix (mixed results and grades)
+    numeric : 0.1.13.11
   0.1.13g :
     name : Folders 0.0.7g-beta
     desc : File List Exports

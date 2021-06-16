@@ -41,15 +41,15 @@ Transform = (options, factory) => {
   };
 
   var getGrade = (id, template) => {
-    return (_.isArray(template.Gradings.Grading) ? template.Gradings.Grading : [template.Gradings.Grading]).find(function(grade) {
+    return template && template.Gradings ? (_.isArray(template.Gradings.Grading) ? template.Gradings.Grading : [template.Gradings.Grading]).find(function(grade) {
       return grade["@Id"] == id;
-    });
+    }) : null;
   };
   
   var getResult = (id, template) => {
-    return (_.isArray(template.Results.Result) ? template.Results.Result : [template.Results.Result]).find(function(result) {
+    return template && template.Results ?  (_.isArray(template.Results.Result) ? template.Results.Result : [template.Results.Result]).find(function(result) {
       return result["@Id"] == id;
-    });
+    }) : null;
   };
   
   var getTemplate = (id, metadata) => {
@@ -161,7 +161,7 @@ Transform = (options, factory) => {
   var transformPupilReport = (metadata, pupilReport, pupils, trackers, name, output) => {
     var _pupil = pupilReport.SchoolId,
         _subject = (pupilReport.AssociatedEntityName || "").toUpperCase().trim(),
-        _template = pupilReport["@TemplateId"],
+        _template = getTemplate(pupilReport["@TemplateId"], metadata),
         _author = pupilReport.Author,
         _date = pupilReport.LastUpdated;
 
@@ -176,8 +176,6 @@ Transform = (options, factory) => {
     /* <!-- Only Run if there are Grades --> */
     if (_pupil && pupilReport.Grades && pupilReport.Grades.Grade) {
       var __grade_subject = _pupil.subjects[_subject] || (_pupil.subjects[_subject] = {});
-      _template = getTemplate(_template, metadata);
-
       (_.isArray(pupilReport.Grades.Grade) ? pupilReport.Grades.Grade : [pupilReport.Grades.Grade])
         .forEach(function(grade) {
           transformGrade(_template, grade, name, _author, _date, __grade_subject);
@@ -187,8 +185,6 @@ Transform = (options, factory) => {
     /* <!-- Only Run if there are Results --> */
     if (_pupil && pupilReport.Results && pupilReport.Results.Result) {
       var __result_subject = _pupil.subjects[_subject] || (_pupil.subjects[_subject] = {});
-      _template = getTemplate(_template, metadata);
-
       (_.isArray(pupilReport.Results.Result) ? pupilReport.Results.Result : [pupilReport.Results.Result])
         .forEach(function(result) {
           transformResult(_template, result, name, _author, _date, __result_subject);
