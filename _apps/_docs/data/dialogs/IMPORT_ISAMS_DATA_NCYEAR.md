@@ -1,0 +1,1 @@
+Please remember this is the __current NC year group__, so for cycles in previous academic years you will need to adjust accordingly (e.g. for a Yr10 cycle last academic year please pick the current Yr11).

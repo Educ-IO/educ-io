@@ -291,7 +291,7 @@ iSAMS_API = (options, factory) => {
         name: cycle.CycleName,
         description: "Report Cycle",
         type: "Reports Count",
-        value: _array(cycle.Reports.Report).length,
+        value: cycle.Reports && cycle.Reports.Report ? _array(cycle.Reports.Report).length : 0,
       })));
     
       /* <!-- Trackers --> */
