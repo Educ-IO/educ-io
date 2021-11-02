@@ -1588,6 +1588,9 @@ book :
     name : Early testing version
     type : minor
 data :
+  0.0.3-alpha :
+    name : Comments Support
+    type : minor
   0.0.2-alpha :
     name : Results Support
     type : minor
