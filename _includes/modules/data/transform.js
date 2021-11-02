@@ -6,7 +6,11 @@ Transform = (options, factory) => {
   /* <!-- REQUIRES: Global Scope: JQuery, Underscore | App Scope: Display --> */
 
   /* <!-- Internal Constants --> */
-  const DEFAULTS = {},
+  const DEFAULTS = {
+    labels : {
+      comments: "~COMMENTS~",
+    }
+  },
     FN = {};
   /* <!-- Internal Constants --> */
 
@@ -191,6 +195,22 @@ Transform = (options, factory) => {
         });
     }
 
+    /* <!-- Only Run if there are Comments --> */
+    if (_pupil && pupilReport.Comments && pupilReport.Comments.Comment && pupilReport.Comments.Comment.Comment) {
+      var __comment_subject = _pupil.subjects[_subject] || (_pupil.subjects[_subject] = {}),
+          _value = {
+            cycle: name,
+            author: _author,
+            date: _date,
+            comment: pupilReport.Comments.Comment.Comment,
+          };
+      if (__comment_subject[options.labels.comments]) {
+        __comment_subject[options.labels.comments].push(_value);
+      } else {
+        __comment_subject[options.labels.comments] = [_value];
+      }
+    }
+
   };
   
   var transformReport = (metadata, report, pupils, trackers, output) => {
@@ -224,6 +244,8 @@ Transform = (options, factory) => {
     return _output;
     
   };
+
+  FN.labels = () => options.labels;
   /* <!-- Public Functions --> */
 
   /* <!-- Initial Calls --> */

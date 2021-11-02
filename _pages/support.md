@@ -3,6 +3,7 @@ layout: page
 title: Support
 permalink: /support/
 helpers:
+  - strings
   - handlebars
 modules:
   - generic/controller
@@ -22,7 +23,7 @@ imports:
   load: last
 - name: handlebars
   load: last
-- name: urlparser
+- name: uri-js
   load: last
 templates:
     - support/subscribe

@@ -12,6 +12,9 @@ Generate = (options, factory) => {
             value: "ACADEMIC DATA",
           },
           format: "YYYY-MM-DD",
+          maximum: {
+            width: 500
+          }
         },
         FN = {};
   /* <!-- Internal Constants --> */
@@ -21,7 +24,7 @@ Generate = (options, factory) => {
   /* <!-- Internal Options --> */
 
   /* <!-- Internal Functions --> */
-  var _formats = () => _.map(["Wide", "Hybrid", "Long"], 
+  var _formats = () => _.map(["Wide", "Hybrid", "Hybrid-Comments", "Long"], 
                              (value, index) => options.functions.common.option(value.toLowerCase(), value, index === 0));
   
   
@@ -320,11 +323,15 @@ Generate = (options, factory) => {
         /* <!-- Set Autosize Columns --> */
         sheet.helpers.format.autosize(sheet.helpers.grid.columns(0, _all_Columns.length).dimension()),
       
+        /* <!-- Set Middle Vertical Alignment --> */
+        sheet.helpers.format.cells(sheet.helpers.grid.range(1, _values.student.length + 1, 0, _all_Columns.length), [
+          sheet.helpers.format.align.vertical("MIDDLE"),
+        ]),
+
         /* <!-- Set Number Format (maybe this should be earlier?) --> */
         sheet.helpers.format.cells(sheet.helpers.grid.range(1, _values.student.length + 1, _columns.student.length, _all_Columns.length), [
           sheet.helpers.format.type("NUMBER", "@"),
           sheet.helpers.format.align.horizontal("CENTER"),
-          sheet.helpers.format.align.vertical("MIDDLE"),
         ]),
       
         /* <!-- Freeze Heading Rows & Student Columns --> */
@@ -333,7 +340,39 @@ Generate = (options, factory) => {
           sheet.helpers.properties.grid.frozen.columns(_columns.student.length),
         ]),
       
-      ]))
+      ], true))
+      
+      .then(sheet => {
+        if (sheet.response && sheet.response.updatedSpreadsheet) {
+          
+          var _sheet = sheet.response.updatedSpreadsheet.sheets[sheet.response.updatedSpreadsheet.sheets.length - 1],
+              _oversize = _.reduce(_sheet.data[0].columnMetadata, (memo, column, index) => {
+                if (column.pixelSize > options.maximum.width) memo.push({index: index, width: column.pixelSize});
+                return memo;
+              }, []);
+          if (_oversize.length > 0) {
+            return FN.sheet.batch(sheet, _.reduce(_oversize, (memo, column) => {
+              
+              var _column = sheet.helpers.grid.columns(column.index, column.index + 1);
+
+              memo.push(sheet.helpers.format.dimension(_column.dimension(options.maximum.width)));
+              
+              memo.push(sheet.helpers.format.cells(_column.range(), [
+                sheet.helpers.format.wrap("WRAP"),
+                sheet.helpers.format.align.horizontal("LEFT"),
+              ]));
+
+              return memo;
+              
+            }, []));
+          } else {
+            return sheet;
+          }
+        } else {
+          return sheet;
+        }
+        
+      })
     
       /* <!-- Return Sheet to Caller --> */
       .then(sheet => {
@@ -350,214 +389,237 @@ Generate = (options, factory) => {
 
   };
   /* <!-- Internal Functions --> */
+
+  /* <!-- Iterator Functions --> */
+  var iterators = {
+
+    wide: (labels, values, students, selector, columns, comments) => (student) => {
+
+      var _row = students.findIndex(function(row) {
+            return row[0] == student.id;
+          });
+
+      /* <!-- Handle Subject Gradings --> */
+      if (student.subjects) iterate(student.subjects, function(subject, subject_Name) {
+
+        iterate(subject, (grades, grade_Name) => {
+
+          if (comments || grade_Name != labels.comments) getGrades(grades, selector)
+            .forEach((grade) => {
+
+              var _header = sprintf("%s\n%s\n%s", grade_Name, subject_Name, grade.cycle);
+              var _index = columns.indexOf(_header) >= 0 ? columns.indexOf(_header) : columns.push(_header) - 1;
+              var _length = values[_row].length;
+
+              if (_length < _index + 1) {
+                values[_row] = values[_row].concat(Array(_index + 1-_length).fill(""));
+              }
+
+              values[_row][_index] = (values[_row][_index] ? values[_row][_index] + "\n" + grade.grade : grade.grade);
+
+            });
+
+        });
+
+      });
+
+    },
+
+    long: (labels, values, students, selector, trackers, comments) => (student) => {
+
+      var _updated = false,
+          _finder = row => row[0] == student.id,
+          _index = students.findIndex(_finder),
+          _student = students[_index].slice(0),
+          _tracker = trackers[_index].slice(0);
+
+      if (student.subjects) iterate(student.subjects, (subject, subject_Name) => {
+
+        iterate(subject, (grades, grade_Name) => {
+
+          if (comments || grade_Name != labels.comments) getGrades(grades, selector).forEach(grade => {
+
+            var _row = [subject_Name, grade.cycle, grade_Name, grade.date,
+                _.isArray(grade.author) ? grade.author.join("\n") : grade.author, grade.grade];
+
+            /* <!-- Add or Update Main & Student Rows --> */
+            if (_updated) {
+              students.push(_student);
+              trackers.push(_tracker);
+              values.push(_row);
+            } else {
+              values[_index] = _row;
+              _updated = true;
+            }
+
+          });
+
+        });
+
+      });
+
+    },
+
+    hybrid: (labels, values, students, selector, columns, trackers, comments) => (student) => {
+
+      var _updated = false,
+              _finder = row => row[0] == student.id,
+              _student = students[students.findIndex(_finder)].slice(0),
+              _tracker = trackers[students.findIndex(_finder)].slice(0);
+
+      if (student.subjects) iterate(student.subjects, (subject, subject_Name) => {
+
+        var _row = [];
+        
+        /* <!-- Add subject name / user placeholder to row --> */
+        _row.push(subject_Name);
+        _row.push([]);
+
+        iterate(subject, (grades, grade_Name) => {
+
+          var _add = (name, object, value) => {
+
+            var _header = sprintf("%s\n%s", grade_Name, object.cycle),
+              _index = columns.indexOf(_header) >= 0 ? columns.indexOf(_header) : columns.push(_header) - 1;
+          
+            var _length = _row.length;
+
+            if (_length < _index + 1) _row = _row.concat(Array(_index + 1 - _length).fill(null));
+
+            _row[_index] = (_row[_index] ? _row[_index] + "\n" + value : value);
+
+            if (object.author) {
+              var _author = _.isArray(object.author) ? object.author : [object.author];
+              _author.forEach(author => {
+                if (_row[1].indexOf(author) < 0) _row[1].push(author);
+              });
+            }
+
+          };
+
+          if (comments && grade_Name == labels.comments) {
+
+            grades.forEach(comment => _add(grade_Name, comment, comment.comment));
+
+          } else if (grade_Name != labels.comments) {
+
+            getGrades(grades, selector).forEach(grade => _add(grade_Name, grade, grade.grade));
+
+          }
+
+        });
+
+        /* <!-- Tidy up User / Author Cell --> */
+        _row[1] = _row[1].join("\n");
+
+        /* <!-- Add or Update Values --> */
+        if (_updated) {
+          students.push(_student);
+          trackers.push(_tracker);
+          values.push(_row);
+        } else {
+          values[students.findIndex(_finder)] = _row;
+          _updated = true;
+        }
+        
+      });
+
+    },
+
+  };
+  /* <!-- Iterator Functions --> */
   
   /* <!-- Public Functions --> */
   FN.property = () => _.object([options.property.name], [options.property.value]);
   
   FN.generator = (date, id, sheet) => ({
   
-    wide : (groups, selector, data) => FN.sheet.tab("W", factory.Google_Sheets_Format({}, factory).colour("00ff00"), 
+    wide : (comments) => (groups, selector, data, labels) => FN.sheet.tab("W", factory.Google_Sheets_Format({}, factory).colour("00ff00"), 
                                                     groups, selector, date, id, sheet)
       .then(value => generate(value, data, (data, columns, values, students) => {
 
         /* <!-- Handle Students / Trackers --> */
-        iterate(data, function(student) {
-
-          var _row = students.findIndex(function(row) {
-                return row[0] == student.id;
-              });
-
-          /* <!-- Handle Subject Gradings --> */
-          if (student.subjects) iterate(student.subjects, function(subject, subject_Name) {
-
-            iterate(subject, function(grades, grade_Name) {
-
-              getGrades(grades, selector).forEach(function(grade) {
-
-                var _header = sprintf("%s\n%s\n%s", grade_Name, subject_Name, grade.cycle);
-                var _index = columns.indexOf(_header) >= 0 ? columns.indexOf(_header) : columns.push(_header) - 1;
-                var _length = values[_row].length;
-
-                if (_length < _index + 1) {
-                  values[_row] = values[_row].concat(Array(_index + 1-_length).fill(""));
-                }
-
-                values[_row][_index] = (values[_row][_index] ? values[_row][_index] + "\n" + grade.grade : grade.grade);
-
-              });
-
-            });
-
-          });
-
-        });
-
+        iterate(data, iterators.wide(labels, values, students, selector, columns, comments));
+        
       }, true))
 
       /* <!-- Return Sheet to Caller --> */
       .then(sheet => sheet ? FN.sheet.finally(sheet.sheet) : null),
 
-      long : (groups, selector, data) => FN.sheet.tab("L", factory.Google_Sheets_Format({}, factory).colour("0000ff"),
-                                                      groups, selector, date, id, sheet)
-        .then(value => generate(value, data, function(data, columns, values, students, trackers) {
+    long : (comments) => (groups, selector, data, labels) => FN.sheet.tab("L", factory.Google_Sheets_Format({}, factory).colour("0000ff"),
+                                                    groups, selector, date, id, sheet)
+      .then(value => generate(value, data, function(data, columns, values, students, trackers) {
 
-          /* <!-- Handle Report Grades --> */
-          columns.splice(columns.length, 0, "Subject", "Cycle", "Grading", "Date", "User", "Value");
+        /* <!-- Handle Report Grades --> */
+        columns.splice(columns.length, 0, "Subject", "Cycle", "Grading", "Date", "User", "Value");
 
-          iterate(data, student => {
+        iterate(data, iterators.long(labels, values, students, selector, trackers, comments));
 
-            var _updated = false,
-                _finder = row => row[0] == student.id,
-                _index = students.findIndex(_finder),
-                _student = students[_index].slice(0),
-                _tracker = trackers[_index].slice(0);
+      })
 
-            if (student.subjects) iterate(student.subjects, (subject, subject_Name) => {
+      /* <!-- Sort Students, Conditional Formats / Autosize Columns --> */
+      .then(value => FN.sheet.batch(value, [
 
-              iterate(subject, (grades, grade_Name) => {
+          /* <!-- Hide ID Column --> */
+          value.helpers.format.hide(value.helpers.grid.columns(0, 1).dimension()),
 
-                getGrades(grades, selector).forEach(grade => {
+          /* <!-- Hide Date/User Column --> */
+          value.helpers.format.hide(value.helpers.grid.columns(value.extents.width - 3, value.extents.width - 1).dimension()),
 
-                  var _row = [subject_Name, grade.cycle, grade_Name, grade.date,
-                      _.isArray(grade.author) ? grade.author.join("\n") : grade.author, grade.grade];
-
-                  /* <!-- Add or Update Main & Student Rows --> */
-                  if (_updated) {
-                    students.push(_student);
-                    trackers.push(_tracker);
-                    values.push(_row);
-                  } else {
-                    values[_index] = _row;
-                    _updated = true;
-                  }
-
-                });
-
-              });
-
-            });
-
-          });
-
-        })
-
-        /* <!-- Sort Students, Conditional Formats / Autosize Columns --> */
-        .then(value => FN.sheet.batch(value, [
-
-            /* <!-- Hide ID Column --> */
-            value.helpers.format.hide(value.helpers.grid.columns(0, 1).dimension()),
-
-            /* <!-- Hide Date/User Column --> */
-            value.helpers.format.hide(value.helpers.grid.columns(value.extents.width - 3, value.extents.width - 1).dimension()),
-
-            /* <!-- Sort Data --> */
-            value.helpers.sorts.range(
-              value.helpers.grid.rows(value.extents.data.row, value.extents.height).range(),
-              [
-                3, 2, 1, value.extents.width - 3,  value.extents.width - 2, {
-                  dimension: value.extents.width,
-                  order: "DESCENDING"
-                }
-              ]),
-          ]))
-
-        /* <!-- Return Sheet to Caller --> */
-        .then(sheet => sheet ? FN.sheet.finally(sheet.sheet) : null)),
-
-      hybrid : (groups, selector, data) => FN.sheet.tab("H", factory.Google_Sheets_Format({}, factory).colour("ff0000"),
-                                                        groups, selector, date, id, sheet).then(value => {
-
-        var _length;
-        return generate(value, data, (data, columns, values, students, trackers) => {
-
-          /* <!-- Handle Subject Names --> */
-          columns.splice(columns.length, 0, "Subject", "User");
-
-          iterate(data, student => {
-
-            var _updated = false,
-                _finder = row => row[0] == student.id,
-                _student = students[students.findIndex(_finder)].slice(0),
-                _tracker = trackers[students.findIndex(_finder)].slice(0);
-
-            if (student.subjects) iterate(student.subjects, (subject, subject_Name) => {
-
-              var _row = [];
-              
-              /* <!-- Add subject name / user placeholder to row --> */
-              _row.push(subject_Name);
-              _row.push([]);
-
-              iterate(subject, (grades, grade_Name) => {
-
-                getGrades(grades, selector).forEach(grade => {
-
-                  var _header = sprintf("%s\n%s", grade_Name, grade.cycle),
-                      _index = columns.indexOf(_header) >= 0 ? columns.indexOf(_header) : columns.push(_header) - 1;
-                  
-                  var _length = _row.length;
-
-                  if (_length < _index + 1) _row = _row.concat(Array(_index + 1 - _length).fill(null));
-
-                  _row[_index] = (_row[_index] ? _row[_index] + "\n" + grade.grade : grade.grade);
-
-                  if (grade.author) {
-                    var _author = _.isArray(grade.author) ? grade.author : [grade.author];
-                    _author.forEach(author => {
-                      if (_row[1].indexOf(author) < 0) _row[1].push(author);
-                    });
-                  } 
-
-                });
-
-              });
-
-              /* <!-- Tidy up User / Author Cell --> */
-              _row[1] = _row[1].join("\n");
-
-              /* <!-- Add or Update Values --> */
-              if (_updated) {
-                students.push(_student);
-                trackers.push(_tracker);
-                values.push(_row);
-              } else {
-                values[students.findIndex(_finder)] = _row;
-                _updated = true;
+          /* <!-- Sort Data --> */
+          value.helpers.sorts.range(
+            value.helpers.grid.rows(value.extents.data.row, value.extents.height).range(),
+            [
+              3, 2, 1, value.extents.width - 3,  value.extents.width - 2, {
+                dimension: value.extents.width,
+                order: "DESCENDING"
               }
-              
-            });
+            ]),
+        ]))
 
-          });
+      /* <!-- Return Sheet to Caller --> */
+      .then(sheet => sheet ? FN.sheet.finally(sheet.sheet) : null)),
 
-          /* <!-- Get Length of Reports (for sorting / hiding purposes) --> */
-          _length = columns.length - 2;
-          
-        }, {
-          trackers : true,
-          main : 2
-        })
+    hybrid : (comments) => (groups, selector, data, labels) => FN.sheet.tab(comments ? "HC" : "H", factory.Google_Sheets_Format({}, factory).colour("ff0000"),
+                                                      groups, selector, date, id, sheet).then(value => {
+
+      var _length;
+      return generate(value, data, (data, columns, values, students, trackers) => {
+
+        /* <!-- Handle Subject Names --> */
+        columns.splice(columns.length, 0, "Subject", "User");
+
+        iterate(data, iterators.hybrid(labels, values, students, selector, columns, trackers, comments));
+
+        /* <!-- Get Length of Reports (for sorting / hiding purposes) --> */
+        _length = columns.length - 2;
         
-        /* <!-- Sort Students, Conditional Formats / Autosize Columns --> */
-        .then(value => FN.sheet.batch(value, [
-          
-            /* <!-- Hide ID Column --> */
-            value.helpers.format.hide(value.helpers.grid.columns(0, 1).dimension()),
-          
-            /* <!-- Hide User Column --> */
-            value.helpers.format.hide(value.helpers.grid.columns(value.extents.width - (_length + 1), 
-                                                                  value.extents.width - _length).dimension()),
-          
-            /* <!-- Sort Data --> */
-            value.helpers.sorts.range(
-              value.helpers.grid.rows(value.extents.data.row, value.extents.height).range(),
-              [3, 2, 1, value.extents.width - (_length + 1)]),
-          
-          ]))
+      }, {
+        trackers : true,
+        main : 2
+      })
+      
+      /* <!-- Sort Students, Conditional Formats / Autosize Columns --> */
+      .then(value => FN.sheet.batch(value, [
         
-        /* <!-- Return Sheet to Caller --> */
-        .then(sheet => sheet ? FN.sheet.finally(sheet.sheet) : null);
+          /* <!-- Hide ID Column --> */
+          value.helpers.format.hide(value.helpers.grid.columns(0, 1).dimension()),
+        
+          /* <!-- Hide User Column --> */
+          value.helpers.format.hide(value.helpers.grid.columns(value.extents.width - (_length + 1), 
+                                                                value.extents.width - _length).dimension()),
+        
+          /* <!-- Sort Data --> */
+          value.helpers.sorts.range(
+            value.helpers.grid.rows(value.extents.data.row, value.extents.height).range(),
+            [3, 2, 1, value.extents.width - (_length + 1)]),
+        
+        ]))
+      
+      /* <!-- Return Sheet to Caller --> */
+      .then(sheet => sheet ? FN.sheet.finally(sheet.sheet) : null);
 
-      }),
+    }),
 
   });
   
@@ -567,10 +629,14 @@ Generate = (options, factory) => {
       var _format = values.Format.Value,
           _grades = values.Grades.Value,
           _generator = FN.generator(date, file ? file.id : null);
+
       factory.Flags.log("Selected Output Options:", `Format=${_format} / Grades=${_grades}`);
-      return (_format == "wide" ? _generator.wide(data.source.years, _grades, data.transformed) : 
-                      _format == "hybrid" ? _generator.hybrid(data.source.years, _grades, data.transformed) :
-                        _generator.long(data.source.years, _grades, data.transformed))
+
+      var _fn = _format == "wide" ? _generator.wide() :
+        _format == "hybrid" ? _generator.hybrid() : 
+        _format == "hybrid-comments" ? _generator.hybrid(true) : 
+        _generator.long();
+      return _fn(data.source.years, _grades, data.transformed, data.labels)
         .then(options.state.application.notify.actions.save("NOTIFY_EXPORT_GENERATE_SUCCESS"));
     };
     

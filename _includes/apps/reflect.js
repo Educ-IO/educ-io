@@ -229,6 +229,7 @@ App = function() {
 
           import: {
             reset: true,
+            matches: [/IMPORT/i, /REPORT/i],
             success: value => ಠ_ಠ.Google.reader().promiseAsText(value.result)
               .then(content => JSON.parse(content))
               .then(value => value.form && value.report ?

@@ -204,6 +204,11 @@ Flags = function() {
             return this;
           },
 
+          performance: function() {
+            if (_debug || _performance) _log.apply(_context, arguments);
+            return this;
+          },
+
           time: function(name, end) {
             if (_debug || _performance) end ? _end.apply(_context, [name]) : _start.apply(_context, [name]);
             return this;

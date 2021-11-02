@@ -57,6 +57,7 @@ Main = function() {
           .catch(e => (e ? ಠ_ಠ.Flags.error(`${name} Select:`, e) : ಠ_ಠ.Flags.log(`${name} Select Cancelled`)).negative())
           .then(results => results ? _.isArray(results) ? results.length === 0 ? false : results : [results] : false));
   
+  const DEADEND = (result) => () => result;
   /* <!-- Plumbing Functions --> */
 
   /* <!-- Internal Functions --> */
@@ -178,7 +179,7 @@ Main = function() {
     }, google_Failure("Signed out of Google"));
   };
 
-  var google_Authorise = (scopes, force) => {
+  var google_Authorise = (scopes, force, silently) => {
 
     /* <!-- Ensure Scopes is an Array --> */
     scopes = _.isString(scopes) ? [scopes] : scopes;
@@ -216,7 +217,9 @@ Main = function() {
           }
           
         };
-      return _login(_default, false, REFRESH_RACE).then(_success, _check).then(BUSY("Authorising", true));
+      return _login(silently === true ? "none" : _default, false, REFRESH_RACE)
+              .then(_success, _check)
+              .then(silently === true ? DEADEND(true) : BUSY("Authorising", true));
     } else {
       ಠ_ಠ.Flags.log("All Scopes already previously requested for authorisation", __scopes);
       return Promise.resolve(true);
@@ -542,6 +545,8 @@ Main = function() {
     
     busy_element: BUSY_ELEMENT,
     
+    deadend : DEADEND,
+
     event: EVENT,
     
     message: MESSAGE,

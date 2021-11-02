@@ -459,7 +459,8 @@ App = function() {
                                 ಠ_ಠ.Display.state().enter([FN.states.loaded.in, FN.states.loaded.isams]);
                                 return Promise.resolve({
                                   source: data,
-                                  transformed: FN.transform.process(data.metadata, data.reports, data.pupils, data.trackers)
+                                  transformed: FN.transform.process(data.metadata, data.reports, data.pupils, data.trackers),
+                                  labels: FN.transform.labels(),
                                 }).then(ಠ_ಠ.Main.busy("Transforming iSAMS Data"));
                               })
                               .then(data => {

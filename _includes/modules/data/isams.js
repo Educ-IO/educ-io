@@ -345,6 +345,22 @@ iSAMS_API = (options, factory) => {
           }, {}), (total, name) => `${name} = ${total} Point${total > 1 ? "s" : ""}`).sort(),
         });
         
+        _data.push({
+          name: "Comments",
+          description: "Number of Students with comments in selected cycles/trackers",
+          type: "Transformed Data",
+          value: _.map(_.reduce(data.transformed, (memo, student) => {
+            if (student.subjects) {
+              var _comments = _.reduce(student.subjects, (memo, subject) => {
+                return subject && subject[data.labels.comments] && 
+                  subject[data.labels.comments].length > 0 ? 
+                  memo + subject[data.labels.comments].length : memo;
+              }, 0);
+              memo[student.form] = memo[student.form] ? memo[student.form] + _comments : _comments;
+            }
+            return memo;
+          }, {}), (total, name) => `${name} = ${total} Comment${total > 1 ? "s" : ""}`).sort(),
+        });
       }
       
       return options.state.application.tabulate.data(ರ‿ರ, ಱ.db, options.collections.summary, {}, _data);
@@ -368,8 +384,12 @@ iSAMS_API = (options, factory) => {
               if (subject) {
                 if (student.subjects[subject]) {
                   _student[subject] = _.reduce(student.subjects[subject], (memo, values, key) => {
-                    memo.push(`${key} - ${_.map(values, 
-                      value => _value(value)).join(" | ")}`);
+                    if (key == data.labels.comments) {
+                      memo.push(`${key} - ${values.length}`);
+                    } else {
+                      memo.push(`${key} - ${_.map(values, 
+                        value => _value(value)).join(" | ")}`);
+                    }
                     return memo;
                   }, []);
                   _student[subject].__small = true;

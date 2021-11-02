@@ -7,7 +7,7 @@
 #   :    :      :    :        : :. :   :   : :    :    ::.: :    #
 #                                                                #
 ##################################################################
-# Last Updated: 2021-01-20
+# Last Updated: 2021-10-25
 
 localstorage:
   name: localStorage
@@ -101,21 +101,21 @@ localforage:
   desc: This makes handling offline storage in the browser easier.
   url: https://cdnjs.com/libraries/localforage
   project: https://github.com/mozilla/localForage
-  version: 1.9.0
-  last: 1.7.4
+  version: 1.10.0
+  last: 1.9.0
   license: Apache-2.0
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.9.0/localforage.min.js
-      integrity: sha512-GkJRKF+k/yzHfJUg9LrNLQhS0jorQe4kES+GHkqtQThCJ5z5A1KwCXH0GYbJApDh/a3ERFvq9xbRJY9mEXzQiA==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js
+      integrity: sha512-+BMamP0e7wn39JGL8nKAZ3yAQT2dL5oaXWr4ZYlTGkKOaoXM/Yj7c4oy50Ngz5yoUutAG17flueD4F6QpTlPng==
       crossorigin: anonymous
-      bulk: 29.5
+      bulk: 29.7
       id: __localforage
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.9.0/localforage.js
-      integrity: sha512-JrJyNknk6qY0sNOPg9LsktBNM+6J4dukn3u1mX2tEY8+BvO+vLCpASMt21HPrn30Ow08wbafPnKoMyrQ5tovJA==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.js
+      integrity: sha512-uhGxZliQzrw9ep2yTwrHzbi+HjpvrxpqVCbuxf86KrjQehpBrfPpJ5H/TIiCf/5jDSmqA5zttGqX724CuWelGg==
       crossorigin: anonymous
-      bulk: 92.8
+      bulk: 123
       id: __localforage 
 
 hammer:
@@ -166,28 +166,28 @@ hello:
   desc: This is used to manage login / tokens for OAuth2 Services.
   url: https://cdnjs.com/libraries/hellojs
   project: https://github.com/MrSwitch/hello.js
-  version: 1.19.3
-  last: 1.18.7
+  version: 1.19.5
+  last: 1.19.3
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.19.3/hello.min.js
-      integrity: sha512-9i/rn8u0KCFZvoIYw+BtBfh8qjC6bI6n5cE3ffFQKyIpYBPndIDFdotQ03dGFQPFT2stg5gH91gDpflG32fByg==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.19.5/hello.min.js
+      integrity: sha512-aH9G0dm2VFpEbPvExqXpQTGEvnXP/VgNouCR16copjRJ8opww9J9dTMd7UMOxihOFD+0D/Wpe2grG015bqbqMQ==
       crossorigin: anonymous
       overrides:
         - replace: emit("auth.init",p);
           with: >-
             if (session&&session.authuser!==null&&session.authuser!==undefined) {url=url+"&authuser="+session.authuser;} emit("auth.init",p);
-      bulk: 37
+      bulk: 37.2
       id: __hello
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.19.3/hello.js
-      integrity: sha512-fetkUNNavUtqnCz6WpyLwDhafrlo4IuW2xECd9VsgjU1QpR9MWqOStI3HUOa0e2mpGun2fawNnoplfBBw2ilqA==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/hellojs/1.19.5/hello.js
+      integrity: sha512-1W++qoEaHviIa/O/UmfBjvcpnLid5mJwKjIHGgXjbOoGbF46J4z533m8yc7mpZH2VIdwNqQwdu1E+QQLL+CHIA==
       crossorigin: anonymous
       overrides:
         - replace: emit('auth.init', p);
           with: if (session&&session.authuser!==null&&session.authuser!==undefined) {url=url+"&authuser="+session.authuser;} emit('auth.init', p);
-      bulk: 77.5
+      bulk: 77.9
       id: __hello
 
 showdown:
@@ -201,14 +201,14 @@ showdown:
   type: js
   prod:
     - url: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js
-      integrity: sha256-jl1+DOsSs9uABTKppOJ2GF8kXoc3XQzBtFFyS0i9Xoo=
+      integrity: sha512-L03kznCrNOfVxOUovR6ESfCz9Gfny7gihUX/huVbQB9zjODtYpxaVtIaAkpetoiyV2eqWbvxMH9fiSv5enX7bw==
       crossorigin: anonymous
       bulk: 74.5
       map: true
       id: __showdown
   dev:
     - url: https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.js
-      integrity: sha256-44/UcMYgn8vlo2B5ydHmUcy9SXMt7bg2RhftDR35kY8=
+      integrity: sha512-bvV1V1YSjP1fbfKJjTlNmdnUO2XpsLYUdKwmz5UXBi5U+x40rx9JpA0ooQUMZfpz1MaaBC0ydNLoC6r0sitPUQ==
       crossorigin: anonymous
       bulk: 156
       map: true
@@ -219,7 +219,7 @@ jquery_slim:
   desc: This popular library is used to manipulate the DOM, and HTML elements on the page.
   url: https://cdnjs.com/libraries/jquery
   project: http://jquery.com/
-  version: 3.6.9
+  version: 3.6.0
   last: 3.5.1
   license: MIT
   type: js
@@ -242,8 +242,8 @@ jquery:
   desc: This popular library is used to manipulate the DOM, and HTML elements on the page.
   url: https://cdnjs.com/libraries/jquery
   project: http://jquery.com/
-  version: 3.5.1
-  last: 3.4.1
+  version: 3.6.0
+  last: 3.5.1
   license: MIT
   type: js
   prod:
@@ -998,21 +998,21 @@ autosize:
   desc: Automatically adjust textarea height to fit text.
   url: https://cdnjs.com/libraries/autosize.js
   project: http://www.jacklmoore.com/autosize
-  version: 4.0.2
-  last: 4.0.1
+  version: 5.0.1
+  last: 4.0.2
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.min.js
-      integrity: sha256-dW8u4dvEKDThJpWRwLgGugbARnA3O2wqBcVerlg9LMc=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/autosize.js/5.0.1/autosize.min.js
+      integrity: sha512-aBxhlAogg9r6Gtes+dsuqW6IQ4Ee0MtjexckbMNOVdxAfi5NSEd38BNEgFiaBWS6cl67r+8OImzxVKDdmswhnA==
       crossorigin: anonymous
-      bulk: 3.5
+      bulk: 3.4
       id: __autosize
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.js
-      integrity: sha256-/cqRc6tEehZivJ5tlpUjFjiy1PoDrCVChM5lmg2WNUo=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/autosize.js/5.0.1/autosize.js
+      integrity: sha512-obXEX2lJVopusJtpNm4cIEp9rnEpoRM44PXFHyVYYrhKbGWLUpPPdeko+gZx5s4kJsQVHXQhvcpqZcL/0yYuhA==
       crossorigin: anonymous
-      bulk: 7.5
+      bulk: 7.8
       id: __autosize
       
 sprintf:
@@ -1166,19 +1166,19 @@ html2canvas:
   desc: Screenshots with JavaScript
   url: https://www.jsdelivr.com/package/npm/html2canvas?path=dist
   project: http://html2canvas.hertzen.com/
-  version: 1.0.0-rc.7
-  last: 1.0.0-rc.5
+  version: 1.3.2
+  last: 1.0.0-rc.7
   license: MIT
   type: js
   prod:
-    - url: https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js
-      integrity: sha256-Ax1aqtvxWBY0xWND+tPZVva/VQZy9t1Ce17ZJO+NTRc=
+    - url: https://cdn.jsdelivr.net/npm/html2canvas@1.3.2/dist/html2canvas.min.js
+      integrity: sha256-d09iTj88kv7ZtK4LYzwk3FfPXtyb3f3g4HpsQcyxzMk=
       crossorigin: anonymous
       bulk: 165
       id: __html2canvas
   dev:
-    - url: https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.js
-      integrity: sha256-QCb0t7q/Gp30bbxFvMPO8sadfKdMRz/rSHo2bWSM7is=
+    - url: https://cdn.jsdelivr.net/npm/html2canvas@1.3.2/dist/html2canvas.js
+      integrity: sha256-duKk2ZPlgFYrCGcMH+bfxt1sS1Fxg35WaLK3rWaAg1E=
       crossorigin: anonymous
       bulk: 383
       map: true
@@ -1189,21 +1189,22 @@ fetchjsonp:
   desc: JSONP with the Fetch API
   url: https://cdnjs.com/libraries/fetch-jsonp
   project: https://github.com/camsong/fetch-jsonp
-  version: 1.1.3
+  version: 1.2.1
+  last: 1.1.3
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/fetch-jsonp/1.1.3/fetch-jsonp.min.js
-      integrity: sha256-1ar8IuE0nRpUw1CRhDsyndspfpqMu5tQTPRaKA6Rk+E=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/fetch-jsonp/1.2.1/fetch-jsonp.min.js
+      integrity: sha512-n3xHXeYzqlEUG8U9rnLIfgLZLI4rNCCaREHODcSiroaI7DzSlk/zNu1XMblPKnRaoKjvgzthM0+64MdckkP9aw==
       crossorigin: anonymous
       bulk: 1.3
       map: true
       id: __fetchjsonp
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/fetch-jsonp/1.1.3/fetch-jsonp.js
-      integrity: sha256-tq+ecRrapUzktALBIRvPglMV8SWXcRubLF1ZQLskfp8=
+    - url: https://cdnjs.cloudflare.com/ajax/libs/fetch-jsonp/1.2.1/fetch-jsonp.js
+      integrity: sha512-Gys8+rULabLrKdkcher/Qg8hbN6RpNghG0tn1OA3gjlWxE8b5LDSQHEO396eeVlmD9t55pKHslRAKwyWquog9w==
       crossorigin: anonymous
-      bulk: 3.5
+      bulk: 3.8
       id: __fetchjsonp
 
 jspdf:
@@ -1211,22 +1212,22 @@ jspdf:
   desc: Generate PDFs with Javascript
   url: https://cdnjs.com/libraries/jspdf
   project: https://github.com/MrRio/jsPDF
-  version: 2.3.1
-  last: 2.3.0
+  version: 2.4.0
+  last: 2.3.1
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js
-      integrity: sha512-VKjwFVu/mmKGk0Z0BxgDzmn10e590qk3ou/jkmRugAkSTMSIRkd4nEnk+n7r5WBbJquusQEQjBidrBD3IQQISQ==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js
+      integrity: sha512-V/C9Axb8EEL4ix79ERIJmpRd6Mp1rWVSxa2PIBCdCxqhEsfCBWp/R0xJ4U495czhcuDWrGOFYo8+QI3lJ9DK5g==
       crossorigin: anonymous
-      bulk: 365
+      bulk: 364
       map: true
       id: __jspdf
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.js
-      integrity: sha512-WCrSB/31xO8khx4qvgDAUFllYJgGPP2avEW6535rE0bKS3kuPyVPW+XZ2k1b5dGlOZf4Eu8Dp886WSDheD+jZw==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.js
+      integrity: sha512-3LA5JnOY0t71uVlxhnpeBlDAeWc9cDSS83/TV9VctW3qSRPlEN7XDYsoEllTeJWUinWno2401LGunftBEhepXg==
       crossorigin: anonymous
-      bulk: 991
+      bulk: 937
       map: true
       id: __jspdf
 
@@ -2145,28 +2146,28 @@ qrscanner:
   desc: A javascript QR scanner library
   url: https://www.jsdelivr.com/package/npm/qr-scanner
   project: https://github.com/nimiq/qr-scanner
-  version: 1.2.0
-  last: 1.1.1
+  version: 1.3.0
+  last: 1.2.0
   license: MIT
   type: js
   prod:
-    - url: https://cdn.jsdelivr.net/npm/qr-scanner@1.2.0/qr-scanner.min.js
-      integrity: sha256-0DxKnprp7G7mWltwN+qimIQeNGaq8jM2CQ0PT8aX9dI=
+    - url: https://cdn.jsdelivr.net/npm/qr-scanner@1.3.0/qr-scanner.min.js
+      integrity: sha256-7K717JpGgLMoE9G24o3caPGkKu/pS1p4niMD6qKQQfo=
       crossorigin: anonymous
-      bulk: 7.8
+      bulk: 15.2
       overrides:
-        - replace: e.WORKER_PATH="qr-scanner-worker.min.js";
-          with: e.WORKER_PATH="https://cdn.jsdelivr.net/npm/qr-scanner@1.2.0/qr-scanner-worker.min.js";
+        - replace: f.WORKER_PATH="qr-scanner-worker.min.js";
+          with: f.WORKER_PATH="https://cdn.jsdelivr.net/npm/qr-scanner@1.3.0/qr-scanner-worker.min.js";
       id: __qrscanner
       map: true
   dev:
-    - url: https://cdn.jsdelivr.net/npm/qr-scanner@1.2.0/src/qr-scanner.js
-      integrity: sha256-aHLDrfHbQMCZ/ZEmlo+XDg+9uP90pwX8NyZ26LH99wQ=
+    - url: https://cdn.jsdelivr.net/npm/qr-scanner@1.3.0/src/qr-scanner.js
+      integrity: sha256-I1bH9sMyNLkiA3NCH9YyrGAxnZjcvfQoZJhtaeub3yc=
       crossorigin: anonymous
-      bulk: 19.3
+      bulk: 26.2
       overrides:
         - replace: QrScanner.WORKER_PATH = 'qr-scanner-worker.min.js';
-          with: QrScanner.WORKER_PATH = 'https://cdn.jsdelivr.net/npm/qr-scanner@1.2.0/qr-scanner-worker.min.js';
+          with: QrScanner.WORKER_PATH = 'https://cdn.jsdelivr.net/npm/qr-scanner@1.3.0/qr-scanner-worker.min.js';
       id: __qrscanner
 
 ion-sound:
@@ -2211,31 +2212,31 @@ sql-js:
   desc: A javascript library to run SQLite on the web
   url: https://cdnjs.com/libraries/sql.js
   project: https://github.com/sql-js/sql.js
-  version: 1.5.0
-  last: 1.4.0
+  version: 1.6.1
+  last: 1.5.0
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.5.0/sql-wasm.js
-      integrity: sha512-dsyusvfMidFZ0Vttbk7YXRAxaO++5nU1vuFtGMK2MNPr8qDzz0e5IahYWSJkzZcNXn18E1OHP6Oa13nRIwT0zg==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.1/sql-wasm.js
+      integrity: sha512-14M7CqWNUr6fzrgs9ncNWKdBtLu69HwEWq7J3/dPMUL+za3fBRLJvK6egAu4SSlxCM1apqsbVJHArGLl5fjldw==
       crossorigin: anonymous
-      bulk: 53.7
+      bulk: 54.1
       id: __sqljs
       dependencies:
-        - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.5.0/sql-wasm.wasm
+        - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.1/sql-wasm.wasm
           crossorigin: anonymous
-          bulk: 1156
+          bulk: 1172
           id: __sqljs_wasm
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.5.0/sql-wasm-debug.js
-      integrity: sha512-7kJQB9ckRpNuYeNErAJa4c6xwux6AAc6G6BCvPVggyqJPtan98Yc7pZb8lwJGE5TnHOnwgTDNkdmCg0na8YWkw==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.1/sql-wasm-debug.js
+      integrity: sha512-uP91MNt2ZTiTgFAbJui97aCIGCIeVCTW5LU5+mRhGaPLbVveaDH9cIOyUJ/zNtcVE7LfwzWatH4bWarxuaQ0Eg==
       crossorigin: anonymous
       bulk: 282
       id: __sqljs
       dependencies:
-        - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.5.0/sql-wasm-debug.wasm
+        - url: https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.1/sql-wasm-debug.wasm
           crossorigin: anonymous
-          bulk: 1243
+          bulk: 1259
           id: __sqljs_wasm
 
 spark-md5:
@@ -2243,20 +2244,21 @@ spark-md5:
   desc: Lightning fast normal and incremental md5 for javascript
   url: https://cdnjs.com/libraries/spark-md5
   project: https://github.com/satazor/js-spark-md5
-  version: 3.0.0
+  version: 3.0.2
+  last: 3.0.0
   license: WTFPL
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/spark-md5/3.0.0/spark-md5.min.js
-      integrity: sha512-5Cmi5XQym+beE9VUPBgqQnDiUhiY8iJU+uCUbZIdWFmDNI+9u3A7ntfO8fRkigdZCRrbM+DSpSHSXAuOn5Ajbg==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/spark-md5/3.0.2/spark-md5.min.js
+      integrity: sha512-iWbxiCA4l1WTD0rRctt/BfDEmDC5PiVqFc6c1Rhj/GKjuj6tqrjrikTw3Sypm/eEgMa7jSOS9ydmDlOtxJKlSQ==
       crossorigin: anonymous
-      bulk: 20.3
+      bulk: 10.2
       id: __sparkmd5
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/spark-md5/3.0.0/spark-md5.js
-      integrity: sha512-8AK3ObH6H+hRYlDFk9yAL/SsnuTkNjNO10V3Uf3ckMtG6bQ0G41v15tK+mVNoc+/7AK9YWiRocVaG2CLWX/GFg==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/spark-md5/3.0.2/spark-md5.js
+      integrity: sha512-g7AYIETEeNrSpkLB3Tk4YvLT3T5K/BfFlyDCQhENMat2hBsypQzfN9i1rq+q0RsD/kaEfhiGPz9WNyuCFOVJDw==
       crossorigin: anonymous
-      bulk: 45.9
+      bulk: 23
       id: __sparkmd5
       
 epub-js:
@@ -2264,20 +2266,21 @@ epub-js:
   desc: Render ePub documents in the browser, across many devices
   url: https://www.jsdelivr.com/package/npm/epubjs
   project: https://github.com/futurepress/epub.js
-  version: 0.3.88
+  version: 0.3.89
+  last: 0.3.88
   license: BSD-2-Clause
   type: js
   prod:
-    - url: https://cdn.jsdelivr.net/npm/epubjs@0.3.88/dist/epub.min.js
-      integrity: sha256-x6hC2oVtURk4y6G6ZNkHQ8MYrALBPke8hK5INP6UyUU=
+    - url: https://cdn.jsdelivr.net/npm/epubjs@0.3.89/dist/epub.min.js
+      integrity: sha256-zNICOOE8RkP9vGdGvFdYuNixsj/KdvYn3j4N7d7wMn8=
       crossorigin: anonymous
-      bulk: 237
+      bulk: 232
       id: __epubjs
   dev:
-    - url: https://cdn.jsdelivr.net/npm/epubjs@0.3.88/dist/epub.js
-      integrity: sha256-1evMUgmyIihqie5Wd72RbJo5mF+bNkgpOQKwx3Lfj1o=
+    - url: https://cdn.jsdelivr.net/npm/epubjs@0.3.89/dist/epub.js
+      integrity: sha256-bg1BWVHZtP/YM9HmpnnXKoVwznZnBR4FK9h+aMPg0JA=
       crossorigin: anonymous
-      bulk: 643
+      bulk: 644
       map: true
       id: __epubjs
 
@@ -2309,21 +2312,21 @@ pdf-js:
   desc: PDF Reader in JavaScript
   url: https://cdnjs.com/libraries/pdf.js
   project: https://github.com/mozilla/pdf.js
-  version: 2.8.335
-  last: 2.6.347
+  version: 2.11.338
+  last: 2.8.335
   license: Apache-2.0
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js
-      integrity: sha512-SG4yH2eYtAR5eK4/VL0bhqOsIb6AZSWAJjHOCmfhcaqTkDviJFoar/VYdG96iY7ouGhKQpAg3CMJ22BrZvhOUA==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js
+      integrity: sha512-t2JWqzirxOmR9MZKu+BMz0TNHe55G5BZ/tfTmXMlxpUY8tsTo3QMD27QGoYKZKFAraIPDhFv56HLdN11ctmiTQ==
       crossorigin: anonymous
-      bulk: 227
+      bulk: 230
       id: __pdfjs
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.js
-      integrity: sha512-WHvEcr6kL3NjdaMT//KjBNtV42r+nz0MOWKhd3IiiEihJnGvOBfrt3z4FNWOyayufc/d4DbmF21cUc+Sc29rag==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.js
+      integrity: sha512-Wy/We6mzda82wLIueVL6DzW+zoBma7zYduZZWUakpNEuoCE28JrO5GZ8UzX0HBFA+6TSUz9Zqxgce+m7meJTiQ==
       crossorigin: anonymous
-      bulk: 406
+      bulk: 408
       map: true
       id: __pdfjs
       
@@ -2332,46 +2335,46 @@ pdf-js-viewer-js:
   desc: PDF Reader in JavaScript (Full Viewer)
   url: https://cdnjs.com/libraries/pdf.js
   project: https://github.com/mozilla/pdf.js
-  version: 2.8.335
-  last: 2.6.347
+  version: 2.11.338
+  last: 2.8.335
   license: Apache-2.0
-  type: css
+  type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js
-      integrity: sha512-SG4yH2eYtAR5eK4/VL0bhqOsIb6AZSWAJjHOCmfhcaqTkDviJFoar/VYdG96iY7ouGhKQpAg3CMJ22BrZvhOUA==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js
+      integrity: sha512-t2JWqzirxOmR9MZKu+BMz0TNHe55G5BZ/tfTmXMlxpUY8tsTo3QMD27QGoYKZKFAraIPDhFv56HLdN11ctmiTQ==
       crossorigin: anonymous
-      bulk: 227
+      bulk: 230
       id: __pdfjs
       dependencies:
-        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.min.js
-          integrity: sha512-A7+amkzh0+2k5IVc5RRZ5vjeCaTm3mZlLQJwiYzS/wa0JyDD6bsrJMtE773tYByLH143/rDtD4+rrdXpt18q/Q==
+        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js
+          integrity: sha512-pv2/orJjnw8dhKWgxFt9wRdN4bvDgkzxVWCjqERXQEAo23ZvwM20xZx5en5FzpKhjCHZPZZz6C02fnCoUZPKdA==
           crossorigin: anonymous
-          bulk: 849
+          bulk: 1034
           id: __pdfjs-worker
-        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf_viewer.js
-          integrity: sha512-O6aDht9IROQup2Ag1xf8F87x34eEzI5ZjNRvt8qx/itgTuAj2Bu41kZafLn/RAnH6fK7AfAFCrcAbjSqXUSQyQ==
+        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf_viewer.min.js
+          integrity: sha512-D3EJEn7/t1QNwCG1RoxJfORQCSljY5RBc2tOL/UypM5jaa3W1v6JFu6158PEMT8F09C+3+ONgTx4FjdJovc/pA==
           crossorigin: anonymous
-          bulk: 188
+          bulk: 107
           map: true
           id: __pdfjs-viewer
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.js
-      integrity: sha512-WHvEcr6kL3NjdaMT//KjBNtV42r+nz0MOWKhd3IiiEihJnGvOBfrt3z4FNWOyayufc/d4DbmF21cUc+Sc29rag==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.js
+      integrity: sha512-Wy/We6mzda82wLIueVL6DzW+zoBma7zYduZZWUakpNEuoCE28JrO5GZ8UzX0HBFA+6TSUz9Zqxgce+m7meJTiQ==
       crossorigin: anonymous
-      bulk: 406
+      bulk: 408
       map: true
       id: __pdfjs
       dependencies:
-        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.js
-          integrity: sha512-E8twuiarDxboEhA6uSwMyFpFms6sCvMcrm2yxoPpghYVbvLp1w0J4o7bKmSXBpN/pMDQp2JNYSBqK8/rk1rrvw==
+        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.js
+          integrity: sha512-FvOB0MT5jWniZ7sAvBuOFahcaep4R/eHVKLynyhSvIRabPxSXzWqkwlGBgsq7k7s18G9mNN849ilEOaGx2TfpQ==
           crossorigin: anonymous
-          bulk: 1619
+          bulk: 1906
           map: true
           id: __pdfjs-worker
-        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf_viewer.js
-          integrity: sha512-O6aDht9IROQup2Ag1xf8F87x34eEzI5ZjNRvt8qx/itgTuAj2Bu41kZafLn/RAnH6fK7AfAFCrcAbjSqXUSQyQ==
+        - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf_viewer.js
+          integrity: sha512-0SHOtdvgnzyhLGLBgk7iUl6qfcEj5syvox2fgNXi/2v3gKoSNluk6xKQ9lZJuKu+8kDrrAQ7yVVEzQ74Oz7X3w==
           crossorigin: anonymous
-          bulk: 188
+          bulk: 206
           map: true
           id: __pdfjs-viewer
       
@@ -2380,43 +2383,43 @@ pdf-js-viewer-css:
   desc: PDF Reader in JavaScript
   url: https://cdnjs.com/libraries/pdf.js
   project: https://github.com/mozilla/pdf.js
-  version: 2.8.335
-  last: 2.6.347
+  version: 2.11.338
+  last: 2.8.335
   license: Apache-2.0
   type: css
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf_viewer.min.css
-      integrity: sha512-LkJXOeBvZ1jlYJlfN1lYUDLk930TUOdRDz2sfCS5alKTbuSUyqn/E9r5QVH+asjOcLyAom8pvEZRcD/YG3J+Hg==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf_viewer.min.css
+      integrity: sha512-txj/K5jJVzCqw9ovfgKo8iNPELqi3gS8UuLUBhG254Clle8CV4LDXVcmPG7t9AIy3o4dnUMgacgC0FV5rD3fMg==
       crossorigin: anonymous
-      bulk: 8.8
+      bulk: 12
       id: __pdfjs-viewer-css
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf_viewer.css
-      integrity: sha512-k/Xe8dvVy8g0sUMaPGV+23j64J+0HvD9abad6LshzjQSNXX2+WUFuGS5B+iZfGzWqhZhM1nlZ12sq1Sfe/C2eQ==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf_viewer.css
+      integrity: sha512-ZJXZgeUzfr+qGTg/3QwPFoBN+K0L8UjR1E8iS4aIK3hmuURvwyxN9bnNivgIKzQ9ynbbAoUDlmflg/DqHvn9ZA==
       crossorigin: anonymous
-      bulk: 12.2
+      bulk: 15
       id: __pdfjs-viewer-css
 
 uri-js:
   name: URI.js
-  desc: PDF Reader in JavaScript
+  desc: Javascript library for working with URLs
   url: https://cdnjs.com/libraries/URI.js
   project: https://github.com/medialize/URI.js
-  version: 1.19.6
-  last: 1.19.5
+  version: 1.19.7
+  last: 1.19.6
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.6/URI.min.js
-      integrity: sha512-W3prM2BMb4lI5HRwh1jFzURjpTueG9Tt3GK9q1Vb8w3T6SjZSDpyj6svha8pojrRPEDrz30LpnMLcFzgPkrmTQ==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.7/URI.min.js
+      integrity: sha512-NhN7q/gDer3nrBNMxW5MSHNAxDMwKD4AvVj/ikQnrp0U2+PHJsxgHoE72ugplv1RWFwLADBiBXEPf/hVDXefpg==
       crossorigin: anonymous
-      bulk: 47.2
+      bulk: 47.3
       id: __urijs
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.6/URI.js
-      integrity: sha512-McmDZAe7iN7DGt5uu/E4QtHinEzE8Pvok0CYOBhgnToUdMO/6JfpE5kV983faxedHEJ6L7M6VBOYZiCbltkl0Q==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.7/URI.js
+      integrity: sha512-3jlEmtiB1o2VMlobqlNuDIyYafGjvaMYhAA3Ge2W8zbAZp3vUNWHE+Qa/mmhZPdoYMqG2Ym/RVDiBOCLpRydqQ==
       crossorigin: anonymous
-      bulk: 66.4
+      bulk: 66.8
       id: __urijs
       
 jsrsasign:
@@ -2424,21 +2427,21 @@ jsrsasign:
   desc: Pure JavaScript Cryptographic Library
   url: https://cdnjs.com/libraries/jsrsasign
   project: https://kjur.github.io/jsrsasign/
-  version: 10.2.0
-  last: 10.1.13
+  version: 10.4.1
+  last: 10.2.0
   license: MIT
   type: js
   prod:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.2.0/jsrsasign-all-min.min.js
-      integrity: sha512-H7oRD2kvdZ03PDxRK3ezw7nQLuMqjs+lcKVKAYPn7x/FTLK0b/w7utdcQh6inQUIb74uh8bHObTMJ1ebOJJ+cw==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.4.1/jsrsasign-all-min.min.js
+      integrity: sha512-ql+NTDe/NMMP05i513vhJCEhxT5L4l7T8KLVLTmOO4K7Db5gLJ6UFy+NuYBmbyE0bd5ckd7t7LQnQ5JGkgspQw==
       crossorigin: anonymous
-      bulk: 286
+      bulk: 289
       id: __jsrsasign
   dev:
-    - url: https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.2.0/jsrsasign-all-min.js
-      integrity: sha512-BJ6MG+1p/Hl7FmzjsrQogJRk4gHAPkVc2f6bw/h3v6Yhfj4exB+81K1lgzbLAqhvcZ3uAd+A72Y+q/nEVWBCig==
+    - url: https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.4.1/jsrsasign-all-min.js
+      integrity: sha512-LO4ljvYu6tguzAcu2SxWEMPLN0CoG4s83cbdTSmUc6mV586Ze/BaehdiVbYqhSwFUv8iszi00VoPWhGy82YWtg==
       crossorigin: anonymous
-      bulk: 311
+      bulk: 314
       id: __jsrsasign
       
 roundslider-js:
