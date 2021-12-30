@@ -17,10 +17,17 @@ info: true
 colour: 000080
 action: Find out more
 versions:
+  0.8.2:
+    name : Configuration Improvements
+    desc : Custom Templates
+    type : beta
+    changes :
+      - details: Custom Templates can now be supplied via App Configuration
+      - details: International and Symbol Characters can be inserted from Help Page
   0.8.0:
     name : Functionality Improvements
     desc : Text Alignment Improvements
-    type : beta
+    type : production
     changes :
       - details: Insert Alignment for Selected Text
       - details: Supports Multiple Aligment Blocks
@@ -41,7 +48,7 @@ versions:
   0.7.7:
     name : Functionality Improvements
     desc : Open Insert/Overwrite
-    type : production
+    type : minor
     changes :
       - details: Opening a file will trigger an __insert__ or __overwrite__ question (previously files were just inserted)
       - details: Added Print option to __always parse__ line breaks as new paragraphs (off by default)
